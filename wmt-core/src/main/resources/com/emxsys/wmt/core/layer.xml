@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Menu">
+        <!-- HOME Tab -->
+        <folder name="Home">
+            <attr name="position" intvalue="100"/>
+            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_HomeTab"/>
+
+            <!-- Project Group -->
+            <folder name="Project">
+                <attr name="position" intvalue="100"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Project"/>
+                <!-- Projects Popup --> 
+                <!-- This section is redundant with items in the File tab - which contributes to slightly confusing UI                  
+                <folder name="Projects">
+                    <attr name="iconBase" stringvalue="images/folder.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Projects"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Projects_Hint"/>
+                    <attr name="priority" stringvalue="top"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Projects_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Projects_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/folder_full32.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>
+                    <file name="SeparatorAfterSaveAll.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>                 
+                        <attr name="position" intvalue="251"/>
+                    </file>
+                    <file name="SeparatorProjectsBeforeLogicalTab.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>                 
+                        <attr name="position" intvalue="950"/>
+                    </file>
+                </folder>-->
+                <!-- Project Window  -->
+                <file name="org-netbeans-modules-project-ui-logical-tab-action2.shadow">
+                    <attr name="iconBase" stringvalue="images/application.png"/>
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-logical-tab-action.instance"/>
+                    <attr name="description" stringvalue="Shows the Projects Window."/>
+                    <attr name="menuText" stringvalue="Projects Window"/>
+                    <attr name="priority" stringvalue="Top"/>
+                    <attr name="position" intvalue="1000"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_ProjectsWindow_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_ProjectsWindow_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/window32.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>
+                </file>
+
+                <!-- File Save Button --> 
+                <file name="org-openide-actions-SaveAction.shadow">
+                    <attr name="iconBase" stringvalue="images/save.png"/>
+                    <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAction.instance"/>
+                    <attr name="description" stringvalue="Saves the current file."/>
+                    <attr name="menuText" stringvalue="Save"/>
+                    <attr name="position" intvalue="200"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Save_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Save_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/save32.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>
+                </file>
+                <!-- Project Save Button --> 
+                <file name="org-openide-actions-SaveAllAction.shadow">
+                    <attr name="iconBase" stringvalue="images/save_all.png"/>
+                    <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAllAction.instance"/>
+                    <attr name="description" stringvalue="Saves the open projects."/>
+                    <attr name="menuText" stringvalue="Save All"/>
+                    <attr name="position" intvalue="200"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_SaveAll_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_SaveAll_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/save_all32.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>
+                </file>
+            </folder>                                
+            <!-- Edit Group (e.g., Copy, Paste, Edit, Rename, Delete, Properties -->
+            <folder name="Edit">
+                <attr name="position" intvalue="200"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Edit"/>
+
+                <!-- Properties Button --> 
+                <file name="org-openide-actions-PropertiesAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-PropertiesAction.instance"/>
+                    <attr name="position" intvalue="1000"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="iconBase" stringvalue="images/info.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_PropertiesAction"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_PropertiesAction_Hint"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                </file>
+                <folder name="Affiliation">
+                    <attr name="position" intvalue="1100"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="iconBase" stringvalue="images/affiliation_unknown_gnd.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Affiliation"/>
+                </folder>
+                <folder name="Status">
+                    <attr name="position" intvalue="1200"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="iconBase" stringvalue="images/status_unknown_present.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Status"/>
+                </folder>
+            </folder>               
+
+            <!-- Create Group (e.g., Markers, Scenes, Symbols) -->
+            <folder name="Create">
+                <attr name="position" intvalue="300"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Create"/>
+                <!-- Screenshot Compound Action/Popup --> 
+                <!-- Marker Popup --> 
+                <folder name="Marker">
+                    <attr name="position" intvalue="100"/>
+                    <attr name="iconBase" stringvalue="images/favorite_add.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Marker"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Marker_Hint"/>
+                    <attr name="priority" stringvalue="top"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Marker_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Marker_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/favorite_add.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                </folder>
+                <folder name="Screenshot">
+                    <attr name="position" intvalue="1000"/>
+                    <attr name="iconBase" stringvalue="images/photo_camera.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Screenshot"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Screenshot_Hint"/>
+                    <attr name="priority" stringvalue="top"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Screenshot_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Screenshot_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/photo_camera.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                </folder>
+            </folder>
+
+            <!-- Map Group (e.g., Base Maps, Layer Manager -->
+            <folder name="Map">
+                <attr name="position" intvalue="400"/>                
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Map"/>
+
+                <!-- Basemap Popup --> 
+                <folder name="Basemap">
+                    <attr name="position" intvalue="100"/>
+                    <attr name="iconBase" stringvalue="images/map_accept.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_Hint"/>
+                    <attr name="priority" stringvalue="top"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/accept.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                    <folder name="Satellite">
+                        <attr name="position" intvalue="100"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsSatellite"/>
+                    </folder>
+                    <folder name="Aerial">
+                        <attr name="position" intvalue="200"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsAerial"/>
+                    </folder>
+                    <folder name="Topographic">
+                        <attr name="position" intvalue="300"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsTopographic"/>
+                    </folder>
+                    <folder name="Street">
+                        <attr name="position" intvalue="400"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsStreet"/>
+                    </folder>
+                    <folder name="User">
+                        <attr name="position" intvalue="500"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsUser"/>
+                    </folder>
+
+                </folder>
+                <!-- Overlays Popup --> 
+                <folder name="Overlays">
+                    <attr name="position" intvalue="200"/>
+                    <attr name="iconBase" stringvalue="images/map.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_Hint"/>
+                    <attr name="priority" stringvalue="top"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/map_add.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                    <folder name="Hazards">
+                        <attr name="position" intvalue="800"/>
+                        <!--<attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysHazards"/>-->
+                    </folder>
+                    <folder name="Weather">
+                        <attr name="position" intvalue="900"/>
+                        <!--<attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysWeather"/>-->
+                    </folder>
+                    <folder name="Graphics">
+                        <attr name="position" intvalue="1000"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysGraphics"/>
+                    </folder>
+                    <folder name="Labels">
+                        <attr name="position" intvalue="2000"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysLabels"/>
+                    </folder>
+                    <folder name="Boundaries">
+                        <attr name="position" intvalue="3000"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysBoundaries"/>
+                    </folder>
+                    <folder name="Controls">
+                        <attr name="position" intvalue="4000"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysControls"/>
+                    </folder>
+                </folder>
+                <!-- Effects Popup --> 
+                <folder name="Effects">
+                    <attr name="position" intvalue="300"/>
+                    <attr name="iconBase" stringvalue="images/map.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_Hint"/>
+                    <attr name="priority" stringvalue="top"/>
+                    <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipTitle"/>
+                    <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipBody"/>
+                    <attr name="tooltipIcon" stringvalue="images/map_add.png"/>
+                    <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                </folder>
+            </folder>
+            <!-- Find Group (e.g., Address, City, Airport, Landmark, Coordinates) -->
+            <folder name="Find">
+                <attr name="position" intvalue="400"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Find"/>
+                <!--                    <file name="org-openide-actions-FindAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-FindAction.instance"/>
+                    <attr name="position" intvalue="1000"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Find.png"/>
+                </file>
+                <file name="org-openide-actions-ReplaceAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-ReplaceAction.instance"/>
+                    <attr name="position" intvalue="1100"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Replace.png"/>
+                </file>
+                <file name="com-pinkmatter-test-flamingo-actions-ShowDialogAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/com-pinkmatter-test-flamingo-actions-ShowDialogAction.instance"/>
+                    <attr name="defaultAction" boolvalue="true"/>
+                    <attr name="position" intvalue="1200"/>
+                </file>-->
+            </folder>
+
+
+            <!-- Zoom Group (e.g., Zoom In and Out -->
+            <folder name="Zoom">
+                <attr name="position" intvalue="600"/>                 
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Zoom"/>
+            </folder>
+
+            <!-- Move Group (e.g., Pan Left, Right, etc. -->
+            <folder name="Move">
+                <attr name="position" intvalue="700"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Move"/>
+            </folder>
+
+            <!-- Rotate Group (e.g. Rotate and Tilt) -->
+            <folder name="Rotate">
+                <attr name="position" intvalue="800"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Rotate"/>
+            </folder>              
+
+            <folder name="Tools">
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Tools"/>
+                <!--                    <attr name="position" intvalue="500"/>
+                <file name="org-openide-actions-UndoAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
+                    <attr name="position" intvalue="201"/>
+                    <attr name="iconBase" stringvalue="images/undo.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_UndoAction"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_UndoAction"/>
+                </file>
+                <file name="org-openide-actions-RedoAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-RedoAction.instance"/>
+                    <attr name="position" intvalue="202"/>
+                    <attr name="iconBase" stringvalue="images/redo.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_RedoAction"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_RedoAction"/>
+                </file>-->
+            </folder>
+
+        </folder>
+       <!--ANALYSIS Tab-->
+        <folder name="Analysis">
+            <attr name="position" intvalue="200"/> 
+            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_AnalysisTab"/>
+        </folder>
+        <!--TOOLS Tab-->
+        <folder name="Tools">
+            <attr name="position" intvalue="300"/> 
+            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_ToolsTab"/>
+            <folder name="Show">
+                <attr name="position" intvalue="1000"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Show"/>
+
+                <file name="SeparatorBeforeProjects.instance">
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>                 
+                    <attr name="position" intvalue="2975"/>
+                </file>
+                <!-- Projects-->
+<!--                    <file name="org-netbeans-modules-project-ui-logical-tab-action.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-logical-tab-action.instance"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="position" intvalue="3000"/>
+                </file>-->
+                <!--Navigator -->
+                <file name="org-netbeans-modules-navigator-ShowNavigatorAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-modules-navigator-ShowNavigatorAction.instance"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="position" intvalue="3100"/>
+                </file>
+                <!--Files -->
+                <file name="org-netbeans-modules-project-ui-physical-tab-action.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-physical-tab-action.instance"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="position" intvalue="3150"/>
+                </file>
+                <!--Favorites -->
+                <file name="org-netbeans-modules-favorites-View.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-modules-favorites-View.instance"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="position" intvalue="3200"/>
+                </file>                    
+                <!-- Properties Window -->
+                <file name="org-netbeans-core-windows-actions-GlobalPropertiesAction.instance">
+                    <attr name="position" intvalue="4000"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                    <attr name="delegate" newvalue="org.netbeans.core.windows.actions.GlobalPropertiesAction"/>
+                    <attr name="iconBase" stringvalue="org/netbeans/core/windows/resources/properties.gif"/>
+                    <attr name="displayName" bundlevalue="org.netbeans.core.windows.actions.Bundle#GlobalProperties"/>
+                </file>
+                <!-- Palette -->
+                <file name="org-netbeans-modules-palette-ShowPaletteAction.instance">
+                    <attr name="position" intvalue="4010"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <!--org.netbeans.modules.palette.ShowPaletteAction-->
+                    <attr bundlevalue="org.netbeans.modules.palette.Bundle#CTL_PaletteAction" name="displayName"/>
+                    <attr methodvalue="org.openide.awt.Actions.alwaysEnabled" name="instanceCreate"/>
+                    <attr name="delegate" newvalue="org.netbeans.modules.palette.ShowPaletteAction"/>
+                    <attr name="iconBase" stringvalue="org/netbeans/modules/palette/resources/palette.png"/>
+                    <attr boolvalue="false" name="noIconInMenu"/>
+                </file>
+                <!--Start/Welcome Page -->
+                <file name="com-emxsys-welcome-ShowWelcomeAction.shadow">
+                    <attr name="position" intvalue="4015"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="originalFile" stringvalue="Actions/Help/com-emxsys-welcome-ShowWelcomeAction.instance"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/welcome/resources/welcome.gif"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.welcome.Bundle#LBL_Action"/>
+                </file>
+                <!--Application Log / IDE Log -->
+                <file name="org-netbeans-core-actions-LogAction.shadow">
+                    <attr name="position" intvalue="4020"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="originalFile" stringvalue="Actions/View/org-netbeans-core-actions-LogAction.instance"/>
+                    <attr name="iconBase" stringvalue="images/application_info.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_IdeLog"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_IdeLog"/>
+                </file>
+            </folder>
+
+            <!-- 
+            <folder name="Document Views">
+                <attr name="position" intvalue="1000"/>
+                <file name="DocumentsAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-core-windows-actions-DocumentsAction.instance"/>
+                    <attr name="position" intvalue="1000"/>
+                    <attr name="menuText" stringvalue="Select Document"/>
+                    <attr name="iconBase" stringvalue="images/pages.png"/>
+                </file>
+            </folder>-->
+
+            <folder name="Launch">
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Launch"/>
+                <attr name="position" intvalue="2000"/>
+                <file name="org-netbeans-core-actions-HTMLViewAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/View/org-netbeans-core-actions-HTMLViewAction.instance"/>
+                    <attr name="position" intvalue="400"/>
+                    <attr name="iconBase" stringvalue="images/computer_world.png"/>
+                </file>
+            </folder>
+
+            <folder name="Window">
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Window"/>
+                <attr name="position" intvalue="3000"/>
+                <file name="org-netbeans-core-windows-actions-ToggleFullScreenAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-core-windows-actions-ToggleFullScreenAction.instance"/>
+                    <attr name="position" intvalue="90"/>
+                    <attr name="iconBase" stringvalue="images/window_up.png"/>
+                </file>
+                <file name="org-netbeans-core-windows-actions-ResetWindowsAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-core-windows-actions-ResetWindowsAction.instance"/>
+                    <attr name="position" intvalue="100"/>
+                    <attr name="iconBase" stringvalue="images/windows.png"/>
+                </file>
+                <file name="MaximizeWindowAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-core-windows-actions-MaximizeWindowAction.instance"/>
+                    <attr name="position" intvalue="2200"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="iconBase" stringvalue="images/window.png"/>
+                </file>
+                <file name="CloseWindowAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-core-windows-actions-CloseWindowAction.instance"/>
+                    <attr name="position" intvalue="2300"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="iconBase" stringvalue="images/window_delete.png"/>
+                </file>
+            </folder>
+
+        </folder>
+    </folder>
+
+    <!--RIBBON BAR Application Menu-->
+    <folder name="Ribbon">
+        <!--FILE Tab-->
+        <folder name="AppMenu">
+            <!-- Open Project actions -->
+            <folder name="Open">
+                <attr name="position" intvalue="100"/>
+                <attr name="iconBase" stringvalue="images/folder_accept.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Open"/>
+            
+                <file name="org-netbeans-modules-project-ui-OpenProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-OpenProject.instance"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OpenProject"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OpenProject_Hint"/>
+                    <attr name="position" intvalue="500"/>
+                </file>
+
+                <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
+                    <!--org.netbeans.modules.openfile.OpenFileAction-->
+                    <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-OpenFileAction.instance"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OpenFile"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OpenFile_Hint"/>
+                    <attr intvalue="800" name="position"/>
+                </file>
+                            
+                <file name="org-netbeans-modules-project-ui-RecentProjects.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-RecentProjects.instance"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_RecentProjects"/>
+                    <attr name="position" intvalue="600"/>
+                </file>
+
+                <file name="org-netbeans-modules-openfile-RecentFileAction.shadow">
+                    <!--org.netbeans.modules.openfile.RecentFileAction-->
+                    <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-RecentFileAction.instance"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_RecentFiles"/>
+                    <attr intvalue="900" name="position"/>
+                </file>
+            </folder>
+            <!-- New Project and File actions -->
+            <folder name="New">
+                <attr name="position" intvalue="101"/>
+                <attr name="iconBase" stringvalue="images/folder_add.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_New"/>
+            
+                <file name="org-netbeans-modules-project-ui-NewProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewProject.instance"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_NewProject"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_NewProject_Hint"/>
+                    <attr name="position" intvalue="100"/>
+                </file>
+
+                <file name="org-netbeans-modules-project-ui-NewFile.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewFile.instance"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_NewFile"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_NewFile_Hint"/>
+                    <attr name="position" intvalue="200"/>
+                </file>
+            </folder>
+            <file name="SeparatorNew.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="475"/>
+            </file>
+            <!--Close actions-->
+            <file name="com-emxsys-wmt-core-actions-CloseProjectAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/File/com-emxsys-wmt-core-actions-CloseProjectAction.instance"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CloseProject"/>
+                <attr name="position" intvalue="700"/>
+            </file>
+<!--            <file name="org-netbeans-modules-project-ui-CloseProject.shadow">
+                <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-CloseProject.instance"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CloseProject"/>
+                <attr name="position" intvalue="700"/>
+            </file>-->
+            <file name="SeparatorOpen.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>                 
+                <attr name="position" intvalue="975"/>
+            </file>
+            <!-- Save actions -->
+            <file name="org-openide-actions-SaveAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAction.instance"/>
+                <attr name="position" intvalue="1000"/>
+                <attr name="iconBase" stringvalue="images/save.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Save"/>
+            </file>
+            <file name="org-openide-actions-SaveAllAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAllAction.instance"/>
+                <attr name="position" intvalue="1100"/>
+                <attr name="iconBase" stringvalue="images/save_all.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_SaveAll"/>
+            </file>
+            <file name="org-openide-actions-SaveAsAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAsAction.instance"/>
+                <attr name="position" intvalue="1200"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_SaveAs"/>
+            </file>
+            <file name="SeparatorSave.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="1500"/>
+            </file>
+            <!-- Print actions -->
+<!--            <folder name="Print">
+                <attr name="position" intvalue="1600"/>
+                <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Print.png"/>
+                <file name="org-netbeans-modules-print-action-PageSetupAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/File/org-netbeans-modules-print-action-PageSetupAction.instance"/>
+                    <attr name="position" intvalue="100"/>
+                    <attr name="description" bundlevalue="com.pinkmatter.test.flamingo.actions.Bundle#HINT_PageSetupAction"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Config.png"/>
+                </file>
+                <file name="org-netbeans-modules-print-action-PrintAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/File/org-netbeans-modules-print-action-PrintAction.instance"/>
+                    <attr name="position" intvalue="600"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Print.png"/>
+                    <attr name="description" bundlevalue="com.pinkmatter.test.flamingo.actions.Bundle#HINT_PrintAction"/>
+                </file>
+            </folder>
+            <file name="SeparatorPrint.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="1799"/>
+            </file>-->
+            
+            <!-- Help and Options actions -->
+            <file name="org-netbeans-modules-options-OptionsWindowAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-netbeans-modules-options-OptionsWindowAction.instance"/>
+                <attr name="position" intvalue="1800"/>
+                <attr name="iconBase" stringvalue="images/application_process.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Options"/>
+            </file>
+            <file name="org-netbeans-modules-javahelp-HelpAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Help/org-netbeans-modules-javahelp-HelpAction.instance"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Help"/>
+                <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Help_Hint"/>
+                <attr name="iconBase" stringvalue="images/help.png"/>
+                <attr name="position" intvalue="1900"/>
+            </file>
+            <file name="org-netbeans-core-actions-AboutAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Help/org-netbeans-core-actions-AboutAction.instance"/>
+                <attr name="iconBase" stringvalue="images/info.png"/>
+                <attr name="position" intvalue="2000"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_About"/>
+            </file>
+            <file name="SeparatorHelp.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="2100"/>
+            </file>           
+            <!-- Exit action -->          
+            <file name="org-netbeans-core-actions-SystemExit.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-netbeans-core-actions-SystemExit.instance"/>
+                <attr name="position" intvalue="2200"/>
+                <attr name="iconBase" stringvalue="images/shut_down.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Exit"/>
+            </file>
+        </folder>
+                
+        <folder name="AppMenuFooter">
+            <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow">
+                <!--org.netbeans.modules.autoupdate.ui.actions.CheckForUpdatesAction-->
+                <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.instance"/>
+                <attr name="position" intvalue="100"/>
+                <attr name="iconBase" stringvalue="images/cd_down.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CheckForUpdates"/>
+            </file>
+            <file name="org-netbeans-modules-autoupdate-ui-actions-PluginManagerAction.shadow">
+                <!--org.netbeans.modules.autoupdate.ui.actions.PluginManagerAction-->
+                <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-autoupdate-ui-actions-PluginManagerAction.instance"/>
+                <attr name="position" intvalue="200"/>
+                <attr name="iconBase" stringvalue="images/process_info.png"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_PluginManager"/>
+            </file>
+        </folder>
+        
+        <!-- We're not using the TaskBar as it's obtuse: just another place to look for functionality.
+        <folder name="TaskBar">
+            <file name="com-pinkmatter-test-flamingo-actions-NewDocumentAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/File/com-pinkmatter-test-flamingo-actions-NewDocumentAction.instance"/>
+                <attr name="position" intvalue="50"/>
+            </file>
+
+            <file name="org-openide-actions-SaveAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAction.instance"/>
+                <attr name="position" intvalue="100"/>
+                <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Save.png"/>
+            </file>
+            <file name="org-openide-actions-SaveAllAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAllAction.instance"/>
+                <attr name="position" intvalue="200"/>
+            </file>
+            <file name="Separator1.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="300"/>
+            </file>
+            <file name="org-openide-actions-RedoAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-RedoAction.instance"/>
+                <attr name="position" intvalue="400"/>
+                <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Redo.png"/>
+            </file>
+            <file name="org-openide-actions-UndoAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
+                <attr name="position" intvalue="500"/>
+                <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Undo.png"/>
+            </file>
+        </folder>
+        -->
+
+        <!--HELP Button-->
+        <folder name="HelpButton">
+            <file name="org-netbeans-modules-javahelp-HelpAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Help/org-netbeans-modules-javahelp-HelpAction.instance"/>
+                <attr name="iconBase" stringvalue="images/help.png"/>
+            </file>
+        </folder>
+        
+    </folder>
+    
+</filesystem>
