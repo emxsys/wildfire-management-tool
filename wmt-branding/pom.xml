@@ -41,4 +41,5 @@
             </plugin>
       </plugins>
   </build>
+    <version>4.0-SNAPSHOT</version>
 </project>
