@@ -29,18 +29,10 @@
  */
 package com.emxsys.wmt.core;
 
-import com.terramenta.ribbon.spi.RibbonComponentProvider;
-import java.awt.Dimension;
 import org.openide.modules.ModuleInstall;
 
 public class Installer extends ModuleInstall
 {
-
-    static
-    {
-        RibbonComponentProvider.setUsePopupMenus(true);
-        RibbonComponentProvider.setPreferredBandSize(new Dimension(90, 82));
-    }
 
     @Override
     public void restored()
