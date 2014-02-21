@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -54,13 +54,27 @@
             <artifactId>org-openide-util</artifactId>
             <groupId>org.netbeans.api</groupId>
             <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-awt</artifactId>
             <groupId>org.netbeans.api</groupId>
             <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>flamengo</artifactId>
+            <groupId>org.pushingpixels</groupId>
+            <type>jar</type>
+            <version>5.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <artifactId>trident</artifactId>
+            <groupId>org.pushingpixels</groupId>
+            <type>jar</type>
+            <version>1.3</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -95,5 +109,5 @@
             </plugin>
         </plugins>
     </build>
-    <description>RibbonActionAnnotation processor </description>
+    <description>RibbonActionAnnotation processor and Emxsys Ribbon customizations.</description>
 </project>

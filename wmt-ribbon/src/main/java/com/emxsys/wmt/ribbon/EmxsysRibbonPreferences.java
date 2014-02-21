@@ -5,12 +5,14 @@
  */
 package com.emxsys.wmt.ribbon;
 
+import com.terramenta.ribbon.api.RibbonPreferences;
+import com.terramenta.ribbon.spi.Office2013RibbonPreferences;
 import com.terramenta.ribbon.spi.RibbonPreferencesProvider;
-import java.awt.Dimension;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * Service Provider for Ribbon preferences.
+ * <p>
  * @author Bruce Schubert
  * @version $Id$
  */
@@ -18,37 +20,16 @@ import org.openide.util.lookup.ServiceProvider;
 public class EmxsysRibbonPreferences extends RibbonPreferencesProvider
 {
 
+    private RibbonPreferences preferences;
+
     @Override
-    public Object[] getLafClassDefaults()
+    public RibbonPreferences getPreferences()
     {
-        return new Object[]
+        if (preferences==null)
         {
-            "RibbonApplicationMenuButtonUI", "com.terramenta.ribbon.FileRibbonApplicationMenuButtonUI",
-            "RibbonUI", "com.terramenta.ribbon.FileRibbonUI",
-        };
+            preferences = new Office2013RibbonPreferences();
+        }
+        return preferences;
     }
 
-    @Override
-    public Dimension getPreferredBandSize()
-    {
-        return new Dimension(40, 90);
-    }
-
-    @Override
-    public boolean getUsePopupMenus()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean getUseTabNameForTasksBand()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean getAlwaysDisplayButtonText()
-    {
-        return true;
-    }
 }

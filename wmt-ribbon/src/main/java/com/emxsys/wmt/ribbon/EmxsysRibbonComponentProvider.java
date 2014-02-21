@@ -44,7 +44,7 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbon;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 
 /**
- * Provider for the Components on the Ribbon. The AppMenu, TaskBarand taskPanes
+ * Service Provider for the Components on the Ribbon. The AppMenu, TaskBar and TaskPanes.
  * <p>
  * @author Chris Böhme
  * @author Bruce Schubert (contributor)
@@ -139,7 +139,7 @@ public class EmxsysRibbonComponentProvider extends RibbonComponentProvider
     private void addTaskPanes(JRibbon ribbon)
     {
         RibbonComponentFactory factory = new RibbonComponentFactory();
-        List<ActionItem> ribbonItems = new ArrayList<ActionItem>();
+        List<ActionItem> ribbonItems = new ArrayList<>();
         ribbonItems.addAll(ActionItems.forPath("Ribbon/TaskPanes"));
         // TODO: Find all "orphans" in the Menu heirarchy and place them on a ribbon band
         //   List<? extends ActionItem> menuItems = ActionItems.forPath("Menu");
