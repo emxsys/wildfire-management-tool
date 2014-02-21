@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Install: com/emxsys/wmt/core/Installer.class
+OpenIDE-Module-Layer: com/emxsys/wmt/core/layer.xml
+OpenIDE-Module-Localizing-Bundle: com/emxsys/wmt/core/Bundle.properties
