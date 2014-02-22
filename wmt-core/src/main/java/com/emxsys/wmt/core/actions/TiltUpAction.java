@@ -30,6 +30,7 @@
 package com.emxsys.wmt.core.actions;
 
 import com.emxsys.wmt.core.capabilities.TiltUpCapability;
+import com.emxsys.wmt.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionRegistration;
@@ -40,15 +41,16 @@ import org.openide.util.NbBundle.Messages;
 
 
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.TiltUpAction")
-@ActionRegistration(iconBase = "images/arrow_up.png", 
+@ActionRegistration(iconBase = "images/tilt_up.png", 
         displayName = "#CTL_TiltUpAction", surviveFocusChange = false)
 @ActionReferences(
 {
     @ActionReference(path = "Menu/Map", position = 300),
     @ActionReference(path = "Toolbars/Map", position = 300),
-    @ActionReference(path = "Ribbon/TaskPanes/Home/Rotate", position = 400)
 })
-@Messages("CTL_TiltUpAction=Tilt Up")
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Rotate", position = 400, description = "#HINT_TiltUpAction", autoRepeatAction = true)
+
+@Messages({"CTL_TiltUpAction=Tilt Up", "HINT_TiltUpAction=Tilt upright."})
 public final class TiltUpAction implements ActionListener
 {
     private final TiltUpCapability context;
