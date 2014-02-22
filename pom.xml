@@ -110,7 +110,8 @@
         <module>wmt-application</module>
         <module>wmt-branding</module>
         <module>wmt-core</module>
-    <module>wmt-ribbon</module>
+        <module>wmt-globe</module>
+        <module>wmt-ribbon</module>
   </modules>
 
 </project>
