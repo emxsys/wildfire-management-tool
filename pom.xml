@@ -14,6 +14,7 @@
 
         <!-- DEPENDENCY VERSIONS -->
         <netbeans.version>RELEASE74</netbeans.version>
+        <terramenta.version>1.3.1-SNAPSHOT</terramenta.version>
                 
         <!-- PLUGIN VERSIONS -->
         <compiler.plugin.version>3.1</compiler.plugin.version>
