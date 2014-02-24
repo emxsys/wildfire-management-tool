@@ -29,44 +29,45 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.core.capabilities.TiltBackCapability;
 import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.emxsys.wmt.core.capabilities.RotateCwCapability;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
-@ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.TiltBackAction")
-@ActionRegistration(iconBase = "images/tilt_down.png", 
-        displayName = "#CTL_TiltBackAction", surviveFocusChange = false)
+@ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.RotateCwAction")
+@ActionRegistration(iconBase = "images/rotate_cw.png",
+        displayName = "#CTL_RotateCwAction", surviveFocusChange = false)
 @ActionReferences(
+        {
+            @ActionReference(path = "Menu/Map", position = 5200),
+            @ActionReference(path = "Toolbars/Map", position = 5200)
+        })
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Rotate", position = 200, description = "#HINT_RotateCwAction", autoRepeatAction = true)
+@Messages(
+        {
+            "CTL_RotateCwAction=Rotate CW",
+            "HINT_RotateCwAction=Rotate Clockwise"
+        })
+public final class RotateCwAction implements ActionListener
 {
-    @ActionReference(path = "Menu/Map", position = 300),
-    @ActionReference(path = "Toolbars/Map", position = 300),
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Rotate", position = 300, description = "#HINT_TiltBackAction", autoRepeatAction = true)
 
-@Messages({"CTL_TiltBackAction=Tilt Down", "HINT_TiltBackAction=Tilt downwards or lean backwards."})
-public final class TiltBackAction implements ActionListener
-{
-    private final TiltBackCapability context;
+    private final RotateCwCapability context;
 
-
-
-    public TiltBackAction(TiltBackCapability context)
+    public RotateCwAction(RotateCwCapability context)
     {
         this.context = context;
     }
 
-
-
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        context.tiltBack(e);
+        context.rotateClockwise(e);
     }
 }
