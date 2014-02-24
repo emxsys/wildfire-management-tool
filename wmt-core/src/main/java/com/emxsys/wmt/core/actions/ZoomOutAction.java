@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.ZoomOutCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,32 +39,25 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.ZoomOutAction")
 @ActionRegistration(iconBase = "images/zoom_out.png",
-                    displayName = "#CTL_ZoomOutAction", surviveFocusChange = false)
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map", position = 6510),
-    @ActionReference(path = "Toolbars/Map", position = 6510)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Zoom", position = 651, description = "#HINT_ZoomOutAction", autoRepeatAction = true)
+        displayName = "#CTL_ZoomOutAction", surviveFocusChange = false)
+@ActionReference(path = "Toolbars/Map", position = 6510)
+@RibbonActionReference(path = "Menu/Home/Zoom", position = 651, description = "#HINT_ZoomOutAction", autoRepeatAction = true)
 @Messages(
-{
-    "CTL_ZoomOutAction=Zoom Out",
-    "HINT_ZoomOutAction=Move back"
-})
+        {
+            "CTL_ZoomOutAction=Zoom Out",
+            "HINT_ZoomOutAction=Move back"
+        })
 public final class ZoomOutAction implements ActionListener
 {
 
     private final ZoomOutCapability context;
 
-
     public ZoomOutAction(ZoomOutCapability context)
     {
         this.context = context;
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e)

@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.ZoomInCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,32 +39,25 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.ZoomInAction")
 @ActionRegistration(iconBase = "images/zoom_in.png",
-                    displayName = "#CTL_ZoomInAction", surviveFocusChange = false)
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map", position = 6500),
-    @ActionReference(path = "Toolbars/Map", position = 6500)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Zoom", position = 650, description = "#HINT_ZoomInAction", autoRepeatAction=true)
+        displayName = "#CTL_ZoomInAction", surviveFocusChange = false)
+@ActionReference(path = "Toolbars/Map", position = 6500)
+@RibbonActionReference(path = "Menu/Home/Zoom", position = 650, description = "#HINT_ZoomInAction", autoRepeatAction = true)
 @Messages(
-{
-    "CTL_ZoomInAction=Zoom In",
-    "HINT_ZoomInAction=Move closer"
-})
+        {
+            "CTL_ZoomInAction=Zoom In",
+            "HINT_ZoomInAction=Move closer"
+        })
 public final class ZoomInAction implements ActionListener
 {
 
     private final ZoomInCapability context;
 
-
     public ZoomInAction(ZoomInCapability context)
     {
         this.context = context;
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e)

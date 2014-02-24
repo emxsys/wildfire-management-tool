@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.utilities.ModuleUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,12 +57,12 @@ import org.openide.util.NbBundle.Messages;
                     displayName = "#CTL_OpenProjectAction")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/File", position = 100),
+//    @ActionReference(path = "Menu/File", position = 100),
     @ActionReference(path = "Toolbars/File", position = 200),
     @ActionReference(path = "Shortcuts", name = "O-O")
 })
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 200,
+//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 200,
 //                       tooltipTitle = "#CTL_OpenProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_OpenProjectAction_TooltipBody",
 //                       tooltipIcon = "images/folder_accept32.png",

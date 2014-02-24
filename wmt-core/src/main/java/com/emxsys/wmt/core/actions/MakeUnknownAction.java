@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.UnknownAffiliationCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,10 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeUnknownAction")
 @ActionRegistration(iconBase = "images/affiliation_unknown_gnd.png",
                     displayName = "#CTL_MakeUnknownAction")
-@ActionReferences(
-{
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit/Affiliation", 
+@RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 
                        position = 400, 
                        description = "#CTL_MakeUnknownAction_Hint", 
                        autoRepeatAction = false)

@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PanLeftCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,34 +39,28 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanLeftAction")
-@ActionRegistration(iconBase = "images/arrow_left.png", 
+@ActionRegistration(iconBase = "images/arrow_left.png",
         displayName = "#CTL_PanLeftAction", surviveFocusChange = false)
-@ActionReferences(
+@ActionReference(path = "Toolbars/Map", position = 3200)
+@RibbonActionReference(path = "Menu/Home/Move", position = 200, description = "#HINT_PanLeftAction", autoRepeatAction = true)
+@Messages(
 {
-    @ActionReference(path = "Menu/Map", position = 3200),
-    @ActionReference(path = "Toolbars/Map", position = 3200)
+    "CTL_PanLeftAction=Pan Left", "HINT_PanLeftAction=Looks to the left"
 })
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move", position = 200, description = "#HINT_PanLeftAction", autoRepeatAction = true)
-@Messages({"CTL_PanLeftAction=Pan Left",   "HINT_PanLeftAction=Looks to the left"})
 public final class PanLeftAction implements ActionListener
 {
+
     private final PanLeftCapability context;
-
-
 
     public PanLeftAction(PanLeftCapability context)
     {
         this.context = context;
     }
 
-
-
     @Override
     public void actionPerformed(ActionEvent e)
     {
         context.panLeft(e);
-    } 
+    }
 }
-

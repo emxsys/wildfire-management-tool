@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PlannedStatusCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,10 +47,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakePlannedAction")
 @ActionRegistration(iconBase = "images/status_unknown_planned.png",
                     displayName = "#CTL_MakePlannedAction")
-@ActionReferences(
-{
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit/Status", 
+
+@RibbonActionReference(path = "Menu/Home/Edit/Status", 
                        position = 200, 
                        description = "CTL_MakePlannedAction_Hint", 
                        autoRepeatAction = false)

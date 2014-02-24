@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.DeleteCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,10 +53,10 @@ import org.openide.util.NbBundle.Messages;
                     key = "delete")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/Edit", position = 300),
+    //@ActionReference(path = "Menu/Edit", position = 300),
     @ActionReference(path = "Toolbars/Edit", position = 300)
 })
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit", 
+@RibbonActionReference(path = "Menu/Home/Edit", 
                        position = 300, 
                        priority = "top",
                        description = "#CTL_DeleteAction_Hint", 

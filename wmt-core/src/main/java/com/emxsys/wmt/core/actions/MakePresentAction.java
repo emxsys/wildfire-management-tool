@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PresentStatusCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,10 +47,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakePresentAction")
 @ActionRegistration(iconBase = "images/status_unknown_present.png",
                     displayName = "#CTL_MakePresentAction")
-@ActionReferences(
-{
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit/Status",
+@RibbonActionReference(path = "Menu/Home/Edit/Status",
                        position = 100,
                        description = "#CTL_MakePresentAction_Hint",
                        autoRepeatAction = false)

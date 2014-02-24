@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.RotateCcwCapability;
 
 import java.awt.event.ActionEvent;
@@ -41,29 +41,24 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.RotateCcwAction")
-@ActionRegistration(iconBase = "images/rotate_ccw.png", 
+@ActionRegistration(iconBase = "images/rotate_ccw.png",
         displayName = "#CTL_RotateCcwAction", surviveFocusChange = false)
-@ActionReferences(
+@ActionReference(path = "Toolbars/Map", position = 5100)
+@RibbonActionReference(path = "Menu/Home/Rotate", position = 100, description = "#HINT_RotateCcwAction", autoRepeatAction = true)
+@Messages(
 {
-    @ActionReference(path = "Menu/Map", position = 5100),
-    @ActionReference(path = "Toolbars/Map", position = 5100)
+    "CTL_RotateCcwAction=Rotate CCW", "HINT_RotateCcwAction=Rotate Counter Clockwise"
 })
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Rotate", position = 100, description = "#HINT_RotateCcwAction", autoRepeatAction = true)
-@Messages({"CTL_RotateCcwAction=Rotate CCW","HINT_RotateCcwAction=Rotate Counter Clockwise"})
 public final class RotateCcwAction implements ActionListener
 {
+
     private final RotateCcwCapability context;
-
-
 
     public RotateCcwAction(RotateCcwCapability context)
     {
         this.context = context;
     }
-
-
 
     @Override
     public void actionPerformed(ActionEvent e)

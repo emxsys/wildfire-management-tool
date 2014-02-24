@@ -54,9 +54,9 @@ import org.openide.util.NbBundle.Messages;
                     displayName = "#CTL_DeleteProjectAction",
                     surviveFocusChange = false,
                     lazy = true)
-@ActionReference(path = "Menu/File", position = 600)
+//@ActionReference(path = "Menu/File", position = 600)
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 600,
+//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 600,
 //                       tooltipTitle = "#CTL_DeleteProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_DeleteProjectAction_TooltipBody",
 //                       tooltipIcon = "images/folder_delete32.png",

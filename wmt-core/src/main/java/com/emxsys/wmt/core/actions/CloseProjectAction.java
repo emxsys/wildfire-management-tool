@@ -56,9 +56,9 @@ import org.openide.util.NbBundle.Messages;
                     displayName = "#CTL_CloseProjectAction",
                     surviveFocusChange = false,
                     lazy = true)
-@ActionReference(path = "Menu/File", position = 500)
+//@ActionReference(path = "Menu/File", position = 500)
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 500,
+//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 500,
 //                       tooltipTitle = "#CTL_CloseProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_CloseProjectAction_TooltipBody",
 //                       tooltipIcon = "images/folder_remove32.png",

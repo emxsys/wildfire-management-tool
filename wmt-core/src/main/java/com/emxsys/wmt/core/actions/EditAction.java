@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,8 +49,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.EditAction")
 @ActionRegistration(iconBase = "images/edit.png",
                     displayName = "#CTL_EditAction")
-@ActionReference(path = "Menu/Edit", position = 500)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
+//@ActionReference(path = "Menu/Edit", position = 500)
+@RibbonActionReference(path = "Menu/Home/Edit",
                        position = 100,
                        priority = "top",
                        description = "#CTL_EditAction_Hint",

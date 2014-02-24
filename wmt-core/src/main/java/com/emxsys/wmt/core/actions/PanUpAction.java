@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PanUpCapability;
 
 import java.awt.event.ActionEvent;
@@ -41,29 +41,24 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanUpAction")
-@ActionRegistration(iconBase = "images/arrow_up.png", 
+@ActionRegistration(iconBase = "images/arrow_up.png",
         displayName = "#CTL_PanUpAction", surviveFocusChange = false)
-@ActionReferences(
+@ActionReference(path = "Toolbars/Map", position = 3400)
+@RibbonActionReference(path = "Menu/Home/Move", position = 400, description = "#HINT_PanUpAction", autoRepeatAction = true)
+@Messages(
 {
-    @ActionReference(path = "Menu/Map", position = 3400),
-    @ActionReference(path = "Toolbars/Map", position = 3400)
+    "CTL_PanUpAction=Pan Up", "HINT_PanUpAction=Looks upward"
 })
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move", position = 400, description = "#HINT_PanUpAction", autoRepeatAction = true)
-@Messages({"CTL_PanUpAction=Pan Up",   "HINT_PanUpAction=Looks upward"})
 public final class PanUpAction implements ActionListener
 {
+
     private final PanUpCapability context;
-
-
 
     public PanUpAction(PanUpCapability context)
     {
         this.context = context;
     }
-
-
 
     @Override
     public void actionPerformed(ActionEvent e)

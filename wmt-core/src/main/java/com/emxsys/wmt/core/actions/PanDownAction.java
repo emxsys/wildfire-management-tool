@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PanDownCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,30 +39,25 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanDownAction")
-@ActionRegistration(iconBase = "images/arrow_down.png", 
+@ActionRegistration(iconBase = "images/arrow_down.png",
         displayName = "#CTL_PanDownAction", surviveFocusChange = false)
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map", position = 3100),
-    @ActionReference(path = "Toolbars/Map", position = 3100)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move", position = 100, description = "#HINT_PanDownAction", autoRepeatAction = true)
+@ActionReference(path = "Toolbars/Map", position = 3100)
+@RibbonActionReference(path = "Menu/Home/Move", position = 100, description = "#HINT_PanDownAction", autoRepeatAction = true)
 
-@Messages({"CTL_PanDownAction=Pan Down",    "HINT_PanDownAction=Looks downward"})
+@Messages(
+{
+    "CTL_PanDownAction=Pan Down", "HINT_PanDownAction=Looks downward"
+})
 public final class PanDownAction implements ActionListener
 {
+
     private final PanDownCapability context;
-
-
 
     public PanDownAction(PanDownCapability context)
     {
         this.context = context;
     }
-
-
 
     @Override
     public void actionPerformed(ActionEvent e)
