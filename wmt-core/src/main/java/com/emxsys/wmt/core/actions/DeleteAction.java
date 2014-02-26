@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.DeleteAction")
-@ActionRegistration(iconBase = "images/delete.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/delete.png",
                     displayName = "#CTL_DeleteAction",
                     surviveFocusChange = false,
                     key = "delete")
@@ -63,9 +63,9 @@ import org.openide.util.NbBundle.Messages;
                        autoRepeatAction = false,
                        tooltipTitle = "#CTL_DeleteAction_TooltipTitle",
                        tooltipBody = "#CTL_DeleteAction_TooltipBody",
-                       tooltipIcon = "images/delete32.png",
+                       tooltipIcon = "com/emxsys/wmt/core/images/delete32.png",
                        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
                        
 @Messages(
 {

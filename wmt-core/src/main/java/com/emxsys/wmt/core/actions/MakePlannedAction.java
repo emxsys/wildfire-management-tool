@@ -45,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakePlannedAction")
-@ActionRegistration(iconBase = "images/status_unknown_planned.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/status_unknown_planned.png",
                     displayName = "#CTL_MakePlannedAction")
 
 @RibbonActionReference(path = "Menu/Home/Edit/Status", 

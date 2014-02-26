@@ -11,15 +11,15 @@
                 <!--Basemap Popup-->  
                 <folder name="Basemap">
                     <attr name="position" intvalue="100"/>
-                    <attr name="iconBase" stringvalue="images/map_accept.png"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_accept.png"/>
                     <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap"/>
                     <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_Hint"/>
                     <attr name="priority" stringvalue="top"/>
                     <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipTitle"/>
                     <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipBody"/>
-                    <attr name="tooltipIcon" stringvalue="images/accept.png"/>
+                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/accept.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
-                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                     <folder name="Satellite">
                         <attr name="position" intvalue="100"/>
                         <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsSatellite"/>
@@ -44,15 +44,15 @@
                 <!--Overlays Popup-->  
                 <folder name="Overlays">
                     <attr name="position" intvalue="200"/>
-                    <attr name="iconBase" stringvalue="images/map.png"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map.png"/>
                     <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays"/>
                     <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_Hint"/>
                     <attr name="priority" stringvalue="top"/>
                     <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipTitle"/>
                     <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipBody"/>
-                    <attr name="tooltipIcon" stringvalue="images/map_add.png"/>
+                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_add.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
-                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                     <folder name="Hazards">
                         <attr name="position" intvalue="800"/>
                         <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysHazards"/>
@@ -81,15 +81,15 @@
                 <!--Effects Popup-->  
                 <folder name="Effects">
                     <attr name="position" intvalue="300"/>
-                    <attr name="iconBase" stringvalue="images/map.png"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map.png"/>
                     <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects"/>
                     <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_Hint"/>
                     <attr name="priority" stringvalue="top"/>
                     <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipTitle"/>
                     <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipBody"/>
-                    <attr name="tooltipIcon" stringvalue="images/map_add.png"/>
+                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_add.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
-                    <attr name="tooltipFooterIcon" stringvalue="images/help.png"/>                        
+                    <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                 </folder>
                     
                 <!-- Find Group (e.g., Address, City, Airport, Landmark, Coordinates) -->
@@ -120,14 +120,14 @@
                     <file name="org-openide-actions-UndoAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
                         <attr name="position" intvalue="201"/>
-                        <attr name="iconBase" stringvalue="images/undo.png"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/undo.png"/>
                         <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_UndoAction"/>
                         <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_UndoAction"/>
                     </file>
                     <file name="org-openide-actions-RedoAction.shadow">
                         <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-RedoAction.instance"/>
                         <attr name="position" intvalue="202"/>
-                        <attr name="iconBase" stringvalue="images/redo.png"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/redo.png"/>
                         <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_RedoAction"/>
                         <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_RedoAction"/>
                     </file>-->

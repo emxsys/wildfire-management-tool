@@ -40,7 +40,7 @@ import org.openide.util.NbBundle.Messages;
 
 
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeNeutralAction")
-@ActionRegistration(iconBase = "images/affiliation_neutral_gnd.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_neutral_gnd.png",
                     displayName = "#CTL_MakeNeutralAction")
 
 @RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 

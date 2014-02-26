@@ -40,7 +40,7 @@ import org.openide.util.NbBundle.Messages;
 
 
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeHostileAction")
-@ActionRegistration(iconBase = "images/affiliation_hostile_gnd.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_hostile_gnd.png",
                     displayName = "#CTL_MakeHostileAction")
 
 @RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 

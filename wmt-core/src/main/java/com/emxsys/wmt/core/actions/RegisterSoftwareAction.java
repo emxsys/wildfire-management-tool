@@ -50,14 +50,14 @@ import org.openide.util.NbBundle.Messages;
         category = "Tools",
         id = "com.emxsys.wmt.core.actions.RegisterSoftwareAction")
 @ActionRegistration(
-        iconBase = "images/mail_edit.png",
+        iconBase = "com/emxsys/wmt/core/images/mail_edit.png",
         displayName = "#CTL_RegisterSoftwareAction")
 @RibbonActionReference(path = "Menu/Tools/Launch", position = 200,
         tooltipTitle = "#CTL_RegisterSoftwareAction_TooltipTitle",
         tooltipBody = "#CTL_RegisterSoftwareAction_TooltipBody",
-        tooltipIcon = "images/mail_edit32.png",
+        tooltipIcon = "com/emxsys/wmt/core/images/mail_edit32.png",
         tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-        tooltipFooterIcon = "images/help.png")
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
             "CTL_RegisterSoftwareAction=Register Software",

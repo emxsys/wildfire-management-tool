@@ -42,7 +42,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanUpAction")
-@ActionRegistration(iconBase = "images/arrow_up.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_up.png",
         displayName = "#CTL_PanUpAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3400)
 @RibbonActionReference(path = "Menu/Home/Move", position = 400, description = "#HINT_PanUpAction", autoRepeatAction = true)

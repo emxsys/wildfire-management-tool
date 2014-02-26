@@ -73,7 +73,7 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
         ContextAwareAction
 {
 
-    private static final String ICON_BASE = "images/lock.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/core/images/lock.png";
     private Lookup.Result<LockCapability> lookupResult;
     private LockCapability context;
 

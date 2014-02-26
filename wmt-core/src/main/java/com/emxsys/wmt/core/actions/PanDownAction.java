@@ -40,7 +40,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanDownAction")
-@ActionRegistration(iconBase = "images/arrow_down.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_down.png",
         displayName = "#CTL_PanDownAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3100)
 @RibbonActionReference(path = "Menu/Home/Move", position = 100, description = "#HINT_PanDownAction", autoRepeatAction = true)

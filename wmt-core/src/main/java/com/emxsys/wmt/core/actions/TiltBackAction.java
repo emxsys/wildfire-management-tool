@@ -40,7 +40,7 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.TiltBackAction")
-@ActionRegistration(iconBase = "images/tilt_down.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/tilt_down.png",
         displayName = "#CTL_TiltBackAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 300)
 @RibbonActionReference(path = "Menu/Home/Rotate", position = 300, description = "#HINT_TiltBackAction", autoRepeatAction = true)

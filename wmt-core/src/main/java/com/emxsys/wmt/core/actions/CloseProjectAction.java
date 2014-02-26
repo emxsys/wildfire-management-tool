@@ -52,7 +52,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert
  */
 @ActionID(category = "File", id = "com.emxsys.wmt.core.actions.CloseProjectAction")
-@ActionRegistration(iconBase = "images/remove.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/remove.png",
                     displayName = "#CTL_CloseProjectAction",
                     surviveFocusChange = false,
                     lazy = true)
@@ -61,9 +61,9 @@ import org.openide.util.NbBundle.Messages;
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 500,
 //                       tooltipTitle = "#CTL_CloseProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_CloseProjectAction_TooltipBody",
-//                       tooltipIcon = "images/folder_remove32.png",
+//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_remove32.png",
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "images/help.png")
+//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_CloseProjectAction=Close",

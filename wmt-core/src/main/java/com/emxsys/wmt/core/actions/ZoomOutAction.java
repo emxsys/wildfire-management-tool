@@ -40,7 +40,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.ZoomOutAction")
-@ActionRegistration(iconBase = "images/zoom_out.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/zoom_out.png",
         displayName = "#CTL_ZoomOutAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 6510)
 @RibbonActionReference(path = "Menu/Home/Zoom", position = 651, description = "#HINT_ZoomOutAction", autoRepeatAction = true)

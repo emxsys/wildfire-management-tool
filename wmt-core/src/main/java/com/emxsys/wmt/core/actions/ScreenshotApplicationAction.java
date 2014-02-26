@@ -30,7 +30,7 @@
 package com.emxsys.wmt.core.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.core.utilities.ScreenCaptureUtil;
+import com.emxsys.wmt.util.ScreenCaptureUtil;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +49,7 @@ import org.openide.windows.WindowManager;
         category = "Screenshot",
         id = "com.emxsys.wmt.core.actions.ScreenshotApplicationAction")
 @ActionRegistration(
-        iconBase = "images/photo_camera.png",
+        iconBase = "com/emxsys/wmt/core/images/photo_camera.png",
         displayName = "#CTL_ScreenshotApplicationAction")
 @ActionReference(path = "Toolbars/Create", position = 0)
 @RibbonActionReference(path = "Menu/Home/Create/Screenshot",
@@ -62,7 +62,7 @@ import org.openide.windows.WindowManager;
         tooltipBody = "#CTL_ScreenshotApplicationAction_TooltipBody",
         tooltipIcon = "com/emxsys/basicui/resoures/application32.png",
         tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-        tooltipFooterIcon = "images/help.png")
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
             "CTL_ScreenshotApplicationAction=Capture Application",

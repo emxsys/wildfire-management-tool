@@ -30,7 +30,7 @@
 package com.emxsys.wmt.core.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.core.utilities.ModuleUtil;
+import com.emxsys.wmt.util.ModuleUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
@@ -53,7 +53,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(
     category = "Project",
           id = "com.emxsys.wmt.core.actions.OpenProjectAction")
-@ActionRegistration(iconBase = "images/accept.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/accept.png",
                     displayName = "#CTL_OpenProjectAction")
 @ActionReferences(
 {
@@ -65,9 +65,9 @@ import org.openide.util.NbBundle.Messages;
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 200,
 //                       tooltipTitle = "#CTL_OpenProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_OpenProjectAction_TooltipBody",
-//                       tooltipIcon = "images/folder_accept32.png",
+//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_accept32.png",
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "images/help.png")
+//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_OpenProjectAction=Open...",
