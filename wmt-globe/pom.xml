@@ -135,4 +135,5 @@
             </plugin>
         </plugins>
     </build>
+    <description>NASA WorldWind virtual globe provided by Terramenta</description>
 </project>
