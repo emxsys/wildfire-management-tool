@@ -50,18 +50,18 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert
  */
 @ActionID(category = "File", id = "com.emxsys.wmt.core.actions.DeleteProjectAction")
-@ActionRegistration(iconBase = "images/delete.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/delete.png",
                     displayName = "#CTL_DeleteProjectAction",
                     surviveFocusChange = false,
                     lazy = true)
-@ActionReference(path = "Menu/File", position = 600)
+//@ActionReference(path = "Menu/File", position = 600)
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 600,
+//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 600,
 //                       tooltipTitle = "#CTL_DeleteProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_DeleteProjectAction_TooltipBody",
-//                       tooltipIcon = "images/folder_delete32.png",
+//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_delete32.png",
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "images/help.png")
+//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_DeleteProjectAction=Delete...",
@@ -108,7 +108,7 @@ public final class DeleteProjectAction implements ActionListener
 //        super(actionContext);
 //
 //        // iconBase is unused with "eager" ActionRegistrations, so we must set it ourselves
-//        this.putValue("iconBase", "images/delete.png");
+//        this.putValue("iconBase", "com/emxsys/wmt/core/images/delete.png");
 //        this.putValue(Action.NAME, Bundle.CTL_DeleteProjectAction());
 //    }
 //

@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.DesignCapability;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -47,18 +47,18 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.DesignAction")
-@ActionRegistration(iconBase = "images/design.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/design.png",
                     displayName = "#CTL_DesignAction")
-@ActionReference(path = "Menu/Edit", position = 505)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
+//@ActionReference(path = "Menu/Edit", position = 505)
+@RibbonActionReference(path = "Menu/Home/Edit",
                        position = 200,
                        priority = "top",
                        description = "#CTL_DesignAction_Hint",
                        tooltipTitle = "#CTL_DesignAction_TooltipTitle",
                        tooltipBody = "#CTL_DesignAction_TooltipBody",
-                       tooltipIcon = "images/design32.png",
+                       tooltipIcon = "com/emxsys/wmt/core/images/design32.png",
                        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_DesignAction=Design",

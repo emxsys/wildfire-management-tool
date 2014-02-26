@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,18 +47,18 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.EditAction")
-@ActionRegistration(iconBase = "images/edit.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/edit.png",
                     displayName = "#CTL_EditAction")
-@ActionReference(path = "Menu/Edit", position = 500)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
+//@ActionReference(path = "Menu/Edit", position = 500)
+@RibbonActionReference(path = "Menu/Home/Edit",
                        position = 100,
                        priority = "top",
                        description = "#CTL_EditAction_Hint",
                        tooltipTitle = "#CTL_EditAction_TooltipTitle",
                        tooltipBody = "#CTL_EditAction_TooltipBody",
-                       tooltipIcon = "images/edit32.png",
+                       tooltipIcon = "com/emxsys/wmt/core/images/edit32.png",
                        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_EditAction=Edit",

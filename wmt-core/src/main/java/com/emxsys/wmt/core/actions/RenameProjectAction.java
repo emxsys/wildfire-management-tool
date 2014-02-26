@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
 import org.netbeans.api.project.Project;
@@ -57,14 +57,14 @@ import org.openide.util.Utilities;
                     displayName = "#CTL_RenameProjectAction",
                     surviveFocusChange = true,
                     lazy = false)
-@ActionReference(path = "Menu/File", position = 300)
+//@ActionReference(path = "Menu/File", position = 300)
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 300,
+//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 300,
 //                       tooltipTitle = "#CTL_RenameProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_RenameProjectAction_TooltipBody",
-//                       tooltipIcon = "images/folder_edit32.png",
+//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_edit32.png",
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "images/help.png")
+//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_RenameProjectAction=Rename...",
@@ -87,7 +87,7 @@ public final class RenameProjectAction extends AbstractProjectContextAction
     {
         super(actionContext);
         // iconBase is unused with "eager" ActionRegistrations, so we must set it ourselves
-        this.putValue("iconBase", "images/edit.png");
+        this.putValue("iconBase", "com/emxsys/wmt/core/images/edit.png");
         this.putValue(Action.NAME, Bundle.CTL_RenameProjectAction());
     }
 

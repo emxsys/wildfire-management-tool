@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
-import com.emxsys.wmt.core.utilities.ScreenCaptureUtil;
+import com.terramenta.ribbon.RibbonActionReference;
+import com.emxsys.wmt.util.ScreenCaptureUtil;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -43,40 +43,35 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
-
 /**
  *
- * @author Bruce
+ * @author Bruce Schubert
  */
 @ActionID(
-    category = "Screenshot",
-          id = "com.emxsys.wmt.core.actions.ScreenshotWindowAction")
+        category = "Screenshot",
+        id = "com.emxsys.wmt.core.actions.ScreenshotWindowAction")
 @ActionRegistration(
-    iconBase = "images/photo_camera.png",
-                    displayName = "#CTL_ScreenshotWindowAction")
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Create/Screenshot", position = 0),
-    @ActionReference(path = "Toolbars/Create", position = 0)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Create/Screenshot",
-                       position = 200,
-                       priority = "top",
-                       menuText = "#CTL_ScreenshotWindowAction_Text",
-                       description = "#CTL_ScreenshotWindowAction_Hint",
-                       tooltipTitle = "#CTL_ScreenshotWindowAction_TooltipTitle",
-                       tooltipBody = "#CTL_ScreenshotWindowAction_TooltipBody",
-                       tooltipIcon = "com/emxsys/basicui/resoures/window32.png",
-                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+        iconBase = "com/emxsys/wmt/core/images/photo_camera.png",
+        displayName = "#CTL_ScreenshotWindowAction")
+@ActionReference(path = "Toolbars/Create", position = 0)
+@RibbonActionReference(path = "Menu/Home/Create/Screenshot",
+        position = 200,
+        priority = "top",
+        menuText = "#CTL_ScreenshotWindowAction_Text",
+        description = "#CTL_ScreenshotWindowAction_Hint",
+        tooltipTitle = "#CTL_ScreenshotWindowAction_TooltipTitle",
+        tooltipBody = "#CTL_ScreenshotWindowAction_TooltipBody",
+        tooltipIcon = "com/emxsys/basicui/resoures/window32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_ScreenshotWindowAction=Capture Window",
-    "CTL_ScreenshotWindowAction_Text=Of Current Window",
-    "CTL_ScreenshotWindowAction_Hint=Creates a screenshot",
-    "CTL_ScreenshotWindowAction_TooltipTitle=Screenshot of Window",
-    "CTL_ScreenshotWindowAction_TooltipBody=Capture a screenshot of the active window and save it to a file."
-})
+        {
+            "CTL_ScreenshotWindowAction=Capture Window",
+            "CTL_ScreenshotWindowAction_Text=Of Current Window",
+            "CTL_ScreenshotWindowAction_Hint=Creates a screenshot",
+            "CTL_ScreenshotWindowAction_TooltipTitle=Screenshot of Window",
+            "CTL_ScreenshotWindowAction_TooltipBody=Capture a screenshot of the active window and save it to a file."
+        })
 public final class ScreenshotWindowAction implements ActionListener
 {
 

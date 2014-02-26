@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PanRightCapability;
 
 import java.awt.event.ActionEvent;
@@ -41,29 +41,24 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanRightAction")
-@ActionRegistration(iconBase = "images/arrow_right.png", 
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_right.png",
         displayName = "#CTL_PanRightAction", surviveFocusChange = false)
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map", position = 3300),
-    @ActionReference(path = "Toolbars/Map", position = 3300)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move", position = 300, description = "#HINT_PanRightAction", autoRepeatAction = true)
-@Messages({"CTL_PanRightAction=Pan Right",   "HINT_PanRightAction=Looks to the right"})
+@ActionReference(path = "Toolbars/Map", position = 3300)
+@RibbonActionReference(path = "Menu/Home/Move", position = 300, description = "#HINT_PanRightAction", autoRepeatAction = true)
+@Messages(
+        {
+            "CTL_PanRightAction=Pan Right", "HINT_PanRightAction=Looks to the right"
+        })
 public final class PanRightAction implements ActionListener
 {
+
     private final PanRightCapability context;
-
-
 
     public PanRightAction(PanRightCapability context)
     {
         this.context = context;
     }
-
-
 
     @Override
     public void actionPerformed(ActionEvent e)

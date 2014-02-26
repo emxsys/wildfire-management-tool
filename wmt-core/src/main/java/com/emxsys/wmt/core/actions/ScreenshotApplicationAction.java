@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
-import com.emxsys.wmt.core.utilities.ScreenCaptureUtil;
+import com.terramenta.ribbon.RibbonActionReference;
+import com.emxsys.wmt.util.ScreenCaptureUtil;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,41 +41,36 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
 
-
 /**
  *
  * @author Bruce
  */
 @ActionID(
-    category = "Screenshot",
-          id = "com.emxsys.wmt.core.actions.ScreenshotApplicationAction")
+        category = "Screenshot",
+        id = "com.emxsys.wmt.core.actions.ScreenshotApplicationAction")
 @ActionRegistration(
-    iconBase = "images/photo_camera.png",
-                    displayName = "#CTL_ScreenshotApplicationAction")
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Create/Screenshot", position = 0),
-    @ActionReference(path = "Toolbars/Create", position = 0)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Create/Screenshot",
-                       defaultAction = true,
-                       position = 100,
-                       priority = "top",
-                       menuText = "#CTL_ScreenshotApplicationAction_Text",
-                       description = "#CTL_ScreenshotApplicationAction_Hint",
-                       tooltipTitle = "#CTL_ScreenshotApplicationAction_TooltipTitle",
-                       tooltipBody = "#CTL_ScreenshotApplicationAction_TooltipBody",
-                       tooltipIcon = "com/emxsys/basicui/resoures/application32.png",
-                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+        iconBase = "com/emxsys/wmt/core/images/photo_camera.png",
+        displayName = "#CTL_ScreenshotApplicationAction")
+@ActionReference(path = "Toolbars/Create", position = 0)
+@RibbonActionReference(path = "Menu/Home/Create/Screenshot",
+        defaultAction = true,
+        position = 100,
+        priority = "top",
+        menuText = "#CTL_ScreenshotApplicationAction_Text",
+        description = "#CTL_ScreenshotApplicationAction_Hint",
+        tooltipTitle = "#CTL_ScreenshotApplicationAction_TooltipTitle",
+        tooltipBody = "#CTL_ScreenshotApplicationAction_TooltipBody",
+        tooltipIcon = "com/emxsys/basicui/resoures/application32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_ScreenshotApplicationAction=Capture Application",
-    "CTL_ScreenshotApplicationAction_Text=Of Application",
-    "CTL_ScreenshotApplicationAction_Hint=Creates a screenshot",
-    "CTL_ScreenshotApplicationAction_TooltipTitle=Screenshot of Application",
-    "CTL_ScreenshotApplicationAction_TooltipBody=Capture a screenshot of the application and save it to a file."
-})
+        {
+            "CTL_ScreenshotApplicationAction=Capture Application",
+            "CTL_ScreenshotApplicationAction_Text=Of Application",
+            "CTL_ScreenshotApplicationAction_Hint=Creates a screenshot",
+            "CTL_ScreenshotApplicationAction_TooltipTitle=Screenshot of Application",
+            "CTL_ScreenshotApplicationAction_TooltipBody=Capture a screenshot of the application and save it to a file."
+        })
 public final class ScreenshotApplicationAction implements ActionListener
 {
 

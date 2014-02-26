@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.LockCapability;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
@@ -46,42 +46,36 @@ import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
-
 /**
  * This is a context sensitive action that toggles the locked state on a LockCapability interface.
- *
+ * <p>
  * @see LockCapability
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.ToggleLockAction")
 @ActionRegistration(displayName = "#CTL_ToggleLockAction",
-                    surviveFocusChange = false,
-                    lazy = false)
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Edit", position = 310),
-    @ActionReference(path = "Toolbars/Edit", position = 310)
-})
+        surviveFocusChange = false,
+        lazy = false)
+@ActionReference(path = "Toolbars/Edit", position = 310)
 // Create a button on the ribbon bar to represent this action
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
-                       buttonStyle = "toggle",
-                       priority = "medium",
-                       description = "#CTL_ToggleLockAction_Hint",
-                       position = 400,
-                       autoRepeatAction = false)
+@RibbonActionReference(path = "Menu/Home/Edit",
+        buttonStyle = "toggle",
+        priority = "medium",
+        description = "#CTL_ToggleLockAction_Hint",
+        position = 400,
+        autoRepeatAction = false)
 @Messages(
-{
-    "CTL_ToggleLockAction=Lock",
-    "CTL_ToggleLockAction_Hint=Toggle the locked state the selected item; a locked item cannot be moved and/or edited."
-})
+        {
+            "CTL_ToggleLockAction=Lock",
+            "CTL_ToggleLockAction_Hint=Toggle the locked state the selected item; a locked item cannot be moved and/or edited."
+        })
 public final class ToggleLockAction extends AbstractAction implements LookupListener,
-                                                                      ContextAwareAction
+        ContextAwareAction
 {
 
-    private static final String ICON_BASE = "images/lock.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/core/images/lock.png";
     private Lookup.Result<LockCapability> lookupResult;
     private LockCapability context;
-
 
     public ToggleLockAction()
     {
@@ -90,14 +84,12 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
         putValue("iconBase", ICON_BASE);
     }
 
-
     @Override
     public boolean isEnabled()
     {
         initialize();
         return super.isEnabled();
     }
-
 
     /**
      * Initializes the lookupResult and, indirectly, the context.
@@ -116,7 +108,6 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
         resultChanged(null);
     }
 
-
     @Override
     public void resultChanged(LookupEvent ev)
     {
@@ -133,7 +124,6 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
         setEnabled(shouldEnable);
     }
 
-
     @Override
     public void actionPerformed(ActionEvent ev)
     {
@@ -142,7 +132,6 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
             this.context.setLocked(!this.context.isLocked());
         }
     }
-
 
     @Override
     public Action createContextAwareInstance(Lookup actionContext)

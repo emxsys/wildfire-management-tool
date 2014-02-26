@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
-import com.emxsys.wmt.core.utilities.ModuleUtil;
+import com.terramenta.ribbon.RibbonActionReference;
+import com.emxsys.wmt.util.ModuleUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
@@ -53,21 +53,21 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(
     category = "Project",
           id = "com.emxsys.wmt.core.actions.OpenProjectAction")
-@ActionRegistration(iconBase = "images/accept.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/accept.png",
                     displayName = "#CTL_OpenProjectAction")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/File", position = 100),
+//    @ActionReference(path = "Menu/File", position = 100),
     @ActionReference(path = "Toolbars/File", position = 200),
     @ActionReference(path = "Shortcuts", name = "O-O")
 })
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 200,
+//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 200,
 //                       tooltipTitle = "#CTL_OpenProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_OpenProjectAction_TooltipBody",
-//                       tooltipIcon = "images/folder_accept32.png",
+//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_accept32.png",
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "images/help.png")
+//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
 {
     "CTL_OpenProjectAction=Open...",

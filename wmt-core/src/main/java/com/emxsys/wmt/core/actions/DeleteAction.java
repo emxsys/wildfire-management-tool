@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.DeleteCapability;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,25 +47,25 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.DeleteAction")
-@ActionRegistration(iconBase = "images/delete.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/delete.png",
                     displayName = "#CTL_DeleteAction",
                     surviveFocusChange = false,
                     key = "delete")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/Edit", position = 300),
+    //@ActionReference(path = "Menu/Edit", position = 300),
     @ActionReference(path = "Toolbars/Edit", position = 300)
 })
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit", 
+@RibbonActionReference(path = "Menu/Home/Edit", 
                        position = 300, 
                        priority = "top",
                        description = "#CTL_DeleteAction_Hint", 
                        autoRepeatAction = false,
                        tooltipTitle = "#CTL_DeleteAction_TooltipTitle",
                        tooltipBody = "#CTL_DeleteAction_TooltipBody",
-                       tooltipIcon = "images/delete32.png",
+                       tooltipIcon = "com/emxsys/wmt/core/images/delete32.png",
                        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
                        
 @Messages(
 {

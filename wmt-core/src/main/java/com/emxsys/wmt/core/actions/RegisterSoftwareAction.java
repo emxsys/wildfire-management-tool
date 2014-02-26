@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.emxsys.wmt.ribbon.RibbonActionReference;
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,45 +46,40 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(
-    category = "Tools",
-          id = "com.emxsys.wmt.core.actions.RegisterSoftwareAction")
+        category = "Tools",
+        id = "com.emxsys.wmt.core.actions.RegisterSoftwareAction")
 @ActionRegistration(
-    iconBase = "images/mail_edit.png",
-                    displayName = "#CTL_RegisterSoftwareAction")
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Help", position = 1600),
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Tools/Launch", position = 200,
-                       tooltipTitle = "#CTL_RegisterSoftwareAction_TooltipTitle",
-                       tooltipBody = "#CTL_RegisterSoftwareAction_TooltipBody",
-                       tooltipIcon = "images/mail_edit32.png",
-                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "images/help.png")
+        iconBase = "com/emxsys/wmt/core/images/mail_edit.png",
+        displayName = "#CTL_RegisterSoftwareAction")
+@RibbonActionReference(path = "Menu/Tools/Launch", position = 200,
+        tooltipTitle = "#CTL_RegisterSoftwareAction_TooltipTitle",
+        tooltipBody = "#CTL_RegisterSoftwareAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/mail_edit32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_RegisterSoftwareAction=Register Software",
-    "CTL_RegisterSoftwareAction_Hint=Register by subscribing to the users mailing list. (ALT-O)",
-    "CTL_RegisterSoftwareAction_TooltipTitle=Register Software",
-    "CTL_RegisterSoftwareAction_TooltipBody=Register your software by subscribing to the users mailing list.\n"
-    + "You can subscribe or unsubscribe at any time by sending an email:\n"
-    + "To: sympa@emxsys.java.net\n"
-    + "Subject: subscribe users\n"
-    + "or Subject: unsubscribe users",
-    "CTL_RegisterSoftwareDialogTitle=Register Your Software",
-    "CTL_RegisterSoftwareDialogMsg=When you register you subscribe you to an exclusive, "
-    + "private mailing list for users.  You'll be notified of new updates and important "
-    + "work arounds to problems.  This is a moderated list with low traffic and no spam.  "
-    + "Your email address will not be shared.\n\n"
-    + "Please subscribe -- it's important that you stay current with new software developments.\n"
-    + "You can unsubscribe at any time.",
-    "CTL_RegisterSoftwareDialogSubscribe=Subscribe",
-    "CTL_RegisterSoftwareDialogUnsubscribe=Unsubscribe",
-    "CTL_RegisterSoftwareDialogCancel=Cancel",
-    "ERR_CannotLaunchEmail=Cannot launch your email client"
-})
+        {
+            "CTL_RegisterSoftwareAction=Register Software",
+            "CTL_RegisterSoftwareAction_Hint=Register by subscribing to the users mailing list. (ALT-O)",
+            "CTL_RegisterSoftwareAction_TooltipTitle=Register Software",
+            "CTL_RegisterSoftwareAction_TooltipBody=Register your software by subscribing to the users mailing list.\n"
+            + "You can subscribe or unsubscribe at any time by sending an email:\n"
+            + "To: sympa@emxsys.java.net\n"
+            + "Subject: subscribe users\n"
+            + "or Subject: unsubscribe users",
+            "CTL_RegisterSoftwareDialogTitle=Register Your Software",
+            "CTL_RegisterSoftwareDialogMsg=When you register you subscribe you to an exclusive, "
+            + "private mailing list for users.  You'll be notified of new updates and important "
+            + "work arounds to problems.  This is a moderated list with low traffic and no spam.  "
+            + "Your email address will not be shared.\n\n"
+            + "Please subscribe -- it's important that you stay current with new software developments.\n"
+            + "You can unsubscribe at any time.",
+            "CTL_RegisterSoftwareDialogSubscribe=Subscribe",
+            "CTL_RegisterSoftwareDialogUnsubscribe=Unsubscribe",
+            "CTL_RegisterSoftwareDialogCancel=Cancel",
+            "ERR_CannotLaunchEmail=Cannot launch your email client"
+        })
 public final class RegisterSoftwareAction implements ActionListener
 {
 
@@ -96,23 +91,22 @@ public final class RegisterSoftwareAction implements ActionListener
     private final Object UNSUBSCRIBE_OPTION = Bundle.CTL_RegisterSoftwareDialogUnsubscribe();
     private final Object CANCEL_OPTION = Bundle.CTL_RegisterSoftwareDialogCancel();
 
-
     @Override
     public void actionPerformed(ActionEvent e)
     {
         // Display a Subscribe/Unsubscribe/Cancel dialog regarding registration
         NotifyDescriptor dialog = new NotifyDescriptor(
-            Bundle.CTL_RegisterSoftwareDialogMsg(),
-            Bundle.CTL_RegisterSoftwareDialogTitle(),
-            NotifyDescriptor.YES_NO_CANCEL_OPTION,
-            NotifyDescriptor.INFORMATION_MESSAGE,
-            new Object[]
-            {
-                SUBSCRIBE_OPTION,
-                UNSUBSCRIBE_OPTION,
-                CANCEL_OPTION
-            },
-            SUBSCRIBE_OPTION);
+                Bundle.CTL_RegisterSoftwareDialogMsg(),
+                Bundle.CTL_RegisterSoftwareDialogTitle(),
+                NotifyDescriptor.YES_NO_CANCEL_OPTION,
+                NotifyDescriptor.INFORMATION_MESSAGE,
+                new Object[]
+                {
+                    SUBSCRIBE_OPTION,
+                    UNSUBSCRIBE_OPTION,
+                    CANCEL_OPTION
+                },
+                SUBSCRIBE_OPTION);
         Object result = DialogDisplayer.getDefault().notify(dialog);
         try
         {
