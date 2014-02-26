@@ -6,6 +6,7 @@
     <version>4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WMT-Wildfire Management Tool</name>
+    <description>The Wildfire Management Tool (WMT) parent maven project.</description>
 
     <properties>
         <brandingToken>wmt</brandingToken>
@@ -15,6 +16,7 @@
         <!-- DEPENDENCY VERSIONS -->
         <netbeans.version>RELEASE74</netbeans.version>
         <terramenta.version>1.3.1-SNAPSHOT</terramenta.version>
+        <visad.version>2.0.1</visad.version>
                 
         <!-- PLUGIN VERSIONS -->
         <compiler.plugin.version>3.1</compiler.plugin.version>
@@ -43,7 +45,15 @@
             <url>http://bits.netbeans.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>visad</groupId>
+                <artifactId>visad</artifactId>
+                <version>${visad.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <pluginManagement>
             <plugins>
@@ -111,8 +121,10 @@
         <module>wmt-application</module>
         <module>wmt-branding</module>
         <module>wmt-core</module>
+        <module>wmt-gis</module>
         <module>wmt-globe</module>
-        <module>wmt-ribbon</module>
+        <module>wmt-maps-usa</module>
+        <module>wmt-utilties</module>
+        <module>wmt-visad</module>
   </modules>
-
 </project>

@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-ribbon</artifactId>
+            <artifactId>wmt-maps-usa</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -73,7 +73,6 @@
             <scope>test</scope>
         </dependency>
         -->
-        
     </dependencies>
 
     <build>
@@ -179,4 +178,5 @@
             </build>
         </profile>
     </profiles>
+    <description>The Wildfire Management Tool (WMT) application.</description>
 </project>
