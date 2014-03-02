@@ -31,7 +31,7 @@ package com.emxsys.wmt.gis.symbology.api;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.Entity;
-import com.emxsys.wmt.gis.layer.api.GisLayer;
+import com.emxsys.wmt.gis.api.layer.GisLayer;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;

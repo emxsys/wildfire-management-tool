@@ -27,53 +27,69 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer;
+package com.emxsys.wmt.gis.api.layer;
 
-import com.emxsys.wmt.gis.layer.api.LayerCategory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.emxsys.wmt.gis.api.Named;
+import java.beans.PropertyChangeListener;
+import org.openide.util.Lookup;
 
 
 /**
- * BasicLayerCategory defines the common layer categories.
+ * This interface provides the common capabilites of a GIS raster or vector layer. Capabilities and
+ * meta-data should be exposed through the lookup.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: BasicLayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
+ * @version $Id: GisLayer.java 769 2013-06-20 18:11:51Z bdschubert $
  */
-public enum BasicLayerCategory implements LayerCategory
+public interface GisLayer extends Lookup.Provider, Named
 {
-
-    Satellite,
-    Aerial,
-    Street,
-    Topographic,
-    Thematic,
-    Hybrid,
-    Other,
-    Unknown;
-    private static final Logger logger = Logger.getLogger(BasicLayerCategory.class.getName());
-
-
-    public static BasicLayerCategory fromString(String text)
-    {
-        if (text != null)
-        {
-            for (BasicLayerCategory category : BasicLayerCategory.values())
-            {
-                if (text.equalsIgnoreCase(category.toString()))
-                {
-                    return category;
-                }
-            }
-        }
-        logger.log(Level.SEVERE, "{0} is not a valid Layer Category.", text);
-        return null;
-    }
-
-
+    /**
+     * The lookup should contain the capabilities of a layer. For example it could contain objects
+     * representing the types of data that would be returned by getObjectAtLatLon.
+     *
+     * @return the layer capabilities, meta-data and possibly the implementation
+     */
     @Override
-    public String getName()
-    {
-        return toString();
-    }
+    Lookup getLookup();
+
+
+    /**
+     * The name of the layer, typically used for displaying the name in a layer manager, but also
+     * used to uniquely identify a layer in a collection.
+     *
+     * @return the layer name (display name)
+     */
+    @Override
+    String getName();
+
+
+    /**
+     * The name of the layer, typically used for displaying the name in a layer manager, but also
+     * used to uniquely identify a layer in a collection.
+     *
+     */
+    @Override
+    void setName(String name);
+
+
+    /**
+     * Returns the enabled state.
+     *
+     * @return true if this layer is enabled.
+     */
+    boolean isEnabled();
+
+
+    /**
+     * Sets the enabled state.
+     *
+     * @param enabled the new enabled state.
+     */
+    void setEnabled(boolean enabled);
+
+
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+
+    void removePropertyChangeListener(PropertyChangeListener listener);
 }

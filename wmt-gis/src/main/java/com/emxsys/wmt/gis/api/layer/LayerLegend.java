@@ -27,55 +27,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer;
+package com.emxsys.wmt.gis.api.layer;
 
-import com.emxsys.wmt.gis.layer.api.LayerCategory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import javax.swing.ImageIcon;
 
 
 /**
- * The BasemapLayerCategory defines the common categories for base maps.
+ * A LayerLegend provides a collection of ImageIcons (images and descriptions) that compose a legend
+ * for a layer. The LayerLegend should be added to a GisLayer's lookup.
  *
+ * @see GisLayer
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: BasemapLayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
+ * @version $Id: LayerLegend.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public enum BasemapLayerCategory implements LayerCategory
+public interface LayerLegend
 {
 
-    Satellite,
-    Aerial,
-    Street,
-    Topographic,
-    Thematic,
-    Hybrid,
-    Other,
-    Unknown;
-    
-    
-    private static final Logger logger = Logger.getLogger(BasemapLayerCategory.class.getName());
-
-
-    public static BasemapLayerCategory fromString(String text)
-    {
-        if (text != null)
-        {
-            for (BasemapLayerCategory category : BasemapLayerCategory.values())
-            {
-                if (text.equalsIgnoreCase(category.toString()))
-                {
-                    return category;
-                }
-            }
-        }
-        logger.log(Level.SEVERE, "{0} is not a valid Layer Category.", text);
-        return null;
-    }
-
-
-    @Override
-    public String getName()
-    {
-        return toString();
-    }
+    /**
+     * Get the components of a legend.
+     *
+     * @return a collection of images with descriptions.
+     */
+    List<ImageIcon> getIcons();
 }

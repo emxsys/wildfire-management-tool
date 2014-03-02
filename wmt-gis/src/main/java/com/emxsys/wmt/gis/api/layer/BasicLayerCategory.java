@@ -27,78 +27,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer;
+package com.emxsys.wmt.gis.api.layer;
 
-import com.emxsys.wmt.gis.layer.api.LayerGroup;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 /**
- * BasicLayerGroup defines some common roles of a GisLayer. Roles may be used for the general
- * ordering layers within the viewer.
+ * BasicLayerCategory defines the common layer categories.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: BasicLayerGroup.java 769 2013-06-20 18:11:51Z bdschubert $
+ * @version $Id: BasicLayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public enum BasicLayerGroup implements LayerGroup
+public enum BasicLayerCategory implements LayerCategory
 {
-    /**
-     * Low resolution background layers for the globe, plus atmosphere and stars.
-     */
-    Background,
-    /**
-     * Opaque base maps.
-     */
-    Basemap,
-    /**
-     * Translucent overlays draw on top of base maps.
-     */
-    Overlay,
-    /**
-     * Data, e.g., shapefiles, kml, gml
-     */
-    Data,
-    /**
-     * Markers, tactical graphics
-     */
-    Symbology,
-    /**
-     * Analytical representations and animations.
-     */
-    Analytic,
-    /**
-     * Undefined roles
-     */
-    Undefined,
-    /**
-     * User interface controls, compass, legends.
-     */
-    Widget;
-    private static final Logger logger = Logger.getLogger(BasicLayerGroup.class.getName());
+
+    Satellite,
+    Aerial,
+    Street,
+    Topographic,
+    Thematic,
+    Hybrid,
+    Other,
+    Unknown;
+    private static final Logger logger = Logger.getLogger(BasicLayerCategory.class.getName());
 
 
-    /**
-     * Returns the BaslicLayerRole who's name matches the given text. Used to create a role from a
-     * name in the layer.xml file.
-     *
-     * @param text used to match the name of a BasicLayerGroup enum.
-     * @return a role matching a predefined enum; returns Undefined if no match.
-     */
-    public static BasicLayerGroup fromString(String text)
+    public static BasicLayerCategory fromString(String text)
     {
         if (text != null)
         {
-            for (BasicLayerGroup role : values())
+            for (BasicLayerCategory category : BasicLayerCategory.values())
             {
-                if (text.equalsIgnoreCase(role.toString()))
+                if (text.equalsIgnoreCase(category.toString()))
                 {
-                    return role;
+                    return category;
                 }
             }
         }
-        logger.log(Level.SEVERE, "{0} is not a valid Layer Role.", text);
-        return Undefined;
+        logger.log(Level.SEVERE, "{0} is not a valid Layer Category.", text);
+        return null;
     }
 
 
@@ -107,12 +75,4 @@ public enum BasicLayerGroup implements LayerGroup
     {
         return toString();
     }
-
-
-    @Override
-    public int getIndex()
-    {
-        return ordinal();
-    }
-    
 }

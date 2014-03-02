@@ -27,27 +27,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer.api;
-
-import java.util.List;
-import javax.swing.ImageIcon;
+package com.emxsys.wmt.gis.api.layer;
 
 
 /**
- * A LayerLegend provides a collection of ImageIcons (images and descriptions) that compose a legend
- * for a layer. The LayerLegend should be added to a GisLayer's lookup.
+ * LayerType is a marker interface that defines the fundamental representation of the data in a
+ * layer. Examples include Raster and Vector.
  *
- * @see GisLayer
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: LayerLegend.java 209 2012-09-05 23:09:19Z bdschubert $
+ * @version $Id: LayerType.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public interface LayerLegend
+public interface LayerType
 {
-
     /**
-     * Get the components of a legend.
+     * Gets the name of the type.
      *
-     * @return a collection of images with descriptions.
+     * @return the type name.
      */
-    List<ImageIcon> getIcons();
+    String getName();
 }

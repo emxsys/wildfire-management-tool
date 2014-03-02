@@ -32,7 +32,7 @@ package com.emxsys.wmt.gis.viewer.api;
 import com.emxsys.wmt.gis.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.layer.api.GisLayer;
+import com.emxsys.wmt.gis.api.layer.GisLayer;
 import java.awt.Component;
 import org.openide.util.Lookup;
 import visad.Real;

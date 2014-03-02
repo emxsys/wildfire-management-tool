@@ -30,7 +30,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/gis/images/layer-add.png", displayName = "#CTL_AddMapLayer")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/Layer", position = 1111),
+    @ActionReference(path = "Menu/Insert/Layer", position = 1111),
     @ActionReference(path = "Toolbars/Layer", position = 1111)
 })
 @Messages("CTL_AddMapLayer=Add Map Layer")

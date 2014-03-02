@@ -27,31 +27,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer.api;
+package com.emxsys.wmt.gis.api.layer;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
- * LayerGroup is a marker interface that is added to a GisLayer's lookup to group the layer within a
- * collection of similar layers. Typical groups include Background, Basemap, Overlay and Data.
+ * BasicLayerType defines some elemental types of GisLayers.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: LayerGroup.java 769 2013-06-20 18:11:51Z bdschubert $
+ * @version $Id: BasicLayerType.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public interface LayerGroup
+public enum BasicLayerType implements LayerType
 {
-    /**
-     * Gets the name of the group.
-     *
-     * @return the group name.
-     */
-    String getName();
+
+    Raster,
+    Vector,
+    Elevation,
+    Other,
+    Unknown;
+    private static final Logger logger = Logger.getLogger(BasicLayerType.class.getName());
 
 
-    /**
-     * Gets the ordinal index of this instance within a collection of groups. Used to
-     * order/prioritize the groups within a layer manager.
-     *
-     * @return the sort/order index
-     */
-    int getIndex();
+    public static BasicLayerType fromString(String text)
+    {
+        if (text != null)
+        {
+            for (BasicLayerType type : BasicLayerType.values())
+            {
+                if (text.equalsIgnoreCase(type.toString()))
+                {
+                    return type;
+                }
+            }
+        }
+        logger.log(Level.SEVERE, "{0} is not a valid Layer Type.", text);
+        return null;
+    }
+
+
+    @Override
+    public String getName()
+    {
+        return toString();
+    }
 }

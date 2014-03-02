@@ -27,22 +27,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer.api;
+package com.emxsys.wmt.gis.api.layer;
 
 
 /**
- * LayerType is a marker interface that defines the fundamental representation of the data in a
- * layer. Examples include Raster and Vector.
+ * LayerGroup is a marker interface that is added to a GisLayer's lookup to group the layer within a
+ * collection of similar layers. Typical groups include Background, Basemap, Overlay and Data.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: LayerType.java 234 2012-10-04 21:44:23Z bdschubert $
+ * @version $Id: LayerGroup.java 769 2013-06-20 18:11:51Z bdschubert $
  */
-public interface LayerType
+public interface LayerGroup
 {
     /**
-     * Gets the name of the type.
+     * Gets the name of the group.
      *
-     * @return the type name.
+     * @return the group name.
      */
     String getName();
+
+
+    /**
+     * Gets the ordinal index of this instance within a collection of groups. Used to
+     * order/prioritize the groups within a layer manager.
+     *
+     * @return the sort/order index
+     */
+    int getIndex();
 }

@@ -27,9 +27,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer;
+package com.emxsys.wmt.gis.api.layer;
 
-import com.emxsys.wmt.gis.layer.api.LayerLegend;
 import com.emxsys.wmt.util.ImageUtil;
 import java.awt.Color;
 import java.awt.image.BufferedImage;

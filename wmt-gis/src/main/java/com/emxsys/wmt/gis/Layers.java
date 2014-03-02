@@ -29,10 +29,11 @@
  */
 package com.emxsys.wmt.gis;
 
-import com.emxsys.wmt.gis.layer.api.GisLayer;
-import com.emxsys.wmt.gis.layer.api.LayerCategory;
-import com.emxsys.wmt.gis.layer.api.LayerOpacity;
-import com.emxsys.wmt.gis.layer.api.LayerGroup;
+import com.emxsys.wmt.gis.api.layer.GisLayerList;
+import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.LayerCategory;
+import com.emxsys.wmt.gis.api.layer.LayerOpacity;
+import com.emxsys.wmt.gis.api.layer.LayerGroup;
 import com.emxsys.wmt.gis.viewer.api.GisViewer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,7 +73,7 @@ public class Layers
             throw new IllegalStateException("GisViewer is null.");
         }
 
-        Collection<? extends GisLayer> layers = viewer.getLookup().lookupAll(GisLayer.class);
+        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
         for (GisLayer layer : layers)
         {
             if (layer.isEnabled() && layer.getLookup().lookup(clazz) != null)
@@ -102,7 +103,7 @@ public class Layers
             throw new IllegalStateException("GisViewer is null.");
         }
 
-        Collection<? extends GisLayer> layers = viewer.getLookup().lookupAll(GisLayer.class);
+        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
         for (GisLayer layer : layers)
         {
             if (layer.getName().equals(layerName))
@@ -149,7 +150,7 @@ public class Layers
         ArrayList<GisLayer> list = new ArrayList<>(); // return value
 
         // Examine  all layers with a role, and find those with a matching role name
-        Collection<? extends GisLayer> layers = viewer.getLookup().lookupAll(GisLayer.class);
+        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
         for (GisLayer layer : layers)
         {
             Collection<? extends LayerGroup> roles = layer.getLookup().lookupAll(role.getClass());
@@ -174,7 +175,7 @@ public class Layers
         }
 
         ArrayList<GisLayer> list = new ArrayList<>();
-        Collection<? extends GisLayer> layers = viewer.getLookup().lookupAll(GisLayer.class);
+        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
         for (GisLayer layer : layers)
         {
             if (layer.getLookup().lookup(clazz) != null)

@@ -32,7 +32,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/gis/images/attributes-display.png", displayName = "#CTL_ViewAttributesTable")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/Layer", position = 3333),
+    @ActionReference(path = "Ribbon/TaskPanes/LayerTools/View", position = 3333),
     @ActionReference(path = "Toolbars/Layer", position = 3333)
 })
 @Messages("CTL_ViewAttributesTable=View Attributes Table")

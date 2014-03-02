@@ -30,7 +30,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/gis/images/layer-remove.png", displayName = "#CTL_RemoveMapLayer")
 @ActionReferences(
 {
-    @ActionReference(path = "Menu/Layer", position = 2222),
+    @ActionReference(path = "Ribbon/TaskPanes/LayerTools/View", position = 2222),
     @ActionReference(path = "Toolbars/Layer", position = 2222)
 })
 @Messages("CTL_RemoveMapLayer=Remove Map Layer")

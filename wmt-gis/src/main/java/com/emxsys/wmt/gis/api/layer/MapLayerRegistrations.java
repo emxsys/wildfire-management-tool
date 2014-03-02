@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
- * - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+ * - Neither the name of the Emxsys company nor the names of its 
  *   contributors may be used to endorse or promote products derived
  *   from this software without specific prior written permission.
  *
@@ -27,52 +27,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.layer;
+package com.emxsys.wmt.gis.api.layer;
 
-import com.emxsys.wmt.gis.layer.api.LayerCategory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
 /**
- * The OverlayLayerCategory defines the common categories for overlays.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: OverlayLayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public enum OverlayLayerCategory implements LayerCategory
+@Retention(RetentionPolicy.SOURCE)
+@Target(
+{
+    ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PACKAGE
+})
+public @interface MapLayerRegistrations
 {
 
-    Widgets,
-    Labels,
-    Lines,
-    Boundaries,
-    Markers,
-    Other,
-    Unknown;
-    private static final Logger logger = Logger.getLogger(OverlayLayerCategory.class.getName());
-
-
-    public static OverlayLayerCategory fromString(String text)
-    {
-        if (text != null)
-        {
-            for (OverlayLayerCategory category : OverlayLayerCategory.values())
-            {
-                if (text.equalsIgnoreCase(category.toString()))
-                {
-                    return category;
-                }
-            }
-        }
-        logger.log(Level.SEVERE, "{0} is not a valid Layer Category.", text);
-        return null;
-    }
-
-
-    @Override
-    public String getName()
-    {
-        return toString();
-    }
+    MapLayerRegistration[] value();
 }
