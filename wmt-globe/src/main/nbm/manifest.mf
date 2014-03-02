@@ -2,4 +2,5 @@ Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: false
 OpenIDE-Module-Display-Category: Core
 OpenIDE-Module-Install: com/emxsys/wmt/globe/Installer.class
+OpenIDE-Module-Layer: com/emxsys/wmt/globe/layer.xml
 OpenIDE-Module-Localizing-Bundle: com/emxsys/wmt/globe/Bundle.properties

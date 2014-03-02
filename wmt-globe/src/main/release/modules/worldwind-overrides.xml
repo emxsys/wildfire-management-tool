@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--$Id: worldwind-overrides.xml 401 2012-12-08 21:31:51Z bdschubert $-->
+<!--Alternate World Wind configuration values-->
+<!--See the javadoc for the Configuration class for details-->
+<WorldWindConfiguration version="1">
+    <!--These values override the defaults found in worldwind.xml-->
+    <!--<LayerList href="worldwind-overrides.layers.xml"/>-->
+    <LayerList/>
+    <Property name="gov.nasa.worldwind.avkey.ViewClassName" value="com.terramenta.globe.AutoClippingOrbitView"/>
+    <Property name="gov.nasa.worldwind.avkey.ViewInputHandlerClassName" value="com.terramenta.globe.utilities.ZoomToCursorViewInputHandler"/>
+    <Property name="gov.nasa.worldwind.avkey.WorldMapImagePath" value="images/earth-map-512x256.png"/>
+    <Property name="gov.nasa.worldwind.avkey.InitialLatitude" value="34.2846"/>
+    <Property name="gov.nasa.worldwind.avkey.InitialLongitude" value="-119.2962"/>
+    <Property name="gov.nasa.worldwind.avkey.InitialAltitude" value="10000"/>
+    
+    <!-- Here's one way to specify proxy settings -->
+    <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyHost" value="100.215.10.20"/>-->
+    <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyPort" value="8080"/>-->
+    <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyType" value="Proxy.Type.Http"/>-->
+</WorldWindConfiguration>

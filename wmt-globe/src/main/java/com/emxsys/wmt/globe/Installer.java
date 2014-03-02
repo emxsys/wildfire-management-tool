@@ -31,8 +31,13 @@ package com.emxsys.wmt.globe;
 
 import com.emxsys.wmt.globe.capabilities.GlobeCapabilities;
 import com.terramenta.globe.WorldWindManager;
+import gov.nasa.worldwind.layers.Layer;
+import java.util.Collection;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.modules.ModuleInstall;
 import org.openide.util.Lookup;
+import org.openide.util.NbPreferences;
 import org.openide.util.lookup.Lookups;
 import org.openide.windows.WindowManager;
 
@@ -48,8 +53,7 @@ public class Installer extends ModuleInstall
             @Override
             public void run()
             {
-                WorldWindManager wwm = Lookup.getDefault().lookup(WorldWindManager.class);
-                wwm.addLookup(Lookups.singleton(new GlobeCapabilities(wwm)));
+                Globe.getInstance().initializeResources();
             }
         });
     }
