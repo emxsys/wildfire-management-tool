@@ -32,57 +32,51 @@ package com.emxsys.wmt.maps.usa.actions;
 import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.gis.Layers;
 import com.emxsys.wmt.gis.Viewers;
-import com.emxsys.wmt.gis.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.layer.api.GisLayer;
-import com.emxsys.wmt.gis.layer.api.LayerOpacity;
+import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
+import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.LayerOpacity;
+import com.emxsys.wmt.maps.usa.layers.UsaBasemapLayers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.logging.Logger;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
-import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(
-    category = "Map",
-          id = "com.emxsys.wmt.maps.usa.actions.BasemapTopographic")
+        category = "Map",
+        id = "com.emxsys.wmt.maps.usa.actions.BasemapTopographic")
 @ActionRegistration(
-    iconBase = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo.png",
-                    displayName = "#CTL_BasemapTopographic")
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map/Basemap/Topographic", position = 100),
-    @ActionReference(path = "Toolbars/Basemap", position = 310)
-})
-@RibbonActionReference(path = "Menu/Home/Map/Basemap/Topographic",
-                       position = 100,
-                       description = "#CTL_BasemapTopographic_Hint",
-                       priority = "top",
-                       tooltipTitle = "#CTL_BasemapTopographic_TooltipTitle",
-                       tooltipBody = "#CTL_BasemapTopographic_TooltipBody",
-                       tooltipIcon = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo32.png")
+        iconBase = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo.png",
+        displayName = "#CTL_BasemapTopographic")
+@ActionReference(path = "Toolbars/Basemap", position = 310)
+@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Topographic",
+        position = 100,
+        description = "#CTL_BasemapTopographic_Hint",
+        priority = "top",
+        tooltipTitle = "#CTL_BasemapTopographic_TooltipTitle",
+        tooltipBody = "#CTL_BasemapTopographic_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages(
-{
-    "CTL_BasemapTopographic=USGS Topographic",
-    "CTL_BasemapTopographic_Hint=24K, 100K and 250K Topographic Basemap",
-    "CTL_BasemapTopographic_TooltipTitle=USGS Topographic Basemap",
-    "CTL_BasemapTopographic_TooltipBody=Activate the USGS Topographic basemap. \n"
-    + "The basemap is comprised of USGS 24K, 100K and 25K topographic maps."
-})
+        {
+            "CTL_BasemapTopographic=USGS Topographic",
+            "CTL_BasemapTopographic_Hint=24K, 100K and 250K Topographic Basemap",
+            "CTL_BasemapTopographic_TooltipTitle=USGS Topographic Basemap",
+            "CTL_BasemapTopographic_TooltipBody=Activate the USGS Topographic basemap. \n"
+            + "The basemap is comprised of USGS 24K, 100K and 25K topographic maps."
+        })
 public final class BasemapTopographic implements ActionListener
 {
 
     private static final Logger logger = Logger.getLogger(BasemapTopographic.class.getName());
-    private static final String BASEMAP_LOW_RES = NbBundle.getBundle("com.emxsys.wmt.maps.usa.Bundle").getString("LAYER_USGSTopoLowRes");
-    private static final String BASEMAP_MED_RES = NbBundle.getBundle("com.emxsys.wmt.maps.usa.Bundle").getString("LAYER_USGSTopoMedRes");
-    private static final String BASEMAP_HIGH_RES = NbBundle.getBundle("com.emxsys.wmt.maps.usa.Bundle").getString("LAYER_USGSTopoHighRes");
-
+    
+    private static final String BASEMAP_LOW_RES = UsaBasemapLayers.LAYER_USGS_TOPO_LOW_RES;
+    private static final String BASEMAP_MED_RES = UsaBasemapLayers.LAYER_USGS_TOPO_MED_RES;
+    private static final String BASEMAP_HIGH_RES = UsaBasemapLayers.LAYER_USGS_TOPO_HIGH_RES;
 
     @Override
     public void actionPerformed(ActionEvent e)
@@ -90,10 +84,10 @@ public final class BasemapTopographic implements ActionListener
         List<GisLayer> layers = Layers.getLayersInRole(BasicLayerGroup.Basemap);
         for (GisLayer layer : layers)
         {
-            boolean shouldEnable =
-                layer.getName().equals(BASEMAP_LOW_RES)
-                || layer.getName().equals(BASEMAP_MED_RES)
-                || layer.getName().equals(BASEMAP_HIGH_RES);
+            boolean shouldEnable
+                    = layer.getName().equals(BASEMAP_LOW_RES)
+                    || layer.getName().equals(BASEMAP_MED_RES)
+                    || layer.getName().equals(BASEMAP_HIGH_RES);
             layer.setEnabled(shouldEnable);
             if (shouldEnable)
             {

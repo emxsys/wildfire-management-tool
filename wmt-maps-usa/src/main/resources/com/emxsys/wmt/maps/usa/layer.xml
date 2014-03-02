@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="WorldWind">
+        <folder name="Layers">
+            <file name="USDANAIP.instance">
+                <attr name="name" stringvalue="USDA NAIP"/>
+                <attr name="type" stringvalue="Raster"/>
+                <attr name="role" stringvalue="Basemap"/>
+                <attr name="category" stringvalue="Aerial"/>
+                <attr name="actuate" stringvalue="onRequest"/>
+                <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.usa.Bundle#LAYER_USDANAIP"/>
+                <attr name="position" intvalue="600"/>
+                <!-- Look for the config file resource on the classpath - e.g. worldwind.jar-->
+                <attr name="config" urlvalue="nbres:/worldwind/config/USA/USDANAIPWMSImageLayer.xml"/>
+                <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+            </file>
+            
+            <file name="USGSTopoLowRes.instance">
+                <attr name="name" stringvalue="USGS Topo Low Res"/>
+                <attr name="type" stringvalue="Raster"/>
+                <attr name="role" stringvalue="Basemap"/>
+                <attr name="category" stringvalue="Topographic"/>
+                <attr name="actuate" stringvalue="onRequest"/>
+                <attr name="position" intvalue="737"/>
+                <attr name="opacity" doublevalue="1.0"/>
+                <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.usa.Bundle#LAYER_USGSTopoLowRes"/>
+                <attr name="config" urlvalue="nbres:/worldwind/config/USA/USGSTopoLowResLayer.xml"/>
+                <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+            </file>
+            <file name="USGSTopoMedRes.instance">
+                <attr name="name" stringvalue="USGS Topo Med Res"/>
+                <attr name="type" stringvalue="Raster"/>
+                <attr name="role" stringvalue="Basemap"/>
+                <attr name="category" stringvalue="Topographic"/>
+                <attr name="actuate" stringvalue="onRequest"/>
+                <attr name="position" intvalue="738"/>
+                <attr name="opacity" doublevalue="1.0"/>
+                <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.usa.Bundle#LAYER_USGSTopoMedRes"/>
+                <attr name="config" urlvalue="nbres:/worldwind/config/USA/USGSTopoMedResLayer.xml"/>
+                <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+            </file>
+            <file name="USGSTopoHighRes.instance">
+                <attr name="name" stringvalue="USGS Topo High Res"/>
+                <attr name="type" stringvalue="Raster"/>
+                <attr name="role" stringvalue="Basemap"/>
+                <attr name="category" stringvalue="Topographic"/>
+                <attr name="actuate" stringvalue="onRequest"/>
+                <attr name="position" intvalue="1050"/>
+                <attr name="opacity" doublevalue="1.0"/>
+                <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.usa.Bundle#LAYER_USGSTopoHighRes"/>
+                <attr name="config" urlvalue="nbres:/worldwind/config/USA/USGSTopoHighResLayer.xml"/>
+                <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+            </file>
+        </folder>        
+    </folder>
+</filesystem>

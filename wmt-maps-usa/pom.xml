@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <artifactId>wmt</artifactId>
-    <groupId>com.emxsys</groupId>
-    <version>4.0-SNAPSHOT</version>
-  </parent>
+        <artifactId>wmt</artifactId>
+        <groupId>com.emxsys</groupId>
+        <version>4.0-SNAPSHOT</version>
+    </parent>
 
     <groupId>com.emxsys</groupId>
     <artifactId>wmt-maps-usa</artifactId>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>com.terramenta</groupId>
@@ -48,8 +48,7 @@
         <dependency>
             <artifactId>org-openide-util</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -59,14 +58,12 @@
         <dependency>
             <artifactId>wmt-visad</artifactId>
             <groupId>com.emxsys</groupId>
-            <type>jar</type>
-            <version>4.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-util-lookup</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 
@@ -75,15 +72,18 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>3.11</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <publicPackages>
+                        <publicPackage>com.emxsys.wmt.maps.usa.actions</publicPackage>
+                    </publicPackages>
+                </configuration>
             </plugin>
 
             <plugin>
                 <!-- NetBeans 6.9+ requires JDK 6, starting NetBeans 7.4 source 1.7 will be required   -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -93,11 +93,32 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <!-- to have the jar plugin pickup the nbm generated manifest -->
                     <useDefaultManifestFile>true</useDefaultManifestFile>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!--Copy external config files to modules/ext-->
+                            <outputDirectory>${project.build.directory}/${brandingToken}/${brandingToken}/modules/ext</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>release/modules/ext</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

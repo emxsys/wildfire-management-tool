@@ -31,17 +31,15 @@ package com.emxsys.wmt.maps.usa.actions;
 
 import com.emxsys.wmt.gis.Layers;
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.gis.layer.api.GisLayer;
 import com.emxsys.wmt.gis.Viewers;
-import com.emxsys.wmt.gis.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.layer.api.GisLayer;
-import com.emxsys.wmt.gis.layer.api.LayerOpacity;
+import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
+import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.LayerOpacity;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
@@ -53,7 +51,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/maps/usa/images/basemap-usda-naip.png",
         displayName = "#CTL_BasemapUsdaNaip")
 @ActionReference(path = "Toolbars/Basemap", position = 240)
-@RibbonActionReference(path = "Men/Home/Map/Basemap/Aerial",
+@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Aerial",
         position = 400,
         description = "#CTL_BasemapUsdaNaip_Hint",
         priority = "top",
