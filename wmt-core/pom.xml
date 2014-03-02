@@ -146,10 +146,11 @@
             <groupId>visad</groupId>
             <artifactId>visad</artifactId>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.emxsys</groupId>
-            <artifactId>wmt-utilties</artifactId>
+            <artifactId>wmt-utilities</artifactId>
             <version>4.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>

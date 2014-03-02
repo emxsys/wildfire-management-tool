@@ -43,7 +43,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/zoom_in.png",
         displayName = "#CTL_ZoomInAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 6500)
-@RibbonActionReference(path = "Menu/Home/Zoom", position = 650, description = "#HINT_ZoomInAction", autoRepeatAction = true)
+@RibbonActionReference(path = "Menu/Home/Zoom", position = 100, description = "#HINT_ZoomInAction", autoRepeatAction = true)
 @Messages(
         {
             "CTL_ZoomInAction=Zoom In",

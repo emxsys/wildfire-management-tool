@@ -4,8 +4,8 @@
 
     <folder name="Menu">
         <folder name="Home">
-            <!-- Map Group (e.g., Base Maps, Layer Manager -->
-            <folder name="Map">
+            <!-- Manage Group (e.g., Base Maps, Overlays, Layer Manager -->
+            <folder name="Manage">
                 <attr name="position" intvalue="400"/>                
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Map"/>
                 <!--Basemap Popup-->  
@@ -91,76 +91,76 @@
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
                     <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                 </folder>
-                    
-                <!-- Find Group (e.g., Address, City, Airport, Landmark, Coordinates) -->
-                <folder name="Find">
-                    <attr name="position" intvalue="400"/>
-                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Find"/>
-                    <!--                    <file name="org-openide-actions-FindAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-FindAction.instance"/>
-                        <attr name="position" intvalue="1000"/>
-                        <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Find.png"/>
-                    </file>
-                    <file name="org-openide-actions-ReplaceAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-ReplaceAction.instance"/>
-                        <attr name="position" intvalue="1100"/>
-                        <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Replace.png"/>
-                    </file>
-                    <file name="com-pinkmatter-test-flamingo-actions-ShowDialogAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/com-pinkmatter-test-flamingo-actions-ShowDialogAction.instance"/>
-                        <attr name="defaultAction" boolvalue="true"/>
-                        <attr name="position" intvalue="1200"/>
-                    </file>-->
-                </folder>
-
-
-                <folder name="Tools">
-                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Tools"/>
-                    <!--                    <attr name="position" intvalue="500"/>
-                    <file name="org-openide-actions-UndoAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
-                        <attr name="position" intvalue="201"/>
-                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/undo.png"/>
-                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_UndoAction"/>
-                        <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_UndoAction"/>
-                    </file>
-                    <file name="org-openide-actions-RedoAction.shadow">
-                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-RedoAction.instance"/>
-                        <attr name="position" intvalue="202"/>
-                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/redo.png"/>
-                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_RedoAction"/>
-                        <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_RedoAction"/>
-                    </file>-->
-                </folder>                
-                <!-- Zoom Group (e.g., Zoom In and Out -->
-                <folder name="Zoom">
-                    <attr name="position" intvalue="600"/>                 
-                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Zoom"/>
-                </folder>
-
-                <!-- Move Group (e.g., Pan Left, Right, etc. -->
-                <folder name="Move">
-                    <attr name="position" intvalue="700"/>
-                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Move"/>
-                </folder>
-
-                <!-- Rotate Group (e.g. Rotate and Tilt) -->
-                <folder name="Rotate">
-                    <attr name="position" intvalue="800"/>
-                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Rotate"/>
-                </folder>              
             </folder>
-            <folder name="Window">
-                <folder name="Show">
-                    <!--Start/Welcome Page -->
-                    <file name="com-emxsys-welcome-ShowWelcomeAction.shadow">
-                        <attr name="position" intvalue="4015"/>
-                        <attr name="priority" stringvalue="medium"/>
-                        <attr name="originalFile" stringvalue="Actions/Help/com-emxsys-welcome-ShowWelcomeAction.instance"/>
-                        <attr name="iconBase" stringvalue="com/emxsys/welcome/resources/welcome.gif"/>
-                        <attr name="menuText" bundlevalue="com.emxsys.welcome.Bundle#LBL_Action"/>
-                    </file>
-                </folder>
+            
+            <!-- Find Group (e.g., Address, City, Airport, Landmark, Coordinates) -->
+            <folder name="Find">
+                <attr name="position" intvalue="400"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Find"/>
+                <!-- <file name="org-openide-actions-FindAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-FindAction.instance"/>
+                    <attr name="position" intvalue="1000"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Find.png"/>
+                </file>
+                <file name="org-openide-actions-ReplaceAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-ReplaceAction.instance"/>
+                    <attr name="position" intvalue="1100"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/cps/branding/resources/Replace.png"/>
+                </file>
+                <file name="com-pinkmatter-test-flamingo-actions-ShowDialogAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/com-pinkmatter-test-flamingo-actions-ShowDialogAction.instance"/>
+                    <attr name="defaultAction" boolvalue="true"/>
+                    <attr name="position" intvalue="1200"/>
+                </file>-->
+            </folder>
+
+
+            <folder name="Tools">
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Tools"/>
+                <!--  <attr name="position" intvalue="500"/>
+                <file name="org-openide-actions-UndoAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
+                    <attr name="position" intvalue="201"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/undo.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_UndoAction"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_UndoAction"/>
+                </file>
+                <file name="org-openide-actions-RedoAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-RedoAction.instance"/>
+                    <attr name="position" intvalue="202"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/redo.png"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_RedoAction"/>
+                    <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#HINT_RedoAction"/>
+                </file>-->
+            </folder>                
+            <!-- Zoom Group (e.g., Zoom In and Out -->
+            <folder name="Zoom">
+                <attr name="position" intvalue="600"/>                 
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Zoom"/>
+            </folder>
+
+            <!-- Move Group (e.g., Pan Left, Right, etc. -->
+            <folder name="Move">
+                <attr name="position" intvalue="700"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Move"/>
+            </folder>
+
+            <!-- Rotate Group (e.g. Rotate and Tilt) -->
+            <folder name="Rotate">
+                <attr name="position" intvalue="800"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Rotate"/>
+            </folder>              
+        </folder>
+        <folder name="Window">
+            <folder name="Show">
+                <!--Start/Welcome Page -->
+                <file name="com-emxsys-welcome-ShowWelcomeAction.shadow">
+                    <attr name="position" intvalue="4015"/>
+                    <attr name="priority" stringvalue="medium"/>
+                    <attr name="originalFile" stringvalue="Actions/Help/com-emxsys-welcome-ShowWelcomeAction.instance"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/welcome/resources/welcome.gif"/>
+                    <attr name="menuText" bundlevalue="com.emxsys.welcome.Bundle#LBL_Action"/>
+                </file>
             </folder>
         </folder>
     </folder>
