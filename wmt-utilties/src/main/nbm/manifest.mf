@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-AutoUpdate-Show-In-Client: false
-OpenIDE-Module-Display-Category: Core
-OpenIDE-Module-Localizing-Bundle: com/emxsys/wmt/util/Bundle.properties
