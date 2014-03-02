@@ -21,46 +21,61 @@
     <dependencies>
         <!--NetBeans-->
         <dependency>
-            <groupId>org.netbeans.cluster</groupId>
             <artifactId>platform</artifactId>
+            <groupId>org.netbeans.cluster</groupId>
             <version>${netbeans.version}</version>
             <type>pom</type>
         </dependency>
         
         <!-- Wildfire Management Tool modules -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-branding</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-core</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <artifactId>wmt-gis</artifactId>
             <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>wmt-globe</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-maps-usa</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-utilities</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-visad</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- Terramenta -->
         <dependency>
-            <groupId>com.terramenta</groupId>
             <artifactId>terramenta-application</artifactId>
+            <groupId>com.terramenta</groupId>
             <version>${terramenta.version}</version>
             <type>zip</type>
         </dependency>
         
         <!-- NbModuleSuite functional in RELEASE70 or later: -->
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-nbjunit</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
             <scope>test</scope> <!-- beyond platform cluster, this often needs to be dropped down to compile/runtime, some other modules in IDE clusters depend on it -->
         </dependency>
@@ -78,8 +93,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
                 <configuration>
                     <installerOsSolaris>false</installerOsSolaris>
                     <installerLicenseFile>emxsys-bsd3.txt</installerLicenseFile>
@@ -92,8 +107,8 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <executions>
                     <!-- Extract JOGL natives from Terramenta repository -->
                     <execution>
@@ -143,8 +158,8 @@
             </plugin>
             <!-- Permits NbModuleSuite to be run in integration-test phase: -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <configuration>
                     <systemPropertyVariables>
                         <all.clusters>${all.clusters}</all.clusters>
@@ -161,8 +176,8 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
                         <artifactId>nbm-maven-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
                         <executions>
                             <execution>
                                 <id>extra</id>
