@@ -47,7 +47,7 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import com.emxsys.wmt.globe.capabilities.GlobeCapabilities;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
-import com.emxsys.wmt.globe.layers.BasemapLayers;
+import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.layers.Layer;
@@ -135,7 +135,7 @@ public class Globe implements GisViewer
         this.wwm.addLookup(this.lookup);
 
         addAll(BackgroundLayers.getLayers());
-        addAll(BasemapLayers.getLayers());
+        addAll(BaseMapLayers.getLayers());
     }
 
     /**
