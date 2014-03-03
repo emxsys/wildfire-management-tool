@@ -31,7 +31,7 @@ package com.emxsys.wmt.gis;
 
 import com.emxsys.wmt.gis.api.Geometry;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.viewer.api.GisViewer;
+import com.emxsys.wmt.gis.api.viewer.GisViewer;
 import java.util.Collection;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;

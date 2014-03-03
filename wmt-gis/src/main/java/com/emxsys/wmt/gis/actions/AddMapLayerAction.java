@@ -16,7 +16,7 @@
  */
 package com.emxsys.wmt.gis.actions;
 
-import com.emxsys.wmt.gis.capabilities.api.AddableGisLayer;
+import com.emxsys.wmt.gis.api.capabilities.AddableGisLayer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionID;

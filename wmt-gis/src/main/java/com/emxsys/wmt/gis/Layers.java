@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerCategory;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
-import com.emxsys.wmt.gis.viewer.api.GisViewer;
+import com.emxsys.wmt.gis.api.viewer.GisViewer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

@@ -16,7 +16,7 @@
  */
 package com.emxsys.wmt.gis.actions;
 
-import com.emxsys.wmt.gis.capabilities.api.ViewableAttributes;
+import com.emxsys.wmt.gis.api.capabilities.ViewableAttributes;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
