@@ -13,6 +13,7 @@
     <packaging>nbm</packaging>
 
     <name>WMT GIS</name>
+    <description>Geographical Information Systems (GIS) module.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +36,24 @@
     </repositories>
 
     <dependencies>
+        <!--WMT Dependencies-->
+        <dependency>
+            <artifactId>wmt-libraries</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-utilities</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-visad</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--NetBeans Dependencies-->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
@@ -46,25 +65,9 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>visad</groupId>
-            <artifactId>visad</artifactId>
-            <scope>provided</scope>
-
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-visad</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-utilities</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-filesystems</artifactId>
@@ -74,14 +77,7 @@
         <dependency>
             <artifactId>org-openide-loaders</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>xmlParserAPIs</artifactId>
-            <groupId>xerces</groupId>
-            <type>jar</type>
-            <version>2.6.2</version>
         </dependency>
     </dependencies>
 
@@ -120,5 +116,4 @@
             </plugin>
         </plugins>
     </build>
-    <description>Geographical Information Systems (GIS) module.</description>
 </project>

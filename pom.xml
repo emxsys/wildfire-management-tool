@@ -126,5 +126,6 @@
         <module>wmt-maps-usa</module>
         <module>wmt-utilities</module>
         <module>wmt-visad</module>
+    <module>wmt-libraries</module>
   </modules>
 </project>

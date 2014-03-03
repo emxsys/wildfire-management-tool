@@ -13,6 +13,7 @@
     <packaging>nbm</packaging>
 
     <name>WMT Globe</name>
+    <description>NASA WorldWind virtual globe provided by Terramenta</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,29 +38,40 @@
     <dependencies>
         <!--WMT-->
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-core</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-gis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-visad</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>visad</artifactId>
-            <groupId>visad</groupId>
-            <scope>provided</scope>
+            <artifactId>wmt-visad</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>wmt-libraries</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <!--Terramenta-->
         <dependency>
-            <groupId>com.terramenta</groupId>
             <artifactId>terramenta-globe</artifactId>
+            <groupId>com.terramenta</groupId>
+            <version>${terramenta.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>terramenta-layermanager</artifactId>
+            <groupId>com.terramenta</groupId>
+            <version>${terramenta.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>terramenta-ribbon</artifactId>
+            <groupId>com.terramenta</groupId>
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>
@@ -85,23 +97,23 @@
         </dependency>
         <!--NetBeans-->
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-modules</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <artifactId>org-openide-windows</artifactId>
             <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-windows</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
@@ -110,22 +122,12 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <artifactId>xmlParserAPIs</artifactId>
-            <groupId>xerces</groupId>
-            <type>jar</type>
-            <version>2.6.2</version>
-        </dependency>
-        <dependency>
-            <artifactId>xpp3</artifactId>
-            <groupId>xpp3</groupId>
-            <type>jar</type>
-            <version>1.1.4c</version>
-        </dependency>
-        <dependency>
             <artifactId>org-openide-filesystems</artifactId>
             <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!--Other Dependencies-->
+
     </dependencies>
 
     <build>
@@ -197,5 +199,4 @@
             -->
         </plugins>
     </build>
-    <description>NASA WorldWind virtual globe provided by Terramenta</description>
 </project>

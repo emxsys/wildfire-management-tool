@@ -12,6 +12,7 @@
     <version>4.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
     <name>WMT Core</name>
+    <description>Base XML layer, actions and capabilities for the Wildfire Management Tool (WMT). </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,133 +35,123 @@
     </repositories>
 
     <dependencies>
+        <!--WMT Dependencies-->
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>${netbeans.version}</version>
+            <artifactId>wmt-libraries</artifactId>
+            <groupId>com.emxsys</groupId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-modules</artifactId>
-            <version>${netbeans.version}</version>
+            <artifactId>wmt-utilities</artifactId>
+            <groupId>com.emxsys</groupId>
+            <version>${project.version}</version>
         </dependency>
+        <!--Terramenta Dependencies-->
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-util</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-loaders</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-actions</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.terramenta</groupId>
             <artifactId>terramenta-ribbon</artifactId>
-            <version>${terramenta.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.terramenta</groupId>
-            <artifactId>terramenta-core</artifactId>
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>
+            <artifactId>terramenta-core</artifactId>
+            <groupId>com.terramenta</groupId>
+            <version>${terramenta.version}</version>
+        </dependency>
+        <!--NetBeans Dependencies-->
+        <dependency>
+            <artifactId>org-netbeans-api-annotations-common</artifactId>
             <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-modules</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-util</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-loaders</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-actions</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>org-netbeans-modules-javahelp</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectapi</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-filesystems</artifactId>
-            <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-awt</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-windows</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-util-lookup</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-nodes</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-projectuiapi</artifactId>
+            <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-dialogs</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-explorer</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>2.6.2</version>
-            <scope>compile</scope>
+            <artifactId>org-netbeans-spi-palette</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-projectui</artifactId>
+            <groupId>org.netbeans.modules</groupId>
             <version>${netbeans.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-spi-palette</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>visad</groupId>
-            <artifactId>visad</artifactId>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.emxsys</groupId>
-            <artifactId>wmt-utilities</artifactId>
-            <version>4.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
+        <!--Other Dependencies-->
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
@@ -168,26 +159,23 @@
                     </publicPackages>
                 </configuration>
             </plugin>
-
-
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <configuration>
                     <!-- to have the jar plugin pickup the nbm generated manifest -->
                     <useDefaultManifestFile>true</useDefaultManifestFile>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
-                    <verbose>true</verbose>
+                    <verbose>false</verbose>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    <description>Base XML layer, actions and capabilities for the Wildfire Management Tool (WMT). </description>
 </project>

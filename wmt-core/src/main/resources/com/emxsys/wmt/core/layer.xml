@@ -7,7 +7,7 @@
             <!-- Manage Group (e.g., Base Maps, Overlays, Layer Manager -->
             <folder name="Manage">
                 <attr name="position" intvalue="400"/>                
-                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Map"/>
+                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Manage"/>
                 <!--Basemap Popup-->  
                 <folder name="Basemap">
                     <attr name="position" intvalue="100"/>
