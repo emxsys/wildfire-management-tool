@@ -35,7 +35,7 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
-import com.emxsys.wmt.gis.viewer.api.GisViewer;
+import com.emxsys.wmt.gis.api.viewer.GisViewer;
 import com.terramenta.globe.WorldWindManager;
 import java.awt.Component;
 import java.util.logging.Level;
