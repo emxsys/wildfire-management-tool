@@ -34,13 +34,9 @@ package com.emxsys.wmt.visad;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Fields.java 423 2012-12-10 21:30:24Z bdschubert $
  */
-public class Fields
-{
+public class Fields {
 
-
-
-    private  Fields()
-    {
+    private Fields() {
     }
-    
+
 }

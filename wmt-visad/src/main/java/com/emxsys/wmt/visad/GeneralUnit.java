@@ -32,7 +32,6 @@ package com.emxsys.wmt.visad;
 import visad.Unit;
 import static com.emxsys.wmt.visad.Units.*;
 
-
 /**
  * General units of measure not defined in visad.CommunUnit.
  *
@@ -42,8 +41,8 @@ import static com.emxsys.wmt.visad.Units.*;
  * @see FireUnit
  * @see Units
  */
-public class GeneralUnit
-{
+public class GeneralUnit {
+
     /**
      * Common unit for fuel bed depth, flame length - US
      */

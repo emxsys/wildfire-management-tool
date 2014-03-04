@@ -39,7 +39,6 @@ import visad.RealType;
 import visad.Unit;
 import visad.VisADException;
 
-
 /**
  * A utility class for creating common Real objects.
  *
@@ -47,16 +46,12 @@ import visad.VisADException;
  * @version $Id: Reals.java 534 2013-04-18 15:26:05Z bdschubert $
  * @see Tuples
  */
-public class Reals
-{
+public class Reals {
 
     private static final Logger logger = Logger.getLogger(Reals.class.getName());
 
-
-    private Reals()
-    {
+    private Reals() {
     }
-
 
     /**
      * Converts a Real to the specified RealType.
@@ -66,29 +61,23 @@ public class Reals
      * @return a Real of the specified type with a converted value, throws if the value cannot be
      * converted.
      */
-    public static Real convertTo(RealType newType, final Real value)
-    {
-        try
-        {
-            if (value.getType().equals(newType))
-            {
+    public static Real convertTo(RealType newType, final Real value) {
+        try {
+            if (value.getType().equals(newType)) {
                 return value;
             }
-            else
-            {
+            else {
                 return new Real(newType, value.getValue(newType.getDefaultUnit()));
             }
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Logger.getLogger(Reals.class.getName()).log(Level.SEVERE,
-                "Real " + value.toString()
-                + "cannot be converted to RealType " + newType.toString(), ex);
+                    "Real " + value.toString()
+                    + "cannot be converted to RealType " + newType.toString(), ex);
             Exceptions.printStackTrace(ex);
             throw new IllegalArgumentException(ex);
         }
     }
-
 
     /**
      * Creates a new RealTypleType - used by static initializers to catch exceptions.
@@ -96,20 +85,16 @@ public class Reals
      * @param types an array of RealTypes that comprise the tuple.
      * @return a new RealTupleType defined by the supplied types.
      */
-    public static RealTupleType newRealTupleType(RealType[] types)
-    {
-        try
-        {
+    public static RealTupleType newRealTupleType(RealType[] types) {
+        try {
             return new RealTupleType(types);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Logger.getLogger(Reals.class.getName()).log(Level.SEVERE, null, ex);
             Exceptions.printStackTrace(ex);
             return null;
         }
     }
-
 
     /**
      * Creates a new Real of the specified type and unit of measure.
@@ -119,21 +104,17 @@ public class Reals
      * @param unit the unit of measure for the value, for example CommonUnit.meter
      * @return a new Real with the given RealType and Unit.
      */
-    public static Real newInstance(RealType type, double value, Unit unit)
-    {
-        try
-        {
+    public static Real newInstance(RealType type, double value, Unit unit) {
+        try {
             return new Real(type, value, unit);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             logger.log(Level.SEVERE, "Double " + Double.toString(value)
-                + "cannot be converted to RealType " + type.toString(), ex);
+                    + "cannot be converted to RealType " + type.toString(), ex);
             throw new IllegalArgumentException(ex);
         }
 
     }
-
 
     /**
      * Creates a new Real of RealType.Altitude in meters.
@@ -141,11 +122,9 @@ public class Reals
      * @param value altitude in meters.
      * @return a RealType.Altitude
      */
-    public static Real newAltitude(double value)
-    {
+    public static Real newAltitude(double value) {
         return newAltitude(value, CommonUnit.meter);
     }
-
 
     /**
      * Creates a new Real of RealType.Altitude
@@ -154,11 +133,9 @@ public class Reals
      * @param unit unit of measure, e.g., CommonUnit.meter
      * @return a RealType.Altitude
      */
-    public static Real newAltitude(double value, Unit unit)
-    {
+    public static Real newAltitude(double value, Unit unit) {
         return newInstance(RealType.Altitude, value, unit);
     }
-
 
     /**
      * Creates a new Real of RealType.Latitude in degrees.
@@ -166,11 +143,9 @@ public class Reals
      * @param value latitude in degrees.
      * @return a RealType.Latitude
      */
-    public static Real newLatitude(double value)
-    {
+    public static Real newLatitude(double value) {
         return newLatitude(value, CommonUnit.degree);
     }
-
 
     /**
      * Creates a new Real of RealType.Latitude.
@@ -179,11 +154,9 @@ public class Reals
      * @param unit unit of measure, e.g., CommonUnit.degree or CommonUnit.radian
      * @return a RealType.Latitude
      */
-    public static Real newLatitude(double value, Unit unit)
-    {
+    public static Real newLatitude(double value, Unit unit) {
         return newInstance(RealType.Latitude, value, unit);
     }
-
 
     /**
      * Creates a new Real of RealType.Longitude in degrees.
@@ -191,11 +164,9 @@ public class Reals
      * @param value longitude in degrees.
      * @return a RealType.Longitude
      */
-    public static Real newLongitude(double value)
-    {
+    public static Real newLongitude(double value) {
         return newLongitude(value, CommonUnit.degree);
     }
-
 
     /**
      * Creates a new Real of RealType.Longitude.
@@ -204,8 +175,7 @@ public class Reals
      * @param unit unit of measure, e.g., CommonUnit.degree or CommonUnit.radian
      * @return a RealType.Longitude
      */
-    public static Real newLongitude(double value, Unit unit)
-    {
+    public static Real newLongitude(double value, Unit unit) {
         return newInstance(RealType.Longitude, value, unit);
     }
 }

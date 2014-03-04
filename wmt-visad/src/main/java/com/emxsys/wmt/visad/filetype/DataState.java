@@ -29,15 +29,14 @@
  */
 package com.emxsys.wmt.visad.filetype;
 
-
 /**
  * This enum represents the state of a DataObject.
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public enum DataState
-{
+public enum DataState {
+
     NEW,
     INITIALIZING,
     INITIALIZED,

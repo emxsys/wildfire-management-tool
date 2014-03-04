@@ -33,16 +33,13 @@ import java.util.logging.Logger;
 import visad.Unit;
 import visad.data.units.Parser;
 
-
 /**
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class Units
-{
-    private Units()
-    {
-    }
+public class Units {
 
+    private Units() {
+    }
 
     /**
      * Get a unit instance based upon a specification string.
@@ -56,7 +53,8 @@ public class Units
      * <center>
      * <h2>
      * Unit names and abbreviations for use in VisAD</h2>
-     * <p> 12/21/2001
+     * <p>
+     * 12/21/2001
      * </center>
      * <p>
      * This page details the unit specifications that VisAD can handle (through the
@@ -101,7 +99,7 @@ public class Units
      * </b>
      * <a name="top"></a>
      *
-<p>
+     * <p>
      * <h3>Fast find - click on these links:</h3>
      * <ul>
      * <li><a href="#prefix">Prefix names</a>
@@ -112,7 +110,7 @@ public class Units
      * <li><a href="#lumin">Luminous Intensity</a>
      * <li><a href="#temp">Thermodynamic Temperature</a>
      *
-<li><a href="#mass">Mass</a>
+     * <li><a href="#mass">Mass</a>
      * <li><a href="#time">Time</a>
      * <li><a href="#angle">Plane angle</a>
      * <li><a href="#special">Special Derived Units</a>
@@ -122,7 +120,7 @@ public class Units
      * <li><a href="#energy">Energy</a>
      * <li><a href="#force">Force</a>
      *
-<li><a href="#heat">Heat</a>
+     * <li><a href="#heat">Heat</a>
      * <li><a href="#light">Light</a>
      * <li><a href="#massperlen">Mass Per Unit Length</a>
      * <li><a href="#masspertime">Mass Per Unit Time</a>
@@ -132,7 +130,7 @@ public class Units
      * <li><a href="#vel">Velocity (includes speed)</a>
      * <li><a href="#viscos">Viscosity</a>
      *
-<li><a href="#volu">Volume (includes capacity)</a>
+     * <li><a href="#volu">Volume (includes capacity)</a>
      * <li><a href="#voltime">Volume per unit time</a>
      * <li><a href="#computer">Computers and communication</a>
      * <li><a href="#misc">Misc.</a>
@@ -142,10 +140,10 @@ public class Units
      *
      *
      *
-<a name="prefix">
+     * <a name="prefix">
      * <h3> The unit prefix names in order of lexicographic length:</h3>
      *
-</a>
+     * </a>
      * <pre>
      * "centi" =   1e-2
      * "femto" =   1e-15
@@ -216,7 +214,7 @@ public class Units
      * <p>
      * <a name="base">
      *
-     <h3>The base units:</h3>
+     * <h3>The base units:</h3>
      * </a>
      * <pre>
      * "A" =   SI.ampere (Electric Current)
@@ -260,7 +258,7 @@ public class Units
      * referencing is not permitted.</b>
      * </a>
      *
-<p>
+     * <p>
      * <h3>UNITS OF ELECTRIC CURRENT</h3>
      * <pre>
      *
@@ -273,7 +271,7 @@ public class Units
      * </pre>
      * <a href="#top">Back to top</a>
      *
-<p>
+     * <p>
      * <a name="lumin">
      * <h3>UNITS OF LUMINOUS INTENSITY</h3>
      * </a>
@@ -385,7 +383,7 @@ public class Units
      * <a name="length">
      * <h3>UNITS OF LENGTH</h3>
      *
-</a>
+     * </a>
      * <pre>
      * "angstrom" =       get("m").scale(1e-10)
      * "au" =             get("m").scale(1.495979e11)
@@ -508,7 +506,7 @@ public class Units
      * <a name="angle">
      * <h3>UNITS OF PLANE ANGLE</h3>
      *
-</a>
+     * </a>
      * <pre>
      * "circle" =      get("radian").scale(2*Math.PI)
      * "deg" =         get("radian").scale(Math.PI/180.)
@@ -631,7 +629,7 @@ public class Units
      * <a name="accel">
      * <h3>ACCELERATION</h3>
      *
-</a>
+     * </a>
      * <pre>
      * "Gal" =       get("m").divide(get("s").pow(2)).scale(1e-2)
      * "gals" =      "Gal"        // avoid "gal" (gallon)
@@ -655,7 +653,7 @@ public class Units
      * <a href="#top">Back to top</a>
      * <p>
      *
-<a name="electmag">
+     * <a name="electmag">
      * <h3>ELECTRICITY AND MAGNETISM</h3>
      * </a>
      * <pre>
@@ -756,7 +754,7 @@ public class Units
      * <a name="heat">
      * <h3>HEAT</h3>
      *
-</a>
+     * </a>
      * <pre>
      * "clo" =        get("K").multiply( get("m").pow(2).divide(get("W"))).scale(1.55e-1)
      *
@@ -788,7 +786,7 @@ public class Units
      * <p>
      * <a name="massperlen">
      *
-     <h3>MASS PER UNIT LENGTH</h3>
+     * <h3>MASS PER UNIT LENGTH</h3>
      * </a>
      * <pre>
      * "denier" =  get("kg").divide(get("m")).scale(1.111111e-7)
@@ -839,7 +837,7 @@ public class Units
      * <a name="pressure">
      * <h3>PRESSURE OR STRESS</h3>
      *
-</a>
+     * </a>
      * <pre>
      *
      * "bar" =       get("Pa").scale(1e5)    // exact
@@ -900,7 +898,7 @@ public class Units
      * <p>
      * <a name="vel">
      *
-     <h3>VELOCITY (INCLUDES SPEED)</h3>
+     * <h3>VELOCITY (INCLUDES SPEED)</h3>
      * </a>
      * <pre>
      * "c" =    get("m").divide( get("s")).scale(2.997925e+8)
@@ -927,7 +925,7 @@ public class Units
      * </pre>
      * <a href="#top">Back to top</a>
      *
-<p>
+     * <p>
      * <a name="volu">
      * <h3>VOLUME (INCLUDES CAPACITY)</h3>
      * </a>
@@ -1038,7 +1036,7 @@ public class Units
      * <a name="misc">
      * <h3>MISC</h3>
      *
-</a>
+     * </a>
      * <pre>
      * "kayser" =         get("m").pow(-1).scale(1e2)    // exact
      * "rps" =            get("revolution").divide(get("s"))
@@ -1056,14 +1054,11 @@ public class Units
      * <a href="#top">Back to top</a>
      *
      */
-    static public Unit getUnit(String unitSpec)
-    {
-        try
-        {
+    static public Unit getUnit(String unitSpec) {
+        try {
             return Parser.parse(unitSpec);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             String msg = "The unit spec: \"" + unitSpec + "\" could not be parsed! \n" + ex.getMessage();
             Logger.getLogger(Reals.class.getName()).severe(msg);
             throw new RuntimeException(ex);

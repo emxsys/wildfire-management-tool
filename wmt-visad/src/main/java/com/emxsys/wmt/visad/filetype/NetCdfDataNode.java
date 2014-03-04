@@ -45,15 +45,14 @@ import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
 import visad.DataImpl;
 
-
 /**
  * This DataNode subclass represents a NetCDF DataObject.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: NetCdfDataNode.java 635 2013-05-14 13:26:28Z bdschubert $
  */
-public class NetCdfDataNode extends DataNode
-{
+public class NetCdfDataNode extends DataNode {
+
     private NetCdfDataObject ncDataObject;
     private String nodeType = "";
     private final InstanceContent content;
@@ -61,18 +60,15 @@ public class NetCdfDataNode extends DataNode
     private PropertyChangeListener propertyListener = new SimplePropertyChangeListener();
     private final Lookup.Result<DataImpl> lookupResult;
 
-
     /**
      * Constructor for a Node representing a NetCDF file.
      *
      * @param dataObject for a FlatField that backs this node
      * @param cookieSet the DataObject's cookieSet that manages the SaveCookie capability
      */
-    public NetCdfDataNode(NetCdfDataObject dataObject, Lookup cookieSet)
-    {
+    public NetCdfDataNode(NetCdfDataObject dataObject, Lookup cookieSet) {
         this(dataObject, cookieSet, new InstanceContent());
     }
-
 
     /**
      * Constructs the node with a proxy lookup comprised of the DataObject's cookieSet and this
@@ -83,8 +79,7 @@ public class NetCdfDataNode extends DataNode
      * FlatField
      * @param content dynamic content for this node's lookup.
      */
-    private NetCdfDataNode(NetCdfDataObject dataObject, Lookup cookieSet, InstanceContent content)
-    {
+    private NetCdfDataNode(NetCdfDataObject dataObject, Lookup cookieSet, InstanceContent content) {
         super(dataObject, Children.LEAF, new ProxyLookup(new AbstractLookup(content), cookieSet));
         this.ncDataObject = dataObject;
         this.content = content;
@@ -98,13 +93,10 @@ public class NetCdfDataNode extends DataNode
         dataObject.addPropertyChangeListener(WeakListeners.propertyChange(propertyListener, dataObject));
     }
 
-
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return getName() + " : " + this.nodeType;
     }
-
 
     /**
      * Makes the name bold when it needs to be saved.
@@ -112,34 +104,28 @@ public class NetCdfDataNode extends DataNode
      * @return a stylized name if the underlying DataObject is modified.
      */
     @Override
-    public String getHtmlDisplayName()
-    {
+    public String getHtmlDisplayName() {
         // The ExplorerView first calls this method for a node name,
         // then it calls getDisplyName if null is returned.
         SaveCookie capability = getLookup().lookup(SaveCookie.class);
-        if (capability != null)
-        {
+        if (capability != null) {
             return "<b>" + getDisplayName() + "</b>"; //NOI18N
         }
         return null;
     }
 
-
     @Override
-    public Action[] getActions(boolean context)
-    {
+    public Action[] getActions(boolean context) {
         return super.getActions(context);
 //        return new Action[]
 //        {
 //        };
     }
 
+    private class SimpleLookupListener implements LookupListener {
 
-    private class SimpleLookupListener implements LookupListener
-    {
         @Override
-        public void resultChanged(LookupEvent ignored)
-        {
+        public void resultChanged(LookupEvent ignored) {
             Collection<? extends DataImpl> instances = lookupResult.allInstances();
             DataImpl dataImpl = instances.isEmpty() ? null : instances.iterator().next();
             nodeType = dataImpl == null ? "No Data" : dataImpl.getType().prettyString();
@@ -148,21 +134,16 @@ public class NetCdfDataNode extends DataNode
         }
     }
 
+    private class SimplePropertyChangeListener implements PropertyChangeListener {
 
-    private class SimplePropertyChangeListener implements PropertyChangeListener
-    {
         @Override
-        public void propertyChange(PropertyChangeEvent evt)
-        {
-            if (evt.getPropertyName().equals(NetCdfDataObject.PROP_DATA_STATE))
-            {
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(NetCdfDataObject.PROP_DATA_STATE)) {
                 DataState state = (DataState) evt.getNewValue();
-                if (state == DataState.INITIALIZED)
-                {
+                if (state == DataState.INITIALIZED) {
                     nodeType = ncDataObject.getData().getType().prettyString();
                 }
-                else
-                {
+                else {
                     nodeType = state.toString();
                 }
                 // Fire event that triggers getHtmlDisplayName 

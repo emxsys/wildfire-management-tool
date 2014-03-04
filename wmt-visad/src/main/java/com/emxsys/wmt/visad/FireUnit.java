@@ -32,7 +32,6 @@ package com.emxsys.wmt.visad;
 import visad.Unit;
 import static com.emxsys.wmt.visad.Units.*;
 
-
 /**
  * Units of measure for fire behavior.
  *
@@ -42,8 +41,8 @@ import static com.emxsys.wmt.visad.Units.*;
  * @see GeneralUnit
  * @see Units
  */
-public class FireUnit
-{
+public class FireUnit {
+
     /**
      * Common unit for fuel load - SI
      */

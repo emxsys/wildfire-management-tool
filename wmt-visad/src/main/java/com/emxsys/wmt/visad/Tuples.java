@@ -36,7 +36,6 @@ import visad.RealTuple;
 import visad.RealTupleType;
 import visad.RealType;
 
-
 /**
  * Utility class for creating and interacting with RealTuples.
  *
@@ -44,12 +43,10 @@ import visad.RealType;
  * @version $Id: Tuples.java 534 2013-04-18 15:26:05Z bdschubert $
  * @see RealTuple
  */
-public class Tuples
-{
-    private Tuples()
-    {
-    }
+public class Tuples {
 
+    private Tuples() {
+    }
 
     /**
      * Returns the index of the first component of the specified type.
@@ -58,12 +55,10 @@ public class Tuples
      * @param tuple array to be searched
      * @return Index of the first matching type, or -1 if not found.
      */
-    public static int getIndex(MathType type, RealTuple tuple)
-    {
+    public static int getIndex(MathType type, RealTuple tuple) {
         RealTupleType tupleType = (RealTupleType) tuple.getType();
         return tupleType.getIndex(type);
     }
-
 
     /**
      * Returns the first component of specified type.
@@ -72,55 +67,41 @@ public class Tuples
      * @param tuple Tuple to search
      * @return Real component matching the type; throws if not found.
      */
-    public static Real getComponent(RealType type, RealTuple tuple)
-    {
+    public static Real getComponent(RealType type, RealTuple tuple) {
         int index = getIndex(type, tuple);
-        if (index < 0)
-        {
+        if (index < 0) {
             throw new IllegalArgumentException("type not found in tuple");
         }
-        try
-        {
+        try {
             return (Real) tuple.getComponent(index);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
-    public static RealTuple fromReal(Real a, Real b)
-    {
-        try
-        {
+    public static RealTuple fromReal(Real a, Real b) {
+        try {
             return new RealTuple(
-                new Real[]
-            {
-                a, b
-            });
+                    new Real[]{
+                        a, b
+                    });
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
-    public static RealTuple fromReal(Real a, Real b, Real c)
-    {
-        try
-        {
+    public static RealTuple fromReal(Real a, Real b, Real c) {
+        try {
             return new RealTuple(
-                new Real[]
-            {
-                a, b, c
-            });
+                    new Real[]{
+                        a, b, c
+                    });
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
