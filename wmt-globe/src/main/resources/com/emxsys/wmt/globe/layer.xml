@@ -238,7 +238,7 @@
                 <attr name="actuate" stringvalue="onLoad"/>
                 <attr name="displayName" bundlevalue="com.emxsys.wmt.globe.Bundle#WorldWind/Layers/ViewControls.instance"/>
                 <attr name="position" intvalue="1400"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.globe.layers.CustomViewControlsLayer"/>
+                <attr name="instanceClass" stringvalue="com.emxsys.wmt.globe.layers.FixedViewControlsLayer"/>
                 <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
             </file>
             <file name="Compass.instance">

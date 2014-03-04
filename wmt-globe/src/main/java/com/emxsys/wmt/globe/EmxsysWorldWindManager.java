@@ -40,15 +40,13 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * A specialized WorldWindManager for the WMT.
- * <p>
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ServiceProvider(service = WorldWindManager.class, position = 1, supersedes = "com.terramenta.globe.WorldWindManager")
-public class EmxsysWorldWindManager extends WorldWindManager
-{
+public class EmxsysWorldWindManager extends WorldWindManager {
 
     public static final String EMXSYS_CONFIG = "modules/worldwind-overrides.xml";
-
     private static final Preferences prefs = NbPreferences.forModule(GlobeOptions.class);
     private static final Logger logger = Logger.getLogger(EmxsysWorldWindManager.class.getName());
 
@@ -57,32 +55,26 @@ public class EmxsysWorldWindManager extends WorldWindManager
      * user option to set the configuration. Assumes this static block is called *after* the base
      * class static block.
      */
-    static
-    {
+    static {
         String config = prefs.get("options.globe.worldwindConfig", "");
-        if (config.isEmpty())
-        {
+        if (config.isEmpty()) {
             File file = InstalledFileLocator.getDefault().locate(EMXSYS_CONFIG, "com.emxsys.wmt.globe", false);
-            if (file != null)
-            {
+            if (file != null) {
                 System.setProperty("gov.nasa.worldwind.app.config.document", file.getPath());
             }
         }
     }
 
-    public EmxsysWorldWindManager()
-    {
+    public EmxsysWorldWindManager() {
         super();
     }
 
     @Override
-    public void restoreSessionState()
-    {
+    public void restoreSessionState() {
     }
 
     @Override
-    public void saveSessionState()
-    {
+    public void saveSessionState() {
     }
 
 }

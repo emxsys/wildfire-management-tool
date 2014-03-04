@@ -41,7 +41,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.URLMapper;
 
-
 /**
  * This utility class provides a factory for creating WorldWind layers from external configuration
  * files.
@@ -49,8 +48,8 @@ import org.openide.filesystems.URLMapper;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: LayerFactory.java 623 2013-05-09 23:04:08Z bdschubert $
  */
-public final class LayerFactory
-{
+public final class LayerFactory {
+
     public static final String LAYER_INSTANCE_FILE_KEY = "com.emxsys.worldwind.layers.instanceFile";
     public static final String ACTUATE_ATTR = "actuate";
     public static final String CONFIG_ATTR = "config";
@@ -66,14 +65,11 @@ public final class LayerFactory
     private static BasicLayerFactory factory = new BasicLayerFactory();
     private static final Logger logger = Logger.getLogger(LayerFactory.class.getName());
 
-
     /**
      * Hidden constructor
      */
-    private LayerFactory()
-    {
+    private LayerFactory() {
     }
-
 
     /**
      * Factory method referenced in XML layer instanceCreate that creates a WorldWind layer from an
@@ -84,20 +80,17 @@ public final class LayerFactory
      * modules/ext folder. Your module can supply configuration files by placing them into the
      * project's release/modules/ext folder hierarchy.
      */
-    public static Layer createLayer(FileObject instanceFile)
-    {
+    public static Layer createLayer(FileObject instanceFile) {
         // Determine whether we're initializing from a config file or a class
         boolean useExternalConfig = instanceFile.getAttribute(CONFIG_ATTR) != null;
         Layer layer = useExternalConfig ? createLayerFromExternalConfig(instanceFile) : createLayerFromClass(instanceFile);
 
         // Update the layer properties
-        if (layer != null)
-        {
+        if (layer != null) {
             updateLayerFromFileAttributes(layer, instanceFile);
         }
         return layer;
     }
-
 
     /**
      * Sets Layer properties from attributes in the instance file.
@@ -105,8 +98,7 @@ public final class LayerFactory
      * @param layer the layer to update
      * @param instanceFile the layer .instance file
      */
-    public static void updateLayerFromFileAttributes(Layer layer, FileObject instanceFile)
-    {
+    public static void updateLayerFromFileAttributes(Layer layer, FileObject instanceFile) {
         // Set the title to the localized name if available
         String displayName = (String) instanceFile.getAttribute(DISPLAY_NAME_ATTR);
         layer.setName(displayName == null ? (String) instanceFile.getAttribute(NAME_ATTR) : displayName);
@@ -122,10 +114,8 @@ public final class LayerFactory
         // Set the layer's expiration time
         Integer refreshIntervalSecs = (Integer) instanceFile.getAttribute(REFRESH_INTERVAL_ATTR);
         Integer expirationAgeSecs = (Integer) instanceFile.getAttribute(EXPIRATION_AGE_ATTR);
-        if (refreshIntervalSecs != null)
-        {
-            if (expirationAgeSecs == null)
-            {
+        if (refreshIntervalSecs != null) {
+            if (expirationAgeSecs == null) {
                 expirationAgeSecs = 1;
             }
             RefreshService refreshService = new RefreshService(layer, expirationAgeSecs, refreshIntervalSecs);
@@ -136,7 +126,6 @@ public final class LayerFactory
         layer.setValue(LAYER_INSTANCE_FILE_KEY, instanceFile);
     }
 
-
     /**
      * Creates a layer via the factory and the external source defined in the instance file's
      * "config" attribute.
@@ -146,45 +135,38 @@ public final class LayerFactory
      * @throws IllegalStateException
      */
     private static Layer createLayerFromExternalConfig(FileObject instanceFile) throws
-        IllegalStateException
-    {
+            IllegalStateException {
         // Return value.
         Layer layer = null;
 
         // Get the external WorldWind (WMS) layer configuration file.
         URL url = (URL) instanceFile.getAttribute(CONFIG_ATTR);
-        if (url == null)
-        {
+        if (url == null) {
             throw new IllegalStateException("No config attribute in " + FileUtil.getFileDisplayName(instanceFile));
         }
 
         // The nbinst protocol implies the external file is stored in the application's modules/ext 
         // folder hierarchy.
-        if (url.getProtocol().contains("nbinst"))
-        {
+        if (url.getProtocol().contains("nbinst")) {
             // Use URLMapper to decode nbinst protocal into an absolute path
             FileObject cfgFile = URLMapper.findFileObject(url);
-            if (cfgFile != null)
-            {
+            if (cfgFile != null) {
                 File diskFile = FileUtil.toFile(cfgFile);
                 layer = (Layer) factory.createFromConfigSource(diskFile, null);
                 logger.config(diskFile.toString());
             }
-            else
-            {
+            else {
                 logger.log(Level.WARNING, "No FileObject for {0}. ", url);
             }
         }
         // Otherwise, create the layer directly from the url, which may point to a file inside the 
         // worldwind.jar
-        else
-        {
+        else {
             layer = (Layer) factory.createFromConfigSource(url, null);
             logger.config(url.toString());
         }
         return layer;
     }
-
 
     /**
      * Creates a layer from the instanceClass attribute.
@@ -192,18 +174,14 @@ public final class LayerFactory
      * @param instanceFile instance file containing an instanceClass attribute.
      * @return the object returned by the Class.newInstance() method.
      */
-    private static Layer createLayerFromClass(FileObject instanceFile)
-    {
+    private static Layer createLayerFromClass(FileObject instanceFile) {
         String instanceClass = (String) instanceFile.getAttribute(INSTANCE_CLASS_ATTR);
-        if (instanceClass == null)
-        {
+        if (instanceClass == null) {
             throw new IllegalStateException("FileObject " + instanceFile.getName() + " instanceClass attribute is empty.");
         }
-        try
-        {
+        try {
             Class<?> layerClass = Class.forName(instanceClass);
-            if (!Layer.class.isAssignableFrom(layerClass))
-            {
+            if (!Layer.class.isAssignableFrom(layerClass)) {
                 throw new IllegalStateException(layerClass.getName() + " is not compatible with Layer.class.");
             }
             Layer layer = (Layer) layerClass.newInstance();
@@ -211,18 +189,15 @@ public final class LayerFactory
 
             return layer;
         }
-        catch (ClassNotFoundException | IllegalStateException | InstantiationException | IllegalAccessException ex)
-        {
+        catch (ClassNotFoundException | IllegalStateException | InstantiationException | IllegalAccessException ex) {
             logger.severe(ex.getMessage());
             throw new IllegalStateException(ex);
         }
     }
 
+    static class RefreshService {
 
-    static class RefreshService
-    {
         private Timer timer = new Timer();
-
 
         /**
          *
@@ -230,13 +205,10 @@ public final class LayerFactory
          * @param expirationAge in seconds
          * @param refreshPeriod in seconds
          */
-        RefreshService(final Layer layer, final long expirationAge, final long refreshPeriod)
-        {
-            this.timer.schedule(new TimerTask()
-            {
+        RefreshService(final Layer layer, final long expirationAge, final long refreshPeriod) {
+            this.timer.schedule(new TimerTask() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     //System.out.println(" Refreshing "+ layer.getName() + ", expiration age: " + expirationAge + " secs.");
                     layer.setExpiryTime(System.currentTimeMillis() - (expirationAge * 1000));
                 }

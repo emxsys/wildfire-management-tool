@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayers;
+import com.emxsys.wmt.globe.layers.BaseMapLayersx;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,46 +45,40 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(
-    category = "Map",
-          id = "com.emxsys.wmt.globe.actions.BasemapAerialBing")
+        category = "Map",
+        id = "com.emxsys.wmt.globe.actions.BasemapAerialBing")
 @ActionRegistration(
-    iconBase = "com/emxsys/wmt/globe/images/basemap-bing-aerial.png",
-                    displayName = "#CTL_BasemapBing")
-    @ActionReference(path = "Toolbars/Basemap", position = 210)
+        iconBase = "com/emxsys/wmt/globe/images/basemap-bing-aerial.png",
+        displayName = "#CTL_BasemapBing")
+@ActionReference(path = "Toolbars/Basemap", position = 210)
 @RibbonActionReference(path = "Menu/Home/Manage/Basemap/Aerial",
-                       position = 100,
-                       description = "#CTL_BasemapBing_Hint",
-                       priority = "top",
-                       tooltipTitle = "#CTL_BasemapBing_TooltipTitle",
-                       tooltipBody = "#CTL_BasemapBing_TooltipBody",
-                       tooltipIcon = "com/emxsys/wmt/globe/images/basemap-bing-aerial.png")
+        position = 100,
+        description = "#CTL_BasemapBing_Hint",
+        priority = "top",
+        tooltipTitle = "#CTL_BasemapBing_TooltipTitle",
+        tooltipBody = "#CTL_BasemapBing_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/globe/images/basemap-bing-aerial.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-{
+@Messages({
     "CTL_BasemapBing=Bing",
     "CTL_BasemapBing_Hint=Bing Basemap",
     "CTL_BasemapBing_TooltipTitle=Bing Basemap",
     "CTL_BasemapBing_TooltipBody=Activate a basemap using Microsoft Bing aerial imagery."
 })
-public final class BasemapAerialBing implements ActionListener
-{
+public final class BasemapAerialBing implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapAerialBing.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_BING;
-
+    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_BING;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        List<GisLayer> layers = Layers.getLayersInRole(BasicLayerGroup.Basemap);
-        for (GisLayer layer : layers)
-        {
+    public void actionPerformed(ActionEvent e) {
+        List<GisLayer> layers = Layers.getLayersInGroup(BasicLayerGroup.Basemap);
+        for (GisLayer layer : layers) {
             // Enable just this basemap 
             layer.setEnabled(layer.getName().equals(BASEMAP_NAME));
-            
+
             // Reset the opacity for all layers in case a previous basemap was using transparency
             // This action will assure the visability of other basemaps should the user intereact 
             // with a layer manager.

@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayers;
+import com.emxsys.wmt.globe.layers.BaseMapLayersx;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,28 +60,24 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/globe/images/basemap-vearth-aerial.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapMsVirtualEarth=MS Virtual Earth Aerial",
-            "CTL_BasemapMsVirtualEarth_Hint=Microsoft Virtual Earth Aerial Basemap",
-            "CTL_BasemapMsVirtualEarth_TooltipTitle=Microsoft Virtual Earth Aerial Basemap",
-            "CTL_BasemapMsVirtualEarth_TooltipBody=Activate a basemap using the Microsoft Virtual Earth aerial imagery."
-        })
-public final class BasemapAerialMsVirtualEarth implements ActionListener
-{
+@Messages({
+    "CTL_BasemapMsVirtualEarth=MS Virtual Earth Aerial",
+    "CTL_BasemapMsVirtualEarth_Hint=Microsoft Virtual Earth Aerial Basemap",
+    "CTL_BasemapMsVirtualEarth_TooltipTitle=Microsoft Virtual Earth Aerial Basemap",
+    "CTL_BasemapMsVirtualEarth_TooltipBody=Activate a basemap using the Microsoft Virtual Earth aerial imagery."
+})
+public final class BasemapAerialMsVirtualEarth implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapAerialMsVirtualEarth.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_MSVE_AERIAL;
+    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_MSVE_AERIAL;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null)
-        {
+        if (layer == null) {
             throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
         }
-        Layers.enableLayerInRoleExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
+        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
         Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
         Viewers.activatePrimaryViewer();
     }

@@ -49,22 +49,19 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
-
 /**
  * This adaptor class presents a WorldWind Layer as a GisLayer with LayerActiveAltitudeRange and
  * LayerOpacity capabilities.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class GisLayerAdaptor implements GisLayer
-{
+public class GisLayerAdaptor implements GisLayer {
+
     protected InstanceContent content = new InstanceContent();
     protected Lookup lookup;
     private final Layer layer;
 
-
-    public GisLayerAdaptor(Layer layer)
-    {
+    public GisLayerAdaptor(Layer layer) {
         this.layer = layer;
         // add the layer implementation to this provider's lookup
         this.content.add(this.layer);
@@ -73,19 +70,16 @@ public class GisLayerAdaptor implements GisLayer
 
         // The LayerFactory stored the FileObject in the AVKey
         FileObject instanceFile = (FileObject) layer.getValue(LayerFactory.LAYER_INSTANCE_FILE_KEY);
-        if (instanceFile != null)
-        {
+        if (instanceFile != null) {
             BasicLayerType type = BasicLayerType.fromString((String) instanceFile.getAttribute("type"));
             BasicLayerGroup role = BasicLayerGroup.fromString((String) instanceFile.getAttribute("role"));
             BasicLayerCategory category = BasicLayerCategory.fromString((String) instanceFile.getAttribute("category"));
 
             BasicLayerLegend legend = null;
             String legendImage = (String) instanceFile.getAttribute("legendImage");
-            if (legendImage != null)
-            {
+            if (legendImage != null) {
                 ImageIcon image = ImageUtilities.loadImageIcon(legendImage, false);
-                if (image != null)
-                {
+                if (image != null) {
                     legend = new BasicLayerLegend();
                     legend.add(image);
                 }
@@ -94,9 +88,7 @@ public class GisLayerAdaptor implements GisLayer
         }
     }
 
-
-    public GisLayerAdaptor(Layer layer, LayerType type, LayerGroup role, LayerCategory category)
-    {
+    public GisLayerAdaptor(Layer layer, LayerType type, LayerGroup role, LayerCategory category) {
         this.layer = layer;
         // add the layer implementation to this provider's lookup
         this.content.add(this.layer);
@@ -105,77 +97,59 @@ public class GisLayerAdaptor implements GisLayer
         updateLayerAttributes(type, role, category, null);
     }
 
-
     @Override
-    public Lookup getLookup()
-    {
-        if (lookup == null)
-        {
+    public Lookup getLookup() {
+        if (lookup == null) {
             lookup = new AbstractLookup(content);
         }
         return lookup;
     }
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return layer.getName();
     }
 
-
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         layer.setName(name);
     }
 
-
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return layer.isEnabled();
     }
 
-
     @Override
-    public void setEnabled(boolean enabled)
-    {
+    public void setEnabled(boolean enabled) {
         layer.setEnabled(enabled);
         layer.firePropertyChange(AVKey.LAYER, null, layer);
         Viewers.refreshViewersContaining(this);
     }
 
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.layer.addPropertyChangeListener(listener);
     }
 
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.layer.removePropertyChangeListener(listener);
     }
 
-
-    private void updateLayerAttributes(LayerType type, LayerGroup role, LayerCategory category,
-        LayerLegend legend)
-    {
+    private void updateLayerAttributes(LayerType type,
+                                       LayerGroup group,
+                                       LayerCategory category,
+                                       LayerLegend legend) {
         this.content.add(type == null ? BasicLayerType.Unknown : type);
-        this.content.add(role == null ? BasicLayerGroup.Undefined : role);
+        this.content.add(group == null ? BasicLayerGroup.Undefined : group);
         this.content.add(category == null ? BasicLayerCategory.Unknown : category);
-        if (legend != null)
-        {
+        if (legend != null) {
             this.content.add(legend);
         }
     }
 
-
-    private void updateCapabilities()
-    {
+    private void updateCapabilities() {
         // Add support for active altitudes
         this.content.add(new BasicLayerActiveAltitude(this.layer));
         // Add support for opacity

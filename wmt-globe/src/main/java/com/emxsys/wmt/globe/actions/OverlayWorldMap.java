@@ -29,60 +29,60 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.Layers;
-import com.emxsys.wmt.gis.Viewers;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.LayerActiveAltitudeRange;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayersx;
+import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.visad.Reals;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.logging.Logger;
+import javax.swing.Action;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
         category = "Map",
-        id = "com.emxsys.wmt.globe.actions.BasemapLandsat")
+        id = "com.emxsys.wmt.globe.actions.OverlayWorldMap")
 @ActionRegistration(
-        iconBase = "com/emxsys/wmt/globe/images/basemap-landsat.png",
-        displayName = "#CTL_BasemapLandsat")
-@ActionReference(path = "Toolbars/Basemap", position = 100)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Satellite",
-        position = 200,
-        description = "#CTL_BasemapLandsat_Hint",
+        displayName = "#CTL_OverlayWorldMap",
+        lazy = true)
+@ActionReference(path = "Toolbars/Overlays", position = 120)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 200,
+        buttonStyle = "toggle",
+        description = "#CTL_OverlayWorldMap_Hint",
         priority = "top",
-        tooltipTitle = "#CTL_BasemapLandsat_TooltipTitle",
-        tooltipBody = "#CTL_BasemapLandsat_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/basemap-landsat.png")
+        tooltipTitle = "#CTL_OverlayWorldMap_TooltipTitle",
+        tooltipBody = "#CTL_OverlayWorldMap_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/globe/images/world_map24.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
-    "CTL_BasemapLandsat=Landsat",
-    "CTL_BasemapLandsat_Hint=Landsat Basemap",
-    "CTL_BasemapLandsat_TooltipTitle=Landsat Basemap",
-    "CTL_BasemapLandsat_TooltipBody=Activate the Landsat basemap from i-cubed."
+    "CTL_OverlayWorldMap=World Map",
+    "CTL_OverlayWorldMap_Hint=World Map Overlay",
+    "CTL_OverlayWorldMap_TooltipTitle=World Map Overlay",
+    "CTL_OverlayWorldMap_TooltipBody=Toggle the display of the world map."
 })
+public final class OverlayWorldMap extends AbstractGisLayerToggleAction {
 
-public final class BasemapLandsat implements ActionListener {
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/world_map24.png";
+    private static final String OVERLAY_NAME = WidgetLayers.LAYER_WORLDMAP;
 
-    private static final Logger logger = Logger.getLogger(BasemapLandsat.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_LANDSAT;
+    public OverlayWorldMap() {
+        super(OVERLAY_NAME);
+        // non-lazy initializtion requires us to put some properties into the action
+        putValue(Action.NAME, Bundle.CTL_OverlayWorldMap());
+        putValue("iconBase", ICON_BASE);
+
+    }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null) {
-            throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
-        }
-        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
-        layer.getLookup().lookup(LayerActiveAltitudeRange.class).setMaxActiveAltitude(Reals.newAltitude(100000000.0));
-        Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
-        Viewers.activatePrimaryViewer();
+    public void actionPerformed(ActionEvent ignoredEvent) {
+        super.actionPerformed(ignoredEvent);
+        getGisLayer().getLookup().lookup(LayerOpacity.class).setOpacity(LayerOpacity.TRANSLUCENT);
+    }
+
+    @Override
+    public Action createContextAwareInstance(Lookup ignoredActionContext) {
+        return new OverlayWorldMap();
     }
 }

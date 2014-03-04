@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayers;
+import com.emxsys.wmt.globe.layers.BaseMapLayersx;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,29 +60,25 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/globe/images/icon-earth.png.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapBlueMarble=Blue Marble",
-            "CTL_BasemapBlueMarble_Hint=Blue Marble Base Map",
-            "CTL_BasemapBlueMarble_TooltipTitle=Blue Marble Base Map",
-            "CTL_BasemapBlueMarble_TooltipBody=Activates the Blue Marble base map."
-        })
+@Messages({
+    "CTL_BasemapBlueMarble=Blue Marble",
+    "CTL_BasemapBlueMarble_Hint=Blue Marble Base Map",
+    "CTL_BasemapBlueMarble_TooltipTitle=Blue Marble Base Map",
+    "CTL_BasemapBlueMarble_TooltipBody=Activates the Blue Marble base map."
+})
 
-public final class BasemapBlueMarble implements ActionListener
-{
+public final class BasemapBlueMarble implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapBlueMarble.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_BLUE_MARBLE;
+    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_BLUE_MARBLE;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null)
-        {
+        if (layer == null) {
             throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
         }
-        Layers.enableLayerInRoleExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
+        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
         Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
         Viewers.activatePrimaryViewer();
     }

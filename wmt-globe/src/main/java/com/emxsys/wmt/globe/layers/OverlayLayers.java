@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
 import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
+import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
 import gov.nasa.worldwind.layers.Layer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,74 +45,49 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * This class registers all of the base map layers and provides a mechanism for retrieving all of
+ * the registered layers in the 'Basemap' group.
+ * <p>
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @MapLayerRegistrations({
     @MapLayerRegistration(
             position = 100,
-            name = "Stars",
-            role = "Background",
-            type = "Other",
+            name = "Borders",
+            actuate = "onRequest",
+            role = "Overlay",
+            type = "Vector",
             category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_Stars",
-            instanceClass = "gov.nasa.worldwind.layers.StarsLayer",
+            displayName = "#CTL_CountryBoundaries",
+            instanceClass = "gov.nasa.worldwind.layers.Earth.CountryBoundariesLayer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
-            position = 200,
-            name = "Sky",
-            role = "Background",
+            position = 1000,
+            name = "Place names",
+            role = "Overlay",
             type = "Other",
             category = "Other",
             actuate = "onLoad",
-            displayName = "#CTL_Sky",
-            instanceClass = "gov.nasa.worldwind.layers.SkyGradientLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 300,
-            name = "Sun",
-            actuate = "onLoad",
-            role = "Background",
-            type = "Other",
-            category = "Other",
-            displayName = "#CTL_Sun",
-            instanceClass = "gov.nasa.worldwindx.sunlight.SunLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 400,
-            name = "Earth",
-            actuate = "onLoad",
-            role = "Background",
-            type = "Raster",
-            category = "Satellite",
-            displayName = "#CTL_Earth",
-            instanceClass = "gov.nasa.worldwind.layers.Earth.BMNGOneImage",
+            displayName = "#CTL_PlaceNames",
+            instanceClass = "gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),})
-
 @Messages({
-    "CTL_Stars=Stars",
-    "CTL_Sun=Sun", // Must match name used in Terramenata-Globe SunController.
-    "CTL_Sky=Sky",
-    "CTL_Earth=Earth",})
-public class BackgroundLayers {
+    "CTL_CountryBoundaries=Country Boundaries",
+    "CTL_PlaceNames=Place Names",})
+public class OverlayLayers {
 
-    public static String LAYER_SKY = Bundle.CTL_Sky();
-    public static String LAYER_SUNLIGHT = Bundle.CTL_Sun();
-    public static String LAYER_STARS = Bundle.CTL_Stars();
-    public static String LAYER_EARTH = Bundle.CTL_Earth();
+    public static String LAYER_COUNTRY_BOUNDARIES = Bundle.CTL_CountryBoundaries();
+    public static String LAYER_PLACE_NAMES = Bundle.CTL_PlaceNames();
 
     public static List<GisLayer> getLayers() {
         ArrayList<GisLayer> list = new ArrayList<>();
 
-        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Background),
-                BasicLayerType.Other, BasicLayerGroup.Background, BasicLayerCategory.Other));
+        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Overlay),
+                BasicLayerType.Other, BasicLayerGroup.Overlay, BasicLayerCategory.Other));
 
-        FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Background");
+        FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Overlay");
         Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
         for (Layer layer : layers) {
             list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
@@ -120,7 +95,7 @@ public class BackgroundLayers {
         return list;
     }
 
-    private BackgroundLayers() {
+    private OverlayLayers() {
     }
 
 }

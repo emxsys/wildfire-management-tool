@@ -35,7 +35,6 @@ import gov.nasa.worldwind.layers.Layer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * This capability class provides a GisLayer with the ability to adjust its transparency level. An
  * instance of this class should be added to the GisLayer's lookup if it supports this capability.
@@ -43,31 +42,23 @@ import java.util.logging.Logger;
  * @author Bruce Schubert
  * @version $Id: BasicLayerOpacity.java 254 2012-10-04 23:48:51Z bdschubert $
  */
-public class BasicLayerOpacity implements LayerOpacity
-{
+public class BasicLayerOpacity implements LayerOpacity {
 
     private static final Logger logger = Logger.getLogger(BasicLayerOpacity.class.getName());
     private final Layer layer;
 
-
-    public BasicLayerOpacity(Layer layer)
-    {
+    public BasicLayerOpacity(Layer layer) {
         this.layer = layer;
     }
 
-
     @Override
-    public double getOpacity()
-    {
+    public double getOpacity() {
         return this.layer.getOpacity();
     }
 
-
     @Override
-    public void setOpacity(double opacity)
-    {
-        if (opacity < 0.0 || opacity > 1.0)
-        {
+    public void setOpacity(double opacity) {
+        if (opacity < 0.0 || opacity > 1.0) {
             logger.log(Level.WARNING, "setOpacity({0}) - opacity level should be between 0.0 and 1.0.", opacity);
         }
         layer.setOpacity(opacity);

@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
 import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
+import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
 import gov.nasa.worldwind.layers.Layer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,74 +45,74 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
 
 /**
+ * This class registers all of the Widget layers and provides a mechanism for retrieving all of
+ * the registered layers in the 'Widget' group.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @MapLayerRegistrations({
     @MapLayerRegistration(
             position = 100,
-            name = "Stars",
-            role = "Background",
+            name = "Compass Overlay",
+            role = "Widget",
             type = "Other",
             category = "Other",
             actuate = "onLoad",
-            displayName = "#CTL_Stars",
-            instanceClass = "gov.nasa.worldwind.layers.StarsLayer",
+            displayName = "#CTL_Compass",
+            instanceClass = "gov.nasa.worldwind.layers.CompassLayer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
             position = 200,
-            name = "Sky",
-            role = "Background",
+            name = "View Controls Overlay",
+            role = "Widget",
             type = "Other",
             category = "Other",
             actuate = "onLoad",
-            displayName = "#CTL_Sky",
-            instanceClass = "gov.nasa.worldwind.layers.SkyGradientLayer",
+            displayName = "#CTL_Controls",
+            instanceClass = "com.emxsys.wmt.globe.layers.FixedViewControlsLayer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
             position = 300,
-            name = "Sun",
-            actuate = "onLoad",
-            role = "Background",
+            name = "World Map Overlay",
+            role = "Widget",
             type = "Other",
             category = "Other",
-            displayName = "#CTL_Sun",
-            instanceClass = "gov.nasa.worldwindx.sunlight.SunLayer",
+            actuate = "onLoad",
+            displayName = "#CTL_WorldMap",
+            instanceClass = "gov.nasa.worldwind.layers.WorldMapLayer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
             position = 400,
-            name = "Earth",
+            name = "Scalebar Overlay",
+            role = "Widget",
+            type = "Other",
+            category = "Other",
             actuate = "onLoad",
-            role = "Background",
-            type = "Raster",
-            category = "Satellite",
-            displayName = "#CTL_Earth",
-            instanceClass = "gov.nasa.worldwind.layers.Earth.BMNGOneImage",
+            displayName = "#CTL_Scalebar",
+            instanceClass = "gov.nasa.worldwind.layers.ScalebarLayer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),})
-
 @Messages({
-    "CTL_Stars=Stars",
-    "CTL_Sun=Sun", // Must match name used in Terramenata-Globe SunController.
-    "CTL_Sky=Sky",
-    "CTL_Earth=Earth",})
-public class BackgroundLayers {
+    "CTL_Compass=Compass Overlay",
+    "CTL_Controls=Controls Overlay",
+    "CTL_Scalebar=Scalebar Overlay",
+    "CTL_WorldMap=World Map Overlay",})
+public class WidgetLayers {
 
-    public static String LAYER_SKY = Bundle.CTL_Sky();
-    public static String LAYER_SUNLIGHT = Bundle.CTL_Sun();
-    public static String LAYER_STARS = Bundle.CTL_Stars();
-    public static String LAYER_EARTH = Bundle.CTL_Earth();
+    public static String LAYER_COMPASS = Bundle.CTL_Compass();
+    public static String LAYER_CONTROLS = Bundle.CTL_Controls();
+    public static String LAYER_SCALEBAR = Bundle.CTL_Scalebar();
+    public static String LAYER_WORLDMAP = Bundle.CTL_WorldMap();
 
     public static List<GisLayer> getLayers() {
         ArrayList<GisLayer> list = new ArrayList<>();
+        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Widget),
+                BasicLayerType.Other, BasicLayerGroup.Widget, BasicLayerCategory.Other));
 
-        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Background),
-                BasicLayerType.Other, BasicLayerGroup.Background, BasicLayerCategory.Other));
-
-        FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Background");
+        FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Widget");
         Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
         for (Layer layer : layers) {
             list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
@@ -120,7 +120,7 @@ public class BackgroundLayers {
         return list;
     }
 
-    private BackgroundLayers() {
+    private WidgetLayers() {
     }
 
 }

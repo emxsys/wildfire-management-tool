@@ -4,8 +4,6 @@
 <!--See the javadoc for the Configuration class for details-->
 <WorldWindConfiguration version="1">
     <!--These values override the defaults found in worldwind.xml-->
-    <!--<LayerList href="worldwind-overrides.layers.xml"/>-->
-    <LayerList/>
     <Property name="gov.nasa.worldwind.avkey.ViewClassName" value="com.terramenta.globe.AutoClippingOrbitView"/>
     <Property name="gov.nasa.worldwind.avkey.ViewInputHandlerClassName" value="com.terramenta.globe.utilities.ZoomToCursorViewInputHandler"/>
     <Property name="gov.nasa.worldwind.avkey.WorldMapImagePath" value="images/earth-map-512x256.png"/>
@@ -17,4 +15,15 @@
     <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyHost" value="100.215.10.20"/>-->
     <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyPort" value="8080"/>-->
     <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyType" value="Proxy.Type.Http"/>-->
+
+    <!--<LayerList href="worldwind-overrides.layers.xml"/>-->
+    <LayerList>
+        <!--Default Layers-->
+        <Layer className="gov.nasa.worldwind.layers.StarsLayer" actuate="onRequest">
+            <Property name="Name" value="Stars"/>
+        </Layer>
+        <Layer className="gov.nasa.worldwindx.sunlight.SunLayer" actuate="onRequest" />
+        <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer"/>
+        <Layer className="com.terramenta.globe.layers.ClassificationBannerLayer"/>    
+    </LayerList>
 </WorldWindConfiguration>

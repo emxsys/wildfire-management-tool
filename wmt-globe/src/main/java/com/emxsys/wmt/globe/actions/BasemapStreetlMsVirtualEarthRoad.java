@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayers;
+import com.emxsys.wmt.globe.layers.BaseMapLayersx;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,29 +59,25 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/globe/images/basemap-vearth-hybrid.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapMsVirtualEarthRoad=MS Virtual Earth Road",
-            "CTL_BasemapMsVirtualEarthRoad_Hint=Microsoft Virtual Earth Road Base Map",
-            "CTL_BasemapMsVirtualEarthRoad_TooltipTitle=Microsoft Virtual Earth Road Base Map",
-            "CTL_BasemapMsVirtualEarthRoad_TooltipBody=Activates a base map from Microsoft that is a "
-            + "general map portraying lines of transportion."
-        })
-public final class BasemapStreetlMsVirtualEarthRoad implements ActionListener
-{
+@Messages({
+    "CTL_BasemapMsVirtualEarthRoad=MS Virtual Earth Road",
+    "CTL_BasemapMsVirtualEarthRoad_Hint=Microsoft Virtual Earth Road Base Map",
+    "CTL_BasemapMsVirtualEarthRoad_TooltipTitle=Microsoft Virtual Earth Road Base Map",
+    "CTL_BasemapMsVirtualEarthRoad_TooltipBody=Activates a base map from Microsoft that is a "
+    + "general map portraying lines of transportion."
+})
+public final class BasemapStreetlMsVirtualEarthRoad implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapStreetlMsVirtualEarthRoad.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_MSVE_ROAD;
+    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_MSVE_ROAD;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null)
-        {
+        if (layer == null) {
             throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
         }
-        Layers.enableLayerInRoleExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
+        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
         Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
         Viewers.activatePrimaryViewer();
     }

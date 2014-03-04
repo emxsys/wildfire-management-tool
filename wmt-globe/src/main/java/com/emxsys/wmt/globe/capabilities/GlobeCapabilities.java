@@ -58,18 +58,15 @@ import org.openide.util.NbBundle;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: ViewerCapabilities.java 393 2012-12-08 21:10:58Z bdschubert $
  */
-@NbBundle.Messages(
-        {
-            "ERR_NullWorldWindow=The WorldWindow cannot be null.",
-            "# {0} - view class",
-            "ERR_NotAnOrbitView=The WorldWindow view ({0}) must be an OrbitView.",
-        })
+@NbBundle.Messages({
+    "ERR_NullWorldWindow=The WorldWindow cannot be null.",
+    "# {0} - view class",
+    "ERR_NotAnOrbitView=The WorldWindow view ({0}) must be an OrbitView.",})
 public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
         PanLeftCapability, PanRightCapability,
         ZoomInCapability, ZoomOutCapability,
         RotateCcwCapability, RotateCwCapability,
-        TiltUpCapability, TiltBackCapability
-{
+        TiltUpCapability, TiltBackCapability {
 
     public static final double DEFAULT_PAN_STEP = 0.8;
     public static final double DEFAULT_TILT_STEP = 0.8;
@@ -77,81 +74,67 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
     public static final double DEFAULT_HEADING_STEP = 1.0;
     private final WorldWindManager wwm;
 
-    public GlobeCapabilities(WorldWindManager wwm)
-    {
+    public GlobeCapabilities(WorldWindManager wwm) {
         this.wwm = wwm;
     }
 
     @Override
-    public void panUp(ActionEvent event)
-    {
+    public void panUp(ActionEvent event) {
         panMap(Angle.fromDegrees(0.0), DEFAULT_PAN_STEP);
     }
 
     @Override
-    public void panDown(ActionEvent event)
-    {
+    public void panDown(ActionEvent event) {
         panMap(Angle.fromDegrees(180.0), DEFAULT_PAN_STEP);
     }
 
     @Override
-    public void panLeft(ActionEvent event)
-    {
+    public void panLeft(ActionEvent event) {
         panMap(Angle.fromDegrees(270.0), DEFAULT_PAN_STEP);
     }
 
     @Override
-    public void panRight(ActionEvent event)
-    {
+    public void panRight(ActionEvent event) {
         panMap(Angle.fromDegrees(90.0), DEFAULT_PAN_STEP);
     }
 
     @Override
-    public void zoomIn(ActionEvent event)
-    {
+    public void zoomIn(ActionEvent event) {
         zoomMap(-DEFAULT_ZOOM_STEP);
     }
 
     @Override
-    public void zoomOut(ActionEvent event)
-    {
+    public void zoomOut(ActionEvent event) {
         zoomMap(DEFAULT_ZOOM_STEP);
     }
 
     @Override
-    public void rotateCounterClockwise(ActionEvent event)
-    {
+    public void rotateCounterClockwise(ActionEvent event) {
         rotateMap(Angle.fromDegrees(-DEFAULT_HEADING_STEP));
     }
 
     @Override
-    public void rotateClockwise(ActionEvent event)
-    {
+    public void rotateClockwise(ActionEvent event) {
         rotateMap(Angle.fromDegrees(DEFAULT_HEADING_STEP));
     }
 
     @Override
-    public void tiltUp(ActionEvent event)
-    {
+    public void tiltUp(ActionEvent event) {
         tiltMap(Angle.fromDegrees(-DEFAULT_TILT_STEP));
     }
 
     @Override
-    public void tiltBack(ActionEvent event)
-    {
+    public void tiltBack(ActionEvent event) {
         tiltMap(Angle.fromDegrees(DEFAULT_TILT_STEP));
     }
 
-    protected void panMap(Angle direction, double panStep)
-    {
+    protected void panMap(Angle direction, double panStep) {
         WorldWindowGLJPanel wwd = wwm.getWorldWindow();
-        if (wwd == null)
-        {
+        if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
         View view = wwd.getView();
-        if (!(view instanceof OrbitView))
-        {
+        if (!(view instanceof OrbitView)) {
             throw new IllegalStateException(Bundle.ERR_NotAnOrbitView(view.getClass()));
         }
         OrbitView orbitView = (OrbitView) view;
@@ -159,8 +142,7 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
         Angle distance = computePanAmount(wwd.getModel().getGlobe(), orbitView, panStep);
         LatLon newViewCenter = LatLon.greatCircleEndPosition(orbitView.getCenterPosition(), heading, distance);
         // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
-        if (this.isPathCrossingAPole(newViewCenter, orbitView.getCenterPosition()))
-        {
+        if (this.isPathCrossingAPole(newViewCenter, orbitView.getCenterPosition())) {
             orbitView.setHeading(Angle.POS180.subtract(orbitView.getHeading()));
         }
         // Set new center pos
@@ -169,11 +151,9 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
 
     }
 
-    protected void rotateMap(Angle amount)
-    {
+    protected void rotateMap(Angle amount) {
         WorldWindowGLJPanel wwd = wwm.getWorldWindow();
-        if (wwd == null)
-        {
+        if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
         View view = wwd.getView();
@@ -181,16 +161,13 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
         wwd.redrawNow();
     }
 
-    protected void tiltMap(Angle amount)
-    {
+    protected void tiltMap(Angle amount) {
         WorldWindowGLJPanel wwd = wwm.getWorldWindow();
-        if (wwd == null)
-        {
+        if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
         View view = wwd.getView();
-        if (!(view instanceof OrbitView))
-        {
+        if (!(view instanceof OrbitView)) {
             throw new IllegalStateException(Bundle.ERR_NotAnOrbitView(view.getClass()));
         }
         OrbitView orbitView = (OrbitView) view;
@@ -198,16 +175,13 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
         wwd.redrawNow();
     }
 
-    protected void zoomMap(double amount)
-    {
+    protected void zoomMap(double amount) {
         WorldWindowGLJPanel wwd = wwm.getWorldWindow();
-        if (wwd == null)
-        {
+        if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
         View view = wwd.getView();
-        if (!(view instanceof OrbitView))
-        {
+        if (!(view instanceof OrbitView)) {
             throw new IllegalStateException(Bundle.ERR_NotAnOrbitView(view.getClass()));
         }
         OrbitView orbitView = (OrbitView) view;
@@ -215,8 +189,7 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
         wwd.redrawNow();
     }
 
-    protected Angle computePanAmount(Globe globe, OrbitView view, double panStep)
-    {
+    protected Angle computePanAmount(Globe globe, OrbitView view, double panStep) {
         // This logic was copied from the WorldWind Java SDK: ViewControlsSelectListener by Patrick Murris
 
         // Compute globe angular distance depending on eye altitude
@@ -237,14 +210,12 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
         return Angle.fromDegrees(value * panStep);
     }
 
-    protected boolean isPathCrossingAPole(LatLon p1, LatLon p2)
-    {
+    protected boolean isPathCrossingAPole(LatLon p1, LatLon p2) {
         return Math.abs(p1.getLongitude().degrees - p2.getLongitude().degrees) > 20
                 && Math.abs(p1.getLatitude().degrees - 90 * Math.signum(p1.getLatitude().degrees)) < 10;
     }
 
-    protected double computeNewZoom(OrbitView view, double amount)
-    {
+    protected double computeNewZoom(OrbitView view, double amount) {
         // This logic was copied from the WorldWind Java SDK: ViewControlsSelectListener by Patrick Murris
         double coeff = 0.05;
         double change = coeff * amount;

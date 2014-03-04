@@ -29,60 +29,65 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.Layers;
-import com.emxsys.wmt.gis.Viewers;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.LayerActiveAltitudeRange;
-import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayersx;
+import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.visad.Reals;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.logging.Logger;
+import javax.swing.Action;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
         category = "Map",
-        id = "com.emxsys.wmt.globe.actions.BasemapLandsat")
+        id = "com.emxsys.wmt.globe.actions.OverlayPlaceNames")
 @ActionRegistration(
-        iconBase = "com/emxsys/wmt/globe/images/basemap-landsat.png",
-        displayName = "#CTL_BasemapLandsat")
-@ActionReference(path = "Toolbars/Basemap", position = 100)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Satellite",
-        position = 200,
-        description = "#CTL_BasemapLandsat_Hint",
+        displayName = "#CTL_PlaceNames",
+        lazy = false)   // non-lazy init is required to update the button state before it displayed                    
+@ActionReference(path = "Toolbars/Overlays", position = 311)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Labels",
+        buttonStyle = "toggle",
+        position = 100,
+        description = "#CTL_PlaceNames_Hint",
         priority = "top",
-        tooltipTitle = "#CTL_BasemapLandsat_TooltipTitle",
-        tooltipBody = "#CTL_BasemapLandsat_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/basemap-landsat.png")
+        tooltipTitle = "#CTL_PlaceNames_TooltipTitle",
+        tooltipBody = "#CTL_PlaceNames_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/globe/images/globe.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
-    "CTL_BasemapLandsat=Landsat",
-    "CTL_BasemapLandsat_Hint=Landsat Basemap",
-    "CTL_BasemapLandsat_TooltipTitle=Landsat Basemap",
-    "CTL_BasemapLandsat_TooltipBody=Activate the Landsat basemap from i-cubed."
+    "CTL_PlaceNames=Place Names",
+    "CTL_PlaceNames_Hint=Worldwide Place Names Overlay",
+    "CTL_PlaceNames_TooltipTitle=Place Names Overlay",
+    "CTL_PlaceNames_TooltipBody=Activate the worldwide place names overlay. \n"
+    + "The overlay displays place names based on the zoom factor."
 })
+public final class OverlayPlaceNames extends AbstractGisLayerToggleAction {
 
-public final class BasemapLandsat implements ActionListener {
+    private static final Logger logger = Logger.getLogger(OverlayPlaceNames.class.getName());
+    private static final String OVERLAY_NAME = OverlayLayers.LAYER_PLACE_NAMES;
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/globe.png";
 
-    private static final Logger logger = Logger.getLogger(BasemapLandsat.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_LANDSAT;
+    public OverlayPlaceNames() {
+        // The base class will use the layer's display name to find the GisLayer that will be operated on.
+        super(OVERLAY_NAME);
+
+        // Non-lazy initializtion requires us to put the name and icon properties into the action;
+        // it's not handled by the registration.
+        putValue(Action.NAME, Bundle.CTL_PlaceNames());
+        putValue("iconBase", ICON_BASE);
+    }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null) {
-            throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
-        }
-        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
-        layer.getLookup().lookup(LayerActiveAltitudeRange.class).setMaxActiveAltitude(Reals.newAltitude(100000000.0));
-        Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
-        Viewers.activatePrimaryViewer();
+    public void actionPerformed(ActionEvent event) {
+        // Let the base class perform the toggle action
+        super.actionPerformed(event);
+    }
+
+    @Override
+    public Action createContextAwareInstance(Lookup ignoredActionContext) {
+        return new OverlayPlaceNames();
     }
 }

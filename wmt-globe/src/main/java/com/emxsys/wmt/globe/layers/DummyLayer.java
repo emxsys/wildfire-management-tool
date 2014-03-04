@@ -39,201 +39,168 @@ import java.util.logging.Logger;
 /**
  * A DummyLayer is simply a non-renderable layer placed in the LayerList collection used for
  * grouping new Layers at the proper position within the list.
- * <p>
+ *
  * @author Bruce Schubert
  */
-public class DummyLayer extends WWObjectImpl implements Layer
-{
+public class DummyLayer extends WWObjectImpl implements Layer {
 
     private static final Logger logger = Logger.getLogger(DummyLayer.class.getName());
     private String name;
     private LayerGroup group;
 
-    public DummyLayer(LayerGroup layerGroup)
-    {
+    public DummyLayer(LayerGroup layerGroup) {
         this.group = layerGroup;
         this.name = layerGroup.getName();
     }
 
-    public LayerGroup getLayerGroup()
-    {
+    public LayerGroup getLayerGroup() {
         return this.group;
     }
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return false;
     }
 
     @Override
-    public void setEnabled(boolean enabled)
-    {
+    public void setEnabled(boolean enabled) {
         logger.warning("Unsupported Operation called: setEnabled()");
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name.toUpperCase();
     }
 
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public double getOpacity()
-    {
+    public double getOpacity() {
         logger.warning("Unsupported Operation called: getOpacity()");
         return 0.0;
     }
 
     @Override
-    public void setOpacity(double opacity)
-    {
+    public void setOpacity(double opacity) {
         logger.warning("Unsupported Operation called: setOpacity()");
     }
 
     @Override
-    public boolean isPickEnabled()
-    {
+    public boolean isPickEnabled() {
         return false;
     }
 
     @Override
-    public void setPickEnabled(boolean isPickable)
-    {
+    public void setPickEnabled(boolean isPickable) {
         logger.warning("Unsupported Operation called: setPickEnabled()");
     }
 
     @Override
-    public void preRender(DrawContext dc)
-    {
+    public void preRender(DrawContext dc) {
     }
 
     @Override
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
     }
 
     @Override
-    public void pick(DrawContext dc, Point pickPoint)
-    {
+    public void pick(DrawContext dc, Point pickPoint) {
     }
 
     @Override
-    public boolean isAtMaxResolution()
-    {
+    public boolean isAtMaxResolution() {
         return false;
     }
 
     @Override
-    public boolean isMultiResolution()
-    {
+    public boolean isMultiResolution() {
         return false;
     }
 
     @Override
-    public double getScale()
-    {
+    public double getScale() {
         return 1.0;
     }
 
     @Override
-    public boolean isNetworkRetrievalEnabled()
-    {
+    public boolean isNetworkRetrievalEnabled() {
         return false;
     }
 
     @Override
-    public void setNetworkRetrievalEnabled(boolean networkRetrievalEnabled)
-    {
+    public void setNetworkRetrievalEnabled(boolean networkRetrievalEnabled) {
         logger.warning("Unsupported Operation called: setNetworkRetrievalEnabled()");
     }
 
     @Override
-    public void setExpiryTime(long expiryTime)
-    {
+    public void setExpiryTime(long expiryTime) {
         logger.warning("Unsupported Operation called: setExpiryTime()");
     }
 
     @Override
-    public long getExpiryTime()
-    {
+    public long getExpiryTime() {
         return Long.MAX_VALUE;
     }
 
     @Override
-    public double getMinActiveAltitude()
-    {
+    public double getMinActiveAltitude() {
         return Double.MIN_VALUE;
     }
 
     @Override
-    public void setMinActiveAltitude(double minActiveAltitude)
-    {
+    public void setMinActiveAltitude(double minActiveAltitude) {
         logger.warning("Unsupported Operation called: setMinActiveAltitude()");
     }
 
     @Override
-    public double getMaxActiveAltitude()
-    {
+    public double getMaxActiveAltitude() {
         return Double.MAX_VALUE;
     }
 
     @Override
-    public void setMaxActiveAltitude(double maxActiveAltitude)
-    {
+    public void setMaxActiveAltitude(double maxActiveAltitude) {
         logger.warning("Unsupported Operation called: setMaxActiveAltitude()");
     }
 
     @Override
-    public boolean isLayerInView(DrawContext dc)
-    {
+    public boolean isLayerInView(DrawContext dc) {
         return false;
     }
 
     @Override
-    public boolean isLayerActive(DrawContext dc)
-    {
+    public boolean isLayerActive(DrawContext dc) {
         return false;
     }
 
     @Override
-    public Double getMaxEffectiveAltitude(Double radius)
-    {
+    public Double getMaxEffectiveAltitude(Double radius) {
         return Double.MAX_VALUE;
     }
 
     @Override
-    public Double getMinEffectiveAltitude(Double radius)
-    {
+    public Double getMinEffectiveAltitude(Double radius) {
         return Double.MIN_VALUE;
     }
 
     @Override
-    public void dispose()
-    {
+    public void dispose() {
     }
 
     @Override
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         return null;
     }
 
     @Override
-    public void restoreState(String stateInXml)
-    {
+    public void restoreState(String stateInXml) {
         throw new UnsupportedOperationException("restoreState() not supported.");
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.getName();
     }
 }

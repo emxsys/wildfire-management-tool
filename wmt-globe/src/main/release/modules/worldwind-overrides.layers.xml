@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LayerList>
+    <!--Default Layers-->
     <Layer className="gov.nasa.worldwind.layers.StarsLayer" actuate="onRequest">
         <Property name="Name" value="Stars"/>
     </Layer>
     <Layer className="gov.nasa.worldwindx.sunlight.SunLayer" actuate="onRequest" />
     <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer"/>
+    <Layer className="gov.nasa.worldwind.layers.WorldMapLayer"/>
+    <Layer className="gov.nasa.worldwind.layers.ScalebarLayer"/>
+    <Layer className="gov.nasa.worldwind.layers.ViewControlsLayer"/>
+    <Layer className="gov.nasa.worldwind.layers.CompassLayer">
+        <Property name="IconFilePath" value="images/notched-compass.png"/>
+    </Layer>
+    <Layer className="com.terramenta.globe.layers.ClassificationBannerLayer"/>    
     <Layer className="com.terramenta.globe.layers.CustomBMNGOneImage"/>
-    <Layer className="com.terramenta.globe.layers.ClassificationBannerLayer"/>
 </LayerList>

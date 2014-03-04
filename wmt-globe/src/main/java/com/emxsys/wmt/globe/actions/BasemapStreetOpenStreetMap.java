@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayers;
+import com.emxsys.wmt.globe.layers.BaseMapLayersx;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,7 +51,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/images/basemap-openstreet.png",
         displayName = "#CTL_BasemapOpenStreetMap")
 @ActionReference(path = "Toolbars/Basemap", position = 410)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Street", 
+@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Street",
         position = 100,
         description = "#CTL_BasemapOpenStreetMap_Hint",
         priority = "top",
@@ -60,32 +60,28 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/globe/images/basemap-openstreet.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapOpenStreetMap=OpenStreetMap",
-            "CTL_BasemapOpenStreetMap_Hint=OpenStreetMap Basemap",
-            "CTL_BasemapOpenStreetMap_TooltipTitle=OpenStreetMap Basemap",
-            "CTL_BasemapOpenStreetMap_TooltipBody=Activate a basemap from OpenStreetMap that is a "
-            + "general map portraying lines of transportion.\n"
-            + "OpenStreetMap (OSM) is a collaborative project to create a free editable map of the world. "
-            + "The maps are created using data from portable GPS devices, aerial photography, other free "
-            + "sources or simply from local knowledge. See www.openstreetmap.org for more information."
-        })
-public final class BasemapStreetOpenStreetMap implements ActionListener
-{
+@Messages({
+    "CTL_BasemapOpenStreetMap=OpenStreetMap",
+    "CTL_BasemapOpenStreetMap_Hint=OpenStreetMap Basemap",
+    "CTL_BasemapOpenStreetMap_TooltipTitle=OpenStreetMap Basemap",
+    "CTL_BasemapOpenStreetMap_TooltipBody=Activate a basemap from OpenStreetMap that is a "
+    + "general map portraying lines of transportion.\n"
+    + "OpenStreetMap (OSM) is a collaborative project to create a free editable map of the world. "
+    + "The maps are created using data from portable GPS devices, aerial photography, other free "
+    + "sources or simply from local knowledge. See www.openstreetmap.org for more information."
+})
+public final class BasemapStreetOpenStreetMap implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapStreetOpenStreetMap.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_OPEN_STREET_MAP;
+    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_OPEN_STREET_MAP;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null)
-        {
+        if (layer == null) {
             throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
         }
-        Layers.enableLayerInRoleExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
+        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
         Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
         Viewers.activatePrimaryViewer();
     }

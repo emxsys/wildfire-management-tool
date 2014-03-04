@@ -37,7 +37,6 @@ import visad.CommonUnit;
 import visad.Real;
 import visad.VisADException;
 
-
 /**
  * This capability class implements the ability set the min/max active altitude range for a layer. A
  * GisLayer implementation should add an instance this class to its lookup if it supports this
@@ -46,59 +45,44 @@ import visad.VisADException;
  * @author Bruce Schubert
  * @version $Id: BasicLayerActiveAltitude.java 254 2012-10-04 23:48:51Z bdschubert $
  */
-class BasicLayerActiveAltitude implements LayerActiveAltitudeRange
-{
+class BasicLayerActiveAltitude implements LayerActiveAltitudeRange {
 
     private final Layer layer;
 
-
-    BasicLayerActiveAltitude(final Layer layer)
-    {
+    BasicLayerActiveAltitude(final Layer layer) {
         this.layer = layer;
     }
 
-
     @Override
-    public Real getMaxActiveAltitude()
-    {
+    public Real getMaxActiveAltitude() {
         return Reals.newAltitude(this.layer.getMaxActiveAltitude());
     }
 
-
     @Override
-    public Real getMinActiveAltitude()
-    {
+    public Real getMinActiveAltitude() {
         return Reals.newAltitude(this.layer.getMinActiveAltitude());
     }
 
-
     @Override
-    public void setMaxActiveAltitude(Real altitude)
-    {
-        try
-        {
+    public void setMaxActiveAltitude(Real altitude) {
+        try {
             double meters = altitude.getValue(CommonUnit.meter);
             this.layer.setMaxActiveAltitude(meters);
             this.layer.firePropertyChange(AVKey.LAYER, null, layer);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-
     @Override
-    public void setMinActiveAltitude(Real altitude)
-    {
-        try
-        {
+    public void setMinActiveAltitude(Real altitude) {
+        try {
             double meters = altitude.getValue(CommonUnit.meter);
             this.layer.setMinActiveAltitude(meters);
             this.layer.firePropertyChange(AVKey.LAYER, null, layer);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             throw new RuntimeException(ex);
         }
     }
