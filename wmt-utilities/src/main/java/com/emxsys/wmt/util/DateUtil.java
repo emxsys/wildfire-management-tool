@@ -33,23 +33,18 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DateUtil
-{
-    private DateUtil()
-    {
+public class DateUtil {
+
+    private DateUtil() {
     }
 
-
-    static public String getCurrentDateTimeString()
-    {
+    static public String getCurrentDateTimeString() {
         return DateFormat.getInstance().format(Calendar.getInstance().getTime());
     }
-
 
     /**
      * Rounds the given Date field and all smaller fields.
@@ -58,24 +53,20 @@ public class DateUtil
      * @param field used to for rounding
      * @return
      */
-    static public Date round(Date date, int field)
-    {
+    static public Date round(Date date, int field) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        switch (field)
-        {
+        switch (field) {
             case Calendar.SECOND:
                 // Set the calendar to the top of the second
-                if (c.get(Calendar.MILLISECOND) >= 500)
-                {
+                if (c.get(Calendar.MILLISECOND) >= 500) {
                     c.add(Calendar.SECOND, 1);
                 }
                 c.set(Calendar.MILLISECOND, 0);
                 break;
             case Calendar.MINUTE:
                 // Set the calendar to the top of the minute
-                if (c.get(Calendar.SECOND) >= 30)
-                {
+                if (c.get(Calendar.SECOND) >= 30) {
                     c.add(Calendar.MINUTE, 1);
                 }
                 c.set(Calendar.SECOND, 0);
@@ -83,8 +74,7 @@ public class DateUtil
                 break;
             case Calendar.HOUR_OF_DAY:
                 // Set the calendar to the top of the hour
-                if (c.get(Calendar.MINUTE) >= 30)
-                {
+                if (c.get(Calendar.MINUTE) >= 30) {
                     c.add(Calendar.HOUR_OF_DAY, 1);
                 }
                 c.set(Calendar.MINUTE, 0);
@@ -93,8 +83,7 @@ public class DateUtil
                 break;
             case Calendar.DATE:
                 // Set the calendar to midnight
-                if (c.get(Calendar.HOUR_OF_DAY) >= 12)
-                {
+                if (c.get(Calendar.HOUR_OF_DAY) >= 12) {
                     c.add(Calendar.DATE, 1);
                 }
                 c.set(Calendar.HOUR_OF_DAY, 0);

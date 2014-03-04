@@ -35,15 +35,13 @@ import java.awt.image.ColorModel;
 import java.awt.image.PixelGrabber;
 import javax.swing.ImageIcon;
 
-
 /**
  * Image class utility.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: ImageUtil.java 448 2012-12-12 17:29:36Z bdschubert $
  */
-public class ImageUtil
-{
+public class ImageUtil {
 
     /**
      * Returns a BufferedImage of type ARGB unconditionally resized to the width and height.
@@ -52,15 +50,14 @@ public class ImageUtil
      * @param height
      * @return a new BufferedImage
      */
-    public static BufferedImage resizeImage(Image image, int width, int height)
-    {
-            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = resizedImage.createGraphics();
-            g.drawImage(image, 0, 0, width, height, null);
-            g.dispose();
-            return resizedImage;
+    public static BufferedImage resizeImage(Image image, int width, int height) {
+        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        g.dispose();
+        return resizedImage;
     }
-    
+
     /**
      * Creates an RGB "color square" image without a border suitable for display as an icon"
      *
@@ -69,11 +66,9 @@ public class ImageUtil
      * @param fill color fill for image
      * @return a color square image.
      */
-    public static BufferedImage createRgbImage(int width, int height, Color fill)
-    {
+    public static BufferedImage createRgbImage(int width, int height, Color fill) {
         return createRgbImage(width, height, fill, null);
     }
-
 
     /**
      * Creates an RGB "color square" image without a border suitable for display as an icon"
@@ -84,16 +79,14 @@ public class ImageUtil
      * @param border color for border
      * @return a color square image.
      */
-    public static BufferedImage createRgbImage(int width, int height, Color fill, Color border)
-    {
+    public static BufferedImage createRgbImage(int width, int height, Color fill, Color border) {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = img.createGraphics();
 
         g2d.setColor(fill);
         g2d.fillRect(1, 1, width - 2, height - 2);
 
-        if (border != null)
-        {
+        if (border != null) {
             g2d.setColor(border);
             g2d.drawRect(1, 1, width - 2, height - 2);
         }
@@ -101,17 +94,14 @@ public class ImageUtil
         return img;
     }
 
-
     /**
      * This method returns a buffered image with the contents of an image.
      *
      * @param image
      * @return
      */
-    public static BufferedImage toBufferedImage(Image image)
-    {
-        if (image instanceof BufferedImage)
-        {
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
             return (BufferedImage) image;
         }
 
@@ -125,12 +115,10 @@ public class ImageUtil
         // Create a buffered image with a format that's compatible with the screen
         BufferedImage bimage = null;
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        try
-        {
+        try {
             // Determine the type of transparency of the new buffered image
             int transparency = Transparency.OPAQUE;
-            if (hasAlpha)
-            {
+            if (hasAlpha) {
                 transparency = Transparency.BITMASK;
             }
 
@@ -138,19 +126,16 @@ public class ImageUtil
             GraphicsDevice gs = ge.getDefaultScreenDevice();
             GraphicsConfiguration gc = gs.getDefaultConfiguration();
             bimage = gc.createCompatibleImage(
-                image.getWidth(null), image.getHeight(null), transparency);
+                    image.getWidth(null), image.getHeight(null), transparency);
         }
-        catch (HeadlessException e)
-        {
+        catch (HeadlessException e) {
             // The system does not have a screen
         }
 
-        if (bimage == null)
-        {
+        if (bimage == null) {
             // Create a buffered image using the default color model
             int type = BufferedImage.TYPE_INT_RGB;
-            if (hasAlpha)
-            {
+            if (hasAlpha) {
                 type = BufferedImage.TYPE_INT_ARGB;
             }
             bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
@@ -166,18 +151,15 @@ public class ImageUtil
         return bimage;
     }
 
-
     /**
      * Determines if the supplied image has transparency.
      *
      * @param image
      * @return true if the specified image has transparent pixels
      */
-    public static boolean hasAlpha(Image image)
-    {
+    public static boolean hasAlpha(Image image) {
         // If buffered image, the color model is readily available
-        if (image instanceof BufferedImage)
-        {
+        if (image instanceof BufferedImage) {
             BufferedImage bimage = (BufferedImage) image;
             return bimage.getColorModel().hasAlpha();
         }
@@ -185,12 +167,10 @@ public class ImageUtil
         // Use a pixel grabber to retrieve the image's color model;
         // grabbing a single pixel is usually sufficient
         PixelGrabber pg = new PixelGrabber(image, 0, 0, 1, 1, false);
-        try
-        {
+        try {
             pg.grabPixels();
         }
-        catch (InterruptedException e)
-        {
+        catch (InterruptedException e) {
         }
 
         // Get the image's color model

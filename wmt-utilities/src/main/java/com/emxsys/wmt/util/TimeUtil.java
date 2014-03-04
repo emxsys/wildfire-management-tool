@@ -29,27 +29,25 @@
  */
 package com.emxsys.wmt.util;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class TimeUtil
-{
+public class TimeUtil {
+
     /**
      * Convert a long ("time_t") to seconds and thousandths. From the Java Cookbook by Ian Darwin.
      *
      * Example that outputs elapsed time for a task:
-     * <pre>      
+     * <pre>
      * long startTimeMillis = System.currentTimeMillis();
      * // Do something ...
      * System.out.println("Elapsed: " + TimeUtil.msToSecs(System.currentTimeMillis() - startTimeMillis));
      * </pre>
-     * 
+     *
      * Source: Java Cookbook by Ian Darwin
      */
-    public static String msToSecs(long t)
-    {
+    public static String msToSecs(long t) {
         return Double.toString(t / 1000D) + " s";
     }
 }

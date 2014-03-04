@@ -35,17 +35,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 /**
  * Utility class for interacting with XML documents.
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public class XmlUtil
-{
-    private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
+public class XmlUtil {
 
+    private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
 
     /**
      * Gets the first child element with the matching tag.
@@ -55,132 +53,96 @@ public class XmlUtil
      * @param tag to search for
      * @return the first Element in the NodeList, or null if not found.
      */
-    public static Element getChildElement(Element element, String namespaceURI, String tag)
-    {
+    public static Element getChildElement(Element element, String namespaceURI, String tag) {
         NodeList nodes = element.getElementsByTagNameNS(namespaceURI, tag);
-        if (nodes != null && nodes.getLength() > 0)
-        {
+        if (nodes != null && nodes.getLength() > 0) {
             return (Element) nodes.item(0);
         }
         return null;
     }
 
-
-    public static Boolean getChildElementBoolean(Element element, String namespaceURI, String tag)
-    {
+    public static Boolean getChildElementBoolean(Element element, String namespaceURI, String tag) {
         Element childElement = getChildElement(element, namespaceURI, tag);
-        if (childElement == null)
-        {
+        if (childElement == null) {
             return null;
         }
         return Boolean.valueOf(childElement.getTextContent());
     }
 
-
-    public static Double getChildElementDouble(Element element, String namespaceURI, String tag)
-    {
+    public static Double getChildElementDouble(Element element, String namespaceURI, String tag) {
         Element childElement = getChildElement(element, namespaceURI, tag);
-        if (childElement == null)
-        {
+        if (childElement == null) {
             return null;
         }
         return Double.valueOf(childElement.getTextContent());
     }
 
-
-    public static Integer getChildElementInteger(Element element, String namespaceURI, String tag)
-    {
+    public static Integer getChildElementInteger(Element element, String namespaceURI, String tag) {
         Element childElement = getChildElement(element, namespaceURI, tag);
-        if (childElement == null)
-        {
+        if (childElement == null) {
             return null;
         }
         return Integer.valueOf(childElement.getTextContent());
     }
 
-
-    public static String getChildElementText(Element element, String namespaceURI, String tag)
-    {
+    public static String getChildElementText(Element element, String namespaceURI, String tag) {
         Element childElement = getChildElement(element, namespaceURI, tag);
-        if (childElement == null)
-        {
+        if (childElement == null) {
             return null;
         }
         return childElement.getTextContent();
     }
 
-
-
-
-    public static Element createDoubleElement(Document doc, String namespaceURI, double value, String tag)
-    {
-        try
-        {
+    public static Element createDoubleElement(Document doc, String namespaceURI, double value, String tag) {
+        try {
             Element element = doc.createElementNS(namespaceURI, tag);
             element.appendChild(doc.createTextNode(Double.toString(value)));
             return element;
         }
-        catch (Exception ex)
-        {
-            logger.log(Level.SEVERE, "createDoubleElement failed! Unable to export value ({0}). Reason: {1}", new Object[]
-            {
+        catch (Exception ex) {
+            logger.log(Level.SEVERE, "createDoubleElement failed! Unable to export value ({0}). Reason: {1}", new Object[]{
                 Double.toString(value), ex.toString()
             });
         }
         return null;
     }
 
-
-    public static Element createBooleanElement(Document doc, String namespaceURI, boolean value, String tag)
-    {
-        try
-        {
+    public static Element createBooleanElement(Document doc, String namespaceURI, boolean value, String tag) {
+        try {
             Element element = doc.createElementNS(namespaceURI, tag);
             element.appendChild(doc.createTextNode(Boolean.toString(value)));
             return element;
         }
-        catch (Exception ex)
-        {
-            logger.log(Level.SEVERE, "createBooleanElement failed! Unable to export boolean ({0}). Reason: {1}", new Object[]
-            {
+        catch (Exception ex) {
+            logger.log(Level.SEVERE, "createBooleanElement failed! Unable to export boolean ({0}). Reason: {1}", new Object[]{
                 Boolean.toString(value), ex.toString()
             });
         }
         return null;
     }
 
-
-    public static Element createIntegerElement(Document doc, String namespaceURI, int value, String tag)
-    {
-        try
-        {
+    public static Element createIntegerElement(Document doc, String namespaceURI, int value, String tag) {
+        try {
             Element element = doc.createElementNS(namespaceURI, tag);
             element.appendChild(doc.createTextNode(Integer.toString(value)));
             return element;
         }
-        catch (Exception ex)
-        {
-            logger.log(Level.SEVERE, "createIntegerElement failed! Unable to export integer ({0}). Reason: {1}", new Object[]
-            {
+        catch (Exception ex) {
+            logger.log(Level.SEVERE, "createIntegerElement failed! Unable to export integer ({0}). Reason: {1}", new Object[]{
                 Integer.toString(value), ex.toString()
             });
         }
         return null;
     }
 
-
-    public static Element createTextElement(Document doc, String namespaceURI, String text, String tag)
-    {
-        try
-        {
+    public static Element createTextElement(Document doc, String namespaceURI, String text, String tag) {
+        try {
             Element element = doc.createElementNS(namespaceURI, tag);
             element.appendChild(doc.createTextNode(text));
             return element;
         }
-        catch (Exception ex)
-        {
-            logger.log(Level.SEVERE, "createTextElement failed! Unable to export text ({0}). Reason: {1}", new Object[]
-            {
+        catch (Exception ex) {
+            logger.log(Level.SEVERE, "createTextElement failed! Unable to export text ({0}). Reason: {1}", new Object[]{
                 text, ex.toString()
             });
         }

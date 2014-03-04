@@ -50,7 +50,6 @@ import org.openide.util.Lookup.Item;
 import org.openide.util.Lookup.Template;
 import org.openide.util.lookup.Lookups;
 
-
 /**
  * Utilities for interacting with a NetBeans layer file. Layer files are small XML files provided by
  * modules, which define a virtual filesystem. The layer file defines folders and files that will be
@@ -59,11 +58,9 @@ import org.openide.util.lookup.Lookups;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class ModuleUtil
-{
+public class ModuleUtil {
 
     private static final Logger logger = Logger.getLogger(ModuleUtil.class.getName());
-
 
     /**
      * Retrieves an action instance.
@@ -72,8 +69,7 @@ public class ModuleUtil
      * @param id e.g., "com-emxsys-worldwind-ribbon-actions-ToggleLayerAction"
      * @return the Action instance or null
      */
-    public static Action getAction(String category, String id)
-    {
+    public static Action getAction(String category, String id) {
         final String FOLDER = "Actions/" + category + "/";
         Lookup pathLookup = Lookups.forPath(FOLDER);
         String actionId = id.replace(".", "-");
@@ -81,13 +77,11 @@ public class ModuleUtil
         Item<Action> item = pathLookup.lookupItem(actionTemplate);
 //        Result<Action> lookupResult = pathLookup.lookup(actionTemplate);
 //        Collection<? extends Action> foundActions = lookupResult.allInstances();
-        if (item != null)
-        {
+        if (item != null) {
             return item.getInstance();
         }
         return null;
     }
-
 
     /**
      * Getting a Java object (Action) from an instance file in the XML layer.
@@ -96,43 +90,33 @@ public class ModuleUtil
      * "Actions/Maps/com-emxsys-worldwind-ribbon-actions-ToggleLayerAction.instance"
      * @return the Action instance or null
      */
-    public static Action getAction(String actionConfigFile)
-    {
-        try
-        {
+    public static Action getAction(String actionConfigFile) {
+        try {
             FileObject configFile = FileUtil.getConfigFile(actionConfigFile);
-            if (configFile != null)
-            {
+            if (configFile != null) {
                 DataObject ob = DataObject.find(configFile);
                 InstanceCookie ck = ob.getLookup().lookup(InstanceCookie.class);
-                if (ck != null)
-                {
+                if (ck != null) {
                     Action action = (Action) ck.instanceCreate();
                     return action;
                 }
             }
         }
-        catch (DataObjectNotFoundException ex)
-        {
+        catch (DataObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-        catch (ClassNotFoundException ex)
-        {
+        catch (ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
         return null;
     }
 
-
-    public static Object getInstance(String configFile)
-    {
+    public static Object getInstance(String configFile) {
         return getInstance(FileUtil.getConfigFile(configFile));
     }
-
 
     /**
      * Gets an instance of a Java object from an instance file in the XML layer.
@@ -140,32 +124,25 @@ public class ModuleUtil
      * @param fo fileObject containing an instance cookie.
      * @return the instance or null
      */
-    public static Object getInstance(FileObject fo)
-    {
-        try
-        {
+    public static Object getInstance(FileObject fo) {
+        try {
             DataObject ob = DataObject.find(fo);
             InstanceCookie ck = ob.getLookup().lookup(InstanceCookie.class);
-            if (ck != null)
-            {
+            if (ck != null) {
                 return ck.instanceCreate();
             }
         }
-        catch (DataObjectNotFoundException ex)
-        {
+        catch (DataObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-        catch (ClassNotFoundException ex)
-        {
+        catch (ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
         return null;
     }
-
 
     /**
      * Method that understands the NetBeans nbinst:// URL protocol.
@@ -173,27 +150,21 @@ public class ModuleUtil
      * @param url a URL that can specify the nbinst:// protocol.
      * @return the file referenced in the URL or null if cannot be created.
      */
-    public static File createFileFromUrl(URL url)
-    {
+    public static File createFileFromUrl(URL url) {
         // Use URLMapper to decode nbinst protocal into an absolute path
         FileObject attribFileObject = URLMapper.findFileObject(url);
-        if (attribFileObject != null)
-        {
+        if (attribFileObject != null) {
             return FileUtil.toFile(attribFileObject);
         }
-        else
-        {
+        else {
             logger.log(Level.WARNING, "No FileObject for {0}. ", url);
         }
         return null;
     }
 
-
-    public static List<FileObject> getSortedChildren(String folderPath)
-    {
+    public static List<FileObject> getSortedChildren(String folderPath) {
         FileObject folder = FileUtil.getConfigFile(folderPath);
-        if (folder == null)
-        {
+        if (folder == null) {
             logger.log(Level.WARNING, "No FileObject for {0}. ", folderPath);
             return new ArrayList<FileObject>();
         }

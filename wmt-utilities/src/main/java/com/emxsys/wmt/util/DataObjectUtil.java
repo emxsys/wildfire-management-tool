@@ -35,17 +35,14 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
 
-
 /**
  *
  * @author Bruce Schubert
  * @version $Id: DataObjectUtil.java 470 2013-01-01 15:15:07Z bdschubert $
  */
-public class DataObjectUtil
-{
+public class DataObjectUtil {
 
     private static final Logger logger = Logger.getLogger(DataObjectUtil.class.getName());
-
 
     /**
      * Locates the DataObject for the supplied file, and if the file is not found, creates the file
@@ -57,27 +54,22 @@ public class DataObjectUtil
      * "Templates/Symbology/SymbologyTemplate.xml"
      * @return the DataObject for the file
      */
-    public static DataObject findDataObject(FileObject parent, String filename, String templatePath)
-    {
+    public static DataObject findDataObject(FileObject parent, String filename, String templatePath) {
         DataObject dob = null;
-        try
-        {
+        try {
             FileObject fo = parent.getFileObject(filename);
-            if (fo == null)
-            {
+            if (fo == null) {
                 DataFolder folder = DataFolder.findFolder(parent);
                 FileObject template = FileUtil.getConfigFile(templatePath);
                 DataObject dTemplate = DataObject.find(template);
                 String filenameWithoutExt = filename.replace(".xml", "");
                 dob = dTemplate.createFromTemplate(folder, filenameWithoutExt);
             }
-            else
-            {
+            else {
                 dob = DataObject.find(fo);
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             logger.severe(ex.getMessage());
         }
         return dob;

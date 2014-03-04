@@ -29,31 +29,27 @@
  */
 package com.emxsys.wmt.util;
 
-
 /**
- *The zoom factor is directly proportional to the magnification of the scene being viewed.
+ * The zoom factor is directly proportional to the magnification of the scene being viewed.
  * The relationship between zoom and FOV is slightly more complex, and is given by the following:
-
-fov = 2 * arctan(1 / zoom)
-zoom = 1 / tan(fov / 2) 
-
+ *
+ * fov = 2 * arctan(1 / zoom)
+ * zoom = 1 / tan(fov / 2)  *
  * where fov is the horizontal or width-wise Field Of View (ie. in the camera's horizontal plane
- * and the image's x-direction). It must be in radians if the trigonometric functions use radians 
+ * and the image's x-direction). It must be in radians if the trigonometric functions use radians
  * instead of degrees. (Degree-radian conversions here.)
  * Note that a zoom value of exactly 1 gives a 90 degree horizontal FOV, but a zoom of 2 does not
- * give a horizontal FOV of 45 degrees. 
+ * give a horizontal FOV of 45 degrees.
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class OpticsUtil
-{
+public class OpticsUtil {
 
     /**
-     * 
+     *
      * @param fovDeg field of view in degrees
      * @return zoom level where a 90 degree FOV equals 1x zoom
      */
-    public static double fovToZoom(double fovDeg)
-    {
+    public static double fovToZoom(double fovDeg) {
         // zoom = 1 / tan(fov / 2)
         double zoom = 1 / (Math.tan(Math.toRadians(fovDeg) / 2));
         return zoom;

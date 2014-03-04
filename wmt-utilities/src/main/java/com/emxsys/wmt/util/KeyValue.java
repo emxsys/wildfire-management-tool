@@ -29,76 +29,58 @@
  */
 package com.emxsys.wmt.util;
 
-
 /**
  * A Key/Value pair.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: KeyValue.java 362 2012-11-30 19:25:53Z bdschubert $
  */
-public class KeyValue<K, V>
-{
+public class KeyValue<K, V> {
 
     private K key;
     private V value;
 
-
-    public KeyValue(K key, V value)
-    {
+    public KeyValue(K key, V value) {
         this.key = key;
         this.value = value;
     }
 
-
-    public K getKey()
-    {
+    public K getKey() {
         return key;
     }
 
-
-    public V getValue()
-    {
+    public V getValue() {
         return value;
     }
 
-
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 7;
         hash = 37 * hash + (this.key != null ? this.key.hashCode() : 0);
         hash = 37 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
 
-
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final KeyValue<K, V> other = (KeyValue<K, V>) obj;
-        if (this.key != other.key && (this.key == null || !this.key.equals(other.key)))
-        {
+        if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
             return false;
         }
-        if (this.value != other.value && (this.value == null || !this.value.equals(other.value)))
-        {
+        if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
             return false;
         }
         return true;
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Entry{" + "key=" + key + ", value=" + value + '}';
     }
 }

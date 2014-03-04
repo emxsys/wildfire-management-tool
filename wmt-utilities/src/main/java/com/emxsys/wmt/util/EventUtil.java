@@ -34,22 +34,17 @@ import java.lang.reflect.Method;
 import java.util.logging.Logger;
 import javax.swing.ButtonModel;
 
-
 /**
  * A utility class used to handle Event based tasks.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class EventUtil
-{
+public class EventUtil {
 
     private static final Logger logger = Logger.getLogger(EventUtil.class.getName());
 
-
-    private EventUtil()
-    {
+    private EventUtil() {
     }
-
 
     /**
      * Retrieves the ButtonModel from the event. Gets the ActionModel derivative from Flamingo
@@ -59,32 +54,25 @@ public class EventUtil
      * @return the ButtonModel from the event source, which may be null
      */
     @SuppressWarnings("unchecked")
-    static public ButtonModel getButtonModel(ActionEvent event)
-    {
-        if (event.getSource() instanceof ButtonModel)
-        {
+    static public ButtonModel getButtonModel(ActionEvent event) {
+        if (event.getSource() instanceof ButtonModel) {
             // Native buttons
             return (ButtonModel) event.getSource();
         }
-        else
-        {
-            try
-            {
+        else {
+            try {
                 // Use reflection to look for a Flamingo ActionModel, a ButtonModel derivative, 
                 // like that embedded in a JCommandToggleButton
                 Class<?> clazz = event.getSource().getClass();
-                Class<?>[] args =
-                {
-                };
+                Class<?>[] args
+                        = {};
                 Method method = clazz.getMethod("getActionModel", args);
 
-                Object[] params =
-                {
-                };
+                Object[] params
+                        = {};
                 return (ButtonModel) method.invoke(event.getSource(), params);
             }
-            catch (Exception exception)
-            {
+            catch (Exception exception) {
                 // handle NoSuchMethod and Security excetions
                 logger.severe(exception.getMessage());
             }

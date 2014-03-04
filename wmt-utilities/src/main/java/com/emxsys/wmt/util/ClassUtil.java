@@ -33,19 +33,16 @@ import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import org.openide.util.Lookup;
 
-
 /**
  * A utility class for working with Java classes.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: ClassUtil.java 524 2013-04-10 00:11:48Z bdschubert $
  */
-public class ClassUtil
-{
-    private ClassUtil()
-    {
-    }
+public class ClassUtil {
 
+    private ClassUtil() {
+    }
 
     /**
      * Gets the parameterized type from a parameterized class.
@@ -53,12 +50,10 @@ public class ClassUtil
      * @param clazz
      * @return the type T from the param Class<T>
      */
-    public static Class<?> getParameterizedType(Class<?> clazz)
-    {
+    public static Class<?> getParameterizedType(Class<?> clazz) {
         Class<?> type = ((Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0]);
         return type;
     }
-
 
     /**
      * Gets the local resource path from the URL if its found on the local machine's classpath.
@@ -69,10 +64,8 @@ public class ClassUtil
      * @return a URL string referring to the local resource if found on the local classpath;
      * otherwise, the original address is returned.
      */
-    public static URL findLocalResource(String resourceUrl)
-    {
-        if (resourceUrl==null)
-        {
+    public static URL findLocalResource(String resourceUrl) {
+        if (resourceUrl == null) {
             return null;
         }
         int indexOfSep = resourceUrl.indexOf("!/");

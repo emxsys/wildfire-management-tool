@@ -59,40 +59,34 @@ import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
-
 /**
  * Utilities for interacting with Projects.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @Messages(
-{
-    "dialogTitle=Select a Main Project"
-})
-public final class ProjectUtil
-{
+        {
+            "dialogTitle=Select a Main Project"
+        })
+public final class ProjectUtil {
 
     public static final String PROJECT_LOGICAL_TAB_ID = "projectTabLogical_tc";
     public static final String PROJECT_FILE_TAB_ID = "projectTab_tc";
-
 
     /**
      * Gets the current project from the global context.
      *
      * @return the current project, or null if not found
      */
-    public static Project getCurrentProject()
-    {
+    public static Project getCurrentProject() {
         // Get the current selection...
         Project project = Utilities.actionsGlobalContext().lookup(Project.class);
         // ... or search the current project hierarchy
-        if (project == null)
-        {
+        if (project == null) {
             project = findProjectThatOwnsNode(Utilities.actionsGlobalContext().lookup(Node.class));
         }
         return project;
     }
-
 
     /**
      * Recursively searches the node hierarchy for the project that owns a node.
@@ -100,28 +94,22 @@ public final class ProjectUtil
      * @param node a node to test for a Project in its or its ancestor's lookup.
      * @return the Project that owns the node, or null if not found
      */
-    public static Project findProjectThatOwnsNode(Node node)
-    {
-        if (node != null)
-        {
+    public static Project findProjectThatOwnsNode(Node node) {
+        if (node != null) {
             Project project = node.getLookup().lookup(Project.class);
-            if (project == null)
-            {
+            if (project == null) {
                 DataObject dataObject = node.getLookup().lookup(DataObject.class);
-                if (dataObject != null)
-                {
+                if (dataObject != null) {
                     project = FileOwnerQuery.getOwner(dataObject.getPrimaryFile());
                 }
             }
             return (project == null) ? findProjectThatOwnsNode(node.getParentNode()) : project;
         }
-        else
-        {
+        else {
             return null;
         }
 
     }
-
 
     /**
      * Gets the Project Manager TopComponent window. Finds the TopComponent with the
@@ -129,73 +117,60 @@ public final class ProjectUtil
      *
      * @return TopComponent with PROJECT_LOGICAL_TAB_ID
      */
-    public static ExplorerManager getProjectsExplorerManager()
-    {
+    public static ExplorerManager getProjectsExplorerManager() {
         TopComponent tc = WindowManager.getDefault().findTopComponent(PROJECT_LOGICAL_TAB_ID);
         return ((ExplorerManager.Provider) tc).getExplorerManager();
 
     }
-
 
     /**
      * Selects the supplied project in the Project Manager window.
      *
      * @param project to be selected
      */
-    public static void selectInProjectManager(Project project)
-    {
+    public static void selectInProjectManager(Project project) {
         final TopComponent projectTab = WindowManager.getDefault().findTopComponent(PROJECT_LOGICAL_TAB_ID);
         ExplorerManager em = ((ExplorerManager.Provider) projectTab).getExplorerManager();
         Node root = em.getRootContext();
         Node projNode = root.getChildren().findChild(ProjectUtils.getInformation(project).getName());
-        if (projNode != null)
-        {
-            try
-            {
+        if (projNode != null) {
+            try {
                 projectTab.open();
                 projectTab.requestActive();
-                Node[] nodes = new Node[]{ projNode };
+                Node[] nodes = new Node[]{projNode};
                 em.setExploredContextAndSelection(projNode, nodes);
                 projectTab.setActivatedNodes(nodes);
             }
-            catch (Exception ignore)
-            {
+            catch (Exception ignore) {
                 // may ignore it
             }
         }
     }
-
 
     /**
      * Selects the supplied Node in the current project in the Project Manager window.
      *
      * @param node to be selected
      */
-    public static void selectInCurrentProject(Node node)
-    {
+    public static void selectInCurrentProject(Node node) {
         Project currentProject = getCurrentProject();
         Project nodesProject = findProjectThatOwnsNode(node);
-        if (currentProject != null && currentProject.equals(nodesProject))
-        {
+        if (currentProject != null && currentProject.equals(nodesProject)) {
             ExplorerManager em = getProjectsExplorerManager();
-            try
-            {
-                em.setSelectedNodes(new Node[]{ node });
+            try {
+                em.setSelectedNodes(new Node[]{node});
             }
-            catch (PropertyVetoException ignored)
-            {
+            catch (PropertyVetoException ignored) {
             }
         }
     }
-
 
     /**
      * Allows the user to choose a single project directory to open.
      *
      * @return
      */
-    static public Project chooseSingleProject()
-    {
+    static public Project chooseSingleProject() {
         // Get the ProjectChooserFactory that's registered in the global lookup 
         JFileChooser chooser = ProjectChooser.projectChooser();
         chooser.setMultiSelectionEnabled(false);
@@ -203,24 +178,20 @@ public final class ProjectUtil
         // Show the chooser
         int option = chooser.showOpenDialog(WindowManager.getDefault().getMainWindow());
 
-        if (option == JFileChooser.APPROVE_OPTION)
-        {
+        if (option == JFileChooser.APPROVE_OPTION) {
 
             File projectToBeOpenedFile = chooser.getSelectedFile();
             FileObject projectToBeOpened = FileUtil.toFileObject(projectToBeOpenedFile);
-            try
-            {
+            try {
                 return ProjectManager.getDefault().findProject(projectToBeOpened);
             }
-            catch (Exception exeception)
-            {
+            catch (Exception exeception) {
                 Exceptions.printStackTrace(exeception);
             }
         }
         return null;
 
     }
-
 
     /**
      * Gets the main project if one has been designated; if not designated, this method will prompt
@@ -230,17 +201,14 @@ public final class ProjectUtil
      * @deprecated Use getCurrentProject() instead.
      */
     @Deprecated()
-    public static Project getMainProject()
-    {
+    public static Project getMainProject() {
         Project project = OpenProjects.getDefault().getMainProject();
-        if (project == null)
-        {
+        if (project == null) {
             project = forceMainProjectSelection();
         }
         return project;
 
     }
-
 
     /**
      * Force the selection of a main project.
@@ -250,22 +218,18 @@ public final class ProjectUtil
      * @return the designated project, or null if not selected
      * @see org.puzzle.core.actions.ActionUtils
      */
-    public static Project forceMainProjectSelection()
-    {
+    public static Project forceMainProjectSelection() {
         Project candidate = null;
         final Project[] projects = OpenProjects.getDefault().getOpenProjects();
 
-        if (projects.length == 1)
-        {
+        if (projects.length == 1) {
             candidate = projects[0];
             OpenProjects.getDefault().setMainProject(candidate);
         }
-        else if (projects.length > 1)
-        {
+        else if (projects.length > 1) {
 
             Vector<ProjectName> projectNames = new Vector<ProjectName>();
-            for (Project project : projects)
-            {
+            for (Project project : projects) {
                 projectNames.add(new ProjectName(project));
             }
             final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -284,32 +248,24 @@ public final class ProjectUtil
         return candidate;
     }
 
-
-    private static class ProjectName
-    {
+    private static class ProjectName {
 
         Project project;
         String name;
 
-
-        public ProjectName(Project project)
-        {
+        public ProjectName(Project project) {
             this.project = project;
             ProjectInformation info = ProjectUtils.getInformation(project);
-            if (info != null)
-            {
+            if (info != null) {
                 name = info.getDisplayName();
             }
-            else
-            {
+            else {
                 name = project.getProjectDirectory().getName();
             }
         }
 
-
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name;
         }
     }

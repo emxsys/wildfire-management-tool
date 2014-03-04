@@ -29,19 +29,15 @@
  */
 package com.emxsys.wmt.util;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: AngleUtil.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public class AngleUtil
-{
+public class AngleUtil {
 
-    private AngleUtil()
-    {
+    private AngleUtil() {
     }
-
 
     /**
      * Normalizes an angle to greater than or equal to zero and less than 360.
@@ -49,19 +45,15 @@ public class AngleUtil
      * @param degrees a positive or negative angle in degrees
      * @return an angle between 0 and 360.
      */
-    public static double normalize360(double degrees)
-    {
-        while (degrees < 0.0)
-        {
+    public static double normalize360(double degrees) {
+        while (degrees < 0.0) {
             degrees += 360;
         }
-        while (degrees >= 360.0)
-        {
+        while (degrees >= 360.0) {
             degrees -= 360;
         }
         return degrees;
     }
-
 
     /**
      * Returns one of the eight cardinal points for the angle.
@@ -69,12 +61,11 @@ public class AngleUtil
      * @param degrees
      * @return "N", "NE", "E", "SE", "S", "SW", "W" or "NW"
      */
-    public static String degreesToCardinalPoint8(double degrees)
-    {
-        String directions[] =
-        {
-            "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"
-        };
+    public static String degreesToCardinalPoint8(double degrees) {
+        String directions[]
+                = {
+                    "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"
+                };
         degrees = normalize360(degrees);
         return directions[(int) Math.round(degrees / 45)];
     }

@@ -32,15 +32,13 @@ package com.emxsys.wmt.util;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
-
 /**
  * This utility class provides methods for working with filenames.
  *
  * @author Bruce Schubert
  * @version $Id: FileNameUtil.java 361 2012-11-30 19:21:21Z bdschubert $
  */
-public class FileNameUtil
-{
+public class FileNameUtil {
 
     /**
      * Gets a unique filename (without extension) within the specified folder. The filename is
@@ -52,12 +50,10 @@ public class FileNameUtil
      * @return a unique filename with URL-8 encoding (without an extension)
      */
     public static String getUniqueEncodedFilename(FileObject folder, String basename,
-        String extension)
-    {
+                                                  String extension) {
         String filename = encodeFilename(basename);
         return FileUtil.findFreeFileName(folder, filename, extension);
     }
-
 
     /**
      * Gets the base name from an encoded filename.
@@ -65,12 +61,10 @@ public class FileNameUtil
      * @param encodedFilename a filename encoded with encodeFilename()
      * @return decoded name without the extension.
      */
-    public static String getDecodedBasename(String encodedFilename)
-    {
+    public static String getDecodedBasename(String encodedFilename) {
         String name = decodeFilename(encodedFilename);
         return getFilenameWithoutExtension(name);
     }
-
 
     /**
      * Encodes a string as legal filename. Uses URL encoding.
@@ -78,22 +72,18 @@ public class FileNameUtil
      * @param s string to encode
      * @return the string encoded as a URL.
      */
-    public static String encodeFilename(String s)
-    {
-        try
-        {
+    public static String encodeFilename(String s) {
+        try {
             //String filename = FILENAME_PREFIX + java.net.URLEncoder.encode(s, "UTF-8");
             String filename = java.net.URLEncoder.encode(s, "UTF-8");
             filename = filename.replace("*", "%2A");
             filename = filename.replace("+", "%20");
             return filename;
         }
-        catch (java.io.UnsupportedEncodingException e)
-        {
+        catch (java.io.UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 is an unknown encoding!?");
         }
     }
-
 
     /**
      * Decodes an encoded filename to readable string. Uses URL encoding.
@@ -101,26 +91,20 @@ public class FileNameUtil
      * @param filename string to decode
      * @return a readable string suitable for a display name.
      */
-    public static String decodeFilename(String filename)
-    {
-        try
-        {
+    public static String decodeFilename(String filename) {
+        try {
             String s = filename.replace("%2A", "*");
             s = s.replace("%20", "+");
             return java.net.URLDecoder.decode(s, "UTF-8");
         }
-        catch (java.io.UnsupportedEncodingException e)
-        {
+        catch (java.io.UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 is an unknown encoding!?");
         }
     }
 
-
-    public static String getFilenameWithoutExtension(String filename)
-    {
+    public static String getFilenameWithoutExtension(String filename) {
         int index = filename.lastIndexOf('.');
-        if (index > 0 && index <= filename.length() - 2)
-        {
+        if (index > 0 && index <= filename.length() - 2) {
             return filename.substring(0, index);
         }
         return filename;

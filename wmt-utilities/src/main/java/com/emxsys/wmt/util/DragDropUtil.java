@@ -33,37 +33,32 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import org.openide.loaders.DataObject;
 
-
 /**
  *
  * @author Bruce Schubert
  * @version $Id: DragDropUtil.java 457 2012-12-18 02:06:21Z bdschubert $
  */
-public class DragDropUtil
-{
+public class DragDropUtil {
 
     /**
      * Looks for a DataObject in a drag-n-drop Transferable object.
      *
-     * @param trnsfr containing a DataFlavor matching {@code application/x-java-openide-dataobjectdnd}
+     * @param trnsfr containing a DataFlavor matching
+     * {@code application/x-java-openide-dataobjectdnd}
      * @return the DataObject if found, else null
      */
-    public static DataObject findDataObject(Transferable trnsfr)
-    {
+    public static DataObject findDataObject(Transferable trnsfr) {
         // The following MIME type and representation class was hard to figure out.
         // I had to set a breakpoint here and examine the Transferable's contents 
         // to discover it. Note the representation class and the MIME type has to be 
         // supplied to the DataFlavor else it won't match the Transfereable's DataFlavor.
         DataFlavor DATA_OBJECT = new DataFlavor("application/x-java-openide-dataobjectdnd;"
-            + "class=org.openide.loaders.DataObject", null);
-        if (trnsfr.isDataFlavorSupported(DATA_OBJECT))
-        {
-            try
-            {
+                + "class=org.openide.loaders.DataObject", null);
+        if (trnsfr.isDataFlavorSupported(DATA_OBJECT)) {
+            try {
                 return (DataObject) trnsfr.getTransferData(DATA_OBJECT);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
             }
         }
         return null;
