@@ -33,15 +33,13 @@ import com.emxsys.wmt.gis.api.Named;
 import com.emxsys.wmt.gis.api.Unique;
 import java.beans.PropertyChangeListener;
 
-
 /**
  * An Entity is named and has a unique ID.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Entity.java 527 2013-04-18 15:01:15Z bdschubert $
  */
-public interface Entity extends Unique, Named
-{
+public interface Entity extends Unique, Named {
 
     /**
      * Registers a PropertyChangeListener on this Entity. The listener should be notified when
@@ -50,7 +48,6 @@ public interface Entity extends Unique, Named
      * @param listener the listener to be registered.
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
-
 
     /**
      * Unregisters a PropertyChangeListener from this Entity

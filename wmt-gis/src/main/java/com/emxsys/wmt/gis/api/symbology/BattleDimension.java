@@ -29,14 +29,13 @@
  */
 package com.emxsys.wmt.gis.api.symbology;
 
-
 /**
  * Battle Dimension.
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BattleDimension.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public enum BattleDimension
-{
+public enum BattleDimension {
 
     GROUND("G", "GROUND"),
     AIR("A", "AIR"),
@@ -49,43 +48,32 @@ public enum BattleDimension
     public final String code;
     public final String description;
 
-
-    private BattleDimension(String code, String description)
-    {
+    private BattleDimension(String code, String description) {
         this.code = code;
         this.description = description;
     }
 
-
-    public String code()
-    {
+    public String code() {
         return this.code;
     }
 
-
-    public String description()
-    {
+    public String description() {
         return this.description;
     }
 
-
-    public static BattleDimension get(String code)
-    {
+    public static BattleDimension get(String code) {
         String properCode = code.toUpperCase();
-        for (BattleDimension si : BattleDimension.values())
-        {
-            if (si.code.equals(properCode))
-            {
+        for (BattleDimension si : BattleDimension.values()) {
+            if (si.code.equals(properCode)) {
                 return si;
             }
         }
         throw new IllegalArgumentException(code + " is not a valid Battle Dimension code.");
     }
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return code + ", " + description;
     }
-    
+
 }

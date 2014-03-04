@@ -29,14 +29,13 @@
  */
 package com.emxsys.wmt.gis.api.symbology;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: CodingScheme.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public enum CodingScheme
-{
+public enum CodingScheme {
+
     EMERGENCY_MANAGEMENT("E", "EMERGENCY MANAGEMENT"),
     TACTICAL_GRAPHICS("G", "TACTICAL GRAPHICS"),
     WARFIGHTING("S", "WARFIGHING"),
@@ -46,43 +45,31 @@ public enum CodingScheme
     public final String code;
     public final String description;
 
-
-    private CodingScheme(String code, String description)
-    {
+    private CodingScheme(String code, String description) {
         this.code = code;
         this.description = description;
     }
 
-
-    public String code()
-    {
+    public String code() {
         return this.code;
     }
 
-
-    public String description()
-    {
+    public String description() {
         return this.description;
     }
 
-
-    public static CodingScheme get(String code)
-    {
+    public static CodingScheme get(String code) {
         String properCode = code.toUpperCase();
-        for (CodingScheme si : CodingScheme.values())
-        {
-            if (si.code.equals(properCode))
-            {
+        for (CodingScheme si : CodingScheme.values()) {
+            if (si.code.equals(properCode)) {
                 return si;
             }
         }
         throw new IllegalArgumentException(code + " is not a valid Battle Dimension code.");
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return code + ", " + description;
     }
 }

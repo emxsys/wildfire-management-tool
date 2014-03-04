@@ -29,15 +29,13 @@
  */
 package com.emxsys.wmt.gis.api;
 
-
 /**
  * This interface provides a unique ID in the form of a long.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Unique.java 527 2013-04-18 15:01:15Z bdschubert $
  */
-public interface Unique
-{
+public interface Unique {
 
     /**
      * Gets the ID assigned to this object.
@@ -45,7 +43,6 @@ public interface Unique
      * @return the unique ID.
      */
     long getUniqueID();
-
 
     /**
      * Sets the ID for this object.

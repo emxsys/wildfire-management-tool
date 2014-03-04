@@ -39,22 +39,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.NbBundle.Messages;
 
-
 @Messages(
-{
-    "err.item.null=The item argument cannot be null.",
-    "err.items.null=Items collection cannot be null.",
-    "# {0} - catalog type",
-    "err.item.incompatible=The item type is incompatable [{0}]. The item was not added.",
-    "# {0} - catalog id",
-    "err.item.already.exists=The item ID ({0}) already exists.",
-    "# {0} - catalog id",
-    "info.item.added=The {0} item was added.",
-    "# {0} - catalog id",
-    "info.item.removed=The {0} item was removed."
-})
+        {
+            "err.item.null=The item argument cannot be null.",
+            "err.items.null=Items collection cannot be null.",
+            "# {0} - catalog type",
+            "err.item.incompatible=The item type is incompatable [{0}]. The item was not added.",
+            "# {0} - catalog id",
+            "err.item.already.exists=The item ID ({0}) already exists.",
+            "# {0} - catalog id",
+            "info.item.added=The {0} item was added.",
+            "# {0} - catalog id",
+            "info.item.removed=The {0} item was removed."
+        })
 /**
- * This generic EntityCatalog manages a collection of unique {@link Items}. It provides property change
+ * This generic EntityCatalog manages a collection of unique {@link Items}. It provides property
+ * change
  * notifications when the catalog contents change. A EntityCatalog implementation, or its individual
  * items, may be mapped to persistent storage, and this class provides notifications that the
  * contents have changed so that 'dirty' flags can be set accordingly.
@@ -63,8 +63,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: EntityCatalog.java 529 2013-04-18 15:08:39Z bdschubert $
  */
-public class EntityCatalog<T extends Entity> implements PropertyChangeListener
-{
+public class EntityCatalog<T extends Entity> implements PropertyChangeListener {
 
     public static final String PROP_ITEMS_ADDED = "PROP_ITEMS_ADDED";
     public static final String PROP_ITEMS_CLEARED = "PROP_ITEMS_CLEARED";
@@ -75,21 +74,17 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
     private Map<Long, T> itemMap = new TreeMap<Long, T>();
     private static final Logger logger = Logger.getLogger(EntityCatalog.class.getName());
 
-
     /**
      * Adds the item to this catalog.
      *
      * @param item the unique item to add.
      */
-    public void add(T item)
-    {
-        if (item == null)
-        {
+    public void add(T item) {
+        if (item == null) {
             logger.severe(Bundle.err_item_null());
             throw new IllegalArgumentException(Bundle.err_item_null());
         }
-        if (contains(item))
-        {
+        if (contains(item)) {
             logger.info(Bundle.err_item_already_exists(item.getName()));
             return;
         }
@@ -100,16 +95,13 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
         this.pcs.firePropertyChange(PROP_ITEM_ADDED, null, item);
     }
 
-
     /**
      * Adds the item to the internal collection and registers a listener on the item.
      *
      * @param item the item to be added.
      */
-    protected void doAddItem(T item)
-    {
-        if (item == null)
-        {
+    protected void doAddItem(T item) {
+        if (item == null) {
             String msg = Bundle.err_item_null();
             logger.severe(msg);
             throw new IllegalArgumentException(msg);
@@ -119,22 +111,18 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
         item.addPropertyChangeListener(this);
     }
 
-
     /**
      * Removes the item from this catalog. Fires a PROP_ITEM_REMOVED event.
      *
      * @param item the item to be removed.
      */
-    public void remove(T item)
-    {
-        if (item == null)
-        {
+    public void remove(T item) {
+        if (item == null) {
             logger.warning(Bundle.err_item_null());
             throw new IllegalArgumentException(Bundle.err_item_null());
         }
 
-        if (!itemMap.containsKey(item.getUniqueID()))
-        {
+        if (!itemMap.containsKey(item.getUniqueID())) {
             return;
         }
 
@@ -144,11 +132,8 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
         pcs.firePropertyChange(PROP_ITEM_REMOVED, item, null);
     }
 
-
-    protected void doRemoveItem(T item)
-    {
-        if (item == null)
-        {
+    protected void doRemoveItem(T item) {
+        if (item == null) {
             String msg = Bundle.err_item_null();
             logger.severe(msg);
             throw new IllegalArgumentException(msg);
@@ -160,29 +145,24 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
 
     }
 
-
     /**
      * Registers a PropertyChangeListener on this catalog. The listener will be notified when the
      * contents of the catalog change.
      *
      * @param listener the listener to be registered.
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
-
 
     /**
      * Unregisters a PropertyChangeListener from this catalog.
      *
      * @param listener the listener to be unregistered.
      */
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
-
 
     /**
      * Gets the items in this catalog.
@@ -190,11 +170,9 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
      * @return a collection of T instances.
      * @see T
      */
-    public Collection<? extends T> getItems()
-    {
+    public Collection<? extends T> getItems() {
         return this.itemMap.values();
     }
-
 
     /**
      * Replaces the current collections of items. Fires PROP_ITEMS_CLEARED and PROP_ITEMS_ADDED
@@ -202,33 +180,26 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
      *
      * @param items a collection of T instances.
      */
-    public void setItems(Collection<? extends T> items)
-    {
+    public void setItems(Collection<? extends T> items) {
         logger.info("Item collection being added...");
-        synchronized (this)
-        {
-            if (items == null)
-            {
+        synchronized (this) {
+            if (items == null) {
                 logger.severe(Bundle.err_items_null());
                 throw new IllegalArgumentException(Bundle.err_items_null());
             }
 
-            for (T item : this.itemMap.values())
-            {
+            for (T item : this.itemMap.values()) {
                 remove(item);
             }
             this.itemMap.clear();
             pcs.firePropertyChange(PROP_ITEMS_CLEARED, null, null);
 
-
-            for (T item : items)
-            {
+            for (T item : items) {
                 doAddItem(item);
             }
             pcs.firePropertyChange(PROP_ITEMS_ADDED, null, items);
         }
     }
-
 
     /**
      * Responds to changes in contained items by firing a PROP_ITEM_CHANGED event with the event
@@ -237,15 +208,12 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
      * @param evt event from a T.
      */
     @Override
-    public void propertyChange(PropertyChangeEvent evt)
-    {
-        if (evt.getSource() instanceof Entity)
-        {
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof Entity) {
             // Notify node explorer(s)
             pcs.firePropertyChange(PROP_ITEM_CHANGED, null, evt.getSource());
         }
     }
-
 
     /**
      * Determines if this catalog contains the item.
@@ -253,14 +221,11 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener
      * @param item item providing a unique ID.
      * @return true if the catalog contains an item matching the parameter's unique ID.
      */
-    public boolean contains(T item)
-    {
+    public boolean contains(T item) {
         return itemMap.containsKey(item.getUniqueID());
     }
 
-
-    public void dispose()
-    {
+    public void dispose() {
         this.itemMap.clear();
     }
 }

@@ -37,135 +37,110 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
-
 @Messages(
-{
-    "err.graphic.null=Graphic argument cannot be null.",
-    "err.graphics.null=Graphics collection cannot be null.",
-    "# {0} - graphic type",
-    "err.graphic.incompatible=The graphic type is incompatable [{0}]. The graphic was not added.",
-    "# {0} - graphic id",
-    "err.graphic.already.exists=The graphic ID ({0}) already exists.",
-    "# {0} - graphic id",
-    "err.graphic.renderer.not.found=A renderer for the graphic was not found. The graphic {0} will not be displayed.",
-    "# {0} - graphic id",
-    "info.adding.graphic.to.renderer=Adding the {0} graphic to a renderer.",
-    "# {0} - graphic id",
-    "info.removing.graphic.from.renderer=Removing the {0} graphic from the renderer."
-})
+        {
+            "err.graphic.null=Graphic argument cannot be null.",
+            "err.graphics.null=Graphics collection cannot be null.",
+            "# {0} - graphic type",
+            "err.graphic.incompatible=The graphic type is incompatable [{0}]. The graphic was not added.",
+            "# {0} - graphic id",
+            "err.graphic.already.exists=The graphic ID ({0}) already exists.",
+            "# {0} - graphic id",
+            "err.graphic.renderer.not.found=A renderer for the graphic was not found. The graphic {0} will not be displayed.",
+            "# {0} - graphic id",
+            "info.adding.graphic.to.renderer=Adding the {0} graphic to a renderer.",
+            "# {0} - graphic id",
+            "info.removing.graphic.from.renderer=Removing the {0} graphic from the renderer."
+        })
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: GraphicCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
-public class GraphicCatalog extends EntityCatalog<Graphic>
-{
+public class GraphicCatalog extends EntityCatalog<Graphic> {
 
     private static final Logger logger = Logger.getLogger(GraphicCatalog.class.getName());
     private FileObject folder;
-
 
     /**
      * Constructs a EntityCatalog who's contents are backed by a folder.
      *
      * @param folder the folder where Graphics are saved
      */
-    public GraphicCatalog(FileObject folder)
-    {
+    public GraphicCatalog(FileObject folder) {
         setFolder(folder);
     }
-
 
     /**
      * @return the folder who's contents this catalog represents.
      */
-    public FileObject getFolder()
-    {
+    public FileObject getFolder() {
         return folder;
     }
-
 
     /**
      * Sets the folder that this catalog represents.
      *
      * @param folder the folder where Graphics are saved.
      */
-    private void setFolder(FileObject folder)
-    {
-        if (folder != null && !folder.isFolder())
-        {
+    private void setFolder(FileObject folder) {
+        if (folder != null && !folder.isFolder()) {
             throw new IllegalArgumentException("setFolder: " + folder.getName() + " is not a folder.");
         }
         this.folder = folder;
     }
 
-
     @Override
-    protected void doAddItem(Graphic item)
-    {
+    protected void doAddItem(Graphic item) {
         super.doAddItem(item);
         addGraphicToRenderer(item);
     }
 
-
-    protected void addGraphicToRenderer(Graphic graphic)
-    {
+    protected void addGraphicToRenderer(Graphic graphic) {
         // Get the renderer (map layer) associated with Graphics
         Graphic.Renderer renderer = getGraphicRenderer();
-        if (renderer != null)
-        {
+        if (renderer != null) {
             logger.fine(Bundle.info_adding_graphic_to_renderer(graphic.getName()));
             renderer.addGraphic(graphic);
         }
-        else
-        {
+        else {
             logger.warning(Bundle.err_graphic_renderer_not_found(graphic.getName()));
         }
     }
 
-
     @Override
-    protected void doRemoveItem(Graphic item)
-    {
+    protected void doRemoveItem(Graphic item) {
         super.doRemoveItem(item);
 
         // Remove from the renderer
         Graphic.Renderer renderer = getGraphicRenderer();
-        if (renderer != null)
-        {
+        if (renderer != null) {
             logger.fine(Bundle.info_removing_graphic_from_renderer(item.getName()));
             renderer.removeGraphic(item);
         }
     }
 
-
     /**
      * Dispose of this catalog. Release listeners, release renderables.
      */
     @Override
-    public void dispose()
-    {
+    public void dispose() {
         Renderer graphicRenderer = getGraphicRenderer();
-        if (graphicRenderer != null)
-        {
+        if (graphicRenderer != null) {
             // The renderer may force the removal of the item from the catalog, so copy
             // the graphics to array that won't be modified by a subsequent nested call 
             // to removeItem invoked the the Renderer
             Graphic[] array = this.getItems().toArray(new Graphic[0]);
-            for (Graphic graphic : array)
-            {
+            for (Graphic graphic : array) {
                 graphicRenderer.removeGraphic(graphic);
             }
         }
         super.dispose();
     }
 
-
-    private Graphic.Renderer getGraphicRenderer()
-    {
+    private Graphic.Renderer getGraphicRenderer() {
         GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
-        if (viewer != null)
-        {
+        if (viewer != null) {
             return viewer.getLookup().lookup(Graphic.Renderer.class);
         }
         return null;

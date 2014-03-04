@@ -31,15 +31,13 @@ package com.emxsys.wmt.gis.api;
 
 import java.util.UUID;
 
-
 /**
  * This interface provides a globally unique ID in the form of a UUID.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: GloballyUnique.java 527 2013-04-18 15:01:15Z bdschubert $
  */
-public interface GloballyUnique
-{
+public interface GloballyUnique {
 
     /**
      * Gets the UUID assigned to this object.
@@ -47,7 +45,6 @@ public interface GloballyUnique
      * @return the unique ID.
      */
     UUID getGlobalUniqueID();
-
 
     /**
      * Sets the UUID for this object.

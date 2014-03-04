@@ -33,42 +33,34 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
-
 /**
  * The Shape interface represents renderable Geometry.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Shape.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public interface Shape
-{
+public interface Shape {
+
     String PROP_SHAPE_NAME = "PROP_SHAPE_NAME";
     String PROP_SHAPE_POSITION = "PROP_SHAPE_POSITION";
 
-
     String getName();
-
 
     void setName(String text);
 
-
     Coord3D getPosition();
-
 
     void setPosition(Coord3D position);
 
-
     void addPropertyChangeListener(PropertyChangeListener listener);
 
-
     void removePropertyChangeListener(PropertyChangeListener listener);
-
 
     /**
      * An interface for a renderer of shapes
      */
-    public interface Renderer
-    {
+    public interface Renderer {
+
         /**
          * Property name indicating a shape was added to the renderer
          */
@@ -78,14 +70,12 @@ public interface Shape
          */
         public static final String PROP_SHAPE_REMOVED = "PROP_SHAPE_REMOVED";
 
-
         /**
          * Adds a shape to the collection of shapes for rendering.
          *
          * @param shape The shape to be added.
          */
         void addShape(Shape shape);
-
 
         /**
          * Removes a shape from the collection of shapes for rendering.
@@ -94,14 +84,12 @@ public interface Shape
          */
         void removeShape(Shape shape);
 
-
         /**
          * Adds all the shapes in the supplied collection to the collection of shapes for rendering.
          *
          * @param shapes The shapes to be added.
          */
         void addShapes(Collection<? extends Shape> shapes);
-
 
         /**
          * Determines if the supplied shape is contained in this renderer.
@@ -111,9 +99,7 @@ public interface Shape
          */
         boolean contains(Shape shape);
 
-
         void addPropertyChangeListener(PropertyChangeListener listener);
-
 
         void removePropertyChangeListener(PropertyChangeListener listener);
     }

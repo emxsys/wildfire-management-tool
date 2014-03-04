@@ -29,35 +29,31 @@
  */
 package com.emxsys.wmt.gis;
 
-import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerCategory;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.openide.util.NbBundle.Messages;
 
 /**
  * Utility class for working with Layers.
  *
  * @author Bruce Schubert
- * @version $Id$
  */
-public class Layers
-{
+@Messages({
+    "ERR_NullGisViewer=GisViewer cannot be null."
+})
+public class Layers {
+
     private static final Logger logger = Logger.getLogger(Layers.class.getName());
 
-
-    private Layers()
-    {
+    private Layers() {
     }
-    
-    
+
     /**
      * Disable each GisLayer that matches the LayerCategory within the active GisViewer's lookup.
      *
@@ -65,127 +61,54 @@ public class Layers
      * @see GisLayer
      * @see GisViewer
      */
-    public static void disableLayersInCategory(Class<? extends LayerCategory> clazz)
-    {
+    public static void disableLayersInCategory(Class<? extends LayerCategory> clazz) {
         GisViewer viewer = Viewers.getPrimaryViewer();
-        if (viewer == null)
-        {
-            throw new IllegalStateException("GisViewer is null.");
+        if (viewer == null) {
+            throw new IllegalStateException(Bundle.ERR_NullGisViewer());
         }
-
-        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
-        for (GisLayer layer : layers)
-        {
-            if (layer.isEnabled() && layer.getLookup().lookup(clazz) != null)
-            {
-                layer.setEnabled(false);
-            }
-        }
-
+        viewer.getGisLayerList().disableLayersInCategory(clazz);
     }
 
-
-    public static void enableLayerInRoleExclusive(String layerName, LayerGroup layerRole)
-    {
-        List<GisLayer> layers = Layers.getLayersInRole(layerRole);
-        for (GisLayer layer : layers)
-        {
-            layer.setEnabled(layer.getName().equals(layerName));
-        }
-    }
-
-
-    public static GisLayer findLayer(String layerName)
-    {
+    public static void enableLayerInGroupExclusive(String layerName, LayerGroup layerGroup) {
         GisViewer viewer = Viewers.getPrimaryViewer();
-        if (viewer == null)
-        {
-            throw new IllegalStateException("GisViewer is null.");
+        if (viewer == null) {
+            throw new IllegalStateException(Bundle.ERR_NullGisViewer());
         }
-
-        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
-        for (GisLayer layer : layers)
-        {
-            if (layer.getName().equals(layerName))
-            {
-                return layer;
-            }
-        }
-        return null;
+        viewer.getGisLayerList().enableLayerInGroupExclusive(layerName, layerGroup);
     }
 
-
-    public static List<GisLayer> getLayersInCategory(LayerCategory category)
-    {
+    public static GisLayer findLayer(String layerName) {
         GisViewer viewer = Viewers.getPrimaryViewer();
-        if (viewer == null)
-        {
-            throw new IllegalStateException("GisViewer is null.");
+        if (viewer == null) {
+            throw new IllegalStateException(Bundle.ERR_NullGisViewer());
         }
-
-        ArrayList<GisLayer> list = new ArrayList<>();
-        Collection<? extends GisLayer> layers = viewer.getLookup().lookupAll(GisLayer.class);
-        for (GisLayer layer : layers)
-        {
-            Collection<? extends LayerCategory> categories = layer.getLookup().lookupAll(LayerCategory.class);
-            for (LayerCategory cat : categories)
-            {
-                if (cat.equals(category))
-                {
-                    list.add(layer);
-                }
-            }
-        }
-        return list;
+        return viewer.getGisLayerList().find(layerName);
     }
 
-
-    public static List<GisLayer> getLayersInRole(LayerGroup role)
-    {
+    public static List<GisLayer> getLayersInCategory(LayerCategory category) {
         GisViewer viewer = Viewers.getPrimaryViewer();
-        if (viewer == null)
-        {
-            throw new IllegalStateException("GisViewer is null.");
+        if (viewer == null) {
+            throw new IllegalStateException(Bundle.ERR_NullGisViewer());
         }
-        ArrayList<GisLayer> list = new ArrayList<>(); // return value
-
-        // Examine  all layers with a role, and find those with a matching role name
-        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
-        for (GisLayer layer : layers)
-        {
-            Collection<? extends LayerGroup> roles = layer.getLookup().lookupAll(role.getClass());
-            for (LayerGroup layerRole : roles)
-            {
-                if (layerRole.getName().equals(role.getName()))
-                {
-                    list.add(layer);
-                }
-            }
-        }
-        return list;
+        return viewer.getGisLayerList().getLayersInCategory(category);
     }
 
-
-    public static List<GisLayer> getLayersWithAttribute(Class<? extends Object> clazz)
-    {
+    public static List<GisLayer> getLayersInGroup(LayerGroup group) {
         GisViewer viewer = Viewers.getPrimaryViewer();
-        if (viewer == null)
-        {
-            throw new IllegalStateException("GisViewer is null.");
+        if (viewer == null) {
+            throw new IllegalStateException(Bundle.ERR_NullGisViewer());
         }
-
-        ArrayList<GisLayer> list = new ArrayList<>();
-        GisLayerList layers = viewer.getLookup().lookup(GisLayerList.class);
-        for (GisLayer layer : layers)
-        {
-            if (layer.getLookup().lookup(clazz) != null)
-            {
-                list.add(layer);
-            }
-        }
-        return list;
+        return viewer.getGisLayerList().getLayersInGroup(group);
     }
-    
+
+    public static List<GisLayer> getLayersWithAttribute(Class<? extends Object> clazz) {
+        GisViewer viewer = Viewers.getPrimaryViewer();
+        if (viewer == null) {
+            throw new IllegalStateException(Bundle.ERR_NullGisViewer());
+        }
+            return viewer.getGisLayerList().getLayersWithAttribute(clazz);
+    }
+
     /**
      * Sets a layer's opacity level if the layer supports this capability. The layer must implement
      * the LayerOpacity interface or have an implementation of it in its lookup. This will method
@@ -194,24 +117,20 @@ public class Layers
      * @param layer the layer to set.
      * @param opacityLevel the opacity level.
      */
-    public static void setLayerOpacity(GisLayer layer, double opacityLevel)
-    {
-        if (layer == null)
-        {
+    public static void setLayerOpacity(GisLayer layer, double opacityLevel) {
+        if (layer == null) {
             throw new IllegalArgumentException("setLayerOpacity layer argument cannot be null.");
         }
         LayerOpacity layerOpacity = layer instanceof LayerOpacity
-            ? (LayerOpacity) layer
-            : layer.getLookup().lookup(LayerOpacity.class);
+                ? (LayerOpacity) layer
+                : layer.getLookup().lookup(LayerOpacity.class);
 
-        if (layerOpacity != null)
-        {
+        if (layerOpacity != null) {
             layerOpacity.setOpacity(opacityLevel);
         }
-        else
-        {
+        else {
             logger.log(Level.INFO, "setLayerOpacity: {0} does not support opacity.", layer.getName());
         }
     }
-    
+
 }

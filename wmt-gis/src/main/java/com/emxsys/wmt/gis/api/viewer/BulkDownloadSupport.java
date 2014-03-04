@@ -38,10 +38,12 @@ import java.util.List;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface BulkDownloadSupport
-{
+public interface BulkDownloadSupport {
+
     List<GisLayer> getBulkDownloadableLayers();
+
     void startDownload(GisLayer downloadableLayer, GeoSector sector);
+
     void abortDownload(GisLayer downloadableLayer);
-    
+
 }

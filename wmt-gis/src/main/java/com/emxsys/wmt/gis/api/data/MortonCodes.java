@@ -32,27 +32,24 @@ package com.emxsys.wmt.gis.api.data;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.MathUtil;
 
-
 /**
- * 
+ *
  * See: http://fgiesen.wordpress.com/2009/12/13/decoding-morton-codes/<br/>
  * and: http://www-graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: MortonCodes.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public class MortonCodes
-{
+public class MortonCodes {
 
-    public static long generate(Coord2D point)
-    {
+    public static long generate(Coord2D point) {
         int x = degreesToFixed((float) (point.getLongitudeDegrees()));
         int y = degreesToFixed((float) (point.getLatitudeDegrees()));
-        
-        return generate(x,y);
+
+        return generate(x, y);
     }
 
-    public static long generate(int x, int y)
-    {
+    public static long generate(int x, int y) {
         long z = interleaveBits(x, y);
         return z;
     }
@@ -63,12 +60,10 @@ public class MortonCodes
      * @param code The Morton Code number.
      * @return The x value.
      */
-    public static int getX(long code)
-    {
+    public static int getX(long code) {
         // Extract the even bits
         return compact64By1(code);
     }
-
 
     /**
      * Extracts the y value from a Morton Code.
@@ -76,37 +71,31 @@ public class MortonCodes
      * @param code The Morton Code number.
      * @return The y value.
      */
-    public static int getY(long code)
-    {
+    public static int getY(long code) {
         // Extract the odd bits
         return compact64By1(code >>> 1);
     }
 
-
     /**
      * Converts degrees to a 32-bit fixed-point integer.
      * <p/>
      * @param degrees Angle must be between +/-180 degrees
      * @return A fixed-point representation of Q9.22.
      */
-    public static int degreesToFixed(float degrees)
-    {
+    public static int degreesToFixed(float degrees) {
         return MathUtil.floatToFixed(9, 22, degrees + 180.0f);
     }
 
-
     /**
      * Converts degrees to a 32-bit fixed-point integer.
      * <p/>
      * @param degrees Angle must be between +/-180 degrees
      * @return A fixed-point representation of Q9.22.
      */
-    public static double fixedToDegrees(int fixed)
-    {
+    public static double fixedToDegrees(int fixed) {
         double degrees = MathUtil.fixedToDouble(22, fixed);
         return degrees - 180.0;
     }
-
 
     /**
      * Interleave bits of x and y, so that all of the bits of x are in the even positions.<br/><br/>
@@ -118,8 +107,7 @@ public class MortonCodes
      * @param y 32 bit coordinate
      * @return The resulting 64 bit Morton Code.
      */
-    public static long interleaveBits(int x, int y)
-    {
+    public static long interleaveBits(int x, int y) {
         long z = 0;
         for (int i = 0; i < Integer.SIZE; i++) // unroll for more speed...
         {
@@ -128,7 +116,6 @@ public class MortonCodes
         return z;
     }
 
-
     /**
      * Interleave bits of x and y, so that all of the bits of x are in the even positions.<br/><br/>
      * http://www-graphics.stanford.edu/~seander/bithacks.html#InterleaveTableObvious<br/>
@@ -137,13 +124,11 @@ public class MortonCodes
      * @param y 32 bit coordinate
      * @return The resulting 64 bit Morton Code.
      */
-    public static long interleave64Bits(int x, int y)
-    {
+    public static long interleave64Bits(int x, int y) {
         long z = (expand32By1(y) << 1) + expand32By1(x);
         return z;
     }
 
-
     /**
      * Interleave bits of x and y, so that all of the bits of x are in the even positions.<br/><br/>
      * http://www-graphics.stanford.edu/~seander/bithacks.html#InterleaveTableObvious<br/>
@@ -152,12 +137,10 @@ public class MortonCodes
      * @param y 32 bit coordinate
      * @return The resulting 64 bit Morton Code.
      */
-    public static int interleave32Bits(short x, short y)
-    {
+    public static int interleave32Bits(short x, short y) {
         int z = (expand16By1(y) << 1) + expand16By1(x);
         return z;
     }
-
 
     /**
      * Insert a 0 bit before each bit of the 32-bit num.
@@ -165,8 +148,7 @@ public class MortonCodes
      * @param num 32-bit number to be expanded.
      * @return 64-bit bit pattern with 0 bits inter-spaced in the original 16-bit bit pattern.
      */
-    public static long expand32By1(int num)
-    {
+    public static long expand32By1(int num) {
         // "Insert" a 0 bit after each of the 32 low bits of x
         long x = num & 0x00000000ffffffffL;         // x = ---- ---- ---- ---- ---- ---- ---- ---- fedc ba98 7654 3210 fedc ba98 7654 3210
         x = (x ^ (x << 16)) & 0x0000ffff0000ffffL;  // x = ---- ---- ---- ---- fedc ba98 7654 3210 ---- ---- ---- ---- fedc ba98 7654 3210
@@ -177,7 +159,6 @@ public class MortonCodes
         return x;
     }
 
-
     /**
      * Insert a 0 bit after each bit of the 16-bit num, such that: <br/> f(fedc ba98 7654 3210) =
      * -f-e -d-c -b-a -9-8 -7-6 -5-4 -3-2 -1-0
@@ -187,8 +168,7 @@ public class MortonCodes
      * @param num 16-bit number to be expanded.
      * @return 32-bit pattern with 0 bits inter-spaced in the original 16-bits.
      */
-    public static int expand16By1(short num)
-    {
+    public static int expand16By1(short num) {
         // "Insert" a 0 bit after each of the 16 low bits of x
         int x = num & 0x0000ffff;        // x = ---- ---- ---- ---- fedc ba98 7654 3210
         x = (x ^ (x << 8)) & 0x00ff00ff; // x = ---- ---- fedc ba98 ---- ---- 7654 3210
@@ -199,7 +179,6 @@ public class MortonCodes
 
     }
 
-
     /**
      * Insert two 0 bits after each bit of the 10-bit num, such that: <br/> f(---- --98 7654 3210) =
      * ---- 9--8 --7- -6-- 5--4 --3- -2-- 1--0
@@ -207,8 +186,7 @@ public class MortonCodes
      * @param num 10-bit number to be expanded.
      * @return 32-bit pattern with two 0 bits inter-spaced in the original low 10-bits.
      */
-    public static int expand10By2(short num)
-    {
+    public static int expand10By2(short num) {
         // "Insert" two 0 bits after each of the 10 low bits of x
         int x = num & 0x000003ff;           // x = ---- ---- ---- ---- ---- --98 7654 3210
         x = (x ^ (x << 16)) & 0xff0000ff;   // x = ---- --98 ---- ---- ---- ---- 7654 3210
@@ -218,7 +196,6 @@ public class MortonCodes
         return x;
     }
 
-
     /**
      * Inverse of expand32By1 - "delete" all odd-indexed bits
      * <p/>
@@ -226,8 +203,7 @@ public class MortonCodes
      * @return 32-bit pattern with inter-spaced bits removed from the original 64-bit pattern
      * pattern.
      */
-    public static int compact64By1(long num)
-    {
+    public static int compact64By1(long num) {
         // using unsigned shift right (>>>)
         long x = num & 0x5555555555555555L;         // x = -f-e -d-c -b-a -9-8 -7-6 -5-4 -3-2 -1-0 -f-e -d-c -b-a -9-8 -7-6 -5-4 -3-2 -1-0
         x = (x ^ (x >>> 1)) & 0x3333333333333333L;  // x = --fe --dc --ba --98 --76 --54 --32 --10 --fe --dc --ba --98 --76 --54 --32 --10
@@ -239,7 +215,6 @@ public class MortonCodes
         return (int) x;
     }
 
-
     /**
      * Inverse of expand16By1 - "delete" all odd-indexed bits
      * <p/>
@@ -247,8 +222,7 @@ public class MortonCodes
      * @return 16-bit bit pattern with inter-spaced bits removed from the original 32-bit bit
      * pattern.
      */
-    public static short compact32By1(int num)
-    {
+    public static short compact32By1(int num) {
         // using unsigned shift right (>>>)
         int x = num & 0x55555555;         // x = -f-e -d-c -b-a -9-8 -7-6 -5-4 -3-2 -1-0
         x = (x ^ (x >>> 1)) & 0x33333333; // x = --fe --dc --ba --98 --76 --54 --32 --10
@@ -258,7 +232,6 @@ public class MortonCodes
         return (short) x;
     }
 
-
     /**
      * Inverse of expand10By2.
      * <p/>
@@ -266,8 +239,7 @@ public class MortonCodes
      * @return 16-bit bit pattern with inter-spaced bits removed from the original 32-bit bit
      * pattern.
      */
-    public static short compactBy2(int num)
-    {
+    public static short compactBy2(int num) {
         // TODO: Consider using unsigned shift right (>>>)
         int x = num & 0x09249249;            // x = ---- 9--8 --7- -6-- 5--4 --3- -2-- 1--0
         x = (x ^ (x >>> 2)) & 0x030c30c3;    // x = ---- --98 ---- 76-- --54 ---- 32-- --10

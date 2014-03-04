@@ -34,37 +34,32 @@ import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Named;
 import org.openide.util.Lookup;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface GisDataSource extends Named, Lookup.Provider
-{
+public interface GisDataSource extends Named, Lookup.Provider {
 
     /**
      * Get a {@link GisResultSet} provided by this data source.
+     *
      * @return a {@link ResultSet} based result set containing all the rows in the data source.
      */
     GisResultSet getResultSet();
 
-
-
     /**
      * Get a {@link GisResultSet} provided by this data source who's features
      * are contained in or intersecting the bounding box.
-    
+     *
      * @param boundingBox the rectangle defined the features to be returned
      * @return a {@link ResultSet} containing the features within or intersecting the bounding box.
      */
     GisResultSet getResultSet(Box boundingBox);
 
-
-
     /**
-     * Get a {@link GisResultSet} provided by this data source where a column's values match 
+     * Get a {@link GisResultSet} provided by this data source where a column's values match
      * a the query value argument.
-    
+     *
      * @param columnLabel the name of the column to query
      * @param queryValue the query value/criteria
      * @param ignoreCase instructs the query processor to perform a case insensitive equality test

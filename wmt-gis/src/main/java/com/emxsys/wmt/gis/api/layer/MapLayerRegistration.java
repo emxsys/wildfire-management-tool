@@ -59,8 +59,7 @@ import org.openide.awt.ActionID;
         {
             ElementType.TYPE, ElementType.FIELD, ElementType.METHOD
         })
-public @interface MapLayerRegistration
-{
+public @interface MapLayerRegistration {
 
     /**
      * One must specify name of the map layer.
@@ -120,6 +119,7 @@ public @interface MapLayerRegistration
      * One can specify the factory class.
      */
     String factoryClass() default "";
+
     /**
      * One can specify the factory class.
      */

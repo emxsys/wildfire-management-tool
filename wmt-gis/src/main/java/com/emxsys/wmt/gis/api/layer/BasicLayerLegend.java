@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 
-
 /**
  * This class provides a collection of ImageIcons that comprise a legend for a GisLayer. A GisLayer
  * that wants a legend should add an instance of this class to its lookup, and populate it with
@@ -46,8 +45,7 @@ import javax.swing.ImageIcon;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicLayerLegend.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public class BasicLayerLegend implements LayerLegend
-{
+public class BasicLayerLegend implements LayerLegend {
 
     private static int DEFAULT_IMAGE_WIDTH = 16;
     private static int DEFAULT_IMAGE_HEIGHT = 16;
@@ -55,15 +53,12 @@ public class BasicLayerLegend implements LayerLegend
     private int imageWidth;
     private int imageHeight;
 
-
     /**
      * Constructor for 16x16 image icons.
      */
-    public BasicLayerLegend()
-    {
+    public BasicLayerLegend() {
         this(DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT);
     }
-
 
     /**
      * Constructor for user defined icon dimensions.
@@ -71,12 +66,10 @@ public class BasicLayerLegend implements LayerLegend
      * @param imageWidth width of the icons.
      * @param imageHeight height of the icons.
      */
-    public BasicLayerLegend(int imageWidth, int imageHeight)
-    {
+    public BasicLayerLegend(int imageWidth, int imageHeight) {
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
     }
-
 
     /**
      * Gets the collection of icons.
@@ -84,11 +77,9 @@ public class BasicLayerLegend implements LayerLegend
      * @return image icons.
      */
     @Override
-    public List<ImageIcon> getIcons()
-    {
+    public List<ImageIcon> getIcons() {
         return icons;
     }
-
 
     /**
      * Adds a new image icon to the legend with the supplied color and description.
@@ -96,21 +87,18 @@ public class BasicLayerLegend implements LayerLegend
      * @param color color for the image icon.
      * @param desc description for the image icon.
      */
-    public void add(Color color, String desc)
-    {
+    public void add(Color color, String desc) {
         BufferedImage image = ImageUtil.createRgbImage(this.imageWidth, this.imageHeight, color);
         ImageIcon imageIcon = new ImageIcon(image, desc);
         add(imageIcon);
     }
-
 
     /**
      * Adds the supplied image icon to the legend.
      *
      * @param icon image icon to add.
      */
-    public void add(ImageIcon icon)
-    {
+    public void add(ImageIcon icon) {
         icons.add(icon);
     }
 }

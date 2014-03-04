@@ -25,34 +25,25 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Layer", id = "com.emxsys.gis.actions.RemoveMapLayerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/gis/images/layer-remove.png", displayName = "#CTL_RemoveMapLayer")
 @ActionReferences(
-{
-    @ActionReference(path = "Ribbon/TaskPanes/LayerTools/View", position = 2222),
-    @ActionReference(path = "Toolbars/Layer", position = 2222)
-})
+        {
+            @ActionReference(path = "Ribbon/TaskPanes/LayerTools/View", position = 2222),
+            @ActionReference(path = "Toolbars/Layer", position = 2222)
+        })
 @Messages("CTL_RemoveMapLayer=Remove Map Layer")
-public final class RemoveMapLayerAction implements ActionListener
-{
+public final class RemoveMapLayerAction implements ActionListener {
 
     private final RemovableGisLayer context;
 
-
-
-    public RemoveMapLayerAction(RemovableGisLayer context)
-    {
+    public RemoveMapLayerAction(RemovableGisLayer context) {
         this.context = context;
     }
 
-
-
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        if (this.context != null)
-        {
+    public void actionPerformed(ActionEvent e) {
+        if (this.context != null) {
             this.context.removeGisLayerFromViewer();
         }
     }

@@ -35,7 +35,6 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.VisADException;
 
-
 /**
  * A Simple3DCooridinateSystem for GeoCoord2D and GeoCoord3D.
  *
@@ -43,67 +42,55 @@ import visad.VisADException;
  * @see GeoCoord2D
  * @see GeoCoord3D
  */
-public class Simple3DCoordinateSystem extends CoordinateSystem
-{
-    private static final RealType[] components =
-    {
-        // Using system intrisic types to ensure max campatibility with VisAD library functions
-        RealType.Latitude,
-        RealType.Longitude,
-        RealType.Altitude,
-//        RealType.getRealType("Lat", CommonUnit.degree),
-//        RealType.getRealType("Lon", CommonUnit.degree),
-//        RealType.getRealType("Alt", CommonUnit.meter),
-    };
+public class Simple3DCoordinateSystem extends CoordinateSystem {
+
+    private static final RealType[] components
+            = {
+                // Using system intrisic types to ensure max campatibility with VisAD library functions
+                RealType.Latitude,
+                RealType.Longitude,
+                RealType.Altitude, //        RealType.getRealType("Lat", CommonUnit.degree),
+            //        RealType.getRealType("Lon", CommonUnit.degree),
+            //        RealType.getRealType("Alt", CommonUnit.meter),
+            };
     public static final RealTupleType SimpleLatLonAltTuple;
 
-
-    static
-    {
-        try
-        {
+    static {
+        try {
             SimpleLatLonAltTuple = new RealTupleType(components);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new RuntimeException(ex);
         }
     }
-
 
     /**
      * Get the index of RealType.Latitude in the reference RealTupleType.
      *
      * @return index of RealType.Latitude in the reference
      */
-    public int getLatitudeIndex()
-    {
+    public int getLatitudeIndex() {
         return 0;
     }
-
 
     /**
      * Get the index of RealType.Longitude in the reference RealTupleType.
      *
      * @return index of RealType.Longitude in the reference
      */
-    public int getLongitudeIndex()
-    {
+    public int getLongitudeIndex() {
         return 1;
     }
-
 
     /**
      * Get the index of RealType.Altitude in the reference RealTupleType.
      *
      * @return index of RealType.Altitude in the reference
      */
-    public int getAltitudeIndex()
-    {
+    public int getAltitudeIndex() {
         return 2;
     }
-
 
     /**
      * Create a Simple3DCoordinateSystem that just returns the input tuple.
@@ -114,11 +101,9 @@ public class Simple3DCoordinateSystem extends CoordinateSystem
      * necessary VisAD object
      */
     public Simple3DCoordinateSystem()
-        throws VisADException
-    {
+            throws VisADException {
         super(Simple3DCoordinateSystem.SimpleLatLonAltTuple, Simple3DCoordinateSystem.SimpleLatLonAltTuple.getDefaultUnits());
     }
-
 
     /**
      * Transform to the reference coordinates
@@ -130,16 +115,13 @@ public class Simple3DCoordinateSystem extends CoordinateSystem
      */
     @Override
     public double[][] toReference(double[][] tuple)
-        throws VisADException
-    {
-        if (tuple == null || getDimension() != tuple.length)
-        {
+            throws VisADException {
+        if (tuple == null || getDimension() != tuple.length) {
             throw new VisADException(
-                "Values are null or wrong dimension");
+                    "Values are null or wrong dimension");
         }
         return tuple;
     }
-
 
     /**
      * Transform from the reference coordinates
@@ -151,16 +133,13 @@ public class Simple3DCoordinateSystem extends CoordinateSystem
      */
     @Override
     public double[][] fromReference(double[][] refTuple)
-        throws VisADException
-    {
-        if (refTuple == null || getDimension() != refTuple.length)
-        {
+            throws VisADException {
+        if (refTuple == null || getDimension() != refTuple.length) {
             throw new VisADException(
-                "Values are null or wrong dimension");
+                    "Values are null or wrong dimension");
         }
         return refTuple;
     }
-
 
     /**
      * See if the object in question is equal to this CoordinateSystem. The two objects are equal if
@@ -170,16 +149,13 @@ public class Simple3DCoordinateSystem extends CoordinateSystem
      * @return true if they are considered equal, otherwise false.
      */
     @Override
-    public boolean equals(Object cs)
-    {
+    public boolean equals(Object cs) {
         if ((cs instanceof Simple3DCoordinateSystem
-            && ((Simple3DCoordinateSystem) cs).getDimension() == getDimension())
-            || cs == this)
-        {
+                && ((Simple3DCoordinateSystem) cs).getDimension() == getDimension())
+                || cs == this) {
             return true;
         }
-        else
-        {
+        else {
             return false;
         }
     }

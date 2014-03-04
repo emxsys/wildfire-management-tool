@@ -32,24 +32,24 @@ package com.emxsys.wmt.gis.api.viewer;
 import com.emxsys.wmt.gis.GeoSector;
 
 /**
- * This is a "capability" interface intended to be used in the NetBeans Lookup facilities.  If
+ * This is a "capability" interface intended to be used in the NetBeans Lookup facilities. If
  * an instance of this interface exists in a lookup, then it infers that a sector is available
  * for query, download, or some other processing.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface SelectedSector
-{
+public interface SelectedSector {
+
     /**
      * Gets the selected sector.
-     * 
+     *
      * @return the sector (area of interest).
      */
     public GeoSector getSelectedSector();
-    
+
     /**
      * Gets the editor for the select; possibly for clearing or editing.
-     * 
+     *
      * @return the editor for this selector (may be null)
      */
     public SectorEditor getSectorEditor();

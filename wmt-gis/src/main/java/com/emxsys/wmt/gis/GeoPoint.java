@@ -35,82 +35,61 @@ import com.emxsys.wmt.gis.api.Part;
 import com.emxsys.wmt.gis.api.Point;
 import java.util.Iterator;
 
-
 /**
  * A GIS 3D Geographic Point.
  *
  * @author Bruce Schubert
  * @version $Id: GeoPoint.java 528 2013-04-18 15:04:46Z bdschubert $
  */
-public class GeoPoint extends AbstractGeometry implements Point
-{
+public class GeoPoint extends AbstractGeometry implements Point {
+
     private GeoCoord3D position;
     private GeoSector extents;
     private GeoPositionPart part;
 
-
-    public GeoPoint()
-    {
+    public GeoPoint() {
         this(GeoCoord3D.INVALID_POSITION);
     }
 
-
-    public GeoPoint(GeoCoord3D position)
-    {
+    public GeoPoint(GeoCoord3D position) {
         setPosition(position);
     }
 
-
-    public final void setPosition(GeoCoord3D position)
-    {
+    public final void setPosition(GeoCoord3D position) {
         this.position = position;
         this.extents = new GeoSector(position, position);
         this.part = new GeoPositionPart(position);
     }
 
-
     @Override
-    public GeoCoord3D getPosition()
-    {
+    public GeoCoord3D getPosition() {
         return position;
     }
 
-
     @Override
-    public Iterable<Part> getParts()
-    {
-        return new Iterable<Part>()
-        {
+    public Iterable<Part> getParts() {
+        return new Iterable<Part>() {
             @Override
-            public Iterator<Part> iterator()
-            {
-                return new Iterator<Part>()
-                {
+            public Iterator<Part> iterator() {
+                return new Iterator<Part>() {
                     private int index = 0;
 
-
                     @Override
-                    public boolean hasNext()
-                    {
+                    public boolean hasNext() {
                         return index == 0;
                     }
 
-
                     @Override
-                    public Part next()
-                    {
-                        if (index == 0)
-                        {
+                    public Part next() {
+                        if (index == 0) {
                             ++index;
                             return part;
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
 
-
                     @Override
-                    public void remove()
-                    {
+                    public void remove() {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
                 };
@@ -118,51 +97,38 @@ public class GeoPoint extends AbstractGeometry implements Point
         };
     }
 
-
     @Override
-    public int getNumParts()
-    {
+    public int getNumParts() {
         return 1;
     }
 
-
     @Override
-    public int getNumPoints()
-    {
+    public int getNumPoints() {
         return part.getNumPoints();
     }
 
-
     @Override
-    public Box getExtents()
-    {
+    public Box getExtents() {
         return this.extents;
     }
 
-
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 5;
         hash = 67 * hash + (this.position != null ? this.position.hashCode() : 0);
         return hash;
     }
 
-
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final GeoPoint other = (GeoPoint) obj;
-        if (this.position != other.position && (this.position == null || !this.position.equals(other.position)))
-        {
+        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
             return false;
         }
         return true;

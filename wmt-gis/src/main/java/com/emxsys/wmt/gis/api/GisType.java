@@ -35,14 +35,13 @@ import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;
 
-
 /**
  * This utility class provides easy access to common Real types used in the GIS API.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class GisType
-{
+public class GisType {
+
     /**
      * Distance in meters - RealType: <b>distance:m</b>.
      */
@@ -88,15 +87,13 @@ public class GisType
      */
     public final static RealTupleType TERRAIN;
 
-
     /**
      * RealType initializer
      */
-    static
-    {
+    static {
         // Distance types
         DISTANCE = RealType.getRealType("distance:m", CommonUnit.meter, null);
-        
+
         // Area types
         AREA = RealType.getRealType("area:ha", Units.getUnit("hectare"), null); // 10000 m2 (100m x 100m)
 
@@ -113,27 +110,20 @@ public class GisType
         SLOPE = RealType.getRealType("slope:deg", CommonUnit.degree, null);
         ELEVATION = RealType.getRealType("elevation:m", CommonUnit.meter, null);
 
-
         // Tuple types
-
         // Create RealTupleTypes from arrays (the Reals utility class will catch exceptions)        
-        LATLON = Reals.newRealTupleType(new RealType[]
-        {
+        LATLON = Reals.newRealTupleType(new RealType[]{
             LAT, LON
         });
-        LATLONALT = Reals.newRealTupleType(new RealType[]
-        {
+        LATLONALT = Reals.newRealTupleType(new RealType[]{
             LAT, LON, ALT
         });
         TERRAIN = Reals.newRealTupleType(
-            new RealType[]
-        {
-            ASPECT, SLOPE, ELEVATION
-        });
+                new RealType[]{
+                    ASPECT, SLOPE, ELEVATION
+                });
     }
 
-
-    private GisType()
-    {
+    private GisType() {
     }
 }

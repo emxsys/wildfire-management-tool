@@ -34,43 +34,36 @@ import java.beans.PropertyChangeListener;
 
 /**
  * This interface defines the capability for interactively selecting a geographic region.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: SectorEditor.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface SectorEditor
-{
+public interface SectorEditor {
 
     /**
      * Enables the interactive sector selector.
      */
     void enableSectorSelector();
 
-
-
     /**
      * Disables the interactive sector selector.
      */
     void disableSectorSelector();
 
-
-
     /**
      * Sets the extents of the sector to be edited.
-     * @param sector  the new extents to be edited.
+     *
+     * @param sector the new extents to be edited.
      */
     void setSector(GeoSector sector);
-    
-    
+
     /**
-     * Add a property change listener to receive sector selection events changes as they occur. 
+     * Add a property change listener to receive sector selection events changes as they occur.
      */
     void addSectorPropertyChangeListener(PropertyChangeListener pcl);
 
-
-
     /**
-     * Remove the property change listener for sector property  events.
+     * Remove the property change listener for sector property events.
      */
     void removeSectorPropertyChangeListener(PropertyChangeListener pcl);
 }

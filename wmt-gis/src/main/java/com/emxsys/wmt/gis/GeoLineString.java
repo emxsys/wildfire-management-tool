@@ -38,89 +38,66 @@ import java.util.Iterator;
 import java.util.List;
 import visad.Real;
 
-
 /**
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public class GeoLineString extends AbstractGeometry implements LineString
-{
+public class GeoLineString extends AbstractGeometry implements LineString {
+
     protected GeoSector extents;
     protected GeoPart part;
     private Real length;
 
-
-    public GeoLineString()
-    {
+    public GeoLineString() {
         this.part = new GeoPart();
         this.extents = new GeoSector();
     }
 
-
-    public GeoLineString(List<GeoCoord3D> coords)
-    {
+    public GeoLineString(List<GeoCoord3D> coords) {
         this.part = new GeoPart(coords);
         this.extents = new GeoSector(this);
     }
 
-
     @Override
-    public Box getExtents()
-    {
+    public Box getExtents() {
         return this.extents;
     }
 
-
     @Override
-    public int getNumPoints()
-    {
+    public int getNumPoints() {
         return this.part.getNumPoints();
     }
 
-
     @Override
-    public int getNumParts()
-    {
+    public int getNumParts() {
         return 1;
     }
 
-
     @Override
-    public Iterable<Part> getParts()
-    {
-        return new Iterable<Part>()
-        {
+    public Iterable<Part> getParts() {
+        return new Iterable<Part>() {
             @Override
-            public Iterator<Part> iterator()
-            {
-                return new Iterator<Part>()
-                {
+            public Iterator<Part> iterator() {
+                return new Iterator<Part>() {
                     private int index = 0;
 
-
                     @Override
-                    public boolean hasNext()
-                    {
+                    public boolean hasNext() {
                         return index == 0;
                     }
 
-
                     @Override
-                    public Part next()
-                    {
-                        if (index == 0)
-                        {
+                    public Part next() {
+                        if (index == 0) {
                             ++index;
                             return part;
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
 
-
                     @Override
-                    public void remove()
-                    {
+                    public void remove() {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
                 };
@@ -128,31 +105,25 @@ public class GeoLineString extends AbstractGeometry implements LineString
         };
     }
 
-
     @Override
-    public Real getLength()
-    {
-        if (this.length == null)
-        {
+    public Real getLength() {
+        if (this.length == null) {
             double km = 0;
             // Compute combined length of all segments
-            for (int i = 0, j = 1; j < part.getNumPoints(); i++, j++)
-            {
+            for (int i = 0, j = 1; j < part.getNumPoints(); i++, j++) {
                 GeoCoord3D coord1 = part.coords.get(i);
                 GeoCoord3D coord2 = part.coords.get(j);
                 km += ConversionUtility.LatLonToDistance(
-                    (float) coord1.getLatitudeDegrees(), (float) coord1.getLongitudeDegrees(),
-                    (float) coord2.getLatitudeDegrees(), (float) coord2.getLongitudeDegrees());
+                        (float) coord1.getLatitudeDegrees(), (float) coord1.getLongitudeDegrees(),
+                        (float) coord2.getLatitudeDegrees(), (float) coord2.getLongitudeDegrees());
             }
             this.length = new Real(GisType.DISTANCE, km * 1000);
         }
         return this.length;
     }
 
-
     @Override
-    public double getLengthMeters()
-    {
+    public double getLengthMeters() {
         return getLength().getValue();
     }
 }

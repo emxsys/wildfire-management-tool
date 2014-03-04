@@ -37,135 +37,110 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
-
 @Messages(
-{
-    "err.marker.null=Marker argument cannot be null.",
-    "err.markers.null=Markers collection cannot be null.",
-    "# {0} - marker type",
-    "err.marker.incompatible=The marker type is incompatable [{0}]. The marker was not added.",
-    "# {0} - marker id",
-    "err.marker.already.exists=The marker ID ({0}) already exists.",
-    "# {0} - marker id",
-    "err.marker.renderer.not.found=A renderer for the marker was not found. The marker {0} will not be displayed.",
-    "# {0} - marker id",
-    "info.adding.marker.to.renderer=Adding the {0} marker to a renderer.",
-    "# {0} - marker id",
-    "info.removing.marker.from.renderer=Removing the {0} marker from the renderer."
-})
+        {
+            "err.marker.null=Marker argument cannot be null.",
+            "err.markers.null=Markers collection cannot be null.",
+            "# {0} - marker type",
+            "err.marker.incompatible=The marker type is incompatable [{0}]. The marker was not added.",
+            "# {0} - marker id",
+            "err.marker.already.exists=The marker ID ({0}) already exists.",
+            "# {0} - marker id",
+            "err.marker.renderer.not.found=A renderer for the marker was not found. The marker {0} will not be displayed.",
+            "# {0} - marker id",
+            "info.adding.marker.to.renderer=Adding the {0} marker to a renderer.",
+            "# {0} - marker id",
+            "info.removing.marker.from.renderer=Removing the {0} marker from the renderer."
+        })
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: MarkerCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
-public class MarkerCatalog extends EntityCatalog<Marker>
-{
+public class MarkerCatalog extends EntityCatalog<Marker> {
 
     private FileObject folder;
     private static final Logger logger = Logger.getLogger(MarkerCatalog.class.getName());
-
 
     /**
      * Constructs a EntityCatalog who's contents are backed by a folder.
      *
      * @param folder the folder where Markers are saved
      */
-    public MarkerCatalog(FileObject folder)
-    {
+    public MarkerCatalog(FileObject folder) {
         setFolder(folder);
     }
-
 
     /**
      * @return the folder who's contents this catalog represents.
      */
-    public FileObject getFolder()
-    {
+    public FileObject getFolder() {
         return folder;
     }
-
 
     /**
      * Sets the folder that this catalog represents.
      *
      * @param folder the folder where Markers are saved.
      */
-    private void setFolder(FileObject folder)
-    {
-        if (folder != null && !folder.isFolder())
-        {
+    private void setFolder(FileObject folder) {
+        if (folder != null && !folder.isFolder()) {
             throw new IllegalArgumentException("setFolder: " + folder.getName() + " is not a folder.");
         }
         this.folder = folder;
     }
 
-
     @Override
-    protected void doAddItem(Marker item)
-    {
+    protected void doAddItem(Marker item) {
         super.doAddItem(item);
         addMarkerToRenderer(item);
     }
 
-
-    protected void addMarkerToRenderer(Marker marker)
-    {
+    protected void addMarkerToRenderer(Marker marker) {
         // Get the renderer (map layer) associated with Markers
         Marker.Renderer renderer = getMarkerRenderer();
-        if (renderer != null)
-        {
+        if (renderer != null) {
             logger.fine(Bundle.info_adding_marker_to_renderer(marker.getName()));
             renderer.addMarker(marker);
         }
-        else
-        {
+        else {
             logger.warning(Bundle.err_marker_renderer_not_found(marker.getName()));
         }
     }
 
-
     @Override
-    protected void doRemoveItem(Marker item)
-    {
+    protected void doRemoveItem(Marker item) {
         super.doRemoveItem(item);
 
         // Remove from the renderer
         Marker.Renderer renderer = getMarkerRenderer();
-        if (renderer != null)
-        {
+        if (renderer != null) {
             logger.fine(Bundle.info_removing_marker_from_renderer(item.getName()));
             renderer.removeMarker(item);
         }
     }
 
-
     /**
      * Dispose of this catalog. Release listeners, release renderables.
      */
     @Override
-    public void dispose()
-    {
+    public void dispose() {
         Renderer markerRenderer = getMarkerRenderer();
-        if (markerRenderer != null)
-        {
+        if (markerRenderer != null) {
             // The renderer may force the removal of the item from the catalog, so copy
             // the markers to array that won't be modified by a subsequent nested call 
             // to removeItem invoked the the Renderer
             Marker[] array = this.getItems().toArray(new Marker[0]);
-            for (Marker marker : array)
-            {
+            for (Marker marker : array) {
                 markerRenderer.removeMarker(marker);
             }
         }
         super.dispose();
     }
 
-
-    private Marker.Renderer getMarkerRenderer()
-    {
+    private Marker.Renderer getMarkerRenderer() {
         GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
-        if (viewer != null)
-        {
+        if (viewer != null) {
             return viewer.getLookup().lookup(Marker.Renderer.class);
         }
         return null;

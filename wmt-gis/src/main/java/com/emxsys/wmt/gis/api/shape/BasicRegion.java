@@ -40,47 +40,36 @@ import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import visad.Real;
 
-
 /**
  * BasicRegion implements the Emxsys {@link Region} GIS interface.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class BasicRegion extends AbstractShape implements Region
-{
+public class BasicRegion extends AbstractShape implements Region {
 
     protected GeoSector sector;
     private static final Logger LOG = Logger.getLogger(BasicRegion.class.getName());
 
-
-    public BasicRegion(GeoSector sector)
-    {
+    public BasicRegion(GeoSector sector) {
         setSector(sector);
     }
 
-
     @Override
-    public void setPosition(Coord3D position)
-    {
+    public void setPosition(Coord3D position) {
         // Just updating the current sector -- its not a new sector, thus no sector event ala setSector
         sector.moveTo(position);
         super.setPosition(position); // fires a position changed event
     }
 
-
     @Override
-    public GeoSector getSector()
-    {
+    public GeoSector getSector() {
         return this.sector;
     }
 
-
     @Override
-    public void setSector(GeoSector sector)
-    {
+    public void setSector(GeoSector sector) {
         GeoSector oldSector = getSector();
-        try
-        {
+        try {
             this.sector = sector;
             super.pcs.firePropertyChange(PROP_REGION_SECTOR, oldSector, this.sector);
 
@@ -89,19 +78,15 @@ public class BasicRegion extends AbstractShape implements Region
             GeoCoord3D newPos = new GeoCoord3D(center.getLatitude(), center.getLongitude(), altitude);
             super.setPosition(newPos);  // fires a position changed event
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
-
 
 }

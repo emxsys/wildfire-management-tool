@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.gis.api;
 
-
 /**
  * Spatial representations per ESRI ArcGIS 9.2 Help Text.
  * http://webhelp.esri.com/arcgisdesktop/9.2/index.cfm?TopicName=Feature_class_basics
@@ -68,8 +67,8 @@ package com.emxsys.wmt.gis.api;
  * @author Bruce Schubert
  * @version $Id: FeatureClass.java 527 2013-04-18 15:01:15Z bdschubert $
  */
-public enum FeatureClass
-{
+public enum FeatureClass {
+
     /**
      * Features that are too small to represent as lines or polygons as well as point locations
      * (such as a GPS observations)

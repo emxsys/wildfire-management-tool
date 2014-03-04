@@ -37,86 +37,59 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.logging.Logger;
 
-
 /**
  * AbstractShape implements the Emxsys {@link Shape} GIS interface.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class AbstractShape implements Shape
-{
+public abstract class AbstractShape implements Shape {
 
     protected String name;
     protected GeoCoord3D position;
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private static final Logger LOG = Logger.getLogger(AbstractShape.class.getName());
 
-
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-
-
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         String oldName = getName();
         this.name = name;
         pcs.firePropertyChange(PROP_SHAPE_NAME, oldName, this.name);
     }
 
-
-
     @Override
-    public Coord3D getPosition()
-    {
+    public Coord3D getPosition() {
         return this.position;
     }
 
-
-
     @Override
-    public void setPosition(Coord3D location)
-    {
+    public void setPosition(Coord3D location) {
         Coord3D oldLocation = getPosition();
-        try
-        {
+        try {
             this.position = new GeoCoord3D(location);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             this.position = GeoCoord3D.INVALID_POSITION;
         }
         pcs.firePropertyChange(PROP_SHAPE_POSITION, oldLocation, this.position);
     }
 
-
-
-
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
-
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 }

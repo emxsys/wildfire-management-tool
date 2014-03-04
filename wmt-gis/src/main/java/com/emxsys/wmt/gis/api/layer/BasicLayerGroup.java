@@ -32,7 +32,6 @@ package com.emxsys.wmt.gis.api.layer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * BasicLayerGroup defines some common roles of a GisLayer. Roles may be used for the general
  * ordering layers within the viewer.
@@ -40,8 +39,8 @@ import java.util.logging.Logger;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicLayerGroup.java 769 2013-06-20 18:11:51Z bdschubert $
  */
-public enum BasicLayerGroup implements LayerGroup
-{
+public enum BasicLayerGroup implements LayerGroup {
+
     /**
      * Low resolution background layers for the globe, plus atmosphere and stars.
      */
@@ -76,7 +75,6 @@ public enum BasicLayerGroup implements LayerGroup
     Widget;
     private static final Logger logger = Logger.getLogger(BasicLayerGroup.class.getName());
 
-
     /**
      * Returns the BaslicLayerRole who's name matches the given text. Used to create a role from a
      * name in the layer.xml file.
@@ -84,14 +82,10 @@ public enum BasicLayerGroup implements LayerGroup
      * @param text used to match the name of a BasicLayerGroup enum.
      * @return a role matching a predefined enum; returns Undefined if no match.
      */
-    public static BasicLayerGroup fromString(String text)
-    {
-        if (text != null)
-        {
-            for (BasicLayerGroup group : values())
-            {
-                if (text.equalsIgnoreCase(group.toString()))
-                {
+    public static BasicLayerGroup fromString(String text) {
+        if (text != null) {
+            for (BasicLayerGroup group : values()) {
+                if (text.equalsIgnoreCase(group.toString())) {
                     return group;
                 }
             }
@@ -100,18 +94,14 @@ public enum BasicLayerGroup implements LayerGroup
         return Undefined;
     }
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return toString();
     }
 
-
     @Override
-    public int getIndex()
-    {
+    public int getIndex() {
         return ordinal();
     }
-    
+
 }

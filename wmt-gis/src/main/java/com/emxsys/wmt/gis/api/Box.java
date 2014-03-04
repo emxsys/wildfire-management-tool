@@ -31,31 +31,24 @@ package com.emxsys.wmt.gis.api;
 
 import visad.Real;
 
-
 /**
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public interface Box extends Geometry
-{
-    Coord2D getNortheast();
+public interface Box extends Geometry {
 
+    Coord2D getNortheast();
 
     Coord2D getSouthwest();
 
-
     Coord2D getCenter();
-
 
     Real getWidth();
 
-
     Real getHeight();
 
-
     boolean intersects(Box other);
-
 
     boolean contains(Box other);
 
@@ -67,7 +60,6 @@ public interface Box extends Geometry
      * @return true if a data element is missing.
      */
     boolean isMissing();
-
 
     /**
      * See if this geographic box is equal to the object in question. Two boxes are equal if they

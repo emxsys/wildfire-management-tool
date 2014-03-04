@@ -41,15 +41,13 @@ import java.util.Random;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
 
-
 /**
  *
  * @see com.emxsys.worldwind.symbology.BasicGraphic
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: AbstractGraphic.java 543 2013-04-18 20:13:07Z bdschubert $
  */
-public abstract class AbstractGraphic implements Graphic
-{
+public abstract class AbstractGraphic implements Graphic {
 
     private long uniqueID;
     private String name;
@@ -61,127 +59,93 @@ public abstract class AbstractGraphic implements Graphic
     protected PropertyChangeSupport pcs;
     private static Random random = new Random();
     private static final Logger LOG = Logger.getLogger(AbstractSymbol.class.getName());
-    
 
-
-    public AbstractGraphic()
-    {
+    public AbstractGraphic() {
         this(random.nextLong());
     }
 
-
-    public AbstractGraphic(long uniqueID)
-    {
+    public AbstractGraphic(long uniqueID) {
         this.uniqueID = uniqueID;
         this.pcs = new PropertyChangeSupport(this);
     }
 
-
     @Override
     abstract public Lookup getLookup();
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         String oldName = getName();
         this.name = name;
         pcs.firePropertyChange(PROP_GRAPHIC_NAME, oldName, this.name);
     }
 
-
     @Override
-    public long getUniqueID()
-    {
+    public long getUniqueID() {
         return uniqueID;
     }
 
-
     @Override
-    public void setUniqueID(long uniqueID)
-    {
+    public void setUniqueID(long uniqueID) {
         long oldUniqueID = getUniqueID();
         this.uniqueID = uniqueID;
         pcs.firePropertyChange(PROP_GRAPHIC_UNIQUE_ID, oldUniqueID, this.uniqueID);
     }
 
-
     @Override
-    public Coord3D getPosition()
-    {
+    public Coord3D getPosition() {
         return this.referencePosition;
     }
 
-
     @Override
-    public void setPosition(Coord3D location)
-    {
+    public void setPosition(Coord3D location) {
         Coord3D oldLocation = getPosition();
-        try
-        {
+        try {
             this.referencePosition = new GeoCoord3D(location);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             this.referencePosition = GeoCoord3D.INVALID_POSITION;
         }
         pcs.firePropertyChange(PROP_GRAPHIC_POSITION, oldLocation, this.referencePosition);
     }
 
-
     @Override
     abstract public Image getImage();
 
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 
-
     @Override
-    public Graphic.Renderer getRenderer()
-    {
-        if (renderer == null)
-        {
+    public Graphic.Renderer getRenderer() {
+        if (renderer == null) {
             GisViewer activeViewer = Viewers.getPrimaryViewer();
-            if (activeViewer != null)
-            {
+            if (activeViewer != null) {
                 renderer = activeViewer.getLookup().lookup(Graphic.Renderer.class);
             }
         }
         return renderer;
     }
 
-
     @Override
-    public void delete()
-    {
+    public void delete() {
         // As a matter of practice, prevent multiple deletes 
-        if (!isDeleted())
-        {
+        if (!isDeleted()) {
             boolean oldDeleted = this.deleted;
             this.deleted = true;
             pcs.firePropertyChange(PROP_GRAPHIC_DELETED, oldDeleted, this.deleted);
@@ -189,42 +153,32 @@ public abstract class AbstractGraphic implements Graphic
         }
     }
 
-
     @Override
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         return this.deleted;
     }
 
-
     @Override
-    public void setSelected(boolean selected)
-    {
+    public void setSelected(boolean selected) {
         boolean oldSelected = this.selected;
         this.selected = selected;
         pcs.firePropertyChange(PROP_GRAPHIC_SELECTED, oldSelected, this.selected);
     }
 
-
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.selected;
     }
 
-
     @Override
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         boolean oldVisible = this.visible;
         this.visible = true;
         pcs.firePropertyChange(PROP_GRAPHIC_VISIBLE, oldVisible, this.visible);
     }
 
-
     @Override
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return this.visible;
     }
 }

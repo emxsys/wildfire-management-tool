@@ -33,24 +33,17 @@ import com.emxsys.wmt.visad.Reals;
 import visad.Real;
 import visad.RealType;
 
-
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class Latitude
-{
+public class Latitude {
 
-    public static Real fromDegrees(double latitude)
-    {
+    public static Real fromDegrees(double latitude) {
         return new Real(RealType.Latitude, latitude);
     }
 
-
-
-    public static Real fromReal(Real latitude)
-    {
+    public static Real fromReal(Real latitude) {
         return Reals.convertTo(RealType.Latitude, latitude);
     }
 }

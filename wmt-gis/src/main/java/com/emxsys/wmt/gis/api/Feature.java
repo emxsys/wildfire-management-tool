@@ -37,15 +37,14 @@ import org.openide.util.Lookup;
  * @author Bruce Schubert
  * @version $Id: Feature.java 527 2013-04-18 15:01:15Z bdschubert $
  */
-public interface Feature extends Entity, Lookup.Provider
-{
+public interface Feature extends Entity, Lookup.Provider {
+
     /**
      * Gets the feature class. I.e., what does this geometry represent?
      *
      * @return spatial representation
      */
     FeatureClass getFeatureClass();
-
 
     /**
      * Gets the geometry for this feature.

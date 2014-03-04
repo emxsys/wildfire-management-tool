@@ -29,15 +29,13 @@
  */
 package com.emxsys.wmt.gis.api;
 
-
 /**
  * This interface marks a disposable object and provides a mechanism for releasing resources.
  *
  * @author Bruce Schubert
  * @version $Id: Disposable.java 556 2013-04-25 22:58:05Z bdschubert $
  */
-public interface Disposable
-{
+public interface Disposable {
 
     /**
      * Releases resources associated with this object.

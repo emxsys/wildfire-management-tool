@@ -40,7 +40,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.Random;
 import java.util.logging.Logger;
 
-
 /**
  * AbstractSymbol implements the Emxsys {@link Symbol} GIS interface, which is backed by a WorldWind
  * {@link MilStd2525TacticalSymbol} implementation within the WorldWind module.
@@ -49,8 +48,7 @@ import java.util.logging.Logger;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class AbstractSymbol implements Symbol
-{
+public abstract class AbstractSymbol implements Symbol {
 
     private long uniqueID;
     protected String name;
@@ -63,158 +61,118 @@ public abstract class AbstractSymbol implements Symbol
     private static Random random = new Random();
     private static final Logger LOG = Logger.getLogger(AbstractSymbol.class.getName());
 
-
-    public AbstractSymbol()
-    {
+    public AbstractSymbol() {
         this.uniqueID = random.nextLong();
     }
 
-
-    public AbstractSymbol(long uniqueID)
-    {
+    public AbstractSymbol(long uniqueID) {
         this.uniqueID = uniqueID;
     }
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         String oldName = getName();
         this.name = name;
         pcs.firePropertyChange(PROP_SYMBOL_NAME, oldName, this.name);
     }
 
-
     @Override
-    public long getUniqueID()
-    {
+    public long getUniqueID() {
         return uniqueID;
     }
 
-
     @Override
-    public void setUniqueID(long uniqueID)
-    {
+    public void setUniqueID(long uniqueID) {
         long oldUniqueID = getUniqueID();
         this.uniqueID = uniqueID;
         pcs.firePropertyChange(PROP_SYMBOL_UNIQUE_ID, oldUniqueID, this.uniqueID);
     }
 
-
     @Override
-    public Coord3D getPosition()
-    {
+    public Coord3D getPosition() {
         return this.position;
     }
 
-
     @Override
-    public void setPosition(Coord3D location)
-    {
+    public void setPosition(Coord3D location) {
         Coord3D oldLocation = getPosition();
-        try
-        {
+        try {
             this.position = new GeoCoord3D(location);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             this.position = GeoCoord3D.INVALID_POSITION;
         }
         pcs.firePropertyChange(PROP_SYMBOL_POSITION, oldLocation, this.position);
     }
 
-
     @Override
     abstract public Image getImage();
 
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 
-
     @Override
-    public Symbol.Renderer getRenderer()
-    {
-        if (renderer == null)
-        {
+    public Symbol.Renderer getRenderer() {
+        if (renderer == null) {
             GisViewer activeViewer = Viewers.getPrimaryViewer();
-            if (activeViewer != null)
-            {
+            if (activeViewer != null) {
                 renderer = activeViewer.getLookup().lookup(Symbol.Renderer.class);
             }
         }
         return renderer;
     }
 
-
     @Override
-    public void delete()
-    {
+    public void delete() {
         boolean oldDeleted = this.deleted;
         this.deleted = true;
         pcs.firePropertyChange(PROP_SYMBOL_DELETED, oldDeleted, this.deleted);
     }
 
-
     @Override
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         return this.deleted;
     }
-    
+
     @Override
-    public void setSelected(boolean selected)
-    {
+    public void setSelected(boolean selected) {
         boolean oldSelected = this.selected;
         this.selected = selected;
         pcs.firePropertyChange(PROP_SYMBOL_SELECTED, oldSelected, this.selected);
     }
 
-
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.selected;
     }
 
-
     @Override
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         boolean oldVisible = this.visible;
         this.visible = true;
         pcs.firePropertyChange(PROP_SYMBOL_VISIBLE, oldVisible, this.visible);
     }
 
-
     @Override
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return this.visible;
     }
-    
+
 }

@@ -32,14 +32,12 @@ package com.emxsys.wmt.gis.api.scene;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
-
 /**
  *
  * @author Bruce
  */
-public interface SceneCatalog
-{
-    
+public interface SceneCatalog {
+
     public static final String PROP_DEFAULT_SCENE = "PROP_DEFAULT_SCENE";
     public static final String PROP_SCENES_ADDED = "PROP_SCENES_ADDED";
     public static final String PROP_SCENES_CLEARED = "PROP_SCENES_CLEARED";
@@ -49,31 +47,17 @@ public interface SceneCatalog
 
     void addScene(Scene scene);
 
-
-
     void removeScene(Scene scene);
-
-
 
     Scene getDefaultScene();
 
-
-
     void setDefaultScene(Scene scene);
-
-
 
     Collection<? extends Scene> getScenes();
 
-
-
     void setScenes(Collection<? extends Scene> scenes);
 
-
-
     public void addPropertyChangeListener(PropertyChangeListener listener);
-
-
 
     public void removePropertyChangeListener(PropertyChangeListener listener);
 }

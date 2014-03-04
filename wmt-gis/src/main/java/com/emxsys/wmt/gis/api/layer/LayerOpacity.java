@@ -29,21 +29,18 @@
  */
 package com.emxsys.wmt.gis.api.layer;
 
-
 /**
- * This capability provides the ability to adjust a layer's opacity within a viewer.  An instance of
+ * This capability provides the ability to adjust a layer's opacity within a viewer. An instance of
  * this interface should be placed in the GisLayer's lookup if it supports this capability.
  *
  * @author Bruce Schubert
  * @version $Id: LayerOpacity.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public interface LayerOpacity
-{
+public interface LayerOpacity {
 
     public static final double TRANSPARENT = 0.0;
     public static final double TRANSLUCENT = 0.50;
     public static final double OPAQUE = 1.0;
-
 
     /**
      * Get the opacity level.
@@ -51,7 +48,6 @@ public interface LayerOpacity
      * @return a value between 0.0 and 1.0 where 1.0 is opaque and 0.0 is transparent.
      */
     double getOpacity();
-
 
     /**
      * Set the opacity level.

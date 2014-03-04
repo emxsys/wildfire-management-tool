@@ -31,21 +31,19 @@ package com.emxsys.wmt.gis.api;
 
 import visad.Real;
 
-
 /**
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public interface LineString extends Geometry
-{
+public interface LineString extends Geometry {
+
     /**
      * Gets the cumulative length of the LineString segments.
      *
      * @return the total length
      */
     Real getLength();
-
 
     /**
      * Gets the cumulative length of the LineString segments in meters.

@@ -38,46 +38,36 @@ import visad.VisADException;
 import visad.data.units.ParseException;
 import visad.data.units.Parser;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class Altitude
-{
+public class Altitude {
+
     /**
      * Zero meters.
      */
     public static final Real ZERO = fromMeters(0.0);
     private static Unit uomFeet;
 
-
-    static Real fromMeters(double meters)
-    {
+    static Real fromMeters(double meters) {
         return new Real(RealType.Altitude, meters);
     }
 
-
-    static Real fromFeet(double feet)
-    {
-        try
-        {
-            if (uomFeet == null)
-            {
+    static Real fromFeet(double feet) {
+        try {
+            if (uomFeet == null) {
                 uomFeet = Parser.parse("foot");
             }
             return fromReal(new Real(RealType.Generic, feet, uomFeet));
         }
-        catch (ParseException | VisADException ex)
-        {
+        catch (ParseException | VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
         return new Real(RealType.Altitude);
     }
 
-
-    static Real fromReal(Real altitude)
-    {
+    static Real fromReal(Real altitude) {
         return Reals.convertTo(RealType.Altitude, altitude);
     }
 }

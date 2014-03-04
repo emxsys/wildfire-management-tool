@@ -29,14 +29,12 @@
  */
 package com.emxsys.wmt.gis.api;
 
-
 /**
  * An interface for simple GIS parts.
  *
  * @author Bruce Schubert
  */
-public interface Part
-{
+public interface Part {
 
     /**
      * Get number of dimensions used in this part.
@@ -45,14 +43,12 @@ public interface Part
      */
     public int getNumDimensions();
 
-
     /**
      * Get number of points in this part.
      *
      * @return number of points in this part.
      */
     public int getNumPoints();
-
 
     /**
      * Returns an iterator over this part's points as double[] coordinate arrays.
@@ -61,7 +57,6 @@ public interface Part
      */
     public Iterable<double[]> getPoints();
 
-
     /**
      * Gets an array of the x values.
      *
@@ -69,14 +64,12 @@ public interface Part
      */
     public double[] getX();
 
-
     /**
      * Gets an array of the y values.
      *
      * @return array of y
      */
     public double[] getY();
-
 
     /**
      * Gets an array of the z values.

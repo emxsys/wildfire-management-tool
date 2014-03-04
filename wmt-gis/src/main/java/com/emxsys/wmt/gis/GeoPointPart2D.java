@@ -34,7 +34,6 @@ import com.emxsys.wmt.gis.api.Feature;
 import com.emxsys.wmt.gis.api.Part;
 import java.util.Iterator;
 
-
 /**
  * GeoPointPart2D allows a GeoCoord2D to represent a Part in a point shape.
  *
@@ -42,43 +41,31 @@ import java.util.Iterator;
  * @version $Id: GeoPointPart2D.java 528 2013-04-18 15:04:46Z bdschubert $
  * @see Feature
  */
-public class GeoPointPart2D implements Part
-{
+public class GeoPointPart2D implements Part {
 
     private GeoCoord2D point;
 
-
-    public GeoPointPart2D()
-    {
+    public GeoPointPart2D() {
         this.point = GeoCoord2D.INVALID_POINT;
     }
 
-
-    public GeoPointPart2D(GeoCoord2D point)
-    {
+    public GeoPointPart2D(GeoCoord2D point) {
         this.point = point;
     }
 
-
-    public void setPoint(GeoCoord2D point)
-    {
+    public void setPoint(GeoCoord2D point) {
         this.point = point;
     }
-
 
     @Override
-    public int getNumDimensions()
-    {
+    public int getNumDimensions() {
         return 2;
     }
 
-
     @Override
-    public int getNumPoints()
-    {
+    public int getNumPoints() {
         return 1;
     }
-
 
     /**
      * Returns an iterator on the coordinates. A call to next() will return an array representing
@@ -87,40 +74,29 @@ public class GeoPointPart2D implements Part
      * @return an iterator on the point
      */
     @Override
-    public Iterable<double[]> getPoints()
-    {
-        return new Iterable<double[]>()
-        {
+    public Iterable<double[]> getPoints() {
+        return new Iterable<double[]>() {
             @Override
-            public Iterator<double[]> iterator()
-            {
-                return new Iterator<double[]>()
-                {
+            public Iterator<double[]> iterator() {
+                return new Iterator<double[]>() {
                     private int index = 0;
 
-
                     @Override
-                    public boolean hasNext()
-                    {
+                    public boolean hasNext() {
                         return index == 0;
                     }
 
-
                     @Override
-                    public double[] next()
-                    {
-                        if (index == 0)
-                        {
+                    public double[] next() {
+                        if (index == 0) {
                             ++index;
                             return point.getValues();
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
 
-
                     @Override
-                    public void remove()
-                    {
+                    public void remove() {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
                 };
@@ -128,34 +104,25 @@ public class GeoPointPart2D implements Part
         };
     }
 
-
     @Override
-    public double[] getX()
-    {
-        return new double[]
-            {
-                point.getLongitudeDegrees()
-            };
+    public double[] getX() {
+        return new double[]{
+            point.getLongitudeDegrees()
+        };
     }
 
-
     @Override
-    public double[] getY()
-    {
-        return new double[]
-            {
-                point.getLatitudeDegrees()
-            };
+    public double[] getY() {
+        return new double[]{
+            point.getLatitudeDegrees()
+        };
     }
 
-
     @Override
-    public double[] getZ()
-    {
+    public double[] getZ() {
         //throw new UnsupportedOperationException("getZ() not supported. Only two dimensions.");
-        return new double[]
-            {
-                0.0
-            };
+        return new double[]{
+            0.0
+        };
     }
 }

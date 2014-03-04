@@ -39,14 +39,12 @@ import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 
-
 /**
  * The Symbol interface manages the placement and control of point-based icons.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Symbol extends Entity
-{
+public interface Symbol extends Entity {
 
     public static final String PROP_SYMBOL_NAME = "PROP_SYMBOL_NAME";
     public static final String PROP_SYMBOL_UNIQUE_ID = "PROP_SYMBOL_UNIQUE_ID";
@@ -54,7 +52,6 @@ public interface Symbol extends Entity
     public static final String PROP_SYMBOL_DELETED = "PROP_SYMBOL_DELETED";
     public static final String PROP_SYMBOL_SELECTED = "PROP_SYMBOL_SELECTED";
     public static final String PROP_SYMBOL_VISIBLE = "PROP_SYMBOL_VISIBLE";
-
 
     /**
      * Determines if this instance owns the supplied implementation object.
@@ -64,12 +61,10 @@ public interface Symbol extends Entity
      */
     boolean owns(Object impl);
 
-
     /**
      * @return the position of the symbol on the globe.
      */
     Coord3D getPosition();
-
 
     /**
      * Sets the geographic position of the symbol.
@@ -78,7 +73,6 @@ public interface Symbol extends Entity
      */
     void setPosition(Coord3D position);
 
-
     /**
      * Gets a representation of the symbol, which can be used in UI elements.
      *
@@ -86,18 +80,15 @@ public interface Symbol extends Entity
      */
     Image getImage();
 
-
     /**
      * Deletes this symbol from the globe.
      */
     void delete();
 
-
     /**
      * @return true if deleted.
      */
     boolean isDeleted();
-
 
     /**
      * Determines the if the symbol should be shown on the globe.
@@ -106,12 +97,10 @@ public interface Symbol extends Entity
      */
     void setVisible(boolean visible);
 
-
     /**
      * @return the visibility state;
      */
     boolean isVisible();
-
 
     /**
      * Places this symbol in the selected state. A selected symbol may be rendered differently to
@@ -121,12 +110,10 @@ public interface Symbol extends Entity
      */
     void setSelected(boolean selected);
 
-
     /**
      * @return the selected state
      */
     boolean isSelected();
-
 
     /**
      * Returns the Renderer associated with this Symbol.
@@ -135,14 +122,12 @@ public interface Symbol extends Entity
      */
     Symbol.Renderer getRenderer();
 
-
     /**
      * Attach this symbol to a Renderer
      *
      * @param renderer a Renderer (e.g., a map layer) that will render this symbol.
      */
     void attachToRenderer(Symbol.Renderer renderer);
-
 
     /**
      * Detach this symbol from a Renderer
@@ -151,13 +136,11 @@ public interface Symbol extends Entity
      */
     void detachFromRenderer(Symbol.Renderer renderer);
 
-
     /**
      * Gets the factory class used to create this symbol. The provider class may be stored in the
      * file representing this symbol.
      */
     Class<? extends Factory> getFactoryClass();
-
 
     /**
      * The Symbol.Renderer interface defines the methods used to manage add and remove Symbols to
@@ -165,12 +148,10 @@ public interface Symbol extends Entity
      *
      * @see GisLayer
      */
-    public interface Renderer
-    {
+    public interface Renderer {
 
         public static final String PROP_SYMBOL_ADDED = "PROP_SYMBOL_ADDED";
         public static final String PROP_SYMBOL_REMOVED = "PROP_SYMBOL_REMOVED";
-
 
         /**
          * Renderers should store the renderer implementation object(s) in the lookup.
@@ -179,14 +160,12 @@ public interface Symbol extends Entity
          */
         Lookup getLookup();
 
-
         /**
          * Adds a symbol to a GisLayer implementation.
          *
          * @param symbol symbol to add
          */
         void addSymbol(Symbol symbol);
-
 
         /**
          * Removes a symbol from the GisLayer implementation.
@@ -195,14 +174,12 @@ public interface Symbol extends Entity
          */
         void removeSymbol(Symbol symbol);
 
-
         /**
          * Adds a collection of symbols en masse the the GisLayer implementation
          *
          * @param symbols
          */
         void addSymbols(Collection<? extends Symbol> symbols);
-
 
         /**
          * Determines if the GisLayer implementation contains the symbol.
@@ -212,19 +189,15 @@ public interface Symbol extends Entity
          */
         boolean contains(Symbol symbol);
 
-
         void addPropertyChangeListener(PropertyChangeListener listener);
-
 
         void removePropertyChangeListener(PropertyChangeListener listener);
     }
 
-
     /**
      * The Factory interface defines factory methods for creating Symbols from XML.
      */
-    public interface Factory
-    {
+    public interface Factory {
 
         /**
          * Creates a Symbol instance.
@@ -232,7 +205,6 @@ public interface Symbol extends Entity
          * @return a new Symbol.
          */
         Symbol newSymbol();
-
 
         /**
          * Creates a DataObject representing the supplied Symbol in the specified folder.

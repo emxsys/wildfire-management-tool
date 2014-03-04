@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.gis.api.layer;
 
-
 /**
  * LayerType is a marker interface that defines the fundamental representation of the data in a
  * layer. Examples include Raster and Vector.
@@ -37,8 +36,8 @@ package com.emxsys.wmt.gis.api.layer;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: LayerType.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public interface LayerType
-{
+public interface LayerType {
+
     /**
      * Gets the name of the type.
      *

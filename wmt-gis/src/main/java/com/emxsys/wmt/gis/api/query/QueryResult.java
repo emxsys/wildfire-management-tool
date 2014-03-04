@@ -31,14 +31,12 @@ package com.emxsys.wmt.gis.api.query;
 
 import java.util.Collection;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: QueryResult.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface QueryResult<T>
-{
+public interface QueryResult<T> {
 
     Collection<T> getResults();
 }

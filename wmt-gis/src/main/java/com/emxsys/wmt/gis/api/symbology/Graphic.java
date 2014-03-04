@@ -42,7 +42,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 /**
  * The Graphic interface manages the placement and control of surface-base graphics. The Entity base
  * class makes this class compatible with a Catalog by providing the unique and named interfaces.
@@ -52,8 +51,7 @@ import org.w3c.dom.Node;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Graphic.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public interface Graphic extends Entity
-{
+public interface Graphic extends Entity {
 
     public static final String PROP_GRAPHIC_NAME = "PROP_GRAPHIC_NAME";
     public static final String PROP_GRAPHIC_UNIQUE_ID = "PROP_GRAPHIC_UNIQUE_ID";
@@ -61,7 +59,6 @@ public interface Graphic extends Entity
     public static final String PROP_GRAPHIC_DELETED = "PROP_GRAPHIC_DELETED";
     public static final String PROP_GRAPHIC_SELECTED = "PROP_GRAPHIC_SELECTED";
     public static final String PROP_GRAPHIC_VISIBLE = "PROP_GRAPHIC_VISIBLE";
-
 
     /**
      * Determines if this instance owns the supplied implementation object.
@@ -71,7 +68,6 @@ public interface Graphic extends Entity
      */
     boolean owns(Object impl);
 
-
     /**
      * The Graphic's implementation object(s) should be stored in the lookup.
      *
@@ -79,12 +75,10 @@ public interface Graphic extends Entity
      */
     Lookup getLookup();
 
-
     /**
      * @return the position of the symbol on the globe.
      */
     Coord3D getPosition();
-
 
     /**
      * Sets the geographic position of the symbol.
@@ -93,7 +87,6 @@ public interface Graphic extends Entity
      */
     void setPosition(Coord3D position);
 
-
     /**
      * Gets a representation of the symbol, which can be used in UI elements.
      *
@@ -101,18 +94,15 @@ public interface Graphic extends Entity
      */
     Image getImage();
 
-
     /**
      * Deletes this graphic from the globe.
      */
     void delete();
 
-
     /**
      * @return true if deleted.
      */
     boolean isDeleted();
-
 
     /**
      * Determines the if the graphic should be shown on the globe.
@@ -121,12 +111,10 @@ public interface Graphic extends Entity
      */
     void setVisible(boolean visible);
 
-
     /**
      * @return the visibility state;
      */
     boolean isVisible();
-
 
     /**
      * Places this graphic in the selected state. A selected graphic may be rendered differently to
@@ -136,18 +124,14 @@ public interface Graphic extends Entity
      */
     void setSelected(boolean selected);
 
-
     /**
      * @return the selected state
      */
     boolean isSelected();
 
-
     List<Coord3D> getPositions();
 
-
     void setPositions(List<Coord3D> position);
-
 
     /**
      * Returns the Renderer associated with this Symbol.
@@ -156,14 +140,12 @@ public interface Graphic extends Entity
      */
     Graphic.Renderer getRenderer();
 
-
     /**
      * Attach this symbol to a Renderer
      *
      * @param renderer a Renderer (e.g., a map layer) that will render this symbol.
      */
     void attachToRenderer(Graphic.Renderer renderer);
-
 
     /**
      * Detach this symbol from a Renderer
@@ -172,54 +154,41 @@ public interface Graphic extends Entity
      */
     void detachFromRenderer(Graphic.Renderer renderer);
 
-
     Node toXmlElement(Document doc, String tag);
-    
-    
+
     /**
-    * Gets the factory class used to create this symbol. The provider class may be stored in the
-    * file representing this symbol.
-    */
+     * Gets the factory class used to create this symbol. The provider class may be stored in the
+     * file representing this symbol.
+     */
     Class<? extends Factory> getFactoryClass();
-        
 
     /**
      * An interface for interacting with the layer that renders the graphic.
      */
-    public interface Renderer
-    {
+    public interface Renderer {
 
         public static final String PROP_GRAPHIC_ADDED = "PROP_GRAPHIC_ADDED";
         public static final String PROP_GRAPHIC_REMOVED = "PROP_GRAPHIC_REMOVED";
 
-
         void addGraphic(Graphic graphic);
-
 
         void removeGraphic(Graphic graphic);
 
-
         void addGraphics(Collection<? extends Graphic> graphics);
-
 
         boolean contains(Graphic graphic);
 
-
         void addPropertyChangeListener(PropertyChangeListener listener);
 
-
         void removePropertyChangeListener(PropertyChangeListener listener);
-
 
         public Lookup getLookup();
     }
 
-
     /**
      * Factory for creating new Graphic instances.
      */
-    public interface Factory
-    {
+    public interface Factory {
 
         /**
          * Creates a Graphic from an XML Document
@@ -229,7 +198,6 @@ public interface Graphic extends Entity
          */
         Graphic createFromXml(Document doc);
 
-
         /**
          * Creates a Graphic from an XML element node
          *
@@ -238,9 +206,9 @@ public interface Graphic extends Entity
          */
         Graphic createFromXml(Element element);
 
-
         /**
          * Creates a DataObject representing the supplied Graphic in the specified folder.
+         *
          * @param graphic model graphic
          * @param folder location for new Graphic file
          * @return a new DataObject

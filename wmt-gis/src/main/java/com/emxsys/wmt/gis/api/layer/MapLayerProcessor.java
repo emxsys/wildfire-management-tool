@@ -58,8 +58,7 @@ import org.openide.util.lookup.ServiceProvider;
             "com.emxsys.wmt.gis.api.layer.MapLayerRegistration",
             "com.emxsys.wmt.gis.api.layer.MapLayerRegistrations"
         })
-public final class MapLayerProcessor extends LayerGeneratingProcessor
-{
+public final class MapLayerProcessor extends LayerGeneratingProcessor {
 
     public static final String NAME = "name";
     public static final String TYPE = "type";
@@ -72,25 +71,24 @@ public final class MapLayerProcessor extends LayerGeneratingProcessor
     public static final String INSTANCE_CLASS = "instanceClass";
     public static final String INSTANCE_CREATE = "instanceCreate";
 
-    public static final String[] VALID_TYPES =
-    {
-        "Raster", "Vector", "Elevation", "Other", "Unknown"
-    };
-    public static final String[] VALID_GROUPS =
-    {
-        "Background", "Basemap", "Overlay", "Data", "Symbology", "Analytic", "Undefined", "Widget"
-    };
-    public static final String[] VALID_CATEGORIES =
-    {
-        "Satellite", "Aerial", "Street", "Topographic", "Thematic", "Hybrid", "Other", "Unknown"
-    };
-    public static final String[] VALID_ACTUATES =
-    {
-        "onLoad", "onRequest"
-    };
+    public static final String[] VALID_TYPES
+            = {
+                "Raster", "Vector", "Elevation", "Other", "Unknown"
+            };
+    public static final String[] VALID_GROUPS
+            = {
+                "Background", "Basemap", "Overlay", "Data", "Symbology", "Analytic", "Undefined", "Widget"
+            };
+    public static final String[] VALID_CATEGORIES
+            = {
+                "Satellite", "Aerial", "Street", "Topographic", "Thematic", "Hybrid", "Other", "Unknown"
+            };
+    public static final String[] VALID_ACTUATES
+            = {
+                "onLoad", "onRequest"
+            };
 
-    static
-    {
+    static {
         Arrays.sort(VALID_TYPES);
         Arrays.sort(VALID_GROUPS);
         Arrays.sort(VALID_CATEGORIES);
@@ -99,24 +97,18 @@ public final class MapLayerProcessor extends LayerGeneratingProcessor
 
     @Override
     protected boolean handleProcess(Set<? extends TypeElement> annotations,
-                                    RoundEnvironment env) throws LayerGenerationException
-    {
-        for (Element e : env.getElementsAnnotatedWith(MapLayerRegistrations.class))
-        {
+                                    RoundEnvironment env) throws LayerGenerationException {
+        for (Element e : env.getElementsAnnotatedWith(MapLayerRegistrations.class)) {
             MapLayerRegistrations refs = e.getAnnotation(MapLayerRegistrations.class);
-            if (refs != null)
-            {
-                for (MapLayerRegistration layer : refs.value())
-                {
+            if (refs != null) {
+                for (MapLayerRegistration layer : refs.value()) {
                     processReference(e, layer);
                 }
             }
         }
-        for (Element e : env.getElementsAnnotatedWith(MapLayerRegistration.class))
-        {
+        for (Element e : env.getElementsAnnotatedWith(MapLayerRegistration.class)) {
             MapLayerRegistration mapLayer = e.getAnnotation(MapLayerRegistration.class);
-            if (mapLayer != null)
-            {
+            if (mapLayer != null) {
                 processReference(e, mapLayer);
             }
         }
@@ -124,74 +116,64 @@ public final class MapLayerProcessor extends LayerGeneratingProcessor
     }
 
     private void processReference(Element e, MapLayerRegistration ref) throws
-            LayerGenerationException
-    {
+            LayerGenerationException {
         String name = ref.name().replace(' ', '_').replace('.', '-');
         String group = ref.role().replace(' ', '_');
         File f = layer(e).file("WorldWind/Layers/" + group + "/" + name + ".instance");
-        
+
         // Name
         f.bundlevalue(NAME, ref.name());
-        
+
         // Position
         f.position(ref.position());
 
         // Type
-        if (Arrays.binarySearch(VALID_TYPES, ref.type()) < 0)
-        {
+        if (Arrays.binarySearch(VALID_TYPES, ref.type()) < 0) {
             throw new LayerGenerationException("type must be one of " + Arrays.toString(VALID_TYPES), e);
         }
         f.stringvalue(TYPE, ref.type());
 
         // Group
-        if (Arrays.binarySearch(VALID_GROUPS, ref.role()) < 0)
-        {
+        if (Arrays.binarySearch(VALID_GROUPS, ref.role()) < 0) {
             throw new LayerGenerationException("role must be one of " + Arrays.toString(VALID_GROUPS), e);
         }
         f.stringvalue(GROUP, ref.role());
 
         // Category
-        if (Arrays.binarySearch(VALID_CATEGORIES, ref.category()) < 0)
-        {
+        if (Arrays.binarySearch(VALID_CATEGORIES, ref.category()) < 0) {
             throw new LayerGenerationException("category must be one of " + Arrays.toString(VALID_CATEGORIES), e);
         }
         f.stringvalue(CATEGORY, ref.category());
 
         // Display Name
-        if (!ref.displayName().isEmpty())
-        {
+        if (!ref.displayName().isEmpty()) {
             f.bundlevalue(DISPLAY_NAME, ref.displayName());
         }
 
         // Opacity
-        if (ref.opacity() < 0 || ref.opacity() > 1)
-        {
+        if (ref.opacity() < 0 || ref.opacity() > 1) {
             throw new LayerGenerationException("opacity must be between 0 and 1", e);
         }
         f.doublevalue(OPACITY, ref.opacity());
 
         // Configuration File
-        if (!ref.config().isEmpty())
-        {
+        if (!ref.config().isEmpty()) {
             f.urlvalue(CONFIG, ref.config());
         }
 
         // Actuate
-        if (Arrays.binarySearch(VALID_ACTUATES, ref.actuate()) < 0)
-        {
+        if (Arrays.binarySearch(VALID_ACTUATES, ref.actuate()) < 0) {
             throw new LayerGenerationException("actuate must be one of " + Arrays.toString(VALID_ACTUATES), e);
         }
         f.stringvalue(ACTUATE, ref.actuate());
 
         // Instance Class
-        if (!ref.instanceClass().isEmpty())
-        {
+        if (!ref.instanceClass().isEmpty()) {
             f.stringvalue(INSTANCE_CLASS, ref.instanceClass());
         }
 
         // Instance Create
-        if (!ref.factoryClass().isEmpty() && !ref.factoryMethod().isEmpty())
-        {
+        if (!ref.factoryClass().isEmpty() && !ref.factoryMethod().isEmpty()) {
             f.methodvalue(INSTANCE_CREATE, ref.factoryClass(), ref.factoryMethod());
         }
 

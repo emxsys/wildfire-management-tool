@@ -40,23 +40,17 @@ import java.util.Set;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicQueryResult.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public class BasicQueryResult<T> implements QueryResult<T>
-{
+public class BasicQueryResult<T> implements QueryResult<T> {
+
     private Set<T> resultSet = new HashSet<T>();
 
-    public BasicQueryResult(T object)
-    {
+    public BasicQueryResult(T object) {
         this.resultSet.add(object);
     }
 
-
     @Override
-    public Collection<T> getResults()
-    {
+    public Collection<T> getResults() {
         return this.resultSet;
     }
 
-
-    
-    
 }

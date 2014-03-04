@@ -32,15 +32,13 @@ package com.emxsys.wmt.gis.api.layer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * The BasicOverlayLayerCategory defines the common categories for overlays.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicOverlayLayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public enum BasicOverlayLayerCategory implements LayerCategory
-{
+public enum BasicOverlayLayerCategory implements LayerCategory {
 
     Widgets,
     Labels,
@@ -51,15 +49,10 @@ public enum BasicOverlayLayerCategory implements LayerCategory
     Unknown;
     private static final Logger logger = Logger.getLogger(BasicOverlayLayerCategory.class.getName());
 
-
-    public static BasicOverlayLayerCategory fromString(String text)
-    {
-        if (text != null)
-        {
-            for (BasicOverlayLayerCategory category : BasicOverlayLayerCategory.values())
-            {
-                if (text.equalsIgnoreCase(category.toString()))
-                {
+    public static BasicOverlayLayerCategory fromString(String text) {
+        if (text != null) {
+            for (BasicOverlayLayerCategory category : BasicOverlayLayerCategory.values()) {
+                if (text.equalsIgnoreCase(category.toString())) {
                     return category;
                 }
             }
@@ -68,10 +61,8 @@ public enum BasicOverlayLayerCategory implements LayerCategory
         return null;
     }
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return toString();
     }
 }

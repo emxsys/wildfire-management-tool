@@ -32,206 +32,145 @@ package com.emxsys.wmt.gis.api.data;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class GisResultSetMetaData implements ResultSetMetaData
-{
+public abstract class GisResultSetMetaData implements ResultSetMetaData {
 
     abstract public String getShapeTypeName() throws SQLException;
-
-
 
     @Override
     abstract public String getTableName(int column) throws SQLException;
 
-
-
     @Override
     abstract public int getColumnCount() throws SQLException;
-
-
 
     @Override
     abstract public int getColumnType(int column) throws SQLException;
 
-
-
     @Override
     abstract public String getColumnTypeName(int column) throws SQLException;
-
-
 
     @Override
     abstract public String getColumnLabel(int column) throws SQLException;
 
-
-
     @Override
     abstract public String getColumnName(int column) throws SQLException;
-
-
 
     @Override
     abstract public int getPrecision(int column) throws SQLException;
 
-
-
     @Override
     abstract public int getScale(int column) throws SQLException;
-
-
 
     @Override
     abstract public boolean isReadOnly(int column) throws SQLException;
 
-
-
     @Override
     abstract public boolean isWritable(int column) throws SQLException;
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isAutoIncrement(int column) throws SQLException
-    {
+    public boolean isAutoIncrement(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isCaseSensitive(int column) throws SQLException
-    {
+    public boolean isCaseSensitive(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isSearchable(int column) throws SQLException
-    {
+    public boolean isSearchable(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isCurrency(int column) throws SQLException
-    {
+    public boolean isCurrency(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public int isNullable(int column) throws SQLException
-    {
+    public int isNullable(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isSigned(int column) throws SQLException
-    {
+    public boolean isSigned(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public int getColumnDisplaySize(int column) throws SQLException
-    {
+    public int getColumnDisplaySize(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public String getSchemaName(int column) throws SQLException
-    {
+    public String getSchemaName(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public String getCatalogName(int column) throws SQLException
-    {
+    public String getCatalogName(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isDefinitelyWritable(int column) throws SQLException
-    {
+    public boolean isDefinitelyWritable(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public String getColumnClassName(int column) throws SQLException
-    {
+    public String getColumnClassName(int column) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException
-    {
+    public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
     /**
      * Not Implemented.
      */
     @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException
-    {
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

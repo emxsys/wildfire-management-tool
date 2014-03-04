@@ -35,68 +35,47 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collection;
 
-
 /**
  *
  * @author Bruce
  */
-public abstract class AbstractSceneCatalog implements SceneCatalog
-{
+public abstract class AbstractSceneCatalog implements SceneCatalog {
 
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     protected Scene defaultScene = null;
 
-
     @Override
     abstract public void addScene(Scene scene);
-
 
     @Override
     abstract public void removeScene(Scene scene);
 
-
-
     @Override
-    public Scene getDefaultScene()
-    {
+    public Scene getDefaultScene() {
         return this.defaultScene;
     }
 
-
-
     @Override
-    public void setDefaultScene(Scene scene)
-    {
+    public void setDefaultScene(Scene scene) {
         Scene oldScene = this.defaultScene;
-        this.defaultScene = scene;        
+        this.defaultScene = scene;
         pcs.firePropertyChange(PROP_DEFAULT_SCENE, oldScene, scene);
     }
-
-
 
     @Override
     abstract public Collection<? extends Scene> getScenes();
 
-
-
     @Override
     abstract public void setScenes(Collection<? extends Scene> scenes);
 
-
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
-
 
 }

@@ -31,21 +31,19 @@ package com.emxsys.wmt.gis.api;
 
 import visad.Real;
 
-
 /**
  * A 3D geographic coordinate.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Coord3D extends Coord2D
-{
+public interface Coord3D extends Coord2D {
+
     /**
      * Get the altitude (z) coordinate.
      *
      * @return the altitude.
      */
     public Real getAltitude();
-
 
     /**
      * Get the altitude (z) in meters.
@@ -54,14 +52,12 @@ public interface Coord3D extends Coord2D
      */
     public double getAltitudeMeters();
 
-
     /**
      * Get the longitude and latitude (x, y) coordinates.
      *
      * @return the lat/lon point.
      */
     public Coord2D getCoordinate2D();
-
 
     @Override
     public boolean equals(Object obj);

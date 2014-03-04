@@ -34,14 +34,12 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import java.util.*;
 import java.util.Map.Entry;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: LinearQuadtree.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public class LinearQuadtree<T>
-{
+public class LinearQuadtree<T> {
 
     final long ODD_MASK = 0xAAAAAAAAAAAAAAAAL;
     final long EVEN_MASK = 0x5555555555555555L;
@@ -49,27 +47,20 @@ public class LinearQuadtree<T>
     final long EVEN_HASH_MASK = 0x5555555555000000L;
     private TreeMap<Long, Set<T>> map = new TreeMap<Long, Set<T>>();
 
-
-    public LinearQuadtree()
-    {
+    public LinearQuadtree() {
     }
 
-
-    public boolean add(Coord2D pt, T item)
-    {
+    public boolean add(Coord2D pt, T item) {
         long mortonCode = MortonCodes.generate(pt);
         Set<T> values = map.get(mortonCode);
-        if (values == null)
-        {
+        if (values == null) {
             values = new HashSet<T>();
             map.put(mortonCode, values);
         }
         return values.add(item);
     }
 
-
-    public Collection<T> findByBruteForce(GeoSector sector)
-    {
+    public Collection<T> findByBruteForce(GeoSector sector) {
         //ArrayList<T> result = new ArrayList<T>();
         HashSet<T> result = new HashSet<T>();
 
@@ -80,16 +71,13 @@ public class LinearQuadtree<T>
         long xMin = zMin & EVEN_MASK;
         long xMax = zMax & EVEN_MASK;
 
-
         Set<Long> keySet = map.subMap(zMin, zMax).keySet();
 //        System.out.println("findByBruteForce...");
 //        System.out.println(" - Num keys in sector: " + keySet.size());
-        for (Long key : keySet)
-        {
+        for (Long key : keySet) {
             long x = key.longValue() & EVEN_MASK;
             long y = key.longValue() & ODD_MASK;
-            if (x >= xMin && x <= xMax && y >= yMin && y <= yMax)
-            {
+            if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
                 Set<T> values = map.get(key);
                 result.addAll(values);
             }
@@ -98,9 +86,7 @@ public class LinearQuadtree<T>
         return result;
     }
 
-
-    public Collection<T> findByRangeSubDivision(GeoSector sector)
-    {
+    public Collection<T> findByRangeSubDivision(GeoSector sector) {
         //ArrayList<T> result = new ArrayList<T>();
         HashSet<T> result = new HashSet<T>();
         long zMin = MortonCodes.generate(sector.getSouthwest());
@@ -114,15 +100,12 @@ public class LinearQuadtree<T>
         scanRangeForKeys(inputRange, subRanges, keysToIgnore);
 
 //        int numKeys = 0;
-        for (Range range : subRanges)
-        {
+        for (Range range : subRanges) {
             Set<Entry<Long, Set<T>>> entrySet = map.subMap(range.min, range.max).entrySet();
 //            numKeys += entrySet.size();
 
-            for (Entry<Long, Set<T>> entry : entrySet)
-            {
-                if (keysToIgnore.contains(entry.getKey()))
-                {
+            for (Entry<Long, Set<T>> entry : entrySet) {
+                if (keysToIgnore.contains(entry.getKey())) {
                     continue;
                 }
                 result.addAll(entry.getValue());
@@ -135,19 +118,15 @@ public class LinearQuadtree<T>
         return result;
     }
 
-
     private void scanRangeForKeys(Range inputRange,
-        ArrayList<Range> outputRanges,
-        Set<Long> keysOutsideRange)
-    {
+                                  ArrayList<Range> outputRanges,
+                                  Set<Long> keysOutsideRange) {
         scanRangeForKeys(inputRange, outputRanges, keysOutsideRange, 0);
     }
 
-
     private void scanRangeForKeys(Range inputRange,
-        ArrayList<Range> outputRanges,
-        Set<Long> keysOutsideRange, long zLast)
-    {
+                                  ArrayList<Range> outputRanges,
+                                  Set<Long> keysOutsideRange, long zLast) {
         long zMin = inputRange.min;
         long zMax = inputRange.max;
         // Get the bit patterns representing the corners of the range 
@@ -161,25 +140,21 @@ public class LinearQuadtree<T>
         int numKeysOutsideRange = 0;
         int numSubdivides = 0;
 
-        if (zLast < zMax)
-        {
+        if (zLast < zMax) {
             // Get the keys that are within the range
             Set<Long> keySet = map.subMap(Math.max(zLast, zMin), zMax).keySet();
 
             // Test each key to see if it is within the region defined by min/max x,y
-            for (Long z : keySet)
-            {
+            for (Long z : keySet) {
                 // Extract the x and y bit patterns
                 long x = z & EVEN_MASK;
                 long y = z & ODD_MASK;
 
                 // Test if x or y are outside the bounds of the range
-                if (x < xMin || x > xMax || y < yMin || y > yMax)
-                {
+                if (x < xMin || x > xMax || y < yMin || y > yMax) {
                     keysOutsideRange.add(z);
                     numKeysOutsideRange++;
-                    if (numKeysOutsideRange > 3)
-                    {
+                    if (numKeysOutsideRange > 3) {
                         Range[] r = subDivideRange(inputRange);
                         scanRangeForKeys(r[0], outputRanges, keysOutsideRange, z);
                         scanRangeForKeys(r[1], outputRanges, keysOutsideRange, z);
@@ -190,16 +165,13 @@ public class LinearQuadtree<T>
             }
         }
         // Save the inputRange if it wasn't subdivided
-        if (numSubdivides == 0)
-        {
+        if (numSubdivides == 0) {
             outputRanges.add(inputRange);
         }
 
     }
 
-
-    private Range[] subDivideRange(Range range)
-    {
+    private Range[] subDivideRange(Range range) {
         int xMin = MortonCodes.getX(range.min);
         int yMin = MortonCodes.getY(range.min);
 
@@ -210,26 +182,21 @@ public class LinearQuadtree<T>
         long leadingZeros = Long.numberOfLeadingZeros(range.min ^ range.max);
 
         // If an 'even' bit differs, then split on the y axis, otherwise split on x axis
-        if (leadingZeros % 2 == 0)
-        {   // vertical split: inherit x values from range and compute new y values...
+        if (leadingZeros % 2 == 0) {   // vertical split: inherit x values from range and compute new y values...
             int[] yMaxMin = computeLitMaxBigMin(yMin, yMax);
-            return new Range[]
-                {
-                    new Range(MortonCodes.generate(xMin, yMin), MortonCodes.generate(xMax, yMaxMin[0])),
-                    new Range(MortonCodes.generate(xMin, yMaxMin[1]), MortonCodes.generate(xMax, yMax))
-                };
+            return new Range[]{
+                new Range(MortonCodes.generate(xMin, yMin), MortonCodes.generate(xMax, yMaxMin[0])),
+                new Range(MortonCodes.generate(xMin, yMaxMin[1]), MortonCodes.generate(xMax, yMax))
+            };
         }
-        else
-        {   // horizontal split: inherit y values from range and compute new x values...
+        else {   // horizontal split: inherit y values from range and compute new x values...
             int[] xMaxMin = computeLitMaxBigMin(xMin, xMax);
-            return new Range[]
-                {
-                    new Range(MortonCodes.generate(xMin, yMin), MortonCodes.generate(xMaxMin[0], yMax)),
-                    new Range(MortonCodes.generate(xMaxMin[1], yMin), MortonCodes.generate(xMax, yMax))
-                };
+            return new Range[]{
+                new Range(MortonCodes.generate(xMin, yMin), MortonCodes.generate(xMaxMin[0], yMax)),
+                new Range(MortonCodes.generate(xMaxMin[1], yMin), MortonCodes.generate(xMax, yMax))
+            };
         }
     }
-
 
     /**
      * Computes LITMAX and BIGMIN values.
@@ -238,17 +205,13 @@ public class LinearQuadtree<T>
      * @param max
      * @return A integer array containing LITMAX and BIGMIN, e.g., [LITMAX, BIGMIN]
      */
-    public static int[] computeLitMaxBigMin(int min, int max)
-    {
-        if (min == max)
-        {
-            return new int[]
-                {
-                    min, max
-                };
+    public static int[] computeLitMaxBigMin(int min, int max) {
+        if (min == max) {
+            return new int[]{
+                min, max
+            };
         }
-        else if (min > max)
-        {
+        else if (min > max) {
             throw new IllegalArgumentException("min greater than max");
         }
 
@@ -264,22 +227,17 @@ public class LinearQuadtree<T>
         // 0100 = (1010 & 1000) | (0100)
         int bigMin = (min & msbMask) | Integer.highestOneBit(lsbMask);
 
-        return new int[]
-            {
-                litMax, bigMin
-            };
+        return new int[]{
+            litMax, bigMin
+        };
     }
 
-
-    private static class Range
-    {
+    private static class Range {
 
         long min;
         long max;
 
-
-        public Range(long min, long max)
-        {
+        public Range(long min, long max) {
             this.min = min;
             this.max = max;
         }

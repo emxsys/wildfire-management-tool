@@ -34,21 +34,19 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.openide.util.Lookup;
 
-
 /**
  * The geometry of a shape.
  *
  * @author Bruce Schubert
  */
-public interface Geometry extends Lookup.Provider
-{
+public interface Geometry extends Lookup.Provider {
+
     /**
      * Get the extents (bounding box) for this geometry.
      *
      * @return rectangular bounding box
      */
     public Box getExtents();
-
 
     /**
      * Get total number of points in all parts of this geometry.
@@ -57,14 +55,12 @@ public interface Geometry extends Lookup.Provider
      */
     public int getNumPoints();
 
-
     /**
      * Get number of parts comprising this geometry.
      *
      * @return number of parts
      */
     public int getNumParts();
-
 
     /**
      * Get the parts of this geometry, in the form of an iterator.
@@ -74,12 +70,11 @@ public interface Geometry extends Lookup.Provider
      */
     public Iterable<Part> getParts();
 
-
     /**
      * An interface for a renderer of Geometry shapes.
      */
-    public interface Renderer
-    {
+    public interface Renderer {
+
         /**
          * Property name indicating a Geometry object was added to the renderer
          */
@@ -89,14 +84,12 @@ public interface Geometry extends Lookup.Provider
          */
         public static final String PROP_GEOMETRY_REMOVED = "PROP_GEOMETRY_REMOVED";
 
-
         /**
          * Adds a Geometry shape to the collection of shapes for rendering.
          *
          * @param shape object to be added.
          */
         void addGeometry(Geometry shape);
-
 
         /**
          * Removes a shape from the collection of shapes for rendering.
@@ -105,14 +98,12 @@ public interface Geometry extends Lookup.Provider
          */
         void removeGeometry(Geometry shape);
 
-
         /**
          * Adds all the shapes in the supplied collection to the collection of shapes for rendering.
          *
          * @param shapes collection to be added.
          */
         void addGeometries(Collection<? extends Geometry> shapes);
-
 
         /**
          * Determines if the supplied shape is contained in this renderer.
@@ -122,9 +113,7 @@ public interface Geometry extends Lookup.Provider
          */
         boolean contains(Geometry shape);
 
-
         void addPropertyChangeListener(PropertyChangeListener listener);
-
 
         void removePropertyChangeListener(PropertyChangeListener listener);
     }

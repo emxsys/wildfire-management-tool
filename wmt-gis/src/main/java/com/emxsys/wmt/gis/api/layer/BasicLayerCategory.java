@@ -32,15 +32,13 @@ package com.emxsys.wmt.gis.api.layer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * BasicLayerCategory defines the common layer categories.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicLayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public enum BasicLayerCategory implements LayerCategory
-{
+public enum BasicLayerCategory implements LayerCategory {
 
     Satellite,
     Aerial,
@@ -52,15 +50,10 @@ public enum BasicLayerCategory implements LayerCategory
     Unknown;
     private static final Logger logger = Logger.getLogger(BasicLayerCategory.class.getName());
 
-
-    public static BasicLayerCategory fromString(String text)
-    {
-        if (text != null)
-        {
-            for (BasicLayerCategory category : BasicLayerCategory.values())
-            {
-                if (text.equalsIgnoreCase(category.toString()))
-                {
+    public static BasicLayerCategory fromString(String text) {
+        if (text != null) {
+            for (BasicLayerCategory category : BasicLayerCategory.values()) {
+                if (text.equalsIgnoreCase(category.toString())) {
                     return category;
                 }
             }
@@ -69,10 +62,8 @@ public enum BasicLayerCategory implements LayerCategory
         return null;
     }
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return toString();
     }
 }

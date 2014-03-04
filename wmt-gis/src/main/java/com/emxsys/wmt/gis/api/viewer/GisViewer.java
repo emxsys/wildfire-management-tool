@@ -33,10 +33,10 @@ import com.emxsys.wmt.gis.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import java.awt.Component;
 import org.openide.util.Lookup;
 import visad.Real;
-
 
 /**
  * This interface provides the common capabilities of a viewer of GIS data.
@@ -50,89 +50,80 @@ public interface GisViewer extends Lookup.Provider //, ShowCapability
     @Override
     Lookup getLookup();
 
-
     /**
      * Shows or hides the window representing this viewer.
+     * @param show true to show
      */
     void setVisible(boolean show);
 
-
+    /**
+     * Gets the current window visibility
+     * @return true if being shown
+     */
     boolean isVisible();
-
 
     /**
      * Adds a layer to the viewer.
-     *
      * @param layer the layer to be added.
      */
     void addGisLayer(GisLayer layer);
 
-
     /**
      * Removes a layer from the viewer.
-     *
      * @param layer the layer to be removed.
      */
     void removeGisLayer(GisLayer layer);
 
+    /**
+     * Gets the collection of layers in the viewer.
+     * @return the layers in the viewer
+     */
+    GisLayerList getGisLayerList();
 
     /**
      * Centers the viewer on a geographic coordinate.
-     *
      * @param latlon the coordinates to center on.
      */
     void centerOn(Coord2D latlon);
 
-
     /**
      * Get the geographic coordinates at the screen center.
-     *
      * @return the latitude, longitude and altitude at the center.
      */
     Coord3D getLocationAtCenter();
 
-
     /**
      * Gets the geographic coordinates at a specified screen position.
-     *
      * @param x screen x position.
      * @param y screen y position.
      * @return the latitude, longitude and altitude at the screen x, y.
      */
     Coord3D getLocationAtScreenPoint(double x, double y);
 
-
     /**
      * Gets the name of this viewer, which may be used for a window title.
-     *
      * @return the viewer name.
      */
     String getName();
 
-
     /**
      * Gets the component that renders the GIS view.
-     *
      * @return the rendering implementation component.
      */
     Component getRendererComponent();
-
 
     /**
      * Initializes the implementation.
      */
     void initializeResources();
 
-
     /**
      * Refreshes the viewer. Typically called after adding or removing a layer or feature.
      */
     void refreshView();
 
-
     /**
      * Compute a rectangular sector who's edges are a fixed distance from the center position.
-     *
      * @param center the lat/lon point on which the sector is centered.
      * @param radius the radius of a circle bounded by the sector.
      * @return a rectangular sector centered on the supplied coordinates.

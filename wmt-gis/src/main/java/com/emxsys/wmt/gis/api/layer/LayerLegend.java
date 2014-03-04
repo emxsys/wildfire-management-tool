@@ -32,7 +32,6 @@ package com.emxsys.wmt.gis.api.layer;
 import java.util.List;
 import javax.swing.ImageIcon;
 
-
 /**
  * A LayerLegend provides a collection of ImageIcons (images and descriptions) that compose a legend
  * for a layer. The LayerLegend should be added to a GisLayer's lookup.
@@ -41,8 +40,7 @@ import javax.swing.ImageIcon;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: LayerLegend.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface LayerLegend
-{
+public interface LayerLegend {
 
     /**
      * Get the components of a legend.

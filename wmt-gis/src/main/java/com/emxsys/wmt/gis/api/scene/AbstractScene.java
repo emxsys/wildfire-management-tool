@@ -33,65 +33,45 @@ import com.emxsys.wmt.gis.api.scene.Scene;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class AbstractScene implements Scene
-{
+public abstract class AbstractScene implements Scene {
 
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     protected String name;
 
-
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-
-
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         String oldName = this.name;
         this.name = name;
         pcs.firePropertyChange(PROP_SCENE_NAME_CHANGED, oldName, this.name);
     }
 
-
-
     @Override
     abstract public void restore();
-
-
 
     @Override
     abstract public void update();
 
-
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
-    
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 }

@@ -32,14 +32,12 @@ package com.emxsys.wmt.gis.api;
 import visad.Real;
 import visad.georef.LatLonPoint;
 
-
 /**
  * A 2D geographic coordinate.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Coord2D extends LatLonPoint
-{
+public interface Coord2D extends LatLonPoint {
 
     /**
      * Get the latitude of this point
@@ -49,7 +47,6 @@ public interface Coord2D extends LatLonPoint
     @Override
     Real getLatitude();
 
-
     /**
      * Get the longitude of this point
      *
@@ -58,7 +55,6 @@ public interface Coord2D extends LatLonPoint
     @Override
     Real getLongitude();
 
-
     /**
      * Get the latitude of this point
      *
@@ -66,14 +62,12 @@ public interface Coord2D extends LatLonPoint
      */
     double getLatitudeDegrees();
 
-
     /**
      * Get the longitude of this point
      *
      * @return double representing the longitude in degrees.
      */
     double getLongitudeDegrees();
-
 
     /**
      * See if this geographic coordinate is equal to the object in question. Two points are equal if
@@ -84,8 +78,7 @@ public interface Coord2D extends LatLonPoint
     @Override
     boolean equals(Object obj);
 
-
-     /**
+    /**
      * Tests whether any data elements are missing.
      *
      * @return true if a data element is missing.

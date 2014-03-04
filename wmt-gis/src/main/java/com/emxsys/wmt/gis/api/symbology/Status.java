@@ -29,14 +29,13 @@
  */
 package com.emxsys.wmt.gis.api.symbology;
 
-
 /**
  * Status/Operational Condition
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Status.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public enum Status
-{
+public enum Status {
 
     PRESENT_EXISTING("P", "PRESENT OR EXISTING"),
     ANTICIPATED_PLANNED("A", "ANTICIPATED OR PLANNED"),
@@ -47,43 +46,31 @@ public enum Status
     public final String code;
     public final String description;
 
-
-    private Status(String code, String description)
-    {
+    private Status(String code, String description) {
         this.code = code;
         this.description = description;
     }
 
-
-    public String code()
-    {
+    public String code() {
         return this.code;
     }
 
-
-    public String description()
-    {
+    public String description() {
         return this.description;
     }
 
-
-    public static Status get(String code)
-    {
+    public static Status get(String code) {
         String properCode = code.toUpperCase();
-        for (Status si : Status.values())
-        {
-            if (si.code.equals(properCode))
-            {
+        for (Status si : Status.values()) {
+            if (si.code.equals(properCode)) {
                 return si;
             }
         }
         throw new IllegalArgumentException(code + " is not a valid Battle Dimension code.");
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return code + ", " + description;
     }
 }

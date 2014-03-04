@@ -31,17 +31,15 @@ package com.emxsys.wmt.gis.api.layer;
 
 import visad.Real;
 
-
 /**
- * This capability provides the ability to set the range of altitudes in which a layer is active. 
+ * This capability provides the ability to set the range of altitudes in which a layer is active.
  * A GisLayer should add an instance of this interface to its lookup if it supports the ability to
  * be active within a range of viewer altitudes.
  *
  * @author Bruce Schubert
  * @version $Id: LayerActiveAltitudeRange.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public interface LayerActiveAltitudeRange
-{
+public interface LayerActiveAltitudeRange {
 
     /**
      * Gets the maximum altitude in which the layer is active.
@@ -50,7 +48,6 @@ public interface LayerActiveAltitudeRange
      */
     Real getMaxActiveAltitude();
 
-
     /**
      * Gets the minimum altitude in which the layer is active.
      *
@@ -58,14 +55,12 @@ public interface LayerActiveAltitudeRange
      */
     Real getMinActiveAltitude();
 
-
     /**
      * Sets the maximum altitude at which the layer is active.
      *
      * @param altitude the new maximum altitude.
      */
     void setMaxActiveAltitude(Real altitude);
-
 
     /**
      * Sets the minimum altitude at which the layer is active.

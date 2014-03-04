@@ -49,7 +49,6 @@ import visad.Unit;
 //import ucar.unidata.geoloc.*;
 //import ucar.unidata.geoloc.projection.*;
 //import ucar.visad.data.MapSet;
-
 /**
  * This abstract class implements the Geometry getLookup() method with a lazy initialization of an
  * AbstractLookup. Derived classes can add and remove content via the {@code content} member.
@@ -59,14 +58,13 @@ import visad.Unit;
  * @see AbstractLookup
  * @see InstanceContent
  */
-public abstract class AbstractGeometry implements Geometry
-{
+public abstract class AbstractGeometry implements Geometry {
+
     private Lookup lookup;
     /**
      * The lookup contents for capabilities and rendering attributes.
      */
     private InstanceContent content = new InstanceContent();
-
 
     /**
      * Get the (lazy) lookup for this geometry object. The lookup may contain capabilities and
@@ -76,27 +74,22 @@ public abstract class AbstractGeometry implements Geometry
      * @return an AbstractLookup containing the capabilities for this object.
      */
     @Override
-    public Lookup getLookup()
-    {
-        if (this.lookup == null)
-        {
+    public Lookup getLookup() {
+        if (this.lookup == null) {
             this.lookup = new AbstractLookup(this.content);
         }
         return this.lookup;
     }
-
 
     /**
      * Provides access to the lookup content so derived classes can add/remove items.
      *
      * @return the content used in an AbstractLookup.
      */
-    protected InstanceContent getInstanceContent()
-    {
+    protected InstanceContent getInstanceContent() {
         return this.content;
     }
-    
-        
+
 //    /**
 //     * Convert this Geometry to a java.awt.Shape. The data coordinate system
 //     * is assumed to be (lat, lon), use the projection to transform points, so
@@ -200,13 +193,10 @@ public abstract class AbstractGeometry implements Geometry
      */
     private int pointCnt = 0;
 
-
-    public int getMapLinesPointCount()
-    {
+    public int getMapLinesPointCount() {
         return pointCnt;
     }
 
-
     /**
      * Convert a Geometry to a visad.SampledSet, which is either a single Gridded2DSet (if there is
      * only one part to the feature) or a UnionSet of Gridded2DSet (if there are multiple parts).
@@ -215,12 +205,10 @@ public abstract class AbstractGeometry implements Geometry
      *
      * @return UnionSet of Gridded2DSet corresponding to this feature.
      */
-    public SampledSet getMapLines()
-    {
+    public SampledSet getMapLines() {
         return getMapLines(null);
     }
 
-
     /**
      * Convert a Geometry to a visad.SampledSet, which is either a single Gridded2DSet (if there is
      * only one part to the feature) or a UnionSet of Gridded2DSet (if there are multiple parts).
@@ -229,38 +217,30 @@ public abstract class AbstractGeometry implements Geometry
      *
      * @return UnionSet of Gridded2DSet corresponding to this feature.
      */
-    public SampledSet getMapLines(Rectangle2D bbox)
-    {
+    public SampledSet getMapLines(Rectangle2D bbox) {
         this.pointCnt = 0;
-        if ((getNumParts() == 0) || (getNumPoints() == 0))
-        {
+        if ((getNumParts() == 0) || (getNumPoints() == 0)) {
             return null;
         }
         SampledSet maplines = null;
         List<Gridded2DSet> lines = new ArrayList<>();
 
-        try
-        {
+        try {
             RealTupleType coordMathType = RealTupleType.SpatialEarth2DTuple;
             Iterator<Part> pi = getParts().iterator();
-            while (pi.hasNext())
-            {
+            while (pi.hasNext()) {
                 Part gp = pi.next();
                 Iterable<double[]> points = gp.getPoints();
 
-                if (bbox != null)
-                {
+                if (bbox != null) {
                     boolean inBox = false;
-                    for (double[] point : points)
-                    {
-                        if (bbox.contains(point[0], point[1]))
-                        {
+                    for (double[] point : points) {
+                        if (bbox.contains(point[0], point[1])) {
                             inBox = true;
                             break;
                         }
                     }
-                    if (!inBox)
-                    {
+                    if (!inBox) {
                         continue;
                     }
                 }
@@ -271,8 +251,7 @@ public abstract class AbstractGeometry implements Geometry
 
                 pointCnt += np;
                 float[][] part = new float[2][np];
-                for (int i = 0; i < np; i++)
-                {
+                for (int i = 0; i < np; i++) {
                     part[0][i] = (float) xx[i];
                     part[1][i] = (float) yy[i];
                 }
@@ -282,29 +261,25 @@ public abstract class AbstractGeometry implements Geometry
 //                        (CoordinateSystem) null, (Unit[]) null,
 //                        (ErrorEstimate[]) null, false));
                 lines.add(new Gridded2DSet(coordMathType, part, np,
-                    (CoordinateSystem) null, (Unit[]) null,
-                    (ErrorEstimate[]) null, false));
+                        (CoordinateSystem) null, (Unit[]) null,
+                        (ErrorEstimate[]) null, false));
             }
 
-            if (lines.isEmpty())
-            {
+            if (lines.isEmpty()) {
                 return null;
             }
             Gridded2DSet[] latLonLines = lines.toArray(new Gridded2DSet[lines.size()]);
-            if (latLonLines.length > 1)
-            {
+            if (latLonLines.length > 1) {
                 maplines = new UnionSet(coordMathType, latLonLines,
-                    (CoordinateSystem) null,
-                    (Unit[]) null,
-                    (ErrorEstimate[]) null, false);  // no copy
+                        (CoordinateSystem) null,
+                        (Unit[]) null,
+                        (ErrorEstimate[]) null, false);  // no copy
             }
-            else
-            {
+            else {
                 maplines = latLonLines[0];
             }
         }
-        catch (visad.VisADException e)
-        {
+        catch (visad.VisADException e) {
             e.printStackTrace();
             System.out.println("numParts = " + getNumParts());
         }

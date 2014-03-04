@@ -35,19 +35,17 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
 
-
 /**
  * Abstract class that implements common methods for a concrete implementation of Feature.
  *
  * @author Bruce Schubert
  * @version $Id: AbstractFeature.java 528 2013-04-18 15:04:46Z bdschubert $
  */
-public abstract class AbstractFeature implements Feature
-{
+public abstract class AbstractFeature implements Feature {
+
     private InstanceContent content = new InstanceContent();
     private AbstractLookup lookup;
     private ProxyLookup proxyLookup;
-
 
     /**
      * Gets this Feature's lookup merged with the Geography lookup.
@@ -55,16 +53,13 @@ public abstract class AbstractFeature implements Feature
      * @return a ProxyLookup object initialized from this object and the Geography lookups
      */
     @Override
-    public Lookup getLookup()
-    {
-        if (this.lookup == null)
-        {
+    public Lookup getLookup() {
+        if (this.lookup == null) {
             this.lookup = new AbstractLookup(content);
             this.proxyLookup = new ProxyLookup(this.lookup, getGeometry().getLookup());
         }
         return this.proxyLookup;
     }
-
 
     /**
      * Provides access to this Feature's lookup contents; allows sub-classes to add or remove
@@ -72,8 +67,7 @@ public abstract class AbstractFeature implements Feature
      *
      * @return the AbstractLookup's content.
      */
-    protected InstanceContent getInstanceContent()
-    {
+    protected InstanceContent getInstanceContent() {
         return this.content;
     }
 }  // AbstractFeature

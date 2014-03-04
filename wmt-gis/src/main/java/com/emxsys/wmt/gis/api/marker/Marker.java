@@ -37,15 +37,13 @@ import java.util.Collection;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 
-
 /**
  * The Marker interface manages the placement and control of place marks.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Marker.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public interface Marker extends Feature
-{
+public interface Marker extends Feature {
 
     public static final String PROP_MARKER_NAME = "PROP_MARKER_NAME";
     public static final String PROP_MARKER_POSITION = "PROP_MARKER_POSITION";
@@ -53,7 +51,6 @@ public interface Marker extends Feature
     public static final String PROP_MARKER_DELETED = "PROP_MARKER_DELETED";
     public static final String PROP_MARKER_SELECTED = "PROP_MARKER_SELECTED";
     public static final String PROP_MARKER_VISIBLE = "PROP_MARKER_VISIBLE";
-
 
     /**
      * Gets the text used to identify this marker. May be a filename; may be used as a label.
@@ -63,7 +60,6 @@ public interface Marker extends Feature
     @Override
     String getName();
 
-
     /**
      * Establishes a new name for this marker.
      *
@@ -72,14 +68,12 @@ public interface Marker extends Feature
     @Override
     void setName(String name);
 
-
     /**
      * Gets the position this marker on the globe.
      *
      * @return the position where this marker is anchored on the map.
      */
     Coord3D getPosition();
-
 
     /**
      * Establishes a new position for the marker on the globe, i.e., "moves" a marker.
@@ -88,14 +82,12 @@ public interface Marker extends Feature
      */
     void setPosition(Coord3D position);
 
-
     /**
      * Gets the image used for rendering this marker.
      *
      * @return the image; may be null
      */
     Image getImage();
-
 
     /**
      * Establishes a new image to be displayed.
@@ -104,18 +96,15 @@ public interface Marker extends Feature
      */
     void setImage(Image image);
 
-
     /**
      * Deletes this marker from the globe.
      */
     void delete();
 
-
     /**
      * @return true if deleted.
      */
     boolean isDeleted();
-
 
     /**
      * Determines the if the marker is shown on the globe.
@@ -124,12 +113,10 @@ public interface Marker extends Feature
      */
     void setVisible(boolean visible);
 
-
     /**
      * @return the visibility state;
      */
     boolean isVisible();
-
 
     /**
      * Places this marker in the selected state. A selected marker may be rendered differently to
@@ -139,12 +126,10 @@ public interface Marker extends Feature
      */
     void setSelected(boolean selected);
 
-
     /**
      * @return the selected state
      */
     boolean isSelected();
-
 
     /**
      * @param listener to be added to this marker
@@ -152,13 +137,11 @@ public interface Marker extends Feature
     @Override
     void addPropertyChangeListener(PropertyChangeListener listener);
 
-
     /**
      * @param listener to be removed from this marker
      */
     @Override
     void removePropertyChangeListener(PropertyChangeListener listener);
-
 
     /**
      * Gets the factory class used to create this marker. The provider class may be stored in the
@@ -166,41 +149,31 @@ public interface Marker extends Feature
      */
     Class<? extends Factory> getFactoryClass();
 
-
     /**
      *
      */
-    public interface Renderer
-    {
+    public interface Renderer {
 
         public static final String PROP_MARKER_ADDED = "PROP_MARKER_ADDED";
         public static final String PROP_MARKER_REMOVED = "PROP_MARKER_REMOVED";
 
-
         void addMarker(Marker marker);
-
 
         void removeMarker(Marker marker);
 
-
         void addMarkers(Collection<? extends Marker> markers);
-
 
         boolean contains(Marker marker);
 
-
         void addPropertyChangeListener(PropertyChangeListener listener);
-
 
         void removePropertyChangeListener(PropertyChangeListener listener);
     }
 
-
     /**
      * Marker factories.
      */
-    public interface Factory
-    {
+    public interface Factory {
 
         /**
          * Creates a Marker instance.
@@ -208,7 +181,6 @@ public interface Marker extends Feature
          * @return a new Marker
          */
         Marker newMarker();
-
 
         /**
          * Creates a new DataObject representing the given Marker in the specified folder.

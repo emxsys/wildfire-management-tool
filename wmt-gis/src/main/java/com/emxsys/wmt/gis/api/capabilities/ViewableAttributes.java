@@ -29,13 +29,11 @@
  */
 package com.emxsys.wmt.gis.api.capabilities;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface ViewableAttributes
-{
+public interface ViewableAttributes {
 
     void viewAttributes();
 }

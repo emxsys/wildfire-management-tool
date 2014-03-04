@@ -34,38 +34,28 @@ import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.w3c.dom.Element;
 
-
 /**
  *
  * @author Bruce
  */
-public interface Scene
-{
+public interface Scene {
 
     public static final String PROP_SCENE_UPDATED = "PROP_SCENE_UPDATED";
     public static final String PROP_SCENE_NAME_CHANGED = "PROP_SCENE_NAME_CHANGED";
 
-
     String getName();
-
 
     void setName(String name);
 
-
     void restore();
-
 
     void update();
 
-
     void addPropertyChangeListener(PropertyChangeListener listener);
-
 
     void removePropertyChangeListener(PropertyChangeListener listener);
 
-
-    public interface Factory
-    {
+    public interface Factory {
 
         /**
          * Creates a scene from the current GIS Viewer.
@@ -74,7 +64,6 @@ public interface Scene
          */
         Scene createScene();
 
-
         /**
          * Creates a new Scene from an XML element.
          *
@@ -82,7 +71,6 @@ public interface Scene
          * @return a new Scene
          */
         Scene fromXmlElement(Element element);
-
 
         /**
          * Creates a new DataObject representing the supplied Scene in the specified folder.

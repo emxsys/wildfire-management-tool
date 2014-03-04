@@ -43,7 +43,6 @@ import java.rmi.RemoteException;
 import java.util.logging.Logger;
 import visad.VisADException;
 
-
 /**
  * AbstractMarker implements the Emxsys {@link Marker} GIS interface, which is backed by a WorldWind
  * {@link PointPlacemark} implementation.
@@ -51,8 +50,8 @@ import visad.VisADException;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: AbstractMarker.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public abstract class AbstractMarker extends AbstractFeature implements Marker
-{
+public abstract class AbstractMarker extends AbstractFeature implements Marker {
+
     protected String name;
     private boolean deleted = false;
     private boolean selected = false;
@@ -61,54 +60,41 @@ public abstract class AbstractMarker extends AbstractFeature implements Marker
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private static final Logger logger = Logger.getLogger(AbstractMarker.class.getName());
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-
     @Override
-    public void setName(String name)
-    {
+    public void setName(String name) {
         String oldName = getName();
         this.name = name;
         pcs.firePropertyChange(PROP_MARKER_NAME, oldName, this.name);
     }
 
-
     @Override
-    public Coord3D getPosition()
-    {
+    public Coord3D getPosition() {
         return this.geometry.getPosition();
     }
 
-
     @Override
-    public void setPosition(Coord3D position)
-    {
+    public void setPosition(Coord3D position) {
         Coord3D oldPos = getPosition();
         GeoCoord3D newPos;
-        try
-        {
+        try {
             newPos = new GeoCoord3D(position);
         }
-        catch (VisADException | RemoteException ex)
-        {
+        catch (VisADException | RemoteException ex) {
             newPos = GeoCoord3D.INVALID_POSITION;
         }
         this.geometry.setPosition(newPos);
         pcs.firePropertyChange(PROP_MARKER_POSITION, oldPos, newPos);
     }
 
-
     @Override
-    public void delete()
-    {
+    public void delete() {
         // As a matter of practice, prevent multiple deletes 
-        if (!isDeleted())
-        {
+        if (!isDeleted()) {
             setSelected(false);
             boolean oldDeleted = this.deleted;
             this.deleted = true;
@@ -116,119 +102,89 @@ public abstract class AbstractMarker extends AbstractFeature implements Marker
         }
     }
 
-
     @Override
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         return this.deleted;
     }
 
-
     @Override
-    public void setSelected(boolean selected)
-    {
+    public void setSelected(boolean selected) {
         boolean oldSelected = this.selected;
         this.selected = selected;
         pcs.firePropertyChange(PROP_MARKER_SELECTED, oldSelected, this.selected);
     }
 
-
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.selected;
     }
 
-
     @Override
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         boolean oldVisible = this.visible;
         this.visible = true;
         pcs.firePropertyChange(PROP_MARKER_VISIBLE, oldVisible, this.visible);
     }
 
-
     @Override
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return this.visible;
     }
-
 
     @Override
     abstract public Image getImage();
 
-
     @Override
     abstract public void setImage(Image symbol);
 
-
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
-
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 
-
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 5;
         hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 53 * hash + (this.geometry != null ? this.geometry.hashCode() : 0);
         return hash;
     }
 
-
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final AbstractMarker other = (AbstractMarker) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name))
-        {
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
-        if (this.geometry != other.geometry && (this.geometry == null || !this.geometry.equals(other.geometry)))
-        {
+        if (this.geometry != other.geometry && (this.geometry == null || !this.geometry.equals(other.geometry))) {
             return false;
         }
         return true;
     }
 
-
     @Override
-    public FeatureClass getFeatureClass()
-    {
+    public FeatureClass getFeatureClass() {
         return FeatureClass.POINT;
     }
 
-
     @Override
-    public Geometry getGeometry()
-    {
+    public Geometry getGeometry() {
         return geometry;
     }
 }

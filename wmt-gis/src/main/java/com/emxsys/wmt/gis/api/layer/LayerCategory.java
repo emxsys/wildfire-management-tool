@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.gis.api.layer;
 
-
 /**
  * A LayerCategory is a marker interface that is added to a GisLayer's lookup for the purpose of
  * categorizing, i.e., grouping GisLayers. A GisLayer can have zero or multiple categories in its
@@ -38,8 +37,7 @@ package com.emxsys.wmt.gis.api.layer;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: LayerCategory.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public interface LayerCategory
-{
+public interface LayerCategory {
 
     /**
      * Gets the name of the category.

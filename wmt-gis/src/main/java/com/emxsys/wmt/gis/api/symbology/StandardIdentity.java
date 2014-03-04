@@ -29,14 +29,12 @@
  */
 package com.emxsys.wmt.gis.api.symbology;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: StandardIdentity.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public enum StandardIdentity
-{
+public enum StandardIdentity {
 
     FRIEND("F", "FRIEND"),
     HOSTILE("H", "HOSTILE"),
@@ -55,43 +53,31 @@ public enum StandardIdentity
     public final String code;
     public final String description;
 
-
-    private StandardIdentity(String code, String description)
-    {
+    private StandardIdentity(String code, String description) {
         this.code = code;
         this.description = description;
     }
 
-
-    public String code()
-    {
+    public String code() {
         return this.code;
     }
 
-
-    public String description()
-    {
+    public String description() {
         return this.description;
     }
 
-
-    public static StandardIdentity get(String code)
-    {
+    public static StandardIdentity get(String code) {
         String properCode = code.toUpperCase();
-        for (StandardIdentity si : StandardIdentity.values())
-        {
-            if (si.code.equals(properCode))
-            {
+        for (StandardIdentity si : StandardIdentity.values()) {
+            if (si.code.equals(properCode)) {
                 return si;
             }
         }
         throw new IllegalArgumentException(code + " is not a valid Standard Identity code.");
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return code + ", " + description;
     }
 }

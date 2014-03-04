@@ -33,7 +33,6 @@ import com.emxsys.wmt.gis.api.Named;
 import java.beans.PropertyChangeListener;
 import org.openide.util.Lookup;
 
-
 /**
  * This interface provides the common capabilites of a GIS raster or vector layer. Capabilities and
  * meta-data should be exposed through the lookup.
@@ -41,8 +40,8 @@ import org.openide.util.Lookup;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: GisLayer.java 769 2013-06-20 18:11:51Z bdschubert $
  */
-public interface GisLayer extends Lookup.Provider, Named
-{
+public interface GisLayer extends Lookup.Provider, Named {
+
     /**
      * The lookup should contain the capabilities of a layer. For example it could contain objects
      * representing the types of data that would be returned by getObjectAtLatLon.
@@ -51,7 +50,6 @@ public interface GisLayer extends Lookup.Provider, Named
      */
     @Override
     Lookup getLookup();
-
 
     /**
      * The name of the layer, typically used for displaying the name in a layer manager, but also
@@ -62,7 +60,6 @@ public interface GisLayer extends Lookup.Provider, Named
     @Override
     String getName();
 
-
     /**
      * The name of the layer, typically used for displaying the name in a layer manager, but also
      * used to uniquely identify a layer in a collection.
@@ -71,14 +68,12 @@ public interface GisLayer extends Lookup.Provider, Named
     @Override
     void setName(String name);
 
-
     /**
      * Returns the enabled state.
      *
      * @return true if this layer is enabled.
      */
     boolean isEnabled();
-
 
     /**
      * Sets the enabled state.
@@ -87,9 +82,7 @@ public interface GisLayer extends Lookup.Provider, Named
      */
     void setEnabled(boolean enabled);
 
-
     void addPropertyChangeListener(PropertyChangeListener listener);
-
 
     void removePropertyChangeListener(PropertyChangeListener listener);
 }

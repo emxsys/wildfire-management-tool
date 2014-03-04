@@ -25,35 +25,28 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Layer", id = "com.emxsys.gis.actions.AddMapLayerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/gis/images/layer-add.png", displayName = "#CTL_AddMapLayer")
 @ActionReferences(
-{
-    @ActionReference(path = "Menu/Insert/Layer", position = 1111),
-    @ActionReference(path = "Toolbars/Layer", position = 1111)
-})
+        {
+            @ActionReference(path = "Menu/Insert/Layer", position = 1111),
+            @ActionReference(path = "Toolbars/Layer", position = 1111)
+        })
 @Messages("CTL_AddMapLayer=Add Map Layer")
 /**
  * This context sensitive action class based simply on an ActionListener.
  */
-public final class AddMapLayerAction implements ActionListener
-{
+public final class AddMapLayerAction implements ActionListener {
 
     private final AddableGisLayer context;
 
-
-    public AddMapLayerAction(AddableGisLayer context)
-    {
+    public AddMapLayerAction(AddableGisLayer context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
-        if (this.context != null)
-        {
+    public void actionPerformed(ActionEvent ev) {
+        if (this.context != null) {
             this.context.addGisLayerToViewer();
         }
     }

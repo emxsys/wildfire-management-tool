@@ -34,18 +34,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(
-{
-    ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PACKAGE
-})
-public @interface MapLayerRegistrations
-{
+        {
+            ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PACKAGE
+        })
+public @interface MapLayerRegistrations {
 
     MapLayerRegistration[] value();
 }

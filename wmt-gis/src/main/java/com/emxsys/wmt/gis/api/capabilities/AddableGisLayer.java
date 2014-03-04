@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.gis.api.capabilities;
 
-
 /**
  * AddableGisLayer is a capability interface commonly added to a GisLayer's lookup when it supports
  * the ability to be added to a viewer. This interface is typically used in context sensitive
@@ -37,11 +36,10 @@ package com.emxsys.wmt.gis.api.capabilities;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface AddableGisLayer
-{
+public interface AddableGisLayer {
 
     /**
-     * Adds the layer to the appropriate viewer.  Typically called thru a context sensitive action.
+     * Adds the layer to the appropriate viewer. Typically called thru a context sensitive action.
      */
     void addGisLayerToViewer();
 }

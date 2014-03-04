@@ -32,29 +32,25 @@ package com.emxsys.wmt.gis.api.scene;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 
-
 /**
  *
  * @author Bruce Schubert
  */
-public interface CatalogProvider
-{
+public interface CatalogProvider {
 
-    /** 
+    /**
      * Returns a DataObject representing a Catalog based on contents of the underlying file.
-     * 
+     *
      * @param folder the directory containing the catalog file
      * @param name the catalog's file name
      * @return the DataObject that representing the catalog
      */
     DataObject getCatalog(FileObject folder, String name);
 
-
-
-    /** 
-     * Returns a new DataObject representing a Catalog.  The underlying
+    /**
+     * Returns a new DataObject representing a Catalog. The underlying
      * file will be created in the specified folder with the specified name.
-     * 
+     *
      * @param folder the directory where the catalog file will be created
      * @param name the catalog's file name
      * @return the DataObject that representing the new catalog

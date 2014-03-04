@@ -38,139 +38,110 @@ import visad.RealType;
 import visad.Unit;
 import visad.VisADException;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class SimpleCoordinateSystem extends CoordinateSystem
-{
+public class SimpleCoordinateSystem extends CoordinateSystem {
 
-    private static final RealType[] components =
-    {
-        RealType.getRealType("Lat", CommonUnit.degree),
-        RealType.getRealType("Lon", CommonUnit.degree)
-    };
+    private static final RealType[] components
+            = {
+                RealType.getRealType("Lat", CommonUnit.degree),
+                RealType.getRealType("Lon", CommonUnit.degree)
+            };
     public static final RealTupleType SimpleLatLonTuple;
 
-
-
-    static
-    {
-        try
-        {
+    static {
+        try {
             SimpleLatLonTuple = new RealTupleType(components);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new RuntimeException(ex);
         }
     }
 
-
-
     /**
      * Get the index of RealType.Latitude in the reference RealTupleType.
      *
-     * @return  index of RealType.Latitude in the reference
+     * @return index of RealType.Latitude in the reference
      */
-    public int getLatitudeIndex()
-    {
+    public int getLatitudeIndex() {
         return 0;
     }
-
-
 
     /**
      * Get the index of RealType.Longitude in the reference RealTupleType.
      *
-     * @return  index of RealType.Longitude in the reference
+     * @return index of RealType.Longitude in the reference
      */
-    public int getLongitudeIndex()
-    {
+    public int getLongitudeIndex() {
         return 1;
     }
-
-
 
     /**
      * Create a NavigationCoordinateSystem that just returns
      * the input tuple.
      *
-     * @param  reference  reference RealTupleType
+     * @param reference reference RealTupleType
      *
-     * @throws VisADException  reference does not contain Latitude/Longitude
-     *                         or couldn't create the necessary VisAD object
+     * @throws VisADException reference does not contain Latitude/Longitude
+     * or couldn't create the necessary VisAD object
      */
     public SimpleCoordinateSystem()
-            throws VisADException
-    {
+            throws VisADException {
         super(SimpleCoordinateSystem.SimpleLatLonTuple, SimpleCoordinateSystem.SimpleLatLonTuple.getDefaultUnits());
     }
 
-
-
-    /** 
+    /**
      * Transform to the reference coordinates
      *
-     * @param  tuple  array of values
-     * @return  input array
+     * @param tuple array of values
+     * @return input array
      *
-     * @throws VisADException  tuple is null or wrong dimension
+     * @throws VisADException tuple is null or wrong dimension
      */
     public double[][] toReference(double[][] tuple)
-            throws VisADException
-    {
-        if (tuple == null || getDimension() != tuple.length)
-        {
+            throws VisADException {
+        if (tuple == null || getDimension() != tuple.length) {
             throw new VisADException(
                     "Values are null or wrong dimension");
         }
         return tuple;
     }
 
-
-
-    /** 
+    /**
      * Transform from the reference coordinates
      *
-     * @param  refTuple  array of values
-     * @return  input array
+     * @param refTuple array of values
+     * @return input array
      *
-     * @throws VisADException  tuple is null or wrong dimension
+     * @throws VisADException tuple is null or wrong dimension
      */
     public double[][] fromReference(double[][] refTuple)
-            throws VisADException
-    {
-        if (refTuple == null || getDimension() != refTuple.length)
-        {
+            throws VisADException {
+        if (refTuple == null || getDimension() != refTuple.length) {
             throw new VisADException(
                     "Values are null or wrong dimension");
         }
         return refTuple;
     }
 
-
-
     /**
      * See if the object in question is equal to this CoordinateSystem.
      * The two objects are equal if they are the same object or if they
      * are both TrivialNavigations and have the same dimension.
      *
-     * @param  cs  Object in question
-     * @return  true if they are considered equal, otherwise false.
+     * @param cs Object in question
+     * @return true if they are considered equal, otherwise false.
      */
-    public boolean equals(Object cs)
-    {
+    public boolean equals(Object cs) {
         if ((cs instanceof SimpleCoordinateSystem
                 && ((SimpleCoordinateSystem) cs).getDimension() == getDimension())
-                || cs == this)
-        {
+                || cs == this) {
             return true;
         }
-        else
-        {
+        else {
             return false;
         }
     }

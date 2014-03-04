@@ -27,33 +27,26 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
-
-@ActionID(category = "Layer",  id = "com.emxsys.gis.actions.ViewAttributesTable")
+@ActionID(category = "Layer", id = "com.emxsys.gis.actions.ViewAttributesTable")
 @ActionRegistration(iconBase = "com/emxsys/wmt/gis/images/attributes-display.png", displayName = "#CTL_ViewAttributesTable")
 @ActionReferences(
-{
-    @ActionReference(path = "Ribbon/TaskPanes/LayerTools/View", position = 3333),
-    @ActionReference(path = "Toolbars/Layer", position = 3333)
-})
+        {
+            @ActionReference(path = "Ribbon/TaskPanes/LayerTools/View", position = 3333),
+            @ActionReference(path = "Toolbars/Layer", position = 3333)
+        })
 @Messages("CTL_ViewAttributesTable=View Attributes Table")
-public final class ViewAttributesTableAction implements ActionListener
-{
+public final class ViewAttributesTableAction implements ActionListener {
 
     private final ViewableAttributes context;
 
-
-
-    public ViewAttributesTableAction(ViewableAttributes context)
-    {
+    public ViewAttributesTableAction(ViewableAttributes context) {
         this.context = context;
     }
 
-
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
-        if (this.context!=null)
+    public void actionPerformed(ActionEvent ev) {
+        if (this.context != null) {
             this.context.viewAttributes();
+        }
     }
 }

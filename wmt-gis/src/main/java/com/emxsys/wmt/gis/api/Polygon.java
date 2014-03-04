@@ -31,21 +31,19 @@ package com.emxsys.wmt.gis.api;
 
 import visad.Real;
 
-
 /**
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public interface Polygon extends Geometry
-{
+public interface Polygon extends Geometry {
+
     /**
      * Gets the interior area of the polygon.
      *
      * @return the total area.
      */
     Real getArea();
-
 
     /**
      * Gets the interior area of the polygon in square meters.
@@ -54,14 +52,12 @@ public interface Polygon extends Geometry
      */
     double getAreaSquareMeters();
 
-
     /**
      * Gets the cumulative length of the outer perimeter.
      *
      * @return the total length
      */
     Real getPerimiterLength();
-
 
     /**
      * Gets the cumulative length of the outer perimeter in meters.

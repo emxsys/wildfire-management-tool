@@ -32,7 +32,6 @@ package com.emxsys.wmt.gis.api.capabilities;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.query.QueryResult;
 
-
 /**
  * QueryableByPoint provides the capability to perform a spatial query on GisLayer instances that
  * implement this interface.
@@ -40,8 +39,7 @@ import com.emxsys.wmt.gis.api.query.QueryResult;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: QueryableByPoint.java 540 2013-04-18 15:48:26Z bdschubert $
  */
-public interface QueryableByPoint
-{
+public interface QueryableByPoint {
 
     QueryResult<?> getObjectsAtLatLon(Coord2D point);
 }

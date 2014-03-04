@@ -37,133 +37,107 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
-
 @Messages(
-{
-    "err.symbol.null=Symbol argument cannot be null.",
-    "err.symbols.null=Symbols collection cannot be null.",
-    "# {0} - symbol type",
-    "err.symbol.incompatible=The symbol type is incompatable [{0}]. The symbol was not added.",
-    "# {0} - symbol id",
-    "err.symbol.already.exists=The symbol ID ({0}) already exists.",
-    "# {0} - symbol id",
-    "err.symbol.renderer.not.found=A renderer for the symbol was not found. The symbol {0} may not be displayed.",
-    "# {0} - symbol id",
-    "info.symbol.added=The {0} symbol was added.",
-    "# {0} - symbol id",
-    "info.symbol.removed=The {0} symbol was removed."
-})
+        {
+            "err.symbol.null=Symbol argument cannot be null.",
+            "err.symbols.null=Symbols collection cannot be null.",
+            "# {0} - symbol type",
+            "err.symbol.incompatible=The symbol type is incompatable [{0}]. The symbol was not added.",
+            "# {0} - symbol id",
+            "err.symbol.already.exists=The symbol ID ({0}) already exists.",
+            "# {0} - symbol id",
+            "err.symbol.renderer.not.found=A renderer for the symbol was not found. The symbol {0} may not be displayed.",
+            "# {0} - symbol id",
+            "info.symbol.added=The {0} symbol was added.",
+            "# {0} - symbol id",
+            "info.symbol.removed=The {0} symbol was removed."
+        })
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: SymbolCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
-public class SymbolCatalog extends EntityCatalog<Symbol>
-{
+public class SymbolCatalog extends EntityCatalog<Symbol> {
 
     private FileObject folder;
     private static final Logger logger = Logger.getLogger(SymbolCatalog.class.getName());
-
 
     /**
      * Constructs a EntityCatalog for symbols stored in a folder.
      *
      * @param folder the folder where symbols are saved.
      */
-    public SymbolCatalog(FileObject folder)
-    {
+    public SymbolCatalog(FileObject folder) {
         this.folder = folder;
     }
-
 
     /**
      * Gets the folder containing symbols associated with this catalog.
      *
      * @return the folder who's contents this catalog represents; may be null.
      */
-    public FileObject getFolder()
-    {
+    public FileObject getFolder() {
         return folder;
     }
 
-
-    public void setFolder(FileObject folder)
-    {
+    public void setFolder(FileObject folder) {
         this.folder = folder;
     }
 
-
     @Override
-    protected void doAddItem(Symbol item)
-    {
+    protected void doAddItem(Symbol item) {
         super.doAddItem(item);
         addSymbolToRenderer(item);
     }
 
-
-    protected void addSymbolToRenderer(Symbol symbol)
-    {
+    protected void addSymbolToRenderer(Symbol symbol) {
         // Get the renderer (map layer) associated with Symbols
         Symbol.Renderer renderer = getSymbolRenderer();
-        if (renderer != null)
-        {
+        if (renderer != null) {
             renderer.addSymbol(symbol);
         }
-        else
-        {
+        else {
             logger.warning(Bundle.err_symbol_renderer_not_found(symbol.getName()));
         }
     }
 
-
     @Override
-    protected void doRemoveItem(Symbol item)
-    {
+    protected void doRemoveItem(Symbol item) {
         super.doRemoveItem(item);
 
         // Remove from the renderer
         Symbol.Renderer renderer = getSymbolRenderer();
-        if (renderer != null)
-        {
+        if (renderer != null) {
             renderer.removeSymbol(item);
         }
     }
-
 
     /**
      * Dispose of this catalog. Release listeners, release renderables.
      */
     @Override
-    public void dispose()
-    {
-        synchronized (this)
-        {
+    public void dispose() {
+        synchronized (this) {
             Renderer symbolRenderer = getSymbolRenderer();
-            if (symbolRenderer != null)
-            {
+            if (symbolRenderer != null) {
                 // The renderer may force the removal of an item from the catalog, so 
                 // copy the symbols to array that won't be modified by a possible call 
                 // to removeItem by the Renderer.
                 Symbol[] array = getItems().toArray(new Symbol[0]);
-                for (Symbol symbol : array)
-                {
+                for (Symbol symbol : array) {
                     symbolRenderer.removeSymbol(symbol);
                 }
             }
             // Now remove the catalog items, if present.
-            if (!this.getItems().isEmpty())
-            {
+            if (!this.getItems().isEmpty()) {
                 this.getItems().clear();
             }
         }
     }
 
-
-    private Symbol.Renderer getSymbolRenderer()
-    {
+    private Symbol.Renderer getSymbolRenderer() {
         GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
-        if (viewer != null)
-        {
+        if (viewer != null) {
             return viewer.getLookup().lookup(Symbol.Renderer.class);
         }
         return null;

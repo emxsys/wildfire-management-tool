@@ -36,15 +36,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import visad.*;
 
-
 /**
  * RealTuple implementation of Coord2D for defining geographic coordinate points. I.e., latitude and
  * longitude (in degrees).
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class GeoCoord2D extends RealTuple implements Coord2D
-{
+public class GeoCoord2D extends RealTuple implements Coord2D {
+
     public static final int LATITUDE_INDEX = 0;
     public static final int LONGITUDE_INDEX = 1;
     public static final GeoCoord2D INVALID_POINT = new GeoCoord2D();
@@ -56,18 +55,14 @@ public class GeoCoord2D extends RealTuple implements Coord2D
     private Data[] components;
     private static final Logger LOGGER = Logger.getLogger(GeoCoord2D.class.getName());
 
-
-    static
-    {
-        try
-        {
+    static {
+        try {
 //            DEFAULT_COORD_SYS = new TrivialNavigation(RealTupleType.LatitudeLongitudeTuple);
             DEFAULT_COORD_SYS = new SimpleCoordinateSystem();
             DEFAULT_TUPLE_TYPE = new RealTupleType(
-                RealType.Latitude, RealType.Longitude, DEFAULT_COORD_SYS, null);
+                    RealType.Latitude, RealType.Longitude, DEFAULT_COORD_SYS, null);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             LOGGER.severe(ex.toString());
             DEFAULT_COORD_SYS = null;
         }
@@ -75,11 +70,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
     }
 
     /* Default units (degree, degree) */
-    public static final Unit[] DEFAULT_UNITS = new Unit[]
-    {
+    public static final Unit[] DEFAULT_UNITS = new Unit[]{
         CommonUnit.degree, CommonUnit.degree
     };
-
 
     /**
      * Factory method to create a GeoCoord2D from a lat lon point.
@@ -88,19 +81,15 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @param lon longitude in degrees
      * @return a new GeoCoord2D
      */
-    public static GeoCoord2D fromDegrees(double lat, double lon)
-    {
-        try
-        {
+    public static GeoCoord2D fromDegrees(double lat, double lon) {
+        try {
             return new GeoCoord2D(lat, lon);
         }
-        catch (VisADException | RemoteException ex)
-        {
+        catch (VisADException | RemoteException ex) {
             LOGGER.severe(ex.toString());
         }
         return INVALID_POINT;
     }
-
 
     /**
      * Factory method to create a GeoCoord2D from a lat lon point.
@@ -109,8 +98,7 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @param lon longitude in radians
      * @return a new GeoCoord2D
      */
-    public static GeoCoord2D fromRadians(double lat, double lon)
-    {
+    public static GeoCoord2D fromRadians(double lat, double lon) {
         return fromDegrees(Math.toDegrees(lat), Math.toDegrees(lon));
     }
 
@@ -121,14 +109,11 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @param lon longitude in RealType.Longitude
      * @return a new GeoCoord2D
      */
-    public static GeoCoord2D fromReals(Real lat, Real lon)
-    {
-        try
-        {
+    public static GeoCoord2D fromReals(Real lat, Real lon) {
+        try {
             return new GeoCoord2D(lat, lon);
         }
-        catch (VisADException | RemoteException ex)
-        {
+        catch (VisADException | RemoteException ex) {
             LOGGER.severe(ex.toString());
         }
         return INVALID_POINT;
@@ -140,20 +125,16 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @param element An Element formatted by the toXmlElement method.
      * @return A new point object, or an INVALID_POSITION if incorrectly formatted.
      */
-    public static GeoCoord2D fromXmlElement(Element element)
-    {
-        try
-        {
-            if (element == null)
-            {
+    public static GeoCoord2D fromXmlElement(Element element) {
+        try {
+            if (element == null) {
                 throw new IllegalArgumentException("Element parameter is null.");
             }
             String latValue = element.getAttribute(RealType.Latitude.getName());
             String lonValue = element.getAttribute(RealType.Longitude.getName());
             String angularUnits = element.getAttribute(XML_ATTR_ANGLE);
 
-            if (latValue == null || lonValue == null)
-            {
+            if (latValue == null || lonValue == null) {
                 throw new IllegalArgumentException("Attribute(s) missing in the XML element.");
             }
 
@@ -161,16 +142,14 @@ public class GeoCoord2D extends RealTuple implements Coord2D
             double longitude = Double.parseDouble(lonValue);
 
             // Assume degrees if missing
-            if (angularUnits != null && !angularUnits.isEmpty() && !angularUnits.equals(CommonUnit.degree.toString()))
-            {
+            if (angularUnits != null && !angularUnits.isEmpty() && !angularUnits.equals(CommonUnit.degree.toString())) {
                 // TODO: could convert radians to degrees
                 throw new IllegalArgumentException("Angular units must be 'degrees': Found " + angularUnits);
             }
 
             return new GeoCoord2D(latitude, longitude);
         }
-        catch (IllegalArgumentException | VisADException | RemoteException ex)
-        {
+        catch (IllegalArgumentException | VisADException | RemoteException ex) {
             // Catching NumberFormatExceptions and IllegalArgumentExceptions,
             // plus VisADExceptions and RemoteExceptions
             LOGGER.severe(ex.toString());
@@ -178,18 +157,15 @@ public class GeoCoord2D extends RealTuple implements Coord2D
         return INVALID_POINT;
     }
 
-
     /**
      * Construct a GeoCoord2D with missing values
      *
      */
-    public GeoCoord2D()
-    {
+    public GeoCoord2D() {
         super(RealTupleType.LatitudeLongitudeTuple);
         this.lat = new Real(RealType.Latitude);
         this.lon = new Real(RealType.Longitude);
     }
-
 
     /**
      * Construct a GeoCoord2D from double values of latitude and longitude.
@@ -197,11 +173,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @param lat latitude (degrees North positive)
      * @param lon longitude (degrees East positive)
      */
-    public GeoCoord2D(double lat, double lon) throws VisADException, RemoteException
-    {
+    public GeoCoord2D(double lat, double lon) throws VisADException, RemoteException {
         this(Latitude.fromDegrees(lat), Longitude.fromDegrees(lon));
     }
-
 
     /**
      * Construct a LatLonTuple from Reals representing the latitude and longitude.
@@ -209,26 +183,21 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @param lat Real representing latitude
      * @param lon Real representing longitude
      */
-    public GeoCoord2D(Real lat, Real lon) throws VisADException, RemoteException
-    {
-        this(new Real[]
-        {
+    public GeoCoord2D(Real lat, Real lon) throws VisADException, RemoteException {
+        this(new Real[]{
             Latitude.fromReal(lat), Longitude.fromReal(lon)
         });
     }
-
 
     /**
      * Construct a LatLonTuple from Reals representing the latitude and longitude.
      *
      */
-    public GeoCoord2D(Real[] latLonArray) throws VisADException, RemoteException
-    {
+    public GeoCoord2D(Real[] latLonArray) throws VisADException, RemoteException {
         super(DEFAULT_TUPLE_TYPE, latLonArray, DEFAULT_COORD_SYS);
         this.lat = latLonArray[0];
         this.lon = latLonArray[1];
     }
-
 
     /**
      * Get the latitude of this point.
@@ -236,11 +205,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @return Real representing the latitude.
      */
     @Override
-    public Real getLatitude()
-    {
+    public Real getLatitude() {
         return lat;
     }
-
 
     /**
      * Get the longitude of this point.
@@ -248,11 +215,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @return Real representing the longitude
      */
     @Override
-    public Real getLongitude()
-    {
+    public Real getLongitude() {
         return lon;
     }
-
 
     /**
      * Get the latitude of this point.
@@ -260,11 +225,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @return double representing the latitude in degrees.
      */
     @Override
-    public double getLatitudeDegrees()
-    {
+    public double getLatitudeDegrees() {
         return lat.getValue();
     }
-
 
     /**
      * Get the longitude of this point.
@@ -272,11 +235,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @return double representing the longitude in degrees.
      */
     @Override
-    public double getLongitudeDegrees()
-    {
+    public double getLongitudeDegrees() {
         return lon.getValue();
     }
-
 
     /**
      * Is missing any data elements?
@@ -284,11 +245,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @return is missing
      */
     @Override
-    public boolean isMissing()
-    {
+    public boolean isMissing() {
         return lat.isMissing() || lon.isMissing();
     }
-
 
     /**
      * Get the i'th component.
@@ -300,10 +259,8 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @throws VisADException On badness
      */
     @Override
-    public Data getComponent(int i) throws VisADException, RemoteException
-    {
-        switch (i)
-        {
+    public Data getComponent(int i) throws VisADException, RemoteException {
+        switch (i) {
             case LATITUDE_INDEX:
                 return lat;
             case LONGITUDE_INDEX:
@@ -313,18 +270,15 @@ public class GeoCoord2D extends RealTuple implements Coord2D
         }
     }
 
-
     /**
      * Create, if needed, and return the component array.
      *
      * @return components
      */
     @Override
-    public Data[] getComponents(boolean copy)
-    {
+    public Data[] getComponents(boolean copy) {
         //Create the array and populate it if needed
-        if (components == null)
-        {
+        if (components == null) {
             Data[] tmp = new Data[getDimension()];
             tmp[LATITUDE_INDEX] = lat;
             tmp[LONGITUDE_INDEX] = lon;
@@ -332,7 +286,6 @@ public class GeoCoord2D extends RealTuple implements Coord2D
         }
         return components;
     }
-
 
     /**
      * Indicates if this Tuple is identical to an object.
@@ -342,21 +295,17 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * identical component sequences.
      */
     @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(obj instanceof GeoCoord2D))
-        {
+        if (!(obj instanceof GeoCoord2D)) {
             return false;
         }
         GeoCoord2D that = (GeoCoord2D) obj;
         return this.lat.equals(that.lat)
-            && this.lon.equals(that.lon);
+                && this.lon.equals(that.lon);
     }
-
 
     /**
      * Returns the hash code of this object.
@@ -364,44 +313,35 @@ public class GeoCoord2D extends RealTuple implements Coord2D
      * @return The hash code of this object.
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return lat.hashCode() | lon.hashCode();
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("Lat: ");
-        try
-        {
+        try {
             buf.append(
-                visad.browser.Convert.shortString(lat.getValue(CommonUnit.degree)));
+                    visad.browser.Convert.shortString(lat.getValue(CommonUnit.degree)));
         }
-        catch (VisADException ve)
-        {
+        catch (VisADException ve) {
             buf.append(
-                visad.browser.Convert.shortString(lat.getValue()));
+                    visad.browser.Convert.shortString(lat.getValue()));
         }
         buf.append(" Lon: ");
-        try
-        {
+        try {
             buf.append(
-                visad.browser.Convert.shortString(lon.getValue(CommonUnit.degree)));
+                    visad.browser.Convert.shortString(lon.getValue(CommonUnit.degree)));
         }
-        catch (VisADException ve)
-        {
+        catch (VisADException ve) {
             buf.append(
-                visad.browser.Convert.shortString(lon.getValue()));
+                    visad.browser.Convert.shortString(lon.getValue()));
         }
         return buf.toString();
     }
 
-
-    public Element toXmlElement(Document doc, String tagName)
-    {
+    public Element toXmlElement(Document doc, String tagName) {
         Element element = doc.createElement(tagName);
         element.setAttribute(RealType.Latitude.getName(), Double.toString(getLatitudeDegrees()));
         element.setAttribute(RealType.Longitude.getName(), Double.toString(getLongitudeDegrees()));

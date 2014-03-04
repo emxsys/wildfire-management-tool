@@ -29,15 +29,13 @@
  */
 package com.emxsys.wmt.gis.api;
 
-
 /**
  * This interface provides a name for an object.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Named.java 527 2013-04-18 15:01:15Z bdschubert $
  */
-public interface Named
-{
+public interface Named {
 
     /**
      * Returns the name of an object.
@@ -45,7 +43,6 @@ public interface Named
      * @return the name.
      */
     String getName();
-
 
     /**
      * Sets the name of an object.

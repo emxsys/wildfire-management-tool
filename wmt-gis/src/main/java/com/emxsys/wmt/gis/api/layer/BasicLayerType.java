@@ -32,15 +32,13 @@ package com.emxsys.wmt.gis.api.layer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * BasicLayerType defines some elemental types of GisLayers.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicLayerType.java 234 2012-10-04 21:44:23Z bdschubert $
  */
-public enum BasicLayerType implements LayerType
-{
+public enum BasicLayerType implements LayerType {
 
     Raster,
     Vector,
@@ -49,15 +47,10 @@ public enum BasicLayerType implements LayerType
     Unknown;
     private static final Logger logger = Logger.getLogger(BasicLayerType.class.getName());
 
-
-    public static BasicLayerType fromString(String text)
-    {
-        if (text != null)
-        {
-            for (BasicLayerType type : BasicLayerType.values())
-            {
-                if (text.equalsIgnoreCase(type.toString()))
-                {
+    public static BasicLayerType fromString(String text) {
+        if (text != null) {
+            for (BasicLayerType type : BasicLayerType.values()) {
+                if (text.equalsIgnoreCase(type.toString())) {
                     return type;
                 }
             }
@@ -66,10 +59,8 @@ public enum BasicLayerType implements LayerType
         return null;
     }
 
-
     @Override
-    public String getName()
-    {
+    public String getName() {
         return toString();
     }
 }

@@ -39,96 +39,73 @@ import java.util.List;
 //import no.geosoft.cc.geometry.Geometry;
 import visad.Real;
 
-
 /**
  * Polygon shape geometry.
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public class GeoPolygon extends AbstractGeometry implements Polygon
-{
+public class GeoPolygon extends AbstractGeometry implements Polygon {
+
     protected GeoSector extents;
     protected GeoPart part;
     private Real length;
     private Real area;
 
-
-    public GeoPolygon()
-    {
+    public GeoPolygon() {
         this.part = new GeoPart();
         this.extents = new GeoSector();
     }
-
 
     /**
      * Constructs a polygon with a single ring.
      *
      * @param coords
      */
-    public GeoPolygon(List<GeoCoord3D> coords)
-    {
+    public GeoPolygon(List<GeoCoord3D> coords) {
         this.part = new GeoPart(coords);
         this.extents = new GeoSector(this);
     }
 
-
     @Override
-    public Box getExtents()
-    {
+    public Box getExtents() {
         return this.extents;
     }
 
-
     @Override
-    public int getNumPoints()
-    {
+    public int getNumPoints() {
         return this.part.getNumPoints();
     }
 
-
     @Override
-    public int getNumParts()
-    {
+    public int getNumParts() {
         return 1;
     }
 
-
     @Override
-    public Iterable<Part> getParts()
-    {
-        return new Iterable<Part>()
-        {
+    public Iterable<Part> getParts() {
+        return new Iterable<Part>() {
             @Override
-            public Iterator<Part> iterator()
-            {
-                return new Iterator<Part>()
-                {
+            public Iterator<Part> iterator() {
+                return new Iterator<Part>() {
                     private int index = 0;
 
-
                     @Override
-                    public boolean hasNext()
-                    {
+                    public boolean hasNext() {
                         return index == 0;
                     }
 
-
                     @Override
-                    public Part next()
-                    {
-                        if (index == 0)
-                        {
+                    public Part next() {
+                        if (index == 0) {
                             ++index;
                             return part;
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
 
-
                     @Override
-                    public void remove()
-                    {
+                    public void remove() {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
                 };
@@ -136,15 +113,11 @@ public class GeoPolygon extends AbstractGeometry implements Polygon
         };
     }
 
-
     @Override
-    public Real getArea()
-    {
-        if (this.area == null)
-        {
+    public Real getArea() {
+        if (this.area == null) {
             double[][] xy = part.toLambertAzimuthalEqualArea();
-            if (xy != null)
-            {
+            if (xy != null) {
                 throw new UnsupportedOperationException("Not implemented: need GDAL");
 //                double areaSqMtr =Geometry.computePolygonArea(xy[0], xy[1]);
 //                try
@@ -157,46 +130,37 @@ public class GeoPolygon extends AbstractGeometry implements Polygon
 //                    this.area = new Real(GisType.AREA);
 //                }
             }
-            else
-            {
+            else {
                 this.area = new Real(GisType.AREA);
             }
         }
         return this.area;
     }
 
-
     @Override
-    public double getAreaSquareMeters()
-    {
+    public double getAreaSquareMeters() {
         return this.area.getValue() * 10000;
     }
 
-
     @Override
-    public Real getPerimiterLength()
-    {
-        if (this.length == null)
-        {
+    public Real getPerimiterLength() {
+        if (this.length == null) {
             double km = 0;
             // Compute combined length of all segments
-            for (int i = 0, j = 1; j < part.getNumPoints(); i++, j++)
-            {
+            for (int i = 0, j = 1; j < part.getNumPoints(); i++, j++) {
                 GeoCoord3D coord1 = part.coords.get(i);
                 GeoCoord3D coord2 = part.coords.get(j);
                 km += ConversionUtility.LatLonToDistance(
-                    (float) coord1.getLatitudeDegrees(), (float) coord1.getLongitudeDegrees(),
-                    (float) coord2.getLatitudeDegrees(), (float) coord2.getLongitudeDegrees());
+                        (float) coord1.getLatitudeDegrees(), (float) coord1.getLongitudeDegrees(),
+                        (float) coord2.getLatitudeDegrees(), (float) coord2.getLongitudeDegrees());
             }
             this.length = new Real(GisType.DISTANCE, km * 1000);
         }
         return this.length;
     }
 
-
     @Override
-    public double getPerimeterLengthMeters()
-    {
+    public double getPerimeterLengthMeters() {
         return getPerimiterLength().getValue();
     }
     /**
@@ -210,6 +174,5 @@ public class GeoPolygon extends AbstractGeometry implements Polygon
      * the polygon must not be self intersecting.
      */
 //    private void computeAreaAndPerimiter(Part part)
-
 
 }

@@ -34,58 +34,46 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.w3c.dom.Element;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Region.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface Region extends Shape
-{
-    String PROP_REGION_SECTOR = "PROP_REGION_SECTOR";
+public interface Region extends Shape {
 
+    String PROP_REGION_SECTOR = "PROP_REGION_SECTOR";
 
     GeoSector getSector();
 
-
     void setSector(GeoSector sector);
 
-
-
     /**
-     * 
+     *
      */
-    public interface Renderer
-    {
+    public interface Renderer {
+
         public static final String PROP_REGION_ADDED = "PROP_REGION_ADDED";
         public static final String PROP_REGION_REMOVED = "PROP_REGION_REMOVED";
 
-
         void addRegion(Region region);
-
 
         void removeRegion(Region region);
 
-
         void addRegions(Collection<? extends Region> regions);
-
 
         boolean contains(Region region);
 
-
         void addPropertyChangeListener(PropertyChangeListener listener);
-
 
         void removePropertyChangeListener(PropertyChangeListener listener);
 
     }
 
-
     /**
-     * 
+     *
      */
-    public interface Provider
-    {
+    public interface Provider {
+
         Region fromXmlElement(Element element);
 
     }

@@ -29,15 +29,14 @@
  */
 package com.emxsys.wmt.gis.api;
 
-
 /**
  * GIS Point Geometry.
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public interface Point extends Geometry
-{
+public interface Point extends Geometry {
+
     /**
      * Gets the position of this Point object.
      *

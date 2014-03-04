@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.gis.api.layer;
 
-
 /**
  * LayerGroup is a marker interface that is added to a GisLayer's lookup to group the layer within a
  * collection of similar layers. Typical groups include Background, Basemap, Overlay and Data.
@@ -37,15 +36,14 @@ package com.emxsys.wmt.gis.api.layer;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: LayerGroup.java 769 2013-06-20 18:11:51Z bdschubert $
  */
-public interface LayerGroup
-{
+public interface LayerGroup {
+
     /**
      * Gets the name of the group.
      *
      * @return the group name.
      */
     String getName();
-
 
     /**
      * Gets the ordinal index of this instance within a collection of groups. Used to
