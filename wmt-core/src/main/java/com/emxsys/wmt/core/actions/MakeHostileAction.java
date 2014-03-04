@@ -38,35 +38,29 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeHostileAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_hostile_gnd.png",
-                    displayName = "#CTL_MakeHostileAction")
+        displayName = "#CTL_MakeHostileAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 
-                       position = 300,
-                       description = "#CTL_MakeHostileAction_Hint", 
-                       autoRepeatAction = false)
+@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+        position = 300,
+        description = "#CTL_MakeHostileAction_Hint",
+        autoRepeatAction = false)
 @Messages(
-{
-    "CTL_MakeHostileAction=Hostile",
-    "CTL_MakeHostileAction_Hint=Sets the selected object's affiliation to hostile."
-})
-public final class MakeHostileAction implements ActionListener
-{
+        {
+            "CTL_MakeHostileAction=Hostile",
+            "CTL_MakeHostileAction_Hint=Sets the selected object's affiliation to hostile."
+        })
+public final class MakeHostileAction implements ActionListener {
 
     private final HostileAffiliationCapability context;
 
-
-    public MakeHostileAction(HostileAffiliationCapability context)
-    {
+    public MakeHostileAction(HostileAffiliationCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         context.makeAffiliationHostile();
     }
 }

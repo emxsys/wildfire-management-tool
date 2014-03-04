@@ -46,22 +46,19 @@ import org.openide.util.NbBundle.Messages;
 @RibbonActionReference(path = "Menu/Home/Move", position = 100, description = "#HINT_PanDownAction", autoRepeatAction = true)
 
 @Messages(
-{
-    "CTL_PanDownAction=Pan Down", "HINT_PanDownAction=Looks downward"
-})
-public final class PanDownAction implements ActionListener
-{
+        {
+            "CTL_PanDownAction=Pan Down", "HINT_PanDownAction=Looks downward"
+        })
+public final class PanDownAction implements ActionListener {
 
     private final PanDownCapability context;
 
-    public PanDownAction(PanDownCapability context)
-    {
+    public PanDownAction(PanDownCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.panDown(e);
     }
 }

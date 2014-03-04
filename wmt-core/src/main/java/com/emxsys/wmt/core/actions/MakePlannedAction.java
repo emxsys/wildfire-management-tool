@@ -38,39 +38,33 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * A context sensitive action for setting an item's status to Planned/Anticipated.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakePlannedAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/status_unknown_planned.png",
-                    displayName = "#CTL_MakePlannedAction")
+        displayName = "#CTL_MakePlannedAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Status", 
-                       position = 200, 
-                       description = "CTL_MakePlannedAction_Hint", 
-                       autoRepeatAction = false)
+@RibbonActionReference(path = "Menu/Home/Edit/Status",
+        position = 200,
+        description = "CTL_MakePlannedAction_Hint",
+        autoRepeatAction = false)
 @Messages({
     "CTL_MakePlannedAction=Planned",
     "CTL_MakePlannedAction_Hint=Sets the selected item's determination/declaration to planned or anticipated."
 })
-public final class MakePlannedAction implements ActionListener
-{
+public final class MakePlannedAction implements ActionListener {
 
     private final PlannedStatusCapability context;
 
-
-    public MakePlannedAction(PlannedStatusCapability context)
-    {
+    public MakePlannedAction(PlannedStatusCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         context.makeStatusPlannedOrAnticipated();
     }
 }

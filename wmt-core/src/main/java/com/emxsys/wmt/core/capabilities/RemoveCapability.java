@@ -31,11 +31,10 @@ package com.emxsys.wmt.core.capabilities;
 
 /**
  * A context interface representing the ability for an object to be removed.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface RemoveCapability
-{
+public interface RemoveCapability {
 
     /**
      * Instructs this object to remove itself from its usage context.

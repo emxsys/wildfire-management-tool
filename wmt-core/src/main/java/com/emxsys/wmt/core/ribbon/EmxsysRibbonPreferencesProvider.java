@@ -27,7 +27,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wmt.core.ribbon;
 
 import com.terramenta.ribbon.api.RibbonPreferences;
@@ -42,21 +41,17 @@ import org.openide.util.lookup.ServiceProvider;
  * @version $Id$
  */
 @ServiceProvider(service = com.terramenta.ribbon.spi.RibbonPreferencesProvider.class)
-public class EmxsysRibbonPreferencesProvider extends RibbonPreferencesProvider
-{
+public class EmxsysRibbonPreferencesProvider extends RibbonPreferencesProvider {
 
-    private class EmxsysRibbonPreferences extends Office2013FullSizeRibbonPreferences
-    {
+    private class EmxsysRibbonPreferences extends Office2013FullSizeRibbonPreferences {
         // TODO: override the predefined preferences
     };
-    
+
     private RibbonPreferences preferences;
 
     @Override
-    public RibbonPreferences getPreferences()
-    {
-        if (preferences==null)
-        {
+    public RibbonPreferences getPreferences() {
+        if (preferences == null) {
             preferences = new EmxsysRibbonPreferences();
         }
         return preferences;

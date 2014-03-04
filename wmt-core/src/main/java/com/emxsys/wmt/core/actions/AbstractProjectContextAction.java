@@ -40,61 +40,48 @@ import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
 
-
 /**
  * This abstract class enables or disables the action based on there being open projects.
  * The Lookup context is ignored. Instead, the class listens for changes in the OpenProjects
  * object and enables the action when there is one or more projects in its container.
- * 
+ *
  * @see OpenProjects
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: AbstractProjectContextAction.java 209 2012-09-05 23:09:19Z bdschubert $
  */
 public abstract class AbstractProjectContextAction extends AbstractAction implements
-    ContextAwareAction,
-    PropertyChangeListener
-{
+        ContextAwareAction,
+        PropertyChangeListener {
 
-    protected AbstractProjectContextAction(Lookup ignored)
-    {
+    protected AbstractProjectContextAction(Lookup ignored) {
         OpenProjects source = OpenProjects.getDefault();
-        source.addPropertyChangeListener(WeakListeners.propertyChange(this, source));        
+        source.addPropertyChangeListener(WeakListeners.propertyChange(this, source));
         // Set the initial state
         propertyChange(null);
     }
 
-
     @Override
-    public void setEnabled(final boolean enabled)
-    {
-        if (!EventQueue.isDispatchThread())
-        {
-            EventQueue.invokeLater(new Runnable()
-            {
+    public void setEnabled(final boolean enabled) {
+        if (!EventQueue.isDispatchThread()) {
+            EventQueue.invokeLater(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     setEnabled(enabled);
                 }
             });
         }
-        else
-        {
+        else {
             super.setEnabled(enabled);
         }
     }
 
-
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return super.isEnabled();
     }
 
-
     @Override
-    public void propertyChange(PropertyChangeEvent evt)
-    {
+    public void propertyChange(PropertyChangeEvent evt) {
         setEnabled(OpenProjects.getDefault().getOpenProjects().length > 0);
     }
 }

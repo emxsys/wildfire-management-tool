@@ -29,14 +29,12 @@
  */
 package com.emxsys.wmt.core.capabilities;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: NeutralAffiliationCapability.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface NeutralAffiliationCapability
-{
+public interface NeutralAffiliationCapability {
 
     /**
      * Sets a neutral affiliation.

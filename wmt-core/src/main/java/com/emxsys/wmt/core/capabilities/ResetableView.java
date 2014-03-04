@@ -28,6 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.emxsys.wmt.core.capabilities;
+
 import java.awt.event.ActionEvent;
 
 /**
@@ -35,8 +36,8 @@ import java.awt.event.ActionEvent;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: ResetableView.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface ResetableView
-{
+public interface ResetableView {
+
     /**
      * Resets a view to a north up, look down perspective with a default zoom.
      * @param event An event from the initiator; it can be null.

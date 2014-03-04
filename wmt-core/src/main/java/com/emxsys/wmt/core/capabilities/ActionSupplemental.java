@@ -34,22 +34,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(
-{
-    ElementType.TYPE, ElementType.FIELD, ElementType.METHOD
-})
-public @interface ActionSupplemental
-{
+        {
+            ElementType.TYPE, ElementType.FIELD, ElementType.METHOD
+        })
+public @interface ActionSupplemental {
 
     String key() default "";
-
-
 
     String value() default "";
 }

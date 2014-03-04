@@ -48,19 +48,16 @@ import org.openide.util.NbBundle.Messages;
         {
             "CTL_TiltUpAction=Tilt Up", "HINT_TiltUpAction=Tilt upright."
         })
-public final class TiltUpAction implements ActionListener
-{
+public final class TiltUpAction implements ActionListener {
 
     private final TiltUpCapability context;
 
-    public TiltUpAction(TiltUpCapability context)
-    {
+    public TiltUpAction(TiltUpCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.tiltUp(e);
     }
 }

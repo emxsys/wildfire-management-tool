@@ -29,14 +29,12 @@
  */
 package com.emxsys.wmt.core.capabilities;
 
-
 /**
  * An interface representing ability to Draw, i.e., edit a graphical shape.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface DesignCapability
-{
+public interface DesignCapability {
 
     /**
      * Starts the design editor.

@@ -30,12 +30,13 @@
 package com.emxsys.wmt.core.capabilities;
 
 /**
- * A context interface representing the ability for a container object add a new item to its collection.
- * 
+ * A context interface representing the ability for a container object add a new item to its
+ * collection.
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface AddCapability
-{
+public interface AddCapability {
+
     /**
      * Instructs this object o add a new constituent.
      */

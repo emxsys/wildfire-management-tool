@@ -50,19 +50,16 @@ import org.openide.util.NbBundle.Messages;
         {
             "CTL_PanRightAction=Pan Right", "HINT_PanRightAction=Looks to the right"
         })
-public final class PanRightAction implements ActionListener
-{
+public final class PanRightAction implements ActionListener {
 
     private final PanRightCapability context;
 
-    public PanRightAction(PanRightCapability context)
-    {
+    public PanRightAction(PanRightCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.panRight(e);
     }
 }

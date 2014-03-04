@@ -71,18 +71,14 @@ import org.openide.windows.WindowManager;
             "CTL_ScreenshotApplicationAction_TooltipTitle=Screenshot of Application",
             "CTL_ScreenshotApplicationAction_TooltipBody=Capture a screenshot of the application and save it to a file."
         })
-public final class ScreenshotApplicationAction implements ActionListener
-{
+public final class ScreenshotApplicationAction implements ActionListener {
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         // By invoking later, we allow the action presenter to reset before the screen is captured.
-        EventQueue.invokeLater(new Runnable()
-        {
+        EventQueue.invokeLater(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 ScreenCaptureUtil.captureToFile(WindowManager.getDefault().getMainWindow().getBounds());
             }
         });

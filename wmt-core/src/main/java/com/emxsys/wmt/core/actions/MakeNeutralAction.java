@@ -38,35 +38,29 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeNeutralAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_neutral_gnd.png",
-                    displayName = "#CTL_MakeNeutralAction")
+        displayName = "#CTL_MakeNeutralAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 
-                       position = 200,
-                       description = "#HINT_MakeNeutralAction", 
-                       autoRepeatAction = false)
+@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+        position = 200,
+        description = "#HINT_MakeNeutralAction",
+        autoRepeatAction = false)
 @Messages(
-{
-    "CTL_MakeNeutralAction=Neutral",
-    "HINT_MakeNeutralAction=Sets the selected object's affiliation to neutral."
-})
-public final class MakeNeutralAction implements ActionListener
-{
+        {
+            "CTL_MakeNeutralAction=Neutral",
+            "HINT_MakeNeutralAction=Sets the selected object's affiliation to neutral."
+        })
+public final class MakeNeutralAction implements ActionListener {
 
     private final NeutralAffiliationCapability context;
 
-
-    public MakeNeutralAction(NeutralAffiliationCapability context)
-    {
+    public MakeNeutralAction(NeutralAffiliationCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         context.makeAffiliationNeutral();
     }
 }

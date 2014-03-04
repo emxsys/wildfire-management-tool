@@ -42,7 +42,6 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
-
 /**
  * This context sensitive action invokes the DefaultProjectOperations.performDefaultRenameOperation
  * and provides custom UI registration for the Ribbon and Menu Bar.
@@ -51,12 +50,12 @@ import org.openide.util.Utilities;
  * @author Bruce Schubert
  */
 @ActionID(
-    category = "File",
-          id = "com.emxsys.wmt.core.actions.RenameProjectAction")
+        category = "File",
+        id = "com.emxsys.wmt.core.actions.RenameProjectAction")
 @ActionRegistration(
-                    displayName = "#CTL_RenameProjectAction",
-                    surviveFocusChange = true,
-                    lazy = false)
+        displayName = "#CTL_RenameProjectAction",
+        surviveFocusChange = true,
+        lazy = false)
 //@ActionReference(path = "Menu/File", position = 300)
 //// Nest this ribbon bar button within the Projects dropdown list
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 300,
@@ -66,46 +65,37 @@ import org.openide.util.Utilities;
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_RenameProjectAction=Rename...",
-    "CTL_RenameProjectAction_Hint=Rename the current project.",
-    "CTL_RenameProjectAction_TooltipTitle=Rename Project",
-    "CTL_RenameProjectAction_TooltipBody=Assign a new name the project and the project folder.\n"
-    + "The Rename Project dialog lets change the display name of the project, "
-    + "and it lets you can change the name of folder that contains the project's files."
-})
-public final class RenameProjectAction extends AbstractProjectContextAction
-{
+        {
+            "CTL_RenameProjectAction=Rename...",
+            "CTL_RenameProjectAction_Hint=Rename the current project.",
+            "CTL_RenameProjectAction_TooltipTitle=Rename Project",
+            "CTL_RenameProjectAction_TooltipBody=Assign a new name the project and the project folder.\n"
+            + "The Rename Project dialog lets change the display name of the project, "
+            + "and it lets you can change the name of folder that contains the project's files."
+        })
+public final class RenameProjectAction extends AbstractProjectContextAction {
 
-    public RenameProjectAction()
-    {
+    public RenameProjectAction() {
         this(Utilities.actionsGlobalContext());
     }
 
-
-    private RenameProjectAction(Lookup actionContext)
-    {
+    private RenameProjectAction(Lookup actionContext) {
         super(actionContext);
         // iconBase is unused with "eager" ActionRegistrations, so we must set it ourselves
         this.putValue("iconBase", "com/emxsys/wmt/core/images/edit.png");
         this.putValue(Action.NAME, Bundle.CTL_RenameProjectAction());
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent event)
-    {
+    public void actionPerformed(ActionEvent event) {
         Project[] openProjects = OpenProjects.getDefault().getOpenProjects();
-        for (Project project : openProjects)
-        {
+        for (Project project : openProjects) {
             DefaultProjectOperations.performDefaultRenameOperation(project, null);
         }
     }
 
-
     @Override
-    public Action createContextAwareInstance(Lookup actionContext)
-    {
+    public Action createContextAwareInstance(Lookup actionContext) {
         return new RenameProjectAction(actionContext);
     }
 }

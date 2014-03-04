@@ -38,34 +38,28 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeUnknownAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_unknown_gnd.png",
-                    displayName = "#CTL_MakeUnknownAction")
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 
-                       position = 400, 
-                       description = "#CTL_MakeUnknownAction_Hint", 
-                       autoRepeatAction = false)
+        displayName = "#CTL_MakeUnknownAction")
+@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+        position = 400,
+        description = "#CTL_MakeUnknownAction_Hint",
+        autoRepeatAction = false)
 @Messages(
-{
-    "CTL_MakeUnknownAction=Unknown",
-    "CTL_MakeUnknownAction_Hint=Sets the selected object's affiliation to unknown."
-})
-public final class MakeUnknownAction implements ActionListener
-{
+        {
+            "CTL_MakeUnknownAction=Unknown",
+            "CTL_MakeUnknownAction_Hint=Sets the selected object's affiliation to unknown."
+        })
+public final class MakeUnknownAction implements ActionListener {
 
     private final UnknownAffiliationCapability context;
 
-
-    public MakeUnknownAction(UnknownAffiliationCapability context)
-    {
+    public MakeUnknownAction(UnknownAffiliationCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         context.makeAffiliationUnknown();
     }
 }

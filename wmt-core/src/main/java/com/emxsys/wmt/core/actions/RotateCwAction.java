@@ -50,19 +50,16 @@ import org.openide.util.NbBundle.Messages;
         {
             "CTL_RotateCwAction=Rotate CW", "HINT_RotateCwAction=Rotate Clockwise"
         })
-public final class RotateCwAction implements ActionListener
-{
+public final class RotateCwAction implements ActionListener {
 
     private final RotateCwCapability context;
 
-    public RotateCwAction(RotateCwCapability context)
-    {
+    public RotateCwAction(RotateCwCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.rotateClockwise(e);
     }
 }

@@ -30,8 +30,8 @@
 package com.emxsys.wmt.core.capabilities;
 
 /**
- * An interface providing the ability to make an 
- * 
+ * An interface providing the ability to make an
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: FriendlyAffiliationCapability.java 209 2012-09-05 23:09:19Z bdschubert $
  */

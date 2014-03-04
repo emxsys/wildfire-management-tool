@@ -38,35 +38,29 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeFriendlyAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_friend_gnd.png",
-                    displayName = "#CTL_MakeFriendlyAction")
+        displayName = "#CTL_MakeFriendlyAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation", 
-                       position = 100, 
-                       description = "#CTL_MakeFriendlyAction_Hint", 
-                       autoRepeatAction = false)
+@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+        position = 100,
+        description = "#CTL_MakeFriendlyAction_Hint",
+        autoRepeatAction = false)
 @Messages(
-{
-    "CTL_MakeFriendlyAction=Friendly",
-    "CTL_MakeFriendlyAction_Hint=Sets the selected object's affiliation to friend."
-})
-public final class MakeFriendlyAction implements ActionListener
-{
+        {
+            "CTL_MakeFriendlyAction=Friendly",
+            "CTL_MakeFriendlyAction_Hint=Sets the selected object's affiliation to friend."
+        })
+public final class MakeFriendlyAction implements ActionListener {
 
     private final FriendlyAffiliationCapability context;
 
-
-    public MakeFriendlyAction(FriendlyAffiliationCapability context)
-    {
+    public MakeFriendlyAction(FriendlyAffiliationCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         context.makeAffiliationFriendly();
     }
 }

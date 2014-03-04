@@ -49,19 +49,16 @@ import org.openide.util.NbBundle.Messages;
             "CTL_ZoomOutAction=Zoom Out",
             "HINT_ZoomOutAction=Move back"
         })
-public final class ZoomOutAction implements ActionListener
-{
+public final class ZoomOutAction implements ActionListener {
 
     private final ZoomOutCapability context;
 
-    public ZoomOutAction(ZoomOutCapability context)
-    {
+    public ZoomOutAction(ZoomOutCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.zoomOut(e);
     }
 }

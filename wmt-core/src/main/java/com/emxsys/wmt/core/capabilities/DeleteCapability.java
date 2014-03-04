@@ -29,20 +29,17 @@
  */
 package com.emxsys.wmt.core.capabilities;
 
-
 /**
  * A context interface representing the ability for an object to be deleted.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface DeleteCapability
-{
+public interface DeleteCapability {
 
     /**
      * Instructs this object to be deleted from its current usage context.
      */
     void delete();
-
 
     /**
      * Returns the deleted state.

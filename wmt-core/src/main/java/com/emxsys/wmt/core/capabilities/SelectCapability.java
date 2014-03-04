@@ -29,15 +29,12 @@
  */
 package com.emxsys.wmt.core.capabilities;
 
-
 /**
  * A context interface representing the ability for an object to be deleted.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface SelectCapability
-{
-
+public interface SelectCapability {
 
     /**
      * Set the selected state of an object.
@@ -46,7 +43,6 @@ public interface SelectCapability
      *
      */
     void setSelected(boolean selected);
-
 
     /**
      * Returns the selected state.

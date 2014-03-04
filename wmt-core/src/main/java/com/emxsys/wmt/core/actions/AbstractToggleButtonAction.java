@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,35 +29,44 @@
  */
 package com.emxsys.wmt.core.actions;
 
-import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.core.capabilities.PanLeftCapability;
+import com.emxsys.wmt.util.EventUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.openide.awt.ActionRegistration;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
-import org.openide.awt.ActionID;
-import org.openide.util.NbBundle.Messages;
+import java.util.logging.Logger;
+import javax.swing.ButtonModel;
 
-@ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanLeftAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_left.png",
-        displayName = "#CTL_PanLeftAction", surviveFocusChange = false)
-@ActionReference(path = "Toolbars/Map", position = 3200)
-@RibbonActionReference(path = "Menu/Home/Move", position = 200, description = "#HINT_PanLeftAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_PanLeftAction=Pan Left", "HINT_PanLeftAction=Looks to the left"
-        })
-public final class PanLeftAction implements ActionListener {
+/**
+ * This abstract Action class invokes the action in the button's ButtonModel.
+ * @author Bruce Schubert
+ */
+public abstract class AbstractToggleButtonAction implements ActionListener {
 
-    private final PanLeftCapability context;
+    private static final Logger logger = Logger.getLogger(AbstractToggleButtonAction.class.getName());
 
-    public PanLeftAction(PanLeftCapability context) {
-        this.context = context;
+    public AbstractToggleButtonAction() {
     }
+
+    abstract public void actionPerformed(ActionEvent event, ButtonModel model);
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        context.panLeft(e);
+    public void actionPerformed(ActionEvent event) {
+        if (event == null) {
+            logger.severe("A null ActionEvent was received.");
+            return;
+        }
+
+        String actionCommand = event.getActionCommand();
+        if (actionCommand == null || actionCommand.isEmpty()) {
+            logger.severe("The actionCommand is empty.");
+            return;
+        }
+
+        ButtonModel model = EventUtil.getButtonModel(event);
+        if (model == null) {
+            logger.severe("The button model is null.");
+            return;
+        }
+        actionPerformed(event, model);
     }
+
 }

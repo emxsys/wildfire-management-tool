@@ -38,7 +38,6 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * A context sensitive action for setting an item's status to Present/Existing.
  *
@@ -46,31 +45,26 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakePresentAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/status_unknown_present.png",
-                    displayName = "#CTL_MakePresentAction")
+        displayName = "#CTL_MakePresentAction")
 @RibbonActionReference(path = "Menu/Home/Edit/Status",
-                       position = 100,
-                       description = "#CTL_MakePresentAction_Hint",
-                       autoRepeatAction = false)
+        position = 100,
+        description = "#CTL_MakePresentAction_Hint",
+        autoRepeatAction = false)
 @Messages(
-{
-    "CTL_MakePresentAction=Present",
-    "CTL_MakePresentAction_Hint=Sets the selected item's determination/declaration to present or existing."
-})
-public final class MakePresentAction implements ActionListener
-{
+        {
+            "CTL_MakePresentAction=Present",
+            "CTL_MakePresentAction_Hint=Sets the selected item's determination/declaration to present or existing."
+        })
+public final class MakePresentAction implements ActionListener {
 
     private final PresentStatusCapability context;
 
-
-    public MakePresentAction(PresentStatusCapability context)
-    {
+    public MakePresentAction(PresentStatusCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         context.makeStatusExistingOrPresent();
     }
 }

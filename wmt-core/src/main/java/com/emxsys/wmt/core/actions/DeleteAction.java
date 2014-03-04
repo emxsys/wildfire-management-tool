@@ -39,7 +39,6 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * This context sensitive action invokes the delete method on a DeleteCapability interface.
  *
@@ -48,48 +47,43 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.DeleteAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/delete.png",
-                    displayName = "#CTL_DeleteAction",
-                    surviveFocusChange = false,
-                    key = "delete")
+        displayName = "#CTL_DeleteAction",
+        surviveFocusChange = false,
+        key = "delete")
 @ActionReferences(
-{
-    //@ActionReference(path = "Menu/Edit", position = 300),
-    @ActionReference(path = "Toolbars/Edit", position = 300)
-})
-@RibbonActionReference(path = "Menu/Home/Edit", 
-                       position = 300, 
-                       priority = "top",
-                       description = "#CTL_DeleteAction_Hint", 
-                       autoRepeatAction = false,
-                       tooltipTitle = "#CTL_DeleteAction_TooltipTitle",
-                       tooltipBody = "#CTL_DeleteAction_TooltipBody",
-                       tooltipIcon = "com/emxsys/wmt/core/images/delete32.png",
-                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
-                       
+        {
+            //@ActionReference(path = "Menu/Edit", position = 300),
+            @ActionReference(path = "Toolbars/Edit", position = 300)
+        })
+@RibbonActionReference(path = "Menu/Home/Edit",
+        position = 300,
+        priority = "top",
+        description = "#CTL_DeleteAction_Hint",
+        autoRepeatAction = false,
+        tooltipTitle = "#CTL_DeleteAction_TooltipTitle",
+        tooltipBody = "#CTL_DeleteAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/delete32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+
 @Messages(
-{
-    "CTL_DeleteAction=Delete",
-    "CTL_DeleteAction_Hint=Delete the selected item",
-    "CTL_DeleteAction_TooltipTitle=Delete Item",
-    "CTL_DeleteAction_TooltipBody=Delete the currently selected item.\n"
-    + "Be cautious, you may not be able to recover the deleted item."
-})
-public final class DeleteAction implements ActionListener
-{
+        {
+            "CTL_DeleteAction=Delete",
+            "CTL_DeleteAction_Hint=Delete the selected item",
+            "CTL_DeleteAction_TooltipTitle=Delete Item",
+            "CTL_DeleteAction_TooltipBody=Delete the currently selected item.\n"
+            + "Be cautious, you may not be able to recover the deleted item."
+        })
+public final class DeleteAction implements ActionListener {
 
     private final DeleteCapability context;
 
-
-    public DeleteAction(DeleteCapability context)
-    {
+    public DeleteAction(DeleteCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.delete();
     }
 }

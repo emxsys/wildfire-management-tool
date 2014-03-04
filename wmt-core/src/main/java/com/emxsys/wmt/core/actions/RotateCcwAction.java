@@ -47,22 +47,19 @@ import org.openide.util.NbBundle.Messages;
 @ActionReference(path = "Toolbars/Map", position = 5100)
 @RibbonActionReference(path = "Menu/Home/Rotate", position = 100, description = "#HINT_RotateCcwAction", autoRepeatAction = true)
 @Messages(
-{
-    "CTL_RotateCcwAction=Rotate CCW", "HINT_RotateCcwAction=Rotate Counter Clockwise"
-})
-public final class RotateCcwAction implements ActionListener
-{
+        {
+            "CTL_RotateCcwAction=Rotate CCW", "HINT_RotateCcwAction=Rotate Counter Clockwise"
+        })
+public final class RotateCcwAction implements ActionListener {
 
     private final RotateCcwCapability context;
 
-    public RotateCcwAction(RotateCcwCapability context)
-    {
+    public RotateCcwAction(RotateCcwCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.rotateCounterClockwise(e);
     }
 }

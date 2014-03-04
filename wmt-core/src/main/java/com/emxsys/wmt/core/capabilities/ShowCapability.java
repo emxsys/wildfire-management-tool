@@ -29,14 +29,12 @@
  */
 package com.emxsys.wmt.core.capabilities;
 
-
 /**
  * A context interface representing ability of an object to be shown or hidden.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface ShowCapability
-{
+public interface ShowCapability {
 
     /**
      * Set the visibility of this object.
@@ -44,7 +42,6 @@ public interface ShowCapability
      * @param visible the visible state; set true to show or false to hide.
      */
     void setVisible(boolean visible);
-
 
     /**
      * Returns the current visibility state.

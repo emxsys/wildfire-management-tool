@@ -28,6 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.emxsys.wmt.core.capabilities;
+
 import java.awt.event.ActionEvent;
 
 /**
@@ -35,8 +36,8 @@ import java.awt.event.ActionEvent;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: TiltBackCapability.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface TiltBackCapability
-{
+public interface TiltBackCapability {
+
     /**
      * Tilts the back/down.
      * @param event An event from the initiator; may be null.

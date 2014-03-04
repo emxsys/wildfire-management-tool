@@ -29,16 +29,13 @@
  */
 package com.emxsys.wmt.core.capabilities;
 
-
 /**
  * An interface representing ability of an object to be locked. The converse of this
  * interface is Unlockable.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface LockCapability
-{
-
+public interface LockCapability {
 
     /**
      * Locks or unlocks this object to either prevent or allow modifications, respectively.
@@ -46,7 +43,6 @@ public interface LockCapability
      * @param locked the locked state.
      */
     void setLocked(boolean locked);
-
 
     /**
      * Returns the current locked state.

@@ -32,17 +32,13 @@ package com.emxsys.wmt.core.actions;
 import org.openide.util.NbBundle.Messages;
 
 @Messages(
-{
-})
+        {})
 
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: CommonMessages.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public class CommonMessages
-{
-
-
+public class CommonMessages {
 
 }

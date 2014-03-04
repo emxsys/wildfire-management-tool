@@ -38,12 +38,11 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * This context sensitive action invokes the DefaultProjectOperations.performDefaultDeleteOperation
  * method and provides custom UI registration for the Ribbon and Menu Bar.
- * 
- * See ProjectAssistant GlobalContextProviderProxy for insight into how the current project is 
+ *
+ * See ProjectAssistant GlobalContextProviderProxy for insight into how the current project is
  * maintained.
  *
  * @see DefaultProjectOperations
@@ -51,9 +50,9 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(category = "File", id = "com.emxsys.wmt.core.actions.DeleteProjectAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/delete.png",
-                    displayName = "#CTL_DeleteProjectAction",
-                    surviveFocusChange = false,
-                    lazy = true)
+        displayName = "#CTL_DeleteProjectAction",
+        surviveFocusChange = false,
+        lazy = true)
 //@ActionReference(path = "Menu/File", position = 600)
 //// Nest this ribbon bar button within the Projects dropdown list
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 600,
@@ -63,29 +62,24 @@ import org.openide.util.NbBundle.Messages;
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_DeleteProjectAction=Delete...",
-    "CTL_DeleteProjectAction_Hint=Delete the current project.",
-    "CTL_DeleteProjectAction_TooltipTitle=Delete Project",
-    "CTL_DeleteProjectAction_TooltipBody=Removes the current project from your system.\n"
-    + "The Delete Project dialog lets you delete project while leaving the data intact, "
-    + "or you can delete the entire project folder and all of its contents."
-})
-public final class DeleteProjectAction implements ActionListener
-{
+        {
+            "CTL_DeleteProjectAction=Delete...",
+            "CTL_DeleteProjectAction_Hint=Delete the current project.",
+            "CTL_DeleteProjectAction_TooltipTitle=Delete Project",
+            "CTL_DeleteProjectAction_TooltipBody=Removes the current project from your system.\n"
+            + "The Delete Project dialog lets you delete project while leaving the data intact, "
+            + "or you can delete the entire project folder and all of its contents."
+        })
+public final class DeleteProjectAction implements ActionListener {
 
     private final Project project;
 
-
-    public DeleteProjectAction(Project context)
-    {
+    public DeleteProjectAction(Project context) {
         this.project = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         // See ProjectAssistant GlobalContextProviderProxy
         DefaultProjectOperations.performDefaultDeleteOperation(project);
     }

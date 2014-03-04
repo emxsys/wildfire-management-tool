@@ -39,54 +39,47 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
- * This context sensitive action invokes the design method on objects implementing the DesignCapability
+ * This context sensitive action invokes the design method on objects implementing the
+ * DesignCapability
  * interface.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.DesignAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/design.png",
-                    displayName = "#CTL_DesignAction")
+        displayName = "#CTL_DesignAction")
 //@ActionReference(path = "Menu/Edit", position = 505)
 @RibbonActionReference(path = "Menu/Home/Edit",
-                       position = 200,
-                       priority = "top",
-                       description = "#CTL_DesignAction_Hint",
-                       tooltipTitle = "#CTL_DesignAction_TooltipTitle",
-                       tooltipBody = "#CTL_DesignAction_TooltipBody",
-                       tooltipIcon = "com/emxsys/wmt/core/images/design32.png",
-                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+        position = 200,
+        priority = "top",
+        description = "#CTL_DesignAction_Hint",
+        tooltipTitle = "#CTL_DesignAction_TooltipTitle",
+        tooltipBody = "#CTL_DesignAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/design32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_DesignAction=Design",
-    "CTL_DesignAction_Hint=Edit the selected item's shape.",
-    "CTL_DesignAction_TooltipTitle=Design Item",
-    "CTL_DesignAction_TooltipBody=Activates the design editor for the currently selected item."
-})
-public final class DesignAction implements ActionListener
-{
+        {
+            "CTL_DesignAction=Design",
+            "CTL_DesignAction_Hint=Edit the selected item's shape.",
+            "CTL_DesignAction_TooltipTitle=Design Item",
+            "CTL_DesignAction_TooltipBody=Activates the design editor for the currently selected item."
+        })
+public final class DesignAction implements ActionListener {
 
     private final DesignCapability context;
 
-
-    public DesignAction(DesignCapability context)
-    {
+    public DesignAction(DesignCapability context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         EventQueue.invokeLater(new Runnable() {
 
-
             @Override
-            public void run()
-            {
+            public void run() {
                 context.design();
             }
         });

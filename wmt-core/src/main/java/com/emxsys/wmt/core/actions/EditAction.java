@@ -39,7 +39,6 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * This context sensitive action invokes the edit method on objects implementing the Editable
  * interface.
@@ -48,46 +47,39 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.EditAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/edit.png",
-                    displayName = "#CTL_EditAction")
+        displayName = "#CTL_EditAction")
 //@ActionReference(path = "Menu/Edit", position = 500)
 @RibbonActionReference(path = "Menu/Home/Edit",
-                       position = 100,
-                       priority = "top",
-                       description = "#CTL_EditAction_Hint",
-                       tooltipTitle = "#CTL_EditAction_TooltipTitle",
-                       tooltipBody = "#CTL_EditAction_TooltipBody",
-                       tooltipIcon = "com/emxsys/wmt/core/images/edit32.png",
-                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+        position = 100,
+        priority = "top",
+        description = "#CTL_EditAction_Hint",
+        tooltipTitle = "#CTL_EditAction_TooltipTitle",
+        tooltipBody = "#CTL_EditAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/edit32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_EditAction=Edit",
-    "CTL_EditAction_Hint=Edit the selected item.",
-    "CTL_EditAction_TooltipTitle=Edit Item",
-    "CTL_EditAction_TooltipBody=Activates the editor for the currently selected item."
-})
-public final class EditAction implements ActionListener
-{
+        {
+            "CTL_EditAction=Edit",
+            "CTL_EditAction_Hint=Edit the selected item.",
+            "CTL_EditAction_TooltipTitle=Edit Item",
+            "CTL_EditAction_TooltipBody=Activates the editor for the currently selected item."
+        })
+public final class EditAction implements ActionListener {
 
     // The NetBeans defined edit capability
     private final Editable context;
 
-
-    public EditAction(Editable context)
-    {
+    public EditAction(Editable context) {
         this.context = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
+    public void actionPerformed(ActionEvent ev) {
         EventQueue.invokeLater(new Runnable() {
 
-
             @Override
-            public void run()
-            {
+            public void run() {
                 context.edit();
             }
         });

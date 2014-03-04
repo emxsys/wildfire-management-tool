@@ -41,7 +41,6 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * This action proxies the default OpenProject action and provides custom UI registration for the
  * Ribbon, Menu Bar and Toolbars. The original OpenProject action references have been hidden from
@@ -51,16 +50,16 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert
  */
 @ActionID(
-    category = "Project",
-          id = "com.emxsys.wmt.core.actions.OpenProjectAction")
+        category = "Project",
+        id = "com.emxsys.wmt.core.actions.OpenProjectAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/accept.png",
-                    displayName = "#CTL_OpenProjectAction")
+        displayName = "#CTL_OpenProjectAction")
 @ActionReferences(
-{
-//    @ActionReference(path = "Menu/File", position = 100),
-    @ActionReference(path = "Toolbars/File", position = 200),
-    @ActionReference(path = "Shortcuts", name = "O-O")
-})
+        {
+            //    @ActionReference(path = "Menu/File", position = 100),
+            @ActionReference(path = "Toolbars/File", position = 200),
+            @ActionReference(path = "Shortcuts", name = "O-O")
+        })
 //// Nest this ribbon bar button within the Projects dropdown list
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 200,
 //                       tooltipTitle = "#CTL_OpenProjectAction_TooltipTitle",
@@ -69,33 +68,29 @@ import org.openide.util.NbBundle.Messages;
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_OpenProjectAction=Open...",
-    "CTL_OpenProjectAction_Hint=Locate and open a project. (ALT-O)",
-    "CTL_OpenProjectAction_TooltipTitle=Open Project",
-    "CTL_OpenProjectAction_TooltipBody=Choose an existing project to open.\n"
-    + "The Open Project Dialog lets you browse your system for an existing project to work with."
-})
-public final class OpenProjectAction implements ActionListener
-{
+        {
+            "CTL_OpenProjectAction=Open...",
+            "CTL_OpenProjectAction_Hint=Locate and open a project. (ALT-O)",
+            "CTL_OpenProjectAction_TooltipTitle=Open Project",
+            "CTL_OpenProjectAction_TooltipBody=Choose an existing project to open.\n"
+            + "The Open Project Dialog lets you browse your system for an existing project to work with."
+        })
+public final class OpenProjectAction implements ActionListener {
 
     private static final String DELEGATE = "Actions/Project/org-netbeans-modules-project-ui-OpenProject.instance";
     private static final Logger logger = Logger.getLogger(OpenProjectAction.class.getName());
 
-
     @Override
-    public void actionPerformed(ActionEvent event)
-    {
+    public void actionPerformed(ActionEvent event) {
         Action delegate = ModuleUtil.getAction(DELEGATE);
-        if (delegate == null)
-        {
+        if (delegate == null) {
             RuntimeException exception = new IllegalArgumentException(DELEGATE + " was not found.");
             logger.severe(exception.toString());
             throw exception;
         }
         logger.info("Delegating to " + DELEGATE);
         delegate.actionPerformed(event);
-        
+
 //        // Normally, the delegate sets the focus to the ProjectManager after opening a project;
 //        // this action will attempt to restore the focus the TC that was active when the action
 //        // was invoked.

@@ -47,22 +47,19 @@ import org.openide.util.NbBundle.Messages;
 @ActionReference(path = "Toolbars/Map", position = 3400)
 @RibbonActionReference(path = "Menu/Home/Move", position = 400, description = "#HINT_PanUpAction", autoRepeatAction = true)
 @Messages(
-{
-    "CTL_PanUpAction=Pan Up", "HINT_PanUpAction=Looks upward"
-})
-public final class PanUpAction implements ActionListener
-{
+        {
+            "CTL_PanUpAction=Pan Up", "HINT_PanUpAction=Looks upward"
+        })
+public final class PanUpAction implements ActionListener {
 
     private final PanUpCapability context;
 
-    public PanUpAction(PanUpCapability context)
-    {
+    public PanUpAction(PanUpCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.panUp(e);
     }
 }

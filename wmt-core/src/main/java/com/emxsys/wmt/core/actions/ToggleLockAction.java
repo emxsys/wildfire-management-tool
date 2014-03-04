@@ -70,23 +70,20 @@ import org.openide.util.Utilities;
             "CTL_ToggleLockAction_Hint=Toggle the locked state the selected item; a locked item cannot be moved and/or edited."
         })
 public final class ToggleLockAction extends AbstractAction implements LookupListener,
-        ContextAwareAction
-{
+        ContextAwareAction {
 
     private static final String ICON_BASE = "com/emxsys/wmt/core/images/lock.png";
     private Lookup.Result<LockCapability> lookupResult;
     private LockCapability context;
 
-    public ToggleLockAction()
-    {
+    public ToggleLockAction() {
         // non-lazy initializtion requires us to put some properties into the action
         putValue(Action.NAME, Bundle.CTL_ToggleLockAction());
         putValue("iconBase", ICON_BASE);
     }
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         initialize();
         return super.isEnabled();
     }
@@ -94,10 +91,8 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
     /**
      * Initializes the lookupResult and, indirectly, the context.
      */
-    private void initialize()
-    {
-        if (this.lookupResult != null)
-        {
+    private void initialize() {
+        if (this.lookupResult != null) {
             // Already initialized
             return;
         }
@@ -109,13 +104,11 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
     }
 
     @Override
-    public void resultChanged(LookupEvent ev)
-    {
+    public void resultChanged(LookupEvent ev) {
         boolean shouldEnable = false;
         boolean shouldSelect = false;
         Collection<? extends LockCapability> allInstances = this.lookupResult.allInstances();
-        if (allInstances.size() == 1)
-        {
+        if (allInstances.size() == 1) {
             this.context = allInstances.iterator().next();
             shouldSelect = this.context.isLocked();
             shouldEnable = true;
@@ -125,17 +118,14 @@ public final class ToggleLockAction extends AbstractAction implements LookupList
     }
 
     @Override
-    public void actionPerformed(ActionEvent ev)
-    {
-        if (this.context != null)
-        {
+    public void actionPerformed(ActionEvent ev) {
+        if (this.context != null) {
             this.context.setLocked(!this.context.isLocked());
         }
     }
 
     @Override
-    public Action createContextAwareInstance(Lookup actionContext)
-    {
+    public Action createContextAwareInstance(Lookup actionContext) {
         return new ToggleLockAction();
     }
 }

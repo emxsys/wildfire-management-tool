@@ -31,7 +31,7 @@ package com.emxsys.wmt.core.capabilities;
 
 /**
  * An interface providing the ability to make a tactical symbol affiliation unknown.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: UnknownAffiliationCapability.java 416 2012-12-10 21:25:15Z bdschubert $
  */

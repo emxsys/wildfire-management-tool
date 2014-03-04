@@ -80,8 +80,7 @@ import org.openide.util.NbBundle.Messages;
             "CTL_RegisterSoftwareDialogCancel=Cancel",
             "ERR_CannotLaunchEmail=Cannot launch your email client"
         })
-public final class RegisterSoftwareAction implements ActionListener
-{
+public final class RegisterSoftwareAction implements ActionListener {
 
     private final String SUBSCRIBE_TO_USERS = "mailto:sympa@emxsys.java.net?subject=subscribe%20users";
     private final String UNSUBSCRIBE_TO_USERS = "mailto:sympa@emxsys.java.net?subject=unsubscribe%20users";
@@ -92,47 +91,39 @@ public final class RegisterSoftwareAction implements ActionListener
     private final Object CANCEL_OPTION = Bundle.CTL_RegisterSoftwareDialogCancel();
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         // Display a Subscribe/Unsubscribe/Cancel dialog regarding registration
         NotifyDescriptor dialog = new NotifyDescriptor(
                 Bundle.CTL_RegisterSoftwareDialogMsg(),
                 Bundle.CTL_RegisterSoftwareDialogTitle(),
                 NotifyDescriptor.YES_NO_CANCEL_OPTION,
                 NotifyDescriptor.INFORMATION_MESSAGE,
-                new Object[]
-                {
+                new Object[]{
                     SUBSCRIBE_OPTION,
                     UNSUBSCRIBE_OPTION,
                     CANCEL_OPTION
                 },
                 SUBSCRIBE_OPTION);
         Object result = DialogDisplayer.getDefault().notify(dialog);
-        try
-        {
+        try {
             // Open the default email client with prepopulated URI content.
-            if (result.equals(SUBSCRIBE_OPTION))
-            {
+            if (result.equals(SUBSCRIBE_OPTION)) {
                 Desktop.getDesktop().mail(new URI(SUBSCRIBE_TO_USERS));
             }
-            else if (result.equals(UNSUBSCRIBE_OPTION))
-            {
+            else if (result.equals(UNSUBSCRIBE_OPTION)) {
                 Desktop.getDesktop().mail(new URI(UNSUBSCRIBE_TO_USERS));
             }
         }
-        catch (IOException exception)
-        {
+        catch (IOException exception) {
             logger.severe("Cannot launch mail client: " + exception.getMessage());
             Message message = new NotifyDescriptor.Message(Bundle.CTL_RegisterSoftwareAction_TooltipBody());
             message.setTitle(Bundle.ERR_CannotLaunchEmail());
             DialogDisplayer.getDefault().notify(message);
         }
-        catch (URISyntaxException exception)
-        {
+        catch (URISyntaxException exception) {
             logger.severe("Bad mailTo URI: " + exception.getInput());
         }
-        catch (Exception exception)
-        {
+        catch (Exception exception) {
             logger.severe(exception.getMessage());
         }
     }

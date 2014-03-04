@@ -38,12 +38,11 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * This context sensitive action invokes the OpenProjects.close method action and provides custom UI
  * registration for the Ribbon and Menu Bar.
- * 
- * See ProjectAssistant GlobalContextProviderProxy for insight into how the current project is 
+ *
+ * See ProjectAssistant GlobalContextProviderProxy for insight into how the current project is
  * maintained.
  *
  * {@link http://wiki.netbeans.org/DevFaqActionContextSensitive}
@@ -53,9 +52,9 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(category = "File", id = "com.emxsys.wmt.core.actions.CloseProjectAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/remove.png",
-                    displayName = "#CTL_CloseProjectAction",
-                    surviveFocusChange = false,
-                    lazy = true)
+        displayName = "#CTL_CloseProjectAction",
+        surviveFocusChange = false,
+        lazy = true)
 //@ActionReference(path = "Menu/File", position = 500)
 //// Nest this ribbon bar button within the Projects dropdown list
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 500,
@@ -65,30 +64,25 @@ import org.openide.util.NbBundle.Messages;
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_CloseProjectAction=Close",
-    "CTL_CloseProjectAction_Hint=Close the current project.",
-    "CTL_CloseProjectAction_TooltipTitle=Close Project",
-    "CTL_CloseProjectAction_TooltipBody=Closes the current project.\n"
-    + "If there are modified files, you will be prompted to save the files, "
-    + "discard the changes, or cancel the close."
-})
+        {
+            "CTL_CloseProjectAction=Close",
+            "CTL_CloseProjectAction_Hint=Close the current project.",
+            "CTL_CloseProjectAction_TooltipTitle=Close Project",
+            "CTL_CloseProjectAction_TooltipBody=Closes the current project.\n"
+            + "If there are modified files, you will be prompted to save the files, "
+            + "discard the changes, or cancel the close."
+        })
 
-public final class CloseProjectAction implements ActionListener
-{
+public final class CloseProjectAction implements ActionListener {
 
     private final Project project;
 
-
-    public CloseProjectAction(Project context)
-    {
+    public CloseProjectAction(Project context) {
         this.project = context;
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        OpenProjects.getDefault().close(new Project[] { project });
+    public void actionPerformed(ActionEvent e) {
+        OpenProjects.getDefault().close(new Project[]{project});
     }
 }

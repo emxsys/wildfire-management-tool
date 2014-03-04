@@ -41,26 +41,26 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-
 /**
  * This action proxies the default NewProject action and provides custom UI registration for the
- * Ribbon, Menu Bar and Toolbars. The original NewProject action references have been hidden from the
+ * Ribbon, Menu Bar and Toolbars. The original NewProject action references have been hidden from
+ * the
  * Menu Bar and Toolbars folders within the XML layer
  *
  * @see org.netbeans.modules.project.ui.actions.NewProject
  * @author Bruce Schubert
  */
 @ActionID(
-    category = "Project",
-          id = "com.emxsys.wmt.core.actions.NewProjectAction")
+        category = "Project",
+        id = "com.emxsys.wmt.core.actions.NewProjectAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/add.png",
-                    displayName = "#CTL_NewProjectAction")
+        displayName = "#CTL_NewProjectAction")
 @ActionReferences(
-{
-    //@ActionReference(path = "Menu/File", position = 200),
-    @ActionReference(path = "Toolbars/File", position = 100),
-    @ActionReference(path = "Shortcuts", name = "O-N")
-})
+        {
+            //@ActionReference(path = "Menu/File", position = 200),
+            @ActionReference(path = "Toolbars/File", position = 100),
+            @ActionReference(path = "Shortcuts", name = "O-N")
+        })
 // Nest this ribbon bar button within the Projects dropdown list
 //@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 100,
 //                       tooltipTitle = "#CTL_NewProjectAction_TooltipTitle",
@@ -69,26 +69,22 @@ import org.openide.util.NbBundle.Messages;
 //                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
-{
-    "CTL_NewProjectAction=New...",
-    "CTL_NewProjectAction_Hint=Creates and opens a new project. (ALT-N)",
-    "CTL_NewProjectAction_TooltipTitle=New Project",
-    "CTL_NewProjectAction_TooltipBody=Create and open a new project.\n"
-    + "The New Project Wizard allows you to select a template for your new project."
-})
-public final class NewProjectAction implements ActionListener
-{
+        {
+            "CTL_NewProjectAction=New...",
+            "CTL_NewProjectAction_Hint=Creates and opens a new project. (ALT-N)",
+            "CTL_NewProjectAction_TooltipTitle=New Project",
+            "CTL_NewProjectAction_TooltipBody=Create and open a new project.\n"
+            + "The New Project Wizard allows you to select a template for your new project."
+        })
+public final class NewProjectAction implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(NewProjectAction.class.getName());
     private static final String ACTION_TO_PROXY = "Actions/Project/org-netbeans-modules-project-ui-NewProject.instance";
 
-
     @Override
-    public void actionPerformed(ActionEvent event)
-    {
+    public void actionPerformed(ActionEvent event) {
         Action proxiedAction = ModuleUtil.getAction(ACTION_TO_PROXY);
-        if (proxiedAction == null)
-        {
+        if (proxiedAction == null) {
             RuntimeException exception = new IllegalArgumentException(ACTION_TO_PROXY + " was not found.");
             logger.severe(exception.toString());
             throw exception;

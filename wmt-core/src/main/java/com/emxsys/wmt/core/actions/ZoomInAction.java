@@ -49,19 +49,16 @@ import org.openide.util.NbBundle.Messages;
             "CTL_ZoomInAction=Zoom In",
             "HINT_ZoomInAction=Move closer"
         })
-public final class ZoomInAction implements ActionListener
-{
+public final class ZoomInAction implements ActionListener {
 
     private final ZoomInCapability context;
 
-    public ZoomInAction(ZoomInCapability context)
-    {
+    public ZoomInAction(ZoomInCapability context) {
         this.context = context;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         context.zoomIn(e);
     }
 }
