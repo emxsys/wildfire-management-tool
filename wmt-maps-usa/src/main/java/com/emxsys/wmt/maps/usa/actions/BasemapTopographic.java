@@ -61,36 +61,31 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapTopographic=USGS Topographic",
-            "CTL_BasemapTopographic_Hint=24K, 100K and 250K Topographic Basemap",
-            "CTL_BasemapTopographic_TooltipTitle=USGS Topographic Basemap",
-            "CTL_BasemapTopographic_TooltipBody=Activate the USGS Topographic basemap. \n"
-            + "The basemap is comprised of USGS 24K, 100K and 25K topographic maps."
-        })
-public final class BasemapTopographic implements ActionListener
-{
+@Messages({
+    "CTL_BasemapTopographic=USGS Topographic",
+    "CTL_BasemapTopographic_Hint=24K, 100K and 250K Topographic Basemap",
+    "CTL_BasemapTopographic_TooltipTitle=USGS Topographic Basemap",
+    "CTL_BasemapTopographic_TooltipBody=Activate the USGS Topographic basemap. \n"
+    + "The basemap is comprised of USGS 24K, 100K and 25K topographic maps."
+})
+public final class BasemapTopographic implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapTopographic.class.getName());
-    
+
     private static final String BASEMAP_LOW_RES = UsaBasemapLayers.LAYER_USGS_TOPO_LOW_RES;
     private static final String BASEMAP_MED_RES = UsaBasemapLayers.LAYER_USGS_TOPO_MED_RES;
     private static final String BASEMAP_HIGH_RES = UsaBasemapLayers.LAYER_USGS_TOPO_HIGH_RES;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        List<GisLayer> layers = Layers.getLayersInRole(BasicLayerGroup.Basemap);
-        for (GisLayer layer : layers)
-        {
+    public void actionPerformed(ActionEvent e) {
+        List<GisLayer> layers = Layers.getLayersInGroup(BasicLayerGroup.Basemap);
+        for (GisLayer layer : layers) {
             boolean shouldEnable
                     = layer.getName().equals(BASEMAP_LOW_RES)
                     || layer.getName().equals(BASEMAP_MED_RES)
                     || layer.getName().equals(BASEMAP_HIGH_RES);
             layer.setEnabled(shouldEnable);
-            if (shouldEnable)
-            {
+            if (shouldEnable) {
                 layer.getLookup().lookup(LayerOpacity.class).setOpacity(LayerOpacity.OPAQUE);
             }
         }

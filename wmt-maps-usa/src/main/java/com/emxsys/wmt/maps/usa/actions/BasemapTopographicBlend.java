@@ -63,17 +63,15 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapTopographicBlend=USGS Topographic NAIP Blend",
-            "CTL_BasemapTopographicBlend_Hint=Topographic and Aerial Imagergy Blend Basemap",
-            "CTL_BasemapTopographicBlend_TooltipTitle=USGS Topographic Blend Basemap",
-            "CTL_BasemapTopographicBlend_TooltipBody=Activate the blended USGS topographic and USDA aerial imagery basemap.\n"
-            + "USGS 24K, 100K and 250K topographic maps are blended with USDA NAIP aerial imagery to provide an enhanced"
-            + "display of the earth's topography and physical features."
-        })
-public final class BasemapTopographicBlend implements ActionListener
-{
+@Messages({
+    "CTL_BasemapTopographicBlend=USGS Topographic NAIP Blend",
+    "CTL_BasemapTopographicBlend_Hint=Topographic and Aerial Imagergy Blend Basemap",
+    "CTL_BasemapTopographicBlend_TooltipTitle=USGS Topographic Blend Basemap",
+    "CTL_BasemapTopographicBlend_TooltipBody=Activate the blended USGS topographic and USDA aerial imagery basemap.\n"
+    + "USGS 24K, 100K and 250K topographic maps are blended with USDA NAIP aerial imagery to provide an enhanced"
+    + "display of the earth's topography and physical features."
+})
+public final class BasemapTopographicBlend implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapTopographicBlend.class.getName());
     //private static final String BASEMAP_SATELLITE = NbBundle.getBundle("com.emxsys.maps.usa.Bundle").getString("LAYER_Landsat");
@@ -85,33 +83,27 @@ public final class BasemapTopographicBlend implements ActionListener
     private static final double THRESHOLD_MED_TO_HIGH_RES = 5000;
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        List<GisLayer> layers = Layers.getLayersInRole(BasicLayerGroup.Basemap);
-        for (GisLayer layer : layers)
-        {
+    public void actionPerformed(ActionEvent e) {
+        List<GisLayer> layers = Layers.getLayersInGroup(BasicLayerGroup.Basemap);
+        for (GisLayer layer : layers) {
             // Default layer properties
             boolean enabled = true;
             double maxActiveAltitude = 1000000000.0;
             double minActiveAltitude = 0.0;
             double opacity = LayerOpacity.TRANSLUCENT;
 
-            if (layer.getName().equals(BASEMAP_LOW_RES))
-            {
+            if (layer.getName().equals(BASEMAP_LOW_RES)) {
                 minActiveAltitude = THRESHOLD_LOW_TO_MED_RES;
             }
-            else if (layer.getName().equals(BASEMAP_MED_RES))
-            {
+            else if (layer.getName().equals(BASEMAP_MED_RES)) {
                 maxActiveAltitude = THRESHOLD_LOW_TO_MED_RES;
                 minActiveAltitude = THRESHOLD_MED_TO_HIGH_RES;
             }
-            else if (layer.getName().equals(BASEMAP_HIGH_RES))
-            {
+            else if (layer.getName().equals(BASEMAP_HIGH_RES)) {
                 maxActiveAltitude = THRESHOLD_MED_TO_HIGH_RES;
                 minActiveAltitude = 0.0;
             }
-            else if (layer.getName().equals(BASEMAP_AERIAL))
-            {
+            else if (layer.getName().equals(BASEMAP_AERIAL)) {
                 opacity = LayerOpacity.OPAQUE;
             }
 //            else if (layer.getName().equals(BASEMAP_SATELLITE))
@@ -119,22 +111,19 @@ public final class BasemapTopographicBlend implements ActionListener
 //                opacity = LayerOpacity.OPAQUE;
 //            }
             // Disable all other layers
-            else
-            {
+            else {
                 enabled = false;
             }
 
             layer.setEnabled(enabled);
 
             LayerActiveAltitudeRange activeAltitudeRange = layer.getLookup().lookup(LayerActiveAltitudeRange.class);
-            if (enabled && activeAltitudeRange != null)
-            {
+            if (enabled && activeAltitudeRange != null) {
                 activeAltitudeRange.setMaxActiveAltitude(Reals.newAltitude(maxActiveAltitude));
                 activeAltitudeRange.setMinActiveAltitude(Reals.newAltitude(minActiveAltitude));
             }
             LayerOpacity layerOpacity = layer.getLookup().lookup(LayerOpacity.class);
-            if (enabled && layerOpacity != null)
-            {
+            if (enabled && layerOpacity != null) {
                 layerOpacity.setOpacity(opacity);
             }
         }

@@ -60,31 +60,27 @@ import org.openide.util.NbBundle.Messages;
         tooltipIcon = "com/emxsys/wmt/maps/usa/images/basemap-usda-naip32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-        {
-            "CTL_BasemapUsdaNaip=USDA NAIP",
-            "CTL_BasemapUsdaNaip_Hint=UDSA NAIP Basemap",
-            "CTL_BasemapUsdaNaip_TooltipTitle=USDA NAIP Basemap",
-            "CTL_BasemapUsdaNaip_TooltipBody=Activate a basemap using USDA National Agriculture Imagery Program (NAIP) imagery. \n"
-            + "The NAIP acquires aerial imagery during the agricultural growing seasons in the continental U.S. "
-            + "A primary goal of the NAIP program is to make digital ortho photography available to governmental "
-            + "agencies and the public within a year of acquisition. "
-        })
-public final class BasemapAerialUsdaNaip implements ActionListener
-{
+@Messages({
+    "CTL_BasemapUsdaNaip=USDA NAIP",
+    "CTL_BasemapUsdaNaip_Hint=UDSA NAIP Basemap",
+    "CTL_BasemapUsdaNaip_TooltipTitle=USDA NAIP Basemap",
+    "CTL_BasemapUsdaNaip_TooltipBody=Activate a basemap using USDA National Agriculture Imagery Program (NAIP) imagery. \n"
+    + "The NAIP acquires aerial imagery during the agricultural growing seasons in the continental U.S. "
+    + "A primary goal of the NAIP program is to make digital ortho photography available to governmental "
+    + "agencies and the public within a year of acquisition. "
+})
+public final class BasemapAerialUsdaNaip implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapAerialUsdaNaip.class.getName());
     private static final String BASEMAP_NAME = NbBundle.getBundle("com.emxsys.wmt.maps.usa.Bundle").getString("LAYER_USDANAIP");
 
     @Override
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         GisLayer layer = Layers.findLayer(BASEMAP_NAME);
-        if (layer == null)
-        {
+        if (layer == null) {
             throw new IllegalStateException(BASEMAP_NAME + " layer not found.");
         }
-        Layers.enableLayerInRoleExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
+        Layers.enableLayerInGroupExclusive(BASEMAP_NAME, BasicLayerGroup.Basemap);
         Layers.setLayerOpacity(layer, LayerOpacity.OPAQUE);
         Viewers.getPrimaryViewer().setVisible(true);
     }

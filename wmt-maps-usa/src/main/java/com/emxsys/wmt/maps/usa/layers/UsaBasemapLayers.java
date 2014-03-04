@@ -35,7 +35,8 @@ import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
 import org.openide.util.NbBundle.Messages;
 
 /**
- *
+ * Registers the USA Base Map layers.
+ * 
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @MapLayerRegistrations(
@@ -87,25 +88,21 @@ import org.openide.util.NbBundle.Messages;
                     config = "nbres:/worldwind/config/USA/USGSTopoHighResLayer.xml",
                     instanceClass = "gov.nasa.worldwind.layers.Layer",
                     factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-                    factoryMethod = "createLayer"),
-        })
-@Messages(
-        {
-            "CTL_USDANAIP=USDA NAIP",
-            "CTL_USGSTopoLowRes=USGS 250k Topographic",
-            "CTL_USGSTopoMedRes=USGS 100k Topographic",
-            "CTL_USGSTopoHighRes=USGS 24k Topographic"
-        })
-public class UsaBasemapLayers
-{
+                    factoryMethod = "createLayer"),})
+@Messages({
+    "CTL_USDANAIP=USDA NAIP",
+    "CTL_USGSTopoLowRes=USGS 250k Topographic",
+    "CTL_USGSTopoMedRes=USGS 100k Topographic",
+    "CTL_USGSTopoHighRes=USGS 24k Topographic"
+})
+public class UsaBasemapLayers {
 
     public static String LAYER_USDA_NAIP = Bundle.CTL_USDANAIP();
     public static String LAYER_USGS_TOPO_LOW_RES = Bundle.CTL_USGSTopoLowRes();
     public static String LAYER_USGS_TOPO_MED_RES = Bundle.CTL_USGSTopoMedRes();
     public static String LAYER_USGS_TOPO_HIGH_RES = Bundle.CTL_USGSTopoHighRes();
 
-    private UsaBasemapLayers()
-    {
+    private UsaBasemapLayers() {
 
     }
 
