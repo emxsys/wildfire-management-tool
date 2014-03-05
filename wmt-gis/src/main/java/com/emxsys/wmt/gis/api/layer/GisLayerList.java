@@ -51,7 +51,7 @@ public class GisLayerList implements Lookup.Provider {
     private static final Logger logger = Logger.getLogger(GisLayerList.class.getName());
 
     static {
-        logger.setLevel(Level.ALL);
+//        logger.setLevel(Level.ALL);
     }
 
     public GisLayerList() {
