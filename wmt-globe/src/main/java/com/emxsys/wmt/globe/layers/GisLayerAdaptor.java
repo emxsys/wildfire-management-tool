@@ -97,6 +97,16 @@ public class GisLayerAdaptor implements GisLayer {
         updateLayerAttributes(type, role, category, null);
     }
 
+    public GisLayerAdaptor(Layer layer, String name, LayerGroup group) {
+        this.layer = layer;
+        this.layer.setName(name);
+        // add the layer implementation to this provider's lookup
+        this.content.add(this.layer);
+
+        updateCapabilities();
+        updateLayerAttributes(BasicLayerType.Other, group, BasicLayerCategory.Other, null);
+    }
+
     @Override
     public Lookup getLookup() {
         if (lookup == null) {

@@ -22,10 +22,6 @@ Any value defined here will override the pom.xml file value but is only applicab
         <org-netbeans-modules-editor-indent.CodeStyle.project.text-line-wrap>none</org-netbeans-modules-editor-indent.CodeStyle.project.text-line-wrap>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.alignMultilineArrayInit>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.alignMultilineArrayInit>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.alignMultilineMethodParams>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.alignMultilineMethodParams>
-        <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeElseOnNewLine>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeElseOnNewLine>
-        <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeFinallyOnNewLine>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeFinallyOnNewLine>
-        <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeCatchOnNewLine>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeCatchOnNewLine>
-        <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeWhileOnNewLine>true</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.placeWhileOnNewLine>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.importGroupsOrder>*</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.importGroupsOrder>
         <netbeans.compile.on.save>all</netbeans.compile.on.save>
         <netbeans.hint.license>bsd3</netbeans.hint.license>

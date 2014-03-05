@@ -29,9 +29,6 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
@@ -63,6 +60,39 @@ import org.openide.util.lookup.Lookups;
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
+            position = 200,
+            name = "LatLon Graticule",
+            actuate = "onRequest",
+            role = "Overlay",
+            type = "Vector",
+            category = "Other",
+            displayName = "#CTL_LatLonGraticule",
+            instanceClass = "gov.nasa.worldwind.layers.LatLonGraticuleLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+            factoryMethod = "createLayer"),
+    @MapLayerRegistration(
+            position = 300,
+            name = "UTM Graticule",
+            actuate = "onRequest",
+            role = "Overlay",
+            type = "Vector",
+            category = "Other",
+            displayName = "#CTL_UTMGraticule",
+            instanceClass = "gov.nasa.worldwind.layers.Earth.UTMGraticuleLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+            factoryMethod = "createLayer"),
+    @MapLayerRegistration(
+            position = 400,
+            name = "MGRS Graticule",
+            actuate = "onRequest",
+            role = "Overlay",
+            type = "Vector",
+            category = "Other",
+            displayName = "#CTL_MGRSGraticule",
+            instanceClass = "gov.nasa.worldwind.layers.Earth.MGRSGraticuleLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+            factoryMethod = "createLayer"),
+    @MapLayerRegistration(
             position = 1000,
             name = "Place names",
             role = "Overlay",
@@ -75,22 +105,26 @@ import org.openide.util.lookup.Lookups;
             factoryMethod = "createLayer"),})
 @Messages({
     "CTL_CountryBoundaries=Country Boundaries",
+    "CTL_LatLonGraticule=Lat/Lon Graticule",
+    "CTL_MGRSGraticule=MGRS Graticule",
+    "CTL_UTMGraticule=UTM Graticule",
     "CTL_PlaceNames=Place Names",})
 public class OverlayLayers {
 
     public static String LAYER_COUNTRY_BOUNDARIES = Bundle.CTL_CountryBoundaries();
+    public static String LAYER_LATLON_GRATICULE = Bundle.CTL_LatLonGraticule();
+    public static String LAYER_UTM_GRATICULE = Bundle.CTL_UTMGraticule();
+    public static String LAYER_MGRS_GRATICULE = Bundle.CTL_MGRSGraticule();
     public static String LAYER_PLACE_NAMES = Bundle.CTL_PlaceNames();
 
     public static List<GisLayer> getLayers() {
-        ArrayList<GisLayer> list = new ArrayList<>();
-
-        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Overlay),
-                BasicLayerType.Other, BasicLayerGroup.Overlay, BasicLayerCategory.Other));
-
+        ArrayList<GisLayer> list = new ArrayList<>();   // return value
         FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Overlay");
-        Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
-        for (Layer layer : layers) {
-            list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+        if (layersFolder != null) {
+            Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
+            for (Layer layer : layers) {
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+            }
         }
         return list;
     }

@@ -89,18 +89,6 @@ import org.openide.util.lookup.Lookups;
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
             position = 400,
-            name = "MS Virtual Earth Hybrid",
-            role = "Basemap",
-            type = "Raster",
-            category = "Hybrid",
-            actuate = "onRequest",
-            displayName = "#CTL_MSVirtualEarthHybrid",
-            config = "nbres:/config/Earth/MSVirtualEarthHybridLayer.xml",
-            instanceClass = "gov.nasa.worldwind.layers.Layer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 500,
             name = "MS Virtual Earth Aerial",
             role = "Basemap",
             type = "Raster",
@@ -112,7 +100,30 @@ import org.openide.util.lookup.Lookups;
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),
     @MapLayerRegistration(
+            position = 500,
+            name = "MS Virtual Earth Hybrid",
+            role = "Basemap",
+            type = "Raster",
+            category = "Hybrid",
+            actuate = "onRequest",
+            displayName = "#CTL_MSVirtualEarthHybrid",
+            config = "nbres:/config/Earth/MSVirtualEarthHybridLayer.xml",
+            instanceClass = "gov.nasa.worldwind.layers.Layer",
+            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+            factoryMethod = "createLayer"),
+    @MapLayerRegistration(
             position = 600,
+            name = "Open Street Map",
+            role = "Basemap",
+            type = "Raster",
+            category = "Street",
+            actuate = "onRequest",
+            displayName = "#CTL_OpenStreetMap",
+            instanceClass = "gov.nasa.worldwind.layers.Earth.OSMMapnikLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+            factoryMethod = "createLayer"),
+    @MapLayerRegistration(
+            position = 700,
             name = "MS Virtual Earth Road",
             role = "Basemap",
             type = "Raster",
@@ -122,29 +133,19 @@ import org.openide.util.lookup.Lookups;
             config = "nbres:/config/Earth/MSVirtualEarthRoadsLayer.xml",
             instanceClass = "gov.nasa.worldwind.layers.Layer",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 700,
-            name = "Open Street Map",
-            role = "Basemap",
-            type = "Raster",
-            category = "Street",
-            actuate = "onRequest",
-            displayName = "#CTL_OpenStreetMap",
-            instanceClass = "gov.nasa.worldwind.layers.Earth.OSMMapnikLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),})
 @Messages({
     "CTL_BlueMarble=Blue Marble",
     "CTL_Landsat=i-cubed Landsat",
     "CTL_Bing=Bing Maps - Aerial",
-    "CTL_MSVirtualEarthHybrid=MS Virtual Earth - Hybrid",
     "CTL_MSVirtualEarthAerial=MS Virtual Earth - Aerial",
+    "CTL_MSVirtualEarthHybrid=MS Virtual Earth - Hybrid",
     "CTL_MSVirtualEarthRoad=MS Virtual Earth - Road",
     "CTL_OpenStreetMap=Open Street Map"
 })
 public class BaseMapLayers {
 
+    public static String LAYER_EARTH = Bundle.CTL_Earth();
     public static String LAYER_BLUE_MARBLE = Bundle.CTL_BlueMarble();
     public static String LAYER_LANDSAT = Bundle.CTL_Landsat();
     public static String LAYER_BING = Bundle.CTL_Bing();
@@ -154,15 +155,13 @@ public class BaseMapLayers {
     public static String LAYER_OPEN_STREET_MAP = Bundle.CTL_OpenStreetMap();
 
     public static List<GisLayer> getLayers() {
-        ArrayList<GisLayer> list = new ArrayList<>();
-
-        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Basemap),
-                BasicLayerType.Other, BasicLayerGroup.Basemap, BasicLayerCategory.Other));
-
+        ArrayList<GisLayer> list = new ArrayList<>();   // return value
         FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Basemap");
-        Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
-        for (Layer layer : layers) {
-            list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+        if (layersFolder != null) {
+            Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
+            for (Layer layer : layers) {
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+            }
         }
         return list;
     }

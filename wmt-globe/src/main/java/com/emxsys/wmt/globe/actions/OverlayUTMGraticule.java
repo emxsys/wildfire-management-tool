@@ -42,41 +42,41 @@ import org.openide.util.NbBundle.Messages;
 
 @ActionID(
         category = "Map",
-        id = "com.emxsys.wmt.globe.actions.OverlayCountryBoundaries")
+        id = "com.emxsys.wmt.globe.actions.UTMGraticule")
 @ActionRegistration(
-        displayName = "#CTL_CountryBoundaries",
+        displayName = "#CTL_UTMGraticule",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@ActionReference(path = "Toolbars/Overlays", position = 311)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Boundaries",
+@ActionReference(path = "Toolbars/Overlays", position = 313)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graticules",
         buttonStyle = "toggle",
-        position = 100,
-        description = "#CTL_CountryBoundaries_Hint",
+        position = 200,
+        description = "#CTL_UTMGraticule_Hint",
         priority = "top",
-        tooltipTitle = "#CTL_CountryBoundaries_TooltipTitle",
-        tooltipBody = "#CTL_CountryBoundaries_TooltipBody",
+        tooltipTitle = "#CTL_UTMGraticule_TooltipTitle",
+        tooltipBody = "#CTL_UTMGraticule_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/globe/images/globe.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
-    "CTL_CountryBoundaries=Country Boundaries",
-    "CTL_CountryBoundaries_Hint=Worldwide Country Boundaries Overlay",
-    "CTL_CountryBoundaries_TooltipTitle=Country Boundaries Overlay",
-    "CTL_CountryBoundaries_TooltipBody=Activate the worldwide Country Boundaries overlay. \n"
-    + "The overlay displays Country Boundaries on top of maps."
+    "CTL_UTMGraticule=UTM Graticule",
+    "CTL_UTMGraticule_Hint=UTM Graticule Overlay",
+    "CTL_UTMGraticule_TooltipTitle=UTM Graticule Overlay",
+    "CTL_UTMGraticule_TooltipBody=Toggles the display of the UTM (Universal Transverse Mercator) cooridinate grid. \n"
+            + "This coordinate system is often used on topographic maps."
 })
-public final class OverlayCountryBoundaries extends AbstractGisLayerToggleAction {
+public final class OverlayUTMGraticule extends AbstractGisLayerToggleAction {
 
-    private static final Logger logger = Logger.getLogger(OverlayCountryBoundaries.class.getName());
-    private static final String OVERLAY_NAME = OverlayLayers.LAYER_COUNTRY_BOUNDARIES;
+    private static final Logger logger = Logger.getLogger(OverlayUTMGraticule.class.getName());
+    private static final String OVERLAY_NAME = OverlayLayers.LAYER_UTM_GRATICULE;
     private static final String ICON_BASE = "com/emxsys/wmt/globe/images/globe.png";
 
-    public OverlayCountryBoundaries() {
+    public OverlayUTMGraticule() {
         // The base class will use the layer's display name to find the GisLayer that will be operated on.
         super(OVERLAY_NAME);
 
         // Non-lazy initializtion requires us to put the name and icon properties into the action;
         // it's not handled by the registration.
-        putValue(Action.NAME, Bundle.CTL_CountryBoundaries());
+        putValue(Action.NAME, Bundle.CTL_UTMGraticule());
         putValue("iconBase", ICON_BASE);
     }
 
@@ -88,6 +88,6 @@ public final class OverlayCountryBoundaries extends AbstractGisLayerToggleAction
 
     @Override
     public Action createContextAwareInstance(Lookup ignoredActionContext) {
-        return new OverlayCountryBoundaries();
+        return new OverlayUTMGraticule();
     }
 }

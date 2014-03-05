@@ -24,6 +24,16 @@
         </Layer>
         <Layer className="gov.nasa.worldwindx.sunlight.SunLayer" actuate="onRequest" />
         <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer"/>
-        <Layer className="com.terramenta.globe.layers.ClassificationBannerLayer"/>    
+        <Layer className="gov.nasa.worldwind.layers.WorldMapLayer"/>
+        <Layer className="gov.nasa.worldwind.layers.ViewControlsLayer"/>
+        <Layer className="gov.nasa.worldwind.layers.CompassLayer">
+            <Property name="IconFilePath" value="images/notched-compass.png"/>
+        </Layer>
+        
+<!--        <Layer className="gov.nasa.worldwind.layers.LatLonGraticuleLayer" title="LatLon Graticule" actuate="onRequest" />
+        <Layer className="gov.nasa.worldwind.layers.Earth.MGRSGraticuleLayer" title="MGRS Graticule" actuate="onRequest" />  
+        <Layer className="gov.nasa.worldwind.layers.ScalebarLayer"/>
+        <Layer className="com.terramenta.globe.layers.ClassificationBannerLayer"/>-->
+
     </LayerList>
 </WorldWindConfiguration>

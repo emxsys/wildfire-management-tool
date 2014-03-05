@@ -31,11 +31,14 @@ package com.emxsys.wmt.globe.layers;
 
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.SkyGradientLayer;
+import gov.nasa.worldwind.layers.StarsLayer;
+import gov.nasa.worldwindx.sunlight.SunLayer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,40 +53,7 @@ import org.openide.util.lookup.Lookups;
  */
 @MapLayerRegistrations({
     @MapLayerRegistration(
-            position = 100,
-            name = "Stars",
-            role = "Background",
-            type = "Other",
-            category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_Stars",
-            instanceClass = "gov.nasa.worldwind.layers.StarsLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 200,
-            name = "Sky",
-            role = "Background",
-            type = "Other",
-            category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_Sky",
-            instanceClass = "gov.nasa.worldwind.layers.SkyGradientLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 300,
-            name = "Sun",
-            actuate = "onLoad",
-            role = "Background",
-            type = "Other",
-            category = "Other",
-            displayName = "#CTL_Sun",
-            instanceClass = "gov.nasa.worldwindx.sunlight.SunLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 400,
+            position = 10,
             name = "Earth",
             actuate = "onLoad",
             role = "Background",
@@ -92,30 +62,78 @@ import org.openide.util.lookup.Lookups;
             displayName = "#CTL_Earth",
             instanceClass = "gov.nasa.worldwind.layers.Earth.BMNGOneImage",
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),})
-
+            factoryMethod = "createLayer"),
+//    @MapLayerRegistration(
+//            position = 100,
+//            name = "Stars",
+//            role = "Background",
+//            type = "Other",
+//            category = "Other",
+//            actuate = "onLoad",
+//            displayName = "#CTL_Stars",
+//            instanceClass = "gov.nasa.worldwind.layers.StarsLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),
+//    @MapLayerRegistration(
+//            position = 200,
+//            name = "Sky",
+//            role = "Background",
+//            type = "Other",
+//            category = "Other",
+//            actuate = "onLoad",
+//            displayName = "#CTL_Sky",
+//            instanceClass = "gov.nasa.worldwind.layers.SkyGradientLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),
+//    @MapLayerRegistration(
+//            position = 300,
+//            name = "Sun",
+//            actuate = "onLoad",
+//            role = "Background",
+//            type = "Other",
+//            category = "Other",
+//            displayName = "#CTL_Sun",
+//            instanceClass = "gov.nasa.worldwindx.sunlight.SunLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),
+})
 @Messages({
     "CTL_Stars=Stars",
     "CTL_Sun=Sun", // Must match name used in Terramenata-Globe SunController.
     "CTL_Sky=Sky",
-    "CTL_Earth=Earth",})
+    "CTL_Earth=Earth",        
+})
 public class BackgroundLayers {
 
-    public static String LAYER_SKY = Bundle.CTL_Sky();
-    public static String LAYER_SUNLIGHT = Bundle.CTL_Sun();
     public static String LAYER_STARS = Bundle.CTL_Stars();
+    public static String LAYER_SUNLIGHT = Bundle.CTL_Sun();
+    public static String LAYER_SKY = Bundle.CTL_Sky();
     public static String LAYER_EARTH = Bundle.CTL_Earth();
 
     public static List<GisLayer> getLayers() {
         ArrayList<GisLayer> list = new ArrayList<>();
-
-        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Background),
-                BasicLayerType.Other, BasicLayerGroup.Background, BasicLayerCategory.Other));
-
+        
+        // Assign the default layers to the appropriate groups
+        LayerList ll = Globe.getInstance().getWorldWindManager().getLayers();
+        for (Layer layer : ll) {
+            if (layer instanceof StarsLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_STARS, BasicLayerGroup.Background));
+            } else if (layer instanceof SunLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_SUNLIGHT, BasicLayerGroup.Background));
+            } else if (layer instanceof SkyGradientLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_SKY, BasicLayerGroup.Background));
+            }
+        }
+        
         FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Background");
-        Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
-        for (Layer layer : layers) {
-            list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+        if (layersFolder != null) {
+            Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
+            for (Layer layer : layers) {
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+            }
         }
         return list;
     }

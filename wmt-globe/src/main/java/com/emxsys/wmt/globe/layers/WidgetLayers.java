@@ -35,10 +35,20 @@ import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
+import com.emxsys.wmt.globe.Globe;
+import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.ScalebarLayer;
+import gov.nasa.worldwind.layers.SkyGradientLayer;
+import gov.nasa.worldwind.layers.StarsLayer;
+import gov.nasa.worldwind.layers.ViewControlsLayer;
+import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwindx.sunlight.SunLayer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
@@ -50,51 +60,51 @@ import org.openide.util.lookup.Lookups;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-@MapLayerRegistrations({
-    @MapLayerRegistration(
-            position = 100,
-            name = "Compass Overlay",
-            role = "Widget",
-            type = "Other",
-            category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_Compass",
-            instanceClass = "gov.nasa.worldwind.layers.CompassLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 200,
-            name = "View Controls Overlay",
-            role = "Widget",
-            type = "Other",
-            category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_Controls",
-            instanceClass = "com.emxsys.wmt.globe.layers.FixedViewControlsLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 300,
-            name = "World Map Overlay",
-            role = "Widget",
-            type = "Other",
-            category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_WorldMap",
-            instanceClass = "gov.nasa.worldwind.layers.WorldMapLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),
-    @MapLayerRegistration(
-            position = 400,
-            name = "Scalebar Overlay",
-            role = "Widget",
-            type = "Other",
-            category = "Other",
-            actuate = "onLoad",
-            displayName = "#CTL_Scalebar",
-            instanceClass = "gov.nasa.worldwind.layers.ScalebarLayer",
-            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-            factoryMethod = "createLayer"),})
+//@MapLayerRegistrations({
+//    @MapLayerRegistration(
+//            position = 100,
+//            name = "Compass Overlay",
+//            role = "Widget",
+//            type = "Other",
+//            category = "Other",
+//            actuate = "onLoad",
+//            displayName = "#CTL_Compass",
+//            instanceClass = "gov.nasa.worldwind.layers.CompassLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),
+//    @MapLayerRegistration(
+//            position = 200,
+//            name = "View Controls Overlay",
+//            role = "Widget",
+//            type = "Other",
+//            category = "Other",
+//            actuate = "onLoad",
+//            displayName = "#CTL_Controls",
+//            instanceClass = "com.emxsys.wmt.globe.layers.FixedViewControlsLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),
+//    @MapLayerRegistration(
+//            position = 300,
+//            name = "World Map Overlay",
+//            role = "Widget",
+//            type = "Other",
+//            category = "Other",
+//            actuate = "onLoad",
+//            displayName = "#CTL_WorldMap",
+//            instanceClass = "gov.nasa.worldwind.layers.WorldMapLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),
+//    @MapLayerRegistration(
+//            position = 400,
+//            name = "Scalebar Overlay",
+//            role = "Widget",
+//            type = "Other",
+//            category = "Other",
+//            actuate = "onLoad",
+//            displayName = "#CTL_Scalebar",
+//            instanceClass = "gov.nasa.worldwind.layers.ScalebarLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+//            factoryMethod = "createLayer"),})
 @Messages({
     "CTL_Compass=Compass Overlay",
     "CTL_Controls=Controls Overlay",
@@ -109,13 +119,30 @@ public class WidgetLayers {
 
     public static List<GisLayer> getLayers() {
         ArrayList<GisLayer> list = new ArrayList<>();
-        list.add(new GisLayerAdaptor(new DummyLayer(BasicLayerGroup.Widget),
-                BasicLayerType.Other, BasicLayerGroup.Widget, BasicLayerCategory.Other));
+        // Assign the default layers to the appropriate groups
+        LayerList ll = Globe.getInstance().getWorldWindManager().getLayers();
+        for (Layer layer : ll) {
+            if (layer instanceof CompassLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_COMPASS, BasicLayerGroup.Widget));
+            } else if (layer instanceof WorldMapLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_WORLDMAP, BasicLayerGroup.Widget));
+            } else if (layer instanceof ViewControlsLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_CONTROLS, BasicLayerGroup.Widget));
+            } else if (layer instanceof ScalebarLayer) {
+                ll.remove(layer);
+                list.add(new GisLayerAdaptor(layer, LAYER_SCALEBAR, BasicLayerGroup.Widget));
+            }
+        }
 
         FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Widget");
-        Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
-        for (Layer layer : layers) {
-            list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+        if (layersFolder != null) {
+            Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
+            for (Layer layer : layers) {
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+            }
         }
         return list;
     }

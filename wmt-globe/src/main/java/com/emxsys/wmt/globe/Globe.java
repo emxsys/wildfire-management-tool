@@ -32,6 +32,9 @@ package com.emxsys.wmt.globe;
 import com.emxsys.wmt.gis.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
+import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
+import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
@@ -49,9 +52,21 @@ import com.emxsys.wmt.globe.capabilities.GlobeCapabilities;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
+import com.emxsys.wmt.globe.layers.GisLayerAdaptor;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.Vec4;
+import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.StarsLayer;
+import gov.nasa.worldwind.layers.ViewControlsLayer;
+import gov.nasa.worldwind.layers.ViewControlsSelectListener;
+import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
+import gov.nasa.worldwindx.sunlight.SunController;
+import gov.nasa.worldwindx.sunlight.SunLayer;
 import java.util.List;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -79,7 +94,9 @@ public class Globe implements GisViewer {
     private final GisLayerList gisLayers = new GisLayerList();
 
     /**
-     * Do not call! Use getInstance() or Lookup.getDefault().lookup(GisViewer.class).
+     * Do not call!
+     * <p>
+     * Use getInstance() or Lookup.getDefault().lookup(Globe.class) instead.
      */
     public Globe() {
     }
@@ -107,7 +124,16 @@ public class Globe implements GisViewer {
     }
 
     /**
-     * Initializes the Globe's capabilities and the underlying WorldWindow LayerList with the merged
+     * Convenience method returns the registered WorldWindManager.
+     *
+     * @return the WorldWindManager found on the global lookup.
+     */
+    public WorldWindManager getWorldWindManager() {
+        return this.wwm;
+    }
+
+    /**
+     * Initializes the Globe's capabilities, and the underlying WorldWindow LayerList via the merged
      * and sorted collection of WorldWind/Layers files are instantiated here via lookupAll. See this
      * module's layer.xml.
      */
@@ -116,11 +142,21 @@ public class Globe implements GisViewer {
         this.content.add(new GlobeCapabilities(this.wwm));
         this.wwm.addLookup(this.lookup);
 
+        // Disable painting during the initialization
+        this.wwm.getWorldWindow().setVisible(false);
+
+        // Insert group layers
+        for (BasicLayerGroup layerGroup : BasicLayerGroup.values()) {
+            DummyLayer dummyLayer = new DummyLayer(layerGroup);
+            this.wwm.getLayers().add(layerGroup.getIndex(), dummyLayer);
+            this.gisLayers.add(new GisLayerAdaptor(dummyLayer));
+        }
         addAll(BackgroundLayers.getLayers());
         addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
-//        addAll(EffectLayers.getLayers());
         addAll(WidgetLayers.getLayers());
+
+        this.wwm.getWorldWindow().setVisible(true);
     }
 
     /**
@@ -214,15 +250,13 @@ public class Globe implements GisViewer {
                     gisLayer.getName(), group.getName(), groupLayerPosition
                 });
                 this.wwm.getLayers().add(insertFirstInGroup ? groupLayerPosition + 1 : groupLayerPosition, layerImpl);
-            }
-            else {
+            } else {
                 logger.log(Level.WARNING, "addGisLayer() : layer group not found; adding {0} at an arbitrary position.", gisLayer.getName());
                 this.wwm.getLayers().add(layerImpl);
             }
             // Sync our internal list
             this.gisLayers.add(gisLayer);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             logger.severe(e.getMessage());
         }
     }
