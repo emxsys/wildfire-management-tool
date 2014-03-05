@@ -35,7 +35,7 @@ import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerActiveAltitudeRange;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayersx;
+import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.visad.Reals;
 import java.awt.event.ActionEvent;
@@ -72,7 +72,7 @@ import org.openide.util.NbBundle.Messages;
 public final class BasemapLandsat implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapLandsat.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_LANDSAT;
+    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_LANDSAT;
 
     @Override
     public void actionPerformed(ActionEvent e) {

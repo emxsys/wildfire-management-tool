@@ -34,7 +34,7 @@ import com.emxsys.wmt.gis.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
-import com.emxsys.wmt.globe.layers.BaseMapLayersx;
+import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,7 +73,7 @@ import org.openide.util.NbBundle.Messages;
 public final class BasemapStreetOpenStreetMap implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(BasemapStreetOpenStreetMap.class.getName());
-    private static final String BASEMAP_NAME = BaseMapLayersx.LAYER_OPEN_STREET_MAP;
+    private static final String BASEMAP_NAME = BaseMapLayers.LAYER_OPEN_STREET_MAP;
 
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -143,7 +143,7 @@ import org.openide.util.lookup.Lookups;
     "CTL_MSVirtualEarthRoad=MS Virtual Earth - Road",
     "CTL_OpenStreetMap=Open Street Map"
 })
-public class BaseMapLayersx {
+public class BaseMapLayers {
 
     public static String LAYER_BLUE_MARBLE = Bundle.CTL_BlueMarble();
     public static String LAYER_LANDSAT = Bundle.CTL_Landsat();
@@ -167,7 +167,7 @@ public class BaseMapLayersx {
         return list;
     }
 
-    private BaseMapLayersx() {
+    private BaseMapLayers() {
     }
 
 }

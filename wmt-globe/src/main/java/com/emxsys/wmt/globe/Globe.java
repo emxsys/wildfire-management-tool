@@ -47,7 +47,7 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import com.emxsys.wmt.globe.capabilities.GlobeCapabilities;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
-import com.emxsys.wmt.globe.layers.BaseMapLayersx;
+import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
@@ -117,7 +117,7 @@ public class Globe implements GisViewer {
         this.wwm.addLookup(this.lookup);
 
         addAll(BackgroundLayers.getLayers());
-        addAll(BaseMapLayersx.getLayers());
+        addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
 //        addAll(EffectLayers.getLayers());
         addAll(WidgetLayers.getLayers());
