@@ -85,7 +85,9 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>C:\Java\visad-2.0\visad.jar</file>
+                            <file>${project.basedir}/src/main/repository/visad-2.0/visad.jar</file>
+                            <sources>${project.basedir}/src/main/repository/visad-2.0/visad_src.jar</sources>
+                            <javadoc>${project.basedir}/src/main/repository/visad-2.0/visad_doc.jar</javadoc>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>visad</groupId>
                             <artifactId>visad</artifactId>
@@ -101,7 +103,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>C:\Java\worldwind-1.5.1\jogl.jar</file>
+                            <file>${project.basedir}/src/main/repository/worldwind-1.5.1/jogl.jar</file>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>com.sun</groupId>
                             <artifactId>jogl</artifactId>
@@ -117,7 +119,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>C:\Java\worldwind-1.5.1\gluegen-rt.jar</file>
+                            <file>${project.basedir}/src/main/repository/worldwind-1.5.1/gluegen-rt.jar</file>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>com.sun</groupId>
                             <artifactId>gluegen-rt</artifactId>
@@ -133,7 +135,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>C:\Java\worldwind-1.5.1\worldwind.jar</file>
+                            <file>${project.basedir}/src/main/repository/worldwind-1.5.1/worldwind.jar</file>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>gov.nasa</groupId>
                             <artifactId>worldwind</artifactId>
@@ -149,7 +151,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>C:\Java\worldwind-1.5.1\worldwindx.jar</file>
+                            <file>${project.basedir}/src/main/repository/worldwind-1.5.1/worldwindx.jar</file>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>gov.nasa</groupId>
                             <artifactId>worldwindx</artifactId>
