@@ -95,7 +95,7 @@
             
             <!-- Find Group (e.g., Address, City, Airport, Landmark, Coordinates) -->
             <folder name="Find">
-                <attr name="position" intvalue="400"/>
+                <attr name="position" intvalue="500"/>
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Find"/>
                 <!-- <file name="org-openide-actions-FindAction.shadow">
                     <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-FindAction.instance"/>
@@ -117,6 +117,7 @@
 
             <folder name="Tools">
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Tools"/>
+                <attr name="position" intvalue="600"/>                 
                 <!--  <attr name="position" intvalue="500"/>
                 <file name="org-openide-actions-UndoAction.shadow">
                     <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
@@ -135,19 +136,19 @@
             </folder>                
             <!-- Zoom Group (e.g., Zoom In and Out -->
             <folder name="Zoom">
-                <attr name="position" intvalue="600"/>                 
+                <attr name="position" intvalue="700"/>                 
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Zoom"/>
             </folder>
 
             <!-- Move Group (e.g., Pan Left, Right, etc. -->
             <folder name="Move">
-                <attr name="position" intvalue="700"/>
+                <attr name="position" intvalue="800"/>
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Move"/>
             </folder>
 
             <!-- Rotate Group (e.g. Rotate and Tilt) -->
             <folder name="Rotate">
-                <attr name="position" intvalue="800"/>
+                <attr name="position" intvalue="900"/>
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Rotate"/>
             </folder>              
         </folder>
@@ -176,11 +177,11 @@
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CloseProject"/>
                 <attr name="position" intvalue="700"/>
             </file>-->
-            <file name="com-emxsys-wmt-core-actions-CloseProjectAction.shadow">
+            <!-- <file name="com-emxsys-wmt-core-actions-CloseProjectAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/File/com-emxsys-wmt-core-actions-CloseProjectAction.instance"/>
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CloseProject"/>
                 <attr name="position" intvalue="700"/>
-            </file>
+            </file>-->
         </folder>
     </folder>
    
