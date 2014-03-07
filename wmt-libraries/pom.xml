@@ -68,8 +68,9 @@
                     <publicPackages>
                         <publicPackage>visad.*</publicPackage>
                         <publicPackage>edu.wisc.ssec.*</publicPackage>
+                        <publicPackage>javax.xml.*</publicPackage>
                         <publicPackage>org.w3c.*</publicPackage>
-                        
+                        <publicPackage>org.xml.*</publicPackage>
                     </publicPackages>
                 </configuration>               
             </plugin>
