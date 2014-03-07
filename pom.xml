@@ -121,11 +121,15 @@
         <module>wmt-application</module>
         <module>wmt-branding</module>
         <module>wmt-core</module>
+        <module>wmt-cps</module>
         <module>wmt-gis</module>
         <module>wmt-globe</module>
+        <module>wmt-libraries</module>
         <module>wmt-maps-usa</module>
+        <module>wmt-solar</module>
+        <module>wmt-terrain</module>
         <module>wmt-utilities</module>
         <module>wmt-visad</module>
-    <module>wmt-libraries</module>
+        <module>wmt-wildfire</module>
   </modules>
 </project>
