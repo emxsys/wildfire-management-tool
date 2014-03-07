@@ -132,6 +132,18 @@
             <artifactId>wmt-utilities</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>org-openide-loaders</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <type>jar</type>
+            <version>RELEASE74</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-nodes</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <type>jar</type>
+            <version>RELEASE74</version>
+        </dependency>
     </dependencies>
 
     <build>
