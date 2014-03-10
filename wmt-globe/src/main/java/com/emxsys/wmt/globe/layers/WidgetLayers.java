@@ -29,9 +29,7 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
@@ -40,28 +38,34 @@ import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.ScalebarLayer;
-import gov.nasa.worldwind.layers.SkyGradientLayer;
-import gov.nasa.worldwind.layers.StarsLayer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.WorldMapLayer;
-import gov.nasa.worldwindx.sunlight.SunLayer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.Lookups;
 
 /**
- * This class registers all of the Widget layers and provides a mechanism for retrieving all of
- * the registered layers in the 'Widget' group.
+ * This class registers all of the Widget layers and provides a mechanism for retrieving all of the
+ * registered layers in the 'Widget' group.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-//@MapLayerRegistrations({
-//    @MapLayerRegistration(
+@MapLayerRegistrations({
+    @MapLayerRegistration(
+            position = 10,
+            name = "Reticule Overlay",
+            role = "Widget",
+            type = "Other",
+            category = "Other",
+            actuate = "onLoad",
+            displayName = "#CTL_Reticule",
+            instanceClass = "com.emxsys.wmt.globe.layers.ReticuleLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
+            factoryMethod = "createLayer"), //    @MapLayerRegistration(
 //            position = 100,
 //            name = "Compass Overlay",
 //            role = "Widget",
@@ -104,16 +108,19 @@ import org.openide.util.lookup.Lookups;
 //            displayName = "#CTL_Scalebar",
 //            instanceClass = "gov.nasa.worldwind.layers.ScalebarLayer",
 //            factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
-//            factoryMethod = "createLayer"),})
+//            factoryMethod = "createLayer"),
+})
 @Messages({
     "CTL_Compass=Compass Overlay",
     "CTL_Controls=Controls Overlay",
+    "CTL_Reticule=Crosshairs Overlay",
     "CTL_Scalebar=Scalebar Overlay",
     "CTL_WorldMap=World Map Overlay",})
 public class WidgetLayers {
 
     public static String LAYER_COMPASS = Bundle.CTL_Compass();
     public static String LAYER_CONTROLS = Bundle.CTL_Controls();
+    public static String LAYER_RETICULE = Bundle.CTL_Reticule();
     public static String LAYER_SCALEBAR = Bundle.CTL_Scalebar();
     public static String LAYER_WORLDMAP = Bundle.CTL_WorldMap();
 

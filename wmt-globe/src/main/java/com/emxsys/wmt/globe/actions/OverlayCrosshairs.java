@@ -28,56 +28,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.emxsys.wmt.globe.actions;
-/*
-import com.emxsys.actions.RibbonActionReference;
-import com.emxsys.basicui.actions.AbstractGisLayerToggleAction;
-import gov.nasa.worldwind.util.Logging;
+
+import com.emxsys.wmt.globe.layers.WidgetLayers;
 import javax.swing.Action;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(
-    category = "Map",
-          id = "com.emxsys.worldwind.actions.OverlayCrosshairs")
-@ActionRegistration(                    
-                    displayName = "#CTL_OverlayCrosshairs",
-                    lazy = false)
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map/Overlays/Controls", position = 500),
-    @ActionReference(path = "Toolbars/Overlays", position = 150)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Map/Overlays/Controls", position = 500,
-                       buttonStyle = "toggle",
-                       description = "#CTL_OverlayCrosshairs_Hint",
-                       priority = "top",
-                       tooltipTitle = "#CTL_OverlayCrosshairs_TooltipTitle",
-                       tooltipBody = "#CTL_OverlayCrosshairs_TooltipBody",
-                       tooltipIcon = "com/emxsys/worldwind/actions/crosshairs.png")
+        category = "Map",
+        id = "com.emxsys.wmt.globe.actions.OverlayCrosshairs")
+@ActionRegistration(
+        displayName = "#CTL_OverlayCrosshairs",
+        lazy = false)
+@ActionReference(path = "Toolbars/Overlays", position = 150)
+@com.terramenta.ribbon.RibbonActionReference(
+        path = "Menu/Home/Manage/Overlays/Controls",
+        position = 10,
+        buttonStyle = "toggle",
+        description = "#CTL_OverlayCrosshairs_Hint",
+        priority = "top",
+        tooltipTitle = "#CTL_OverlayCrosshairs_TooltipTitle",
+        tooltipBody = "#CTL_OverlayCrosshairs_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/globe/images/crosshairs.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
-@Messages(
-{
+@Messages({
     "CTL_OverlayCrosshairs=Crosshairs",
     "CTL_OverlayCrosshairs_Hint=Crosshairs Overlay",
     "CTL_OverlayCrosshairs_TooltipTitle=Crosshairs Overlay",
     "CTL_OverlayCrosshairs_TooltipBody=Toggle the display of the crosshairs."
 })
-public final class OverlayCrosshairs extends AbstractGisLayerToggleAction
-{
+public final class OverlayCrosshairs extends AbstractGisLayerToggleAction {
 
-    private static final String ICON_BASE = "com/emxsys/worldwind/actions/crosshairs.png";
-    private static final String OVERLAY_NAME = Logging.getMessage("layers.CrosshairLayer.Name");
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/crosshairs32.png";
+    private static final String OVERLAY_NAME = WidgetLayers.LAYER_RETICULE;
 
-
-    public OverlayCrosshairs()
-    {
+    public OverlayCrosshairs() {
         super(OVERLAY_NAME);
         // non-lazy initializtion requires us to put some properties into the action
         putValue(Action.NAME, Bundle.CTL_OverlayCrosshairs());
@@ -85,11 +74,8 @@ public final class OverlayCrosshairs extends AbstractGisLayerToggleAction
 
     }
 
-
     @Override
-    public Action createContextAwareInstance(Lookup ignoredActionContext)
-    {
+    public Action createContextAwareInstance(Lookup ignoredActionContext) {
         return new OverlayCrosshairs();
     }
 }
-*/

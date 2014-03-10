@@ -29,64 +29,62 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.globe.events.CrosshairsEvent;
-import com.emxsys.wmt.globe.events.CrosshairsListener;
-import gov.nasa.worldwind.geom.Angle;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
+import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.GlobeCoordinateProvider;
+import com.emxsys.wmt.globe.util.Positions;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.CrosshairLayer;
 import gov.nasa.worldwind.render.DrawContext;
-import java.awt.EventQueue;
-import javax.swing.event.EventListenerList;
+import java.util.logging.Logger;
 
 /**
- * The CrosshairPositionLayer renders cross-hairs on the globe and publishes their position.
- * 
+ * The ReticuleLayer renders a crosshair reticule on the globe and publishes it's geographical
+ * coordinate to ReticuleCoordinateEvent listeners.
+ *
  * @author Bruce Schubert
  */
-public class CrosshairPositionLayer extends CrosshairLayer {
+public class ReticuleLayer extends CrosshairLayer {
 
-    private final EventListenerList eventListeners = new EventListenerList();
     private Position lastPosition;
+    private final GlobeCoordinateProvider eventProvider;
+    private static final Logger logger = Logger.getLogger(ReticuleLayer.class.getName());
 
-    public CrosshairPositionLayer() {
+    public ReticuleLayer() {
         super("com/emxsys/wmt/globe/images/32x32-crosshair-outline.png");
+        eventProvider = Globe.getInstance().getLookup().lookup(GlobeCoordinateProvider.class);
+        if (eventProvider == null) {
+            logger.warning("A GlobeCoordinateProvider was not found in the Globe's lookup. No ReticuleChangeEvents will be fired.");
+        }
     }
-
-    public void addCrosshairsListener(CrosshairsListener listener) {
-        this.eventListeners.add(CrosshairsListener.class, listener);
-    }
-
-    public void removeCrosshairsListener(CrosshairsListener listener) {
-        this.eventListeners.remove(CrosshairsListener.class, listener);
-    }
-
-    protected void callListeners(final CrosshairsEvent event) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                for (CrosshairsListener listener : eventListeners.getListeners(CrosshairsListener.class)) {
-                    listener.moved(event);
-                }
-            }
-        });
-    }
-
-    public Position getPosition() {
-        return lastPosition;
-    }
-
 
     @Override
     public void render(DrawContext dc) {
         super.render(dc);
-        // Set the position under the cross-hairs
-        Position position = dc.getViewportCenterPosition();
-        if (position == null || position.equals(lastPosition)) {
-            return;
+        if (isEnabled()) {
+            // Get the position under the crosshairs
+            Position position = dc.getViewportCenterPosition();
+            if (position == null || position.equals(lastPosition)) {
+                return;
+            }
+            lastPosition = position;
+            // Notify listeners
+            if (eventProvider != null) {
+                eventProvider.fireReticuleChange(this, Positions.toGeoCoord3D(position));
+            }
         }
-        lastPosition = position;
-        // Notify
-        callListeners(new CrosshairsEvent(this, position));
+    }
+
+    @Override
+    public void setEnabled(boolean enable) {
+        super.setEnabled(enable);
+        if (!enable) {
+            lastPosition = Position.ZERO; // this triggers notification if re-enabled
+            if (eventProvider != null) {
+                eventProvider.fireReticuleChange(this, GeoCoord3D.INVALID_POSITION);
+            }
+        }
 
     }
+
 }
