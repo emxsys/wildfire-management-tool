@@ -30,6 +30,8 @@
 package com.emxsys.wmt.globe.ui;
 
 import com.emxsys.wmt.gis.api.GeoCoord3D;
+import com.emxsys.wmt.gis.api.Terrain;
+import com.emxsys.wmt.gis.api.TerrainProvider;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateEvent;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
@@ -59,22 +61,24 @@ import visad.VisADException;
  * @author Bruce Schubert
  */
 public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable {
-    
+
     public static JLabel LATITUDE_CELL = new ReticuleStatusLineComponent(ReticuleStatusLineComponent.Type.LATITUDE);
     public static JLabel LONGITUDE_CELL = new ReticuleStatusLineComponent(ReticuleStatusLineComponent.Type.LONGITUDE);
     public static JLabel ELEVATION_CELL = new ReticuleStatusLineComponent(ReticuleStatusLineComponent.Type.ELEVATION);
+    public static JLabel ASPECT_CELL = new ReticuleStatusLineComponent(ReticuleStatusLineComponent.Type.ASPECT);
+    public static JLabel SLOPE_CELL = new ReticuleStatusLineComponent(ReticuleStatusLineComponent.Type.SLOPE);
     private static final ReticuleStatusLine instance = new ReticuleStatusLine();
     private static final RequestProcessor RP = new RequestProcessor(ReticuleStatusLine.class);
     private static final Logger logger = Logger.getLogger(ReticuleStatusLine.class.getName());
     private final AtomicReference<ReticuleCoordinateEvent> event = new AtomicReference<>(
             new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
     private Task TASK;
-    
+
     public static ReticuleStatusLine getInstance() {
         return instance;
     }
-    
-    /** 
+
+    /**
      * Call to attach this listener to the ReticuleCoordinateProvider.
      */
     public void initialize() {
@@ -88,13 +92,15 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
 
     private ReticuleStatusLine() {
     }
-    
+
     private static void clearStatusLine() {
         LATITUDE_CELL.setText("");
         LONGITUDE_CELL.setText("");
         ELEVATION_CELL.setText("");
+        ASPECT_CELL.setText("");
+        SLOPE_CELL.setText("");
     }
-    
+
     static Component panelWithSeparator(JLabel cell) {
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL) {
             @Override
@@ -103,17 +109,17 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
             }
         };
         separator.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(separator, BorderLayout.WEST);
         panel.add(cell);
         return panel;
     }
-    
+
     @Override
     public void updateCoordinate(ReticuleCoordinateEvent evt) {
         this.event.set(evt);
-        
+
         if (this.TASK == null) {   // XXX Can't initilize this in constructor w/o throwing Null exception...don't know why.
             this.TASK = RP.create(this, true); // true == initiallyFinished
         }
@@ -122,7 +128,7 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
             this.TASK.schedule(100); // update in 1/10 of second
         }
     }
-    
+
     @Override
     public void run() {
         try {
@@ -140,7 +146,7 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
                     evt.getCoordinate().getLatitude().toValueString());
             LATITUDE_CELL.setText(latStr);
             LATITUDE_CELL.setToolTipText(evt.getCoordinate().getLatitude().longString());
-            
+
             double[] lonDMS = Angle.fromDegrees(evt.getCoordinate().getLongitudeDegrees()).toDMS();
             sign = Math.signum(evt.getCoordinate().getLongitudeDegrees());
             String lonStr = String.format("%3d\u00B0 %5.2f\u2019 %s  (%s)",
@@ -150,38 +156,66 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
                     evt.getCoordinate().getLongitude().toValueString());
             LONGITUDE_CELL.setText(lonStr);
             LONGITUDE_CELL.setToolTipText(evt.getCoordinate().getLongitude().longString());
-            
-            ELEVATION_CELL.setText("Elev " + Long.toString((long) evt.getCoordinate().getAltitudeMeters()) + " meters");
-            ELEVATION_CELL.setToolTipText(evt.getCoordinate().getAltitude().longString());
+
+
+            TerrainProvider terrainProvider = Globe.getInstance().getLookup().lookup(TerrainProvider.class);
+            if (terrainProvider != null) {
+                Terrain terrain = terrainProvider.getTerrain(evt.getCoordinate());
+                ELEVATION_CELL.setText("Elev " + Long.toString((long) terrain.getElevationFeet()) + " feet");
+                ELEVATION_CELL.setToolTipText(terrain.getElevation().longString());
+                ASPECT_CELL.setText(terrain.isMissing() ? "" : "Aspect " + terrain.getAspectCardinalPoint8());
+                ASPECT_CELL.setToolTipText(terrain.getAspect().longString());
+                SLOPE_CELL.setText(terrain.isMissing() ? "" : "Slope " + Long.toString((long) terrain.getSlopePercent()) + "%");
+                SLOPE_CELL.setToolTipText(terrain.getSlope().longString());
+            }
+
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
-    
+
     @ServiceProvider(service = StatusLineElementProvider.class, position = 100)
     public static final class Latitude implements StatusLineElementProvider {
-        
+
         @Override
         public Component getStatusLineElement() {
             return panelWithSeparator(LATITUDE_CELL);
         }
     }
-    
+
     @ServiceProvider(service = StatusLineElementProvider.class, position = 101)
     public static final class Longitude implements StatusLineElementProvider {
-        
+
         @Override
         public Component getStatusLineElement() {
             return panelWithSeparator(LONGITUDE_CELL);
         }
     }
-    
+
     @ServiceProvider(service = StatusLineElementProvider.class, position = 102)
     public static final class Elevation implements StatusLineElementProvider {
-        
+
         @Override
         public Component getStatusLineElement() {
             return panelWithSeparator(ELEVATION_CELL);
+        }
+    }
+
+    @ServiceProvider(service = StatusLineElementProvider.class, position = 103)
+    public static final class Aspect implements StatusLineElementProvider {
+
+        @Override
+        public Component getStatusLineElement() {
+            return panelWithSeparator(ASPECT_CELL);
+        }
+    }
+
+    @ServiceProvider(service = StatusLineElementProvider.class, position = 104)
+    public static final class Slope implements StatusLineElementProvider {
+
+        @Override
+        public Component getStatusLineElement() {
+            return panelWithSeparator(SLOPE_CELL);
         }
     }
 }

@@ -50,9 +50,20 @@ public class ReticuleStatusLineComponent extends JLabel
     private static final String MAX_LATITUDE_STRING = "___88\u00B0 88.88\' N__(-88.8888\u00B0)___";
     private static final String MAX_LONGITUDE_STRING = "___888\u00B0 88.88\' W__(-888.8888\u00B0)___";
     private static final String MAX_ELEVATION_STRING = "Elev 8,888,888 meters";
+    private static final String MAX_SLOPE_STRING = "Slope 8888 deg";
+    private static final String MAX_ASPECT_STRING = "Aspect 8888 deg";
     private static final Logger LOG = Logger.getLogger(ReticuleStatusLineComponent.class.getName());
     private Dimension minDimension;
 
+    enum Type
+    { // Type of component
+
+        LATITUDE,
+        LONGITUDE,
+        ELEVATION,
+        ASPECT,
+        SLOPE
+    }
 
     ReticuleStatusLineComponent(Type type)
     {
@@ -66,6 +77,12 @@ public class ReticuleStatusLineComponent extends JLabel
                 break;
             case ELEVATION:
                 initMinDimension(MAX_ELEVATION_STRING);
+                break;
+            case ASPECT:
+                initMinDimension(MAX_ASPECT_STRING);
+                break;
+            case SLOPE:
+                initMinDimension(MAX_SLOPE_STRING);
                 break;
             default:
                 throw new IllegalStateException();
@@ -97,11 +114,4 @@ public class ReticuleStatusLineComponent extends JLabel
     }
 
 
-    enum Type
-    { // Type of component
-
-        LATITUDE,
-        LONGITUDE,
-        ELEVATION
-    }
 }

@@ -99,7 +99,7 @@ public class GlobeCoordinateProvider implements CursorCoordinateProvider, Reticu
                 if (event == null) {
                     event = new CursorCoordinateEvent(Globe.getInstance(), coord);
                 }
-                System.out.println("Firing CursorCoordinateEvent: " + coord);
+                //System.out.println("Firing CursorCoordinateEvent: " + coord);
                 listener.updateCoordinate(event);
             }
         }
@@ -113,7 +113,7 @@ public class GlobeCoordinateProvider implements CursorCoordinateProvider, Reticu
             if (event == null) {
                 event = new ReticuleCoordinateEvent(source, coord);
             }
-            System.out.println("Firing ReticuleCoordinateEvent: " + coord);
+            //System.out.println("Firing ReticuleCoordinateEvent: " + coord);
             listener.updateCoordinate(event);
         }
     }

@@ -141,6 +141,7 @@ public class Globe implements GisViewer {
     public void initializeResources() {
         this.content.add(new GlobeCapabilities(this.wwm));
         this.content.add(new GlobeCoordinateProvider());
+        this.content.add(new GlobeTerrainProvider());
         this.wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization
