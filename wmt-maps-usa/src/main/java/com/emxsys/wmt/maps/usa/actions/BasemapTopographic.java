@@ -30,8 +30,8 @@
 package com.emxsys.wmt.maps.usa.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.gis.Layers;
-import com.emxsys.wmt.gis.Viewers;
+import com.emxsys.wmt.gis.api.layer.Layers;
+import com.emxsys.wmt.gis.api.viewer.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerOpacity;
