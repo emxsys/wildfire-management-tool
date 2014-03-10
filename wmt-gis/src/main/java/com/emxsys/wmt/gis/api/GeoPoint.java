@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2012, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,51 +27,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.GisType;
-import com.emxsys.wmt.gis.api.LineString;
 import com.emxsys.wmt.gis.api.Part;
-import edu.wisc.ssec.mcidas.ConversionUtility;
+import com.emxsys.wmt.gis.api.Point;
 import java.util.Iterator;
-import java.util.List;
-import visad.Real;
 
 /**
+ * A GIS 3D Geographic Point.
  *
  * @author Bruce Schubert
- * @version $Id$
+ * @version $Id: GeoPoint.java 528 2013-04-18 15:04:46Z bdschubert $
  */
-public class GeoLineString extends AbstractGeometry implements LineString {
+public class GeoPoint extends AbstractGeometry implements Point {
 
-    protected GeoSector extents;
-    protected GeoPart part;
-    private Real length;
+    private GeoCoord3D position;
+    private GeoSector extents;
+    private GeoPositionPart part;
 
-    public GeoLineString() {
-        this.part = new GeoPart();
-        this.extents = new GeoSector();
+    public GeoPoint() {
+        this(GeoCoord3D.INVALID_POSITION);
     }
 
-    public GeoLineString(List<GeoCoord3D> coords) {
-        this.part = new GeoPart(coords);
-        this.extents = new GeoSector(this);
+    public GeoPoint(GeoCoord3D position) {
+        setPosition(position);
     }
 
-    @Override
-    public Box getExtents() {
-        return this.extents;
-    }
-
-    @Override
-    public int getNumPoints() {
-        return this.part.getNumPoints();
+    public final void setPosition(GeoCoord3D position) {
+        this.position = position;
+        this.extents = new GeoSector(position, position);
+        this.part = new GeoPositionPart(position);
     }
 
     @Override
-    public int getNumParts() {
-        return 1;
+    public GeoCoord3D getPosition() {
+        return position;
     }
 
     @Override
@@ -106,24 +98,39 @@ public class GeoLineString extends AbstractGeometry implements LineString {
     }
 
     @Override
-    public Real getLength() {
-        if (this.length == null) {
-            double km = 0;
-            // Compute combined length of all segments
-            for (int i = 0, j = 1; j < part.getNumPoints(); i++, j++) {
-                GeoCoord3D coord1 = part.coords.get(i);
-                GeoCoord3D coord2 = part.coords.get(j);
-                km += ConversionUtility.LatLonToDistance(
-                        (float) coord1.getLatitudeDegrees(), (float) coord1.getLongitudeDegrees(),
-                        (float) coord2.getLatitudeDegrees(), (float) coord2.getLongitudeDegrees());
-            }
-            this.length = new Real(GisType.DISTANCE, km * 1000);
-        }
-        return this.length;
+    public int getNumParts() {
+        return 1;
     }
 
     @Override
-    public double getLengthMeters() {
-        return getLength().getValue();
+    public int getNumPoints() {
+        return part.getNumPoints();
+    }
+
+    @Override
+    public Box getExtents() {
+        return this.extents;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.position != null ? this.position.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GeoPoint other = (GeoPoint) obj;
+        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
+            return false;
+        }
+        return true;
     }
 }

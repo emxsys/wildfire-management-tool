@@ -27,51 +27,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.gis.GeoCoord3D;
-import com.emxsys.wmt.gis.api.Box;
+import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.wmt.gis.api.Feature;
 import com.emxsys.wmt.gis.api.Part;
-import com.emxsys.wmt.gis.api.Point;
 import java.util.Iterator;
 
 /**
- * A GIS 3D Geographic Point.
+ * GeoPointPart2D allows a GeoCoord2D to represent a Part in a point shape.
  *
  * @author Bruce Schubert
- * @version $Id: GeoPoint.java 528 2013-04-18 15:04:46Z bdschubert $
+ * @version $Id: GeoPointPart2D.java 528 2013-04-18 15:04:46Z bdschubert $
+ * @see Feature
  */
-public class GeoPoint extends AbstractGeometry implements Point {
+public class GeoPointPart2D implements Part {
 
-    private GeoCoord3D position;
-    private GeoSector extents;
-    private GeoPositionPart part;
+    private GeoCoord2D point;
 
-    public GeoPoint() {
-        this(GeoCoord3D.INVALID_POSITION);
+    public GeoPointPart2D() {
+        this.point = GeoCoord2D.INVALID_POINT;
     }
 
-    public GeoPoint(GeoCoord3D position) {
-        setPosition(position);
+    public GeoPointPart2D(GeoCoord2D point) {
+        this.point = point;
     }
 
-    public final void setPosition(GeoCoord3D position) {
-        this.position = position;
-        this.extents = new GeoSector(position, position);
-        this.part = new GeoPositionPart(position);
+    public void setPoint(GeoCoord2D point) {
+        this.point = point;
     }
 
     @Override
-    public GeoCoord3D getPosition() {
-        return position;
+    public int getNumDimensions() {
+        return 2;
     }
 
     @Override
-    public Iterable<Part> getParts() {
-        return new Iterable<Part>() {
+    public int getNumPoints() {
+        return 1;
+    }
+
+    /**
+     * Returns an iterator on the coordinates. A call to next() will return an array representing
+     * the point's coordinates (x,y).
+     *
+     * @return an iterator on the point
+     */
+    @Override
+    public Iterable<double[]> getPoints() {
+        return new Iterable<double[]>() {
             @Override
-            public Iterator<Part> iterator() {
-                return new Iterator<Part>() {
+            public Iterator<double[]> iterator() {
+                return new Iterator<double[]>() {
                     private int index = 0;
 
                     @Override
@@ -80,10 +87,10 @@ public class GeoPoint extends AbstractGeometry implements Point {
                     }
 
                     @Override
-                    public Part next() {
+                    public double[] next() {
                         if (index == 0) {
                             ++index;
-                            return part;
+                            return point.getValues();
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
@@ -98,39 +105,24 @@ public class GeoPoint extends AbstractGeometry implements Point {
     }
 
     @Override
-    public int getNumParts() {
-        return 1;
+    public double[] getX() {
+        return new double[]{
+            point.getLongitudeDegrees()
+        };
     }
 
     @Override
-    public int getNumPoints() {
-        return part.getNumPoints();
+    public double[] getY() {
+        return new double[]{
+            point.getLatitudeDegrees()
+        };
     }
 
     @Override
-    public Box getExtents() {
-        return this.extents;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 67 * hash + (this.position != null ? this.position.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final GeoPoint other = (GeoPoint) obj;
-        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
-            return false;
-        }
-        return true;
+    public double[] getZ() {
+        //throw new UnsupportedOperationException("getZ() not supported. Only two dimensions.");
+        return new double[]{
+            0.0
+        };
     }
 }

@@ -27,23 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.visad.Reals;
-import visad.Real;
-import visad.RealType;
+import com.emxsys.wmt.gis.api.Feature;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
+ * Abstract class that implements common methods for a concrete implementation of Feature.
  *
- * @author Bruce Schubert <bruce@emxsys.com>
+ * @author Bruce Schubert
+ * @version $Id: AbstractFeature.java 528 2013-04-18 15:04:46Z bdschubert $
  */
-public class Latitude {
+public abstract class AbstractFeature implements Feature {
 
-    public static Real fromDegrees(double latitude) {
-        return new Real(RealType.Latitude, latitude);
+    private InstanceContent content = new InstanceContent();
+    private AbstractLookup lookup;
+    private ProxyLookup proxyLookup;
+
+    /**
+     * Gets this Feature's lookup merged with the Geography lookup.
+     *
+     * @return a ProxyLookup object initialized from this object and the Geography lookups
+     */
+    @Override
+    public Lookup getLookup() {
+        if (this.lookup == null) {
+            this.lookup = new AbstractLookup(content);
+            this.proxyLookup = new ProxyLookup(this.lookup, getGeometry().getLookup());
+        }
+        return this.proxyLookup;
     }
 
-    public static Real fromReal(Real latitude) {
-        return Reals.convertTo(RealType.Latitude, latitude);
+    /**
+     * Provides access to this Feature's lookup contents; allows sub-classes to add or remove
+     * objects.
+     *
+     * @return the AbstractLookup's content.
+     */
+    protected InstanceContent getInstanceContent() {
+        return this.content;
     }
-}
+}  // AbstractFeature

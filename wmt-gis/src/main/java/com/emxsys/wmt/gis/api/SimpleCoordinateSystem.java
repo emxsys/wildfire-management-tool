@@ -27,37 +27,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
 import org.openide.util.Exceptions;
+import visad.CommonUnit;
 import visad.CoordinateSystem;
+import visad.CoordinateSystemException;
 import visad.RealTupleType;
 import visad.RealType;
+import visad.Unit;
 import visad.VisADException;
 
 /**
- * A Simple3DCooridinateSystem for GeoCoord2D and GeoCoord3D.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @see GeoCoord2D
- * @see GeoCoord3D
  */
-public class Simple3DCoordinateSystem extends CoordinateSystem {
+public class SimpleCoordinateSystem extends CoordinateSystem {
 
     private static final RealType[] components
             = {
-                // Using system intrisic types to ensure max campatibility with VisAD library functions
-                RealType.Latitude,
-                RealType.Longitude,
-                RealType.Altitude, //        RealType.getRealType("Lat", CommonUnit.degree),
-            //        RealType.getRealType("Lon", CommonUnit.degree),
-            //        RealType.getRealType("Alt", CommonUnit.meter),
+                RealType.getRealType("Lat", CommonUnit.degree),
+                RealType.getRealType("Lon", CommonUnit.degree)
             };
-    public static final RealTupleType SimpleLatLonAltTuple;
+    public static final RealTupleType SimpleLatLonTuple;
 
     static {
         try {
-            SimpleLatLonAltTuple = new RealTupleType(components);
+            SimpleLatLonTuple = new RealTupleType(components);
         }
         catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
@@ -84,25 +80,17 @@ public class Simple3DCoordinateSystem extends CoordinateSystem {
     }
 
     /**
-     * Get the index of RealType.Altitude in the reference RealTupleType.
-     *
-     * @return index of RealType.Altitude in the reference
-     */
-    public int getAltitudeIndex() {
-        return 2;
-    }
-
-    /**
-     * Create a Simple3DCoordinateSystem that just returns the input tuple.
+     * Create a NavigationCoordinateSystem that just returns
+     * the input tuple.
      *
      * @param reference reference RealTupleType
      *
-     * @throws VisADException reference does not contain Latitude/Longitude or couldn't create the
-     * necessary VisAD object
+     * @throws VisADException reference does not contain Latitude/Longitude
+     * or couldn't create the necessary VisAD object
      */
-    public Simple3DCoordinateSystem()
+    public SimpleCoordinateSystem()
             throws VisADException {
-        super(Simple3DCoordinateSystem.SimpleLatLonAltTuple, Simple3DCoordinateSystem.SimpleLatLonAltTuple.getDefaultUnits());
+        super(SimpleCoordinateSystem.SimpleLatLonTuple, SimpleCoordinateSystem.SimpleLatLonTuple.getDefaultUnits());
     }
 
     /**
@@ -113,7 +101,6 @@ public class Simple3DCoordinateSystem extends CoordinateSystem {
      *
      * @throws VisADException tuple is null or wrong dimension
      */
-    @Override
     public double[][] toReference(double[][] tuple)
             throws VisADException {
         if (tuple == null || getDimension() != tuple.length) {
@@ -131,7 +118,6 @@ public class Simple3DCoordinateSystem extends CoordinateSystem {
      *
      * @throws VisADException tuple is null or wrong dimension
      */
-    @Override
     public double[][] fromReference(double[][] refTuple)
             throws VisADException {
         if (refTuple == null || getDimension() != refTuple.length) {
@@ -142,16 +128,16 @@ public class Simple3DCoordinateSystem extends CoordinateSystem {
     }
 
     /**
-     * See if the object in question is equal to this CoordinateSystem. The two objects are equal if
-     * they are the same object or if they are both TrivialNavigations and have the same dimension.
+     * See if the object in question is equal to this CoordinateSystem.
+     * The two objects are equal if they are the same object or if they
+     * are both TrivialNavigations and have the same dimension.
      *
      * @param cs Object in question
      * @return true if they are considered equal, otherwise false.
      */
-    @Override
     public boolean equals(Object cs) {
-        if ((cs instanceof Simple3DCoordinateSystem
-                && ((Simple3DCoordinateSystem) cs).getDimension() == getDimension())
+        if ((cs instanceof SimpleCoordinateSystem
+                && ((SimpleCoordinateSystem) cs).getDimension() == getDimension())
                 || cs == this) {
             return true;
         }

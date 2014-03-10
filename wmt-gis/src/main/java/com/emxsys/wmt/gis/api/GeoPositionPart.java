@@ -27,39 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.gis.GeoCoord2D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.Feature;
 import com.emxsys.wmt.gis.api.Part;
 import java.util.Iterator;
 
 /**
- * GeoPointPart2D allows a GeoCoord2D to represent a Part in a point shape.
+ * GeoPointPart allows a GeoPointTuple to represent a Part in a point Feature.
  *
  * @author Bruce Schubert
- * @version $Id: GeoPointPart2D.java 528 2013-04-18 15:04:46Z bdschubert $
+ * @version $Id: GeoPositionPart.java 528 2013-04-18 15:04:46Z bdschubert $
  * @see Feature
  */
-public class GeoPointPart2D implements Part {
+public class GeoPositionPart implements Part {
 
-    private GeoCoord2D point;
+    private GeoCoord3D position;
 
-    public GeoPointPart2D() {
-        this.point = GeoCoord2D.INVALID_POINT;
+    public GeoPositionPart() {
+        position = GeoCoord3D.INVALID_POSITION;
     }
 
-    public GeoPointPart2D(GeoCoord2D point) {
-        this.point = point;
-    }
-
-    public void setPoint(GeoCoord2D point) {
-        this.point = point;
+    public GeoPositionPart(GeoCoord3D position) {
+        this.position = position;
     }
 
     @Override
     public int getNumDimensions() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -90,7 +86,7 @@ public class GeoPointPart2D implements Part {
                     public double[] next() {
                         if (index == 0) {
                             ++index;
-                            return point.getValues();
+                            return position.getValues();
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
@@ -107,22 +103,21 @@ public class GeoPointPart2D implements Part {
     @Override
     public double[] getX() {
         return new double[]{
-            point.getLongitudeDegrees()
+            position.getLongitudeDegrees()
         };
     }
 
     @Override
     public double[] getY() {
         return new double[]{
-            point.getLatitudeDegrees()
+            position.getLatitudeDegrees()
         };
     }
 
     @Override
     public double[] getZ() {
-        //throw new UnsupportedOperationException("getZ() not supported. Only two dimensions.");
         return new double[]{
-            0.0
+            position.getAltitudeMeters()
         };
     }
 }

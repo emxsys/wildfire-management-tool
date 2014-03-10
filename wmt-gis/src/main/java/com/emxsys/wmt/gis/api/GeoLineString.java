@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2013, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,54 +27,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.gis.GeoCoord3D;
-import com.emxsys.wmt.gis.api.Feature;
+import com.emxsys.wmt.gis.api.Box;
+import com.emxsys.wmt.gis.api.GisType;
+import com.emxsys.wmt.gis.api.LineString;
 import com.emxsys.wmt.gis.api.Part;
+import edu.wisc.ssec.mcidas.ConversionUtility;
 import java.util.Iterator;
+import java.util.List;
+import visad.Real;
 
 /**
- * GeoPointPart allows a GeoPointTuple to represent a Part in a point Feature.
  *
  * @author Bruce Schubert
- * @version $Id: GeoPositionPart.java 528 2013-04-18 15:04:46Z bdschubert $
- * @see Feature
+ * @version $Id$
  */
-public class GeoPositionPart implements Part {
+public class GeoLineString extends AbstractGeometry implements LineString {
 
-    private GeoCoord3D position;
+    protected GeoSector extents;
+    protected GeoPart part;
+    private Real length;
 
-    public GeoPositionPart() {
-        position = GeoCoord3D.INVALID_POSITION;
+    public GeoLineString() {
+        this.part = new GeoPart();
+        this.extents = new GeoSector();
     }
 
-    public GeoPositionPart(GeoCoord3D position) {
-        this.position = position;
+    public GeoLineString(List<GeoCoord3D> coords) {
+        this.part = new GeoPart(coords);
+        this.extents = new GeoSector(this);
     }
 
     @Override
-    public int getNumDimensions() {
-        return 3;
+    public Box getExtents() {
+        return this.extents;
     }
 
     @Override
     public int getNumPoints() {
+        return this.part.getNumPoints();
+    }
+
+    @Override
+    public int getNumParts() {
         return 1;
     }
 
-    /**
-     * Returns an iterator on the coordinates. A call to next() will return an array representing
-     * the point's coordinates (x,y).
-     *
-     * @return an iterator on the point
-     */
     @Override
-    public Iterable<double[]> getPoints() {
-        return new Iterable<double[]>() {
+    public Iterable<Part> getParts() {
+        return new Iterable<Part>() {
             @Override
-            public Iterator<double[]> iterator() {
-                return new Iterator<double[]>() {
+            public Iterator<Part> iterator() {
+                return new Iterator<Part>() {
                     private int index = 0;
 
                     @Override
@@ -83,10 +88,10 @@ public class GeoPositionPart implements Part {
                     }
 
                     @Override
-                    public double[] next() {
+                    public Part next() {
                         if (index == 0) {
                             ++index;
-                            return position.getValues();
+                            return part;
                         }
                         throw new ArrayIndexOutOfBoundsException();
                     }
@@ -101,23 +106,24 @@ public class GeoPositionPart implements Part {
     }
 
     @Override
-    public double[] getX() {
-        return new double[]{
-            position.getLongitudeDegrees()
-        };
+    public Real getLength() {
+        if (this.length == null) {
+            double km = 0;
+            // Compute combined length of all segments
+            for (int i = 0, j = 1; j < part.getNumPoints(); i++, j++) {
+                GeoCoord3D coord1 = part.coords.get(i);
+                GeoCoord3D coord2 = part.coords.get(j);
+                km += ConversionUtility.LatLonToDistance(
+                        (float) coord1.getLatitudeDegrees(), (float) coord1.getLongitudeDegrees(),
+                        (float) coord2.getLatitudeDegrees(), (float) coord2.getLongitudeDegrees());
+            }
+            this.length = new Real(GisType.DISTANCE, km * 1000);
+        }
+        return this.length;
     }
 
     @Override
-    public double[] getY() {
-        return new double[]{
-            position.getLatitudeDegrees()
-        };
-    }
-
-    @Override
-    public double[] getZ() {
-        return new double[]{
-            position.getAltitudeMeters()
-        };
+    public double getLengthMeters() {
+        return getLength().getValue();
     }
 }

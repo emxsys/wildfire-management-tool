@@ -27,43 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.api.viewer;
+package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import java.beans.PropertyChangeListener;
+import com.emxsys.wmt.visad.Reals;
+import org.openide.util.Exceptions;
+import visad.Real;
+import visad.RealType;
+import visad.Unit;
+import visad.VisADException;
+import visad.data.units.ParseException;
+import visad.data.units.Parser;
 
 /**
- * This interface defines the capability for interactively selecting a geographic region.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SectorEditor.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface SectorEditor {
+public class Altitude {
 
     /**
-     * Enables the interactive sector selector.
+     * Zero meters.
      */
-    void enableSectorSelector();
+    public static final Real ZERO = fromMeters(0.0);
+    private static Unit uomFeet;
 
-    /**
-     * Disables the interactive sector selector.
-     */
-    void disableSectorSelector();
+    static Real fromMeters(double meters) {
+        return new Real(RealType.Altitude, meters);
+    }
 
-    /**
-     * Sets the extents of the sector to be edited.
-     *
-     * @param sector the new extents to be edited.
-     */
-    void setSector(GeoSector sector);
+    static Real fromFeet(double feet) {
+        try {
+            if (uomFeet == null) {
+                uomFeet = Parser.parse("foot");
+            }
+            return fromReal(new Real(RealType.Generic, feet, uomFeet));
+        }
+        catch (ParseException | VisADException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return new Real(RealType.Altitude);
+    }
 
-    /**
-     * Add a property change listener to receive sector selection events changes as they occur.
-     */
-    void addSectorPropertyChangeListener(PropertyChangeListener pcl);
-
-    /**
-     * Remove the property change listener for sector property events.
-     */
-    void removeSectorPropertyChangeListener(PropertyChangeListener pcl);
+    static Real fromReal(Real altitude) {
+        return Reals.convertTo(RealType.Altitude, altitude);
+    }
 }

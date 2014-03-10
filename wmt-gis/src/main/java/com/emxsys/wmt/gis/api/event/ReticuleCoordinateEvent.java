@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,47 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api.event;
 
-import com.emxsys.wmt.gis.api.Feature;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.AbstractLookup;
-import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.ProxyLookup;
+import com.emxsys.wmt.gis.api.Coord3D;
 
 /**
- * Abstract class that implements common methods for a concrete implementation of Feature.
+ * A ReticuleCoordinateEvent instance provides the geographical coordinate of the reticule.
  *
- * @author Bruce Schubert
- * @version $Id: AbstractFeature.java 528 2013-04-18 15:04:46Z bdschubert $
+ * @author Bruce Schubert (bruce@emxsys.com)
  */
-public abstract class AbstractFeature implements Feature {
-
-    private InstanceContent content = new InstanceContent();
-    private AbstractLookup lookup;
-    private ProxyLookup proxyLookup;
+public class ReticuleCoordinateEvent extends AbstractCoordinateEvent {
 
     /**
-     * Gets this Feature's lookup merged with the Geography lookup.
-     *
-     * @return a ProxyLookup object initialized from this object and the Geography lookups
+     * Constructs a ReticuleCoordinateEvent.
+     * @param source the source of the reticule coordinate (e.g, a GisLayer)
+     * @param coord the geographical coordinate of the reticule
      */
+    public ReticuleCoordinateEvent(Object source, Coord3D coord) {
+        super(source, coord);
+    }
+
     @Override
-    public Lookup getLookup() {
-        if (this.lookup == null) {
-            this.lookup = new AbstractLookup(content);
-            this.proxyLookup = new ProxyLookup(this.lookup, getGeometry().getLookup());
-        }
-        return this.proxyLookup;
+    public String toString() {
+        return this.getClass().getSimpleName() + " "
+                + (getCoordinate() != null ? getCoordinate() : "null");
     }
-
-    /**
-     * Provides access to this Feature's lookup contents; allows sub-classes to add or remove
-     * objects.
-     *
-     * @return the AbstractLookup's content.
-     */
-    protected InstanceContent getInstanceContent() {
-        return this.content;
-    }
-}  // AbstractFeature
+}

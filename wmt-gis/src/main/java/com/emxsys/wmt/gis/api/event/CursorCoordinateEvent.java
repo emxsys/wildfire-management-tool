@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api.event;
 
-import com.emxsys.wmt.visad.Reals;
-import visad.Real;
-import visad.RealType;
+import com.emxsys.wmt.gis.api.Coord3D;
 
 /**
- *
- * @author Bruce Schubert <bruce@emxsys.com>
+ * A CursorCoordinateEvent instance provides the geographical coordinate of the cursor.
+ * 
+ * @author Bruce Schubert (bruce@emxsys.com)
  */
-public class Longitude {
+public class CursorCoordinateEvent extends AbstractCoordinateEvent {
 
-    public static Real fromDegrees(double longitude) {
-        return new Real(RealType.Longitude, longitude);
+    /**
+     * Constructs a CursorCoordinateEvent.
+     * @param source the cursor coordinate source (e.g., a GisViewer)
+     * @param coord the geographical coordinate of the cursor
+     */
+    public CursorCoordinateEvent(Object source, Coord3D coord) {
+        super(source, coord);
     }
 
-    public static Real fromReal(Real longitude) {
-        return Reals.convertTo(RealType.Longitude, longitude);
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " "
+                + (getCoordinate() != null ? getCoordinate() : "null");
     }
 }

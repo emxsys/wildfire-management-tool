@@ -27,47 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis;
+package com.emxsys.wmt.gis.api;
 
 import com.emxsys.wmt.visad.Reals;
-import org.openide.util.Exceptions;
 import visad.Real;
 import visad.RealType;
-import visad.Unit;
-import visad.VisADException;
-import visad.data.units.ParseException;
-import visad.data.units.Parser;
 
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class Altitude {
+public class Latitude {
 
-    /**
-     * Zero meters.
-     */
-    public static final Real ZERO = fromMeters(0.0);
-    private static Unit uomFeet;
-
-    static Real fromMeters(double meters) {
-        return new Real(RealType.Altitude, meters);
+    public static Real fromDegrees(double latitude) {
+        return new Real(RealType.Latitude, latitude);
     }
 
-    static Real fromFeet(double feet) {
-        try {
-            if (uomFeet == null) {
-                uomFeet = Parser.parse("foot");
-            }
-            return fromReal(new Real(RealType.Generic, feet, uomFeet));
-        }
-        catch (ParseException | VisADException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return new Real(RealType.Altitude);
-    }
-
-    static Real fromReal(Real altitude) {
-        return Reals.convertTo(RealType.Altitude, altitude);
+    public static Real fromReal(Real latitude) {
+        return Reals.convertTo(RealType.Latitude, latitude);
     }
 }

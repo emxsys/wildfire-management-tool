@@ -27,43 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.api.viewer;
+package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import java.beans.PropertyChangeListener;
+import com.emxsys.wmt.visad.Reals;
+import visad.Real;
+import visad.RealType;
 
 /**
- * This interface defines the capability for interactively selecting a geographic region.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SectorEditor.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface SectorEditor {
+public class Longitude {
 
-    /**
-     * Enables the interactive sector selector.
-     */
-    void enableSectorSelector();
+    public static Real fromDegrees(double longitude) {
+        return new Real(RealType.Longitude, longitude);
+    }
 
-    /**
-     * Disables the interactive sector selector.
-     */
-    void disableSectorSelector();
-
-    /**
-     * Sets the extents of the sector to be edited.
-     *
-     * @param sector the new extents to be edited.
-     */
-    void setSector(GeoSector sector);
-
-    /**
-     * Add a property change listener to receive sector selection events changes as they occur.
-     */
-    void addSectorPropertyChangeListener(PropertyChangeListener pcl);
-
-    /**
-     * Remove the property change listener for sector property events.
-     */
-    void removeSectorPropertyChangeListener(PropertyChangeListener pcl);
+    public static Real fromReal(Real longitude) {
+        return Reals.convertTo(RealType.Longitude, longitude);
+    }
 }

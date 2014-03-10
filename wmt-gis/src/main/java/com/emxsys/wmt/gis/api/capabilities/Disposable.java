@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.api;
+package com.emxsys.wmt.gis.api.capabilities;
 
 /**
  * This interface marks a disposable object and provides a mechanism for releasing resources.

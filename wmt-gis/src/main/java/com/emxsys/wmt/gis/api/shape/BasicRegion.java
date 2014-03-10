@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.gis.api.shape;
 
-import com.emxsys.wmt.gis.GeoCoord3D;
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.shape.Region;

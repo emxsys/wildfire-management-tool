@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,43 +27,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.api.viewer;
+package com.emxsys.wmt.gis.api.event;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import java.beans.PropertyChangeListener;
+import com.emxsys.wmt.gis.api.Coord3D;
+import java.util.EventObject;
 
 /**
- * This interface defines the capability for interactively selecting a geographic region.
- *
- * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SectorEditor.java 209 2012-09-05 23:09:19Z bdschubert $
+ * Base class for coordinate change events.
+ * 
+ * @author Bruce Schubert (bruce@emxsys.com)
  */
-public interface SectorEditor {
+abstract public class AbstractCoordinateEvent extends EventObject {
 
-    /**
-     * Enables the interactive sector selector.
-     */
-    void enableSectorSelector();
+    protected final Coord3D coord;
 
-    /**
-     * Disables the interactive sector selector.
-     */
-    void disableSectorSelector();
+    public AbstractCoordinateEvent(Object source, Coord3D coord) {
+        super(source);
+        this.coord = coord;
+    }
 
-    /**
-     * Sets the extents of the sector to be edited.
-     *
-     * @param sector the new extents to be edited.
-     */
-    void setSector(GeoSector sector);
-
-    /**
-     * Add a property change listener to receive sector selection events changes as they occur.
-     */
-    void addSectorPropertyChangeListener(PropertyChangeListener pcl);
-
-    /**
-     * Remove the property change listener for sector property events.
-     */
-    void removeSectorPropertyChangeListener(PropertyChangeListener pcl);
+    public Coord3D getCoordinate() {
+        return coord;
+    }
 }
