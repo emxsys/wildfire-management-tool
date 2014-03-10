@@ -42,49 +42,27 @@ import visad.RealType;
  */
 public class GisType {
 
-    /**
-     * Distance in meters - RealType: <b>distance:m</b>.
-     */
+    /** Distance in meters - RealType: <b>distance:m</b>. */
     public static final RealType DISTANCE;
-    /**
-     * Area in hectares (1 ha = 10,000 m2, 100m x100m) - RealType: <b>area:ha</b>.
-     */
+    /** Area in hectares (1 ha = 10,000 m2, 100m x100m) - RealType: <b>area:ha</b>. */
     public static final RealType AREA;
-    /**
-     * Latitude in degrees - RealType: <b>latitude:deg</b>.
-     */
+    /** Latitude in degrees - RealType: <b>latitude:deg</b>. */
     public static final RealType LAT;
-    /**
-     * Longitude in degrees - RealType: <b>longitude:deg</b>.
-     */
+    /** Longitude in degrees - RealType: <b>longitude:deg</b>. */
     public static final RealType LON;
-    /**
-     * Altitude in meters: RealType: <b>altitude:m</b>.
-     */
+    /** Altitude in meters: RealType: <b>altitude:m</b>. */
     public static final RealType ALT;
-    /**
-     * Latitude/Longitude tuple: RealTupleType: <b>[LAT,LON]</b>.
-     */
+    /** Latitude/Longitude tuple: RealTupleType: <b>[LAT,LON]</b>. */
     public final static RealTupleType LATLON;
-    /**
-     * Latitude/Longitude/Altitude tuple: RealTupleType: <b>[LAT,LON,ALT]</b>.
-     */
+    /** Latitude/Longitude/Altitude tuple: RealTupleType: <b>[LAT,LON,ALT]</b>. */
     public final static RealTupleType LATLONALT;
-    /**
-     * Terrain aspect in degrees: - RealType: <b>aspect:deg</b>.
-     */
+    /** Terrain aspect in degrees: - RealType: <b>aspect:deg</b>. */
     public static final RealType ASPECT;
-    /**
-     * Terrain slope in degrees: - RealType: <b>slope:deg</b>.
-     */
+    /** Terrain slope in degrees: - RealType: <b>slope:deg</b>. */
     public static final RealType SLOPE;
-    /**
-     * Terrain elevation in meters: - RealType: <b>elevation:m</b>.
-     */
+    /** Terrain elevation in meters: - RealType: <b>elevation:m</b>. */
     public static final RealType ELEVATION;
-    /**
-     * Terrain aspect,slope,elevation tuple: RealTupleType: <b>[ASPECT,SLOPE,ELEVATION]</b>.
-     */
+    /** Terrain aspect,slope,elevation tuple: RealTupleType: <b>[ASPECT,SLOPE,ELEVATION]</b>. */
     public final static RealTupleType TERRAIN;
 
     /**
