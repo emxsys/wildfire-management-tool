@@ -33,21 +33,15 @@ import visad.Real;
 
 /**
  * TerrainProvider the interface of a terrain factory, used to obtain the aspect, slope, and/or
- elevation at a given coordinate.
+ * elevation at a given coordinate.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public interface TerrainProvider {
 
     /**
-     * Construct a default Terrain object
-     * @return a new Terrain instance with 'missing' values
-     */
-    Terrain newTerrain();
-
-    /**
      * Gets a {@link TerrainTuple} for the location.
-     * @param coord Latitude/longitude coordinates
+     * @param coord the coordinates to get the terrain
      * @return The terrain's aspect, slope and elevation at supplied location
      */
     Terrain getTerrain(Coord2D coord);

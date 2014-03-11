@@ -27,22 +27,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.emxsys.wmt.gis.api;
 
-import com.emxsys.wmt.util.AngleUtil;
+import java.util.Date;
 
 /**
- * A CardinalPoint8 instance represents one of the eight cardinal points.
+ * ShadedTerrainProvider extends the TerrainProvider interface with methods to test for 
+ * shading.
  * @author Bruce Schubert
+ * @version $Id$
  */
-public enum CardinalPoint8 {
+public interface ShadedTerrainProvider extends TerrainProvider {
 
-    N, NE, E, SE, S, SW, W, NW;
-
-    static CardinalPoint8 fromDegrees(double degrees) {
-        degrees = AngleUtil.normalize360(degrees);
-        int ordinal = ((int) Math.round(degrees / 45)) % 8;
-        return values()[ordinal];
-    }
-
+    /**
+     * Returns true if the location is shaded by the terrain at the given date and time.
+     * @param coord coordinate to test
+     * @param datetime UTC time used to determine sun's position
+     * @return true if the position is shaded by surrounding terrain.
+     */
+    boolean isCoordinateTerrestialShaded(Coord2D coord, Date datetime);
 }
