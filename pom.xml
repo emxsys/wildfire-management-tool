@@ -127,7 +127,6 @@
         <module>wmt-libraries</module>
         <module>wmt-maps-usa</module>
         <module>wmt-solar</module>
-        <module>wmt-terrain</module>
         <module>wmt-utilities</module>
         <module>wmt-visad</module>
         <module>wmt-wildfire</module>
