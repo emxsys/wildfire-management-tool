@@ -27,49 +27,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.spi;
+package com.emxsys.wmt.solar.api;
 
-//import com.emxsys.wmt.solar.internal.WorldWindSolarObserver;
-import com.emxsys.wmt.solar.api.SolarMonitor;
-import org.openide.util.Lookup;
-
+import java.util.Date;
+import visad.Data;
+import visad.Real;
 
 /**
- * This class provides a Solar object for a monitored date and position.
+ * A SunlightHours instance contains solar times for a given date and latitude.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class SolarObserver implements SolarMonitor
-{
-    /**
-     * Represents a change in the current Solar value; newObject() contains a Solar object.
-     */
-    public static final String PROP_SOLAR_VALUE = "PROP_SOLAR_VALUE";
-    public static final String PROP_SOLAR_DATE = "PROP_SOLAR_STATE";
-    public static final String PROP_SOLAR_LATITUDE = "PROP_SOLAR_LATITUDE";
-    private static SolarObserver monitor = null;
-
+public interface SunlightHours extends Data {
 
     /**
-     * Returns the singleton instance of a SolarMonitor. If a class has been registered as a
-     * SolarObserver service provider, then an instance of that class will be returned. 
-     * Otherwise, aninstance of the WorldWindSolarObserver will be returned.
+     * Sunrise is the time at which daylight begins.
+     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
+     * point in the sky. This time is independent of timezones.
      *
-     * @return A singleton instance of a SolarMonitor implemenation.
+     * @return sunrise [solar date/time]
      */
-    public static SolarObserver getInstance()
-    {
-        if (monitor == null)
-        {
-            // Check the general Lookup for a service provider
-            monitor = Lookup.getDefault().lookup(SolarObserver.class);
+    Real getSunrise();
 
-            // Use our default factory if no registered provider.
-            if (monitor == null)
-            {
-//                monitor = new WorldWindSolarObserver();
-            }
-        }
-        return monitor;
-    }
+    /**
+     * Sunrise is the time at which daylight begins.
+     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
+     * point in the sky. This time is independent of timezones.
+     *
+     * @return sunrise [solar hour]
+     */
+    double getSunriseHour();
+
+
+    /**
+     * Sunset is the time at which daylight ends.
+     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
+     * point in the sky. This time is independent of timezones.
+     *
+     * @return sunset [solar date/time]
+     */
+    Real getSunset();
+
+    /**
+     * Sunset is the time at which daylight ends.
+     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
+     * point in the sky. This time is independent of timezones.
+     *
+     * @return sunset [solar hour]
+     */
+    double getSunsetHour();
+
 }

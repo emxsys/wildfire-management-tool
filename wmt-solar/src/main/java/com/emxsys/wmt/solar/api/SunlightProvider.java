@@ -32,36 +32,29 @@ package com.emxsys.wmt.solar.api;
 import java.util.Date;
 import visad.Real;
 
-
 /**
+ * A SunlightProvider instance provides solar angles and times.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SolarProvider.java 675 2013-05-24 20:05:05Z bdschubert $
  */
-public interface SolarProvider
-{
-    /**
-     * Constructs a default Solar object.
-     */
-    Solar newSolar();
+public interface SunlightProvider {
 
 
     /**
-     * Constructs a new Solar object relative to the latitude and date.
+     * Constructs a new Sunlight object represent the sun angles for a given date/time.
      *
-     * @param latitude angular degrees north/south.
-     * @param date a Java Date object.
-     * @return a new Solar object.
+     * @param utcTime a UTC date/time
+     * @return a Sunlight object for the given date/time
      */
-    Solar newSolar(Real latitude, Date date);
-
+    Sunlight getSunlight(Date utcTime);
 
     /**
-     * Constructs a new Solar object for the supplied latitude and date
+     * Constructs a new SunlightHours object for a given longitude and date.
      *
-     * @param latitude degrees north/south.
-     * @param date a Java Date object.
-     * @return a new Solar object.
+     * @param latitude angular degrees north/south
+     * @param utcTime a UTC date/time
+     * @return a SunlightHours object for the given date and latitude
      */
-    Solar newSolar(double latitude, Date date);
+    SunlightHours getSunlightHours(Real latitude, Date utcTime);
+
 }

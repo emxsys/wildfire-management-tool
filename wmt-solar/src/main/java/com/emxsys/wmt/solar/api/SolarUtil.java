@@ -29,40 +29,36 @@
  */
 package com.emxsys.wmt.solar.api;
 
-import com.emxsys.wmt.gis.GeoCoord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import static java.lang.Math.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+public class SolarUtil {
 
-public class SolarUtil
-{
     private static final Logger logger = Logger.getLogger(SolarUtil.class.getName());
-
 
     /**
      * Computes the position of the sun at the given time relative to the earth lat/lon/altitude
      * coordinate system.
      *
-     * @param datetime
+     * @param utcTime the UTC time for which to obtain the sun position
      * @return a Coord3D representing the sun's position as lat and lon with elevation set to 1 A.U.
      * @author heidtmare
      */
-    static public GeoCoord3D getSunPosition(Date datetime)
-    {
+    static public GeoCoord3D getSunPosition(Date utcTime) {
         final double ASTRONOMICAL_UNIT_METERS = 149597870700.0;
 
         Calendar time = Calendar.getInstance();
-        time.setTime(datetime);
+        time.setTime(utcTime);
         double[] ll = subsolarPoint(time);
         GeoCoord3D sunPosition = GeoCoord3D.fromRadiansAndMeters(ll[0], ll[1], ASTRONOMICAL_UNIT_METERS);
         logger.log(Level.FINE, "SUN Position: {0}", sunPosition.toString());
 
         return sunPosition;
     }
-
 
     /**
      * Calculate the LatLon of sun at given time. Latitude is equivalent to declination. Longitude
@@ -72,11 +68,10 @@ public class SolarUtil
      * subsolarPoint is from the old sunlight package."
      *
      * @author heidtmare
-     * @param time
+     * @param time UTC time
      * @return latitude and longitude of sun on the celestial sphere
      */
-    static double[] subsolarPoint(Calendar time)
-    {
+    static double[] subsolarPoint(Calendar time) {
         // Main variables
         double elapsedJulianDays;
         double decimalHours;
@@ -88,14 +83,14 @@ public class SolarUtil
         {
             // Calculate time of the day in UT decimal hours
             decimalHours = time.get(Calendar.HOUR_OF_DAY)
-                + (time.get(Calendar.MINUTE) + time.get(Calendar.SECOND) / 60.0)
-                / 60.0;
+                    + (time.get(Calendar.MINUTE) + time.get(Calendar.SECOND) / 60.0)
+                    / 60.0;
             // Calculate current Julian Day
             long aux1 = (time.get(Calendar.MONTH) - 14) / 12;
             long aux2 = (1461 * (time.get(Calendar.YEAR) + 4800 + aux1)) / 4
-                + (367 * (time.get(Calendar.MONTH) - 2 - 12 * aux1)) / 12
-                - (3 * ((time.get(Calendar.YEAR) + 4900 + aux1) / 100)) / 4
-                + time.get(Calendar.DAY_OF_MONTH) - 32075;
+                    + (367 * (time.get(Calendar.MONTH) - 2 - 12 * aux1)) / 12
+                    - (3 * ((time.get(Calendar.YEAR) + 4900 + aux1) / 100)) / 4
+                    + time.get(Calendar.DAY_OF_MONTH) - 32075;
             double julianDate = (double) (aux2) - 0.5 + decimalHours / 24.0;
             // Calculate difference between current Julian Day and JD 2451545.0
             elapsedJulianDays = julianDate - 2451545.0;
@@ -108,11 +103,11 @@ public class SolarUtil
             double meanLongitude = 4.8950630 + 0.017202791698 * elapsedJulianDays; // Radians
             double meanAnomaly = 6.2400600 + 0.0172019699 * elapsedJulianDays;
             eclipticLongitude = meanLongitude + 0.03341607
-                * Math.sin(meanAnomaly) + 0.00034894
-                * Math.sin(2 * meanAnomaly) - 0.0001134 - 0.0000203
-                * Math.sin(omega);
+                    * Math.sin(meanAnomaly) + 0.00034894
+                    * Math.sin(2 * meanAnomaly) - 0.0001134 - 0.0000203
+                    * Math.sin(omega);
             eclipticObliquity = 0.4090928 - 6.2140e-9 * elapsedJulianDays
-                + 0.0000396 * Math.cos(omega);
+                    + 0.0000396 * Math.cos(omega);
         }
         // Calculate celestial coordinates ( right ascension and declination ) in radians
         // but without limiting the angle to be less than 2*Pi (i.e., the result may be
@@ -122,8 +117,7 @@ public class SolarUtil
             double dY = Math.cos(eclipticObliquity) * sinEclipticLongitude;
             double dX = Math.cos(eclipticLongitude);
             rightAscension = Math.atan2(dY, dX);
-            if (rightAscension < 0.0)
-            {
+            if (rightAscension < 0.0) {
                 rightAscension = rightAscension + Math.PI * 2.0;
             }
             declination = Math.asin(Math.sin(eclipticObliquity) * sinEclipticLongitude);
@@ -133,30 +127,23 @@ public class SolarUtil
         double longitude = rightAscension - Math.toRadians(greenwichMeanSiderealTime * 15.0);
 
         //longitude += Math.PI;//This was putting the sun on the wrong side of the earth!!
-
-        while (declination > Math.PI / 2.0)
-        {
+        while (declination > Math.PI / 2.0) {
             declination -= Math.PI;
         }
-        while (declination <= -Math.PI / 2.0)
-        {
+        while (declination <= -Math.PI / 2.0) {
             declination += Math.PI;
         }
-        while (longitude > Math.PI)
-        {
+        while (longitude > Math.PI) {
             longitude -= Math.PI * 2.0;
         }
-        while (longitude <= -Math.PI)
-        {
+        while (longitude <= -Math.PI) {
             longitude += Math.PI * 2.0;
         }
 
-        return new double[]
-        {
+        return new double[]{
             declination, longitude
         };
     }
-
 
     /**
      * Idn = A * exp( -B / sin(beta)
@@ -165,26 +152,24 @@ public class SolarUtil
      * @param solarAltitudeAngleDegrees
      * @return
      */
-    public static double DirectNormalSolarFlux(Date date, double solarAltitudeAngleDegrees)
-    {
+    public static double DirectNormalSolarFlux(Date date, double solarAltitudeAngleDegrees) {
 
-        if (solarAltitudeAngleDegrees <= 0)
-        {
+        if (solarAltitudeAngleDegrees <= 0) {
             return 0;
         }
 
         // The apparent direct normal solar flux at the outer edge of the earth's atmosphere
         // on the 21st day of each month
-        final double[] SOLAR_FLUX =
-        {
-            1230, 1215, 1186, 1136, 1104, 1088, 1085, 1107, 1151, 1192, 1221, 1233
-        };
+        final double[] SOLAR_FLUX
+                = {
+                    1230, 1215, 1186, 1136, 1104, 1088, 1085, 1107, 1151, 1192, 1221, 1233
+                };
 
         // The apparent atmospheric extinction coefficient on the 21st day of each month
-        final double[] EXTINCTION =
-        {
-            0.142, 0.144, 0.145, 0.180, 0.196, 0.205, 0.207, 0.201, 0.177, 0.160, 0.149, 0.142
-        };
+        final double[] EXTINCTION
+                = {
+                    0.142, 0.144, 0.145, 0.180, 0.196, 0.205, 0.207, 0.201, 0.177, 0.160, 0.149, 0.142
+                };
 
         final int EPOCH_DATE = 21;
 
@@ -198,13 +183,10 @@ public class SolarUtil
         int dom = cal.get(Calendar.DAY_OF_MONTH);
         int curMonth = cal.get(Calendar.MONTH); // zero based array index
 
-        if (dom == EPOCH_DATE)
-        {
+        if (dom == EPOCH_DATE) {
             A = SOLAR_FLUX[curMonth];
             B = EXTINCTION[curMonth];
-        }
-        else
-        {
+        } else {
             // Interpolate between two monthly coeffecients in our table of which
             // the values arebased on the 21st day of each month.  We assume 30 
             // days per month for the interpolation - crude but simple.
@@ -233,11 +215,9 @@ public class SolarUtil
         return directNormalFlux;
     }
 
-
     public static double IncidenceAngleDegrees(
-        double surfaceTiltAngleDegrees, double surfaceAzimuthAngleDegrees,
-        double solarAzimuthAngleDegrees, double solarAltitudeAngleDegrees)
-    {
+            double surfaceTiltAngleDegrees, double surfaceAzimuthAngleDegrees,
+            double solarAzimuthAngleDegrees, double solarAltitudeAngleDegrees) {
         double sigma = toRadians(surfaceTiltAngleDegrees);
         double psi = toRadians(surfaceAzimuthAngleDegrees);
         double beta = toRadians(solarAltitudeAngleDegrees);
@@ -246,25 +226,19 @@ public class SolarUtil
         double gamma = abs(phi - psi); // surface-solar azimuth angle
         double cosTheta = 0;                // angle between surface normal and solar rays
 
-        if (surfaceTiltAngleDegrees == 90.0)
-        {
+        if (surfaceTiltAngleDegrees == 90.0) {
             // The surface is vertical
             cosTheta = cos(beta) * cos(gamma);
-        }
-        else if (surfaceTiltAngleDegrees == 0.0)
-        {
+        } else if (surfaceTiltAngleDegrees == 0.0) {
             // The surface is horizontal (incidence angle is equal to zenith angle)
             cosTheta = sin(beta);
-        }
-        else
-        {
+        } else {
             // The surface is tilted
             cosTheta = cos(beta) * cos(gamma) * sin(sigma)
-                + sin(beta) * cos(sigma);
+                    + sin(beta) * cos(sigma);
         }
         return toDegrees(acos(cosTheta));
     }
-
 
     /**
      * The declination angle thoughout the year can be well approximated by a sine function.
@@ -272,8 +246,7 @@ public class SolarUtil
      * @returns the sun's declination angle (in radians)
      * @param dayOfYear Day of the year (1-365).
      */
-    public static double DeclinationDegrees(int dayOfYear)
-    {
+    public static double DeclinationDegrees(int dayOfYear) {
         // Source: University of Minissota - Department of Mechanical Engineering
         // from ME 4131 THERMAL ENVIRONMENTAL ENGINEERING LABORATORY MANUAL
         // http://www.me.umn.edu/courses/me4131/HTMLPages/LabManual.htm
@@ -282,14 +255,11 @@ public class SolarUtil
         return dec;
     }
 
-
-    public static double SolarHourDegrees(double localSolarTime)
-    {
+    public static double SolarHourDegrees(double localSolarTime) {
         double lst = localSolarTime % 24;
         double solarHour = 15 * (lst - 12.0);
         return solarHour;
     }
-
 
     /**
      * Local Solar Time is based on the apparent solar day, which is the interval between two
@@ -304,8 +274,7 @@ public class SolarUtil
      * @return solar hour
      */
     public static double LocalSolarTimeFromClockTime(Date clockTime,
-        double lonTzStdMer, double lonActualLoc, int dstMins)
-    {
+                                                     double lonTzStdMer, double lonActualLoc, int dstMins) {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(clockTime);
@@ -318,7 +287,6 @@ public class SolarUtil
         return LST;
     }
 
-
     /**
      * The equation of time is the difference between apparent solar time and mean solar time, both
      * taken at a given place (or at another place with the same geographical longitude) at the same
@@ -328,17 +296,14 @@ public class SolarUtil
      * @param dayOfYear
      * @return (apparent - mean) in hours
      */
-    public static double EquationOfTimeInHours(int dayOfYear)
-    {
+    public static double EquationOfTimeInHours(int dayOfYear) {
         double B = toRadians((360 * (dayOfYear - 81)) / 364.0);
         double E = (0.165 * sin(2 * B)) - (0.126 * cos(B)) - (0.025 * sin(B));
         return E;
     }
 
-
     public static double ZenithAngleDegrees(
-        double latitudeDegrees, double solarHourDegrees, double declinationDegrees)
-    {
+            double latitudeDegrees, double solarHourDegrees, double declinationDegrees) {
         double l = toRadians(latitudeDegrees);
         double h = toRadians(solarHourDegrees);
         double d = toRadians(declinationDegrees);
@@ -349,10 +314,8 @@ public class SolarUtil
         return toDegrees(zenith);
     }
 
-
     public static double AltitudeAngleDegrees(
-        double latitudeDegrees, double solarHourDegrees, double declinationDegrees)
-    {
+            double latitudeDegrees, double solarHourDegrees, double declinationDegrees) {
         double l = toRadians(latitudeDegrees);
         double h = toRadians(solarHourDegrees);
         double d = toRadians(declinationDegrees);
@@ -363,7 +326,6 @@ public class SolarUtil
         return toDegrees(altitude);
     }
 
-
     /**
      *
      * @param altitudeAngleDegrees
@@ -373,8 +335,7 @@ public class SolarUtil
      * @return the azimuth angle measured from the south
      */
     public static double AzimuthAngleDegrees(double altitudeAngleDegrees,
-        double latitudeDegrees, double solarHourDegrees, double declinationDegrees)
-    {
+                                             double latitudeDegrees, double solarHourDegrees, double declinationDegrees) {
         double a = toRadians(altitudeAngleDegrees);
         double l = toRadians(latitudeDegrees);
         double h = toRadians(solarHourDegrees);
@@ -388,57 +349,39 @@ public class SolarUtil
         double cos2 = 0;
         double azimuth = 0;
         // Prevent divide by zero
-        if (a < PI / 2.0)
-        {
+        if (a < PI / 2.0) {
             sin1 = ts / cos(a);
             cos2 = (t - u / cos(a));
         }
         // Range checking
-        if (sin1 > 1.0)
-        {
+        if (sin1 > 1.0) {
             sin1 = 1.0;
         }
-        if (sin1 < -1.0)
-        {
+        if (sin1 < -1.0) {
             sin1 = -1.0;
         }
-        if (cos2 > 1.0)
-        {
+        if (cos2 > 1.0) {
             cos2 = 1.0;
         }
-        if (cos2 < -1.0)
-        {
+        if (cos2 < -1.0) {
             cos2 = -1.0;
         }
         // Check the quadrants
-        if (sin1 < -0.99999)
-        {
+        if (sin1 < -0.99999) {
             azimuth = asin(sin1);
-        }
-        else if (sin1 > 0 && cos2 < 0)
-        {
-            if (sin1 >= 1.0)
-            {
+        } else if (sin1 > 0 && cos2 < 0) {
+            if (sin1 >= 1.0) {
                 azimuth = -(PI / 2.0);
-            }
-            else
-            {
+            } else {
                 azimuth = PI / 2.0 + (PI / 2.0 - asin(sin1));
             }
-        }
-        else if (sin1 < 0 && cos2 < 0)
-        {
-            if (sin1 <= -1.0)
-            {
+        } else if (sin1 < 0 && cos2 < 0) {
+            if (sin1 <= -1.0) {
                 azimuth = PI / 2.0;
-            }
-            else
-            {
+            } else {
                 azimuth = -(PI / 2.0) - (PI / 2.0 + asin(sin1));
             }
-        }
-        else
-        {
+        } else {
             azimuth = asin(sin1);
         }
         // switching to degrees

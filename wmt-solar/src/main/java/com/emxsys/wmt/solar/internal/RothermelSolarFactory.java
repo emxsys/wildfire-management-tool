@@ -29,11 +29,15 @@
  */
 package com.emxsys.wmt.solar.internal;
 
-import com.emxsys.wmt.gis.GeoSector;
-import com.emxsys.wmt.gis.Latitude;
-import com.emxsys.wmt.solar.api.Solar;
-import com.emxsys.wmt.solar.api.SolarTuple;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
+import com.emxsys.wmt.gis.api.GeoSector;
+import com.emxsys.wmt.gis.api.Latitude;
+import com.emxsys.wmt.solar.api.SolarUtil;
+import com.emxsys.wmt.solar.api.Sunlight;
+import com.emxsys.wmt.solar.api.SunlightHoursTuple;
 import com.emxsys.wmt.solar.api.SolarType;
+import com.emxsys.wmt.solar.api.SunlightHours;
+import com.emxsys.wmt.solar.api.SunlightTuple;
 import com.emxsys.wmt.solar.spi.SolarFactory;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.visad.Times;
@@ -48,10 +52,10 @@ import visad.*;
 
 
 /**
- * A reference to this object can be obtained via SolarFactory.getInstance();
+ * A reference to this object can be obtained via SunlightFactory.getInstance();
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: RothermelSolarFactory.java 675 2013-05-24 20:05:05Z bdschubert $
+ * @version $Id: RothermelSunlightFactory.java 675 2013-05-24 20:05:05Z bdschubert $
  */
 public class RothermelSolarFactory extends SolarFactory
 {
@@ -64,43 +68,27 @@ public class RothermelSolarFactory extends SolarFactory
 
 
     /**
-     * Creates a new SolarTuple with "missing" values.
+     * Creates a new SunlightTuple object from VisAD type
      *
-     * @param latitude location on the earth [degrees]
-     * @param date determines declination, sunrise and sunset.
-     * @return SolarTuple
+     * @param utcTime determines sun position
+     * @return SunlightTuple
      */
     @Override
-    public Solar newSolar()
+    public Sunlight getSunlight(Date utcTime)
     {
-        return new SolarTuple();
-
+        GeoCoord3D sunPosition = SolarUtil.getSunPosition(utcTime);
+        return new SunlightTuple(sunPosition.getLatitude(), sunPosition.getLongitude());
     }
 
-
     /**
-     * Creates a new SolarTuple object from double.
-     *
-     * @param latitude location on the earth [degrees]
-     * @param date determines declination, sunrise and sunset.
-     * @return SolarTuple
-     */
-    @Override
-    public Solar newSolar(double latitude, Date date)
-    {
-        return newSolar(new Real(SolarType.LATITUDE, latitude), date);
-    }
-
-
-    /**
-     * Creates a new SolarTuple object from VisAD type
+     * Creates a new SunlightTuple object from VisAD type
      *
      * @param latitude location on the earth [Degrees]
      * @param date determines declination angle, and sunrise/sunset times.
-     * @return SolarTuple
+     * @return SunlightTuple
      */
     @Override
-    public Solar newSolar(Real latitude, Date date)
+    public SunlightHours getSunlightHours(Real latitude, Date date)
     {
         Real declination = calcSolarDeclinationAngle(date);
         DateTime[] times;
@@ -114,11 +102,11 @@ public class RothermelSolarFactory extends SolarFactory
         }
         catch (Exception ex)
         {
-            Logger.getLogger(SolarTuple.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SunlightHoursTuple.class.getName()).log(Level.SEVERE, null, ex);
             sunrise = new Real(SolarType.TIME); // missing value
             sunset = new Real(SolarType.TIME);  // missing value
         }
-        return new SolarTuple(latitude, declination, sunrise, sunset);
+        return new SunlightHoursTuple(sunrise, sunset);
     }
 
 

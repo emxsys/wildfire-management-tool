@@ -37,60 +37,31 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
+ * A SunlightHoursTuple contains the sunrise and sunset times for given date and latitude.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SolarTuple.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public class SolarTuple extends RealTuple implements Solar {
+public class SunlightHoursTuple extends RealTuple implements SunlightHours {
 
-    private Real latitude;
-    private Real declination;
-    private Real sunrise;
-    private Real sunset;
+    private final Real sunrise;
+    private final Real sunset;
     private Data[] components;
 
-    public SolarTuple(Real latitude, Real declination, Real sunrise, Real sunset) {
-        super(SolarType.SOLAR_DATA);
-        this.latitude = latitude;
-        this.declination = declination;
+    public SunlightHoursTuple(Real sunrise, Real sunset) {
+        super(SolarType.SUNRISE_SUNSET);
         this.sunrise = sunrise;
         this.sunset = sunset;
-
     }
 
-    public SolarTuple() {
-        super(SolarType.SOLAR_DATA);
-        this.latitude = new Real(SolarType.LATITUDE);
-        this.declination = new Real(SolarType.DECLINATION);
+    public SunlightHoursTuple() {
+        super(SolarType.SUNRISE_SUNSET);
         this.sunrise = new Real(SolarType.TIME);
         this.sunset = new Real(SolarType.TIME);
     }
 
     /**
-     * Latitude is earth latutide for which the sunrise/sunset times apply.
-     *
-     * @return [degrees]
-     */
-    @Override
-    public Real getLatitude() {
-        return this.latitude;
-    }
-
-    /**
-     * Declination is the earth's tilt angle relative to the sun at the given date.
-     *
-     * @return [degrees]
-     */
-    @Override
-    public Real getDeclination() {
-        return this.declination;
-    }
-
-    /**
-     * Sunrise is the time at which daylight begins.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
-     *
+     * Sunrise is the time at which daylight begins. The time is in solar hours, where at 12:00
+     * noon, the sun is at its highest point in the sky. This time is independent of timezones.
      * @return sunrise [solar time]
      */
     @Override
@@ -99,10 +70,8 @@ public class SolarTuple extends RealTuple implements Solar {
     }
 
     /**
-     * Sunset is the time at which daylight ends.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
-     *
+     * Sunset is the time at which daylight ends. The time is in solar hours, where at 12:00 noon,
+     * the sun is at its highest point in the sky. This time is independent of timezones.
      * @return sunset [solar time]
      */
     @Override
@@ -111,9 +80,8 @@ public class SolarTuple extends RealTuple implements Solar {
     }
 
     /**
-     * Sunrise is the time at which daylight begins.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
+     * Sunrise is the time at which daylight begins. The time is in solar hours, where at 12:00
+     * noon, the sun is at its highest point in the sky. This time is independent of timezones.
      *
      * @return sunrise [solar hour]
      */
@@ -123,9 +91,8 @@ public class SolarTuple extends RealTuple implements Solar {
     }
 
     /**
-     * Sunset is the time at which daylight ends.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
+     * Sunset is the time at which daylight ends. The time is in solar hours, where at 12:00 noon,
+     * the sun is at its highest point in the sky. This time is independent of timezones.
      *
      * @return sunset [solar hour]
      */
@@ -141,7 +108,6 @@ public class SolarTuple extends RealTuple implements Solar {
      * @return hour of day
      */
     private double convertDateTimeToHour(Real datetime) {
-        //
         double val = Reals.convertTo(SolarType.SOLAR_HOUR, datetime).getValue();
         val %= 24;
         return val;
@@ -149,21 +115,17 @@ public class SolarTuple extends RealTuple implements Solar {
 
     /**
      * Is missing any data elements?
-     *
      * @return is missing
      */
     @Override
     public boolean isMissing() {
-        return latitude.isMissing() || declination.isMissing()
-                || sunrise.isMissing() || sunset.isMissing();
+        return sunrise.isMissing() || sunset.isMissing();
     }
 
     /**
      * Get the i'th component.
-     *
      * @param i Which one
      * @return The component
-     *
      * @throws RemoteException On badness
      * @throws VisADException On badness
      */
@@ -171,12 +133,8 @@ public class SolarTuple extends RealTuple implements Solar {
     public Data getComponent(int i) throws VisADException, RemoteException {
         switch (i) {
             case 0:
-                return latitude;
-            case 1:
-                return declination;
-            case 2:
                 return sunrise;
-            case 3:
+            case 1:
                 return sunset;
             default:
                 throw new IllegalArgumentException("Wrong component number:" + i);
@@ -185,7 +143,7 @@ public class SolarTuple extends RealTuple implements Solar {
 
     /**
      * Create, if needed, and return the component array.
-     *
+     * @param copy ignored
      * @return components
      */
     @Override
@@ -193,10 +151,8 @@ public class SolarTuple extends RealTuple implements Solar {
         //Create the array and populate it if needed
         if (components == null) {
             Data[] tmp = new Data[getDimension()];
-            tmp[0] = latitude;
-            tmp[1] = declination;
-            tmp[2] = sunrise;
-            tmp[3] = sunset;
+            tmp[0] = sunrise;
+            tmp[1] = sunset;
             components = tmp;
         }
         return components;
@@ -204,10 +160,8 @@ public class SolarTuple extends RealTuple implements Solar {
 
     /**
      * Indicates if this Tuple is identical to an object.
-     *
      * @param obj The object.
-     * @return            <code>true</code> if and only if the object is
-     * a Tuple and both Tuple-s have identical component
+     * @return true if and only if the object is a Tuple and both Tuple-s have identical component
      * sequences.
      */
     @Override
@@ -215,34 +169,29 @@ public class SolarTuple extends RealTuple implements Solar {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof SolarTuple)) {
+        if (!(obj instanceof SunlightHoursTuple)) {
             return false;
         }
-        SolarTuple that = (SolarTuple) obj;
-        return this.latitude.equals(that.latitude)
-                && this.declination.equals(that.declination)
-                && this.sunrise.equals(that.sunrise)
+        SunlightHoursTuple that = (SunlightHoursTuple) obj;
+        return this.sunrise.equals(that.sunrise)
                 && this.sunset.equals(that.sunset);
     }
 
     /**
      * Returns the hash code of this object.
-     *
      * @return The hash code of this object.
      */
     @Override
     public int hashCode() {
-        return latitude.hashCode() | declination.hashCode()
-                & sunrise.hashCode() & sunset.hashCode();
+        return sunrise.hashCode() & sunset.hashCode();
     }
 
     /**
      * to string
-     *
      * @return string of me
      */
     @Override
     public String toString() {
-        return getLatitude() + " " + getDeclination() + " " + getSunrise() + " " + getSunset();
+        return getSunrise() + " " + getSunset();
     }
 }

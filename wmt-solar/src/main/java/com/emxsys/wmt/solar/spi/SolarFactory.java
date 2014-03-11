@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.solar.spi;
 
-import com.emxsys.wmt.gis.GeoSector;
-import com.emxsys.wmt.solar.api.SolarProvider;
+import com.emxsys.wmt.gis.api.GeoSector;
+import com.emxsys.wmt.solar.api.SunlightProvider;
 import com.emxsys.wmt.solar.internal.RothermelSolarFactory;
 import org.openide.util.Lookup;
 import visad.FlatField;
@@ -42,7 +42,7 @@ import visad.Real;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class SolarFactory implements SolarProvider
+public abstract class SolarFactory implements SunlightProvider
 {
     private static SolarFactory factory = null;
 

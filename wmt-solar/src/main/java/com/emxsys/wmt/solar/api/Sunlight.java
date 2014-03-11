@@ -33,59 +33,22 @@ import visad.Data;
 import visad.Real;
 
 /**
- *
+ * A Sunlight instance contains solar angles representing the position of the sun.
+ * 
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: Solar.java 675 2013-05-24 20:05:05Z bdschubert $
  */
-public interface Solar extends Data {
+public interface Sunlight extends Data {
 
     /**
-     * Declination is the earth's tilt angle relative to the sun at the given date.
-     *
+     * Declination is the earth's tilt angle relative to the sun at a given date and time.
      * @return [degrees]
      */
     Real getDeclination();
 
     /**
-     * Latitude is earth latitude for which the sunrise/sunset times apply.
-     *
+     * Longitude is earth longitude for where the sun is overhead at a given date and time.
      * @return [degrees]
      */
-    Real getLatitude();
+    Real getLongitude();
 
-    /**
-     * Sunrise is the time at which daylight begins.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
-     *
-     * @return sunrise [solar date/time]
-     */
-    Real getSunrise();
-
-    /**
-     * Sunrise is the time at which daylight begins.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
-     *
-     * @return sunrise [solar hour]
-     */
-    double getSunriseHour();
-
-    /**
-     * Sunset is the time at which daylight ends.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
-     *
-     * @return sunset [solar date/time]
-     */
-    Real getSunset();
-
-    /**
-     * Sunset is the time at which daylight ends.
-     * The time is in solar hours, where at 12:00 noon, the sun is at its highest
-     * point in the sky. This time is independent of timezones.
-     *
-     * @return sunset [solar hour]
-     */
-    double getSunsetHour();
 }
