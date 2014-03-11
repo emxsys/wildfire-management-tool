@@ -2,3 +2,4 @@ syntax: glob
 target
 vpproject\Wildfire Management Tool v4.vpp~*
 .vpp~*
+*.vpp~*
