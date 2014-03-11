@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
@@ -43,12 +42,22 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/zoom_in.png",
         displayName = "#CTL_ZoomInAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 6500)
-@RibbonActionReference(path = "Menu/Home/Zoom", position = 100, description = "#HINT_ZoomInAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_ZoomInAction=Zoom In",
-            "HINT_ZoomInAction=Move closer"
-        })
+@RibbonActionReference(path = "Menu/Home/Zoom", position = 100, 
+        description = "#CTL_ZoomInAction_Hint",
+        tooltipTitle = "#CTL_ZoomInAction_TooltipTitle",
+        tooltipBody = "#CTL_ZoomInAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/zoom_in.png",
+        tooltipFooter = "#CTL_ZoomInAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png",
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_ZoomInAction=Zoom In",
+    "CTL_ZoomInAction_Hint=Move closer",
+    "CTL_ZoomInAction_TooltipTitle=Zoom In",
+    "CTL_ZoomInAction_TooltipBody=Zooms the view closer.",
+    "CTL_ZoomInAction_TooltipFooter=Keyboard shortcut: [Plus]"
+})
 public final class ZoomInAction implements ActionListener {
 
     private final ZoomInCapability context;

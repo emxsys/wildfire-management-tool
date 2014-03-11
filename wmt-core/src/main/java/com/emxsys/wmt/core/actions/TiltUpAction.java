@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -43,11 +42,23 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/tilt_up.png",
         displayName = "#CTL_TiltUpAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 300)
-@RibbonActionReference(path = "Menu/Home/Rotate", position = 400, description = "#HINT_TiltUpAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_TiltUpAction=Tilt Up", "HINT_TiltUpAction=Tilt upright."
-        })
+@RibbonActionReference(path = "Menu/Home/Rotate", 
+        position = 400, 
+        description = "#CTL_TiltUpAction_Hint",
+        tooltipTitle = "#CTL_TiltUpAction_TooltipTitle",
+        tooltipBody = "#CTL_TiltUpAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/tilt_up.png",
+        tooltipFooter = "#CTL_TiltUpAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png", 
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_TiltUpAction=Tilt Up",
+    "CTL_TiltUpAction_Hint=Tilt upwards",
+    "CTL_TiltUpAction_TooltipTitle=Tilt Up",
+    "CTL_TiltUpAction_TooltipBody=Tilts the view upwards.",
+    "CTL_TiltUpAction_TooltipFooter=Keyboard shortcut: [Shift]+[Up Arrow] or [Page Up]"
+})
 public final class TiltUpAction implements ActionListener {
 
     private final TiltUpCapability context;

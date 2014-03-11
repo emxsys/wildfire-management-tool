@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
@@ -43,12 +42,22 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/zoom_out.png",
         displayName = "#CTL_ZoomOutAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 6510)
-@RibbonActionReference(path = "Menu/Home/Zoom", position = 200, description = "#HINT_ZoomOutAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_ZoomOutAction=Zoom Out",
-            "HINT_ZoomOutAction=Move back"
-        })
+@RibbonActionReference(path = "Menu/Home/Zoom", position = 200, 
+        description = "#CTL_ZoomOutAction_Hint",
+        tooltipTitle = "#CTL_ZoomOutAction_TooltipTitle",
+        tooltipBody = "#CTL_ZoomOutAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/zoom_out.png",
+        tooltipFooter = "#CTL_ZoomOutAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png",
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_ZoomOutAction=Zoom Out",
+    "CTL_ZoomOutAction_Hint=Move back",
+    "CTL_ZoomOutAction_TooltipTitle=Zoom Out",
+    "CTL_ZoomOutAction_TooltipBody=Zooms the view backwards or farter away.",
+    "CTL_ZoomOutAction_TooltipFooter=Keyboard shortcut: [Minus]"
+})
 public final class ZoomOutAction implements ActionListener {
 
     private final ZoomOutCapability context;

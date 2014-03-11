@@ -31,13 +31,10 @@ package com.emxsys.wmt.core.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.RotateCcwCapability;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -45,11 +42,24 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/rotate_ccw.png",
         displayName = "#CTL_RotateCcwAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 5100)
-@RibbonActionReference(path = "Menu/Home/Rotate", position = 100, description = "#HINT_RotateCcwAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_RotateCcwAction=Rotate CCW", "HINT_RotateCcwAction=Rotate Counter Clockwise"
-        })
+@RibbonActionReference(path = "Menu/Home/Rotate",
+        position = 100,
+        description = "#CTL_RotateCcwAction_Hint",
+        tooltipTitle = "#CTL_RotateCcwAction_TooltipTitle",
+        tooltipBody = "#CTL_RotateCcwAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/rotate_ccw.png",
+        tooltipFooter = "#CTL_RotateCcwAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png",
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_RotateCcwAction=Rotate CCW",
+    "CTL_RotateCcwAction_Hint=Rotates view counter-clockwise",
+    "CTL_RotateCcwAction_TooltipTitle=Rotate Counter-clockwise",
+    "CTL_RotateCcwAction_TooltipBody=Rotates the view counter-clockwise.",
+    "CTL_RotateCcwAction_TooltipFooter=Keyboard shortcut: [Shift]+[Right Arrow]"
+
+})
 public final class RotateCcwAction implements ActionListener {
 
     private final RotateCcwCapability context;

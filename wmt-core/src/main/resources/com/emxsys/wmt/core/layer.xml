@@ -11,13 +11,13 @@
                 <!--Basemap Popup-->  
                 <folder name="Basemap">
                     <attr name="position" intvalue="100"/>
-                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_accept.png"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_basemaps.png"/>
                     <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap"/>
                     <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_Hint"/>
                     <attr name="priority" stringvalue="top"/>
                     <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipTitle"/>
                     <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipBody"/>
-                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/accept.png"/>
+                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_basemaps.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
                     <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                     <folder name="Satellite">
@@ -44,13 +44,13 @@
                 <!--Overlays Popup-->  
                 <folder name="Overlays">
                     <attr name="position" intvalue="200"/>
-                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map.png"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_overlays.png"/>
                     <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays"/>
                     <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_Hint"/>
                     <attr name="priority" stringvalue="top"/>
                     <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipTitle"/>
                     <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipBody"/>
-                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_add.png"/>
+                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_overlays.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
                     <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                     <folder name="Hazards">
@@ -81,13 +81,13 @@
                 <!--Effects Popup-->  
                 <folder name="Effects">
                     <attr name="position" intvalue="300"/>
-                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map.png"/>
+                    <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_effects.png"/>
                     <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects"/>
                     <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_Hint"/>
                     <attr name="priority" stringvalue="top"/>
                     <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipTitle"/>
                     <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipBody"/>
-                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_add.png"/>
+                    <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_effects.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
                     <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
                 </folder>

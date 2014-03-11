@@ -22,7 +22,7 @@
  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRLEFTTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -43,11 +42,24 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_left.png",
         displayName = "#CTL_PanLeftAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3200)
-@RibbonActionReference(path = "Menu/Home/Move", position = 200, description = "#HINT_PanLeftAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_PanLeftAction=Pan Left", "HINT_PanLeftAction=Looks to the left"
-        })
+@RibbonActionReference(path = "Menu/Home/Move",
+        position = 200,
+        description = "#CTL_PanLeftAction_Hint",
+        tooltipTitle = "#CTL_PanLeftAction_TooltipTitle",
+        tooltipBody = "#CTL_PanLeftAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/arrow_left.png",
+        tooltipFooter = "#CTL_PanLeftAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png",
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_PanLeftAction=Pan Left",
+    "CTL_PanLeftAction_Hint=Looks left",
+    "CTL_PanLeftAction_TooltipTitle=Pan Left",
+    "CTL_PanLeftAction_TooltipBody=Pans the view to the left.",
+    "CTL_PanLeftAction_TooltipFooter=Keyboard shortcut: [Left Arrow]"
+
+})
 public final class PanLeftAction implements ActionListener {
 
     private final PanLeftCapability context;

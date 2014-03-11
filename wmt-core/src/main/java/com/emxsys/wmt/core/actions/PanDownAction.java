@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -43,12 +42,24 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_down.png",
         displayName = "#CTL_PanDownAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3100)
-@RibbonActionReference(path = "Menu/Home/Move", position = 100, description = "#HINT_PanDownAction", autoRepeatAction = true)
+@RibbonActionReference(path = "Menu/Home/Move",
+        position = 100,
+        description = "#CTL_PanDownAction_Hint",
+        tooltipTitle = "#CTL_PanDownAction_TooltipTitle",
+        tooltipBody = "#CTL_PanDownAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/arrow_down.png",
+        tooltipFooter = "#CTL_PanDownAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png", 
+        autoRepeatAction = true)
 
-@Messages(
-        {
-            "CTL_PanDownAction=Pan Down", "HINT_PanDownAction=Looks downward"
-        })
+@Messages({
+    "CTL_PanDownAction=Pan Down",
+    "CTL_PanDownAction_Hint=Looks downward",
+    "CTL_PanDownAction_TooltipTitle=Pan Down",
+    "CTL_PanDownAction_TooltipBody=Pans the view downward.",
+    "CTL_PanDownAction_TooltipFooter=Keyboard shortcut: [Down Arrow]"
+
+})
 public final class PanDownAction implements ActionListener {
 
     private final PanDownCapability context;
