@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.wildfire.api;
 
-import com.emxsys.wmt.terrain.api.Terrain;
+import com.emxsys.wmt.gis.api.Terrain;
 import visad.Real;
 
 /**

@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.wildfire.api;
 
-import com.emxsys.wmt.solar.api.Solar;
-import com.emxsys.wmt.terrain.api.Terrain;
+import com.emxsys.wmt.gis.api.Terrain;
+import com.emxsys.wmt.solar.api.Sunlight;
 import java.util.List;
 import visad.Real;
 
@@ -65,6 +65,6 @@ public interface Fuel {
      * @param windDir
      * @param terrain
      */
-    void adjustFuelConditions(Solar solar, List<Real> airTemps, List <Real>humidities,
+    void adjustFuelConditions(Sunlight solar, List<Real> airTemps, List <Real>humidities,
             Real windSpd, Real windDir, Terrain terrain, FuelMoisture fuelMoisture);
 }
