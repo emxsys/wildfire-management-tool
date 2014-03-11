@@ -74,8 +74,8 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
     public static final double DEFAULT_HEADING_STEP = 1.0;
     private final WorldWindManager wwm;
 
-    public GlobeCapabilities(WorldWindManager wwm) {
-        this.wwm = wwm;
+    public GlobeCapabilities() {
+        this.wwm = com.emxsys.wmt.globe.Globe.getInstance().getWorldWindManager();
     }
 
     @Override

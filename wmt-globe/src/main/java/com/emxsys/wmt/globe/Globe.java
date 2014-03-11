@@ -139,7 +139,7 @@ public class Globe implements GisViewer {
      */
     @Override
     public void initializeResources() {
-        this.content.add(new GlobeCapabilities(this.wwm));
+        this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
         this.content.add(new GlobeTerrainProvider());
         this.wwm.addLookup(this.lookup);
@@ -322,7 +322,7 @@ public class Globe implements GisViewer {
         }
 
         // Compute N/S and E/W distances in radians
-        Position position = Positions.fromCoord3D(point);
+        Position position = Positions.fromCoord2D(point);
         gov.nasa.worldwind.globes.Globe globe = this.wwm.getWorldWindow().getModel().getGlobe();
         double deltaLatRadians = meters / globe.getEquatorialRadius();
         double deltaLonRadians = deltaLatRadians / Math.cos(position.getLatitude().radians);

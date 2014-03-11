@@ -31,14 +31,12 @@ package com.emxsys.wmt.globe.layers;
 
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
 import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import gov.nasa.worldwind.layers.Layer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
@@ -153,11 +151,16 @@ public class BaseMapLayers {
     public static String LAYER_MSVE_ROAD = Bundle.CTL_MSVirtualEarthRoad();
     public static String LAYER_MSVE_HYBRID = Bundle.CTL_MSVirtualEarthHybrid();
     public static String LAYER_OPEN_STREET_MAP = Bundle.CTL_OpenStreetMap();
+    private static final String BASEMAP_LAYERS_FOLDER = "WorldWind/Layers/Basemap";
+
+    private static final Logger logger = Logger.getLogger(BaseMapLayers.class.getName());
 
     public static List<GisLayer> getLayers() {
         ArrayList<GisLayer> list = new ArrayList<>();   // return value
-        FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Basemap");
-        if (layersFolder != null) {
+        FileObject layersFolder = FileUtil.getConfigFile(BASEMAP_LAYERS_FOLDER);
+        if (layersFolder == null) {
+            logger.severe(BASEMAP_LAYERS_FOLDER + " is null!");            
+        } else {
             Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
             for (Layer layer : layers) {
                 list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));

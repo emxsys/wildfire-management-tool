@@ -48,12 +48,22 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>wmt-visad</artifactId>
+            <artifactId>wmt-libraries</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>wmt-libraries</artifactId>
+            <artifactId>wmt-solar</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-utilities</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-visad</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
@@ -126,30 +136,22 @@
             <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
         </dependency>
-        <!--Other Dependencies-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-utilities</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <artifactId>org-openide-loaders</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-nodes</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-awt</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
+        <!--Other Dependencies-->
     </dependencies>
 
     <build>
@@ -161,8 +163,6 @@
                 <configuration>
                     <publicPackages>
                         <publicPackage>com.emxsys.wmt.globe</publicPackage>
-                        <publicPackage>com.emxsys.wmt.globe.capabilities</publicPackage>
-                        <publicPackage>com.emxsys.wmt.globe.layers</publicPackage>
                     </publicPackages>
                     <nbmResources> 
                         <nbmResource>

@@ -29,10 +29,9 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.globe.layers.OverlayLayers;
+import com.emxsys.wmt.globe.layers.BackgroundLayers;
+import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.terramenta.ribbon.RibbonActionReference;
-import java.awt.event.ActionEvent;
-import java.util.logging.Logger;
 import javax.swing.Action;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -42,52 +41,41 @@ import org.openide.util.NbBundle.Messages;
 
 @ActionID(
         category = "Map",
-        id = "com.emxsys.wmt.globe.actions.LatLonGraticule")
+        id = "com.emxsys.wmt.globe.actions.EffectSunlight")
 @ActionRegistration(
-        displayName = "#CTL_LatLonGraticule",
-        lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@ActionReference(path = "Toolbars/Overlays", position = 312)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graticules",
+        displayName = "#CTL_EffectSunlight",
+        lazy = false)
+@ActionReference(path = "Toolbars/Effects", position = 130)
+@RibbonActionReference(path = "Menu/Home/Manage/Effects/Controls", position = 300,
         buttonStyle = "toggle",
-        position = 100,
-        description = "#CTL_LatLonGraticule_Hint",
+        description = "#CTL_EffectSunlight_Hint",
         priority = "top",
-        tooltipTitle = "#CTL_LatLonGraticule_TooltipTitle",
-        tooltipBody = "#CTL_LatLonGraticule_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/table24.png")
+        tooltipTitle = "#CTL_EffectSunlight_TooltipTitle",
+        tooltipBody = "#CTL_EffectSunlight_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/globe/images/sun24.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
-    "CTL_LatLonGraticule=Lat/Lon Graticule",
-    "CTL_LatLonGraticule_Hint=Latitude and Longitude Graticule Overlay",
-    "CTL_LatLonGraticule_TooltipTitle=Latitude and Longitude Graticule Overlay",
-    "CTL_LatLonGraticule_TooltipBody=Toggles the display of the latitude/longitude cooridinate grid.\n"
-            + "This common coordinate system is used worldwide."
+    "CTL_EffectSunlight=Sunlight",
+    "CTL_EffectSunlight_Hint=Sunlight Effect",
+    "CTL_EffectSunlight_TooltipTitle=Sunlight Effect",
+    "CTL_EffectSunlight_TooltipBody=Toggle the display of the sunlight."
 })
-public final class OverlayLatLonGraticule extends AbstractGisLayerToggleAction {
+public final class EffectSunlight extends AbstractGisLayerToggleAction {
 
-    private static final Logger logger = Logger.getLogger(OverlayLatLonGraticule.class.getName());
-    private static final String OVERLAY_NAME = OverlayLayers.LAYER_LATLON_GRATICULE;
-    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/table.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/sun.png";
+    private static final String EFFECT_NAME = BackgroundLayers.LAYER_SUNLIGHT;
 
-    public OverlayLatLonGraticule() {
-        // The base class will use the layer's display name to find the GisLayer that will be operated on.
-        super(OVERLAY_NAME);
-
-        // Non-lazy initializtion requires us to put the name and icon properties into the action;
-        // it's not handled by the registration.
-        putValue(Action.NAME, Bundle.CTL_LatLonGraticule());
+    public EffectSunlight() {
+        super(EFFECT_NAME);
+        // non-lazy initializtion requires us to put some properties into the action
+        putValue(Action.NAME, Bundle.CTL_EffectSunlight());
         putValue("iconBase", ICON_BASE);
-    }
 
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        // Let the base class perform the toggle action
-        super.actionPerformed(event);
     }
 
     @Override
     public Action createContextAwareInstance(Lookup ignoredActionContext) {
-        return new OverlayLatLonGraticule();
+        return new EffectSunlight();
     }
 }

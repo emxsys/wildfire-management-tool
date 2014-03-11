@@ -50,7 +50,7 @@ public class Positions {
      * @return A position with a ZERO elevation.
      * @see GeoCoord2D
      */
-    public static Position fromCoord3D(Coord2D coord) {
+    public static Position fromCoord2D(Coord2D coord) {
         try {
             if (coord == null || coord.isMissing()) {
                 return Position.ZERO;

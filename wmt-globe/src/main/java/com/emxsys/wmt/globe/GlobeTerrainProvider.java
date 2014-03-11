@@ -30,27 +30,30 @@
 package com.emxsys.wmt.globe;
 
 import com.emxsys.wmt.gis.api.Coord2D;
+import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.gis.api.TerrainProvider;
 import com.emxsys.wmt.gis.api.TerrainTuple;
+import com.emxsys.wmt.globe.util.Positions;
+import com.emxsys.wmt.solar.api.SolarUtil;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Intersection;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
+import java.util.Date;
 import java.util.logging.Logger;
 import visad.Real;
 import visad.RealType;
 
 //TODO: Implement hi-res terrain and shading tests.
-
 /**
  * GlobeTerrainProvider is concrete TerrainProvider based on the WorldWind globe elevation model.
- * 
+ *
  * @author Bruce Schubert
  */
-public class GlobeTerrainProvider implements TerrainProvider {
+public class GlobeTerrainProvider implements ShadedTerrainProvider {
 
     private final HighResolutionTerrain terrain;
     /** WorldWind globe provides the elevation model */
@@ -91,7 +94,7 @@ public class GlobeTerrainProvider implements TerrainProvider {
     }
 
     /**
-     * Creates a VisAD based {@link TerrainTuple} from the WorldWind.
+     * Creates a VisAD based {@link TerrainTuple} from the WorldWind terrain model.
      * @param coord the coordinate where terrain should be determined
      * @return the terrain's aspect, slope and elevation at supplied location
      */
@@ -117,14 +120,14 @@ public class GlobeTerrainProvider implements TerrainProvider {
         }
     }
 
-    /**
-     * Create a default TerrainTuple object.
-     *
-     * @return a terrain tuple with "missing" values
-     */
     @Override
-    public Terrain newTerrain() {
-        return new TerrainTuple();
+    public boolean isCoordinateTerrestialShaded(Coord2D coord, Date datetime) {
+        Position positionA = Positions.fromCoord2D(coord);
+        Position positionB = Positions.fromCoord2D(SolarUtil.getSunPosition(datetime));
+        Intersection[] intersect = terrain.intersect(positionA, positionB);
+
+        // The position is shaded if there is an interesection with the terrain between the two positions
+        return intersect != null;
     }
 
     private double getBestElevation(LatLon latLon) {
@@ -185,4 +188,5 @@ public class GlobeTerrainProvider implements TerrainProvider {
             slope, aspect
         };
     }
+
 }
