@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.Viewers;
+import com.emxsys.wmt.gis.api.viewer.Viewers;
 import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
 import com.emxsys.wmt.gis.api.layer.BasicLayerLegend;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;

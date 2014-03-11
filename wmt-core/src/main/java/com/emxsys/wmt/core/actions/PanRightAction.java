@@ -22,7 +22,7 @@
  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRRIGHTTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -31,13 +31,10 @@ package com.emxsys.wmt.core.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PanRightCapability;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -45,11 +42,24 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_right.png",
         displayName = "#CTL_PanRightAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3300)
-@RibbonActionReference(path = "Menu/Home/Move", position = 300, description = "#HINT_PanRightAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_PanRightAction=Pan Right", "HINT_PanRightAction=Looks to the right"
-        })
+@RibbonActionReference(path = "Menu/Home/Move",
+        position = 300,
+        description = "#CTL_PanRightAction_Hint",
+        tooltipTitle = "#CTL_PanRightAction_TooltipTitle",
+        tooltipBody = "#CTL_PanRightAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/arrow_right.png",
+        tooltipFooter = "#CTL_PanRightAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png", 
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_PanRightAction=Pan Right",
+    "CTL_PanRightAction_Hint=Looks right",
+    "CTL_PanRightAction_TooltipTitle=Pan Right",
+    "CTL_PanRightAction_TooltipBody=Pans the view to the right.",
+        "CTL_PanRightAction_TooltipFooter=Keyboard shortcut: [Right Arrow]"
+
+})
 public final class PanRightAction implements ActionListener {
 
     private final PanRightCapability context;

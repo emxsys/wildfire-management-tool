@@ -39,25 +39,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.NbBundle.Messages;
 
-@Messages(
-        {
-            "err.item.null=The item argument cannot be null.",
-            "err.items.null=Items collection cannot be null.",
-            "# {0} - catalog type",
-            "err.item.incompatible=The item type is incompatable [{0}]. The item was not added.",
-            "# {0} - catalog id",
-            "err.item.already.exists=The item ID ({0}) already exists.",
-            "# {0} - catalog id",
-            "info.item.added=The {0} item was added.",
-            "# {0} - catalog id",
-            "info.item.removed=The {0} item was removed."
-        })
+@Messages({
+    "err.item.null=The item argument cannot be null.",
+    "err.items.null=Items collection cannot be null.",
+    "# {0} - catalog type",
+    "err.item.incompatible=The item type is incompatable [{0}]. The item was not added.",
+    "# {0} - catalog id",
+    "err.item.already.exists=The item ID ({0}) already exists.",
+    "# {0} - catalog id",
+    "info.item.added=The {0} item was added.",
+    "# {0} - catalog id",
+    "info.item.removed=The {0} item was removed."
+})
 /**
  * This generic EntityCatalog manages a collection of unique {@link Items}. It provides property
- * change
- * notifications when the catalog contents change. A EntityCatalog implementation, or its individual
- * items, may be mapped to persistent storage, and this class provides notifications that the
- * contents have changed so that 'dirty' flags can be set accordingly.
+ * change notifications when the catalog contents change. A EntityCatalog implementation, or its
+ * individual items, may be mapped to persistent storage, and this class provides notifications that
+ * the contents have changed so that 'dirty' flags can be set accordingly.
  *
  * @see Entity
  * @author Bruce Schubert <bruce@emxsys.com>
@@ -71,7 +69,7 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener {
     public static final String PROP_ITEM_CHANGED = "PROP_ITEM_CHANGED";
     public static final String PROP_ITEM_REMOVED = "PROP_ITEM_REMOVED";
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private Map<Long, T> itemMap = new TreeMap<Long, T>();
+    private final Map<Long, T> itemMap = new TreeMap<>();
     private static final Logger logger = Logger.getLogger(EntityCatalog.class.getName());
 
     /**

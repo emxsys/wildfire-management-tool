@@ -47,25 +47,25 @@ public class SolarType {
     public static final RealType SOLAR_HOUR;
     public static final RealType SUNRISE_HOUR;
     public static final RealType SUNSET_HOUR;
-    public static final RealTupleType SUNSET_SUNRISE;
-    public static final RealType LATITUDE;
+    public static final RealTupleType SUNRISE_SUNSET;
+    public static final RealType LONGITUDE;
     public static final RealType DECLINATION;
-    public final static RealTupleType SOLAR_DATA;
+    public final static RealTupleType SUNLIGHT_ANGLES;
 
     static {
         TIME = RealType.getRealType("local_time:sec", CommonUnit.secondsSinceTheEpoch, null);
         SOLAR_HOUR = RealType.getRealType("solar_time:hour", GeneralUnit.hour, null);
         SUNRISE_HOUR = RealType.getRealType("sunrise:hour", GeneralUnit.hour, null);
         SUNSET_HOUR = RealType.getRealType("sunset:hour", GeneralUnit.hour, null);
-        SUNSET_SUNRISE = Reals.newRealTupleType(
+        SUNRISE_SUNSET = Reals.newRealTupleType(
                 new RealType[]{
                     SOLAR_HOUR, SOLAR_HOUR
                 });
-        LATITUDE = RealType.getRealType("latitude:deg", CommonUnit.degree, null);
+        LONGITUDE = RealType.getRealType("longitude:deg", CommonUnit.degree, null);
         DECLINATION = RealType.getRealType("declination:deg", CommonUnit.degree, null);
-        SOLAR_DATA = Reals.newRealTupleType(
+        SUNLIGHT_ANGLES = Reals.newRealTupleType(
                 new RealType[]{
-                    LATITUDE, DECLINATION, TIME, TIME
+                    DECLINATION, LONGITUDE
                 });
 
     }

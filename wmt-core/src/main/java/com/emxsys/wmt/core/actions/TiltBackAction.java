@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -43,11 +42,23 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/tilt_down.png",
         displayName = "#CTL_TiltBackAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 300)
-@RibbonActionReference(path = "Menu/Home/Rotate", position = 300, description = "#HINT_TiltBackAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_TiltBackAction=Tilt Down", "HINT_TiltBackAction=Tilt downwards or lean backwards."
-        })
+@RibbonActionReference(path = "Menu/Home/Rotate",
+        position = 300,
+        description = "#CTL_TiltBackAction_Hint",
+        tooltipTitle = "#CTL_TiltBackAction_TooltipTitle",
+        tooltipBody = "#CTL_TiltBackAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/tilt_down.png",
+        tooltipFooter = "#CTL_TiltBackAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png",
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_TiltBackAction=Tilt Back",
+    "CTL_TiltBackAction_Hint=Tilt backwards",
+    "CTL_TiltBackAction_TooltipTitle=Tilt Back",
+    "CTL_TiltBackAction_TooltipBody=Tilts the view backwards.",
+    "CTL_TiltBackAction_TooltipFooter=Keyboard shortcut: [Shift]+[Down Arrow] or [Page Down]"
+})
 public final class TiltBackAction implements ActionListener {
 
     private final TiltBackCapability context;

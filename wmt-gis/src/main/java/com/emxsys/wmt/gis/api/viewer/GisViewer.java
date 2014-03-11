@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.gis.api.viewer;
 
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.layer.GisLayer;

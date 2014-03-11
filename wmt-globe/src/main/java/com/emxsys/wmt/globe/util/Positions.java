@@ -29,9 +29,10 @@
  */
 package com.emxsys.wmt.globe.util;
 
-import com.emxsys.wmt.gis.GeoCoord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord2D;
 import gov.nasa.worldwind.geom.Position;
 import org.openide.util.Exceptions;
 
@@ -47,8 +48,9 @@ public class Positions {
      *
      * @param coord Supplies lat/lon.
      * @return A position with a ZERO elevation.
+     * @see GeoCoord2D
      */
-    public static Position fromGeoPoint(Coord2D coord) {
+    public static Position fromCoord2D(Coord2D coord) {
         try {
             if (coord == null || coord.isMissing()) {
                 return Position.ZERO;
@@ -65,8 +67,9 @@ public class Positions {
      *
      * @param coordinate Supplies lat, lon and latitude
      * @return A new position with the same values as the coordinate parameter.
+     * @see GeoCoord3D
      */
-    public static Position fromGeoPosition(Coord3D coordinate) {
+    public static Position fromCoord3D(Coord3D coordinate) {
         try {
             if (coordinate == null || coordinate.isMissing()) {
                 return Position.ZERO;
@@ -82,12 +85,30 @@ public class Positions {
     }
 
     /**
+     * Converts a WorldWind Position to a GIS Coord2D
+     *
+     * @param position Supplies the lat, lon and elevation.
+     * @return A new Coord2D with the same values as the position parameter.
+     */
+    public static GeoCoord2D toGeoCoord2D(Position position) {
+        if (position==null){
+            return GeoCoord2D.INVALID_POINT;
+        }
+        return GeoCoord2D.fromDegrees(
+                position.getLatitude().degrees,
+                position.getLongitude().degrees);
+    }
+
+    /**
      * Converts a WorldWind Position to a GIS Coord3D
      *
      * @param position Supplies the lat, lon and elevation.
      * @return A new Coord3D with the same values as the position parameter.
      */
-    public static GeoCoord3D toGeoPosition(Position position) {
+    public static GeoCoord3D toGeoCoord3D(Position position) {
+        if (position==null){
+            return GeoCoord3D.INVALID_POSITION;
+        }
         return GeoCoord3D.fromDegreesAndMeters(
                 position.getLatitude().degrees,
                 position.getLongitude().degrees,

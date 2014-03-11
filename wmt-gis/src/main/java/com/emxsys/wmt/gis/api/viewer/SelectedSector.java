@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.gis.api.viewer;
 
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoSector;
 
 /**
  * This is a "capability" interface intended to be used in the NetBeans Lookup facilities. If

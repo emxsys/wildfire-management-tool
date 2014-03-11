@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.gis.api.viewer;
 
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 
 import java.util.List;

@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.gis.api.marker;
 
-import com.emxsys.wmt.gis.AbstractFeature;
-import com.emxsys.wmt.gis.GeoCoord3D;
+import com.emxsys.wmt.gis.api.AbstractFeature;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.GeoPoint;
+import com.emxsys.wmt.gis.api.GeoPoint;
 import com.emxsys.wmt.gis.api.FeatureClass;
 import com.emxsys.wmt.gis.api.Geometry;
 import com.emxsys.wmt.gis.api.marker.Marker;

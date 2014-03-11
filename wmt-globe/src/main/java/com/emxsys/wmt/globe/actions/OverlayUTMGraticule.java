@@ -54,7 +54,7 @@ import org.openide.util.NbBundle.Messages;
         priority = "top",
         tooltipTitle = "#CTL_UTMGraticule_TooltipTitle",
         tooltipBody = "#CTL_UTMGraticule_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/globe.png")
+        tooltipIcon = "com/emxsys/wmt/globe/images/table24.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
@@ -68,7 +68,7 @@ public final class OverlayUTMGraticule extends AbstractGisLayerToggleAction {
 
     private static final Logger logger = Logger.getLogger(OverlayUTMGraticule.class.getName());
     private static final String OVERLAY_NAME = OverlayLayers.LAYER_UTM_GRATICULE;
-    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/globe.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/table.png";
 
     public OverlayUTMGraticule() {
         // The base class will use the layer's display name to find the GisLayer that will be operated on.

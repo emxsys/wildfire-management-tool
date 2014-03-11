@@ -29,12 +29,11 @@
  */
 package com.emxsys.wmt.globe;
 
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
+import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
@@ -48,29 +47,23 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
-import com.emxsys.wmt.globe.capabilities.GlobeCapabilities;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
 import com.emxsys.wmt.globe.layers.GisLayerAdaptor;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Vec4;
-import gov.nasa.worldwind.layers.CompassLayer;
+import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
+import com.emxsys.wmt.globe.util.Positions;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.layers.StarsLayer;
-import gov.nasa.worldwind.layers.ViewControlsLayer;
-import gov.nasa.worldwind.layers.ViewControlsSelectListener;
-import gov.nasa.worldwind.layers.WorldMapLayer;
-import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
-import gov.nasa.worldwindx.sunlight.SunController;
-import gov.nasa.worldwindx.sunlight.SunLayer;
 import java.util.List;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import visad.CommonUnit;
 import visad.Real;
+import visad.VisADException;
 
 /**
  * The Globe is a GisViewer instance that provides access to the WorldWind virtual globe. The
@@ -92,27 +85,35 @@ public class Globe implements GisViewer {
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
     private final GisLayerList gisLayers = new GisLayerList();
+    private boolean initialized = false;
+    private static Globe INSTANCE;
 
     /**
-     * Do not call!
-     * <p>
+     * Do not call! Used by @ServiceProvider.
      * Use getInstance() or Lookup.getDefault().lookup(Globe.class) instead.
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public Globe() {
+        if (INSTANCE != null) {
+            throw new IllegalStateException("Do not call constructor. Use getInstance().");
+        }
+        INSTANCE = this;
     }
 
     /**
      * Get the singleton instance.
-     *
      * @return the singleton Globe .
      */
     public static Globe getInstance() {
-        return GlobeHolder.INSTANCE;
+        if (INSTANCE == null) {
+            return Lookup.getDefault().lookup(Globe.class);
+        } else {
+            return INSTANCE;
+        }
     }
 
     /**
      * Get the Globe window.
-     *
      * @return the Globe window; may be null.
      */
     public TopComponent getGlobeTopComponent() {
@@ -125,7 +126,6 @@ public class Globe implements GisViewer {
 
     /**
      * Convenience method returns the registered WorldWindManager.
-     *
      * @return the WorldWindManager found on the global lookup.
      */
     public WorldWindManager getWorldWindManager() {
@@ -139,7 +139,9 @@ public class Globe implements GisViewer {
      */
     @Override
     public void initializeResources() {
-        this.content.add(new GlobeCapabilities(this.wwm));
+        this.content.add(new GlobeCapabilities());
+        this.content.add(new GlobeCoordinateProvider());
+        this.content.add(new GlobeTerrainProvider());
         this.wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization
@@ -156,12 +158,16 @@ public class Globe implements GisViewer {
         addAll(OverlayLayers.getLayers());
         addAll(WidgetLayers.getLayers());
 
+
+        // Update the UI
+        ReticuleStatusLine.getInstance().initialize();
         this.wwm.getWorldWindow().setVisible(true);
+        
+        this.initialized = true;
     }
 
     /**
      * Get the Globe's lookup which actually a proxy for the WorldWindManager's lookup.
-     *
      * @return the WorldWindManager's lookup.
      */
     @Override
@@ -180,7 +186,6 @@ public class Globe implements GisViewer {
 
     /**
      * Get the visibility of the Globe Window.
-     *
      * @return visibility of the GlobeTopComponent
      */
     @Override
@@ -305,13 +310,33 @@ public class Globe implements GisViewer {
     }
 
     @Override
-    public GeoSector computeSector(Coord2D center, Real radius) {
-        throw new UnsupportedOperationException("computeSector");
+    public GeoSector computeSector(Coord2D point, Real radius) {
+        double meters;
+        try {
+            // Convert from an arbitrary unit to meters
+            meters = radius.getValue(CommonUnit.meter);
+        } catch (VisADException ex) {
+            logger.log(Level.SEVERE, "computeSector: Cannot convert radius value to meters", ex);
+            // Return a GIS sector with "missing" values
+            return new GeoSector();
+        }
+
+        // Compute N/S and E/W distances in radians
+        Position position = Positions.fromCoord2D(point);
+        gov.nasa.worldwind.globes.Globe globe = this.wwm.getWorldWindow().getModel().getGlobe();
+        double deltaLatRadians = meters / globe.getEquatorialRadius();
+        double deltaLonRadians = deltaLatRadians / Math.cos(position.getLatitude().radians);
+
+        // Create a sector in WW using radians...
+        Sector sector = new Sector(
+                position.getLatitude().subtractRadians(deltaLatRadians),
+                position.getLatitude().addRadians(deltaLatRadians),
+                position.getLongitude().subtractRadians(deltaLonRadians),
+                position.getLongitude().addRadians(deltaLonRadians));
+
+        //... and convert it to VisAD based sector.
+        Coord2D southwest = GeoCoord2D.fromDegrees(sector.getMinLatitude().degrees, sector.getMinLongitude().degrees);
+        Coord2D northeast = GeoCoord2D.fromDegrees(sector.getMaxLatitude().degrees, sector.getMaxLongitude().degrees);
+        return new GeoSector(southwest, northeast);
     }
-
-    private static class GlobeHolder {
-
-        private static final Globe INSTANCE = Lookup.getDefault().lookup(Globe.class);
-    }
-
 }

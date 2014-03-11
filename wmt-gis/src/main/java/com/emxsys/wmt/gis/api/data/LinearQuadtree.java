@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.gis.api.data;
 
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import java.util.*;
 import java.util.Map.Entry;

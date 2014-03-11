@@ -31,13 +31,10 @@ package com.emxsys.wmt.core.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
 import com.emxsys.wmt.core.capabilities.PanUpCapability;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 
@@ -45,11 +42,24 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_up.png",
         displayName = "#CTL_PanUpAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3400)
-@RibbonActionReference(path = "Menu/Home/Move", position = 400, description = "#HINT_PanUpAction", autoRepeatAction = true)
-@Messages(
-        {
-            "CTL_PanUpAction=Pan Up", "HINT_PanUpAction=Looks upward"
-        })
+@RibbonActionReference(path = "Menu/Home/Move",
+        position = 400,
+        description = "#CTL_PanUpAction_Hint",
+        tooltipTitle = "#CTL_PanUpAction_TooltipTitle",
+        tooltipBody = "#CTL_PanUpAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/arrow_up.png",
+        tooltipFooter = "#CTL_PanUpAction_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/keyboard24.png",
+        autoRepeatAction = true)
+
+@Messages({
+    "CTL_PanUpAction=Pan Up",
+    "CTL_PanUpAction_Hint=Looks upward",
+    "CTL_PanUpAction_TooltipTitle=Pan Up",
+    "CTL_PanUpAction_TooltipBody=Pans the view upward.",
+    "CTL_PanUpAction_TooltipFooter=Keyboard shortcut: [Up Arrow]"
+
+})
 public final class PanUpAction implements ActionListener {
 
     private final PanUpCapability context;

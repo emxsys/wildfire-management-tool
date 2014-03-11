@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.gis.api.shape;
 
-import com.emxsys.wmt.gis.GeoSector;
+import com.emxsys.wmt.gis.api.GeoSector;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.w3c.dom.Element;
