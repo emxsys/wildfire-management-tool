@@ -125,12 +125,12 @@ public class SurfaceFuel implements Fuel {
         try {
 
             // hour sunset [solar time]
-            double t_s = solar.getSunsetHour();
+            double t_s = 0;//TODO: solar.getSunsetHour();
             // hour sunrise [solar time]
-            double t_r = solar.getSunriseHour();
+            double t_r = 0;//TODO: solar.getSunriseHour();
 
             // Latitude [radians]
-            double phi = solar.getLatitude().getValue(CommonUnit.radian);
+            double phi = 0;// TODO: solar.getLatitude().getValue(CommonUnit.radian);
             // Declination [radians]
             double delta = solar.getDeclination().getValue(CommonUnit.radian);
 

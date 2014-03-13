@@ -64,6 +64,11 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <version>3.11</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <publicPackages>
+                        <publicPackage>com.emxsys.wmt.weather.api</publicPackage>
+                    </publicPackages>
+                </configuration>
             </plugin>
 
             <plugin>

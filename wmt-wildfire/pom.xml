@@ -57,6 +57,17 @@
             <artifactId>wmt-visad</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-utilities</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-weather</artifactId>
+            <version>${project.version}</version>
+        </dependency>        
+        
         <!--NetBeans-->
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -79,14 +90,9 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-utilities</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-weather</artifactId>
-            <version>${project.version}</version>
+            <artifactId>org-openide-util</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 
