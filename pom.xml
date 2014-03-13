@@ -130,5 +130,6 @@
         <module>wmt-utilities</module>
         <module>wmt-visad</module>
         <module>wmt-wildfire</module>
+    <module>wmt-weather</module>
   </modules>
 </project>
