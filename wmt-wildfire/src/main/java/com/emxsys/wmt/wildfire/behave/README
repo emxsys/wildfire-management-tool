@@ -1,0 +1,77 @@
+$Id: README 407 2012-12-10 20:42:56Z bdschubert $
+BDS - 2009.07.27
+================
+I obtained the wf.rothermel package from the ForestFire example
+that is included in the DEVSJAVA Examples.zip
+    http://www.acims.arizona.edu/SOFTWARE/devsjava3.0/Examples.zip
+
+The wf.rothermel.Behave class and its wrappers have been modified and
+integrated into the com.emxsys.behave package.
+
+Following are the orginal release notes from the Behave.java author,
+Andreas Bachmann.
+
+   Uncertainty Propagation in Wildland Fire Behaviour Modelling
+   ============================================================
+
+1. INTRODUCTION
+---------------
+Behave.java is main JAVA-programs for calculating wildland fire
+behavior according to Rothermel (1972) and Albini
+(1976). BehaveDeriv.java allows the determination of uncertainty
+propagation applying a first order Taylor series. For convenience two
+additional programs, i.e. BehaveTest.java and BehaveDerivTest.java,
+have been added that serves as some sort of `wrappers'. After compilation
+you will be able to run the calculations using these wrappers together
+with some properties file, as they are provided in the
+wf/data/-subdirectory.
+
+2. COMPILING
+------------
+
+  1. Unpack the tar using something like:
+	     tar -xvf wf.tar
+
+  2. Have a look at the makefile and adjust the path for the
+     JAVA-compiler and your classpath
+
+  3. compile the classes with:
+		 make
+
+*NOTE* I tested the programs on a Solaris 7 system with a jdk version
+1.3.0 (if I type java -version I get the following:
+  java version "1.3.0"
+  Java(TM) 2 Runtime Environment, Standard Edition (build 1.3.0-RC)
+  Java HotSpot(TM) Client VM (build 1.3.0-RC, mixed mode)
+
+
+3. USE IT
+---------
+Run the Wrappers BehaveTest.class and BehaveDerivTest.class, e.g. with:
+    java -classpath ${classpath} wf.rothermel.BehaveTest nffl2.prp
+
+It produces some (hopefully) readable output at the commandline. An
+80x42 terminal is actually the best size.
+
+4. INFO
+-------
+
+My name is Andreas Bachmann and you will find my address below. All
+the JAVA-programs and the properties files come without any warranty
+(hahahaha).
+
+get your own copy from: 
+          http://www.geo.unizh.ch/gis/research/edmg/fire/unc.html
+  send comments to:
+          bachmann@geo.unizh.ch
+ 
+  or by letter:
+          University of Zurich
+          Deptartment of Geography
+          Geographic Information Systems Division
+          Winterthurerstr. 190
+          8057 Zurich
+          Switzerland
+
+
+April 2001

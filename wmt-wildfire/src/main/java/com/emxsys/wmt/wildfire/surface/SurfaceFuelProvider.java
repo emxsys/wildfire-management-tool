@@ -27,12 +27,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.wildfire.api;
+package com.emxsys.wmt.wildfire.surface;
+
+import com.emxsys.wmt.wildfire.api.Fuel;
+import com.emxsys.wmt.wildfire.api.FuelModel;
+import com.emxsys.wmt.wildfire.api.FuelProvider;
+import com.emxsys.wmt.wildfire.api.WeatherConditions;
 
 /**
+ * A FuelProvider service that provides SurfaceFuel objects for Surface Fires.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Environment {
+@org.openide.util.lookup.ServiceProvider(service = FuelProvider.class)
+public class SurfaceFuelProvider implements FuelProvider {
 
+    /**
+     * Create a new fuel object from a fuel model code.
+     *
+     * @param fuelModelCode fuel model code
+     * @return SurfaceFuel
+     */
+    @Override
+    public Fuel newFuel(int fuelModelCode) {
+        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
+        return fuel;
+    }
+
+    /**
+     * Create a new fuel object from an existing fuel model.
+     *
+     * @param fm fuel model
+     * @return SurfaceFuel
+     */
+    @Override
+    public Fuel newFuel(FuelModel fm) {
+        SurfaceFuel fuel = new SurfaceFuel(fm);
+        return fuel;
+    }
+
+    /**
+     * Create a new fuel object with adjusted fuel moistures.
+     *
+     * @param fuelModelCode fuel model code
+     * @param prevWeekWxConditions
+     * @return SurfaceFuel
+     */
+    @Override
+    public Fuel newFuel(int fuelModelCode, WeatherConditions prevWeekWxConditions) {
+
+        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
+        fuel.adjustFuelMoistures(prevWeekWxConditions);
+        return fuel;
+    }
 }
