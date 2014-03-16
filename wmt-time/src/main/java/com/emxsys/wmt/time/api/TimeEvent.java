@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.wildfire.surface;
+package com.emxsys.wmt.time.api;
 
-import com.emxsys.wmt.wildfire.api.Fuel;
-import com.emxsys.wmt.wildfire.api.FuelModel;
-import com.emxsys.wmt.wildfire.api.FuelProvider;
-import com.emxsys.wmt.wildfire.api.WeatherConditions;
+import java.util.Date;
+import java.util.EventObject;
 
 /**
- * A FuelProvider service that provides SurfaceFuel objects for Surface Fires.
+ * A TimeEvent instance provides the geographical coordinate of the reticule.
  *
- * @author Bruce Schubert <bruce@emxsys.com>
+ * @author Bruce Schubert (bruce@emxsys.com)
  */
-@org.openide.util.lookup.ServiceProvider(service = FuelProvider.class)
-public class SurfaceFuelProvider implements FuelProvider {
+public class TimeEvent extends EventObject {
 
-    /**
-     * Create a new fuel object from a fuel model code.
-     *
-     * @param fuelModelCode fuel model code
-     * @return SurfaceFuel
-     */
-    @Override
-    public Fuel newFuel(int fuelModelCode) {
-        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
-        return fuel;
+    private final Date oldTime;
+    private final Date newTime;
+
+    public TimeEvent(Object source, Date oldTime, Date newTime) {
+        super(source);
+        this.oldTime = oldTime;
+        this.newTime = newTime;
     }
 
-    /**
-     * Create a new fuel object from an existing fuel model.
-     *
-     * @param fm fuel model
-     * @return SurfaceFuel
-     */
-    @Override
-    public Fuel newFuel(FuelModel fm) {
-        SurfaceFuel fuel = new SurfaceFuel(fm);
-        return fuel;
+    public Date getNewTime() {
+        return newTime;
     }
 
-    /**
-     * Create a new fuel object with adjusted fuel moistures.
-     *
-     * @param fuelModelCode fuel model code
-     * @param prevWeekWxConditions
-     * @return SurfaceFuel
-     */
-    @Override
-    public Fuel newFuel(int fuelModelCode, WeatherConditions prevWeekWxConditions) {
+    ;
+    public Date getOldTime() {
+        return oldTime;
+    }
 
-        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
-        fuel.adjustFuelMoistures(prevWeekWxConditions);
-        return fuel;
+    ;
+    
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " "
+                + (getNewTime() != null ? getNewTime() : "null");
     }
 }

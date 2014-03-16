@@ -44,6 +44,12 @@
             <name>NetBeans Snapshots</name>
             <url>http://bits.netbeans.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <!--Apache snapshots - for commons-imaging-->
+        <repository>
+            <id>apache.snapshots</id>
+            <name>Apache Snapshots</name>
+            <url>http://repository.apache.org/snapshots/</url>
+        </repository>        
     </repositories>
     <dependencyManagement>
         <dependencies>
@@ -130,6 +136,8 @@
         <module>wmt-utilities</module>
         <module>wmt-visad</module>
         <module>wmt-wildfire</module>
-    <module>wmt-weather</module>
+        <module>wmt-weather</module>
+        <module>wmt-photo</module>
+    <module>wmt-time</module>
   </modules>
 </project>

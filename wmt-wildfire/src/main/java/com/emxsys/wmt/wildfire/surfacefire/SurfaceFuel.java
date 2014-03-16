@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.wildfire.surface;
+package com.emxsys.wmt.wildfire.surfacefire;
 
 import com.emxsys.wmt.gis.api.Terrain;
 import com.emxsys.wmt.solar.api.Sunlight;
@@ -125,12 +125,12 @@ public class SurfaceFuel implements Fuel {
         try {
 
             // hour sunset [solar time]
-            double t_s = 0;//TODO: solar.getSunsetHour();
+            double t_s = 0;//FIXME: solar.getSunsetHour();
             // hour sunrise [solar time]
-            double t_r = 0;//TODO: solar.getSunriseHour();
+            double t_r = 0;//FIXME: solar.getSunriseHour();
 
             // Latitude [radians]
-            double phi = 0;// TODO: solar.getLatitude().getValue(CommonUnit.radian);
+            double phi = 0;// FIXME: solar.getLatitude().getValue(CommonUnit.radian);
             // Declination [radians]
             double delta = solar.getDeclination().getValue(CommonUnit.radian);
 

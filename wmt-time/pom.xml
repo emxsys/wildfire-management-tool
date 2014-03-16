@@ -8,11 +8,11 @@
   </parent>
 
     <groupId>com.emxsys</groupId>
-    <artifactId>wmt-weather</artifactId>
+    <artifactId>wmt-time</artifactId>
     <version>4.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
-    <name>WMT Weather</name>
+    <name>WMT Time</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,23 +35,6 @@
     </repositories>
 
     <dependencies>
-        <!--WMT-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-gis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-solar</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-visad</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!--NetBeans-->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
@@ -62,6 +45,11 @@
             <artifactId>org-openide-util-lookup</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.terramenta</groupId>
+            <artifactId>terramenta-time</artifactId>
+            <version>${terramenta.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,13 +57,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>3.11</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <publicPackages>
-                        <publicPackage>com.emxsys.wmt.weather.api</publicPackage>
-                    </publicPackages>
-                </configuration>
             </plugin>
 
             <plugin>
@@ -100,5 +82,5 @@
             </plugin>
         </plugins>
     </build>
-    <description>The Weather API</description>
+    <description>The Time controller module for WMT.</description>
 </project>

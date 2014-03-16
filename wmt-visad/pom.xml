@@ -36,6 +36,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>visad</groupId>
+            <artifactId>visad</artifactId>
+            <type>jar</type>
+        </dependency>        
         <!--WMT Dependencies-->
         <dependency>
             <artifactId>wmt-core</artifactId>
@@ -100,6 +105,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
+                        <publicPackage>ucar.*</publicPackage>
+                        <publicPackage>visad.*</publicPackage>
                         <publicPackage>com.emxsys.wmt.visad</publicPackage>
                         <publicPackage>com.emxsys.wmt.visad.filetype</publicPackage>
                     </publicPackages>

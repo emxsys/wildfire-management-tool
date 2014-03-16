@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,28 +27,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.wmt.time.api;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import java.util.Date;
-import visad.FlatField;
-import visad.Gridded1DSet;
+import java.util.EventListener;
 
 /**
- *
- * @author Bruce Schubert <bruce@emxsys.com>
+ * A TimeListener receives a TimeEvent message when
+ the coordinate under the reticule changes.
+ * 
+ * @author Bruce Schubert (bruce@emxsys.com)
+ * @see TimeEvent
  */
-public interface WeatherProvider {
+public interface TimeListener extends EventListener {
 
-    Weather getWeather(Date utcTime, Coord2D coord);
-    
-    void addForecast();
-    void addObservation();
-    
-    FlatField generateTemperatures(Gridded1DSet timeDomain);
-
-    FlatField generateHumidities(Gridded1DSet timeDomain);
-
-    FlatField generateWinds(Gridded1DSet timeDomain);
-
+    public void updateTime(TimeEvent evt);
 }

@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.solar.internal;
 
+import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Latitude;
@@ -38,7 +39,7 @@ import com.emxsys.wmt.solar.api.SunlightHoursTuple;
 import com.emxsys.wmt.solar.api.SolarType;
 import com.emxsys.wmt.solar.api.SunlightHours;
 import com.emxsys.wmt.solar.api.SunlightTuple;
-import com.emxsys.wmt.solar.spi.SolarFactory;
+import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.visad.Times;
 import static com.emxsys.wmt.solar.internal.RothermelSupport.*;
@@ -50,22 +51,23 @@ import org.openide.util.Exceptions;
 
 import visad.*;
 
-
 /**
  * A reference to this object can be obtained via SunlightFactory.getInstance();
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: RothermelSunlightFactory.java 675 2013-05-24 20:05:05Z bdschubert $
  */
-public class RothermelSolarFactory extends SolarFactory
-{
+public class RothermelSolarFactory extends DefaultSunlightProvider {
+
     private static final Logger logger = Logger.getLogger(RothermelSolarFactory.class.getName());
 
-
-    public RothermelSolarFactory()
-    {
+    public RothermelSolarFactory() {
     }
 
+    @Override
+    public Coord3D getSunPosition(Date utcTime) {
+        return SolarUtil.getSunPosition(utcTime);
+    }
 
     /**
      * Creates a new SunlightTuple object from VisAD type
@@ -74,8 +76,7 @@ public class RothermelSolarFactory extends SolarFactory
      * @return SunlightTuple
      */
     @Override
-    public Sunlight getSunlight(Date utcTime)
-    {
+    public Sunlight getSunlight(Date utcTime) {
         GeoCoord3D sunPosition = SolarUtil.getSunPosition(utcTime);
         return new SunlightTuple(sunPosition.getLatitude(), sunPosition.getLongitude());
     }
@@ -88,27 +89,22 @@ public class RothermelSolarFactory extends SolarFactory
      * @return SunlightTuple
      */
     @Override
-    public SunlightHours getSunlightHours(Real latitude, Date date)
-    {
+    public SunlightHours getSunlightHours(Real latitude, Date date) {
         Real declination = calcSolarDeclinationAngle(date);
         DateTime[] times;
         Real sunrise;
         Real sunset;
-        try
-        {
+        try {
             times = calcSunriseSunset(latitude, declination, date);
             sunrise = Reals.convertTo(RealType.Time, times[0]);
             sunset = Reals.convertTo(RealType.Time, times[1]);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Logger.getLogger(SunlightHoursTuple.class.getName()).log(Level.SEVERE, null, ex);
             sunrise = new Real(SolarType.TIME); // missing value
             sunset = new Real(SolarType.TIME);  // missing value
         }
         return new SunlightHoursTuple(sunrise, sunset);
     }
-
 
     /**
      * Function Type: (( date, latitude ) -> ( declination, sunrise, sunset ))
@@ -119,15 +115,13 @@ public class RothermelSolarFactory extends SolarFactory
      * @return A 2x2 FlatField containing
      */
     @Override
-    public FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2)
-    {
-        try
-        {
+    public FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2) {
+        try {
             // Define our function type: solar data = function(latitude, date)
-            RealTupleType domainType =
-                new RealTupleType(RealType.Time, RealType.Latitude);
-            RealTupleType rangeType =
-                new RealTupleType(SolarType.DECLINATION, SolarType.SUNRISE_HOUR, SolarType.SUNSET_HOUR);
+            RealTupleType domainType
+                    = new RealTupleType(RealType.Time, RealType.Latitude);
+            RealTupleType rangeType
+                    = new RealTupleType(SolarType.DECLINATION, SolarType.SUNRISE_HOUR, SolarType.SUNSET_HOUR);
             FunctionType functionType = new FunctionType(domainType, rangeType);
 
             // Create the domain ( latitude, date )
@@ -135,16 +129,15 @@ public class RothermelSolarFactory extends SolarFactory
             double endTime = timeDomain.getHiX();
             double startLat = latitude1.getValue(CommonUnit.degree);
             double endLat = latitude2.getValue(CommonUnit.degree);
-            Linear2DSet domainSet =
-                new Linear2DSet(domainType,
-                startTime, endTime, 2,
-                startLat, endLat, 2);
+            Linear2DSet domainSet
+                    = new Linear2DSet(domainType,
+                            startTime, endTime, 2,
+                            startLat, endLat, 2);
 
             // Populate the range ( declination, sunrise, sunset )
             double[][] domainSamples = domainSet.getDoubles();
             double[][] rangeSamples = new double[3][domainSet.getLength()];
-            for (int i = 0; i < domainSet.getLength(); i++)
-            {
+            for (int i = 0; i < domainSet.getLength(); i++) {
                 DateTime time = new DateTime(domainSamples[0][i]);
                 Real lat = Latitude.fromDegrees(domainSamples[1][i]);
 
@@ -162,7 +155,6 @@ public class RothermelSolarFactory extends SolarFactory
 //                double lha = calcLocalHourAngle(hour);
 //                double A = calcSolarAltitudeAngle(lha, phi, delta);
 //                double Z = calcSolarAzimuthAngle(lha, phi, delta, A);
-
                 rangeSamples[0][i] = declination.getValue();
                 rangeSamples[1][i] = sunrise.getValue();
                 rangeSamples[2][i] = sunset.getValue();
@@ -172,14 +164,11 @@ public class RothermelSolarFactory extends SolarFactory
             field.setSamples(rangeSamples);
 
             return field;
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Function Type: (( date, latitude ) -> ( declination, sunrise, sunset ))
@@ -189,9 +178,9 @@ public class RothermelSolarFactory extends SolarFactory
      * @return A 2x2 FlatField containing
      */
     @Override
-    public FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector)
-    {
+    public FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector) {
         return makeSolarData(
-            timeDomain, sector.getSouthwest().getLatitude(), sector.getNortheast().getLatitude());
+                timeDomain, sector.getSouthwest().getLatitude(), sector.getNortheast().getLatitude());
     }
+
 }

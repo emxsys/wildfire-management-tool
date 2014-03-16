@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,28 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.wmt.solar.spi;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import java.util.Date;
+import com.emxsys.wmt.gis.api.GeoSector;
+import com.emxsys.wmt.solar.api.SunlightProvider;
+import com.emxsys.wmt.solar.internal.RothermelSolarFactory;
+import org.openide.util.Lookup;
 import visad.FlatField;
 import visad.Gridded1DSet;
+import visad.Real;
 
 /**
+ * SunlightProvider factory. The default instance can be overridden by creating SolarProvider
+ * service provider.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface WeatherProvider {
+public abstract class DefaultSunlightProvider implements SunlightProvider {
 
-    Weather getWeather(Date utcTime, Coord2D coord);
-    
-    void addForecast();
-    void addObservation();
-    
-    FlatField generateTemperatures(Gridded1DSet timeDomain);
+    private static SunlightProvider instance = null;
 
-    FlatField generateHumidities(Gridded1DSet timeDomain);
+    /**
+     * Returns the singleton instance of a SunlightProvider. If a class has been registered as a
+     * SunlightProvider service provider, then an instance of that class will be returned.
+     * Otherwise, an instance of the RothermelDefaultSunlightProvider will be returned.
+     *
+     * @return A singleton instance of a DefaultSunlightProvider.
+     */
+    public static SunlightProvider getInstance() {
+        if (instance == null) {
+            // Check the general Lookup for a service provider
+            instance = Lookup.getDefault().lookup(SunlightProvider.class);
 
-    FlatField generateWinds(Gridded1DSet timeDomain);
+            // Use our default factory if no registered provider.
+            if (instance == null) {
+                instance = new RothermelSolarFactory();
+            }
+        }
+        return instance;
+    }
 
+    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector);
+
+    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2);
 }

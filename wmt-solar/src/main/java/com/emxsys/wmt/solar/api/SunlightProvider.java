@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.solar.api;
 
+import com.emxsys.wmt.gis.api.Coord3D;
 import java.util.Date;
 import visad.Real;
 
@@ -39,6 +40,13 @@ import visad.Real;
  */
 public interface SunlightProvider {
 
+    /**
+     * Gets the coordinate where the position of the sun is overhead at the given date and time.
+     *
+     * @param utcTime UTC time used to get sun's position
+     * @return the position of the sun
+     */
+    Coord3D getSunPosition(Date utcTime);
 
     /**
      * Constructs a new Sunlight object represent the sun angles for a given date/time.

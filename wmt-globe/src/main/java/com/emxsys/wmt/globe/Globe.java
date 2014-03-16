@@ -38,15 +38,6 @@ import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
-import com.terramenta.globe.WorldWindManager;
-import java.awt.Component;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openide.util.Lookup;
-import org.openide.util.NbBundle.Messages;
-import org.openide.util.lookup.ServiceProvider;
-import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
@@ -55,10 +46,22 @@ import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
+import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
+import com.emxsys.wmt.time.spi.DefaultTimeProvider;
+import com.emxsys.wmt.weather.spi.DefaultWeatherProvider;
+import com.terramenta.globe.WorldWindManager;
+import java.awt.Component;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.List;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle.Messages;
+import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
-import java.util.List;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import visad.CommonUnit;
@@ -139,9 +142,13 @@ public class Globe implements GisViewer {
      */
     @Override
     public void initializeResources() {
+        // Assemble the components of the globe
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
         this.content.add(new GlobeTerrainProvider());
+        this.content.add(DefaultTimeProvider.getInstance());
+        this.content.add(DefaultSunlightProvider.getInstance());
+        this.content.add(DefaultWeatherProvider.getInstance());
         this.wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization

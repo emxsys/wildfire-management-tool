@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,52 +27,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.spi;
+package com.emxsys.wmt.wildfire.surfacefire;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.solar.api.SunlightProvider;
-import com.emxsys.wmt.solar.internal.RothermelSolarFactory;
-import org.openide.util.Lookup;
-import visad.FlatField;
-import visad.Gridded1DSet;
-import visad.Real;
-
+import com.emxsys.wmt.wildfire.api.Fuel;
+import com.emxsys.wmt.wildfire.api.FuelModel;
+import com.emxsys.wmt.wildfire.api.FuelProvider;
+import com.emxsys.wmt.wildfire.api.WeatherConditions;
 
 /**
+ * A FuelProvider service that provides SurfaceFuel objects for Surface Fires.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class SolarFactory implements SunlightProvider
-{
-    private static SolarFactory factory = null;
-
+@org.openide.util.lookup.ServiceProvider(service = FuelProvider.class)
+public class SurfaceFuelProvider implements FuelProvider {
 
     /**
-     * Returns the singleton instance of a SolarFactory. If a class has been registered as a
-     * SolarFactory service provider, then an instance of that class will be returned. Otherwise, an
-     * instance of the RothermelSolarFactory will be returned.
+     * Create a new fuel object from a fuel model code.
      *
-     * @return A singleton instance of a SolarFactory.
+     * @param fuelModelCode fuel model code
+     * @return SurfaceFuel
      */
-    public static SolarFactory getInstance()
-    {
-        if (factory == null)
-        {
-            // Check the general Lookup for a service provider
-            factory = Lookup.getDefault().lookup(SolarFactory.class);
-
-            // Use our default factory if no registered provider.
-            if (factory == null)
-            {
-                factory = new RothermelSolarFactory();
-            }
-        }
-        return factory;
+    @Override
+    public Fuel newFuel(int fuelModelCode) {
+        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
+        return fuel;
     }
 
+    /**
+     * Create a new fuel object from an existing fuel model.
+     *
+     * @param fm fuel model
+     * @return SurfaceFuel
+     */
+    @Override
+    public Fuel newFuel(FuelModel fm) {
+        SurfaceFuel fuel = new SurfaceFuel(fm);
+        return fuel;
+    }
 
-    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector);
+    /**
+     * Create a new fuel object with adjusted fuel moistures.
+     *
+     * @param fuelModelCode fuel model code
+     * @param prevWeekWxConditions
+     * @return SurfaceFuel
+     */
+    @Override
+    public Fuel newFuel(int fuelModelCode, WeatherConditions prevWeekWxConditions) {
 
-
-    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2);
+        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
+        fuel.adjustFuelMoistures(prevWeekWxConditions);
+        return fuel;
+    }
 }
