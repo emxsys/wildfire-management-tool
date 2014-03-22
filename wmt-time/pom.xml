@@ -58,6 +58,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                    <publicPackages>
+                        <publicPackage>com.emxsys.wmt.time.api</publicPackage>
+                        <publicPackage>com.emxsys.wmt.time.spi</publicPackage>
+                    </publicPackages>
+                </configuration>
             </plugin>
 
             <plugin>
