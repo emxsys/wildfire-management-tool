@@ -43,52 +43,28 @@ import static com.emxsys.wmt.visad.Units.*;
  */
 public class FireUnit {
 
-    /**
-     * Common unit for fuel load - SI
-     */
+    /** Common unit for fuel load - SI */
     public static final Unit kg_m2 = getUnit("kg/(m2)");
-    /**
-     * Common unit for fuel load - US
-     */
+    /** Common unit for fuel load - US */
     public static final Unit tons_acre = getUnit("ton/(acre)");
-    /**
-     * Common unit or surface-area-to-volume - SI
-     */
+    /** Common unit or surface-area-to-volume - SI */
     public static final Unit m2_m3 = getUnit("m2/(m3)");
-    /**
-     * Common unit for surface-area-to-volume - US
-     */
+    /** Common unit for surface-area-to-volume - US */
     public static final Unit ft2_ft3 = getUnit("ft2/(ft3)");
-    /**
-     * Common unit for heat of combustion (low heat output) - SI
-     */
+    /** Common unit for heat of combustion (low heat output) - SI */
     public static final Unit kJ_kg = getUnit("kJ/(kg)");
-    /**
-     * Common unit for heat of combustion (low heat output) - US
-     */
+    /** Common unit for heat of combustion (low heat output) - US */
     public static final Unit Btu_lb = getUnit("Btu/(lb)");
-    /**
-     * Common unit for Byram's fire line intensity - SI
-     */
+    /** Common unit for Byram's fire line intensity - SI */
     public static final Unit kW_m = getUnit("kW.m-1");
-    /**
-     * Common unit for Byram's fire line intensity - US
-     */
+    /** Common unit for Byram's fire line intensity - US */
     public static final Unit Btu_ft_s = getUnit("Btu.ft-1.s-1");
-    /**
-     * Common unit for heat release per unit area - SI
-     */
+    /** Common unit for heat release per unit area - SI */
     public static final Unit kJ_m2 = getUnit("kJ/(m2)");
-    /**
-     * Common unit for heat release per unit area - US
-     */
+    /** Common unit for heat release per unit area - US */
     public static final Unit Btu_ft2 = getUnit("Btu/(ft2)");
-    /**
-     * Common unit for rate of spread - US
-     */
+    /** Common unit for rate of spread - US */
     public static final Unit chain_hour = getUnit("chain/(hour)");
-    /**
-     * Common unit for rate of spread - SI
-     */
+    /** Common unit for rate of spread - SI */
     public static final Unit meter_minute = getUnit("meter/(minute)");
 }

@@ -138,6 +138,27 @@ public class Reals {
     }
 
     /**
+     * Creates a new Real of RealType.Distance in meters.
+     *
+     * @param value Distance in meters.
+     * @return a RealType.Distance
+     */
+    public static Real newDistance(double value) {
+        return newDistance(value, CommonUnit.meter);
+    }
+
+    /**
+     * Creates a new Real of RealType.Distance
+     *
+     * @param value Distance
+     * @param unit unit of measure, e.g., CommonUnit.meter
+     * @return a RealType.Distance
+     */
+    public static Real newDistance(double value, Unit unit) {
+        return newInstance(GeneralType.Distance, value, unit);
+    }
+
+    /**
      * Creates a new Real of RealType.Latitude in degrees.
      *
      * @param value latitude in degrees.

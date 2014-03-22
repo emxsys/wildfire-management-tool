@@ -43,52 +43,32 @@ import static com.emxsys.wmt.visad.Units.*;
  */
 public class GeneralUnit {
 
-    /**
-     * Common unit for fuel bed depth, flame length - US
-     */
+    /** Common unit for distance - US */
+    public static final Unit mile = getUnit("mile");
+    /** Common unit for fuel bed depth, flame length - US */
+    public static final Unit nautical_mile = getUnit("nmile");
+    /** Common unit for fuel bed depth, flame length - US */
     public static final Unit foot = getUnit("ft");
-    /**
-     * Common unit for rainfall, inches - US
-     */
+    /** Common unit for rainfall, inches - US */
     public static final Unit inch = getUnit("inch");
-    /**
-     * Common unit for humidity and moisture of extinction of dead fuel
-     */
+    /** Common unit for humidity and moisture of extinction of dead fuel */
     public static final Unit percent = getUnit("percent");
-    /**
-     * Common unit for temperature in degrees Celsius
-     */
+    /** Common unit for temperature in degrees Celsius */
     public static final Unit degC = getUnit("degC");
-    /**
-     * Common unit for temperature in degrees Fahrenheit
-     */
+    /** Common unit for temperature in degrees Fahrenheit */
     public static final Unit degF = getUnit("degF");
-    /**
-     * Common unit for speed in miles per hour
-     */
+    /** Common unit for speed in miles per hour */
     public static final Unit mph = getUnit("mile/(hour)");
-    /**
-     * Common unit for speed in kilometers per hour
-     */
+    /** Common unit for speed in kilometers per hour */
     public static final Unit kph = getUnit("kilometer/(hour)");
-    /**
-     * Common unit for speed in knots
-     */
+    /** Common unit for speed in knots */
     public static final Unit knot = getUnit("kt");
-    /**
-     * Common unit for time in hours
-     */
+    /** Common unit for time in hours */
     public static final Unit hour = getUnit("h");
-    /**
-     * Common unit for time in hours
-     */
+    /** Common unit for time in hours */
     public static final Unit day = getUnit("d");
-    /**
-     * Common unit for area in hectares
-     */
+    /** Common unit for area in hectares */
     public static final Unit hectare = getUnit("hectare");
-    /**
-     * Common unit for area in acres
-     */
+    /** Common unit for area in acres */
     public static final Unit acre = getUnit("acre");
 }

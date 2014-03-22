@@ -36,6 +36,7 @@
     </repositories>
 
     <dependencies>
+        <!--VisAD-->
         <dependency>
             <groupId>visad</groupId>
             <artifactId>visad</artifactId>
@@ -105,6 +106,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
+                        <publicPackage>edu.wisc.ssec.*</publicPackage>
                         <publicPackage>ucar.*</publicPackage>
                         <publicPackage>visad.*</publicPackage>
                         <publicPackage>com.emxsys.wmt.visad</publicPackage>
