@@ -157,6 +157,12 @@
                     <publicPackages>
                         <publicPackage>com.emxsys.wmt.core.*</publicPackage>
                     </publicPackages>
+                    <moduleDependencies>
+                        <dependency>
+                            <id>org.netbeans.api:org-openide-windows</id>
+                            <type>impl</type>
+                        </dependency>
+                    </moduleDependencies>
                 </configuration>
             </plugin>
             <plugin>

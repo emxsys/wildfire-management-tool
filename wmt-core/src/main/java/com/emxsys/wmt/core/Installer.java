@@ -29,12 +29,27 @@
  */
 package com.emxsys.wmt.core;
 
+import com.emxsys.wmt.core.project.CurrentProjectTracker;
 import org.openide.modules.ModuleInstall;
+import org.openide.windows.WindowManager;
 
 public class Installer extends ModuleInstall {
 
     @Override
-    public void restored() {
+    public void restored()
+    {
+        
+        WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+
+
+            @Override
+            public void run()
+            {
+                // Initialize a CurrentProjectTracker instance...getDefault() forces the lookup for a 
+                // service provider, and if not found creates a BasicProjectAssistant instance.
+                CurrentProjectTracker.getDefault();
+            }
+        });
     }
 
 }
