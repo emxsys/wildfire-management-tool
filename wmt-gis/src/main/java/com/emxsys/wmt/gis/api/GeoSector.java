@@ -59,6 +59,7 @@ public class GeoSector extends AbstractGeometry implements Box {
     private Coord2D northeast;
     private final Real ONE_HALF_LAT = new Real(RealType.Latitude, 0.5);
     private final Real ONE_HALF_LON = new Real(RealType.Longitude, 0.5);
+    public static GeoSector INVALID_BOX = new GeoSector();
 
     /**
      * Create a sector with "missing" values.
