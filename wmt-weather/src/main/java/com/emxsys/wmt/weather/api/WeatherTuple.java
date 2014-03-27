@@ -30,13 +30,10 @@
 package com.emxsys.wmt.weather.api;
 
 import com.emxsys.wmt.weather.api.Weather;
-import static com.emxsys.wmt.solar.api.SolarType.*;
 import static com.emxsys.wmt.visad.Reals.*;
 import static com.emxsys.wmt.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
-import java.util.Date;
 import visad.Data;
-import visad.DateTime;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -44,13 +41,15 @@ import visad.VisADException;
 /**
  * WeatherTuple is a concrete implementation of the Weather interface.
  *
+ * The weather data model in VisAD can be represented by a FunctionType:
+ *
+ * (lat,lon,time) -> (air_temp, relative_humidity, wind_speed, wind_dir, cloud_cover)
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class WeatherTuple extends RealTuple implements Weather {
 
     /** An tuple with "missing" components */
     public static final WeatherTuple INVALID_TUPLE = new WeatherTuple();
-    private Real dateTime;
     private Real airTemperature;
     private Real relativeHumidity;
     private Real windSpeed;
@@ -62,13 +61,11 @@ public class WeatherTuple extends RealTuple implements Weather {
      * Constructs and instance with missing values.
      */
     public WeatherTuple() {
-        this(
-                new Real(TIME),
-                new Real(AIR_TEMP_C),
-                new Real(REL_HUMIDITY),
-                new Real(WIND_SPEED_SI),
-                new Real(WIND_DIR),
-                new Real(CLOUD_COVER));
+        this(new Real(AIR_TEMP_C),
+             new Real(REL_HUMIDITY),
+             new Real(WIND_SPEED_SI),
+             new Real(WIND_DIR),
+             new Real(CLOUD_COVER));
     }
 
     /**
@@ -80,12 +77,10 @@ public class WeatherTuple extends RealTuple implements Weather {
      * @param windDirection [degrees]
      * @param cloudCover [percent]
      */
-    public WeatherTuple(Date dateTime,
-                        double airTemperature, double relativeHumidity,
+    public WeatherTuple(double airTemperature, double relativeHumidity,
                         double windSpeed, double windDirection,
                         double cloudCover) throws VisADException {
         this(
-                new DateTime(dateTime),
                 new Real(AIR_TEMP_C, airTemperature),
                 new Real(REL_HUMIDITY, relativeHumidity),
                 new Real(WIND_SPEED_SI, windSpeed),
@@ -98,7 +93,7 @@ public class WeatherTuple extends RealTuple implements Weather {
      * converted to the member's specified RealTypes.
      */
     public WeatherTuple(Real[] realArray) {
-        this(realArray[0], realArray[1], realArray[2], realArray[3], realArray[4], realArray[5]);
+        this(realArray[0], realArray[1], realArray[2], realArray[3], realArray[4]);
     }
 
     /**
@@ -111,23 +106,14 @@ public class WeatherTuple extends RealTuple implements Weather {
      * @param windDirection must be compatible with WildfireType.WIND_DIR
      * @param cloudCover must be compatible with WildfireType.CLOUD_COVER
      */
-    public WeatherTuple(Real dateTime, Real airTemperature, Real relativeHumidity,
+    public WeatherTuple(Real airTemperature, Real relativeHumidity,
                         Real windSpeed, Real windDirection, Real cloudCover) {
         super(FIRE_WEATHER);
-        this.dateTime = convertTo(TIME, dateTime);
         this.airTemperature = convertTo(AIR_TEMP_C, airTemperature);
         this.relativeHumidity = convertTo(REL_HUMIDITY, relativeHumidity);
         this.windSpeed = convertTo(WIND_SPEED_SI, windSpeed);
         this.windDirection = convertTo(WIND_DIR, windDirection);
         this.cloudCover = convertTo(CLOUD_COVER, cloudCover);
-    }
-
-    /**
-     * Date & Time
-     * @return [hours since epoch]
-     */
-    public Real getDateTime() {
-        return dateTime;
     }
 
     /**
@@ -177,13 +163,12 @@ public class WeatherTuple extends RealTuple implements Weather {
 
     /**
      * is missing any data elements
-     *
      * @return is missing
      */
     @Override
     public boolean isMissing() {
-        return dateTime.isMissing() || windSpeed.isMissing() || windDirection.isMissing()
-                || airTemperature.isMissing() || relativeHumidity.isMissing()
+        return airTemperature.isMissing() || relativeHumidity.isMissing()
+                || windSpeed.isMissing() || windDirection.isMissing()
                 || cloudCover.isMissing();
     }
 
@@ -200,16 +185,14 @@ public class WeatherTuple extends RealTuple implements Weather {
     public Data getComponent(int i) throws VisADException, RemoteException {
         switch (i) {
             case 0:
-                return dateTime;
-            case 1:
                 return airTemperature;
-            case 2:
+            case 1:
                 return relativeHumidity;
-            case 3:
+            case 2:
                 return windSpeed;
-            case 4:
+            case 3:
                 return windDirection;
-            case 5:
+            case 4:
                 return cloudCover;
             default:
                 throw new IllegalArgumentException("Wrong component number:" + i);
@@ -219,6 +202,7 @@ public class WeatherTuple extends RealTuple implements Weather {
     /**
      * Create, if needed, and return the component array.
      *
+     * @param copy Ignored.
      * @return components
      */
     @Override
@@ -226,12 +210,11 @@ public class WeatherTuple extends RealTuple implements Weather {
         //Create the array and populate it if needed
         if (components == null) {
             Data[] tmp = new Data[getDimension()];
-            tmp[0] = dateTime;
-            tmp[1] = airTemperature;
-            tmp[2] = relativeHumidity;
-            tmp[3] = windSpeed;
-            tmp[4] = windDirection;
-            tmp[5] = cloudCover;
+            tmp[0] = airTemperature;
+            tmp[1] = relativeHumidity;
+            tmp[2] = windSpeed;
+            tmp[3] = windDirection;
+            tmp[4] = cloudCover;
             components = tmp;
         }
         return components;
@@ -241,7 +224,7 @@ public class WeatherTuple extends RealTuple implements Weather {
      * Indicates if this Tuple is identical to an object.
      *
      * @param obj The object.
-     * @return            <code>true</code> if and only if the object is a Tuple and both Tuple-s have
+     * @return <code>true</code> if and only if the object is a Tuple and both Tuple-s have
      * identical component sequences.
      */
     @Override
@@ -249,15 +232,12 @@ public class WeatherTuple extends RealTuple implements Weather {
         if (this == obj) {
             return true;
         }
-
         if (!(obj instanceof WeatherTuple)) {
             return false;
         }
-
         WeatherTuple that = (WeatherTuple) obj;
 
-        return this.dateTime.equals(that.dateTime)
-                && this.airTemperature.equals(that.airTemperature)
+        return this.airTemperature.equals(that.airTemperature)
                 && this.relativeHumidity.equals(that.relativeHumidity)
                 && this.windSpeed.equals(that.windSpeed)
                 && this.windDirection.equals(that.windDirection)
@@ -270,8 +250,7 @@ public class WeatherTuple extends RealTuple implements Weather {
      */
     @Override
     public int hashCode() {
-        return dateTime.hashCode()
-                ^ windSpeed.hashCode()
+        return windSpeed.hashCode()
                 & windDirection.hashCode()
                 ^ airTemperature.hashCode()
                 | (relativeHumidity.hashCode() & cloudCover.hashCode());
@@ -279,13 +258,11 @@ public class WeatherTuple extends RealTuple implements Weather {
 
     /**
      * to string
-     *
      * @return string of me
      */
     @Override
     public String toString() {
-        return getDateTime()
-                + ", Air: " + getAirTemperature().toValueString()
+        return "Air: " + getAirTemperature().toValueString()
                 + ", RH: " + getRelativeHumidity().toValueString()
                 + ", Spd: " + getWindSpeed().toValueString()
                 + ", Dir: " + getWindDirection().toValueString()

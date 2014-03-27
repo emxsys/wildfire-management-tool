@@ -52,19 +52,19 @@ public interface Weather extends Data {
     Real getWindDirection();
 
     /**
-     *
+     * The air temperature.
      * @return [celcius]
      */
     Real getAirTemperature();
 
     /**
-     *
+     * The relative humidity.
      * @return [percent]
      */
     Real getRelativeHumidity();
 
     /**
-     *
+     * The amount of cloud/sky cover.
      * @return [percent]
      */
     Real getCloudCover();

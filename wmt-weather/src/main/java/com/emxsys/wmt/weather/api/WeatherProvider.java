@@ -41,14 +41,13 @@ import visad.Gridded1DSet;
 public interface WeatherProvider {
 
     Weather getWeather(Date utcTime, Coord2D coord);
-    
-    void addForecast();
-    void addObservation();
-    
-    FlatField generateTemperatures(Gridded1DSet timeDomain);
 
-    FlatField generateHumidities(Gridded1DSet timeDomain);
-
-    FlatField generateWinds(Gridded1DSet timeDomain);
-
+//    void addForecast();
+//    void addObservation();
+//    
+//    FlatField generateTemperatures(Gridded1DSet timeDomain);
+//
+//    FlatField generateHumidities(Gridded1DSet timeDomain);
+//
+//    FlatField generateWinds(Gridded1DSet timeDomain);
 }

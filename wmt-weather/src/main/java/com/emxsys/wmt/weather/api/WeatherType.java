@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.weather.api;
 
-import com.emxsys.wmt.solar.api.SolarType;
 import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
 import visad.CommonUnit;
@@ -38,7 +37,7 @@ import visad.RealType;
 
 /**
  * WeatherType is a utility class used to obtain VisAD based weather types.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class WeatherType {
@@ -64,9 +63,7 @@ public class WeatherType {
     public static final RealType CLOUD_COVER;
     /** Rainfall (inches). */
     public static final RealType RAINFALL_INCH;
-    /**
-     * SolarType.TIME, AIR_TEMP_C, REL_HUMIDITY, WIND_SPEED_SI, WIND_DIR, CLOUD_COVER
-     */
+    /** Fire Weather: AIR_TEMP_C, REL_HUMIDITY, WIND_SPEED_SI, WIND_DIR, CLOUD_COVER */
     public final static RealTupleType FIRE_WEATHER;
 
     static {
@@ -83,7 +80,7 @@ public class WeatherType {
 
         FIRE_WEATHER = Reals.newRealTupleType(
                 new RealType[]{
-                    SolarType.TIME, AIR_TEMP_C, REL_HUMIDITY, WIND_SPEED_SI, WIND_DIR, CLOUD_COVER
+                    AIR_TEMP_C, REL_HUMIDITY, WIND_SPEED_SI, WIND_DIR, CLOUD_COVER
                 });
 
     }

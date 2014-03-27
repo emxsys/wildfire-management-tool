@@ -48,21 +48,17 @@ import visad.Set;
 import visad.VisADException;
 import static java.lang.Math.*;
 
-
 /**
  * Utility class for working with Weather objects.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class WeatherUtil
-{
+public class WeatherUtil {
 
     static public RealTuple newSunriseSunsetTuple(Date date,
-            double timeOfSunrise,
-            double timeOfSunset)
-    {
-        try
-        {
+                                                  double timeOfSunrise,
+                                                  double timeOfSunset) {
+        try {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             int year = cal.get(Calendar.YEAR);
@@ -70,57 +66,41 @@ public class WeatherUtil
             int sunrise = (int) (timeOfSunrise * 3600);
             int sunset = (int) (timeOfSunset * 3600);
 
-            RealTuple times = new RealTuple(new Real[]
-                    {
-                        new DateTime(year, day, sunrise),
-                        new DateTime(year, day, sunset)
-                    });
+            RealTuple times = new RealTuple(new Real[]{
+                new DateTime(year, day, sunrise),
+                new DateTime(year, day, sunset)
+            });
 
             return times;
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-
-
     static public RealTuple newTemperaturesTuple(RealType type,
-            double valueAt1400,
-            double valueAtSunset,
-            double valueAtSunrise,
-            double valueAtNoon)
-    {
-        try
-        {
+                                                 double valueAt1400,
+                                                 double valueAtSunset,
+                                                 double valueAtSunrise,
+                                                 double valueAtNoon) {
+        try {
             RealTuple values = new RealTuple(
-                    new Real[]
-                    {
+                    new Real[]{
                         new Real(type, valueAt1400),
                         new Real(type, valueAtSunset),
                         new Real(type, valueAtSunrise),
                         new Real(type, valueAtNoon)
                     });
             return values;
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-
-
 
     /**
      *
@@ -134,10 +114,8 @@ public class WeatherUtil
      */
     static public FlatField makeGeneralFireWeather(
             RealTuple times, RealTuple airTemps, RealTuple humidities,
-            Real windSpeed, Real windDir, Real cloudCover)
-    {
-        try
-        {
+            Real windSpeed, Real windDir, Real cloudCover) {
+        try {
             // Create a FunctionType ( index -> ( time, wndSpd, wndDir, airTemp, RH, cloudCover) )
             //  index has no unit, just a name
             // Use FunctionType(MathType domain, MathType range)
@@ -155,8 +133,7 @@ public class WeatherUtil
 
             // Create the actual samples for the index domain
             double[][] vals = new double[WeatherType.FIRE_WEATHER.getDimension()][NUM_HOURS];
-            for (int i = 0; i < NUM_HOURS; i++)
-            {
+            for (int i = 0; i < NUM_HOURS; i++) {
                 // Start at 1400 hours
                 double hour = 14 + i;
                 RealTuple diurnals = calcDiurnalValues(hour, times, airTemps, humidities);
@@ -172,46 +149,30 @@ public class WeatherUtil
 
             return valuesFlatField;
 
-        }
-        catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
 
     }
 
-
-
-    static private double dateTimeToHourOfDay(Real dateTime)
-    {
-        try
-        {
+    static private double dateTimeToHourOfDay(Real dateTime) {
+        try {
             return dateTime.getValue(GeneralUnit.hour) % 24;
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
             return 0;
         }
     }
 
-
-
-    static private DateTime getMidnight(Real dateTime)
-    {
-        try
-        {
+    static private DateTime getMidnight(Real dateTime) {
+        try {
             final double secsPerDay = 60 * 60 * 24;
             double secsSinceMidnight = dateTime.getValue() % secsPerDay;
             return new DateTime(dateTime.getValue() - secsSinceMidnight);
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -258,18 +219,14 @@ public class WeatherUtil
 //        return calcDiurnalValues(times, temps);
 //
 //    }
-
-
     /**
      *
      * @param times for sunrise and sunset
      * @param values diurnal values at 1400, sunset, sunrise and noon
      * @return FunctionType ( index -> ( time, value ) )
      */
-    static public FlatField calcDiurnalValues(RealTuple times, RealTuple values)
-    {
-        try
-        {
+    static public FlatField calcDiurnalValues(RealTuple times, RealTuple values) {
+        try {
             // Organize time and either temp or humidity in a Tuple
             RealTupleType diurnalType = new RealTupleType(
                     (RealType) times.getComponent(0).getType(),
@@ -284,15 +241,14 @@ public class WeatherUtil
             // Create the domain_set, with 24 houly values
             final int LENGTH = 24;
             Set indexSet = new Integer1DSet(indexType, LENGTH);
-            
+
             // Get the solar cycle params...
             Real midnight = getMidnight((Real) times.getComponent(0));
             double localTimeOfSunrise = dateTimeToHourOfDay((Real) times.getComponent(0));
             double localTimeOfSunset = dateTimeToHourOfDay((Real) times.getComponent(1));
             // Compute the actual data values for time and value
             double[][] vals = new double[2][LENGTH];
-            for (int i = 0; i < LENGTH; i++)
-            {
+            for (int i = 0; i < LENGTH; i++) {
                 double localTime = 14 + i;
                 // time
                 vals[0][i] = midnight.getValue() + (localTime * 60 * 60);
@@ -312,19 +268,13 @@ public class WeatherUtil
             // and put the time_temp values from above in it
             valuesFlatField.setSamples(vals);
             return valuesFlatField;
-        }
-        catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-
-
 
     /**
      *
@@ -336,9 +286,8 @@ public class WeatherUtil
      * @throws RemoteException
      */
     static public FlatField calcDiurnalValues(RealTuple times,
-            RealTuple airTemps, RealTuple humidities)
-            throws VisADException, RemoteException
-    {
+                                              RealTuple airTemps, RealTuple humidities)
+            throws VisADException, RemoteException {
 
         // Organize time and either temp or humidity in a Tuple
         RealTupleType diurnalType = new RealTupleType(
@@ -365,8 +314,7 @@ public class WeatherUtil
 
         // Compute the actual data values for time, temp and humidity
         double[][] vals = new double[3][LENGTH];
-        for (int i = 0; i < LENGTH; i++)
-        {
+        for (int i = 0; i < LENGTH; i++) {
             double localTime = 14 + i;
             // time
             vals[0][i] = midnight.getValue() + (localTime * 60 * 60);
@@ -399,12 +347,9 @@ public class WeatherUtil
         return valuesFlatField;
     }
 
-
-
     static public RealTuple calcDiurnalValues(double hour,
-            RealTuple times, RealTuple airTemps, RealTuple humidities)
-            throws VisADException, RemoteException
-    {
+                                              RealTuple times, RealTuple airTemps, RealTuple humidities)
+            throws VisADException, RemoteException {
 
         double midnight = getMidnight((Real) times.getComponent(0)).getValue();
         double localTimeOfSunrise = dateTimeToHourOfDay((Real) times.getComponent(0));
@@ -438,14 +383,11 @@ public class WeatherUtil
 
     }
 
-
-
     /**
-     * Computes the diurnal values within the daily cycle beginning
-     * with the day's 1400 value and ending with next day's 1200 value.
-     * This method can compute values for either temperature or relative
-     * humidity.
-     * 
+     * Computes the diurnal values within the daily cycle beginning with the day's 1400 value and
+     * ending with next day's 1200 value. This method can compute values for either temperature or
+     * relative humidity.
+     *
      * @param localTime local time of day for desired value [solar hour]
      * @param localTimeOfSunrise sunrise time [solar hour]
      * @param localTimeOfSunset sunset time [solar hour]
@@ -458,49 +400,37 @@ public class WeatherUtil
     static public double calcDiurnalValueForTimeOfDay(
             double localTime,
             double localTimeOfSunrise, double localTimeOfSunset,
-            double valueAt1400, double valueAtSunset, double valueAtSunrise, double valueAtNoon)
-    {
+            double valueAt1400, double valueAtSunset, double valueAtSunrise, double valueAtNoon) {
 
         localTime %= 24;
         double value;
-        
+
         // Afternoon
-        if (localTime >= 13.5 && localTime < localTimeOfSunset)
-        {
+        if (localTime >= 13.5 && localTime < localTimeOfSunset) {
             value = calcDiurnalValueForAfternoon(localTime, localTimeOfSunset, valueAt1400, valueAtSunset);
-        }
-        // Nightime
-        else if ((localTime >= localTimeOfSunset && localTime < 24) || (localTime < localTimeOfSunrise))
-        {
+        } // Nightime
+        else if ((localTime >= localTimeOfSunset && localTime < 24) || (localTime < localTimeOfSunrise)) {
             value = calcDiurnalValueForNighttime(localTime, localTimeOfSunset, localTimeOfSunrise, valueAtSunset, valueAtSunrise);
-        }
-        // Morning
-        else if (localTime >= localTimeOfSunrise && localTime < 11.5)
-        {
+        } // Morning
+        else if (localTime >= localTimeOfSunrise && localTime < 11.5) {
             value = calcDiurnalValueForMorning(localTime, localTimeOfSunrise, valueAtSunrise, valueAtNoon);
-        }
-        // Noon
-        else if (localTime >= 11.5 && localTime < 12.5)
-        {
+        } // Noon
+        else if (localTime >= 11.5 && localTime < 12.5) {
             value = valueAtNoon;
-        }
-        // Early afternon
-        else
-        {
+        } // Early afternon
+        else {
             value = (valueAtNoon + valueAt1400) / 2;    // Interpolate between noon and 1400
         }
         return value;
     }
 
-
-
     /**
-     * Sinusoidal curve linking values at 1400 to values at sunset - used to
-     * calculate temperature and humidity for each hour between 1400 and sunset.
+     * Sinusoidal curve linking values at 1400 to values at sunset - used to calculate temperature
+     * and humidity for each hour between 1400 and sunset.
      *
-     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels:
-     * input to the BEHAVE fire prediction system. Research Paper INT-359. 1986.
-     * Equations #38 & #39 located on page 22."
+     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels: input to the
+     * BEHAVE fire prediction system. Research Paper INT-359. 1986. Equations #38 & #39 located on
+     * page 22."
      *
      * @param timeProjection
      * @param timeSunset
@@ -510,24 +440,21 @@ public class WeatherUtil
      */
     static public double calcDiurnalValueForAfternoon(
             double timeProjection, double timeSunset,
-            double valueAt1400, double valueAtSunset)
-    {
+            double valueAt1400, double valueAtSunset) {
         assert (timeProjection >= 13.5);
         return valueAt1400 + (valueAt1400 - valueAtSunset)
                 * (cos(toRadians(
-                90 * (timeProjection - 14) / (timeSunset - 14))) - 1);
+                                90 * (timeProjection - 14) / (timeSunset - 14))) - 1);
 
     }
 
-
-
     /**
-     * Sinusoidal curve linking values at sunset to values at sunrise - used to
-     * calculate temperature and humidity for each hour between sunset and sunrise.
+     * Sinusoidal curve linking values at sunset to values at sunrise - used to calculate
+     * temperature and humidity for each hour between sunset and sunrise.
      *
-     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels:
-     * input to the BEHAVE fire prediction system. Research Paper INT-359. 1986.
-     * Equations #40 & #41 located on page 23."
+     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels: input to the
+     * BEHAVE fire prediction system. Research Paper INT-359. 1986. Equations #40 & #41 located on
+     * page 23."
      *
      * @param timeProjection
      * @param timeOfSunset
@@ -539,27 +466,23 @@ public class WeatherUtil
     static public double calcDiurnalValueForNighttime(
             double timeProjection,
             double timeOfSunset, double timeOfSunrise,
-            double valueAtSunset, double valueAtSunrise)
-    {
+            double valueAtSunset, double valueAtSunrise) {
         timeOfSunrise += 24;
-        if (timeProjection < timeOfSunset)
-        {
+        if (timeProjection < timeOfSunset) {
             timeProjection += 24;
         }
         return valueAtSunset + (valueAtSunrise - valueAtSunset)
                 * sin(toRadians(
-                90 * (timeProjection - timeOfSunset) / (timeOfSunrise - timeOfSunset)));
+                                90 * (timeProjection - timeOfSunset) / (timeOfSunrise - timeOfSunset)));
     }
 
-
-
     /**
-     * Sinusoidal curve linking values at sunrise to values at noon - used to
-     * calculate temperature and humidity for each hour between sunrise and 1200 hrs.
+     * Sinusoidal curve linking values at sunrise to values at noon - used to calculate temperature
+     * and humidity for each hour between sunrise and 1200 hrs.
      *
-     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels:
-     * input to the BEHAVE fire prediction system. Research Paper INT-359. 1986.
-     * Equations #42 & 43 located on page 24."
+     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels: input to the
+     * BEHAVE fire prediction system. Research Paper INT-359. 1986. Equations #42 & 43 located on
+     * page 24."
      *
      * @param timeProjection
      * @param timeOfSunrise
@@ -570,29 +493,24 @@ public class WeatherUtil
     static public double calcDiurnalValueForMorning(
             double timeProjection,
             double timeOfSunrise,
-            double valueAtSunrise, double valueAtNoon)
-    {
+            double valueAtSunrise, double valueAtNoon) {
         assert (timeProjection < 12.0);
         return valueAtNoon + (valueAtSunrise - valueAtNoon)
                 * cos(toRadians(
-                90 * (timeProjection - timeOfSunrise) / (12.0 - timeOfSunrise)));
+                                90 * (timeProjection - timeOfSunrise) / (12.0 - timeOfSunrise)));
     }
-
-
 
     /**
      * Computes the wind speed at the fuel level from 20 foot wind speeds.
      *
-     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels:
-     * input to the BEHAVE fire prediction system. Research Paper INT-359. 1986.
-     * Equations #36"
+     * @see "Rothermel, et al, Modeling moisture content of fine dead wildland fuels: input to the
+     * BEHAVE fire prediction system. Research Paper INT-359. 1986. Equations #36"
      *
-     * @param U_20  wind speed 20 feet above the vegitation [mph]
-     * @param h     vegitation height [feet]
-     * @return      wind speed at vegetation height [mph]
+     * @param U_20 wind speed 20 feet above the vegitation [mph]
+     * @param h vegitation height [feet]
+     * @return wind speed at vegetation height [mph]
      */
-    static public double calcWindSpeedAtFuelLevel(double U_20, double h)
-    {
+    static public double calcWindSpeedAtFuelLevel(double U_20, double h) {
         // Equation #36
         // The ratio of windspeed at vegetation height to that at
         // 20 feet above the vegitation is given by:

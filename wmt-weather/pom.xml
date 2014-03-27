@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <artifactId>wmt</artifactId>
-    <groupId>com.emxsys</groupId>
-    <version>4.0-SNAPSHOT</version>
-  </parent>
+        <artifactId>wmt</artifactId>
+        <groupId>com.emxsys</groupId>
+        <version>4.0-SNAPSHOT</version>
+    </parent>
 
     <groupId>com.emxsys</groupId>
     <artifactId>wmt-weather</artifactId>
@@ -13,6 +13,7 @@
     <packaging>nbm</packaging>
 
     <name>WMT Weather</name>
+    <description>The Weather API</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,6 +75,7 @@
                 <configuration>
                     <publicPackages>
                         <publicPackage>com.emxsys.wmt.weather.api</publicPackage>
+                        <publicPackage>com.emxsys.wmt.weather.spi</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
@@ -84,8 +86,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -100,5 +102,4 @@
             </plugin>
         </plugins>
     </build>
-    <description>The Weather API</description>
 </project>

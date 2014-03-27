@@ -42,15 +42,14 @@ import visad.Gridded1DSet;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DefaultWeatherProvider implements WeatherProvider{
-    
+public class DefaultWeatherProvider implements WeatherProvider {
 
     private static WeatherProvider instance = null;
 
     /**
      * Returns the singleton instance of a WeatherProvider. If a class has been registered as a
-     * WeatherProvider service provider, then an instance of that class will be returned.
-     * Otherwise, an instance of the DefaultWeatherProvider will be returned.
+     * WeatherProvider service provider, then an instance of that class will be returned. Otherwise,
+     * an instance of the DefaultWeatherProvider will be returned.
      *
      * @return A singleton instance of a WeatherProvider.
      */
@@ -67,35 +66,34 @@ public class DefaultWeatherProvider implements WeatherProvider{
         return instance;
     }
 
-    @Override
-    public FlatField generateTemperatures(Gridded1DSet timeDomain) {
-        throw new UnsupportedOperationException("generateTemperatures");
-    }
-
-    @Override
-    public FlatField generateHumidities(Gridded1DSet timeDomain) {
-        throw new UnsupportedOperationException("generateHumidities");
-    }
-
-    @Override
-    public FlatField generateWinds(Gridded1DSet timeDomain) {
-        throw new UnsupportedOperationException("generateWinds");
-    }
-
+//    @Override
+//    public FlatField generateTemperatures(Gridded1DSet timeDomain) {
+//        throw new UnsupportedOperationException("generateTemperatures");
+//    }
+//
+//    @Override
+//    public FlatField generateHumidities(Gridded1DSet timeDomain) {
+//        throw new UnsupportedOperationException("generateHumidities");
+//    }
+//
+//    @Override
+//    public FlatField generateWinds(Gridded1DSet timeDomain) {
+//        throw new UnsupportedOperationException("generateWinds");
+//    }
+//
     @Override
     public Weather getWeather(Date utcTime, Coord2D coord) {
         // TODO: lookup the weather, if not found use general weather
         return new WeatherTuple();
     }
 
-    @Override
-    public void addForecast() {
-        throw new UnsupportedOperationException("addForecast");
-    }
-
-    @Override
-    public void addObservation() {
-        throw new UnsupportedOperationException("addObservation");
-    }
-
+//    @Override
+//    public void addForecast() {
+//        throw new UnsupportedOperationException("addForecast");
+//    }
+//
+//    @Override
+//    public void addObservation() {
+//        throw new UnsupportedOperationException("addObservation");
+//    }
 }
