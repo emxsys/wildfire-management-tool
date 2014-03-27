@@ -32,7 +32,7 @@ package com.emxsys.wmt.places.yahoo;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.places.api.Place;
 import com.emxsys.wmt.places.api.PlaceProvider;
-import gov.nasa.worldwind.poi.POIUtils;
+import com.emxsys.wmt.util.HttpUtil;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -123,7 +123,7 @@ public class YahooPlaceProvider implements PlaceProvider {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(lookupCriteria);
         }
-        String xmlString = POIUtils.callService(urlString);
+        String xmlString = HttpUtil.callWebService(urlString);
         if (xmlString == null || xmlString.length() < 1) {
             return EMPTY_LIST;
         }
@@ -151,7 +151,7 @@ public class YahooPlaceProvider implements PlaceProvider {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(coord.toString());
         }
-        String xmlString = POIUtils.callService(urlString);
+        String xmlString = HttpUtil.callWebService(urlString);
         if (xmlString == null || xmlString.length() < 1) {
             return EMPTY_LIST;
         }

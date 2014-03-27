@@ -13,9 +13,10 @@
     <packaging>nbm</packaging>
 
     <name>WMT Places</name>
+    <description>The Places and Gazetteer API.</description>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
     </properties>
 
     <repositories>
@@ -38,6 +39,11 @@
         <!--WMT-->
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-branding</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-gis</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -53,15 +59,8 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-globe</artifactId>
+            <artifactId>wmt-utilities</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <!--Libraries-->
-        <dependency>
-            <artifactId>worldwind</artifactId>
-            <groupId>gov.nasa</groupId>
-            <type>jar</type>
-            <version>1.5.1</version>
         </dependency>
         <!--NetBeans-->
         <dependency>
@@ -87,23 +86,6 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <artifactId>jogl</artifactId>
-            <groupId>com.sun</groupId>
-            <type>jar</type>
-            <version>1.1.2</version>
-        </dependency>
-        <dependency>
-            <artifactId>gluegen-rt</artifactId>
-            <groupId>com.sun</groupId>
-            <type>jar</type>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-branding</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -111,7 +93,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>3.11</version>
                 <extensions>true</extensions>
             </plugin>
 
@@ -119,17 +100,15 @@
                 <!-- NetBeans 6.9+ requires JDK 6, starting NetBeans 7.4 source 1.7 will be required   -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <!-- to have the jar plugin pickup the nbm generated manifest -->
                     <useDefaultManifestFile>true</useDefaultManifestFile>
@@ -137,5 +116,4 @@
             </plugin>
         </plugins>
     </build>
-    <description>The Places and Gazetteer API.</description>
 </project>
