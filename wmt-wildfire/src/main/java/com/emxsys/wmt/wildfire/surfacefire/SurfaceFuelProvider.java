@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2010-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

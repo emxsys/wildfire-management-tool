@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.behave;
+package com.emxsys.wmt.wildfire.behave;
 
 /*
  * Original version: Copyright (C) 2001, Andreas Bachmann
@@ -41,9 +41,6 @@ package com.emxsys.behave;
  *      8057 Zurich
  *      Switzerland
  */
-
-
-import com.emxsys.behave.BehaveDeriv;
 import java.util.*;
 import java.text.*;
 import java.io.*;
@@ -51,7 +48,7 @@ import javax.swing.JFileChooser;
 
 /**
  * Class to run BehaveDeriv
- * 
+ *
  * @author andreas bachmann
  * @version 1.0 april 2001
  */
@@ -142,151 +139,151 @@ public class BehaveDerivTestRun {
         pdrv = b.getValue("w0_d1PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" w0_d1 |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" w0_d1 |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("w0_d2");
         stdv = b.getValue("w0_d2Stdv");
         pdrv = b.getValue("w0_d2PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" w0_d2 |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" w0_d2 |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("w0_d3");
         stdv = b.getValue("w0_d3Stdv");
         pdrv = b.getValue("w0_d3PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" w0_d3 |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" w0_d3 |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("w0_lh");
         stdv = b.getValue("w0_lhStdv");
         pdrv = b.getValue("w0_lhPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" w0_lh |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" w0_lh |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("w0_lw");
         stdv = b.getValue("w0_lwStdv");
         pdrv = b.getValue("w0_lwPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" w0_lw |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" w0_lw |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("sv_d1");
         stdv = b.getValue("sv_d1Stdv");
         pdrv = b.getValue("sv_d1PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" sv_d1 |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" sv_d1 |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("sv_d2");
-        show(" sv_d2 |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 12) + " |" +
-                lPad("-", 6));
+        show(" sv_d2 |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 12) + " |"
+                + lPad("-", 6));
         mean = b.getValue("sv_d3");
-        show(" sv_d3 |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 12) + " |" +
-                lPad("-", 6));
+        show(" sv_d3 |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 12) + " |"
+                + lPad("-", 6));
         mean = b.getValue("sv_lh");
-        show(" sv_lh |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 12) + " |" +
-                lPad("-", 6));
+        show(" sv_lh |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 12) + " |"
+                + lPad("-", 6));
         mean = b.getValue("sv_lw");
-        show(" sv_lw |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 12) + " |" +
-                lPad("-", 6));
+        show(" sv_lw |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 12) + " |"
+                + lPad("-", 6));
         // moisture content
         mean = b.getValue("m_d1");
         stdv = b.getValue("m_d1Stdv");
         pdrv = b.getValue("m_d1PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" m_d1  |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" m_d1  |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("m_d2");
         stdv = b.getValue("m_d2Stdv");
         pdrv = b.getValue("m_d2PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" m_d2  |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" m_d2  |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("m_d3");
         stdv = b.getValue("m_d3Stdv");
         pdrv = b.getValue("m_d3PDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" m_d3  |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" m_d3  |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("m_lh");
         stdv = b.getValue("m_lhStdv");
         pdrv = b.getValue("m_lhPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" m_lh  |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" m_lh  |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         mean = b.getValue("m_lw");
         stdv = b.getValue("m_lwStdv");
         pdrv = b.getValue("m_lwPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" m_lw  |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" m_lw  |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         //
         // depth
         mean = b.getValue("depth");
@@ -294,41 +291,41 @@ public class BehaveDerivTestRun {
         pdrv = b.getValue("depthPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" d     |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" d     |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         // moisture of extinction
         mean = b.getValue("mx");
         stdv = b.getValue("mxStdv");
         pdrv = b.getValue("mxPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" mx    |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" mx    |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         //
         // particle density
         mean = b.getValue("rho_p");
-        show(" rho_p |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 12) + " |" +
-                lPad("-", 6));
+        show(" rho_p |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 12) + " |"
+                + lPad("-", 6));
         // heat content
         mean = b.getValue("heat");
-        show(" heat  |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 11) + " |" +
-                lPad("-", 12) + " |" +
-                lPad("-", 6));
+        show(" heat  |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 11) + " |"
+                + lPad("-", 12) + " |"
+                + lPad("-", 6));
         //
         // slope
         mean = b.getValue("slp");
@@ -336,58 +333,58 @@ public class BehaveDerivTestRun {
         pdrv = b.getValue("slpPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" slp   |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(Math.toDegrees(stdv)), 11) + " |" + // convert to degrees!
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" slp   |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(Math.toDegrees(stdv)), 11) + " |" + // convert to degrees!
+                lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         // asp
         mean = b.getValue("asp");
         stdv = b.getValue("aspStdv");  // in radian!
         pdrv = b.getValue("aspPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" asp   |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(Math.toDegrees(stdv)), 11) + " |" + // convert to degrees!
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" asp   |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(Math.toDegrees(stdv)), 11) + " |" + // convert to degrees!
+                lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         // wsp
         mean = b.getValue("wsp");
         stdv = b.getValue("wspStdv");
         pdrv = b.getValue("wspPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" wsp   |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" wsp   |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         // wdr
         mean = b.getValue("wdr");
         stdv = b.getValue("wdrStdv"); // in radian!
         pdrv = b.getValue("wdrPDros");
         varpa = stdv * stdv * pdrv * pdrv;
         varpp = varpa * 100 / vartot;
-        show(" wdr   |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(Math.toDegrees(stdv)), 11) + " |" + // convert to degrees!
-                lPad(df6.format(pdrv), 11) + " |" +
-                lPad(df8.format(varpa), 12) + " |" +
-                lPad(df1.format(varpp), 6));
+        show(" wdr   |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(Math.toDegrees(stdv)), 11) + " |" + // convert to degrees!
+                lPad(df6.format(pdrv), 11) + " |"
+                + lPad(df8.format(varpa), 12) + " |"
+                + lPad(df1.format(varpp), 6));
         show("--------------------------------------------------------------------");
         //
         // ros
         mean = b.getValue("ros");
         stdv = b.getValue("rosStdv"); // in radian!
-        show(" ros   |" +
-                lPad(df3.format(mean), 11) + " |" +
-                lPad(df4.format(stdv), 11) + " |" +
-                "            |" +
-                lPad(df8.format(vartot), 12) + " | 100.0");
+        show(" ros   |"
+                + lPad(df3.format(mean), 11) + " |"
+                + lPad(df4.format(stdv), 11) + " |"
+                + "            |"
+                + lPad(df8.format(vartot), 12) + " | 100.0");
 /////////////////////////////////////////////////////////////////
         show(" ");
         //for(int i = 0; i < b.ros_d.length; i++)

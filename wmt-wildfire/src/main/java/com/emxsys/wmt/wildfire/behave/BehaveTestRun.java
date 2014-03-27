@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.behave;
+package com.emxsys.wmt.wildfire.behave;
 
 /*
  * Original version: Copyright (C) 2001, Andreas Bachmann
@@ -41,8 +41,6 @@ package com.emxsys.behave;
  *      8057 Zurich
  *      Switzerland
  */
-
-import com.emxsys.behave.Behave;
 import java.util.*;
 import java.text.*;
 import java.io.*;
@@ -50,7 +48,7 @@ import javax.swing.JFileChooser;
 
 /**
  * Class to run Behave
- * 
+ *
  * @author andreas bachmann
  * @version 1.0 april 2001
  */
@@ -107,7 +105,6 @@ public class BehaveTestRun {
         b.wdr = 180;
         ///////////////////////////////////
 
-
         //
         // now calculate fire behaviour
         b.calc();
@@ -120,88 +117,88 @@ public class BehaveTestRun {
         DecimalFormat df5 = new DecimalFormat("#,##0.00000");
 
         show(" ");
-        show("  Effective mineral content    s_e          [%] =" +
-                lPad(df1.format(b.s_e), 10));
-        show("  Total mineral content        s_t          [%] =" +
-                lPad(df1.format(b.s_t), 10));
-        show("  Heat content                 heat     [kJ/kg] =" +
-                lPad(df2.format(b.heat), 10));
-        show("  Particle density             rho_p    [kg/m3] =" +
-                lPad(df2.format(b.rho_p), 10));
-        show("  Fuel bed depth               d            [m] =" +
-                lPad(df2.format(b.depth), 10));
-        show("  Moisture of extinction       mx           [%] =" +
-                lPad(df2.format(b.mx), 10));
+        show("  Effective mineral content    s_e          [%] ="
+                + lPad(df1.format(b.s_e), 10));
+        show("  Total mineral content        s_t          [%] ="
+                + lPad(df1.format(b.s_t), 10));
+        show("  Heat content                 heat     [kJ/kg] ="
+                + lPad(df2.format(b.heat), 10));
+        show("  Particle density             rho_p    [kg/m3] ="
+                + lPad(df2.format(b.rho_p), 10));
+        show("  Fuel bed depth               d            [m] ="
+                + lPad(df2.format(b.depth), 10));
+        show("  Moisture of extinction       mx           [%] ="
+                + lPad(df2.format(b.mx), 10));
         show(" ");
         // fuel properties
         show("  Size |  Fuel Load | Surface-to-Volume- | Moisture");
         show("       |    [kg/m2] | Ratio        [1/m] |      [%]");
         show(" ---------------------------------------------------");
-        show("    d1 |" +
-                lPad(df3.format(b.w0_d1), 10) + "  |" +
-                lPad(df3.format(b.sv_d1), 18) + "  |" +
-                lPad(df1.format(b.m_d1), 8));
-        show("    d2 |" +
-                lPad(df3.format(b.w0_d2), 10) + "  |" +
-                lPad(df3.format(b.sv_d2), 18) + "  |" +
-                lPad(df1.format(b.m_d2), 8));
-        show("    d3 |" +
-                lPad(df3.format(b.w0_d3), 10) + "  |" +
-                lPad(df3.format(b.sv_d3), 18) + "  |" +
-                lPad(df1.format(b.m_d3), 8));
-        show("    lh |" +
-                lPad(df3.format(b.w0_lh), 10) + "  |" +
-                lPad(df3.format(b.sv_lh), 18) + "  |" +
-                lPad(df1.format(b.m_lh), 8));
-        show("    lw |" +
-                lPad(df3.format(b.w0_lw), 10) + "  |" +
-                lPad(df3.format(b.sv_lw), 18) + "  |" +
-                lPad(df1.format(b.m_lw), 8));
+        show("    d1 |"
+                + lPad(df3.format(b.w0_d1), 10) + "  |"
+                + lPad(df3.format(b.sv_d1), 18) + "  |"
+                + lPad(df1.format(b.m_d1), 8));
+        show("    d2 |"
+                + lPad(df3.format(b.w0_d2), 10) + "  |"
+                + lPad(df3.format(b.sv_d2), 18) + "  |"
+                + lPad(df1.format(b.m_d2), 8));
+        show("    d3 |"
+                + lPad(df3.format(b.w0_d3), 10) + "  |"
+                + lPad(df3.format(b.sv_d3), 18) + "  |"
+                + lPad(df1.format(b.m_d3), 8));
+        show("    lh |"
+                + lPad(df3.format(b.w0_lh), 10) + "  |"
+                + lPad(df3.format(b.sv_lh), 18) + "  |"
+                + lPad(df1.format(b.m_lh), 8));
+        show("    lw |"
+                + lPad(df3.format(b.w0_lw), 10) + "  |"
+                + lPad(df3.format(b.sv_lw), 18) + "  |"
+                + lPad(df1.format(b.m_lw), 8));
         //
         show(" ");
         show("  Wind                         |  Terrain");
         show(" ------------------------------------------------------");
-        show("   wind speed     [m/s]" + lPad(df2.format(b.wsp), 7) +
-                " |   slope  [deg]" + lPad(df2.format(b.slp), 7));
-        show("   wind direction [deg]" + lPad(df2.format(b.wdr), 7) +
-                " |   aspect [deg]" + lPad(df2.format(b.asp), 7));
+        show("   wind speed     [m/s]" + lPad(df2.format(b.wsp), 7)
+                + " |   slope  [deg]" + lPad(df2.format(b.slp), 7));
+        show("   wind direction [deg]" + lPad(df2.format(b.wdr), 7)
+                + " |   aspect [deg]" + lPad(df2.format(b.asp), 7));
         show(" ");
         // results
-        show("  => Characteristic sv-ratio   sigma      [1/m] =" +
-                lPad(df2.format(b.sigma), 10));
-        show("  => Mean bulk density         rho_b    [kg/m3] =" +
-                lPad(df4.format(b.rho_b), 12));
-        show("  => Packing ratio             beta         [-] =" +
-                lPad(df5.format(b.beta), 13));
-        show("  => Optimal packing ratio     beta_opt     [-] =" +
-                lPad(df5.format(b.beta_opt), 13));
+        show("  => Characteristic sv-ratio   sigma      [1/m] ="
+                + lPad(df2.format(b.sigma), 10));
+        show("  => Mean bulk density         rho_b    [kg/m3] ="
+                + lPad(df4.format(b.rho_b), 12));
+        show("  => Packing ratio             beta         [-] ="
+                + lPad(df5.format(b.beta), 13));
+        show("  => Optimal packing ratio     beta_opt     [-] ="
+                + lPad(df5.format(b.beta_opt), 13));
         show(" ");
-        show("  => Rate of spread            ros        [m/s] =" +
-                lPad(df4.format(b.ros), 12));
-        show("  => Heat sink                 hsk      [kJ/m3] =" +
-                lPad(df2.format(b.hsk), 10));
-        show("  => Reaction intensity        I_r      [kW/m2] =" +
-                lPad(df2.format(b.I_r), 10));
-        show("  => Propagating flux ratio    xi           [-] =" +
-                lPad(df4.format(b.xi), 12));
+        show("  => Rate of spread            ros        [m/s] ="
+                + lPad(df4.format(b.ros), 12));
+        show("  => Heat sink                 hsk      [kJ/m3] ="
+                + lPad(df2.format(b.hsk), 10));
+        show("  => Reaction intensity        I_r      [kW/m2] ="
+                + lPad(df2.format(b.I_r), 10));
+        show("  => Propagating flux ratio    xi           [-] ="
+                + lPad(df4.format(b.xi), 12));
         show(" ");
-        show("  => Wind and slope factor     phi_t        [-] =" +
-                lPad(df4.format(b.phi_t), 12));
-        show("  => Direction of max. spread  sdr        [deg] =" +
-                lPad(df1.format(b.sdr), 9));
-        show("  => Effective Wind speed      efw        [m/s] =" +
-                lPad(df2.format(b.efw), 10));
+        show("  => Wind and slope factor     phi_t        [-] ="
+                + lPad(df4.format(b.phi_t), 12));
+        show("  => Direction of max. spread  sdr        [deg] ="
+                + lPad(df1.format(b.sdr), 9));
+        show("  => Effective Wind speed      efw        [m/s] ="
+                + lPad(df2.format(b.efw), 10));
         show(" ");
-        show("  => Flame length              fln          [m] =" +
-                lPad(df2.format(b.fln), 10));
-        show("  => Fire line intensity       fli       [kW/m] =" +
-                lPad(df2.format(b.fli), 10));
-        show("  => Heat per area             hpa      [kJ/m2] =" +
-                lPad(df2.format(b.hpa), 10));
-        show("  => flame residence time      tau          [s] =" +
-                lPad(df2.format(b.tau), 10));
-        show("  => flame zone depth          fzd          [m] =" +
-                lPad(df3.format(b.fzd), 11));
+        show("  => Flame length              fln          [m] ="
+                + lPad(df2.format(b.fln), 10));
+        show("  => Fire line intensity       fli       [kW/m] ="
+                + lPad(df2.format(b.fli), 10));
+        show("  => Heat per area             hpa      [kJ/m2] ="
+                + lPad(df2.format(b.hpa), 10));
+        show("  => flame residence time      tau          [s] ="
+                + lPad(df2.format(b.tau), 10));
+        show("  => flame zone depth          fzd          [m] ="
+                + lPad(df3.format(b.fzd), 11));
     }
 
     public static void usage() {

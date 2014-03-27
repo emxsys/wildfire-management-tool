@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,17 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.behave;
-
-import com.emxsys.behave.Behave;
-import java.lang.*;
-import java.util.*;
-import java.io.*;
-import java.text.*;
+package com.emxsys.wmt.wildfire.behave;
 
 /**
- * Calculates the Derivations of Fire behavior according to the Rothermel
- *  model.
+ * Calculates the Derivations of Fire behavior according to the Rothermel model.
  * @author andreas bachmann
  * @version 1.0, April 2001
  */
@@ -109,11 +102,11 @@ class BehaveDeriv extends Behave {
         }
     }
 
-    /**************************************************************************
+    /** ************************************************************************
      *
      * Instance Methods
      *
-     **************************************************************************/
+     ************************************************************************* */
     public void setCorrelationMatrix(double[][] corr) {
         this.corr = corr;
     }
@@ -289,7 +282,7 @@ class BehaveDeriv extends Behave {
 
     protected void calcPartialDerivatives() {
         /**
-         *  characteristic surface to volume ratio...
+         * characteristic surface to volume ratio...
          */
         double sigma_dw0_d1 = 0.;
         double sigma_dw0_d2 = 0.;
@@ -309,7 +302,7 @@ class BehaveDeriv extends Behave {
         }
 
         /**
-         *   mean bulk density
+         * mean bulk density
          */
         double rho_b_dw0_d1, rho_b_dw0_d2, rho_b_dw0_d3 = 0.;
         double rho_b_dw0_lh, rho_b_dw0_lw = 0.;
@@ -323,7 +316,7 @@ class BehaveDeriv extends Behave {
         rho_b_ddepth = -1 * rho_b / depth;
 
         /**
-         *   packing ratios
+         * packing ratios
          */
         // mean packing ratio
         double beta_dw0_d1, beta_dw0_d2, beta_dw0_d3, beta_dw0_lh, beta_dw0_lw = 0.;
@@ -352,16 +345,16 @@ class BehaveDeriv extends Behave {
         double beta_ratio_dw0_lh, beta_ratio_dw0_lw, beta_ratio_dsv_d1 = 0.;
         double beta_ratio_ddepth = 0.;
 
-        beta_ratio_dw0_d1 = (beta_dw0_d1 * beta_opt - beta * beta_opt_dw0_d1) /
-                Math.pow(beta_opt, 2);
-        beta_ratio_dw0_d2 = (beta_dw0_d2 * beta_opt - beta * beta_opt_dw0_d2) /
-                Math.pow(beta_opt, 2);
-        beta_ratio_dw0_d3 = (beta_dw0_d3 * beta_opt - beta * beta_opt_dw0_d3) /
-                Math.pow(beta_opt, 2);
-        beta_ratio_dw0_lh = (beta_dw0_lh * beta_opt - beta * beta_opt_dw0_lh) /
-                Math.pow(beta_opt, 2);
-        beta_ratio_dw0_lw = (beta_dw0_lw * beta_opt - beta * beta_opt_dw0_lw) /
-                Math.pow(beta_opt, 2);
+        beta_ratio_dw0_d1 = (beta_dw0_d1 * beta_opt - beta * beta_opt_dw0_d1)
+                / Math.pow(beta_opt, 2);
+        beta_ratio_dw0_d2 = (beta_dw0_d2 * beta_opt - beta * beta_opt_dw0_d2)
+                / Math.pow(beta_opt, 2);
+        beta_ratio_dw0_d3 = (beta_dw0_d3 * beta_opt - beta * beta_opt_dw0_d3)
+                / Math.pow(beta_opt, 2);
+        beta_ratio_dw0_lh = (beta_dw0_lh * beta_opt - beta * beta_opt_dw0_lh)
+                / Math.pow(beta_opt, 2);
+        beta_ratio_dw0_lw = (beta_dw0_lw * beta_opt - beta * beta_opt_dw0_lw)
+                / Math.pow(beta_opt, 2);
         //
         beta_ratio_dsv_d1 = (-beta * beta_opt_dsv_d1) / Math.pow(beta_opt, 2);
         beta_ratio_ddepth = beta_ddepth / beta_opt;
@@ -429,8 +422,8 @@ class BehaveDeriv extends Behave {
             Mf_dead_dm_d2 = hn_d2 / sumhd;
             Mf_dead_dm_d3 = hn_d3 / sumhd;
 
-            Mf_dead_dsv_d1 = (452.76 * hn_d1 / (Math.pow(sv_d1, 2) * sumhd)) *
-                    (m_d1 - (sumhdm / sumhd));
+            Mf_dead_dsv_d1 = (452.76 * hn_d1 / (Math.pow(sv_d1, 2) * sumhd))
+                    * (m_d1 - (sumhdm / sumhd));
         }
 
         // Mx_live': Moisture of extinction of living fuel
@@ -498,10 +491,10 @@ class BehaveDeriv extends Behave {
         double rm_l_dmx = 0.;
         if ((sw_l > 0) && (Mx_live > 0)) {
             // rm_l'
-            rm_l_dw0_lh = (sv_lh * m_lh - (swm_l * sv_lh / sw_l) -
-                    (swm_l * Mx_live_dw0_lh / Mx_live)) / (sw_l * Mx_live);
-            rm_l_dw0_lw = (sv_lw * m_lw - (swm_l * sv_lw / sw_l) -
-                    (swm_l * Mx_live_dw0_lw / Mx_live)) / (sw_l * Mx_live);
+            rm_l_dw0_lh = (sv_lh * m_lh - (swm_l * sv_lh / sw_l)
+                    - (swm_l * Mx_live_dw0_lh / Mx_live)) / (sw_l * Mx_live);
+            rm_l_dw0_lw = (sv_lw * m_lw - (swm_l * sv_lw / sw_l)
+                    - (swm_l * Mx_live_dw0_lw / Mx_live)) / (sw_l * Mx_live);
 
             rm_l_dw0_d1 = -1 * rm_l * Mx_live_dw0_d1 / Mx_live;
             rm_l_dw0_d2 = -1 * rm_l * Mx_live_dw0_d2 / Mx_live;
@@ -560,14 +553,14 @@ class BehaveDeriv extends Behave {
         double eta_M_dm_d1, eta_M_dm_d2, eta_M_dm_d3 = 0.;
         double eta_M_dm_lh, eta_M_dm_lw = 0.;
         double eta_M_dsv_d1, eta_M_dmx = 0.;
-        eta_M_dw0_d1 = wn_d_dw0_d1 * eta_Md + wn_d * eta_Md_dw0_d1 +
-                wn_l * eta_Ml_dw0_d1;
-        eta_M_dw0_d2 = wn_d_dw0_d2 * eta_Md + wn_d * eta_Md_dw0_d2 +
-                wn_l * eta_Ml_dw0_d1;
-        eta_M_dw0_d3 = wn_d_dw0_d3 * eta_Md + wn_d * eta_Md_dw0_d3 +
-                wn_l * eta_Ml_dw0_d1;
-        eta_M_dsv_d1 = wn_d_dsv_d1 * eta_Md + wn_d * eta_Md_dsv_d1 +
-                wn_l * eta_Ml_dsv_d1;
+        eta_M_dw0_d1 = wn_d_dw0_d1 * eta_Md + wn_d * eta_Md_dw0_d1
+                + wn_l * eta_Ml_dw0_d1;
+        eta_M_dw0_d2 = wn_d_dw0_d2 * eta_Md + wn_d * eta_Md_dw0_d2
+                + wn_l * eta_Ml_dw0_d1;
+        eta_M_dw0_d3 = wn_d_dw0_d3 * eta_Md + wn_d * eta_Md_dw0_d3
+                + wn_l * eta_Ml_dw0_d1;
+        eta_M_dsv_d1 = wn_d_dsv_d1 * eta_Md + wn_d * eta_Md_dsv_d1
+                + wn_l * eta_Ml_dsv_d1;
 
         eta_M_dw0_lh = wn_l_dw0_lh * eta_Ml + wn_l * eta_Ml_dw0_lh;
         eta_M_dw0_lw = wn_l_dw0_lw * eta_Ml + wn_l * eta_Ml_dw0_lw;
@@ -591,33 +584,33 @@ class BehaveDeriv extends Behave {
         double xi_dw0_d1, xi_dw0_d2, xi_dw0_d3, xi_dw0_lh, xi_dw0_lw = 0.;
         double xi_ddepth, xi_dsv_d1 = 0.;
         double xiz_d, xin_d;
-        xiz_d = xiz *
-                ((0.187985 * sigma_dw0_d1 * (beta + 0.1) / Math.sqrt(sigma)) +
-                beta_dw0_d1 * (0.792 + 0.376 * Math.sqrt(sigma)));
+        xiz_d = xiz
+                * ((0.187985 * sigma_dw0_d1 * (beta + 0.1) / Math.sqrt(sigma))
+                + beta_dw0_d1 * (0.792 + 0.376 * Math.sqrt(sigma)));
         xin_d = 0.0791 * sigma_dw0_d1;
         xi_dw0_d1 = (xiz_d * xin - xiz * xin_d) / Math.pow(xin, 2);
 
-        xiz_d = xiz *
-                ((0.187985 * sigma_dw0_d2 * (beta + 0.1) / Math.sqrt(sigma)) +
-                beta_dw0_d2 * (0.792 + 0.376 * Math.sqrt(sigma)));
+        xiz_d = xiz
+                * ((0.187985 * sigma_dw0_d2 * (beta + 0.1) / Math.sqrt(sigma))
+                + beta_dw0_d2 * (0.792 + 0.376 * Math.sqrt(sigma)));
         xin_d = 0.0791 * sigma_dw0_d2;
         xi_dw0_d2 = (xiz_d * xin - xiz * xin_d) / Math.pow(xin, 2);
 
-        xiz_d = xiz *
-                ((0.187985 * sigma_dw0_d3 * (beta + 0.1) / Math.sqrt(sigma)) +
-                beta_dw0_d3 * (0.792 + 0.376 * Math.sqrt(sigma)));
+        xiz_d = xiz
+                * ((0.187985 * sigma_dw0_d3 * (beta + 0.1) / Math.sqrt(sigma))
+                + beta_dw0_d3 * (0.792 + 0.376 * Math.sqrt(sigma)));
         xin_d = 0.0791 * sigma_dw0_d3;
         xi_dw0_d3 = (xiz_d * xin - xiz * xin_d) / Math.pow(xin, 2);
 
-        xiz_d = xiz *
-                ((0.187985 * sigma_dw0_lh * (beta + 0.1) / Math.sqrt(sigma)) +
-                beta_dw0_lh * (0.792 + 0.376 * Math.sqrt(sigma)));
+        xiz_d = xiz
+                * ((0.187985 * sigma_dw0_lh * (beta + 0.1) / Math.sqrt(sigma))
+                + beta_dw0_lh * (0.792 + 0.376 * Math.sqrt(sigma)));
         xin_d = 0.0791 * sigma_dw0_lh;
         xi_dw0_lh = (xiz_d * xin - xiz * xin_d) / Math.pow(xin, 2);
 
-        xiz_d = xiz *
-                ((0.187985 * sigma_dw0_lw * (beta + 0.1) / Math.sqrt(sigma)) +
-                beta_dw0_lw * (0.792 + 0.376 * Math.sqrt(sigma)));
+        xiz_d = xiz
+                * ((0.187985 * sigma_dw0_lw * (beta + 0.1) / Math.sqrt(sigma))
+                + beta_dw0_lw * (0.792 + 0.376 * Math.sqrt(sigma)));
         xin_d = 0.0791 * sigma_dw0_lw;
         xi_dw0_lw = (xiz_d * xin - xiz * xin_d) / Math.pow(xin, 2);
 
@@ -646,8 +639,8 @@ class BehaveDeriv extends Behave {
         double gamma_max_dw0_d1, gamma_max_dw0_d2, gamma_max_dw0_d3 = 0.;
         double gamma_max_dw0_lh, gamma_max_dw0_lw, gamma_max_dsv_d1 = 0.;
 
-        double gamma_h = Math.sqrt(sigma) /
-                Math.pow(29700 + 0.5997 * Math.pow(sigma, 1.5), 2);
+        double gamma_h = Math.sqrt(sigma)
+                / Math.pow(29700 + 0.5997 * Math.pow(sigma, 1.5), 2);
         gamma_max_dw0_d1 = -7496.874 * sigma_dw0_d1 * gamma_h;
         gamma_max_dw0_d2 = -7496.874 * sigma_dw0_d2 * gamma_h;
         gamma_max_dw0_d3 = -7496.874 * sigma_dw0_d3 * gamma_h;
@@ -730,8 +723,8 @@ class BehaveDeriv extends Behave {
         B_dsv_d1 = sigma_dsv_d1 * B_dh;
         // C'
         double C_dw0_d1, C_dw0_d2, C_dw0_d3, C_dw0_lh, C_dw0_lw, C_dsv_d1 = 0.;
-        double C_dh = -0.284267115 * Math.exp(-0.06919 * Math.pow(sigma, 0.55)) /
-                Math.pow(sigma, 0.45);
+        double C_dh = -0.284267115 * Math.exp(-0.06919 * Math.pow(sigma, 0.55))
+                / Math.pow(sigma, 0.45);
         C_dw0_d1 = sigma_dw0_d1 * C_dh;
         C_dw0_d2 = sigma_dw0_d2 * C_dh;
         C_dw0_d3 = sigma_dw0_d3 * C_dh;
@@ -772,38 +765,38 @@ class BehaveDeriv extends Behave {
 
             phi_a = C_dw0_d1 * wsp_B * bet_E;
             phi_b = C * wsp_B * B_dw0_d1 * wsp_L * bet_E;
-            phi_c = C * wsp_B * bet_E *
-                    (-E_dw0_d1 * bet_L - E * beta_ratio_dw0_d1 / beta_ratio);
+            phi_c = C * wsp_B * bet_E
+                    * (-E_dw0_d1 * bet_L - E * beta_ratio_dw0_d1 / beta_ratio);
             phi_w_dw0_d1 = phi_a + phi_b + phi_c;
 
             phi_a = C_dw0_d2 * wsp_B * bet_E;
             phi_b = C * wsp_B * B_dw0_d2 * wsp_L * bet_E;
-            phi_c = C * wsp_B * bet_E *
-                    (-E_dw0_d2 * bet_L - E * beta_ratio_dw0_d2 / beta_ratio);
+            phi_c = C * wsp_B * bet_E
+                    * (-E_dw0_d2 * bet_L - E * beta_ratio_dw0_d2 / beta_ratio);
             phi_w_dw0_d2 = phi_a + phi_b + phi_c;
 
             phi_a = C_dw0_d3 * wsp_B * bet_E;
             phi_b = C * wsp_B * B_dw0_d3 * wsp_L * bet_E;
-            phi_c = C * wsp_B * bet_E *
-                    (-E_dw0_d3 * bet_L - E * beta_ratio_dw0_d3 / beta_ratio);
+            phi_c = C * wsp_B * bet_E
+                    * (-E_dw0_d3 * bet_L - E * beta_ratio_dw0_d3 / beta_ratio);
             phi_w_dw0_d3 = phi_a + phi_b + phi_c;
 
             phi_a = C_dw0_lh * wsp_B * bet_E;
             phi_b = C * wsp_B * B_dw0_lh * wsp_L * bet_E;
-            phi_c = C * wsp_B * bet_E *
-                    (-E_dw0_lh * bet_L - E * beta_ratio_dw0_lh / beta_ratio);
+            phi_c = C * wsp_B * bet_E
+                    * (-E_dw0_lh * bet_L - E * beta_ratio_dw0_lh / beta_ratio);
             phi_w_dw0_lh = phi_a + phi_b + phi_c;
 
             phi_a = C_dw0_lw * wsp_B * bet_E;
             phi_b = C * wsp_B * B_dw0_lw * wsp_L * bet_E;
-            phi_c = C * wsp_B * bet_E *
-                    (-E_dw0_lw * bet_L - E * beta_ratio_dw0_lw / beta_ratio);
+            phi_c = C * wsp_B * bet_E
+                    * (-E_dw0_lw * bet_L - E * beta_ratio_dw0_lw / beta_ratio);
             phi_w_dw0_lw = phi_a + phi_b + phi_c;
 
             phi_a = C_dsv_d1 * wsp_B * bet_E;
             phi_b = C * wsp_B * B_dsv_d1 * wsp_L * bet_E;
-            phi_c = C * wsp_B * bet_E *
-                    (-E_dsv_d1 * bet_L - (E * beta_ratio_dsv_d1 / beta_ratio));
+            phi_c = C * wsp_B * bet_E
+                    * (-E_dsv_d1 * bet_L - (E * beta_ratio_dsv_d1 / beta_ratio));
             phi_w_dsv_d1 = phi_a + phi_b + phi_c;
 
             phi_w_dwsp = phi_w * B / wsp;
@@ -1003,20 +996,20 @@ class BehaveDeriv extends Behave {
         // hsk'
         double hskz_dw;
         hskz_dw = sv_d1 / sw_t * (eps_d1 * q_d1 - hskz / sw_t);
-        hsk_dw0_d1 = ((rho_b_dw0_d1 * hskz + rho_b * hskz_dw) * sw_t -
-                rho_b * hskz * sv_d1) / Math.pow(sw_t, 2);
+        hsk_dw0_d1 = ((rho_b_dw0_d1 * hskz + rho_b * hskz_dw) * sw_t
+                - rho_b * hskz * sv_d1) / Math.pow(sw_t, 2);
         hskz_dw = sv_d2 / sw_t * (eps_d2 * q_d2 - hskz / sw_t);
-        hsk_dw0_d2 = ((rho_b_dw0_d2 * hskz + rho_b * hskz_dw) * sw_t -
-                rho_b * hskz * sv_d2) / Math.pow(sw_t, 2);
+        hsk_dw0_d2 = ((rho_b_dw0_d2 * hskz + rho_b * hskz_dw) * sw_t
+                - rho_b * hskz * sv_d2) / Math.pow(sw_t, 2);
         hskz_dw = sv_d3 / sw_t * (eps_d3 * q_d3 - hskz / sw_t);
-        hsk_dw0_d3 = ((rho_b_dw0_d3 * hskz + rho_b * hskz_dw) * sw_t -
-                rho_b * hskz * sv_d3) / Math.pow(sw_t, 2);
+        hsk_dw0_d3 = ((rho_b_dw0_d3 * hskz + rho_b * hskz_dw) * sw_t
+                - rho_b * hskz * sv_d3) / Math.pow(sw_t, 2);
         hskz_dw = sv_lh / sw_t * (eps_lh * q_lh - hskz / sw_t);
-        hsk_dw0_lh = ((rho_b_dw0_lh * hskz + rho_b * hskz_dw) * sw_t -
-                rho_b * hskz * sv_lh) / Math.pow(sw_t, 2);
+        hsk_dw0_lh = ((rho_b_dw0_lh * hskz + rho_b * hskz_dw) * sw_t
+                - rho_b * hskz * sv_lh) / Math.pow(sw_t, 2);
         hskz_dw = sv_lw / sw_t * (eps_lw * q_lw - hskz / sw_t);
-        hsk_dw0_lw = ((rho_b_dw0_lw * hskz + rho_b * hskz_dw) * sw_t -
-                rho_b * hskz * sv_lw) / Math.pow(sw_t, 2);
+        hsk_dw0_lw = ((rho_b_dw0_lw * hskz + rho_b * hskz_dw) * sw_t
+                - rho_b * hskz * sv_lw) / Math.pow(sw_t, 2);
 
         hsk_dm_d1 = rho_b * 25.957 * sw_d1 * eps_d1 / sw_t;
         hsk_dm_d2 = rho_b * 25.957 * sw_d2 * eps_d2 / sw_t;
@@ -1032,8 +1025,7 @@ class BehaveDeriv extends Behave {
         hsk_ddepth = rho_b_ddepth * hskz / sw_t;
 
         /**
-        --------------------------------------------------------------
-        forward rate of spread
+         * -------------------------------------------------------------- forward rate of spread
          */
         // ros'
         double cz1, cz2, cz3, cz4;
@@ -1119,4 +1111,3 @@ class BehaveDeriv extends Behave {
         // fini le calcDerivs()
     }
 }
-

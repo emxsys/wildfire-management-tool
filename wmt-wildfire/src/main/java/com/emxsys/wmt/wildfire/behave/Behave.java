@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.behave;
+package com.emxsys.wmt.wildfire.behave;
 
 /*
  * Original version: Copyright (C) 2001, Andreas Bachmann
@@ -41,24 +41,21 @@ package com.emxsys.behave;
  *      8057 Zurich
  *      Switzerland
  */
-
 import java.util.logging.Logger;
 import java.util.*;
 import static java.lang.Math.*;
 
 /**
  * Calculates the fire behavior according to the Rothermel model.
- * 
+ *
  * <ul>
- * <li style="bullet"><a name="bib_1000"></a>Albini, F.A., 1976, Estimating
- * Wildfire Behavior and Effects, General Technical Report
- * INT-30, USDA Forest Service, Intermountain Forest and Range
+ * <li style="bullet"><a name="bib_1000"></a>Albini, F.A., 1976, Estimating Wildfire Behavior and
+ * Effects, General Technical Report INT-30, USDA Forest Service, Intermountain Forest and Range
  * Experiment Station
  *
- * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical
- * model for predicting fire spread in wildland fuels, General
- * Technical Report INT-115, USDA Forest Service, Intermountain
- * Forest and Range Experiment Station
+ * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
+ * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
+ * and Range Experiment Station
  * </ul>
  *
  * @author Andreas Bachmann
@@ -66,10 +63,11 @@ import static java.lang.Math.*;
  */
 @SuppressWarnings("unchecked")
 public class Behave {
+
     private static final Logger LOG = Logger.getLogger(Behave.class.getName());
 
     /** links from var-names to indices.. */
-    static public List<String> v = new ArrayList<String>(17);
+    static final public List<String> v = new ArrayList<>(17);
 
     /** Establish input variable names */
     static {
@@ -93,15 +91,15 @@ public class Behave {
     }
     static public double noData[] = new double[17];
     /**
-     *  INSTANCE VARS
+     * INSTANCE VARS
      */
     private boolean hasFuel = false;
     private boolean hasNodata = false;
     public boolean isCalculated = false;
     public boolean canDerive = true;
-    public Map<String, Double> varHashMap = new HashMap<String, Double>(25);
-    public Map<String, Double> resHashMap = new HashMap<String, Double>(10);
-    public Map<String, Double> resHashMapNoWS = new HashMap<String, Double>(10);
+    public Map<String, Double> varHashMap = new HashMap<>(25);
+    public Map<String, Double> resHashMap = new HashMap<>(10);
+    public Map<String, Double> resHashMapNoWS = new HashMap<>(10);
     // ---------------------------------
     // Rothermel's model input variables
     // ---------------------------------
@@ -254,7 +252,7 @@ public class Behave {
     public double sdr = 0.;
     /** Output: effective wind speed [m/s] */
     public double efw = 0.;
-    /** Output: heat sink term  [kJ/m3] */
+    /** Output: heat sink term [kJ/m3] */
     public double hsk = 0.;
     /** Output: rate of spread [m/s] */
     public double ros = 0.;
@@ -264,21 +262,21 @@ public class Behave {
     public double hpa = 0.;
     /** Output: flame zone depth [m] */
     public double fzd = 0.;
-    /** Output: fire line intensity  [kW/m] */
+    /** Output: fire line intensity [kW/m] */
     public double fli = 0.;
     /** Output: flame length [m] */
     public double fln = 0.;
 
     //**********************************************************************
     /**
-    Methods
-     **/
+     * Methods
+     * */
     // just for convenience
     static void show(String text) {
         System.out.println(text);
     }
 
-    /** 
+    /**
      * Build array with nodata-values
      */
     static public void setNodataValue(String key, double val) {
@@ -303,8 +301,7 @@ public class Behave {
     /**
      * Calculates the Rothermel equations. <br>
      *
-     * Wrapper for the actual calculation, it first checks for consistent
-     * data.
+     * Wrapper for the actual calculation, it first checks for consistent data.
      */
     public void calc() {
         resetOutputs();
@@ -346,8 +343,8 @@ public class Behave {
     }
 
     /**
-     *  Allows verification of input parameters.
-     *  @return true if fuel present and all input params have been set.
+     * Allows verification of input parameters.
+     * @return true if fuel present and all input params have been set.
      */
     public boolean verify() {
         checkFuel();
@@ -363,11 +360,7 @@ public class Behave {
 
         // Total weight
         w0 = w0_d1 + w0_d2 + w0_d3 + w0_lh + w0_lw;
-        if (w0 <= 0.) {
-            hasFuel = false;
-        } else {
-            hasFuel = true;
-        }
+        hasFuel = w0 > 0.0;
     }
 
     /**
@@ -395,11 +388,11 @@ public class Behave {
         return ros;
     }
 
-    public Map<String,Double> getMaxSpreadResults() {
+    public Map<String, Double> getMaxSpreadResults() {
         return resHashMap;
     }
 
-    public Map<String,Double> getNoWindNoSlopeResults() {
+    public Map<String, Double> getNoWindNoSlopeResults() {
         return resHashMapNoWS;
     }
 
@@ -413,8 +406,8 @@ public class Behave {
     }
 
     /**
-     * Sets the mean value, i.e. the expectation value, of a parameter.
-     * Useful for loading parameters from a property file.
+     * Sets the mean value, i.e. the expectation value, of a parameter. Useful for loading
+     * parameters from a property file.
      *
      * @param key Name of a Parameter
      * @param value Value of parameter
@@ -472,8 +465,7 @@ public class Behave {
         } else if (key.equalsIgnoreCase("asp")) {
             asp = value;
         } else if (key.equalsIgnoreCase("fuelModel")) {
-            fuelModel =
-                    new Double(value).intValue();
+            fuelModel = new Double(value).intValue();
         }
     }
 
@@ -527,7 +519,7 @@ public class Behave {
     /**
      * Updates the list containing the max spread results
      */
-    void updateResultList(Map<String,Double> resHashMap) {
+    void updateResultList(Map<String, Double> resHashMap) {
         resHashMap.put("I_r", new Double(I_r));
         resHashMap.put("sdr", new Double(sdr));
         resHashMap.put("efw", new Double(efw));
@@ -599,10 +591,10 @@ public class Behave {
         }
     }
 
-    /**************************************************************************
+    /** ************************************************************************
      * The main logic of rothermel wildfire behaviour calculation.
      *
-     *************************************************************************/
+     ************************************************************************ */
     void calcRothermel() throws Exception {
 
         // reset flags
@@ -650,7 +642,7 @@ public class Behave {
         // rate of spread: ros
         rateOfSpreadWithWindAndSlope();
 
-        /***********************************************************************/
+        /** ******************************************************************** */
         /* additional fire behaviour results                                   */
         //
         /* flame residence time: tau               */
@@ -735,8 +727,8 @@ public class Behave {
     }
 
     /**
-     * Transfers the cured portion of live herbaceous fuels into the
-     * dead herbaceous fuel load: w0_dh
+     * Transfers the cured portion of live herbaceous fuels into the dead herbaceous fuel load:
+     * w0_dh
      */
     protected void transferDeadFuel() {
         if (isDynamic) {
@@ -770,9 +762,8 @@ public class Behave {
      * - net fuel loadings (wn_..)<br/>
      *
      * Exceptions are thrown if<br/>
-     *  - w0    <= 0.0       no fuel specified<br/>
-     *  - sw_t  <= 0.0       surface-to-voume-ratios not properly specified<br/>
-     *  - depth <= 0.0       depth of fuel bed not properly specified<br/>
+     * - w0 <= 0.0 no fuel specified<br/> - sw_t <= 0.0 surface-to-voume-ratios not properly
+     * specified<br/> - depth <= 0.0 depth of fuel bed not properly specified<br/>
      */
     protected void calcFuel() throws Exception {
         // reset Fuel flag
@@ -806,7 +797,7 @@ public class Behave {
         wn_d = 0.;
         wn_l = 0.;
 
-        /**************************************************************/
+        /** *********************************************************** */
         // computing characteristic values
         //
         checkFuel();
@@ -840,8 +831,7 @@ public class Behave {
 
         //
         /**
-        characteristic surface to volume ratio => sigma
-        Rothermel 1972: eq. (71) and (72)
+         * characteristic surface to volume ratio => sigma Rothermel 1972: eq. (71) and (72)
          */
         if (sw_t <= 0.0) {
             throw new Exception("Surface-to-volume-ratio not defined!");
@@ -849,8 +839,7 @@ public class Behave {
         sigma = s2w_t / sw_t;
 
         /**
-        mean bulk density
-        Rothermel 1972: eq. (74)
+         * mean bulk density Rothermel 1972: eq. (74)
          */
         // see further down "beta"
         // rho_b should not be bigger than 0.5 of the particle density
@@ -861,7 +850,7 @@ public class Behave {
         rho_b = w0 / depth;
 
         /**
-        packing ratios
+         * packing ratios
          */
         // mean packing ratio
         beta = rho_b / rho_p;
@@ -878,8 +867,7 @@ public class Behave {
         beta_ratio = beta / beta_opt;
 
         /**
-        Net fuel loading
-        Rothermel 1972: eq. (60), adjusted by Albini 1976, p.88
+         * Net fuel loading Rothermel 1972: eq. (60), adjusted by Albini 1976, p.88
          */
         // compute the net combustible fuel loading of each fuel element, wn,
         // from w0 which includes the non-combustible mineral component s_t
@@ -918,8 +906,8 @@ public class Behave {
 
     /**
      * Calculate the mineral damping coefficient: eta_s <br>
-     *  Uses effective mineral content: s_e <br>
-     *   Rothermel 1972: eq. (62)
+     * Uses effective mineral content: s_e <br>
+     * Rothermel 1972: eq. (62)
      */
     protected void mineralDamping() {
         eta_s = 0.174 * pow(s_e / 100, -0.19);
@@ -928,13 +916,12 @@ public class Behave {
     /**
      * Calculates the moisture damping coefficients for dead and live fuel: eta_M.<br/>
      * <br/>
-     * moisture damping coefficient
-     * weighting factors for live moisture of extinction...
+     * moisture damping coefficient weighting factors for live moisture of extinction...
      * <br/>
      * Rothermel (1972): eq. (88)<br/>
-     *  (mx)_living = 2.9W(1-(M_f)_dead/0.3) - 0.226 (min = 0.3)<br/>
+     * (mx)_living = 2.9W(1-(M_f)_dead/0.3) - 0.226 (min = 0.3)<br/>
      * <br/>
-     *  => Albini (1976): page 89!<br/>
+     * => Albini (1976): page 89!<br/>
      * (mx)_living = 2.9W'(1-(M'_f)_dead/(mx)_dead) - 0.226 (min = mx)<br/>
      * <br/>
      *
@@ -991,7 +978,7 @@ public class Behave {
         }
 
         /*
-        moisture damping for live fuel
+         moisture damping for live fuel
          */
         // calc only if there is any live fuel available...
         // sw_l > 0 ensures that sumhl > 0
@@ -1053,16 +1040,14 @@ public class Behave {
     }
 
     /**
-     * Calculates the propagating flux ratio: xi  <br/>
+     * Calculates the propagating flux ratio: xi <br/>
      *
-     *  Rothermel 1972: eq. (42) <br/>
-     *  Formula: <br/>
-     *   with sigma[1/ft]: <br/>
-     *     xi = exp[(0.792 + 0.681* sqrt(sigma))*(beta + 0.1)] /
-     *          (192 + 0.259*sigma) <br/>
-     *   with sigma[1/m] : <br/>
-     *     xi = exp[(0.792 + 0.681*sqrt(.3048)*sqrt(sigma))*(beta + 0.1)] /
-     *          (192 + 0.259*0.3048*sigma)
+     * Rothermel 1972: eq. (42) <br/>
+     * Formula: <br/>
+     * with sigma[1/ft]: <br/>
+     * xi = exp[(0.792 + 0.681* sqrt(sigma))*(beta + 0.1)] / (192 + 0.259*sigma) <br/>
+     * with sigma[1/m] : <br/>
+     * xi = exp[(0.792 + 0.681*sqrt(.3048)*sqrt(sigma))*(beta + 0.1)] / (192 + 0.259*0.3048*sigma)
      */
     protected void propagatingFluxRatio() {
         xi = exp((0.792 + 0.37597 * sqrt(sigma)) * (beta + 0.1)) / (192 + 0.0791 * sigma);
@@ -1082,10 +1067,8 @@ public class Behave {
      */
     protected void heatSink() throws Exception {
         /**
-        Effective heating number:
-        epsilon = exp(-138 / sigma_ft)   (14)
-        = exp(-138 / (sigma_m * 0.3048)) conversion!
-        = exp( -452.76 / sigma)
+         * Effective heating number: epsilon = exp(-138 / sigma_ft) (14) = exp(-138 / (sigma_m *
+         * 0.3048)) conversion! = exp( -452.76 / sigma)
          */
         // if there is no fuel, go back...
         if (sw_t <= 0.) {
@@ -1108,10 +1091,8 @@ public class Behave {
             eps_lw = exp(-452.76 / sv_lw);
         }
         /**
-        Heat of Preignition:
-        Q_ig, [Btu/lb] = 1.05506 kJ / 0.4535 kg = 2.3265 kJ/kg
-        Q_ig    = 250.0 + 1116 * M_f    ; M_f [fraction]
-        = 581.5 + 2.3265 *(0.01 * M_f)  ; M_f [%]
+         * Heat of Preignition: Q_ig, [Btu/lb] = 1.05506 kJ / 0.4535 kg = 2.3265 kJ/kg Q_ig = 250.0
+         * + 1116 * M_f ; M_f [fraction] = 581.5 + 2.3265 *(0.01 * M_f) ; M_f [%]
          */
         q_d1 = 581.5 + 25.957 * m_d1;
         q_d2 = 581.5 + 25.957 * m_d2;
@@ -1120,7 +1101,7 @@ public class Behave {
         q_lw = 581.5 + 25.957 * m_lw;
 
         /**
-        Heat Sink
+         * Heat Sink
          */
         hskz = (sw_d1 * eps_d1 * q_d1) + (sw_d2 * eps_d2 * q_d2) + (sw_d3 * eps_d3 * q_d3)
                 + (sw_lh * eps_lh * q_lh) + (sw_lw * eps_lw * q_lw);
@@ -1129,10 +1110,10 @@ public class Behave {
 
     /**
      * Calculates the combined wind and slope factor: phi_t<br/>
-     *  -> spread direction: sdr<br>
-     *  -> effective wind spd: efw<br>
-     *  -> wind and slope coefficient: phi_t<br>
-     *  assumptions: wsp > 0. and/or slp > 0.
+     * -> spread direction: sdr<br>
+     * -> effective wind spd: efw<br>
+     * -> wind and slope coefficient: phi_t<br>
+     * assumptions: wsp > 0. and/or slp > 0.
      */
     protected void calcWindAndSlopeFactor() {
         // reset values
@@ -1180,9 +1161,9 @@ public class Behave {
          * vectors (versus the bearing between the two).  Normalizing this value to
          * +/- 180 does appear necessary for the sine and cosine functions that follow.
          *
-        splitRad = abs(wdr_r - asp_r) >= PI ?
-        wdr_r + asp_r - 2 * PI :
-        wdr_r - asp_r;
+         splitRad = abs(wdr_r - asp_r) >= PI ?
+         wdr_r + asp_r - 2 * PI :
+         wdr_r - asp_r;
          */
         // delta between wind and aspect
         splitRad = wdr_r - asp_r;
@@ -1208,10 +1189,9 @@ public class Behave {
         // Spread direction
         sdr = alDeg;
 
-        /***********************************************************************
-         * effective windspeed
-         * actually this is only the inverse function of phi_w
-         ***********************************************************************/
+        /** *********************************************************************
+         * effective windspeed actually this is only the inverse function of phi_w
+         ********************************************************************** */
         efw = (pow(vl / (C * pow(beta_ratio, -E)), 1 / B)) / 196.85;
         // rothermel 87: sets an upper limit on
         // the wind multiplication factor
@@ -1243,11 +1223,11 @@ public class Behave {
      * Called from calcWindAndSlopeFactor().<br/>
      *
      * conversion:<br/>
-     *  sigma [1/ft] = sigma[1/m] * 0.3048!<br/>
-     *  original formulae in Rothermel 1972, eq. 79,81,82,83,84<br/>
-     *     B = 0.013298 * pow(sigma,0.54);<br/>
-     *     C = 7.47 * exp(-0.06919 * pow(sigma,0.55));<br/>
-     *     E = 0.715 * exp(0.0001094 * sigma);<br/>
+     * sigma [1/ft] = sigma[1/m] * 0.3048!<br/>
+     * original formulae in Rothermel 1972, eq. 79,81,82,83,84<br/>
+     * B = 0.013298 * pow(sigma,0.54);<br/>
+     * C = 7.47 * exp(-0.06919 * pow(sigma,0.55));<br/>
+     * E = 0.715 * exp(0.0001094 * sigma);<br/>
      *
      */
     protected void windFactor() {
@@ -1278,27 +1258,27 @@ public class Behave {
     }
 
     /**
-     *  Calculates the reaction velocity: gamma' <br>
+     * Calculates the reaction velocity: gamma' <br>
      * <br>
      * exponent A:<br>
-     *  => Rothermel 1972 eq.(70), replaced by Albini (1976) (p.88) <br>
-     *  A = 133                 * sigma**-0.7913  ;sigma[1/ft] <br>
-     *  = 133 * 0.3048**-0.7913 * sigma**-0.7913  ;sigma[1/m] <br>
-     *  =        340.53         * sigma**-0.7913  ;sigma[1/m] <br>
+     * => Rothermel 1972 eq.(70), replaced by Albini (1976) (p.88) <br>
+     * A = 133 * sigma**-0.7913 ;sigma[1/ft] <br>
+     * = 133 * 0.3048**-0.7913 * sigma**-0.7913 ;sigma[1/m] <br>
+     * = 340.53 * sigma**-0.7913 ;sigma[1/m] <br>
      * <br>
-     *  maximum reaction velocity: <br>
-     *   => Rothermel 1972: (68), based on (36) <br>
-     *   conversion: <br>
-     *   gamma_max [min-1] = 60 gamma_max [s-1] <br>
-     *   Formulae: <br>
-     *   gamma_max   = sigma**1.5 / (495 + 0.0594* sigma**1.5) <br>
-     *   counter     = sigma**1.5 ;sigma [1/ft] <br>
-     *   = 1 * pow(0.3048, 1.5) * sigma**1.5  ;sigma [1/m] <br>
-     *   = 0.16828 * sigma**1.5 <br>
+     * maximum reaction velocity: <br>
+     * => Rothermel 1972: (68), based on (36) <br>
+     * conversion: <br>
+     * gamma_max [min-1] = 60 gamma_max [s-1] <br>
+     * Formulae: <br>
+     * gamma_max = sigma**1.5 / (495 + 0.0594* sigma**1.5) <br>
+     * counter = sigma**1.5 ;sigma [1/ft] <br>
+     * = 1 * pow(0.3048, 1.5) * sigma**1.5 ;sigma [1/m] <br>
+     * = 0.16828 * sigma**1.5 <br>
      * <br>
-     *   denominator = 495 + 0.0594 * sigma**1.5  ;sigma[1/ft] <br>
-     *   = 495*60 + 0.0594*60*0.16828 * sigma**1.5  ;sigma[1/m] <br>
-     *   = 29700  +       0.5997      * sigma**1.5  ;sigma[1/m] <br>
+     * denominator = 495 + 0.0594 * sigma**1.5 ;sigma[1/ft] <br>
+     * = 495*60 + 0.0594*60*0.16828 * sigma**1.5 ;sigma[1/m] <br>
+     * = 29700 + 0.5997 * sigma**1.5 ;sigma[1/m] <br>
      */
     protected void reactionVelocity() {
         A = 340.53 * pow(sigma, -0.7913);
@@ -1307,20 +1287,12 @@ public class Behave {
         gamma = gamma_max * pow(beta_ratio, A)
                 * exp(A * (1 - beta_ratio));
 
-
-
-
     }
 
     @Override
     public String toString() {
         return BehaveReporter.report(this);
 
-
     }
 
 }
-
-
-
-

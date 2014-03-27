@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.behave;
+package com.emxsys.wmt.wildfire.behave;
 
 import java.text.DecimalFormat;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2010-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.wildfire.surfacefire;
 
-import com.emxsys.behave.Behave;
 import com.emxsys.wmt.gis.api.Terrain;
 import static com.emxsys.wmt.visad.FireUnit.*;
 import com.emxsys.wmt.wildfire.api.FireBehaviorTuple;
@@ -37,6 +36,7 @@ import com.emxsys.wmt.wildfire.api.FireBehaviorService;
 import com.emxsys.wmt.wildfire.api.FireEnvironment;
 import com.emxsys.wmt.wildfire.api.FuelCondition;
 import com.emxsys.wmt.wildfire.api.FuelModel;
+import com.emxsys.wmt.wildfire.behave.Behave;
 import java.util.Map;
 import org.openide.util.Exceptions;
 import visad.CommonUnit;

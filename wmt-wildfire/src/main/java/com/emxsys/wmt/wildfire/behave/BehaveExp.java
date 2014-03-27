@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.behave;
+package com.emxsys.wmt.wildfire.behave;
 
 import static java.lang.Math.*;
 
@@ -52,7 +52,6 @@ public class BehaveExp extends Behave {
         super();
     }
 
-
     @Override
     protected void calcWindAndSlopeFactor() {
         // compute sdr, efw and phi_t
@@ -75,18 +74,17 @@ public class BehaveExp extends Behave {
         sdr_r = toRadians(sdr);
 
         double deltaRad = abs(sol_r - sdr_r);
-        double cos_deltaRad= cos(deltaRad);
+        double cos_deltaRad = cos(deltaRad);
         double sunlitFuel = 0;
-        if (deltaRad < PI ) {
-            sunlitFuel = (1 + cos_deltaRad)/2;
+        if (deltaRad < PI) {
+            sunlitFuel = (1 + cos_deltaRad) / 2;
         } else {
-            sunlitFuel = (1 - cos_deltaRad)/2;
+            sunlitFuel = (1 - cos_deltaRad) / 2;
         }
         // arbitrary value based on chemical reaction increase for every 10 deg C.
         double preheat = sunlitFuel * (fuelTempDelta / 10);
 
         phi_p = pow(beta, -0.3) * preheat;
     }
-
 
 }

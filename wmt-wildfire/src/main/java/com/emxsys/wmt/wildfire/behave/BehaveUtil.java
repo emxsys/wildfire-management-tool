@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@ import com.emxsys.wmt.util.MathUtil;
 import com.emxsys.wmt.wildfire.api.StdFuelMoistureScenario;
 import static java.lang.Math.*;
 
-
 /**
  * Utility class that calculates solar insolation, temperature, humidity, surface wind speed, and
  * fine fuel moisture content per the 1986 Rothermel et al equations.
@@ -44,10 +43,8 @@ import static java.lang.Math.*;
  * USDA Forest Service, Intermountain Research Station </ul>
  *
  * @author Bruce Schubert
- * @version $Id: BehaveUtil.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public class BehaveUtil
-{
+public class BehaveUtil {
 
     /**
      * Compute the Canadian Standard Daily Fine Fuel Moisture Code (FFMC) computes the fuel moisture
@@ -64,8 +61,7 @@ public class BehaveUtil
      * @return fuel moisture percent from derived from computed FFMC code
      */
     static public double calcCanadianStandardDailyFineFuelMoisture(double m_0, double T_f,
-        double H_f, double W, double R)
-    {
+                                                                   double H_f, double W, double R) {
 
         // f_0 - initial moisture converted to a FFMC
         double f_0 = 101d - m_0;
@@ -73,26 +69,18 @@ public class BehaveUtil
         // Equation #1 - adust the initial fuel moisture code (f0) for rain
         double f_R;     // f_0 modified for rain
         // if rain > 0.02"
-        if (R > 0.02)
-        {
+        if (R > 0.02) {
             double R_A = min(R, 1.5);
             double F;
-            if (R_A <= 0.055)
-            { // [inches]
+            if (R_A <= 0.055) { // [inches]
                 F = -56.0 - 55.6 * log(R_A + 0.04);
-            }
-            else if (R_A <= 0.225)
-            { // [inches]
+            } else if (R_A <= 0.225) { // [inches]
                 F = -1.0 - 18.2 * log(R_A - 0.04);
-            }
-            else
-            {
+            } else {
                 F = 14 - 8.25 * log(R_A - 0.075);
             }
             f_R = max(0, (F * f_0 / 100) + 1 - 8.73 * exp(-0.1117 * f_0));
-        }
-        else
-        {
+        } else {
             // little or no rain
             f_R = f_0;
         }
@@ -109,21 +97,16 @@ public class BehaveUtil
 
         // m - fine fuel moisture adjusted for humidity and wind
         double m;
-        if (MathUtil.nearlyEquals(m_R, E_D))
-        {
+        if (MathUtil.nearlyEquals(m_R, E_D)) {
             m = m_R;
-        }
-        // Wetting
-        else if (m_R < E_D)
-        {
+        } // Wetting
+        else if (m_R < E_D) {
             // fuel moisture is below the drying curve so a wetting trend is in effect
             // Equation #5
             //m = E_W + (m_R - E_W) / 1.9953;   -- original
             m = E_W + (E_W - m_R) / 1.9953;     // corrected based on Anderson 2009 87-10 
-        }
-        // Drying
-        else
-        {
+        } // Drying
+        else {
             // fuel moisture is above the drying curve so a drying trend is in effect
 
             // Here we constrain 20' wind to between 1 and 14 mph
@@ -134,8 +117,7 @@ public class BehaveUtil
         }
         // compute fine fuel moisture delta for temperature
         double delta = 0;
-        if (f_0 < 99.0)
-        {
+        if (f_0 < 99.0) {
             delta = max(-16.0, (T_f - 70d) * (0.63 - 0.0065 * f_R));
         }
         // final FFMC code constrained to between 0 and 99
@@ -144,7 +126,6 @@ public class BehaveUtil
         // FFMC code converted to fuel moisture
         return 101d - f;
     }
-
 
     /**
      *
@@ -161,8 +142,7 @@ public class BehaveUtil
      * @return fuel moisture [percent]
      */
     static public double calcCanadianHourlyFineFuelMoisture(double m_0, double H, double T_c,
-        double W_k)
-    {
+                                                            double W_k) {
         // Equation #1 [not used/applicatble] converts previous hours FFMC to fuel moisture percent
         // m_0 = previous hour's fuel moisture;
 
@@ -173,36 +153,30 @@ public class BehaveUtil
 
         // Equation #2a compute equilibruim moisture curve (EMC) for drying
         double E_d = 0.942 * pow(H, 0.679) + 11 * exp((H - 100) / 10)
-            + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
+                + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
         // Equation #2b compute equilibruim moisture curve (EMC) for wetting
         double E_w = 0.618 * pow(H, 0.753) + 10 * exp((H - 100) / 10)
-            + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
-        
-        if (m_0 > E_d)
-        {
+                + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
+
+        if (m_0 > E_d) {
             // Equations #3a and #3b compute log drying rate for hourly computation, log base 10
             double k_a = 0.424 * (1 - pow(H / 100, 1.7)) + 0.0694 * pow(W_k, 0.5) * (1 - pow(H / 100, 8));
             double k_d = k_a * 0.0579 * exp(0.0365 * T_c);
             // Equation #5a computes final fuel moisture percent
             m = E_d + (m_0 - E_d) * exp(-2.303 * k_d);
-        }
-        else if (m_0 < E_w)
-        {
+        } else if (m_0 < E_w) {
             // Equation #4a and #4b compute log wetting rate for hourly computation, log base 10
             double k_b = 0.424 * (1 - (pow((100 - H) / 100, 1.7)))
-                + 0.0694 * pow(W_k, 0.5) * (1 - (pow((100 - H) / 100, 8)));
+                    + 0.0694 * pow(W_k, 0.5) * (1 - (pow((100 - H) / 100, 8)));
             double k_w = k_b * 0.0579 * exp(0.0365 * T_c);
             // Equation #5b computes final fuel moisture percent
             //m = E_w + (E_w - m_0) * exp(-2.303 * k_w);    // anderson 2009 (77-5b)
             m = E_w - (E_w - m_0) * exp(-2.303 * k_w);    // rothemel pg 48
-        }
-        else
-        {
+        } else {
             m = m_0;
         }
         return m;
     }
-
 
     /**
      * Compute difference between fuel temperature and the air temperature due to solar heating and
@@ -214,8 +188,7 @@ public class BehaveUtil
      *
      * @return T_f temperature of fuel [fahrenheit]
      */
-    static public double calcFuelTemp(double I, double T_a, double U_h)
-    {
+    static public double calcFuelTemp(double I, double T_a, double U_h) {
         // Rothermel et al, 1986, page 9
         // Equation #1
         // The difference in temperature between the air and fuel is assumed
@@ -233,7 +206,6 @@ public class BehaveUtil
         return T_f;
     }
 
-
     /**
      * Compute the relative humidity for the air immediately adjacent to the fuel.
      *
@@ -242,8 +214,7 @@ public class BehaveUtil
      * @param T_a air temperature [fahrenheit]
      * @return H_f - relative humidity of the air next to the fuel [percent]
      */
-    static public double calcRelativeHumidityNearFuel(double H_a, double T_f, double T_a)
-    {
+    static public double calcRelativeHumidityNearFuel(double H_a, double T_f, double T_a) {
         // Rothermel et al, 1986, page 9
         // Equation #2
         // Correction for relative humidity as a function of the fuel temperature
@@ -253,28 +224,24 @@ public class BehaveUtil
         return H_f;
     }
 
-
     /**
      * Computes the solar irradiance.
      *
      * @param I_a irradiance at the forest floor perpendicular to the solar ray [cal/cm2*min]
      * @param r2 The earth-sun (center of mass) distance squared
-     * @param A solar elevation angle to the sun (-90 <= A <= 90) [radians]
-     * @return I - incident radiation on the forest floor [cal/cm2*min]
+     * @param A solar elevation angle to the sun (-90 <= A <= 90) [radians] @return
+     * I - incident radiation on the forest floor [cal/cm2*min]
      */
-    static public double calcSolarIrradianceOnHorzSurface(double I_a, double r2, double A)
-    {
+    static public double calcSolarIrradianceOnHorzSurface(double I_a, double r2, double A) {
         // Rothermel et al, 1986, page 9
         // Equation #3
         // I = (I_a / r2) * sin A
-        if (A <= 0)
-        {
+        if (A <= 0) {
             return 0;
         }
         double I = (I_a / r2) * sin(A);
         return I;
     }
-
 
     /**
      * Computes the irradiance on a slope (neglecting the small variation in r)
@@ -287,8 +254,7 @@ public class BehaveUtil
      * @return incident radiation intensity [cal/cm2*min]
      */
     static public double calcIrradianceOnASlope(double alpha, double beta, double A, double Z,
-        double I_a)
-    {
+                                                double I_a) {
         // Rothermel et al, 1986, page 11
         // Equation #9, 10 and 11
         //  I = Ia * sin zeta
@@ -305,8 +271,7 @@ public class BehaveUtil
         //
 
         // Precondition: Sun above the horizon
-        if (A <= 0)
-        {
+        if (A <= 0) {
             return 0;
         }
 
@@ -321,7 +286,6 @@ public class BehaveUtil
         return (I > 0) ? I : 0;
     }
 
-
     /**
      * Computes the solar altitude angle A, i.e., how high is the sun from the horizon.
      *
@@ -330,8 +294,7 @@ public class BehaveUtil
      * @param delta solar declination [radians]
      * @return solar altitude angle [radians]
      */
-    static public double calcSolarAltitudeAngle(double h, double phi, double delta)
-    {
+    static public double calcSolarAltitudeAngle(double h, double phi, double delta) {
         // Rothermel et al, 1986, page 10
         // Equation #4
         // The solar altitude angle A, is given by
@@ -342,14 +305,11 @@ public class BehaveUtil
         return asin(sinA);
     }
 
-
-    static public double calcHourAngle(double A, double phi, double delta)
-    {
+    static public double calcHourAngle(double A, double phi, double delta) {
         // This equation computes the hour angle from the solar altitude angle
         double sinh = (sin(A) - sin(phi) * sin(delta)) / (cos(phi) * cos(delta));
         return asin(sinh);
     }
-
 
     /**
      * Computes the time of sunrise for latitudes less that 66.5 Rothermel et al, 1986, page 48
@@ -358,8 +318,7 @@ public class BehaveUtil
      * The text includes additional conditions for testing for perpetual day or perpetual night...
      * not implemented.
      */
-    static public double calcSunrise(double phi, double delta)
-    {
+    static public double calcSunrise(double phi, double delta) {
         assert (abs(phi) < toDegrees(66.5));
         // TODO: Add tests for perpetual day/night (return 0 for no sunrise/sunset)
 
@@ -369,14 +328,11 @@ public class BehaveUtil
         return t;
     }
 
-
-    static public double calcSunset(double phi, double delta)
-    {
+    static public double calcSunset(double phi, double delta) {
         double t_r = calcSunrise(phi, delta);
         double t_s = 24 - t_r;
         return t_s;
     }
-
 
     /**
      * Computes the solar azimuth angle, Z, i.e., where is sun relative to East. At 0600 local time
@@ -388,15 +344,14 @@ public class BehaveUtil
      * @param A solar altitude angle [radians]
      * @return solar azimuth angle 0 <= Z <= 2PI relative to East [radians]
      */
-    static public double calcSolarAzimuthAngle(double h, double phi, double delta, double A)
-    {
+    static public double calcSolarAzimuthAngle(double h, double phi, double delta, double A) {
         // Rothermel et al, 1986, page 11
         // Equation #5 and #6. The solar azimuth angle Z, is given by simple
         // ratios of equations 5 and 6.
 
         // Eq #5
         double tanZ = ((sin(h) * cos(delta) * sin(phi)) - (sin(delta) * cos(phi)))
-            / (cos(h) * cos(delta));
+                / (cos(h) * cos(delta));
         // Eq #6
         double cosZ = cos(h) * (cos(delta) / cos(A));
 
@@ -406,29 +361,20 @@ public class BehaveUtil
         // sync it up with the cos value which is not influenced by the sign of phi --
         // A angle used in cosZ is is always positive at noon regardless of hemisphere.
         double Z = 0;
-        if (phi < 0)
-        {
+        if (phi < 0) {
             tanZ = -tanZ;
         }
-        if (tanZ >= 0 && cosZ >= 0)
-        {
+        if (tanZ >= 0 && cosZ >= 0) {
             Z = atan(tanZ);         // late morning (east to south)
-        }
-        else if (tanZ < 0 && cosZ < 0)
-        {
+        } else if (tanZ < 0 && cosZ < 0) {
             Z = acos(cosZ);         // early afternnon (south to west)
-        }
-        else if (tanZ >= 0 && cosZ < 0)
-        {
+        } else if (tanZ >= 0 && cosZ < 0) {
             Z = atan(tanZ) + PI;    // night (west to north)
-        }
-        else
-        {
+        } else {
             Z = 2 * PI - acos(cosZ);// early morning (north to east)
         }
         return Z;
     }
-
 
     /**
      * Computes hour angle from local 6am
@@ -436,13 +382,11 @@ public class BehaveUtil
      * @param timeProjection local time in 24hr format
      * @return hour angle 0600=0 deg; 1200=90 deg; 1800=180 deg; 0000=270[radians]
      */
-    static public double calcLocalHourAngle(double t)
-    {
+    static public double calcLocalHourAngle(double t) {
         // deg per hour = (360.0 / 24.0) = 15
         double h = 15 * ((t >= 6.0 ? t : t + 24) - 6.0);
         return toRadians(h);
     }
-
 
     /**
      * Computes the earth-sun (center of mass) distance squared.
@@ -450,15 +394,13 @@ public class BehaveUtil
      * @param delta solar declination [radians]
      * @return r2 earth-sun distance squared
      */
-    static public double calcEarthSunDistanceSqrd(double delta)
-    {
+    static public double calcEarthSunDistanceSqrd(double delta) {
         // Rothermel et al, 1986, page 11
         // Equation #7
         // The earth-sun distance (squared) by analytic soltion to tabular values
         double r2 = 0.999847 + (0.001406 * toDegrees(delta));
         return r2;
     }
-
 
     /**
      * Computes the solar declination angle for a given day of the year. Solar Declination angle is
@@ -472,15 +414,13 @@ public class BehaveUtil
      * @param NJ the julian date (day of the year)
      * @return the solar declination angle [degrees]
      */
-    static public double calcSolarDeclinationAngle(long NJ)
-    {
+    static public double calcSolarDeclinationAngle(long NJ) {
         // Rothermel et al, 1986, page 11
         // Equation #8
         // 0.9863 = 360 degrees /365 days
         double delta = 23.5 * sin(toRadians(0.9863) * (284 + NJ));
         return toRadians(delta);
     }
-
 
     /**
      * Computes the julian date (day of the year)
@@ -490,8 +430,7 @@ public class BehaveUtil
      * @param Yr
      * @return NJ - the day of the year
      */
-    static public int calcJulianDate(int Mo, int Dy, int Yr)
-    {
+    static public int calcJulianDate(int Mo, int Dy, int Yr) {
         // Rothermel et al, 1986, page 11
         // Equation #8
 
@@ -502,7 +441,6 @@ public class BehaveUtil
         return NJ;
     }
 
-
     /**
      * Computes irradiance at forest floor perpendicular to solar ray (1 [cal/cm2*min] = 697.8
      * [watts/m2])
@@ -512,8 +450,7 @@ public class BehaveUtil
      * @param p is the transparency coefficient
      * @return attenuated irradiance [cal/cm2*min]
      */
-    static public double calcAttenuatedIrradiance(double M, double S_c, double p)
-    {
+    static public double calcAttenuatedIrradiance(double M, double S_c, double p) {
         // I_a = I_M * tau_n
         //  where:
         //      tau_n is net transmittance of clouds and trees
@@ -524,8 +461,7 @@ public class BehaveUtil
         //      p is the transparency coefficient
         //      M is the optical air mass, the ratio of the
         //
-        if (M <= 0)
-        {
+        if (M <= 0) {
             return 0;
         }
         final double I_o = 1.98;        // solar constant [cal/cm2*min]
@@ -537,7 +473,6 @@ public class BehaveUtil
         return I_a;
     }
 
-
     /**
      * Computes the optical air mass, i.e., the ratio of the optical path length of radiation
      * through the atmosphere at angle A, to the path length toward the zenith at sea level.
@@ -546,18 +481,15 @@ public class BehaveUtil
      * @param E the elevation at angle A [feet]
      * @return M the optical air mass ratio
      */
-    static public double calcOpticalAirMass(double A, double E)
-    {
+    static public double calcOpticalAirMass(double A, double E) {
         // Equation #16
         // M = (absolute_pressure / sea_level_pressure) csc A = exp(-0.0000448E) csc A
         double M = 0;
-        if (A > 0)
-        {
+        if (A > 0) {
             M = exp(-0.0000448 * E) * 1.0 / sin(A);
         }
         return M;
     }
-
 
     /**
      * Sinusoidal curve linking 1400 temp to temp at sunset - used to calculate temperature for each
@@ -573,12 +505,10 @@ public class BehaveUtil
      * @return
      */
     static public double calcAirTempLateAfternoon(double timeProjection, double timeSunset,
-        double temp1400, double tempSunset)
-    {
+                                                  double temp1400, double tempSunset) {
         assert (timeProjection >= 14);
         return temp1400 + (temp1400 - tempSunset) * (cos(toRadians(90 * (timeProjection - 14) / (timeSunset - 14))) - 1);
     }
-
 
     /**
      * Sinusoidal curve linking sunset temp to temp at sunrise - used to calculate temperature for
@@ -595,16 +525,13 @@ public class BehaveUtil
      * @return
      */
     static public double calcAirTempNighttime(double timeProjection, double timeSunset,
-        double timeSunrise, double tempSunset, double tempSunrise)
-    {
+                                              double timeSunrise, double tempSunset, double tempSunrise) {
         timeSunrise += 24;
-        if (timeProjection < timeSunset)
-        {
+        if (timeProjection < timeSunset) {
             timeProjection += 24;
         }
         return tempSunset + (tempSunrise - tempSunset) * sin(toRadians(90 * (timeProjection - timeSunset) / (timeSunrise - timeSunset)));
     }
-
 
     /**
      * Sinusoidal curve linking sunrise temp to temp at noon - used to calculate temperature for
@@ -620,12 +547,10 @@ public class BehaveUtil
      * @return
      */
     static public double calcAirTempMorning(double timeProjection, double timeSunrise,
-        double tempSunrise, double temp1200)
-    {
+                                            double tempSunrise, double temp1200) {
         assert (timeProjection <= 12.0);
         return temp1200 + (tempSunrise - temp1200) * cos(toRadians(90 * (timeProjection - timeSunrise) / (12.0 - timeSunrise)));
     }
-
 
     /**
      * Sinusoidal curve linking 1400 humidity to humidity at sunset - used to calculate humidity for
@@ -642,14 +567,12 @@ public class BehaveUtil
      * @return
      */
     static public double calcHumidityLateAfternoon(double timeProjection, double timeSunset,
-        double rh1400, double rhSunset)
-    {
+                                                   double rh1400, double rhSunset) {
         assert (timeProjection >= 14);
         assert (timeProjection <= timeSunset);
 
         return rh1400 + (rh1400 - rhSunset) * (cos(toRadians(90 * (timeProjection - 14) / (timeSunset - 14))) - 1);
     }
-
 
     /**
      * Sinusoidal curve linking sunset humidity to humidity at sunrise - used to calculate relative
@@ -666,16 +589,13 @@ public class BehaveUtil
      * @return
      */
     static public double calcHumidityNighttime(double timeProjection, double timeSunset,
-        double timeSunrise, double rhSunset, double rhSunrise)
-    {
+                                               double timeSunrise, double rhSunset, double rhSunrise) {
         timeSunrise += 24;
-        if (timeProjection < timeSunset)
-        {
+        if (timeProjection < timeSunset) {
             timeProjection += 24;
         }
         return rhSunset + (rhSunrise - rhSunset) * sin(toRadians(90 * (timeProjection - timeSunset) / (timeSunrise - timeSunset)));
     }
-
 
     /**
      * Sinusoidal curve linking sunrise humidty to humidty at noon - used to calculate humidty for
@@ -691,12 +611,10 @@ public class BehaveUtil
      * @return
      */
     static public double calcHumidityMorning(double timeProjection, double timeSunrise,
-        double rhSunrise, double rh1200)
-    {
+                                             double rhSunrise, double rh1200) {
         assert (timeProjection <= 12.0);
         return rh1200 + (rhSunrise - rh1200) * cos(toRadians(90 * (timeProjection - timeSunrise) / (12.0 - timeSunrise)));
     }
-
 
     /**
      * Computes the wind speed at the fuel level from 20 foot wind speeds
@@ -705,25 +623,21 @@ public class BehaveUtil
      * @param h vegitation height [feet]
      * @return wind speed at vegetation height
      */
-    static public double calcWindSpeedAtFuelLevel(double U_20, double h)
-    {
+    static public double calcWindSpeedAtFuelLevel(double U_20, double h) {
         // Equation #36
         // The ratio of windspeed at vegetation height to that at
         // 20 feet above the vegitation is given by:
         //  U_h' / U_20+h' = 1 / ln((20 + 0.36 * h') / 0.13 * h')
         //      where:
         //          h' = vegitation height [feet]
-        if (h == 0)
-        {
+        if (h == 0) {
             h = 0.1;
         }
         double U_h = (1.0 / log((20 + 0.36 * h) / (0.13 * h))) * U_20;
         return U_h;
     }
 
-
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
 
         FuelMoisture fm = StdFuelMoistureScenario.LowDead_FullyCuredHerb.getFuelMoisture();
         double m_0 = 4.2;           // [percent]
@@ -749,11 +663,10 @@ public class BehaveUtil
 
         double T_m = (T_a - 32) * .5556; // [celcius]
         double W_m = W * 1.609;    // [kph]
-        for (int i = 0; i <= 24; i++)
-        {
+        for (int i = 0; i <= 24; i++) {
             double result = calcCanadianHourlyFineFuelMoisture(m_0, H_f, T_m, W_m);
             System.out.println("CanadianHourlyFineFuelMoisture = " + result
-                + " @ " + (i + 14 < 24 ? i + 14 : i - 10) + ":00 local");
+                    + " @ " + (i + 14 < 24 ? i + 14 : i - 10) + ":00 local");
             m_0 = result;
         }
 
