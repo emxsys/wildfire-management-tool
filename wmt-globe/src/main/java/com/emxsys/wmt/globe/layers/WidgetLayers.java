@@ -131,16 +131,16 @@ public class WidgetLayers {
         for (Layer layer : ll) {
             if (layer instanceof CompassLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_COMPASS, BasicLayerGroup.Widget));
+                list.add(new GisLayerProxy(layer, LAYER_COMPASS, BasicLayerGroup.Widget));
             } else if (layer instanceof WorldMapLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_WORLDMAP, BasicLayerGroup.Widget));
+                list.add(new GisLayerProxy(layer, LAYER_WORLDMAP, BasicLayerGroup.Widget));
             } else if (layer instanceof ViewControlsLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_CONTROLS, BasicLayerGroup.Widget));
+                list.add(new GisLayerProxy(layer, LAYER_CONTROLS, BasicLayerGroup.Widget));
             } else if (layer instanceof ScalebarLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_SCALEBAR, BasicLayerGroup.Widget));
+                list.add(new GisLayerProxy(layer, LAYER_SCALEBAR, BasicLayerGroup.Widget));
             }
         }
 
@@ -148,7 +148,7 @@ public class WidgetLayers {
         if (layersFolder != null) {
             Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
             for (Layer layer : layers) {
-                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerProxy(layer));
             }
         }
         return list;

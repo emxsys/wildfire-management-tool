@@ -55,13 +55,17 @@ import org.openide.util.lookup.InstanceContent;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class GisLayerAdaptor implements GisLayer {
+public class GisLayerProxy implements GisLayer {
 
     protected InstanceContent content = new InstanceContent();
     protected Lookup lookup;
     private final Layer layer;
 
-    public GisLayerAdaptor(Layer layer) {
+    /**
+     * Constructor used to create a proxy for a WorldWind Layer.
+     * @param layer The WorldWind Layer needing a proxy.
+     */
+    public GisLayerProxy(Layer layer) {
         this.layer = layer;
         // add the layer implementation to this provider's lookup
         this.content.add(this.layer);
@@ -88,7 +92,7 @@ public class GisLayerAdaptor implements GisLayer {
         }
     }
 
-    public GisLayerAdaptor(Layer layer, LayerType type, LayerGroup role, LayerCategory category) {
+    public GisLayerProxy(Layer layer, LayerType type, LayerGroup role, LayerCategory category) {
         this.layer = layer;
         // add the layer implementation to this provider's lookup
         this.content.add(this.layer);
@@ -97,7 +101,7 @@ public class GisLayerAdaptor implements GisLayer {
         updateLayerAttributes(type, role, category, null);
     }
 
-    public GisLayerAdaptor(Layer layer, String name, LayerGroup group) {
+    public GisLayerProxy(Layer layer, String name, LayerGroup group) {
         this.layer = layer;
         this.layer.setName(name);
         // add the layer implementation to this provider's lookup
@@ -105,6 +109,15 @@ public class GisLayerAdaptor implements GisLayer {
 
         updateCapabilities();
         updateLayerAttributes(BasicLayerType.Other, group, BasicLayerCategory.Other, null);
+    }
+
+    /**
+     * Convenience method. Gets the implementation layer object. The implementation can also be found
+     * this the lookup.
+     * @return The WorldWind Layer implementation.
+     */
+    public Layer getLayerImpl() {
+        return layer;
     }
 
     @Override

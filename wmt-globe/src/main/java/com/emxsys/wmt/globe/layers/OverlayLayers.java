@@ -36,6 +36,8 @@ import gov.nasa.worldwind.layers.Layer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
@@ -117,14 +119,31 @@ public class OverlayLayers {
     public static String LAYER_MGRS_GRATICULE = Bundle.CTL_MGRSGraticule();
     public static String LAYER_PLACE_NAMES = Bundle.CTL_PlaceNames();
 
+    private static final Logger logger = Logger.getLogger(OverlayLayers.class.getName());
+
     public static List<GisLayer> getLayers() {
+
         ArrayList<GisLayer> list = new ArrayList<>();   // return value
+        // Process the layers; there are three types:
+        // 1) Native WorldWind Layers
+        // 2) GisLayers with a Layer super class
+        // 3) GisLayers with a Layer aggregate (in the lookup)
         FileObject layersFolder = FileUtil.getConfigFile("WorldWind/Layers/Overlay");
         if (layersFolder != null) {
-            Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
-            for (Layer layer : layers) {
-                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
-            }
+            // Lookup the classes in the Layer class hierarchy
+            Collection<? extends Layer> wwLayers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
+            wwLayers.stream().forEach((wwLayer) -> {
+                list.add(wwLayer instanceof GisLayer ? (GisLayer) wwLayer : new GisLayerProxy(wwLayer));
+            });
+            // Lookup the GISLayer with an aggregate Layer object
+            Collection<? extends GisLayer> gisLayers = Lookups.forPath(layersFolder.getPath()).lookupAll(GisLayer.class);
+            gisLayers.stream().forEach((gisLayer) -> {
+                if (!(gisLayer instanceof Layer) && gisLayer.getLookup().lookup(Layer.class) != null) {
+                    list.add(gisLayer);
+                } else {
+                    logger.log(Level.SEVERE, "GisLayer [{0}] was not initialized because it is not a Layer nor has a Layer.", gisLayer.getName());
+                }
+            });
         }
         return list;
     }

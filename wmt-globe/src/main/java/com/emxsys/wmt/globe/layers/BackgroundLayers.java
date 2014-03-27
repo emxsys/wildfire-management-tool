@@ -118,13 +118,13 @@ public class BackgroundLayers {
         for (Layer layer : ll) {
             if (layer instanceof StarsLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_STARS, BasicLayerGroup.Background));
+                list.add(new GisLayerProxy(layer, LAYER_STARS, BasicLayerGroup.Background));
             } else if (layer instanceof SunLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_SUNLIGHT, BasicLayerGroup.Background));
+                list.add(new GisLayerProxy(layer, LAYER_SUNLIGHT, BasicLayerGroup.Background));
             } else if (layer instanceof SkyGradientLayer) {
                 ll.remove(layer);
-                list.add(new GisLayerAdaptor(layer, LAYER_SKY, BasicLayerGroup.Background));
+                list.add(new GisLayerProxy(layer, LAYER_SKY, BasicLayerGroup.Background));
             }
         }
         
@@ -132,7 +132,7 @@ public class BackgroundLayers {
         if (layersFolder != null) {
             Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
             for (Layer layer : layers) {
-                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerProxy(layer));
             }
         }
         return list;

@@ -32,7 +32,7 @@ package com.emxsys.wmt.globe.util;
 import com.emxsys.wmt.globe.layers.WmsLayerInfo;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.util.ModuleUtil;
-import com.emxsys.wmt.globe.layers.GisLayerAdaptor;
+import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
@@ -88,7 +88,7 @@ public class LayerUtil {
         ArrayList<Layer> layers = hashMap.get(category);
         ArrayList<GisLayer> gisLayers = new ArrayList<>(layers.size());
         for (Layer layer : layers) {
-            gisLayers.add(new GisLayerAdaptor(layer));
+            gisLayers.add(new GisLayerProxy(layer));
         }
         return gisLayers;
     }
@@ -98,7 +98,7 @@ public class LayerUtil {
         ArrayList<Layer> wwLayers = hashMap.get(role);
         ArrayList<GisLayer> gisLayers = new ArrayList<>(wwLayers.size());
         for (Layer layer : wwLayers) {
-            gisLayers.add(new GisLayerAdaptor(layer));
+            gisLayers.add(new GisLayerProxy(layer));
         }
         return gisLayers;
     }

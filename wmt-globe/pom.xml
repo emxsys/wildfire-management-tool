@@ -196,6 +196,9 @@
                         <publicPackage>com.emxsys.wmt.globe.actions</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.layers</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.markers</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.markers.ics</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.markers.pushpins</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.render</publicPackage>
                     </publicPackages>
                     <nbmResources> 
                         <nbmResource>
@@ -216,8 +219,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>

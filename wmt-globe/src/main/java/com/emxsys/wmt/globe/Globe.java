@@ -33,6 +33,7 @@ import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
@@ -41,7 +42,7 @@ import com.emxsys.wmt.gis.api.viewer.GisViewer;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
-import com.emxsys.wmt.globe.layers.GisLayerAdaptor;
+import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
@@ -92,8 +93,8 @@ public class Globe implements GisViewer {
     private static Globe INSTANCE;
 
     /**
-     * Do not call! Used by @ServiceProvider.
-     * Use getInstance() or Lookup.getDefault().lookup(Globe.class) instead.
+     * Do not call! Used by @ServiceProvider. Use getInstance() or
+     * Lookup.getDefault().lookup(Globe.class) instead.
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Globe() {
@@ -158,18 +159,17 @@ public class Globe implements GisViewer {
         for (BasicLayerGroup layerGroup : BasicLayerGroup.values()) {
             DummyLayer dummyLayer = new DummyLayer(layerGroup);
             this.wwm.getLayers().add(layerGroup.getIndex(), dummyLayer);
-            this.gisLayers.add(new GisLayerAdaptor(dummyLayer));
+            this.gisLayers.add(new GisLayerProxy(dummyLayer));
         }
         addAll(BackgroundLayers.getLayers());
         addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
         addAll(WidgetLayers.getLayers());
 
-
         // Update the UI
         ReticuleStatusLine.getInstance().initialize();
         this.wwm.getWorldWindow().setVisible(true);
-        
+
         this.initialized = true;
     }
 
@@ -223,9 +223,14 @@ public class Globe implements GisViewer {
             if (group == null) {
                 throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + " must have a LayerRole in its lookup.");
             }
+            // Get the WorldWind Layer implementation from the lookup or class hierarchy
             Layer layerImpl = gisLayer.getLookup().lookup(Layer.class);
             if (layerImpl == null) {
-                throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + "must have a Layer implemenation in its lookup.");
+                if (gisLayer instanceof Layer) {
+                    layerImpl = (Layer) gisLayer;
+                } else {
+                    throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + "must have a Layer implemenation in its lookup.");
+                }
             }
             // Don't re-add the layer to WorldWind, just add it to our internal list
             for (Layer l : this.wwm.getLayers()) {
@@ -291,7 +296,7 @@ public class Globe implements GisViewer {
 
     @Override
     public Coord3D getLocationAtCenter() {
-        throw new UnsupportedOperationException("getLocationAtCenter");
+        return getLookup().lookup(ReticuleCoordinateProvider.class).getReticuleCoordinate();
     }
 
     @Override

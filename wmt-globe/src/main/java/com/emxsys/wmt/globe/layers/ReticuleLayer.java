@@ -39,7 +39,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import java.util.logging.Logger;
 
 /**
- * The ReticuleLayer renders a crosshair reticule on the globe and publishes it's geographical
+ * The ReticuleLayer renders a cross-hair reticule on the globe and publishes it's geographical
  * coordinate to ReticuleCoordinateEvent listeners.
  *
  * @author Bruce Schubert
@@ -52,6 +52,7 @@ public class ReticuleLayer extends CrosshairLayer {
 
     public ReticuleLayer() {
         super("com/emxsys/wmt/globe/images/32x32-crosshair-outline.png");
+        // The Globe is the ReticuleCoordinateProvider; this class creates and fires the events.
         eventProvider = Globe.getInstance().getLookup().lookup(GlobeCoordinateProvider.class);
         if (eventProvider == null) {
             logger.warning("A GlobeCoordinateProvider was not found in the Globe's lookup. No ReticuleChangeEvents will be fired.");

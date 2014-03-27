@@ -163,7 +163,7 @@ public class BaseMapLayers {
         } else {
             Collection<? extends Layer> layers = Lookups.forPath(layersFolder.getPath()).lookupAll(Layer.class);
             for (Layer layer : layers) {
-                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerAdaptor(layer));
+                list.add(layer instanceof GisLayer ? (GisLayer) layer : new GisLayerProxy(layer));
             }
         }
         return list;
