@@ -29,18 +29,15 @@
  */
 package com.emxsys.wmt.visad;
 
-import com.emxsys.wmt.visad.GeneralUnit;
 import visad.CommonUnit;
 import visad.RealType;
 
-
 /**
  * General Purpose VisAD RealTypes.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class GeneralType
-{
+public class GeneralType {
 
     /** Distance in meters */
     public static final RealType Distance;
@@ -48,13 +45,13 @@ public class GeneralType
     public static final RealType DISTANCE_MI;
     /** Distance in nautical miles */
     public static final RealType DISTANCE_NM;
+    // Time
+    public static final RealType TIME;
 
-
-
-    static
-    {
+    static {
         Distance = RealType.getRealType("Distance", CommonUnit.meter, null);
         DISTANCE_MI = RealType.getRealType("distance:mi", GeneralUnit.mile, null);
         DISTANCE_NM = RealType.getRealType("distance:nm", GeneralUnit.nautical_mile, null);
+        TIME = RealType.getRealType("local_time:sec", CommonUnit.secondsSinceTheEpoch, null);
     }
 }
