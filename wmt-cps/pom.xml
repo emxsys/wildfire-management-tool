@@ -13,6 +13,7 @@
     <packaging>nbm</packaging>
 
     <name>WMT CPS</name>
+    <description>The Campbell Prediction System</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +39,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>RELEASE74</version>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -52,7 +53,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>3.11</version>
                 <extensions>true</extensions>
             </plugin>
 
@@ -62,8 +62,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -78,5 +78,4 @@
             </plugin>
         </plugins>
     </build>
-    <description>The Campbell Prediction System</description>
 </project>
