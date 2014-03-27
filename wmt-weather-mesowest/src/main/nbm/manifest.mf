@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Install: com/emxsys/wmt/weather/mesowest/Installer.class
+OpenIDE-Module-Localizing-Bundle: com/emxsys/wmt/weather/mesowest/Bundle.properties
