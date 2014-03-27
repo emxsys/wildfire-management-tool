@@ -42,6 +42,7 @@ import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
@@ -63,16 +64,23 @@ import visad.VisADException;
 
 public final class MesoWestLayer extends RenderableGisLayer {
 
+    /** The layer name as it appears in the Layer Manager */
     public static String LAYER_MESOWEST = Bundle.CTL_MesoWest();
-
-    private final AtomicReference<ReticuleCoordinateEvent> event = new AtomicReference<>(
+    /** The coordinate event obtained by the listener */
+    private final AtomicReference<ReticuleCoordinateEvent> coordEvent = new AtomicReference<>(
             new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
-    private static final RequestProcessor RP = new RequestProcessor(MesoWestLayer.class);
-    private Task TASK;
-
+    /** Event task processor */
+    private static final RequestProcessor taskProcessor = new RequestProcessor(MesoWestLayer.class);
+    /** Event task */
+    private Task updateWeatherTask;
+    /** Event provider */
     private ReticuleCoordinateProvider coordProvider = null;
+    /** Last coordinate processed */
     private Coord3D lastCoord = GeoCoord3D.ZERO_POSITION;
 
+    /**
+     * Constructor for a MesoWestLayer with default attributes.
+     */
     public MesoWestLayer() {
         super(LAYER_MESOWEST, BasicLayerGroup.Overlay, BasicLayerType.Other, BasicLayerCategory.Other);
         setEnabled(false);
@@ -91,23 +99,29 @@ public final class MesoWestLayer extends RenderableGisLayer {
         }
     }
 
+    /**
+     * Coal/ese and process ReticuleCoordinateEvent events with a task processor.
+     * @param evt 
+     */
     private void processEvent(ReticuleCoordinateEvent evt) {
-        this.event.set(evt);
-
-        // Lazy updateWeather task initialization
-        if (this.TASK == null) {
-            this.TASK = RP.create(() -> {
+        coordEvent.set(evt);
+        // Lazy task initialization
+        if (updateWeatherTask == null) {
+            updateWeatherTask = taskProcessor.create(() -> {
                 updateWeather();
-            }, true); // true == initiallyFinished
+            }, true); // true = initiallyFinished state
         }
         // Sliding task: coallese the update events into 1000ms intervals
-        if (this.TASK.isFinished()) {
-            this.TASK.schedule(1000); // update in 1 second
+        if (updateWeatherTask.isFinished()) {
+            updateWeatherTask.schedule(1000); // update in 1 second
         }
     }
 
+    /**
+     * Update the weather field from the last coordinate.
+     */
     private void updateWeather() {
-        ReticuleCoordinateEvent evt = event.get();
+        ReticuleCoordinateEvent evt = coordEvent.get();
         Coord3D coord = evt.getCoordinate();
         if (coord.isMissing()) {
             return;
@@ -116,11 +130,11 @@ public final class MesoWestLayer extends RenderableGisLayer {
             RealTuple delta = (RealTuple) coord.subtract(lastCoord);
             double[] values = delta.getValues();
             if ((Math.abs(values[0]) > 0.1) || (Math.abs(values[1]) > 0.1)) {
-                System.out.println(delta.longString());
+                //System.out.println(delta.longString());
                 lastCoord = coord;
-                Field curWx = MesoWestWeatherProvider.getInstance().getLatestWeather(
-                        coord, Reals.newDistance(25.0, GeneralUnit.mile));
-                System.out.println(curWx.toString());
+                Field latestWx = MesoWestWeatherProvider.getInstance().getLatestWeather(
+                        coord, Reals.newDistance(25.0, GeneralUnit.mile), Duration.ofHours(24));
+                //System.out.println(curWx.toString());
             }
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);

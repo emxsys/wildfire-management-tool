@@ -38,16 +38,14 @@ import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import static com.emxsys.wmt.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
@@ -190,7 +188,7 @@ public class MesoWestWeatherProvider implements WeatherProvider {
      * @param radius The radius of the area of interest; the value will be converted to miles.
      * @return A {@code FlatField}: ( (lat, lon ) -> ( air_temp, RH, wind_spd, wind_dir ) )
      */
-    public Field getLatestAgedWeather(Coord2D coord, Real radius, Duration age) {
+    public Field getLatestWeather(Coord2D coord, Real radius, Duration age) {
         try {
             // Build the query string and URL
             String query = String.format(LATEST_WX_RADIUS_AGE_QUERY,
@@ -251,13 +249,13 @@ public class MesoWestWeatherProvider implements WeatherProvider {
             // is stuck in the data. We detect this by examining the values in the date_time array.
             // Create an array of date_time "ageHrs" to validate usefullness of sensor values.
             JSONArray times = (JSONArray) obs.get(DATE_TIME);
-            double[] ageHrs = new double[times.size()];
+            long[] ageHrs = new long[times.size()];
             for (int j = 0; j < times.size(); j++) {
                 String time = (String) times.get(j);
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
-                Date then = df.parse(time);
-                Date now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
-                ageHrs[j] = (now.getTime() - then.getTime()) / 360000;
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime then = LocalDateTime.parse(time, formatter);
+                LocalDateTime now = ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime();
+                ageHrs[j] = Duration.between(then, now).toHours();
             }
 
             // Store the wx range samples that exist in this station
@@ -270,7 +268,7 @@ public class MesoWestWeatherProvider implements WeatherProvider {
                 Number dateIndex = (Number) ((JSONArray) obs.get(sensor)).get(0);
                 Number value = (Number) ((JSONArray) obs.get(sensor)).get(1);
                 // Skip stale observations that are truely erroneous
-                if (ageHrs[dateIndex.intValue()] > 120.0) {
+                if (ageHrs[dateIndex.intValue()] > 24) {
                     logger.log(Level.INFO, "Ignoring {0} sensor variable {1}. Appears to be stale: {2} ({3} hours old).", 
                             new Object[]{name, sensor, times.get(dateIndex.intValue()), ageHrs[dateIndex.intValue()]});
                     continue;

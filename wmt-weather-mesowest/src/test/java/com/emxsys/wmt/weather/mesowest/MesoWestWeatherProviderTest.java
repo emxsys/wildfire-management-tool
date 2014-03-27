@@ -132,7 +132,7 @@ public class MesoWestWeatherProviderTest {
     }
 
     /**
-     * Test of getLatestAgedWeather method, of class MesoWestWeatherProvider.
+     * Test of getLatestWeather method, of class MesoWestWeatherProvider.
      */
     @Test
     public void testGetLatestAgedWeather() throws VisADException, RemoteException {
@@ -141,7 +141,7 @@ public class MesoWestWeatherProviderTest {
         Real radius = Reals.newDistance(52800, GeneralUnit.foot);
         Duration age = Duration.ofMinutes(60);
         MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
-        Field result = instance.getLatestAgedWeather(coord, radius, age);
+        Field result = instance.getLatestWeather(coord, radius, age);
         assertNotNull(result);
         System.out.println(result.toString());
 
