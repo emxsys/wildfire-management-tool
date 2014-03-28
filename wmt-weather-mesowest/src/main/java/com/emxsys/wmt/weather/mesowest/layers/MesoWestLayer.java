@@ -38,6 +38,7 @@ import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
+import com.emxsys.wmt.globe.render.SimplePlacemark;
 import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
@@ -49,13 +50,13 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.util.RequestProcessor.Task;
 import visad.Field;
-import visad.RealTuple;
+import visad.Real;
 import visad.VisADException;
 
 /**
- * A RenderableGisLayer for displaying MesoWestPlacemark markers. This layer is not created by the 
- * normal XML MapLayerRegistration registration process due to dependency issues between the modules. 
- * Instead, this class is added to Globe via the module Installer.
+ * A RenderableGisLayer for displaying MesoWestPlacemark markers. This layer is not created by the
+ * normal XML MapLayerRegistration registration process due to dependency issues between the
+ * modules. Instead, this class is added to Globe via the module Installer.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -77,6 +78,7 @@ public final class MesoWestLayer extends RenderableGisLayer {
     private ReticuleCoordinateProvider coordProvider = null;
     /** Last coordinate processed */
     private Coord3D lastCoord = GeoCoord3D.ZERO_POSITION;
+    private Field lastestWxField;
 
     /**
      * Constructor for a MesoWestLayer with default attributes.
@@ -89,31 +91,38 @@ public final class MesoWestLayer extends RenderableGisLayer {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (coordProvider == null) {
-            coordProvider = Globe.getInstance().getLookup().lookup(ReticuleCoordinateProvider.class);
-            if (coordProvider != null) {
-                coordProvider.addReticuleCoordinateListener((ReticuleCoordinateEvent evt) -> {
-                    processEvent(evt);
-                });
+        if (enabled) {
+            // Lazy initialization / activation of listener
+            if (coordProvider == null) {
+                coordProvider = Globe.getInstance().getLookup().lookup(ReticuleCoordinateProvider.class);
+                if (coordProvider != null) {
+                    coordProvider.addReticuleCoordinateListener((ReticuleCoordinateEvent evt) -> {
+                        processEvent(evt);
+                    });
+                }
             }
         }
     }
 
     /**
-     * Coal/ese and process ReticuleCoordinateEvent events with a task processor.
-     * @param evt 
+     * Coallese and process ReticuleCoordinateEvent events with a task processor.
+     * @param evt
      */
     private void processEvent(ReticuleCoordinateEvent evt) {
+        // Save this most recent event
         coordEvent.set(evt);
+        
         // Lazy task initialization
         if (updateWeatherTask == null) {
             updateWeatherTask = taskProcessor.create(() -> {
                 updateWeather();
             }, true); // true = initiallyFinished state
         }
-        // Sliding task: coallese the update events into 1000ms intervals
+        
+        // Sliding task: coallese the updates into 1 second intervals
+        // by 
         if (updateWeatherTask.isFinished()) {
-            updateWeatherTask.schedule(1000); // update in 1 second
+            updateWeatherTask.schedule(1000); // update in 1000 milli second
         }
     }
 
@@ -121,23 +130,37 @@ public final class MesoWestLayer extends RenderableGisLayer {
      * Update the weather field from the last coordinate.
      */
     private void updateWeather() {
-        ReticuleCoordinateEvent evt = coordEvent.get();
-        Coord3D coord = evt.getCoordinate();
-        if (coord.isMissing()) {
-            return;
-        }
         try {
-            RealTuple delta = (RealTuple) coord.subtract(lastCoord);
-            double[] values = delta.getValues();
-            if ((Math.abs(values[0]) > 0.1) || (Math.abs(values[1]) > 0.1)) {
-                //System.out.println(delta.longString());
-                lastCoord = coord;
-                Field latestWx = MesoWestWeatherProvider.getInstance().getLatestWeather(
-                        coord, Reals.newDistance(25.0, GeneralUnit.mile), Duration.ofHours(24));
-                //System.out.println(curWx.toString());
+            Coord3D coord = coordEvent.get().getCoordinate();
+            if (coord.isMissing()) {
+                return;
+            }
+            // Test to see if the coord has moved far enough to warrent a new query
+            Real distance = Globe.computeGreatCircleDistance(coord, lastCoord);
+            if (distance.getValue(GeneralUnit.mile) < 5.0) {
+                return;
+            }
+            // Get the latest weather within the last 24 hours
+            lastestWxField = MesoWestWeatherProvider.getInstance().getLatestWeather(
+                    coord, Reals.newDistance(25.0, GeneralUnit.mile), Duration.ofHours(24));           
+            updateRenderables();
+            lastCoord = coord;
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private void updateRenderables() {
+        try {
+            clearRenderables();
+            double[][] latLons = lastestWxField.getDomainSet().getDoubles(false); // Don't copy
+            for (int i = 0; i < latLons[0].length; i++) {
+                GeoCoord3D coord = GeoCoord3D.fromDegrees(latLons[0][i], latLons[1][i]);
+                this.addRenderable(new SimplePlacemark(coord, Integer.toString(i)));
             }
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
         }
+        
     }
 }
