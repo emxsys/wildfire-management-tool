@@ -29,11 +29,18 @@
  */
 package com.emxsys.wmt.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Utility class for interacting with XML documents.
@@ -44,6 +51,22 @@ import org.w3c.dom.NodeList;
 public class XmlUtil {
 
     private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
+
+    public static Document getDoc(String xmlString) {
+        try {
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            docBuilderFactory.setNamespaceAware(false);
+            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            return docBuilder.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
+        }
+        catch (ParserConfigurationException | UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
+        catch (SAXException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+    }
 
     /**
      * Gets the first child element with the matching tag.
