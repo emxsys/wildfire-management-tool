@@ -150,6 +150,7 @@
         <module>wmt-visad</module>
         <module>wmt-weather</module>
         <module>wmt-weather-mesowest</module>
+        <module>wmt-weather-nws</module>
         <module>wmt-wildfire</module>
         <module>wmt-project</module>
     </modules>
