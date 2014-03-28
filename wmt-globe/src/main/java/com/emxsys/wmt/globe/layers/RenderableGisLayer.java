@@ -60,17 +60,17 @@ public class RenderableGisLayer extends GisLayerProxy {
         setName(name);
     }
 
-    void addRenderable(Renderable renderable) {
+    public void addRenderable(Renderable renderable) {
         RenderableLayer impl = (RenderableLayer) getLayerImpl();
         impl.addRenderable(renderable);
     }
 
-    void addRenderables(Collection<? extends Renderable> renderables) {
+    public void addRenderables(Collection<? extends Renderable> renderables) {
         RenderableLayer impl = (RenderableLayer) getLayerImpl();
         impl.addRenderables(renderables);
     }
 
-    void clearRenderables() {
+    public void clearRenderables() {
         RenderableLayer impl = (RenderableLayer) getLayerImpl();
         impl.removeAllRenderables();
     }

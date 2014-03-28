@@ -49,8 +49,12 @@ import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
 import com.emxsys.wmt.time.spi.DefaultTimeProvider;
+import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.spi.DefaultWeatherProvider;
 import com.terramenta.globe.WorldWindManager;
+import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
 import java.awt.Component;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -350,5 +354,22 @@ public class Globe implements GisViewer {
         Coord2D southwest = GeoCoord2D.fromDegrees(sector.getMinLatitude().degrees, sector.getMinLongitude().degrees);
         Coord2D northeast = GeoCoord2D.fromDegrees(sector.getMaxLatitude().degrees, sector.getMaxLongitude().degrees);
         return new GeoSector(southwest, northeast);
+    }
+    
+    /**
+     * Computes the great circle distance between two coordinates.
+     * @param coord1
+     * @param coord2
+     * @return A Real containing the distance in meters.
+     */
+    public static Real computeGreatCircleDistance(Coord2D coord1, Coord2D coord2) {
+        Position pos1 = Positions.fromCoord2D(coord1); 
+        Position pos2 = Positions.fromCoord2D(coord2); 
+        Angle angle = LatLon.greatCircleDistance(pos2, pos1);
+        
+        WorldWindManager wwm = Globe.getInstance().getWorldWindManager(); 
+        double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
+        double distance = angle.radians * radius;
+        return Reals.newDistance(distance, CommonUnit.meter);
     }
 }
