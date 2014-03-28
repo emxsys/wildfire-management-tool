@@ -89,6 +89,12 @@
             <artifactId>org-openide-modules</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>xmlParserAPIs</artifactId>
+            <groupId>xerces</groupId>
+            <type>jar</type>
+            <version>2.6.2</version>
+        </dependency>
     </dependencies>
     <name>WMT Weather : NWS</name>
     <description>The National Weather Service weather provider</description>

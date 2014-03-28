@@ -188,9 +188,11 @@ public class NwsWeatherProvider implements WeatherProvider {
         System.out.println(urlString);
 
         // Invoke the REST service and get the JSON results
-        String xmlDoc = HttpUtil.callWebService(urlString);
-        System.out.println(xmlDoc);
-        return null;
+        String dwml = HttpUtil.callWebService(urlString);
+        System.out.println(dwml);
+        
+        // Parse the XML
+        return DwmlParser.parseDwml(dwml);
     }
 
 }
