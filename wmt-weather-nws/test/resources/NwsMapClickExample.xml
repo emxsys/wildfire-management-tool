@@ -1,0 +1,276 @@
+<!-- Query URL
+http://forecast.weather.gov/MapClick.php
+    ?lat=34.25
+    &lon=-119.2
+    &unit=0
+    &lg=english
+    &FcstType=dwml
+-->
+<?xml version="1.0"?>
+<dwml xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:noNamespaceSchemaLocation="http://graphical.weather.gov/xml/DWMLgen/schema/DWML.xsd">
+    <head>
+        <product concise-name="dwmlByDay" operational-mode="developmental" srsName="WGS 1984">
+            <creation-date refresh-frequency="PT1H">2014-03-28T02:31:14-07:00</creation-date>
+            <category>current observations and forecast</category>
+        </product>
+        <source>
+            <production-center>Los Angeles/Oxnard, CA</production-center>
+            <credit>http://www.wrh.noaa.gov/lox</credit>
+            <more-information>http://www.nws.noaa.gov/forecasts/xml/</more-information>
+        </source>
+    </head>
+    <data type="forecast">
+        <location>
+            <location-key>point1</location-key>
+            <point latitude="34.26" longitude="-119.2"/>
+            <area-description>2 Miles WNW El Rio CA</area-description>
+            <height datum="mean sea level" height-units="feet">138</height>
+        </location>
+        <moreWeatherInformation applicable-location="point1">
+            http://forecast.weather.gov/MapClick.php?lat=34.26&lon=-119.2
+        </moreWeatherInformation>
+        <time-layout time-coordinate="local" summarization="12hourly">
+            <layout-key>k-p6h-n1-1</layout-key>
+            <start-valid-time>2014-03-28T04:00:00-07:00</start-valid-time>
+            <end-valid-time>2014-04-03T18:00:00-07:00</end-valid-time>
+        </time-layout>
+        <time-layout time-coordinate="local" summarization="12hourly">
+            <layout-key>k-p12h-n14-1</layout-key>
+            <start-valid-time period-name="Overnight">2014-03-28T06:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Friday">2014-03-28T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Friday Night">2014-03-29T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Saturday">2014-03-29T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Saturday Night">2014-03-30T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Sunday">2014-03-30T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Sunday Night">2014-03-31T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Monday">2014-03-31T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Monday Night">2014-04-01T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Tuesday">2014-04-01T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Tuesday Night">2014-04-02T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Wednesday">2014-04-02T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Wednesday Night">2014-04-03T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Thursday">2014-04-03T12:00:00-07:00</start-valid-time>
+        </time-layout>
+        <time-layout time-coordinate="local" summarization="12hourly">
+            <layout-key>k-p24h-n7-1</layout-key>
+            <start-valid-time period-name="Overnight">2014-03-28T06:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Friday Night">2014-03-29T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Saturday Night">2014-03-30T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Sunday Night">2014-03-31T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Monday Night">2014-04-01T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Tuesday Night">2014-04-02T00:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Wednesday Night">2014-04-03T00:00:00-07:00</start-valid-time>
+        </time-layout>
+        <time-layout time-coordinate="local" summarization="12hourly">
+            <layout-key>k-p24h-n7-2</layout-key>
+            <start-valid-time period-name="Friday">2014-03-28T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Saturday">2014-03-29T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Sunday">2014-03-30T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Monday">2014-03-31T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Tuesday">2014-04-01T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Wednesday">2014-04-02T12:00:00-07:00</start-valid-time>
+            <start-valid-time period-name="Thursday">2014-04-03T12:00:00-07:00</start-valid-time>
+        </time-layout>
+        <parameters applicable-location="point1">
+            <temperature type="minimum" units="Fahrenheit" time-layout="k-p24h-n7-1">
+                <name>Daily Minimum Temperature</name>
+                <value>49</value>
+                <value>51</value>
+                <value>53</value>
+                <value>50</value>
+                <value>51</value>
+                <value>50</value>
+                <value>53</value>
+            </temperature>
+            <temperature type="maximum" units="Fahrenheit" time-layout="k-p24h-n7-2">
+                <name>Daily Maximum Temperature</name>
+                <value>66</value>
+                <value>66</value>
+                <value>66</value>
+                <value>63</value>
+                <value>63</value>
+                <value>65</value>
+                <value>66</value>
+            </temperature>
+            <probability-of-precipitation type="12 hour" units="percent" time-layout="k-p12h-n14-1">
+                <name>12 Hourly Probability of Precipitation</name>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value>60</value>
+                <value>20</value>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+                <value xsi:nil="true"/>
+            </probability-of-precipitation>
+            <weather time-layout="k-p12h-n14-1">
+                <name>Weather Type, Coverage, Intensity</name>
+                <weather-conditions weather-summary="Partly Cloudy"/>
+                <weather-conditions weather-summary="Mostly Sunny"/>
+                <weather-conditions weather-summary="Patchy Fog"/>
+                <weather-conditions weather-summary="Patchy Fog"/>
+                <weather-conditions weather-summary="Rain Likely"/>
+                <weather-conditions weather-summary="Slight Chc Showers"/>
+                <weather-conditions weather-summary="Partly Cloudy"/>
+                <weather-conditions weather-summary="Partly Sunny"/>
+                <weather-conditions weather-summary="Chance Rain"/>
+                <weather-conditions weather-summary="Chance Showers"/>
+                <weather-conditions weather-summary="Slight Chc Showers"/>
+                <weather-conditions weather-summary="Mostly Sunny"/>
+                <weather-conditions weather-summary="Patchy Fog"/>
+                <weather-conditions weather-summary="Patchy Fog"/>
+            </weather>
+            <conditions-icon type="forecast-NWS" time-layout="k-p12h-n14-1">
+                <name>Conditions Icon</name>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/nsct.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/sct.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/nfg.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/fg.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/nra60.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/hi_shwrs20.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/nsct.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/bkn.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/nra.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/shra.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/hi_nshwrs.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/sct.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/nfg.png
+                </icon-link>
+                <icon-link>
+                    http://forecast.weather.gov/images/wtf/medium/fg.png
+                </icon-link>
+            </conditions-icon>
+            <hazards time-layout="k-p6h-n1-1">
+                <name>Watches, Warnings, and Advisories</name>
+                <hazard-conditions>
+                    <hazard headline="Hazardous Weather Outlook">
+                        <hazardTextURL>
+                            http://forecast.weather.gov/showsigwx.php?warnzone=CAZ040&warncounty=CAC111&firewxzone=CAZ240&local_place1=2+Miles+WNW+El+Rio+CA&product1=Hazardous+Weather+Outlook
+                        </hazardTextURL>
+                    </hazard>
+                </hazard-conditions>
+            </hazards>
+            <wordedForecast time-layout="k-p12h-n14-1" dataSource="loxNetcdf" wordGenerator="markMitchell">
+                <name>Text Forecast</name>
+                <text>
+                    Partly cloudy, with a low around 49. North northeast wind around 5 mph.
+                </text>
+                <text>
+                    Mostly sunny, with a high near 66. Northeast wind 5 to 10 mph becoming west southwest in the morning. Winds could gust as high as 15 mph.
+                </text>
+                <text>
+                    Patchy fog after 11pm. Otherwise, mostly cloudy, with a low around 51. West southwest wind 5 to 10 mph becoming light and variable in the evening. Winds could gust as high as 15 mph.
+                </text>
+                <text>
+                    Patchy fog before 11am. Otherwise, partly sunny, with a high near 66. Northeast wind 5 to 10 mph becoming west 10 to 15 mph in the morning. Winds could gust as high as 20 mph.
+                </text>
+                <text>
+                    Rain likely, mainly after 11pm. Mostly cloudy, with a low around 53. West wind 5 to 10 mph becoming north northwest in the evening. Chance of precipitation is 60%.
+                </text>
+                <text>
+                    A 20 percent chance of showers before 11am. Mostly sunny, with a high near 66.
+                </text>
+                <text>Partly cloudy, with a low around 50.</text>
+                <text>Partly sunny, with a high near 63.</text>
+                <text>
+                    A chance of rain. Mostly cloudy, with a low around 51.
+                </text>
+                <text>
+                    A chance of showers. Partly sunny, with a high near 63.
+                </text>
+                <text>
+                    A slight chance of showers. Partly cloudy, with a low around 50.
+                </text>
+                <text>Mostly sunny, with a high near 65.</text>
+                <text>
+                    Patchy fog after 11pm. Otherwise, mostly cloudy, with a low around 53.
+                </text>
+                <text>
+                    Patchy fog before 11am. Otherwise, partly sunny, with a high near 66.
+                </text>
+            </wordedForecast>
+        </parameters>
+    </data>
+    <data type="current observations">
+        <location>
+            <location-key>point1</location-key>
+            <point latitude="34.27678" longitude="-119.18332"/>
+            <area-description>CW1484 Ventura, CA</area-description>
+            <height datum="mean sea level" height-units="feet">269</height>
+        </location>
+        <moreWeatherInformation applicable-location="point1">
+            http://www.wrh.noaa.gov/total_forecast/other_obs.php?wfo=lox&zone=CAZ040
+        </moreWeatherInformation>
+        <time-layout time-coordinate="local">
+            <layout-key>k-p1h-n1-1</layout-key>
+            <start-valid-time period-name="current">2014-03-28T03:20:00</start-valid-time>
+        </time-layout>
+        <parameters applicable-location="point1">
+            <temperature type="apparent" units="Fahrenheit" time-layout="k-p1h-n1-1">
+                <value>50</value>
+            </temperature>
+            <temperature type="dew point" units="Fahrenheit" time-layout="k-p1h-n1-1">
+                <value>NA</value>
+            </temperature>
+            <humidity type="relative" time-layout="k-p1h-n1-1">
+                <value>NA</value>
+            </humidity>
+            <weather time-layout="k-p1h-n1-1">
+                <name>Weather Type, Coverage, Intensity</name>
+                <weather-conditions weather-summary="NA"/>
+                <weather-conditions>
+                    <value>
+                        <visibility units="statute miles">NA</visibility>
+                    </value>
+                </weather-conditions>
+            </weather>
+            <conditions-icon type="forecast-NWS" time-layout="k-p1h-n1-1">
+                <name>Conditions Icon</name>
+                <icon-link>NULL</icon-link>
+            </conditions-icon>
+            <direction type="wind" units="degrees true" time-layout="k-p1h-n1-1">
+                <value>NA</value>
+            </direction>
+            <wind-speed type="gust" units="knots" time-layout="k-p1h-n1-1">
+                <value>NA</value>
+            </wind-speed>
+            <wind-speed type="sustained" units="knots" time-layout="k-p1h-n1-1">
+                <value>0</value>
+            </wind-speed>
+            <pressure type="barometer" units="inches of mercury" time-layout="k-p1h-n1-1">
+                <value>30.14</value>
+            </pressure>
+        </parameters>
+    </data>
+</dwml>
