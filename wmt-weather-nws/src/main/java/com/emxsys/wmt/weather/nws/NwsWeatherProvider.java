@@ -31,18 +31,15 @@ package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.HttpUtil;
-import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
-import static com.emxsys.wmt.weather.api.WeatherType.*;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
-import visad.Real;
-import visad.RealTupleType;
-import visad.RealType;
+import visad.FlatField;
 
 /**
  * National Weather Service NDFD Point Forecast weather service.
@@ -119,12 +116,13 @@ public class NwsWeatherProvider implements WeatherProvider {
     /** URI for Official REST service. */
     protected static final String NDFD_REST_URI = "http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?";
     /** NDFD Single Point query */
-    private static final String NDFD_POINT_FORECAST = "lat=%1$f"
+    private static final String NDFD_POINT_FORECAST
+            = "lat=%1$f"
             + "&lon=%2$f"
             + "&product=time-series"
             + "&begin=%3$s"
             + "&end=%4$s"
-            + "&Unit=e"
+            + "&Unit=e" // e or m
             + "&temp=temp"
             + "&rh=rh"
             + "&wspd=wspd"
@@ -134,13 +132,6 @@ public class NwsWeatherProvider implements WeatherProvider {
             + "&wx=wx"
             + "&critfireo=critfireo";
 
-    /** MathType to represent the weather: air_temp, RH, wind_spd, wind_dir */
-    protected static final RealTupleType WX_RANGE = Reals.newRealTupleType(
-            new RealType[]{AIR_TEMP_F, REL_HUMIDITY, WIND_SPEED_KTS, WIND_DIR});
-    protected static final int AIR_TEMP_IDX = WX_RANGE.getIndex(AIR_TEMP_F);
-    protected static final int HUMIDITY_IDX = WX_RANGE.getIndex(REL_HUMIDITY);
-    protected static final int WIND_SPD_IDX = WX_RANGE.getIndex(WIND_SPEED_KTS);
-    protected static final int WIND_DIR_IDX = WX_RANGE.getIndex(WIND_DIR);
     /** Singleton */
     private static NwsWeatherProvider instance;
     private static final Logger logger = Logger.getLogger(NwsWeatherProvider.class.getName());
@@ -190,9 +181,13 @@ public class NwsWeatherProvider implements WeatherProvider {
         // Invoke the REST service and get the JSON results
         String dwml = HttpUtil.callWebService(urlString);
         System.out.println(dwml);
-        
+
         // Parse the XML
-        return DwmlParser.parseDwml(dwml);
+        List<FlatField> fields = new DwmlParser(dwml).parse();
+        if (!fields.isEmpty()) {
+            return fields.get(0);
+        }
+        return null;
     }
 
 }

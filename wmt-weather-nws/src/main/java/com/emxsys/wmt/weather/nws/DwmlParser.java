@@ -31,33 +31,34 @@ package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.wmt.util.KeyValue;
 import com.emxsys.wmt.util.XmlUtil;
-import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.weather.api.WeatherType;
+import static com.emxsys.wmt.weather.nws.NwsTypes.*;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.validation.Schema;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import visad.Field;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded1DDoubleSet;
 import visad.Real;
 import visad.RealType;
+import visad.Set;
 import visad.Unit;
 import visad.VisADException;
 
@@ -98,28 +99,12 @@ import visad.VisADException;
  *       <time-layout time-coordinate="local" summarization="none">
  *           <layout-key>k-p3h-n36-1</layout-key>
  *           <start-valid-time>2014-03-28T08:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T11:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T14:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T17:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T20:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T23:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T02:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T05:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T08:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T11:00:00-07:00</start-valid-time>
+ *           ...
  *       </time-layout>
  *       <time-layout time-coordinate="local" summarization="none">
  *           <layout-key>k-p3h-n20-2</layout-key>
  *           <start-valid-time>2014-03-28T08:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T11:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T14:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T17:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T20:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-28T23:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T02:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T05:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T08:00:00-07:00</start-valid-time>
- *           <start-valid-time>2014-03-29T11:00:00-07:00</start-valid-time>
+ *           ...
  *        </time-layout>
  *        <time-layout time-coordinate="local" summarization="none">
  *           <layout-key>k-p24h-n8-3</layout-key>
@@ -133,53 +118,22 @@ import visad.VisADException;
  *            <temperature type="hourly" units="Fahrenheit" time-layout="k-p3h-n36-1">
  *                <name>Temperature</name>
  *                <value>49</value>
- *                <value>61</value>
- *                <value>66</value>
- *                <value>65</value>
- *                <value>57</value>
- *                <value>55</value>
- *                <value>52</value>
- *                <value>49</value>
- *                <value>50</value>
+ *                ...
  *            </temperature>
  *            <wind-speed type="sustained" units="knots" time-layout="k-p3h-n36-1">
  *                <name>Wind Speed</name>
  *                <value>5</value>
- *                <value>10</value>
- *                <value>10</value>
- *                <value>10</value>
- *                <value>10</value>
- *                <value>2</value>
- *                <value>2</value>
- *                <value>2</value>
- *                <value>5</value>
- *                <value>13</value>
+ *                ...
  *            </wind-speed>
  *            <direction type="wind" units="degrees true" time-layout="k-p3h-n36-1">
  *                <name>Wind Direction</name>
  *                <value>50</value>
- *                <value>240</value>
- *                <value>240</value>
- *                <value>240</value>
- *                <value>240</value>
- *                <value>340</value>
- *                <value>340</value>
- *                <value>40</value>
- *                <value>250</value>
- *                <value>250</value>
+ *                ...
  *            </direction>
  *            <cloud-amount type="total" units="percent" time-layout="k-p3h-n36-1">
  *                <name>Cloud Cover Amount</name>
  *                <value>29</value>
- *                <value>26</value>
- *                <value>26</value>
- *                <value>27</value>
- *                <value>27</value>
- *                <value>72</value>
- *                <value>72</value>
- *                <value>85</value>
- *                <value>85</value>
- *                <value>35</value>
+ *                ...
  *            </cloud-amount>
  *            <fire-weather type="risk from wind and relative humidity" time-layout="k-p24h-n8-3">
  *                <name>
@@ -192,57 +146,22 @@ import visad.VisADException;
  *            <wind-speed type="gust" units="knots" time-layout="k-p3h-n20-2">
  *                <name>Wind Speed Gust</name>
  *                <value>5</value>
- *                <value>14</value>
- *                <value>14</value>
- *                <value>14</value>
- *                <value>14</value>
- *                <value>2</value>
- *                <value>2</value>
- *                <value>2</value>
- *                <value>5</value>
- *                <value>18</value>
+ *                ...
  *            </wind-speed>
  *            <humidity type="relative" units="percent" time-layout="k-p3h-n36-1">
  *                <name>Relative Humidity</name>
  *                <value>93</value>
- *                <value>65</value>
- *                <value>56</value>
- *                <value>63</value>
- *                <value>83</value>
- *                <value>89</value>
- *                <value>92</value>
- *                <value>100</value>
- *                <value>100</value>
- *                <value>67</value>
+ *                ...
  *            </humidity>
  *            <weather time-layout="k-p3h-n36-1">
  *                <name>Weather Type, Coverage, and Intensity</name>
- *                <weather-conditions/>
- *                <weather-conditions/>
- *                <weather-conditions/>
- *                <weather-conditions/>
- *                <weather-conditions/>
- *                <weather-conditions>
- *                    <value coverage="patchy" intensity="none" weather-type="fog" qualifier="none">
- *                        <visibility xsi:nil="true"/>
- *                    </value>
- *                </weather-conditions>
- *                <weather-conditions>
- *                    <value coverage="patchy" intensity="none" weather-type="fog" qualifier="none">
- *                        <visibility xsi:nil="true"/>
- *                    </value>
- *                </weather-conditions>
- *                <weather-conditions>
- *                    <value coverage="patchy" intensity="none" weather-type="fog" qualifier="none">
- *                        <visibility xsi:nil="true"/>
- *                    </value>
- *                </weather-conditions>
  *                <weather-conditions>
  *                    <value coverage="patchy" intensity="none" weather-type="fog" qualifier="none">
  *                        <visibility xsi:nil="true"/>
  *                    </value>
  *                </weather-conditions>
  *                <weather-conditions/>
+ *                ...
  *            </weather>
  *        </parameters>
  *    </data>
@@ -260,86 +179,110 @@ public class DwmlParser {
     public static final String DWML_SCHEMA_URI = "http://www.nws.noaa.gov/forecasts/xml/DWMLgen/schema/DWML.xsd";
     public static final String TAG_HEAD = "/dwml/head";
     public static final String TAG_DATA = "/dwml/data";
-    public static final String TAG_LOCATION = "location";
-    public static final String TAG_TIME_LAYOUT = "time-layout";
-    public static final String TAG_PARAMETERS = "parameters";
-    public static final String TAG_TEMPERATURE = "temperature";
-    public static final String TAG_MORE_WX_INFO = "moreWeatherInformation";
     private static final Logger logger = Logger.getLogger(DwmlParser.class.getName());
+
+    private final Document doc;
+    private final XPath xpath;
 
     static {
         logger.setLevel(Level.ALL);
     }
 
-    public static Field parseDwml(String xmlString) {
+    /**
+     * Constructs a parser for the given XML document.
+     * @param xmlString 
+     */
+    public DwmlParser(String xmlString) {
+        doc = XmlUtil.getDoc(xmlString);
+        xpath = XPathFactory.newInstance().newXPath();
+    }
+
+    /**
+     * Parses the document.
+     * @return An array of FlatFields.
+     */
+    public List<FlatField> parse() {
         try {
-            Document doc = XmlUtil.getDoc(xmlString);
-            XPath xpath = XPathFactory.newInstance().newXPath();
             Node headNode = (Node) xpath.evaluate(TAG_HEAD, doc, XPathConstants.NODE);
             Node dataNode = (Node) xpath.evaluate(TAG_DATA, doc, XPathConstants.NODE);
 
-            Map<String, Coord2D> locations
-                    = parseLocations(
-                            (NodeList) xpath.evaluate(TAG_LOCATION, dataNode, XPathConstants.NODESET));
-            Map<String, ArrayList<OffsetDateTime>> timeMap
-                    = parseTimeLayouts(
-                            (NodeList) xpath.evaluate(TAG_TIME_LAYOUT, dataNode, XPathConstants.NODESET));
+            Map<String, Coord2D> locations = parseLocations(dataNode);
+            Map<String, ArrayList<OffsetDateTime>> timeLayouts = parseTimeLayouts(dataNode);
 
+            // Create a FlatField for each point
+            ArrayList<FlatField> fields = new ArrayList<>();
             for (String location : locations.keySet()) {
                 // Select the parameters node that has the given location attribute
-                Node paramsNode = (Node) xpath.compile("parameters[@applicable-location='" + location + "']").evaluate(dataNode, XPathConstants.NODE);
+                String paramExp = "parameters[@applicable-location='" + location + "']";
+                Node paramsNode = (Node) xpath.compile(paramExp).evaluate(dataNode, XPathConstants.NODE);
 
-                Map<String, ArrayList<Real>> tempMap
-                        = parseTemperatures(
-                                (Node) xpath.evaluate("temperature", paramsNode, XPathConstants.NODE));
+                // Read the values into Real arrays using the native units
+                KeyValue<String, ArrayList<Real>> airTemps = parseTemperatures(paramsNode);
+                KeyValue<String, ArrayList<Real>> humidities = parseRelativeHumidity(paramsNode);
+                KeyValue<String, ArrayList<Real>> windSpeeds = parseWindSpeeds(paramsNode, "sustained");
+                KeyValue<String, ArrayList<Real>> windGusts = parseWindSpeeds(paramsNode, "gust");
+                KeyValue<String, ArrayList<Real>> directions = parseWindDirections(paramsNode);
+                KeyValue<String, ArrayList<Real>> cloudCover = parseCloudCover(paramsNode);
 
-                Map<String, ArrayList<Real>> humidityMap
-                        = parseRelativeHumidity(
-                                (Node) xpath.evaluate("humidity[@type='relative']", paramsNode, XPathConstants.NODE));
+                // Now create the Function: ( time -> ( weather ) )
+                // Create the time domain samples (using the time-layout from the temperatures)
+                ArrayList<OffsetDateTime> times = timeLayouts.get(airTemps.getKey());
+                double[][] timeSamples = new double[1][times.size()];
+                for (int i = 0; i < times.size(); i++) {
+                    timeSamples[0][i] = times.get(i).toEpochSecond();
+                }
+                // Create the wx range samples, converting the units as necessary.
+                double[][] wxSamples = new double[WX_TUPLE_TYPE.getDimension()][times.size()];
+                for (int dim = 0; dim < WX_TUPLE_TYPE.getDimension(); dim++) {
+                    for (int i = 0; i < times.size(); i++) {
+                        if (dim == AIR_TEMP_IDX) {
+                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(AIR_TEMP_IDX))).getDefaultUnit();
+                            wxSamples[dim][i] = airTemps.getValue().get(i).getValue(defaultUnit);
+                        } else if (dim == HUMIDITY_IDX) {
+                            wxSamples[dim][i] = humidities.getValue().get(i).getValue();
+                        } else if (dim == WIND_SPD_IDX) {
+                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(WIND_SPD_IDX))).getDefaultUnit();
+                            wxSamples[dim][i] = windSpeeds.getValue().get(i).getValue(defaultUnit);
+                        } else if (dim == WIND_DIR_IDX) {
+                            wxSamples[dim][i] = directions.getValue().get(i).getValue();
+                        } else if (dim == CLOUD_CVR_IDX) {
+                            wxSamples[dim][i] = cloudCover.getValue().get(i).getValue();
+                        } else {
+                            throw new IllegalStateException("bad array index");
+                        }
+                    }
+                }
+                // Create the domain Set, a 1-D sequence with no regular interval.
+                // Use Gridded1DDoubleSet(MathType type, double[][] samples, lengthX)
+                Set timeSet = new Gridded1DDoubleSet(RealType.Time, timeSamples, timeSamples[0].length);
 
-                Map<String, ArrayList<Real>> windSpdMap
-                        = parseWindSpeeds(
-                                (Node) xpath.evaluate("wind-speed[@type='sustained']", paramsNode, XPathConstants.NODE));
+                // Create a MathType for the function ( ( time ) -> ( air_temp, RH, wind_spd, ... ) )
+                FunctionType wxFuncOfTime = new FunctionType(RealType.Time, WX_TUPLE_TYPE);
 
-                Map<String, ArrayList<Real>> windDirMap
-                        = parseWindDirections(
-                                (Node) xpath.evaluate("direction", paramsNode, XPathConstants.NODE));
-
-                Map<String, ArrayList<Real>> cloudCoverMap
-                        = parseCloudCover(
-                                (Node) xpath.evaluate("cloud-amount", paramsNode, XPathConstants.NODE));
-
-                Map<String, ArrayList<Real>> windGustMap
-                        = parseWindSpeeds(
-                                (Node) xpath.evaluate("wind-speed[@type='gust']", paramsNode, XPathConstants.NODE));
-
+                // Create the FlatField.
+                // Use FlatField(FunctionType type, Set domain_set)
+                FlatField ff = new FlatField(wxFuncOfTime, timeSet);
+                // ...and put the weather values above into it
+                ff.setSamples(wxSamples);
                 
-                
-//                printReals(tempMap);
-//                printReals(humidityMap);
-//                printReals(windSpdMap);
-//                printReals(windGustMap);
-//                printReals(windDirMap);
-//                printReals(cloudCoverMap);
-
+                fields.add(ff);
             }
-
-        } catch (XPathExpressionException ex) {
-            Exceptions.printStackTrace(ex);
-
+            return fields;
+        } catch (XPathExpressionException | VisADException | RemoteException ex) {
+            logger.severe(ex.getMessage());
         }
         return null;
     }
 
     /**
      *
-     * @param nodes The {@code location} NodeList.
+     * @param dataNode The node containing the {@code location} NodeList.
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, Coord2D> parseLocations(NodeList nodes) throws XPathExpressionException {
+    Map<String, Coord2D> parseLocations(Node dataNode) throws XPathExpressionException {
         HashMap<String, Coord2D> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList nodes = (NodeList) xpath.evaluate("location", dataNode, XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {
             String key = xpath.evaluate("location-key", nodes.item(i));
             String lat = xpath.evaluate("point/@latitude", nodes.item(i));
@@ -351,13 +294,13 @@ public class DwmlParser {
 
     /**
      *
-     * @param nodes The {@code time-layout} NodeList.
+     * @param dataNode The node containing the {@code time-layout} NodeList.
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, ArrayList<OffsetDateTime>> parseTimeLayouts(NodeList nodes) throws XPathExpressionException {
+    Map<String, ArrayList<OffsetDateTime>> parseTimeLayouts(Node dataNode) throws XPathExpressionException {
         HashMap<String, ArrayList<OffsetDateTime>> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList nodes = (NodeList) xpath.evaluate("time-layout", dataNode, XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {
             String key = xpath.evaluate("layout-key", nodes.item(i));
             NodeList times = (NodeList) xpath.evaluate("start-valid-time", nodes.item(i), XPathConstants.NODESET);
@@ -373,89 +316,81 @@ public class DwmlParser {
 
     /**
      *
-     * @param node The {@code temperature} Node
+     * @param paramsNode The node containing the {@code temperature} Node
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, ArrayList<Real>> parseTemperatures(Node node) throws XPathExpressionException {
-        HashMap<String, ArrayList<Real>> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+    KeyValue<String, ArrayList<Real>> parseTemperatures(Node paramsNode) throws XPathExpressionException {
+        Node node = (Node) xpath.evaluate("temperature", paramsNode, XPathConstants.NODE);
         String key = xpath.evaluate("@time-layout", node);
         String units = xpath.evaluate("@units", node);
         RealType type = units.equals("Fahrenheit") ? WeatherType.AIR_TEMP_F : WeatherType.AIR_TEMP_C;
         NodeList values = (NodeList) xpath.evaluate("value", node, XPathConstants.NODESET);
         ArrayList<Real> reals = createRealsArray(values, type);
-        map.put(key, reals);
-        return map;
+        return new KeyValue<>(key, reals);
     }
 
     /**
      *
-     * @param node The sustained {@code wind-speed} Node
+     * @param paramsNode The node containing {@code wind-speed} Node
+     * @param windType "sustained" or "gust".
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, ArrayList<Real>> parseWindSpeeds(Node node) throws XPathExpressionException {
-        HashMap<String, ArrayList<Real>> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+    KeyValue<String, ArrayList<Real>> parseWindSpeeds(Node paramsNode, String windType) throws XPathExpressionException {
+        Node node = (Node) xpath.evaluate("wind-speed[@type='" + windType + "']", paramsNode, XPathConstants.NODE);
         String key = xpath.evaluate("@time-layout", node);
         String units = xpath.evaluate("@units", node);
         RealType type = units.equals("knots") ? WeatherType.WIND_SPEED_KTS : WeatherType.WIND_SPEED_SI;
         NodeList values = (NodeList) xpath.evaluate("value", node, XPathConstants.NODESET);
         ArrayList<Real> reals = createRealsArray(values, type);
-        map.put(key, reals);
-        return map;
+        return new KeyValue<>(key, reals);
     }
 
     /**
      *
-     * @param node The wind {@code direction} Node
+     * @param  paramsNode The node containing the wind {@code direction} Node
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, ArrayList<Real>> parseWindDirections(Node node) throws XPathExpressionException {
-        HashMap<String, ArrayList<Real>> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+    KeyValue<String, ArrayList<Real>> parseWindDirections(Node paramsNode) throws XPathExpressionException {
+        Node node = (Node) xpath.evaluate("direction", paramsNode, XPathConstants.NODE);
         String key = xpath.evaluate("@time-layout", node);
         NodeList values = (NodeList) xpath.evaluate("value", node, XPathConstants.NODESET);
         ArrayList<Real> reals = createRealsArray(values, WeatherType.WIND_DIR);
-        map.put(key, reals);
-        return map;
+        return new KeyValue<>(key, reals);
     }
 
     /**
      *
-     * @param node The relative {@code humidity} Node
+     * @param paramsNode The node containing the relative {@code humidity} Node
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, ArrayList<Real>> parseRelativeHumidity(Node node) throws XPathExpressionException {
-        HashMap<String, ArrayList<Real>> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+    KeyValue<String, ArrayList<Real>> parseRelativeHumidity(Node paramsNode) throws XPathExpressionException {
+        Node node = (Node) xpath.evaluate("humidity[@type='relative']", paramsNode, XPathConstants.NODE);
         String key = xpath.evaluate("@time-layout", node);
         NodeList values = (NodeList) xpath.evaluate("value", node, XPathConstants.NODESET);
         ArrayList<Real> reals = createRealsArray(values, WeatherType.REL_HUMIDITY);
-        map.put(key, reals);
-        return map;
+        return new KeyValue<>(key, reals);
     }
 
     /**
      *
-     * @param node The {@code cloud-amount} Node
+     * @param paramsNode The node containing the {@code cloud-amount} Node
      * @return
      * @throws XPathExpressionException
      */
-    static Map<String, ArrayList<Real>> parseCloudCover(Node node) throws XPathExpressionException {
+    KeyValue<String, ArrayList<Real>> parseCloudCover(Node paramsNode) throws XPathExpressionException {
         HashMap<String, ArrayList<Real>> map = new HashMap<>();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+        Node node = (Node) xpath.evaluate("cloud-amount", paramsNode, XPathConstants.NODE);
         String key = xpath.evaluate("@time-layout", node);
         NodeList values = (NodeList) xpath.evaluate("value", node, XPathConstants.NODESET);
         ArrayList<Real> reals = createRealsArray(values, WeatherType.CLOUD_COVER);
-        map.put(key, reals);
-        return map;
+        return new KeyValue<>(key, reals);
     }
 
-    private static ArrayList<Real> createRealsArray(NodeList values, RealType type) throws DOMException, NumberFormatException {
+    static ArrayList<Real> createRealsArray(NodeList values, RealType type) throws DOMException, NumberFormatException {
         ArrayList<Real> reals = new ArrayList<>();
         for (int j = 0; j < values.getLength(); j++) {
             String num = values.item(j).getTextContent();
@@ -466,14 +401,17 @@ public class DwmlParser {
 
     static void printReals(Map<String, ArrayList<Real>> map) {
 
-        for (Map.Entry<String, ArrayList<Real>> entry : map.entrySet()) {
+        map.entrySet().stream().map((entry) -> {
             System.out.println("<Key: " + entry.getKey() + ">");
+            return entry;
+        }).map((entry) -> {
             System.out.println("<Values>");
-            List<Real> list = entry.getValue();
-            for (Real r : list) {
+            return entry;
+        }).map((entry) -> entry.getValue()).forEach((list) -> {
+            list.stream().forEach((r) -> {
                 System.out.println(" > " + r.toValueString());
-            }
-        }
+            });
+        });
 
     }
 }

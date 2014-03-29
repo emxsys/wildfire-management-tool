@@ -32,6 +32,7 @@ package com.emxsys.wmt.weather.nws;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.weather.api.Weather;
+import java.rmi.RemoteException;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,7 +42,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import visad.DateTime;
 import visad.Field;
+import visad.Set;
+import visad.VisADException;
 
 /**
  *
@@ -98,11 +102,19 @@ public class NwsWeatherProviderTest {
      * Test of getPointForecast method, of class NwsWeatherProvider.
      */
     @Test
-    public void testGetPointForecast() {
+    public void testGetPointForecast() throws VisADException, RemoteException {
         System.out.println("getPointForecast");
         NwsWeatherProvider instance = NwsWeatherProvider.getInstance();
         Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
         Field pointForecast = instance.getPointForecast(coord);
+        assertNotNull(pointForecast);
+        
+        System.out.println(pointForecast.getDomainSet().getType());
+        double[][] times = pointForecast.getDomainSet().getDoubles();
+        for (double time : times[0]) {
+            System.out.println(new DateTime(time));
+        }
+        System.out.println(pointForecast.longString());
 
     }
 
