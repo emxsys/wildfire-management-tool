@@ -113,7 +113,7 @@ public class NwsWeatherProvider implements WeatherProvider {
 
     /** URI for MapClick service */
     protected static final String MAP_CLICK_URI = "http://forecast.weather.gov/MapClick.php?";
-    /** URI for Official REST service. */
+    /** NDFD URI for Official REST service. */
     protected static final String NDFD_REST_URI = "http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?";
     /** NDFD Single Point query */
     private static final String NDFD_POINT_FORECAST
