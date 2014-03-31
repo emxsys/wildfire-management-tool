@@ -111,6 +111,17 @@ public @interface MapLayerRegistration {
     double opacity() default 1.0;
 
     /**
+     * One can specify the refresh interval, in seconds, for map layer tile.
+     */
+    int refreshIntervalSeconds() default 0;
+
+    /**
+     * One can specify the expiration age, in seconds, for a map layer data. Used with the refresh
+     * interval. If set to less than zero, then all map tiles are set expired on the refresh cycle.
+     */
+    int expirationAgeSeconds() default -1;
+
+    /**
      * One can specify the type of object to be created.
      */
     String instanceClass() default "";

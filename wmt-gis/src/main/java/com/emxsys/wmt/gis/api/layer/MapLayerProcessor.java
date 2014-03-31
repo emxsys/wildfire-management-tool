@@ -68,6 +68,8 @@ public final class MapLayerProcessor extends LayerGeneratingProcessor {
     public static final String ACTUATE = "actuate";
     public static final String OPACITY = "opacity";
     public static final String CONFIG = "config";
+    public static final String EXPIRATION_AGE = "expirationAgeSeconds";
+    public static final String REFRESH_INTERVAL = "refreshIntervalSeconds";
     public static final String INSTANCE_CLASS = "instanceClass";
     public static final String INSTANCE_CREATE = "instanceCreate";
 
@@ -155,6 +157,12 @@ public final class MapLayerProcessor extends LayerGeneratingProcessor {
             throw new LayerGenerationException("opacity must be between 0 and 1", e);
         }
         f.doublevalue(OPACITY, ref.opacity());
+
+        // Expiration Age and Refresh Interval
+        if (ref.refreshIntervalSeconds() > 0) {
+            f.intvalue(REFRESH_INTERVAL, ref.refreshIntervalSeconds());
+            f.intvalue(EXPIRATION_AGE, ref.expirationAgeSeconds());
+        }
 
         // Configuration File
         if (!ref.config().isEmpty()) {
