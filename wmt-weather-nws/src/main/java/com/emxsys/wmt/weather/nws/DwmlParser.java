@@ -52,7 +52,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import visad.Field;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Gridded1DDoubleSet;
@@ -190,7 +189,7 @@ public class DwmlParser {
 
     /**
      * Constructs a parser for the given XML document.
-     * @param xmlString 
+     * @param xmlString
      */
     public DwmlParser(String xmlString) {
         doc = XmlUtil.getDoc(xmlString);
@@ -234,24 +233,46 @@ public class DwmlParser {
                 // Create the wx range samples, converting the units as necessary.
                 double[][] wxSamples = new double[WX_TUPLE_TYPE.getDimension()][times.size()];
                 for (int dim = 0; dim < WX_TUPLE_TYPE.getDimension(); dim++) {
+                    Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(dim))).getDefaultUnit();
+                    ArrayList<Real> values;
+                    if (dim == AIR_TEMP_IDX) {
+                        values = airTemps.getValue();
+                    } else if (dim == HUMIDITY_IDX) {
+                        values = humidities.getValue();
+                    } else if (dim == WIND_SPD_IDX) {
+                        values = windSpeeds.getValue();
+                    } else if (dim == WIND_DIR_IDX) {
+                        values = directions.getValue();
+                    } else if (dim == CLOUD_CVR_IDX) {
+                        values = cloudCover.getValue();
+                    } else {
+                        throw new IllegalStateException("unprocessed tuple index: " + dim);
+                    }
                     for (int i = 0; i < times.size(); i++) {
-                        if (dim == AIR_TEMP_IDX) {
-                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(AIR_TEMP_IDX))).getDefaultUnit();
-                            wxSamples[dim][i] = airTemps.getValue().get(i).getValue(defaultUnit);
-                        } else if (dim == HUMIDITY_IDX) {
-                            wxSamples[dim][i] = humidities.getValue().get(i).getValue();
-                        } else if (dim == WIND_SPD_IDX) {
-                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(WIND_SPD_IDX))).getDefaultUnit();
-                            wxSamples[dim][i] = windSpeeds.getValue().get(i).getValue(defaultUnit);
-                        } else if (dim == WIND_DIR_IDX) {
-                            wxSamples[dim][i] = directions.getValue().get(i).getValue();
-                        } else if (dim == CLOUD_CVR_IDX) {
-                            wxSamples[dim][i] = cloudCover.getValue().get(i).getValue();
-                        } else {
-                            throw new IllegalStateException("bad array index");
-                        }
+                        wxSamples[dim][i] = values.get(i).getValue(defaultUnit);
                     }
                 }
+                // Create the wx range samples, converting the units as necessary.
+//                double[][] wxSamples = new double[WX_TUPLE_TYPE.getDimension()][times.size()];
+//                for (int dim = 0; dim < WX_TUPLE_TYPE.getDimension(); dim++) {
+//                    for (int i = 0; i < times.size(); i++) {
+//                        if (dim == AIR_TEMP_IDX) {
+//                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(AIR_TEMP_IDX))).getDefaultUnit();
+//                            wxSamples[dim][i] = airTemps.getValue().get(i).getValue(defaultUnit);
+//                        } else if (dim == HUMIDITY_IDX) {
+//                            wxSamples[dim][i] = humidities.getValue().get(i).getValue();
+//                        } else if (dim == WIND_SPD_IDX) {
+//                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(WIND_SPD_IDX))).getDefaultUnit();
+//                            wxSamples[dim][i] = windSpeeds.getValue().get(i).getValue(defaultUnit);
+//                        } else if (dim == WIND_DIR_IDX) {
+//                            wxSamples[dim][i] = directions.getValue().get(i).getValue();
+//                        } else if (dim == CLOUD_CVR_IDX) {
+//                            wxSamples[dim][i] = cloudCover.getValue().get(i).getValue();
+//                        } else {
+//                            throw new IllegalStateException("unprocessed tuple index: " + dim );
+//                        }
+//                    }
+//                }
                 // Create the domain Set, a 1-D sequence with no regular interval.
                 // Use Gridded1DDoubleSet(MathType type, double[][] samples, lengthX)
                 Set timeSet = new Gridded1DDoubleSet(RealType.Time, timeSamples, timeSamples[0].length);
@@ -264,7 +285,7 @@ public class DwmlParser {
                 FlatField ff = new FlatField(wxFuncOfTime, timeSet);
                 // ...and put the weather values above into it
                 ff.setSamples(wxSamples);
-                
+
                 fields.add(ff);
             }
             return fields;
@@ -349,7 +370,7 @@ public class DwmlParser {
 
     /**
      *
-     * @param  paramsNode The node containing the wind {@code direction} Node
+     * @param paramsNode The node containing the wind {@code direction} Node
      * @return
      * @throws XPathExpressionException
      */
