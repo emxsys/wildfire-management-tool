@@ -40,16 +40,15 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import org.openide.util.NbBundle.Messages;
 
-@Messages(
-        {
-            "CTL_PositionLocked=Locked",
-            "CTL_PositionUnlocked=Unlocked",
-            "CTL_LockedDesc=The pushpin position is locked.",
-            "CTL_UnlockedDesc=The pushpin can be moved."
-        })
+@Messages({
+    "CTL_PositionLocked=Locked",
+    "CTL_PositionUnlocked=Unlocked",
+    "CTL_LockedDesc=The pushpin position is locked.",
+    "CTL_UnlockedDesc=The pushpin can be moved."
+})
 /**
- *
- * @author Bruce
+ * Pushpin Editor dialog.
+ * @author Bruce Schubert
  */
 public class PushpinEditorPane extends javax.swing.JPanel {
 
@@ -61,6 +60,13 @@ public class PushpinEditorPane extends javax.swing.JPanel {
             };
     private static int lastSelectionIndex = 0;
 
+    /**
+     * Creates the pushpin editor panel.
+     * @param markerName
+     * @param location
+     * @param isMovable
+     * @param attributes
+     */
     public PushpinEditorPane(String markerName, Coord3D location, boolean isMovable,
                              final PointPlacemarkAttributes attributes) {
         initComponents();
@@ -72,8 +78,8 @@ public class PushpinEditorPane extends javax.swing.JPanel {
         images = new ImageIcon[names.length];
         Integer[] intArray = new Integer[names.length];
         for (int i = 0; i < names.length; i++) {
-            intArray[i] = new Integer(i);
-            images[i] = createImageIcon("com/emxsys/wmt/globe/images/pushpins/castshadow-" + names[i].toLowerCase() + "32.png");
+            intArray[i] = i;
+            images[i] = createImageIcon("castshadow-" + names[i].toLowerCase() + "32.png");
         }
         // Create the name field -- autoselect the text to ease the editing of default names
         nameTextField.setText(markerName);
@@ -112,6 +118,8 @@ public class PushpinEditorPane extends javax.swing.JPanel {
 
     /**
      * Returns an ImageIcon, or null if the path was invalid.
+     * @param path
+     * @return
      */
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = PushpinEditorPane.class.getResource(path);
@@ -172,7 +180,7 @@ public class PushpinEditorPane extends javax.swing.JPanel {
                 boolean cellHasFocus) {
             //Get the selected index. (The index param isn't
             //always valid, so just use the value.)
-            int selectedIndex = ((Integer) value).intValue();
+            int selectedIndex = ((Integer) value);
 
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
@@ -247,7 +255,6 @@ public class PushpinEditorPane extends javax.swing.JPanel {
 
         lonLabel.setText("Longitude:");
 
-        lockToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/markers/pushpins/resources/unlock.png"))); // NOI18N
         lockToggleButton.setText("Unlocked");
         lockToggleButton.setToolTipText("Lock the position to prevent the pushpin from being moved.");
         lockToggleButton.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -261,7 +268,7 @@ public class PushpinEditorPane extends javax.swing.JPanel {
             }
         });
 
-        lockLabel.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lockLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -349,11 +356,11 @@ private void iconsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 private void lockToggleButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_lockToggleButtonStateChanged
     // Update context sensitive controls here:
     if (lockToggleButton.getModel().isSelected()) {
-        lockToggleButton.setIcon(new ImageIcon(getClass().getResource("resources/lock.png")));
+        lockToggleButton.setIcon(new ImageIcon(getClass().getResource("lock.png")));
         lockToggleButton.setText(Bundle.CTL_PositionLocked());
         lockLabel.setText(Bundle.CTL_LockedDesc());
     } else {
-        lockToggleButton.setIcon(new ImageIcon(getClass().getResource("resources/unlock.png")));
+        lockToggleButton.setIcon(new ImageIcon(getClass().getResource("unlock.png")));
         lockToggleButton.setText(Bundle.CTL_PositionUnlocked());
         lockLabel.setText(Bundle.CTL_UnlockedDesc());
     }

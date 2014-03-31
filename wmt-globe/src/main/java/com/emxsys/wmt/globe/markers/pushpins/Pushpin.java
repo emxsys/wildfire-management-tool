@@ -34,6 +34,7 @@ import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import gov.nasa.worldwind.render.PointPlacemark;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -104,7 +105,7 @@ public class Pushpin extends BasicMarker {
             try {
                 template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
             } catch (DataObjectNotFoundException ex) {
-                logger.severe(ex.toString());
+                logger.log(Level.SEVERE, "PushpinFactory() could not find template: {0}", TEMPLATE_CONFIG_FILE);
             }
         }
 

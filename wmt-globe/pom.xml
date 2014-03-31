@@ -198,6 +198,7 @@
                         <publicPackage>com.emxsys.wmt.globe.markers</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.markers.ics</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.markers.pushpins</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.markers.weather</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.render</publicPackage>
                     </publicPackages>
                     <nbmResources> 

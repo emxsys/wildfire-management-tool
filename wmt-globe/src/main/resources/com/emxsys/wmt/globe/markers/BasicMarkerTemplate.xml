@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MarkerCollection xmlns="http://emxsys.com/wmt-basicmarker"
+<MarkerCollection xmlns="http://emxsys.com/worldwind-basicmarker"
          xmlns:gml="http://www.opengis.net/gml"       
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://emxsys.com/wmt-basicmarker BasicMarkerSchema.xsd">
+         xsi:schemaLocation="http://emxsys.com/worldwind-basicmarker BasicMarkerSchema.xsd">
     <gml:boundedBy>
         <gml:Box>
             <gml:coord>

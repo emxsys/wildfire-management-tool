@@ -29,15 +29,17 @@
  */
 package com.emxsys.wmt.globe;
 
-import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.wmt.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.gis.api.layer.LayerGroup;
+import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.wmt.gis.api.symbology.Graphic;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
@@ -52,23 +54,22 @@ import com.emxsys.wmt.time.spi.DefaultTimeProvider;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.spi.DefaultWeatherProvider;
 import com.terramenta.globe.WorldWindManager;
-import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
-import java.awt.Component;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.List;
-import org.openide.util.Lookup;
-import org.openide.util.NbBundle.Messages;
-import org.openide.util.lookup.ServiceProvider;
-import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
+import java.awt.Component;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 import visad.CommonUnit;
 import visad.Real;
 import visad.VisADException;
@@ -159,7 +160,7 @@ public class Globe implements GisViewer {
         // Disable painting during the initialization
         this.wwm.getWorldWindow().setVisible(false);
 
-        // Insert group layers
+        // Create TOC layers
         for (BasicLayerGroup layerGroup : BasicLayerGroup.values()) {
             DummyLayer dummyLayer = new DummyLayer(layerGroup);
             this.wwm.getLayers().add(layerGroup.getIndex(), dummyLayer);
@@ -169,6 +170,16 @@ public class Globe implements GisViewer {
         addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
         addAll(WidgetLayers.getLayers());
+
+        // Some layers provide capabilities. Find them and them to the Globe's lookup.
+        Marker.Renderer markerRenderer = this.gisLayers.getLookup().lookup(Marker.Renderer.class);
+        if (markerRenderer != null) {
+            this.content.add(markerRenderer);
+        }
+        Graphic.Renderer graphicRenderer = this.gisLayers.getLookup().lookup(Graphic.Renderer.class);
+        if (graphicRenderer != null) {
+            this.content.add(graphicRenderer);
+        }
 
         // Update the UI
         ReticuleStatusLine.getInstance().initialize();
@@ -216,16 +227,16 @@ public class Globe implements GisViewer {
     }
 
     private void addAll(List<GisLayer> list) {
-        for (GisLayer gisLayer : list) {
-            addGisLayer(gisLayer, false);   // false = position last in layer group
-        }
+        list.stream().forEach((gisLayer) -> {
+            addGisLayer(gisLayer, false);
+        });
     }
 
     public synchronized void addGisLayer(GisLayer gisLayer, boolean insertFirstInGroup) {
         try {
             LayerGroup group = gisLayer.getLookup().lookup(LayerGroup.class);
             if (group == null) {
-                throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + " must have a LayerRole in its lookup.");
+                throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + " must have a LayerGroup in its lookup.");
             }
             // Get the WorldWind Layer implementation from the lookup or class hierarchy
             Layer layerImpl = gisLayer.getLookup().lookup(Layer.class);
@@ -295,7 +306,7 @@ public class Globe implements GisViewer {
 
     @Override
     public void centerOn(Coord2D latlon) {
-        throw new UnsupportedOperationException("centerOn");
+        getWorldWindManager().gotoPosition(Positions.fromCoord2D(latlon), true); // true = animate
     }
 
     @Override
@@ -355,7 +366,7 @@ public class Globe implements GisViewer {
         Coord2D northeast = GeoCoord2D.fromDegrees(sector.getMaxLatitude().degrees, sector.getMaxLongitude().degrees);
         return new GeoSector(southwest, northeast);
     }
-    
+
     /**
      * Computes the great circle distance between two coordinates.
      * @param coord1
@@ -363,11 +374,11 @@ public class Globe implements GisViewer {
      * @return A Real containing the distance in meters.
      */
     public static Real computeGreatCircleDistance(Coord2D coord1, Coord2D coord2) {
-        Position pos1 = Positions.fromCoord2D(coord1); 
-        Position pos2 = Positions.fromCoord2D(coord2); 
+        Position pos1 = Positions.fromCoord2D(coord1);
+        Position pos2 = Positions.fromCoord2D(coord2);
         Angle angle = LatLon.greatCircleDistance(pos2, pos1);
-        
-        WorldWindManager wwm = Globe.getInstance().getWorldWindManager(); 
+
+        WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
         double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
         double distance = angle.radians * radius;
         return Reals.newDistance(distance, CommonUnit.meter);

@@ -36,12 +36,12 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.NbBundle.Messages;
 
-@Messages(
-        {
-            "CTL_DialogTitleAdd=Add ICS Marker",
-            "CTL_DialogTitleEdit=Edit ICS Marker"
-        })
+@Messages({
+    "CTL_DialogTitleAdd=Add ICS Marker",
+    "CTL_DialogTitleEdit=Edit ICS Marker"
+})
 /**
+ * This class displays a simple editor for an ICS marker.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */

@@ -48,15 +48,15 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert
  */
 @ActionID(category = "Markers", id = "com.emxsys.wmt.globe.markers.ics.actions.AddIcsMarkerAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/ics/Fire_Origin.png", displayName = "#CTL_AddICSMarkerAction")
+@ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/ics/Fire_Origin.png", displayName = "#CTL_AddICSMarkerAction")
 @ActionReference(path = "Toolbars/Create", position = 300)
-@RibbonActionReference(path = "Menu/Insert/Create/Marker/Centered",
+@RibbonActionReference(path = "Menu/Insert/Create",
         position = 300,
-        priority = "medium",
+        priority = "top",
         description = "#CTL_AddICSMarkerAction_Hint",
         tooltipTitle = "#CTL_AddICSMarkerAction_TooltipTitle",
         tooltipBody = "#CTL_AddICSMarkerAction_TooltipBody",
-        tooltipIcon = "com/emxsys/markers/pushpins/resources/Fire_Origin32.png")
+        tooltipIcon = "com/emxsys/wmt/globe/markers/ics/Fire_Origin32.png")
 @Messages(
         {
             "CTL_AddICSMarkerAction=ICS Marker",

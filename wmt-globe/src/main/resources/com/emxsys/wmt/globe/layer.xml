@@ -64,18 +64,6 @@
                 <attr name="instanceClass" stringvalue="com.emxsys.wmt.globe.layers.SymbolLayer"/>
                 <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.SymbolLayer.getInstance"/>
             </file>
-            <file name="Markers.instance">
-                <attr name="name" stringvalue="Markers"/>
-                <attr name="type" stringvalue="Vector"/>
-                <attr name="role" stringvalue="Symbology"/>
-                <attr name="category" stringvalue="Other"/>
-                <attr name="actuate" stringvalue="onLoad"/>
-                <attr name="opacity" doublevalue="0.65"/>
-                <attr name="position" intvalue="1251"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.globe.Bundle#WorldWind/Layers/Markers.instance"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.globe.layers.MarkerLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.MarkerLayer.getInstance"/>
-            </file>
             <file name="Shapes.instance">
                 <attr name="name" stringvalue="Shapes"/>
                 <attr name="type" stringvalue="Vector"/>

@@ -132,8 +132,8 @@ public class BasicMarkerNode extends DataNode {
             SystemAction.get(CopyAction.class),
             SystemAction.get(CutAction.class),
             null,
-            ModuleUtil.getAction("Edit", "com.emxsys.basicui.actions.EditAction"),
-            ModuleUtil.getAction("Edit", "com.emxsys.basicui.actions.DeleteAction"),
+            ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.EditAction"),
+            ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.DeleteAction"),
             null,
             SystemAction.get(PropertiesAction.class)
         };
@@ -141,7 +141,7 @@ public class BasicMarkerNode extends DataNode {
 
     @Override
     public Action getPreferredAction() {
-        return ModuleUtil.getAction("Edit", "com.emxsys.basicui.actions.EditAction");
+        return ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.EditAction");
     }
 
     /**
@@ -203,7 +203,7 @@ public class BasicMarkerNode extends DataNode {
         Image lockedImage = null;
         LockCapability lockable = getLookup().lookup(LockCapability.class);
         if (lockable != null && lockable.isLocked()) {
-            Image badgeImage = ImageUtilities.loadImage("com/emxsys/worldwind/resources/lock_badge.png");
+            Image badgeImage = ImageUtilities.loadImage("com/emxsys/wmt/globe/images/lock_badge.png");
             if (badgeImage != null) {
                 lockedImage = ImageUtilities.mergeImages(markerImage, badgeImage, 16, 8);
             }

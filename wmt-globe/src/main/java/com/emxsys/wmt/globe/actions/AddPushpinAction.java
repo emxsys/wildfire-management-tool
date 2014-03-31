@@ -49,16 +49,16 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Markers", id = "com.emxsys.wmt.globe.markers.pushpins.AddPushpinAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/pushpins/castshadow-green.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/pushpins/castshadow-green.png",
         displayName = "#CTL_AddPushpinAction")
 @ActionReference(path = "Toolbars/Create", position = 200)
-@RibbonActionReference(path = "Menu/Insert/Create/Marker/Centered",
+@RibbonActionReference(path = "Menu/Insert/Create",
         position = 200,
         description = "#CTL_AddPushpinAction_Hint",
         priority = "top",
         tooltipTitle = "#CTL_AddPushpinAction_TooltipTitle",
         tooltipBody = "#CTL_AddPushpinAction_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/pushpins/castshadow-black32.png")
+        tooltipIcon = "com/emxsys/wmt/globe/markers/pushpins/castshadow-black32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages(

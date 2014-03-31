@@ -152,8 +152,7 @@ public class BasicMarker extends AbstractMarker {
         this(GeoCoord3D.INVALID_POSITION);
     }
 
-
-    /*
+    /**
      * Constructor used by actions.
      */
     public BasicMarker(Coord3D coord) {
@@ -506,20 +505,21 @@ public class BasicMarker extends AbstractMarker {
     }
 
     /**
-     *
+     * MarkerFactory class.
      */
     public static class MarkerFactory implements Marker.Factory {
 
         // See package-info.java for the declaration of the MarkerTemplate
-        private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/MarkerTemplate.xml";
+        private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/BasicMarkerTemplate.xml";
         private static DataObject template;
         private static final Logger logger = Logger.getLogger(MarkerFactory.class.getName());
 
         public MarkerFactory() {
             try {
+                //template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
                 template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
             } catch (DataObjectNotFoundException ex) {
-                logger.severe(ex.toString());
+                logger.log(Level.SEVERE, "BasicMarker.MarkerFactory() cannot find: {0}", TEMPLATE_CONFIG_FILE);
             }
         }
 

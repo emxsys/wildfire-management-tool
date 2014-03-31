@@ -98,6 +98,10 @@ public class IcsMarkerEditorPane extends javax.swing.JPanel {
 
     /**
      * Creates new form EditMarkerPanel
+     * @param markerName
+     * @param location
+     * @param isMovable
+     * @param attributes
      */
     public IcsMarkerEditorPane(String markerName, Coord3D location, boolean isMovable,
                                final PointPlacemarkAttributes attributes) {
@@ -121,9 +125,9 @@ public class IcsMarkerEditorPane extends javax.swing.JPanel {
         images = new ImageIcon[names.length];
         Integer[] intArray = new Integer[names.length];
         for (int i = 0; i < names.length; i++) {
-            intArray[i] = new Integer(i);
+            intArray[i] = i;
             String filename = names[i].replace(" ", "_");
-            images[i] = createImageIcon("com/emxsys/wmt/globe/images/ics/" + filename + "24.png");
+            images[i] = createImageIcon(filename + "24.png");
         }
         // Create the name field -- autoselect the text to ease the editing of default names
         nameTextField.setText(markerName);
@@ -321,7 +325,6 @@ public class IcsMarkerEditorPane extends javax.swing.JPanel {
 
         lonLabel.setText("Longitude:");
 
-        lockToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/markers/ics/resources/lock24.png"))); // NOI18N
         lockToggleButton.setToolTipText("Lock the position to prevent the pushpin from being moved.");
         lockToggleButton.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -435,11 +438,11 @@ private void iconsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     {//GEN-HEADEREND:event_lockToggleButtonStateChanged
         // Update context sensitive controls here:
         if (lockToggleButton.getModel().isSelected()) {
-            lockToggleButton.setIcon(new ImageIcon(getClass().getResource("/com/emxsys/markers/ics/resources/lock24.png")));
+            lockToggleButton.setIcon(new ImageIcon(getClass().getResource("lock24.png")));
             //lockToggleButton.setText(Bundle.CTL_PositionLocked());
             lockLabel.setText(Bundle.CTL_LockedDesc());
         } else {
-            lockToggleButton.setIcon(new ImageIcon(getClass().getResource("/com/emxsys/markers/ics/resources/unlock24.png")));
+            lockToggleButton.setIcon(new ImageIcon(getClass().getResource("unlock24.png")));
             //lockToggleButton.setText(Bundle.CTL_PositionUnlocked());
             lockLabel.setText(Bundle.CTL_UnlockedDesc());
         }

@@ -35,11 +35,13 @@ import com.emxsys.wmt.gis.gml.GmlBuilder;
 import static com.emxsys.wmt.gis.gml.GmlConstants.*;
 import com.emxsys.wmt.gis.gml.GmlParser;
 import com.emxsys.wmt.util.ClassUtil;
+import com.emxsys.wmt.util.FileNameUtil;
 import com.emxsys.wmt.util.TimeUtil;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
+import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,7 +110,7 @@ import org.xml.sax.SAXException;
             "err.document.has.extra.markers={0} contains more than one Marker element. Only one Marker will be processed.",})
 public class BasicMarkerXmlEncoder {
 
-    public static final String BASIC_MARKER_NS_URI = "http://emxsys.com/wmt-basicmarker";
+    public static final String BASIC_MARKER_NS_URI = "http://emxsys.com/worldwind-basicmarker";
     public static final String BASIC_MARKER_SCHEMA_FILE = "BasicMarkerSchema.xsd";
     public static final String TAG_MARKERS = "MarkerCollection";
     public static final String TAG_MARKER = "Marker";
@@ -222,7 +224,7 @@ public class BasicMarkerXmlEncoder {
                 Element lbl_off_y = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_OFFSET_Y);
                 Element img_scale = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_SCALE);
 
-                img_url.appendChild(doc.createTextNode(stripJarFileUrl(attributes.getImageAddress())));
+                img_url.appendChild(doc.createTextNode(getFilename(attributes.getImageAddress())));
                 img_off_x.appendChild(doc.createTextNode(Double.toString(attributes.getImageOffset().getX())));
                 img_off_y.appendChild(doc.createTextNode(Double.toString(attributes.getImageOffset().getY())));
                 lbl_off_x.appendChild(doc.createTextNode(Double.toString(attributes.getLabelOffset().getX())));
@@ -247,20 +249,25 @@ public class BasicMarkerXmlEncoder {
     }
 
     public static BasicMarker readDocument(Document doc) {
-        if (doc == null) {
-            logger.severe(Bundle.err_cannot_import_marker(new IllegalArgumentException(Bundle.err_document_is_null()).toString()));
-            return null;
+        try {
+
+            if (doc == null) {
+                throw new IllegalArgumentException(Bundle.err_document_is_null());
+            }
+            // Get the Marker node, there should only be one [0-1]
+            final NodeList markerNodes = doc.getElementsByTagName(TAG_MARKER);
+            if (markerNodes.getLength() == 0) {
+                throw new IllegalStateException(Bundle.err_document_missing_marker(doc.getDocumentURI()));
+            } else if (markerNodes.getLength() > 1) {
+                logger.warning(Bundle.err_document_has_extra_markers(doc.getDocumentURI()));
+            }
+            // Process first (and only) marker element
+            return parseMarkerElement((Element) markerNodes.item(0));
+
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            logger.severe(Bundle.err_cannot_import_marker(ex.toString()));
         }
-        // Get the markers nodes, there should only be one [0-1]
-        final NodeList markerNodes = doc.getElementsByTagName(TAG_MARKER);
-        if (markerNodes.getLength() == 0) {
-            logger.warning(Bundle.err_cannot_import_marker(new IllegalStateException(Bundle.err_document_missing_marker(doc.getDocumentURI())).toString()));
-            return null;
-        } else if (markerNodes.getLength() > 1) {
-            logger.warning(Bundle.err_cannot_import_marker(new IllegalStateException(Bundle.err_document_has_extra_markers(doc.getDocumentURI())).toString()));
-        }
-        // Get the first (and only) marker element
-        return parseMarkerElement((Element) markerNodes.item(0));
+        return null;
     }
 
     /**
@@ -273,20 +280,21 @@ public class BasicMarkerXmlEncoder {
         // Get the factory class
         String clazz = element.getAttribute(ATTR_FACTORY);
         Marker.Factory markerFactory = findMarkerFactory(clazz);
-        if (markerFactory == null) {
-            logger.warning(Bundle.err_cannot_import_marker(new IllegalStateException("Could not find a Marker.Factory.").toString()));
-            return null;
+        try {
+            if (markerFactory == null) {
+                throw new IllegalStateException("Marker.Factory \"" + clazz + "\" cannot be null.");
+            }
+            // Create a Marker and initialize it from the XML
+            Marker marker = markerFactory.newMarker();
+            if (marker instanceof BasicMarker) {
+                return initializeMarker(element, (BasicMarker) marker);
+            } else {
+                throw new IllegalStateException("Not a BasicMarker type.");
+            }
+        } catch (IllegalArgumentException ex) {
+            logger.severe(Bundle.err_cannot_import_marker(ex.toString()));
         }
-
-        // Create a Marker and initialize it from the XML
-        Marker marker = markerFactory.newMarker();
-        if (marker instanceof BasicMarker) {
-            return initializeMarker(element, (BasicMarker) marker);
-        } else {
-            logger.severe(Bundle.err_cannot_import_marker(new IllegalStateException("Not a BasicMarker type.").toString()));
-            return null;
-        }
-
+        return null;
     }
 
     /**
@@ -328,7 +336,9 @@ public class BasicMarkerXmlEncoder {
                     lblOffsetX.isEmpty() ? 0.9 : Double.valueOf(lblOffsetX),
                     lblOffsetY.isEmpty() ? 0.6 : Double.valueOf(lblOffsetY),
                     AVKey.FRACTION, AVKey.FRACTION);
-            attributes.setImageAddress(imgAddress == null ? null : ClassUtil.findLocalResource(imgAddress).toString());
+            URL localResource = findLocalResource(imgAddress, marker.getClass());
+            logger.log(Level.FINE, "image resource: {0}", (localResource == null ? "null" : localResource.toString()));
+            attributes.setImageAddress(localResource == null ? null : localResource.toString());
             attributes.setScale(imgScale.isEmpty() ? 1.0 : Double.parseDouble(imgScale));
             attributes.setImageOffset(imgOffset);
             attributes.setLabelOffset(lblOffset);
@@ -376,7 +386,7 @@ public class BasicMarkerXmlEncoder {
         Lookup.Template<Marker.Factory> template = new Lookup.Template<>(Marker.Factory.class, clazz, null);
         Item<Marker.Factory> item = Lookup.getDefault().lookupItem(template);
         if (item == null) {
-            logger.log(Level.SEVERE, "Cannot create Marker.Provider: {0} was not found on the global lookup.", clazz);
+            logger.log(Level.SEVERE, "Cannot create Marker.Factory: \"{0}\" was not found on the global lookup.", clazz);
             return null;
         }
         return item.getInstance();
@@ -396,6 +406,21 @@ public class BasicMarkerXmlEncoder {
         }
         int index = resourceUrl.indexOf("!/");
         return index == -1 ? resourceUrl : resourceUrl.substring(index + 1);
+    }
+
+    private static String getFilename(String resourceUrl) {
+        if (resourceUrl == null) {
+            return "";
+        }
+        File file = new File(resourceUrl);
+        return file.getName();
+    }
+
+    public static URL findLocalResource(String resourceUrl, Class clazz) {
+        if (resourceUrl == null) {
+            return null;
+        }
+        return clazz.getResource(getFilename(resourceUrl));
     }
 
 }

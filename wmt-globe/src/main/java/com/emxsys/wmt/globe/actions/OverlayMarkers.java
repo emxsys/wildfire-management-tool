@@ -28,10 +28,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.emxsys.wmt.globe.actions;
-/*
-import com.emxsys.actions.RibbonActionReference;
-import com.emxsys.basicui.actions.AbstractGisLayerToggleAction;
-import com.emxsys.worldwind.WorldWindTopComponent;
+
+import com.emxsys.wmt.globe.layers.OverlayLayers;
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.util.logging.Logger;
 import javax.swing.Action;
@@ -43,47 +42,39 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
-
 @ActionID(
-    category = "Map",
-          id = "com.emxsys.worldwind.actions.OverlayMarkers")
+        category = "Map",
+        id = "com.emxsys.wmt.globe.actions.OverlayMarkers")
 @ActionRegistration(
-    iconBase = "com/emxsys/worldwind/resources/favorite.png",
-                    displayName = "#CTL_Markers",
-                    lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@ActionReferences(
-{
-    @ActionReference(path = "Menu/Map/Overlays/Graphics", position = 100),
-    @ActionReference(path = "Toolbars/Overlays", position = 311)
-})
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Map/Overlays/Graphics",
-                       buttonStyle = "toggle",
-                       position = 100,
-                       description = "#CTL_Markers_Hint",
-                       priority = "top",
-                       tooltipTitle = "#CTL_Markers_TooltipTitle",
-                       tooltipBody = "#CTL_Markers_TooltipBody",
-                       tooltipIcon = "com/emxsys/worldwind/resources/favorite24.png")
+        iconBase = "com/emxsys/wmt/globe/markers/pushpins/plain-black.png",
+        displayName = "#CTL_Markers",
+        lazy = false)   // non-lazy init is required to update the button state before it displayed                    
+@ActionReference(path = "Toolbars/Overlays", position = 311)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graphics",
+        buttonStyle = "toggle",
+        position = 100,
+        description = "#CTL_Markers_Hint",
+        priority = "top",
+        tooltipTitle = "#CTL_Markers_TooltipTitle",
+        tooltipBody = "#CTL_Markers_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/globe/markers/pushpins/plain-black.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages(
-{
-    "CTL_Markers=Markers",
-    "CTL_Markers_Hint=Markers and Pushpins Overlay",
-    "CTL_Markers_TooltipTitle=Markers and Pushpins Overlay",
-    "CTL_Markers_TooltipBody=Activate the Markers overlay. \n"
-    + "The overlay displays markers and pushpins on top of maps."
-})
-public final class OverlayMarkers extends AbstractGisLayerToggleAction
-{
+        {
+            "CTL_Markers=Markers",
+            "CTL_Markers_Hint=Markers and Pushpins Overlay",
+            "CTL_Markers_TooltipTitle=Markers and Pushpins Overlay",
+            "CTL_Markers_TooltipBody=Activate the Markers overlay. \n"
+            + "The overlay displays markers and pushpins on top of maps."
+        })
+public final class OverlayMarkers extends AbstractGisLayerToggleAction {
 
     private static final Logger logger = Logger.getLogger(OverlayMarkers.class.getName());
-    private static final String OVERLAY_NAME = NbBundle.getMessage(WorldWindTopComponent.class, "WorldWind/Layers/Markers.instance");
-    private static final String ICON_BASE = "com/emxsys/worldwind/resources/favorite.png";
+    private static final String OVERLAY_NAME = OverlayLayers.LAYER_MARKERS;
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/markers/pushpins/plain-black.png";
 
-
-    public OverlayMarkers()
-    {
+    public OverlayMarkers() {
         // The base class will use the layer's display name to find the GisLayer that will be operated on.
         super(OVERLAY_NAME);
 
@@ -93,19 +84,14 @@ public final class OverlayMarkers extends AbstractGisLayerToggleAction
         putValue("iconBase", ICON_BASE);
     }
 
-
     @Override
-    public void actionPerformed(ActionEvent event)
-    {
+    public void actionPerformed(ActionEvent event) {
         // Let the base class perform the toggle action
         super.actionPerformed(event);
     }
 
-
     @Override
-    public Action createContextAwareInstance(Lookup ignoredActionContext)
-    {
+    public Action createContextAwareInstance(Lookup ignoredActionContext) {
         return new OverlayMarkers();
     }
 }
-*/

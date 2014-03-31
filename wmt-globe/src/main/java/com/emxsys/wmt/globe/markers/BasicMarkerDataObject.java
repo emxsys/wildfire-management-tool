@@ -76,7 +76,7 @@ import org.xml.sax.SAXException;
  */
 @Messages(
         {
-            "LBL_Marker_LOADER=Files of Marker",
+            "LBL_Marker_LOADER=Marker Files",
             "# {0} - marker name",
             "error_cannot_load_marker=Cannot load marker. {0}",
             "# {0} - marker name",
@@ -85,44 +85,40 @@ import org.xml.sax.SAXException;
             "error_cannot_delete_marker=Cannot delete marker. {0}",})
 @MIMEResolver.NamespaceRegistration(
         displayName = "#LBL_Marker_LOADER",
-        mimeType = "text/emxsys-worldwind-basicmarker+xml",
+        mimeType = "text/emxsys-wmt-basicmarker+xml",
         elementNS
         = {
-            "http://emxsys.com/wmt-basicmarker"
+            "http://emxsys.com/wmt-basicmarker",
+            "http://emxsys.com/worldwind-basicmarker"
         })
 @DataObject.Registration(
         mimeType = "text/emxsys-wmt-basicmarker+xml",
-        iconBase = "com/emxsys/wmt/globe/images/plain-black.png",
+        iconBase = "com/emxsys/wmt/globe/markers/plain-black.png",
         displayName = "#LBL_Marker_LOADER",
         position = 300)
 @ActionReferences(
         {
             @ActionReference(
                     path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+                    id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
                     position = 100,
                     separatorAfter = 200),
             @ActionReference(
                     path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+                    id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
                     position = 300),
             @ActionReference(
                     path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+                    id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
                     position = 400,
                     separatorAfter = 500),
             @ActionReference(
                     path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+                    id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
                     position = 600),
             @ActionReference(
                     path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+                    id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
                     position = 700,
                     separatorAfter = 800),
 //    @ActionReference(
@@ -144,8 +140,7 @@ import org.xml.sax.SAXException;
 //                     position = 1300),
             @ActionReference(
                     path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+                    id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
                     position = 1400)
         })
 // This file was created by the IDE's New FileType Wizard and then the base class was changed from
@@ -208,12 +203,10 @@ public class BasicMarkerDataObject extends XMLDataObject {
             // Read a the marker from the xml
             this.marker = BasicMarkerXmlEncoder.readDocument(getDocument());
             if (this.marker == null) {
-                throw new RuntimeException("readFile() failed: " + getName());
+                throw new RuntimeException("readFile->readDocument() failed: " + getName());
             }
-
             // Override the name read from the XML with the filename--the filename IS the marker name
             this.marker.setName(FileNameUtil.decodeFilename(getName()));
-
             // Ok to add event listener now that the marker is initialized.
             this.marker.addPropertyChangeListener(WeakListeners.propertyChange(this.changeListener, this.marker));
         } catch (IOException | SAXException | RuntimeException exception) {
@@ -222,7 +215,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
             return;
         }
         try {
-            // Add this marker to the project catalog
+            // Add this marker to the project's marker manager/catalog
             Project owner = FileOwnerQuery.getOwner(getPrimaryFile());
             if (owner == null) {
                 throw new RuntimeException("Cannot find the project that owns " + getName());
@@ -302,6 +295,9 @@ public class BasicMarkerDataObject extends XMLDataObject {
 
     /**
      * Delegates to DataObject.getLookup().lookup().
+     * @param <T>
+     * @param cls
+     * @return 
      */
     @Override
     public <T extends Cookie> T getCookie(Class<T> cls) {
@@ -324,7 +320,6 @@ public class BasicMarkerDataObject extends XMLDataObject {
             if (openCookie != null) {
                 getCookieSet().remove(openCookie);
             }
-
             return new BasicMarkerNode(this, this.marker, getCookieSet().getLookup());
         } catch (RuntimeException ex) {
             logger.severe(ex.getMessage());
@@ -407,6 +402,10 @@ public class BasicMarkerDataObject extends XMLDataObject {
 
     /**
      *
+     * @param df
+     * @param name
+     * @return 
+     * @throws java.io.IOException 
      * @see MarkerCreateFromTemplateHandler
      */
     @Override

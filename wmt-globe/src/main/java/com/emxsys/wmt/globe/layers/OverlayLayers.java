@@ -51,6 +51,17 @@ import org.openide.util.lookup.Lookups;
  */
 @MapLayerRegistrations({
     @MapLayerRegistration(
+            position = 10,
+            name = "Markers",
+            actuate = "onLoad",
+            role = "Overlay",
+            type = "Vector",
+            category = "Other",
+            displayName = "#CTL_Markers",
+            instanceClass = "com.emxsys.wmt.globe.layers.MarkerLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.MarkerLayer",
+            factoryMethod = "newInstance"),
+    @MapLayerRegistration(
             position = 100,
             name = "Borders",
             actuate = "onRequest",
@@ -106,6 +117,7 @@ import org.openide.util.lookup.Lookups;
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),})
 @Messages({
+    "CTL_Markers=Markers",
     "CTL_CountryBoundaries=Country Boundaries",
     "CTL_LatLonGraticule=Lat/Lon Graticule",
     "CTL_MGRSGraticule=MGRS Graticule",
@@ -113,6 +125,7 @@ import org.openide.util.lookup.Lookups;
     "CTL_PlaceNames=Place Names",})
 public class OverlayLayers {
 
+    public static String LAYER_MARKERS = Bundle.CTL_Markers();
     public static String LAYER_COUNTRY_BOUNDARIES = Bundle.CTL_CountryBoundaries();
     public static String LAYER_LATLON_GRATICULE = Bundle.CTL_LatLonGraticule();
     public static String LAYER_UTM_GRATICULE = Bundle.CTL_UTMGraticule();
@@ -135,15 +148,15 @@ public class OverlayLayers {
             wwLayers.stream().forEach((wwLayer) -> {
                 list.add(wwLayer instanceof GisLayer ? (GisLayer) wwLayer : new GisLayerProxy(wwLayer));
             });
-            // Lookup the GISLayer with an aggregate Layer object
-            Collection<? extends GisLayer> gisLayers = Lookups.forPath(layersFolder.getPath()).lookupAll(GisLayer.class);
-            gisLayers.stream().forEach((gisLayer) -> {
-                if (!(gisLayer instanceof Layer) && gisLayer.getLookup().lookup(Layer.class) != null) {
-                    list.add(gisLayer);
-                } else {
-                    logger.log(Level.SEVERE, "GisLayer [{0}] was not initialized because it is not a Layer nor has a Layer.", gisLayer.getName());
-                }
-            });
+//            // Lookup the GISLayer with an aggregate Layer object
+//            Collection<? extends GisLayer> gisLayers = Lookups.forPath(layersFolder.getPath()).lookupAll(GisLayer.class);
+//            gisLayers.stream().forEach((gisLayer) -> {
+//                if (!(gisLayer instanceof Layer) && gisLayer.getLookup().lookup(Layer.class) != null) {
+//                    list.add(gisLayer);
+//                } else {
+//                    logger.log(Level.SEVERE, "GisLayer [{0}] was not initialized because it is not a Layer nor has a Layer.", gisLayer.getName());
+//                }
+//            });
         }
         return list;
     }

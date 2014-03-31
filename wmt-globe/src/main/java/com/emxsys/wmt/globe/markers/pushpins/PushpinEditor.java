@@ -34,9 +34,7 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.NbBundle.Messages;
 
-
-@Messages(
-{
+@Messages({
     "CTL_DialogTitleAdd=Add Pushpin",
     "CTL_DialogTitleEdit=Edit Pushpin"
 })
@@ -45,45 +43,42 @@ import org.openide.util.NbBundle.Messages;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class PushpinEditor
-{
+public class PushpinEditor {
 
-    public static boolean edit(Pushpin pushpin, boolean isNew)
-    {
+    public static boolean edit(Pushpin pushpin, boolean isNew) {
         // Create the dialog content panel
-        PointPlacemark placemark = pushpin.getLookup().lookup(PointPlacemark.class);        
+        PointPlacemark placemark = pushpin.getLookup().lookup(PointPlacemark.class);
         PushpinEditorPane dialogPane = new PushpinEditorPane(
-            pushpin.getName(), pushpin.getPosition(), pushpin.isMovable(), placemark.getAttributes());
+                pushpin.getName(),
+                pushpin.getPosition(),
+                pushpin.isMovable(),
+                placemark.getAttributes());
 
         // Wrap the panel in a standard dialog...
         DialogDescriptor descriptor = new DialogDescriptor(
-            dialogPane,
-            isNew ? Bundle.CTL_DialogTitleAdd() : Bundle.CTL_DialogTitleEdit(),
-            true, // Modal?
-            DialogDescriptor.OK_CANCEL_OPTION,
-            DialogDescriptor.OK_OPTION,
-            null);
+                dialogPane,
+                isNew ? Bundle.CTL_DialogTitleAdd() : Bundle.CTL_DialogTitleEdit(),
+                true, // Modal?
+                DialogDescriptor.OK_CANCEL_OPTION,
+                DialogDescriptor.OK_OPTION,
+                null);
         // ... and present to the user
         Object result = DialogDisplayer.getDefault().notify(descriptor);
 
         // Update the pushpin
-        if (result != null && result == DialogDescriptor.OK_OPTION)
-        {
+        if (result != null && result == DialogDescriptor.OK_OPTION) {
             // Update name
-            if (!pushpin.getName().equals(dialogPane.getMarkerName()))
-            {
+            if (!pushpin.getName().equals(dialogPane.getMarkerName())) {
                 pushpin.setName(dialogPane.getMarkerName());
             }
             // Update movable flag
-            if (pushpin.isMovable() != dialogPane.isMovable())
-            {
+            if (pushpin.isMovable() != dialogPane.isMovable()) {
                 pushpin.setMovable(dialogPane.isMovable());
             }
             // Update attributes if image changed
             String oldImageAddress = placemark.getAttributes().getImageAddress();
             String newImageAddress = dialogPane.getMarkerRenderingAttributes().getImageAddress();
-            if (oldImageAddress == null || oldImageAddress.isEmpty() || !oldImageAddress.equals(newImageAddress))
-            {
+            if (oldImageAddress == null || oldImageAddress.isEmpty() || !oldImageAddress.equals(newImageAddress)) {
                 // fires a property change event
                 pushpin.setAttributes(dialogPane.getMarkerRenderingAttributes());
             }
