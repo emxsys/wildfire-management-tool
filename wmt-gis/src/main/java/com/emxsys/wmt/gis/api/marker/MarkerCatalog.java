@@ -32,9 +32,14 @@ package com.emxsys.wmt.gis.api.marker;
 import com.emxsys.wmt.gis.api.EntityCatalog;
 import com.emxsys.wmt.gis.api.marker.Marker.Renderer;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 
 @Messages(
@@ -60,8 +65,14 @@ import org.openide.util.NbBundle.Messages;
 public class MarkerCatalog extends EntityCatalog<Marker> {
 
     private FileObject folder;
+    private Lookup.Result<Renderer> rendererResults;
+    private Marker.Renderer markerRenderer;
+    private final ArrayList<Marker> pendingAdds = new ArrayList<>();
     private static final Logger logger = Logger.getLogger(MarkerCatalog.class.getName());
 
+    static {
+        logger.setLevel(Level.ALL);
+    }
     /**
      * Constructs a EntityCatalog who's contents are backed by a folder.
      *
@@ -105,6 +116,7 @@ public class MarkerCatalog extends EntityCatalog<Marker> {
         }
         else {
             logger.warning(Bundle.err_marker_renderer_not_found(marker.getName()));
+            pendingAdds.add(marker);
         }
     }
 
@@ -117,7 +129,7 @@ public class MarkerCatalog extends EntityCatalog<Marker> {
         if (renderer != null) {
             logger.fine(Bundle.info_removing_marker_from_renderer(item.getName()));
             renderer.removeMarker(item);
-        }
+        } 
     }
 
     /**
@@ -135,14 +147,35 @@ public class MarkerCatalog extends EntityCatalog<Marker> {
                 markerRenderer.removeMarker(marker);
             }
         }
+        pendingAdds.clear();
         super.dispose();
     }
 
     private Marker.Renderer getMarkerRenderer() {
-        GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
-        if (viewer != null) {
-            return viewer.getLookup().lookup(Marker.Renderer.class);
+        if (markerRenderer == null) {
+            GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
+            if (viewer != null && rendererResults == null) {
+                // Create lookup listener to watch for the arrival or disposal of a Marker.Renderer
+                this.rendererResults = viewer.getLookup().lookupResult(Marker.Renderer.class);
+                this.rendererResults.addLookupListener((LookupEvent ev) -> {
+                    Collection<? extends Renderer> allInstances = rendererResults.allInstances();
+                    if (allInstances.isEmpty()) {
+                        markerRenderer = null;
+                    }
+                    else {
+                        // Update the renderer and process any pending Markers
+                        markerRenderer = allInstances.iterator().next();
+                        pendingAdds.stream().forEach((marker) -> {
+                            addMarkerToRenderer(marker);
+                        });
+                        pendingAdds.clear();
+                    }
+                });
+                if (!rendererResults.allInstances().isEmpty()) {
+                    markerRenderer = rendererResults.allInstances().iterator().next();
+                }
+            }
         }
-        return null;
+        return markerRenderer;
     }
 }
