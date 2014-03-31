@@ -103,7 +103,7 @@ public class BasicProject implements Project {
     Lookup baseLookup;
     Lookup compositeLookup;
     InstanceContent content = new InstanceContent();
-    private boolean ungoingDeletion = false;
+    //private boolean ungoingDeletion = false;
     private final AtomicReference<State> init = new AtomicReference<>(State.NEW);
     private final AtomicReference<Operation> operation = new AtomicReference<>(Operation.IDLE);
     private static final RequestProcessor THREAD_POOL = new RequestProcessor("BasicProject processor", 1);
@@ -192,35 +192,32 @@ public class BasicProject implements Project {
         if (!isNew && !this.init.compareAndSet(State.CLOSED, State.INITILIZING)) {
             throw new IllegalStateException("Cannot open, state must be NEW or CLOSED, not " + this.init.get());
         }
-        THREAD_POOL.post(new Runnable() {
-            @Override
-            public void run() {
-                logger.log(Level.INFO, "Loading project {0} data files...", getProjectName()); //NOI18N            
-
-                final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading data files...");
-                handle.start(); // start in indeterminate mode
-                try {
-                    handle.progress("Loading scenes...");
-                    loadScenes(SCENE_FOLDER_NAME);
-
-                    handle.progress("Loading markers...");
-                    loadMarkers(MARKER_FOLDER_NAME);
-
-                    handle.progress("Loading symbology...");
-                    loadSymbology(SYMBOLOGY_FOLDER_NAME);
-
-                    // Ok to Load/convert file formats in the project root now 
-                    // that the project folder hierarchay has been established
-                    handle.progress("Loading/converting legacy files...");
-                    loadLegacyFiles();
-
-                    init.set(State.INITIALIZED);
-                } catch (Exception exception) {
-                    logger.severe(exception.toString());
-                } finally {
-                    handle.finish();
-                    logger.log(Level.INFO, "Finished loading project {0} data files...", getProjectName()); //NOI18N                logger.log(Level.INFO, "Opening project folder {0} ...", getProjectDirectory().getName());
-                }
+        THREAD_POOL.post(() -> {
+            logger.log(Level.INFO, "Loading project {0} data files...", getProjectName()); //NOI18N
+            
+            final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading data files...");
+            handle.start(); // start in indeterminate mode
+            try {
+                handle.progress("Loading scenes...");
+                loadScenes(SCENE_FOLDER_NAME);
+                
+                handle.progress("Loading markers...");
+                loadMarkers(MARKER_FOLDER_NAME);
+                
+                handle.progress("Loading symbology...");
+                loadSymbology(SYMBOLOGY_FOLDER_NAME);
+                
+                // Ok to Load/convert file formats in the project root now
+                // that the project folder hierarchay has been established
+                handle.progress("Loading/converting legacy files...");
+                loadLegacyFiles();
+                
+                init.set(State.INITIALIZED);
+            } catch (Exception exception) {
+                logger.severe(exception.toString());
+            } finally {
+                handle.finish();
+                logger.log(Level.INFO, "Finished loading project {0} data files...", getProjectName()); //NOI18N                logger.log(Level.INFO, "Opening project folder {0} ...", getProjectDirectory().getName());
             }
         });
     }
@@ -253,9 +250,9 @@ public class BasicProject implements Project {
         }
         // TODO: query project extensions; find a way to signal them that the project is closed.
         Collection<? extends Disposable> lookupAll = this.compositeLookup.lookupAll(Disposable.class);
-        for (Disposable object : lookupAll) {
+        lookupAll.stream().forEach((object) -> {
             object.dispose();
-        }
+        });
 
         init.set(State.CLOSED);
     }
