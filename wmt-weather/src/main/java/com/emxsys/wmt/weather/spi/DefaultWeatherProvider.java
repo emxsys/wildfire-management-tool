@@ -34,7 +34,9 @@ import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import com.emxsys.wmt.weather.api.WeatherTuple;
 import java.util.Date;
+import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
+import visad.Field;
 import visad.FlatField;
 import visad.Gridded1DSet;
 
@@ -96,4 +98,14 @@ public class DefaultWeatherProvider implements WeatherProvider {
 //    public void addObservation() {
 //        throw new UnsupportedOperationException("addObservation");
 //    }
+
+    @Override
+    public ImageIcon getImageIcon() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Field getPointForecast(Coord2D coord) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

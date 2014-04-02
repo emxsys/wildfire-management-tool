@@ -30,7 +30,7 @@
 package com.emxsys.wmt.globe.markers;
 
 import com.emxsys.wmt.gis.api.marker.MarkerCatalog;
-import com.emxsys.wmt.util.FileNameUtil;
+import com.emxsys.wmt.util.FilenameUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -206,7 +206,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
                 throw new RuntimeException("readFile->readDocument() failed: " + getName());
             }
             // Override the name read from the XML with the filename--the filename IS the marker name
-            this.marker.setName(FileNameUtil.decodeFilename(getName()));
+            this.marker.setName(FilenameUtils.decodeFilename(getName()));
             // Ok to add event listener now that the marker is initialized.
             this.marker.addPropertyChangeListener(WeakListeners.propertyChange(this.changeListener, this.marker));
         } catch (IOException | SAXException | RuntimeException exception) {

@@ -38,19 +38,13 @@ import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.util.HttpUtil;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.AbstractBrowserBalloon;
 import gov.nasa.worldwind.render.BalloonAttributes;
 import gov.nasa.worldwind.render.BasicBalloonAttributes;
 import gov.nasa.worldwind.render.GlobeBrowserBalloon;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
-import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.Size;
-import gov.nasa.worldwind.util.Logging;
-import gov.nasa.worldwind.util.WWIO;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -72,7 +66,7 @@ import visad.Field;
  */
 @Messages(
         {
-            "CTL_PushpinDialogTitle=Edit Marker",
+            "CTL_WeatherDialogTitle=Edit Weather Marker",
             "ERR_ViewerNotFound=WorldWindPanel not found."
         })
 public class WeatherMarker extends BasicMarker {
@@ -83,20 +77,32 @@ public class WeatherMarker extends BasicMarker {
     private static final Logger logger = Logger.getLogger(WeatherMarker.class.getName());
 
     WeatherMarker() {
-        this("Marker", GeoCoord3D.INVALID_POSITION, null, null);
+        this("Wx Marker", GeoCoord3D.INVALID_POSITION, null, null);
+    }
+    
+    public WeatherMarker(String name, Coord3D location) {
+        this(name, location, null, null);
     }
 
     public WeatherMarker(String name, Coord3D location, Field field, URL moreInfo) {
         super(location);
         setName(name);
         this.field = field;
-        this.moreInfoLink = moreInfo.toString();
+        this.moreInfoLink = null;//moreInfo.toString();
 
         // Get the implementation from the super class' lookup
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
+        
+        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
+        attrs.setLabelColor("ffffffff");
+        attrs.setLineColor("ff0000ff");
+        attrs.setUsePointAsDefaultImage(true);
+        attrs.setScale(5d);
+        placemark.setAttributes(attrs);
         overrideDefaultAttributes();
     }
+    
 
     private void overrideDefaultAttributes() {
         Preferences pref = NbPreferences.forModule(getClass());
@@ -121,14 +127,12 @@ public class WeatherMarker extends BasicMarker {
         if (balloon != null) {
             balloon.setVisible(true);
         }
-
     }
 
     protected void makeBrowserBalloon() {
 
         String htmlString = HttpUtil.callWebService(moreInfoLink);
         if (htmlString == null) {
-            htmlString = Logging.getMessage("generic.ExceptionAttemptingToReadFile", moreInfoLink);
             return;
         }
         this.balloon = new GlobeBrowserBalloon(htmlString, Positions.fromCoord3D(getPosition()));
@@ -145,11 +149,11 @@ public class WeatherMarker extends BasicMarker {
     /**
      * Gets the class responsible for creating WeatherMarkers from XML Elements.
      *
-     * @return WeatherMarkerFactory.class.
+     * @return WeatherMarker.Factory.class.
      */
     @Override
-    public Class<WeatherMarkerFactory> getFactoryClass() {
-        return WeatherMarkerFactory.class;
+    public Class<WeatherMarker.Factory> getFactoryClass() {
+        return WeatherMarker.Factory.class;
     }
 
     /**
@@ -159,7 +163,7 @@ public class WeatherMarker extends BasicMarker {
      * @see WeatherMarkerFactory
      */
     public static Factory getFactory() {
-        return new WeatherMarkerFactory();
+        return new WeatherMarker.Factory();
 
     }
 
@@ -173,14 +177,14 @@ public class WeatherMarker extends BasicMarker {
      * @author Bruce Schubert <bruce@emxsys.com>
      */
     @ServiceProvider(service = Marker.Factory.class)
-    public static class WeatherMarkerFactory extends BasicMarker.MarkerFactory {
+    public static class Factory extends BasicMarker.MarkerFactory {
 
         // See package-info.java for the declaration of the WeatherMarkerTemplate
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/WeatherMarkerTemplate.xml";
         private static DataObject template;
-        private static final Logger logger = Logger.getLogger(WeatherMarkerFactory.class.getName());
+        private static final Logger logger = Logger.getLogger(Factory.class.getName());
 
-        public WeatherMarkerFactory() {
+        public Factory() {
             try {
                 template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
             } catch (DataObjectNotFoundException ex) {

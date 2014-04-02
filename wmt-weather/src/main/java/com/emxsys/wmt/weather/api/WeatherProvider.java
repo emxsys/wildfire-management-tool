@@ -31,6 +31,8 @@ package com.emxsys.wmt.weather.api;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import java.util.Date;
+import javax.swing.ImageIcon;
+import visad.Field;
 import visad.FlatField;
 import visad.Gridded1DSet;
 
@@ -39,6 +41,19 @@ import visad.Gridded1DSet;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public interface WeatherProvider {
+
+    /**
+     * Gets an icon representative of this provider, e.g., Yahoo, NWS, WeatherUnderground.
+     * @return An ImageIcon; may be null
+     */
+    ImageIcon getImageIcon();
+
+    /**
+     * Gets a point forecast for the given position.
+     * @param coord The position for the forecast
+     * @return A VisAD field in the form ( Time -> ( Weather ) )
+     */
+    public Field getPointForecast(Coord2D coord);
 
     Weather getWeather(Date utcTime, Coord2D coord);
 

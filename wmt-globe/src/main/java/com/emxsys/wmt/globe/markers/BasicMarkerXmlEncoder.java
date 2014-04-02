@@ -34,8 +34,6 @@ import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.gis.gml.GmlBuilder;
 import static com.emxsys.wmt.gis.gml.GmlConstants.*;
 import com.emxsys.wmt.gis.gml.GmlParser;
-import com.emxsys.wmt.util.ClassUtil;
-import com.emxsys.wmt.util.FileNameUtil;
 import com.emxsys.wmt.util.TimeUtil;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
@@ -90,6 +88,14 @@ import org.xml.sax.SAXException;
  *                    <gml:coordinates>-119.2,34.2,15.0</gml:coordinates>
  *                </gml:Point>
  *            </gml:pointProperty>
+ *            <Symbol>
+ *                <image_url/>
+ *                <image_offset_x>0.5</image_offset_x>
+ *                <image_offset_y>0.0</image_offset_y>
+ *                <label_offset_x>0.9</label_offset_x>
+ *                <label_offset_y>0.6</label_offset_y>
+ *                <image_scale>1.0</image_scale>
+ *            </Symbol>
  *        </Marker>
  *    </gml:featureMember>
  *</Markers>
@@ -97,17 +103,16 @@ import org.xml.sax.SAXException;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-@Messages(
-        {
-            "# {0} - reason",
-            "err.cannot.import.marker=Cannot import marker. {0}",
-            "# {0} - reason",
-            "err.cannot.export.marker=Cannot export marker. {0}",
-            "err.document.is.null=Document argument cannot be null.",
-            "# {0} - document",
-            "err.document.missing.marker={0} is does not have a Marker element.",
-            "# {0} - document",
-            "err.document.has.extra.markers={0} contains more than one Marker element. Only one Marker will be processed.",})
+@Messages({
+    "# {0} - reason",
+    "err.cannot.import.marker=Cannot import marker. {0}",
+    "# {0} - reason",
+    "err.cannot.export.marker=Cannot export marker. {0}",
+    "err.document.is.null=Document argument cannot be null.",
+    "# {0} - document",
+    "err.document.missing.marker={0} is does not have a Marker element.",
+    "# {0} - document",
+    "err.document.has.extra.markers={0} contains more than one Marker element. Only one Marker will be processed.",})
 public class BasicMarkerXmlEncoder {
 
     public static final String BASIC_MARKER_NS_URI = "http://emxsys.com/worldwind-basicmarker";
@@ -250,7 +255,6 @@ public class BasicMarkerXmlEncoder {
 
     public static BasicMarker readDocument(Document doc) {
         try {
-
             if (doc == null) {
                 throw new IllegalArgumentException(Bundle.err_document_is_null());
             }
@@ -261,8 +265,9 @@ public class BasicMarkerXmlEncoder {
             } else if (markerNodes.getLength() > 1) {
                 logger.warning(Bundle.err_document_has_extra_markers(doc.getDocumentURI()));
             }
+
             // Process first (and only) marker element
-            return parseMarkerElement((Element) markerNodes.item(0));
+            return createMarkerFromElement((Element) markerNodes.item(0));
 
         } catch (IllegalArgumentException | IllegalStateException ex) {
             logger.severe(Bundle.err_cannot_import_marker(ex.toString()));
@@ -276,17 +281,20 @@ public class BasicMarkerXmlEncoder {
      * @param element Marker element
      * @return a new BasicMarker, or null on error.
      */
-    static BasicMarker parseMarkerElement(final Element element) {
+    static BasicMarker createMarkerFromElement(final Element element) {
         // Get the factory class
         String clazz = element.getAttribute(ATTR_FACTORY);
         Marker.Factory markerFactory = findMarkerFactory(clazz);
+        
         try {
             if (markerFactory == null) {
                 throw new IllegalStateException("Marker.Factory \"" + clazz + "\" cannot be null.");
             }
-            // Create a Marker and initialize it from the XML
+            // Create a Marker via it's factory...
             Marker marker = markerFactory.newMarker();
+        
             if (marker instanceof BasicMarker) {
+                // ...and initialize it from the XML
                 return initializeMarker(element, (BasicMarker) marker);
             } else {
                 throw new IllegalStateException("Not a BasicMarker type.");
@@ -417,7 +425,7 @@ public class BasicMarkerXmlEncoder {
     }
 
     public static URL findLocalResource(String resourceUrl, Class clazz) {
-        if (resourceUrl == null) {
+        if (resourceUrl == null || resourceUrl.isEmpty()) {
             return null;
         }
         return clazz.getResource(getFilename(resourceUrl));

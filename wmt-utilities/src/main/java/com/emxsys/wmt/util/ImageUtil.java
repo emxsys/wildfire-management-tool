@@ -33,6 +33,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.PixelGrabber;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 /**
@@ -42,6 +45,16 @@ import javax.swing.ImageIcon;
  * @version $Id: ImageUtil.java 448 2012-12-12 17:29:36Z bdschubert $
  */
 public class ImageUtil {
+    private static final Logger logger = Logger.getLogger(ImageUtil.class.getName());
+    
+    public static ImageIcon createImageIconFromResource(String name, Class clazz) {
+        URL imgURL = clazz.getResource(name);
+        if (imgURL == null) {
+            logger.log(Level.WARNING, "Resource \"{0}\" was not found on the classpath.", name);
+            return null;
+        }
+        return new ImageIcon(imgURL);
+    }
 
     /**
      * Returns a BufferedImage of type ARGB unconditionally resized to the width and height.

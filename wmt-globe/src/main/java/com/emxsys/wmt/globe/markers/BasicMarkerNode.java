@@ -33,7 +33,7 @@ import com.emxsys.wmt.core.capabilities.DeleteCapability;
 import com.emxsys.wmt.core.capabilities.LockCapability;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.Globe;
-import com.emxsys.wmt.util.FileNameUtil;
+import com.emxsys.wmt.util.FilenameUtils;
 import com.emxsys.wmt.util.ModuleUtil;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -157,7 +157,7 @@ public class BasicMarkerNode extends DataNode {
     @Override
     public String getDisplayName() {
         String displayName = super.getDisplayName();        // may include or hide ext based on base class settings
-        return FileNameUtil.decodeFilename(displayName);    // decode URL to plain text
+        return FilenameUtils.decodeFilename(displayName);    // decode URL to plain text
     }
 
     @Override
@@ -321,7 +321,7 @@ public class BasicMarkerNode extends DataNode {
             switch (event.getPropertyName()) {
                 case Marker.PROP_MARKER_NAME:
                     // Update Node and DataObject from marker (display name)
-                    updateName(FileNameUtil.encodeFilename(marker.getName()));
+                    updateName(FilenameUtils.encodeFilename(marker.getName()));
                     break;
                 case Marker.PROP_MARKER_SYMBOL:
                     // Get a fresh image

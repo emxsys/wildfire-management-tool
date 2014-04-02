@@ -33,9 +33,12 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.HttpUtil;
 import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
@@ -111,6 +114,7 @@ import visad.FlatField;
 @ServiceProvider(service = WeatherProvider.class)
 public class NwsWeatherProvider implements WeatherProvider {
 
+    public static final String IMAGE_ICON_NAME = "nws_logo.png";
     /** URI for MapClick service */
     protected static final String MAP_CLICK_URI = "http://forecast.weather.gov/MapClick.php?";
     /** NDFD URI for Official REST service. */
@@ -135,6 +139,10 @@ public class NwsWeatherProvider implements WeatherProvider {
     /** Singleton */
     private static NwsWeatherProvider instance;
     private static final Logger logger = Logger.getLogger(NwsWeatherProvider.class.getName());
+    
+    static {
+        logger.setLevel(Level.ALL);
+    }
 
     /**
      * Get the singleton instance.
@@ -146,6 +154,20 @@ public class NwsWeatherProvider implements WeatherProvider {
         }
         return instance;
     }
+
+    @Override
+    public ImageIcon getImageIcon() {
+        URL imgURL = getClass().getResource("nws_logo32.png");
+        if (imgURL == null) {
+            logger.warning("Image icon " + IMAGE_ICON_NAME + " was not found on the classpath.");
+            return null;
+        }
+        ImageIcon imageIcon = new ImageIcon(imgURL);
+        imageIcon.setDescription(getClass().getSimpleName());
+        return imageIcon;
+    }
+    
+    
 
     /**
      * Do not call! Used by @ServiceProvider.
@@ -166,6 +188,7 @@ public class NwsWeatherProvider implements WeatherProvider {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
     public Field getPointForecast(Coord2D coord) {
         // Build the query string and URL
         String pointForecastQuery = String.format(NDFD_POINT_FORECAST,

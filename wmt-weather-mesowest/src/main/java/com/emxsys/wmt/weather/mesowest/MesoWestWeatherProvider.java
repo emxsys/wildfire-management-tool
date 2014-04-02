@@ -32,6 +32,7 @@ package com.emxsys.wmt.weather.mesowest;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.GisType;
 import com.emxsys.wmt.util.HttpUtil;
+import com.emxsys.wmt.util.ImageUtil;
 import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.api.Weather;
@@ -48,6 +49,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -307,5 +309,15 @@ public class MesoWestWeatherProvider implements WeatherProvider {
         // ...and put the weather values above into it
         values_ff.setSamples(wxSamples);
         return values_ff;
+    }
+
+    @Override
+    public ImageIcon getImageIcon() {
+        return ImageUtil.createImageIconFromResource("images/mesowest.png", getClass());
+    }
+
+    @Override
+    public Field getPointForecast(Coord2D coord) {
+        return getLatestWeather(coord, Reals.newDistance(25, GeneralUnit.mile));
     }
 }

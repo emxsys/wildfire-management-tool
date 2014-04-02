@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.util;
 
+import java.io.File;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
@@ -36,9 +37,9 @@ import org.openide.filesystems.FileUtil;
  * This utility class provides methods for working with filenames.
  *
  * @author Bruce Schubert
- * @version $Id: FileNameUtil.java 361 2012-11-30 19:21:21Z bdschubert $
+ * @version $Id: FilenameUtils.java 361 2012-11-30 19:21:21Z bdschubert $
  */
-public class FileNameUtil {
+public class FilenameUtils {
 
     /**
      * Gets a unique filename (without extension) within the specified folder. The filename is
@@ -108,5 +109,9 @@ public class FileNameUtil {
             return filename.substring(0, index);
         }
         return filename;
+    }
+
+    public static String getFilename(String filepath) {
+        return new File(filepath).getName();
     }
 }

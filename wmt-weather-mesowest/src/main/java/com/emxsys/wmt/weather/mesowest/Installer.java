@@ -38,8 +38,7 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
         // Add the MesoWestLayer to the globe.
-        Globe.getInstance().addGisLayer(new MesoWestLayer(),true); // true = first in group.
-        
+        Globe.getInstance().addGisLayer(new MesoWestLayer(),true); // true = first in group.        
     }
 
 }

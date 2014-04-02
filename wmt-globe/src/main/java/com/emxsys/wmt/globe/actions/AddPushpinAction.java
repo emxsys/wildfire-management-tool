@@ -48,7 +48,7 @@ import org.openide.util.NbBundle.Messages;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-@ActionID(category = "Markers", id = "com.emxsys.wmt.globe.markers.pushpins.AddPushpinAction")
+@ActionID(category = "Markers", id = "com.emxsys.wmt.globe.actions.AddPushpinAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/pushpins/castshadow-green.png",
         displayName = "#CTL_AddPushpinAction")
 @ActionReference(path = "Toolbars/Create", position = 200)

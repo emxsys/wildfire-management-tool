@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
  *
  * @author Bruce Schubert
  */
-@ActionID(category = "Markers", id = "com.emxsys.wmt.globe.markers.ics.actions.AddIcsMarkerAction")
+@ActionID(category = "Markers", id = "com.emxsys.wmt.globe.actions.AddIcsMarkerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/ics/Fire_Origin.png", displayName = "#CTL_AddICSMarkerAction")
 @ActionReference(path = "Toolbars/Create", position = 300)
 @RibbonActionReference(path = "Menu/Insert/Create",

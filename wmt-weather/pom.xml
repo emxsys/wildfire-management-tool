@@ -63,6 +63,12 @@
             <artifactId>org-openide-util-lookup</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>wmt-utilities</artifactId>
+            <groupId>com.emxsys</groupId>
+            <type>jar</type>
+            <version>4.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

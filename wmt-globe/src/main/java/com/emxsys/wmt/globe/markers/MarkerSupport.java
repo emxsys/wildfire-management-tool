@@ -30,7 +30,7 @@
 package com.emxsys.wmt.globe.markers;
 
 import com.emxsys.wmt.gis.api.marker.MarkerCatalog;
-import com.emxsys.wmt.util.FileNameUtil;
+import com.emxsys.wmt.util.FilenameUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -53,11 +53,12 @@ public class MarkerSupport {
     private static final Logger logger = Logger.getLogger(MarkerSupport.class.getName());
 
     /**
-     * Create a new BasicMarkerDataObject from a model Marker object.
+     * Create a new BasicMarkerDataObject (file) from a model Marker object.
      *
-     * @param marker
-     * @param folder
-     * @param template
+     * @param marker The model marker who's values will be stored in the file.
+     * @param folder The folder where the DataObject will be created. If null, trys to get it from
+     * the current project.
+     * @param template The file template.
      * @return a new BasicMarkerDataObject
      * @see MarkerCreateFromTemplateHandler
      */
@@ -73,10 +74,11 @@ public class MarkerSupport {
                     }
                 }
             }
+            // throws an IllegalArgumentException if not found
             DataFolder dataFolder = DataFolder.findFolder(folder);
 
             // Ensure the filename is unique -- appends a numeral if not
-            String filename = FileNameUtil.getUniqueEncodedFilename(
+            String filename = FilenameUtils.getUniqueEncodedFilename(
                     folder, marker.getName(), template.getPrimaryFile().getExt());
 
             // Create the marker file from our template -- delegated to BasicMarkerTemplateHandler, 
@@ -86,7 +88,7 @@ public class MarkerSupport {
             DataObject dataObject = template.createFromTemplate(dataFolder, filename, parameters);
 
             return dataObject;
-        } catch (IOException exception) {
+        } catch (IllegalArgumentException | IOException exception) {
             logger.log(Level.SEVERE, "createBasicMarkerDataObject() failed: {0}", exception.toString());
             return null;
         }
