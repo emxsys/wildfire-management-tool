@@ -36,6 +36,7 @@ import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.GlobeTopComponent;
+import com.terramenta.globe.dnd.Draggable;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.SelectEvent;
@@ -44,6 +45,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
+import gov.nasa.worldwind.util.BasicDragger;
 import java.awt.Component;
 import java.awt.Image;
 import java.net.MalformedURLException;
@@ -72,7 +74,7 @@ public class BasicMarker extends AbstractMarker {
     public static final String PROP_MARKER_MOVABLE = "marker.movable";
     public static final String PROP_MARKER_ATTRIBUTES = "marker.attributes";
     private static final Logger logger = Logger.getLogger(BasicMarker.class.getName());
-    private static DefaultSelectListener viewController = null;
+    private static MarkerSelectListener selectListener = null;
     private static Random idGenerator = new Random();
     private long markerID = idGenerator.nextLong();
     private boolean movable = true;
@@ -91,7 +93,7 @@ public class BasicMarker extends AbstractMarker {
      *
      * @author Bruce
      */
-    private class PointPlacemarkAdapter extends PointPlacemark {
+    private class PointPlacemarkAdapter extends PointPlacemark implements Draggable {
 
         GeoCoord3D syncPosition;
         BasicMarker owner;
@@ -128,8 +130,7 @@ public class BasicMarker extends AbstractMarker {
 
         /**
          * Synchronizes the BasicMarker to the implementation when the marker is moved via a mouse.
-         *
-         * @param position
+         * @param position The new position to move to.
          */
         @Override
         public void moveTo(Position position) {
@@ -139,17 +140,40 @@ public class BasicMarker extends AbstractMarker {
                 owner.setPosition(syncPosition);
             }
         }
+
+        @Override
+        public boolean isDraggable() {
+            return owner.isMovable();
+        }
+
+        @Override
+        public void setDraggable(boolean draggable) {
+            owner.setMovable(draggable);
+        }
+
+        /**
+         * Called by Terramenta DragController.
+         * @param position New position.
+         */
+        @Override
+        public void setPosition(Position position) {
+                syncPosition = Positions.toGeoCoord3D(position);
+                super.setPosition(position); 
+                owner.setPosition(syncPosition);
+        }
+        
+        
     }
 
     /**
-     * Constructor used by factory.
+     * Constructor with an invalid position.
      */
     public BasicMarker() {
         this(GeoCoord3D.INVALID_POSITION);
     }
 
     /**
-     * Constructor used by actions.
+     * Constructor with a given coordinate.
      * @param coord
      */
     public BasicMarker(Coord3D coord) {
@@ -157,13 +181,13 @@ public class BasicMarker extends AbstractMarker {
         this.impl = new PointPlacemarkAdapter(Positions.fromCoord3D(coord), this);
         this.markerID = idGenerator.nextLong();
 
-        // Add the renderable to the Feature lookup so the MarkerLayer can render it
+        // Add the renderable to the lookup so the MarkerLayer can find it and render it.
         getInstanceContent().add(this.impl);
 
         // Inititialize the highlight/selection controller
-        if (BasicMarker.viewController == null) {
-            BasicMarker.viewController = new DefaultSelectListener();
-            BasicMarker.viewController.attachToViewer();
+        if (BasicMarker.selectListener == null) {
+            BasicMarker.selectListener = new MarkerSelectListener();
+            BasicMarker.selectListener.attachToGlobe();
         }
     }
 
@@ -179,7 +203,8 @@ public class BasicMarker extends AbstractMarker {
     /**
      * Sets the implementation rendering attributes
      *
-     * @param attributes an instance of PointPlacemarkAttributes.
+     * @param attributes A PointPlacemarkAttributes instance.
+     * @see PointPlacemarkAttributes
      */
     public void setAttributes(Object attributes) {
         if (attributes instanceof PointPlacemarkAttributes) {
@@ -259,7 +284,7 @@ public class BasicMarker extends AbstractMarker {
     }
 
     /**
-     * Launches the marker editor.
+     * Launches the marker editor. Subclasses should override.
      */
     public void edit() {
         throw new NotImplementedException("BasicMarker.edit not implemented.");
@@ -359,39 +384,42 @@ public class BasicMarker extends AbstractMarker {
     }
 
     /**
-     * The DefaultSelectListener listens for selection events in the viewer and either highlights a
+     * The MarkerSelectListener listens for selection events in the viewer and either highlights a
      * selected item or shows its context menu.
      *
      * (Based on gov.nasa.worldwind.examples.ContextMenusOnShapes)
      *
-     * @author Bruce
+     * @author Bruce Schubert
      */
-    protected static class DefaultSelectListener implements SelectListener {
+    protected static class MarkerSelectListener implements SelectListener {
 
         private PointPlacemarkAdapter lastPickedPlacemark = null;
         private PointPlacemarkAdapter lastSelectedPlacemark = null;
-        private static final Logger logger = Logger.getLogger(DefaultSelectListener.class.getName());
+        private BasicDragger dragDelegate;
 
         /**
-         * Defers attaching the DefaultSelectListener to the WorldWindow view until the UI is ready.
+         * Defers attaching the MarkerSelectListener to the WorldWindow view until the UI is ready.
          * FYI: at startup, markers can be loaded from a project file before the top component is
          * loaded.
          */
-        public void attachToViewer() {
-            // Listen for events signaling that this pushpin has been selected
+        public void attachToGlobe() {
             WindowManager.getDefault().invokeWhenUIReady(() -> {
                 WorldWindowGLJPanel wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
-                if (wwd != null) {
-                    wwd.addSelectListener(DefaultSelectListener.this);
-                } else {
-                    logger.severe("attachToViewer failed. The BasicMarker.Controller is not attached to a WorldWindow. "
+                if (wwd == null) {
+                    logger.severe("attachToGlobe failed. The MarkerSelectListener is not attached to a WorldWindow. "
                             + "Marker highlighting and selection will be disabled.");
+                    return;
                 }
+                // Create a SelectListener delegate for handling drags/moves
+//                dragDelegate = new BasicDragger(wwd);
+                // Listen for events signaling that this pushpin has been selected
+                wwd.addSelectListener(MarkerSelectListener.this);
             });
         }
 
         @Override
         public void selected(SelectEvent event) {
+
             try {
                 switch (event.getEventAction()) {
                     case SelectEvent.ROLLOVER:
@@ -408,6 +436,11 @@ public class BasicMarker extends AbstractMarker {
                     case SelectEvent.LEFT_DOUBLE_CLICK:
                         openMarker(event);
                         break;
+//                    default:
+//                        Object topObject = event.getTopObject();
+//                        if (topObject instanceof PointPlacemarkAdapter) {
+//                            dragDelegate.selected(event);
+//                        }
                 }
             } catch (Exception e) {
                 Exceptions.printStackTrace(e);
@@ -420,13 +453,11 @@ public class BasicMarker extends AbstractMarker {
             if (this.lastPickedPlacemark == obj) {
                 return; // same thing selected
             }
-
             // Turn off currently highlighted pushpin
             if (this.lastPickedPlacemark != null) {
                 this.lastPickedPlacemark.setHighlighted(false);
                 this.lastPickedPlacemark = null;
             }
-
             // Turn on highlight for pushpins when they are selected.
             if (obj instanceof PointPlacemarkAdapter) {
                 this.lastPickedPlacemark = (PointPlacemarkAdapter) obj;
@@ -436,7 +467,6 @@ public class BasicMarker extends AbstractMarker {
 
         /**
          * Called by selected() to synchronize node selection with gis viewer selection.
-         *
          * @param event
          * @param obj
          */
@@ -444,7 +474,6 @@ public class BasicMarker extends AbstractMarker {
             if (this.lastSelectedPlacemark == obj) {
                 return; // same thing selected
             }
-
             // Turn off selection if on (muliple selection is not supported)
             if (this.lastSelectedPlacemark != null) {
                 this.lastSelectedPlacemark.owner.setSelected(false);
@@ -459,7 +488,6 @@ public class BasicMarker extends AbstractMarker {
 
         /**
          * Called on left double-click
-         *
          * @param event
          */
         protected void openMarker(SelectEvent event) {
@@ -473,7 +501,6 @@ public class BasicMarker extends AbstractMarker {
 
         /**
          * Called on right-click
-         *
          * @param event
          */
         protected void showContextMenu(SelectEvent event) {
@@ -490,7 +517,6 @@ public class BasicMarker extends AbstractMarker {
                     }
                 }
             }
-
         }
     }
 }

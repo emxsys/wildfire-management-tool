@@ -59,6 +59,7 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.util.BasicDragger;
 import java.awt.Component;
 import java.util.List;
 import java.util.logging.Level;
@@ -148,6 +149,7 @@ public class Globe implements GisViewer {
      */
     @Override
     public void initializeResources() {
+        
         // Assemble the components of the globe
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
