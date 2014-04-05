@@ -141,7 +141,12 @@ public class BasicMarkerNode extends DataNode {
 
     @Override
     public Action getPreferredAction() {
-        return ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.EditAction");
+        // Default action is Goto.
+        // Unless we click on marker in the Globe, then we Edit.
+        if (Globe.getInstance().getGlobeTopComponent().isFocusOwner()) {
+            return ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.EditAction");
+        }
+        return new CenterOnAction("Go To");
     }
 
     /**
