@@ -30,9 +30,7 @@
 package com.emxsys.markers.pushpins;
 
 import com.emxsys.wmt.gis.api.marker.Marker;
-import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataObject;
-import org.openide.util.lookup.ServiceProvider;
+import org.w3c.dom.Document;
 
 /**
  * This a legacy class.
@@ -41,49 +39,26 @@ import org.openide.util.lookup.ServiceProvider;
 @Deprecated
 public class Pushpin {
 
-    @ServiceProvider(service = Marker.Factory.class)
-    public static class PushpinFactory implements Marker.Factory {
+    public static class PushpinFactory implements Marker.Builder {
 
-        private final com.emxsys.wmt.globe.markers.pushpins.Pushpin.PushpinFactory delegate;
+        private final com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder delegate;
 
-        public PushpinFactory() {
-            System.out.println(">>> Creating delgate: com.emxsys.wmt.globe.markers.pushpins.Pushpin.PushpinFactory");
-            this.delegate = (com.emxsys.wmt.globe.markers.pushpins.Pushpin.PushpinFactory) 
-                    com.emxsys.wmt.globe.markers.pushpins.Pushpin.getFactory();
+        public PushpinFactory(Document doc) {
+            System.out.println(">>> Creating delgate: com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder");
+            this.delegate = new com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder(doc);
             if (this.delegate == null) {
-                throw new IllegalStateException("com.emxsys.wmt.globe.markers.pushpins.Pushpin.PushpinFactory");
+                throw new IllegalStateException("Could not create delegate: com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder");
             }
         }
 
         /**
          *
-         * @return a new Pushpin instance.
+         * @return A new Pushpin instance created via a delegate factory.
          */
-        public Marker newMarker() {
-            return delegate.newMarker();
+        @Override
+        public Marker build() {
+            return delegate.build();
         }
 
-        /**
-         * Creates a DataObject that represents the supplied Marker.
-         *
-         * @param marker to be assigned to the DataObject
-         * @param folder where to create the DataObject, uses the current project if null
-         * @return a BasicMarkerDataObject
-         */
-        public DataObject createDataObject(Marker marker, FileObject folder) {
-            return delegate.createDataObject(marker, folder);
-        }
-
-        public boolean equals(Object o) {
-            Object target = o;
-            if (o instanceof PushpinFactory) {
-                target = ((PushpinFactory) o).delegate;
-            }
-            return this.delegate.equals(target);
-        }
-
-        public int hashCode() {
-            return this.delegate.hashCode();
-        }
     }
 }

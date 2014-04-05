@@ -55,10 +55,6 @@ import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import org.openide.explorer.ExplorerManager;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
@@ -154,6 +150,7 @@ public class BasicMarker extends AbstractMarker {
 
     /**
      * Constructor used by actions.
+     * @param coord
      */
     public BasicMarker(Coord3D coord) {
         super.setPosition(coord);
@@ -323,12 +320,8 @@ public class BasicMarker extends AbstractMarker {
     }
 
     @Override
-    public Class<? extends Marker.Factory> getFactoryClass() {
-        return MarkerFactory.class;
-    }
-
-    public static Factory getFactory() {
-        return new MarkerFactory();
+    public Class<? extends Marker.Builder> getFactoryClass() {
+        return BasicMarkerBuilder.class;
     }
 
     @Override
@@ -386,16 +379,13 @@ public class BasicMarker extends AbstractMarker {
          */
         public void attachToViewer() {
             // Listen for events signaling that this pushpin has been selected
-            WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
-                @Override
-                public void run() {
-                    WorldWindowGLJPanel wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
-                    if (wwd != null) {
-                        wwd.addSelectListener(DefaultSelectListener.this);
-                    } else {
-                        logger.severe("attachToViewer failed. The BasicMarker.Controller is not attached to a WorldWindow. "
-                                + "Marker highlighting and selection will be disabled.");
-                    }
+            WindowManager.getDefault().invokeWhenUIReady(() -> {
+                WorldWindowGLJPanel wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
+                if (wwd != null) {
+                    wwd.addSelectListener(DefaultSelectListener.this);
+                } else {
+                    logger.severe("attachToViewer failed. The BasicMarker.Controller is not attached to a WorldWindow. "
+                            + "Marker highlighting and selection will be disabled.");
                 }
             });
         }
@@ -501,42 +491,6 @@ public class BasicMarker extends AbstractMarker {
                 }
             }
 
-        }
-    }
-
-    /**
-     * MarkerFactory class.
-     */
-    public static class MarkerFactory implements Marker.Factory {
-
-        // See package-info.java for the declaration of the MarkerTemplate
-        private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/BasicMarkerTemplate.xml";
-        private static DataObject template;
-        private static final Logger logger = Logger.getLogger(MarkerFactory.class.getName());
-
-        public MarkerFactory() {
-            try {
-                //template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
-                template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
-            } catch (DataObjectNotFoundException ex) {
-                logger.log(Level.SEVERE, "BasicMarker.MarkerFactory() cannot find: {0}", TEMPLATE_CONFIG_FILE);
-            }
-        }
-
-        @Override
-        public Marker newMarker() {
-            return new BasicMarker();
-        }
-
-        @Override
-        public DataObject createDataObject(Marker marker, FileObject folder) {
-            if (marker instanceof BasicMarker) {
-                return MarkerSupport.createBasicMarkerDataObject((BasicMarker) marker, folder, template);
-            } else {
-                throw new IllegalArgumentException(
-                        "createMarkerDataObject: marker argument must be a BasicMarker, not a "
-                        + marker.getClass().getName());
-            }
         }
     }
 }

@@ -32,15 +32,15 @@ package com.emxsys.wmt.globe.markers.pushpins;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
-import com.emxsys.wmt.globe.markers.MarkerSupport;
+import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
+import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
 import gov.nasa.worldwind.render.PointPlacemark;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.util.lookup.ServiceProvider;
+import org.w3c.dom.Document;
 
 /**
  * Pushpin implements the Emxsys {@link Marker} GIS interface, which is backed by a WorldWind
@@ -70,68 +70,75 @@ public class Pushpin extends BasicMarker {
     /**
      * Gets the class responsible for creating Pushpins from XML Elements.
      *
-     * @return PushpinFactory.class.
+     * @return Builder.class.
      */
     @Override
-    public Class<PushpinFactory> getFactoryClass() {
-        return PushpinFactory.class;
+    public Class<Builder> getFactoryClass() {
+        return Builder.class;
     }
 
     /**
-     * Gets a factory for Pushpin objects.
-     *
-     * @return a PushpinFactory instance
-     * @see PushpinFactory
-     */
-    public static Factory getFactory() {
-        return new PushpinFactory();
-    }
-
-    /**
-     * Note to self: Ensure this is a 'static' inner class so that it can be instantiated by the
-     * service provider framework. DataObjects will query for Marker.Factory with the ATTR_PROVIDER
-     * class to find the appropriate XML encoder/decoder. Called by Pushpin.newInstance.
+     * The Pushpin.Builder is responsible for building a new Pushpin instance from either the given
+     * parameters or from the contents of an XML file.
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
-    @ServiceProvider(service = Marker.Factory.class)
-    public static class PushpinFactory implements Marker.Factory {
+    public static class Builder extends BasicMarkerBuilder {
 
+        public Builder() {
+        }
+
+        public Builder(String name, Coord3D coord) {
+            super(coord);
+            name(name);
+        }
+
+        public Builder(Document sourceXml) {
+            super(sourceXml);
+        }
+
+        @Override
+        public Marker build() {
+            if (getDocument() == null) {
+                return new Pushpin(super.name, super.coord);
+            } else {
+                return initializeFromXml(new Pushpin());
+            }
+        }
+
+        @Override
+        protected BasicMarker initializeFromXml(BasicMarker marker) {
+            return super.initializeFromXml(marker); //To change body of generated methods, choose Tools | Templates.
+        }
+
+    }
+
+    /**
+     * The IcsMarker.Writer is responsible for writing a marker to a persistent store.
+     *
+     * @author Bruce Schubert
+     */
+    public static class Writer extends BasicMarkerWriter {
+
+        // See package-info.java for the declaration of the PushpinMarkerTemplate
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/PushpinMarkerTemplate.xml";
         private static DataObject template;
-        private static final Logger logger = Logger.getLogger(PushpinFactory.class.getName());
-
-        public PushpinFactory() {
-            try {
-                template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
-            } catch (DataObjectNotFoundException ex) {
-                logger.log(Level.SEVERE, "PushpinFactory() could not find template: {0}", TEMPLATE_CONFIG_FILE);
-            }
-        }
+        private static final Logger logger = Logger.getLogger(Writer.class.getName());
 
         /**
-         *
-         * @return a new Pushpin instance.
+         * Called by super.createDataObject().
+         * @return A template file used for new Pushpins.
          */
         @Override
-        public Marker newMarker() {
-            return new Pushpin();
-        }
-
-        /**
-         * Creates a DataObject that represents the supplied Marker.
-         *
-         * @param marker to be assigned to the DataObject
-         * @param folder where to create the DataObject, uses the current project if null
-         * @return a BasicMarkerDataObject
-         */
-        @Override
-        public DataObject createDataObject(Marker marker, FileObject folder) {
-            if (marker instanceof Pushpin) {
-                return MarkerSupport.createBasicMarkerDataObject((Pushpin) marker, folder, template);
-            } else {
-                throw new IllegalArgumentException("createBasicMarkerDataObject: marker argument must be a Pushpin, not a " + marker.getClass().getName());
+        protected DataObject getTemplate() {
+            if (template == null) {
+                try {
+                    template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
+                } catch (DataObjectNotFoundException ex) {
+                    logger.log(Level.SEVERE, "Pushpin.Writer.getTemplate() cannot find: {0}", TEMPLATE_CONFIG_FILE);
+                }
             }
+            return template;
         }
     }
 }

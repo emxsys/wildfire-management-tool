@@ -30,9 +30,7 @@
 package com.emxsys.markers.ics;
 
 import com.emxsys.wmt.gis.api.marker.Marker;
-import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataObject;
-import org.openide.util.lookup.ServiceProvider;
+import org.w3c.dom.Document;
 
 /**
  * This a legacy class.
@@ -41,48 +39,28 @@ import org.openide.util.lookup.ServiceProvider;
 @Deprecated
 public class IcsMarker {
 
-    @ServiceProvider(service = Marker.Factory.class)
-    public static class IcsMarkerFactory implements Marker.Factory {
+    public static class IcsMarkerFactory implements Marker.Builder {
 
-        private final com.emxsys.wmt.globe.markers.ics.IcsMarker.IcsMarkerFactory delegate;
+        private final com.emxsys.wmt.globe.markers.ics.IcsMarker.Builder delegate;
 
-        public IcsMarkerFactory() {
-            System.out.println(">>> Creating delgate: com.emxsys.wmt.globe.markers.ics.IcsMarker.IcsMarkerFactory");
-            this.delegate = (com.emxsys.wmt.globe.markers.ics.IcsMarker.IcsMarkerFactory) com.emxsys.wmt.globe.markers.ics.IcsMarker.getFactory();
+        /**
+         * Creates a legacy factory that can create a IcsMarker from an XML document via a delegate.
+         * @param doc
+         */
+        public IcsMarkerFactory(Document doc) {
+            System.out.println(">>> Creating delgate: com.emxsys.wmt.globe.markers.ics.IcsMarker.Builder");
+            this.delegate = new com.emxsys.wmt.globe.markers.ics.IcsMarker.Builder(doc);
             if (this.delegate == null) {
-                throw new IllegalStateException("Could not create delegate: com.emxsys.wmt.globe.markers.ics.IcsMarker.IcsMarkerFactory");
+                throw new IllegalStateException("Could not create delegate: com.emxsys.wmt.globe.markers.ics.IcsMarker.Builder");
             }
         }
 
         /**
-         *
-         * @return a new Pushpin instance.
+         * @return A new IcsMarker instance via a delegate factory.
          */
-        public Marker newMarker() {
-            return delegate.newMarker();
-        }
-
-        /**
-         * Creates a DataObject that represents the supplied Marker.
-         *
-         * @param marker to be assigned to the DataObject
-         * @param folder where to create the DataObject, uses the current project if null
-         * @return a BasicMarkerDataObject
-         */
-        public DataObject createDataObject(Marker marker, FileObject folder) {
-            return delegate.createDataObject(marker, folder);
-        }
-
-        public boolean equals(Object o) {
-            Object target = o;
-            if (o instanceof IcsMarkerFactory) {
-                target = ((IcsMarkerFactory) o).delegate;
-            }
-            return this.delegate.equals(target);
-        }
-
-        public int hashCode() {
-            return this.delegate.hashCode();
+        @Override
+        public Marker build() {
+            return delegate.build();
         }
     }
 }

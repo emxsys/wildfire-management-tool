@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.marker.MarkerCatalog;
+import com.emxsys.wmt.gis.api.marker.MarkerManager;
 import com.emxsys.wmt.util.FilenameUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -148,7 +148,7 @@ import org.xml.sax.SAXException;
 public class BasicMarkerDataObject extends XMLDataObject {
 
     private BasicMarker marker;
-    private MarkerCatalog catalog;
+    private MarkerManager manager;
     private transient final AtomicReference<State> init = new AtomicReference<>(State.NEW);
     private final transient SaveSupport saveCookie = new SaveSupport();
     private final transient ChangeSupport changeListener = new ChangeSupport();
@@ -186,7 +186,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
      *
      */
     protected final void readFile() {
-        logger.log(Level.FINE, "readFile() called: {0}", getName());
+        logger.log(Level.FINE, "readFile() reading {0}", getName());
 
         // Don't process template files--the XML is not complete/valid.
         FileObject templates = FileUtil.getConfigFile("Templates/Marker");
@@ -198,33 +198,31 @@ public class BasicMarkerDataObject extends XMLDataObject {
                 }
             }
         }
-
+        // Read the marker file
         try {
-            // Read a the marker from the xml
-            this.marker = BasicMarkerXmlEncoder.readDocument(getDocument());
-            if (this.marker == null) {
-                throw new RuntimeException("readFile->readDocument() failed: " + getName());
-            }
-            // Override the name read from the XML with the filename--the filename IS the marker name
+            // Build the marker from the Marker.Builder class stored in the XML
+            this.marker = (BasicMarker) MarkerSupport.getBuilder(getDocument()).build();
+            // Override the name property read from the XML with the filename,
+            // the filename IS the marker name.
             this.marker.setName(FilenameUtils.decodeFilename(getName()));
-            // Ok to add event listener now that the marker is initialized.
+            // Ok to add the event listener now that the marker is initialized.
             this.marker.addPropertyChangeListener(WeakListeners.propertyChange(this.changeListener, this.marker));
         } catch (IOException | SAXException | RuntimeException exception) {
             logger.severe(Bundle.error_cannot_load_marker(getName() + " caused a " + exception.toString()));
             init.set(State.INVALID);
             return;
         }
+        // Associate the marker with the current project's MarkerManager
         try {
-            // Add this marker to the project's marker manager/catalog
             Project owner = FileOwnerQuery.getOwner(getPrimaryFile());
             if (owner == null) {
                 throw new RuntimeException("Cannot find the project that owns " + getName());
             }
-            this.catalog = owner.getLookup().lookup(MarkerCatalog.class);
-            if (this.catalog == null) {
-                throw new RuntimeException("Cannot find a MarkerCatalog in " + ProjectUtils.getInformation(owner).getDisplayName());
+            this.manager = owner.getLookup().lookup(MarkerManager.class);
+            if (this.manager == null) {
+                throw new RuntimeException("Cannot find a MarkerManager in " + ProjectUtils.getInformation(owner).getDisplayName());
             }
-            this.catalog.add(this.marker);
+            this.manager.add(this.marker);
         } catch (RuntimeException exception) {
             logger.log(Level.WARNING, "{0} caused a {1}", new Object[]{
                 getName(), exception.toString()
@@ -232,13 +230,18 @@ public class BasicMarkerDataObject extends XMLDataObject {
         }
     }
 
+
     /**
      * Write the marker to persistent storage.
      */
     protected final void writeFile() {
         try {
-            // Write the data to the XML document
-            BasicMarkerXmlEncoder.writeDocument(getDocument(), this.marker);
+            // Write to the XML document
+            new BasicMarkerWriter()
+                    .document(getDocument())
+                    .marker(this.marker)
+                    .write();
+            // Write to disk
             try (OutputStream output = getPrimaryFile().getOutputStream(FileLock.NONE)) {
                 XMLUtil.write(this.getDocument(), output, "UTF-8");
                 output.flush();
@@ -260,10 +263,10 @@ public class BasicMarkerDataObject extends XMLDataObject {
      */
     private static void writeSchema(FileObject folder) throws IOException {
         // Copy an XML schema to the document folder
-        File schemaTarget = new File(folder.getPath(), BasicMarkerXmlEncoder.BASIC_MARKER_SCHEMA_FILE);
+        File schemaTarget = new File(folder.getPath(), BasicMarkerWriter.BASIC_MARKER_SCHEMA_FILE);
         if (!schemaTarget.exists()) {
             logger.log(Level.CONFIG, "Creating Schema: {0}", schemaTarget.getPath());
-            FileObject schemaSource = BasicMarkerXmlEncoder.getLocalSchemaFile();
+            FileObject schemaSource = MarkerSupport.getLocalSchemaFile();
             if (schemaSource != null) {
                 FileUtil.copyFile(schemaSource, folder, schemaSource.getName());
             } else {
@@ -297,7 +300,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
      * Delegates to DataObject.getLookup().lookup().
      * @param <T>
      * @param cls
-     * @return 
+     * @return
      */
     @Override
     public <T extends Cookie> T getCookie(Class<T> cls) {
@@ -313,14 +316,19 @@ public class BasicMarkerDataObject extends XMLDataObject {
     protected Node createNodeDelegate() {
         if (init.get() != State.INITIALIZED) {   // fallback on invalid DataObjects
             return new DataNode(this, Children.LEAF);
+
         }
         try {
             // Remove the default XML editor and its cookies from this DataObject
-            OpenCookie openCookie = getCookieSet().getCookie(OpenCookie.class);
-            if (openCookie != null) {
+            OpenCookie openCookie = getCookieSet().getCookie(OpenCookie.class
+            );
+            if (openCookie
+                    != null) {
                 getCookieSet().remove(openCookie);
             }
-            return new BasicMarkerNode(this, this.marker, getCookieSet().getLookup());
+
+            return new BasicMarkerNode(this,
+                    this.marker, getCookieSet().getLookup());
         } catch (RuntimeException ex) {
             logger.severe(ex.getMessage());
             return new DataNode(this, Children.LEAF, getCookieSet().getLookup());
@@ -341,6 +349,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
                 removeSaveCookie();
             }
             super.setModified(modified);
+
         }
     }
 
@@ -348,17 +357,22 @@ public class BasicMarkerDataObject extends XMLDataObject {
      * Adds the SaveCapability cookie.
      */
     private void addSaveCookie() {
-        if (getLookup().lookup(SaveCookie.class) == null) {
-            getCookieSet().add(this.saveCookie);
+        if (getLookup().lookup(SaveCookie.class
+        ) == null) {
+            getCookieSet()
+                    .add(this.saveCookie);
         }
+
     }
 
     /**
      * Removes the SaveCapability cookie.
      */
     private void removeSaveCookie() {
-        SaveCookie save = getLookup().lookup(SaveCookie.class);
-        if (save != null) {
+        SaveCookie save = getLookup().lookup(SaveCookie.class
+        );
+        if (save
+                != null) {
             getCookieSet().remove(save);
         }
     }
@@ -397,15 +411,15 @@ public class BasicMarkerDataObject extends XMLDataObject {
         if (!this.marker.isDeleted()) {
             this.marker.delete();
         }
-        this.catalog.remove(this.marker);
+        this.manager.remove(this.marker);
     }
 
     /**
      *
      * @param df
      * @param name
-     * @return 
-     * @throws java.io.IOException 
+     * @return
+     * @throws java.io.IOException
      * @see MarkerCreateFromTemplateHandler
      */
     @Override
@@ -415,6 +429,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
             writeSchema(dob.getPrimaryFile().getParent());
         }
         return dob;
+
     }
 
     /**

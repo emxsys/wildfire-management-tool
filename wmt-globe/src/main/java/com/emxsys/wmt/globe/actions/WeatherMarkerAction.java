@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.markers.weather.WeatherMarker;
 import com.emxsys.wmt.globe.markers.weather.WeatherMarkerEditor;
 import com.terramenta.ribbon.RibbonActionReference;
@@ -95,8 +96,11 @@ public final class WeatherMarkerAction implements ActionListener {
         WeatherMarker marker = new WeatherMarker("Wx Marker", position);
         boolean success = WeatherMarkerEditor.edit(marker, true);
         if (success) {
-            // Create the DataObject in the current project
-            WeatherMarker.getFactory().createDataObject(marker, null);
+            // Save the pushpin into the current project 
+            new WeatherMarker.Writer()
+                    .marker(marker)
+                    .folder(MarkerSupport.getFolderFromCurrentProject())
+                    .write();
         }
     }
 }

@@ -33,7 +33,8 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
-import com.emxsys.wmt.globe.markers.MarkerSupport;
+import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
+import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
 import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.util.HttpUtil;
 import gov.nasa.worldwind.WorldWind;
@@ -46,15 +47,15 @@ import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import gov.nasa.worldwind.render.Size;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
-import org.openide.util.lookup.ServiceProvider;
+import org.w3c.dom.Document;
 import visad.Field;
 
 /**
@@ -79,7 +80,7 @@ public class WeatherMarker extends BasicMarker {
     WeatherMarker() {
         this("Wx Marker", GeoCoord3D.INVALID_POSITION, null, null);
     }
-    
+
     public WeatherMarker(String name, Coord3D location) {
         this(name, location, null, null);
     }
@@ -93,7 +94,7 @@ public class WeatherMarker extends BasicMarker {
         // Get the implementation from the super class' lookup
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
-        
+
         PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
         attrs.setLabelColor("ffffffff");
         attrs.setLineColor("ff0000ff");
@@ -102,7 +103,6 @@ public class WeatherMarker extends BasicMarker {
         placemark.setAttributes(attrs);
         overrideDefaultAttributes();
     }
-    
 
     private void overrideDefaultAttributes() {
         Preferences pref = NbPreferences.forModule(getClass());
@@ -149,11 +149,11 @@ public class WeatherMarker extends BasicMarker {
     /**
      * Gets the class responsible for creating WeatherMarkers from XML Elements.
      *
-     * @return WeatherMarker.Factory.class.
+     * @return WeatherMarker.Builder.class.
      */
     @Override
-    public Class<WeatherMarker.Factory> getFactoryClass() {
-        return WeatherMarker.Factory.class;
+    public Class<WeatherMarker.Builder> getFactoryClass() {
+        return WeatherMarker.Builder.class;
     }
 
     /**
@@ -162,60 +162,81 @@ public class WeatherMarker extends BasicMarker {
      * @return a WeatherMarkerFactory instance
      * @see WeatherMarkerFactory
      */
-    public static Factory getFactory() {
-        return new WeatherMarker.Factory();
+    @Deprecated
+    public static Builder getFactory() {
+        return new WeatherMarker.Builder();
 
     }
 
     /**
-     * Factory for creating WeatherMarkers. DataObjects will query for Marker.Factory with the
-     * ATTR_PROVIDER class to find the appropriate XML encoder/decoder.
-     *
-     * Note: Ensure this is a 'static' inner class so that it can be instantiated by the service
-     * provider framework.
+     * Builder for creating WeatherMarkers. DataObjects will query for Marker.Builder with the
+ ATTR_PROVIDER class to find the appropriate XML encoder/decoder.
+
+ Note: Ensure this is a 'static' inner class so that it can be instantiated by the service
+ provider framework.
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
-    @ServiceProvider(service = Marker.Factory.class)
-    public static class Factory extends BasicMarker.MarkerFactory {
+    public static class Builder extends BasicMarkerBuilder {
+
+        // See package-info.java for the declaration of the IcsMarkerTemplate
+        private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/IcsMarkerTemplate.xml";
+        private static DataObject template;
+        private static final Logger logger = Logger.getLogger(Builder.class.getName());
+
+        public Builder() {
+        }
+
+        public Builder(String name, Coord3D coord) {
+            super(coord);
+            name(name);
+        }
+
+        public Builder(Document sourceDoc) {
+            super(sourceDoc);
+        }
+
+        @Override
+        public Marker build() {
+            if (getDocument() == null) {
+                return new WeatherMarker(super.name, super.coord);
+            } else {               
+                return initializeFromXml(new WeatherMarker());
+            }
+        }
+
+        @Override
+        protected BasicMarker initializeFromXml(BasicMarker marker) {
+            return super.initializeFromXml(marker); //To change body of generated methods, choose Tools | Templates.
+        }
+  
+    }
+
+    /**
+     * Writer class.
+     */
+    public static class Writer extends BasicMarkerWriter {
 
         // See package-info.java for the declaration of the WeatherMarkerTemplate
+        private static final Logger logger = Logger.getLogger(Writer.class.getName());
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/WeatherMarkerTemplate.xml";
         private static DataObject template;
-        private static final Logger logger = Logger.getLogger(Factory.class.getName());
-
-        public Factory() {
-            try {
-                template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
-            } catch (DataObjectNotFoundException ex) {
-                logger.severe(ex.toString());
-            }
-        }
 
         /**
-         *
-         * @return A new WeatherMarker instance.
+         * Called by super.createDataObject().
+         * @return
          */
         @Override
-        public Marker newMarker() {
-            return new WeatherMarker();
+        protected DataObject getTemplate() {
+            if (template == null) {
+                try {
+                    template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
+                } catch (DataObjectNotFoundException ex) {
+                    logger.log(Level.SEVERE, "getTemplate() cannot find: {0}", TEMPLATE_CONFIG_FILE);
+                }
+            }
+            return template;
         }
 
-        /**
-         * Creates a DataObject in the supplied folder using the supplied WeatherMarker instance for
-         * DataObject contents.
-         *
-         * @param marker assigned to the DataObject
-         * @param folder where the DataObject will be created, uses the current project if null
-         * @return a BasicMarkerDataObject
-         */
-        @Override
-        public DataObject createDataObject(Marker marker, FileObject folder) {
-            if (marker instanceof WeatherMarker) {
-                return MarkerSupport.createBasicMarkerDataObject((WeatherMarker) marker, folder, template);
-            } else {
-                throw new IllegalArgumentException("createDataObject: marker argument must be a WeatherMarker, not a " + marker.getClass().getName());
-            }
-        }
     }
 }

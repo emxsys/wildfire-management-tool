@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.markers.pushpins.Pushpin;
 import com.emxsys.wmt.globe.markers.pushpins.PushpinEditor;
 import com.terramenta.ribbon.RibbonActionReference;
@@ -102,7 +103,10 @@ public final class AddPushpinAction implements ActionListener {
         boolean success = PushpinEditor.edit(pushpin, true);
         if (success) {
             // Save the pushpin into the current project 
-            Pushpin.getFactory().createDataObject(pushpin, null);
+            new Pushpin.Writer()   
+                    .marker(pushpin)
+                    .folder(MarkerSupport.getFolderFromCurrentProject())
+                    .write();
         }
     }
 }

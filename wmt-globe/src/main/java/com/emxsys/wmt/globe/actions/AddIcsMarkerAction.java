@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.markers.ics.IcsMarker;
 import com.emxsys.wmt.globe.markers.ics.IcsMarkerEditor;
 import com.terramenta.ribbon.RibbonActionReference;
@@ -90,13 +91,15 @@ public final class AddIcsMarkerAction implements ActionListener {
             logger.severe(Bundle.ERR_ICSNullPosition());
             return;
         }
-
         // Create and edit the marker
         IcsMarker marker = new IcsMarker("Marker", position);
-        boolean success = IcsMarkerEditor.edit(marker, true);
+        boolean success = IcsMarkerEditor.edit(marker, true);   // true = new
         if (success) {
-            // Create the DataObject in the current project
-            IcsMarker.getFactory().createDataObject(marker, null);
+            // Creates a DataObject in the current project
+            new IcsMarker.Writer()
+                    .marker(marker)
+                    .folder(MarkerSupport.getFolderFromCurrentProject())
+                    .write();
         }
     }
 }

@@ -33,24 +33,22 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
-import com.emxsys.wmt.globe.markers.MarkerSupport;
+import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
+import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
-import org.openide.util.lookup.ServiceProvider;
+import org.w3c.dom.Document;
 
 /**
  * This class extends BasicMarker to provide a set of ICS symbols. It includes a service provider
@@ -59,7 +57,7 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @see BasicMarker
- * @see MarkerFactory
+ * @see Builder
  * @see Marker
  */
 @Messages(
@@ -107,76 +105,77 @@ public class IcsMarker extends BasicMarker {
     /**
      * Gets the class responsible for creating Pushpins from XML Elements.
      *
-     * @return IcsMarkerFactory.class.
+     * @return Builder.class.
      */
     @Override
-    public Class<IcsMarkerFactory> getFactoryClass() {
-        return IcsMarkerFactory.class;
+    public Class<Builder> getFactoryClass() {
+        return Builder.class;
     }
 
     /**
-     * Gets a factory for IcsMarker objects.
-     *
-     * @return a IcsMarkerFactory instance
-     * @see IcsMarkerFactory
-     */
-    public static Factory getFactory() {
-        return new IcsMarkerFactory();
-//        Lookup.Template<Marker.Factory> template = new Lookup.Template<>(
-//                Marker.Factory.class, "com.emxsys.wmt.globe.markers.ics.IcsMarker$IcsMarkerFactory", null);
-//        Lookup.Item<Marker.Factory> item = Lookup.getDefault().lookupItem(template);
-//        return item.getInstance();
-    }
-
-    /**
-     * Factory for creating IcsMarkers. DataObjects will query for Marker.Factory with the
+     * Builder for creating IcsMarkers. DataObjects will query for Marker.Builder with the
      * ATTR_PROVIDER class to find the appropriate XML encoder/decoder.
-     *
-     * Note: Ensure this is a 'static' inner class so that it can be instantiated by the service
-     * provider framework.
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
-    @ServiceProvider(service = Marker.Factory.class)
-    public static class IcsMarkerFactory extends BasicMarker.MarkerFactory {
+    public static class Builder extends BasicMarkerBuilder {
+
+        public Builder() {
+        }
+
+        public Builder(String name, Coord3D coord) {
+            super(coord);
+            name(name);
+        }
+
+        public Builder(Document doc) {
+            super(doc);
+        }
+
+        @Override
+        public Marker build() {
+            if (getDocument() == null) {
+                return new IcsMarker(super.name, super.coord);
+            } else {
+                return initializeFromXml(new IcsMarker());
+            }
+        }
+
+        @Override
+        protected BasicMarker initializeFromXml(BasicMarker marker) {
+            // Let the base class handle the heavy lifting.
+            return super.initializeFromXml(marker); //To change body of generated methods, choose Tools | Templates.
+        }
+
+    }
+
+    /**
+     * The IcsMarker.Writer is responsible for writing a marker to a persistent store.
+     *
+     * @author Bruce Schubert
+     */
+    public static class Writer extends BasicMarkerWriter {
 
         // See package-info.java for the declaration of the IcsMarkerTemplate
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/IcsMarkerTemplate.xml";
         private static DataObject template;
-        private static final Logger logger = Logger.getLogger(IcsMarkerFactory.class.getName());
-
-        public IcsMarkerFactory() {
-            try {
-                template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
-            } catch (DataObjectNotFoundException ex) {
-                logger.log(Level.SEVERE, "IcsMarkerFactory() could not find template: {0}", TEMPLATE_CONFIG_FILE);
-            }
-        }
+        private static final Logger logger = Logger.getLogger(Writer.class.getName());
 
         /**
-         *
-         * @return A new IcsMarker instance.
+         * Called by super.createDataObject().
+         * @return A template file used for writing new IcsMarkers.
          */
         @Override
-        public Marker newMarker() {
-            return new IcsMarker();
+        protected DataObject getTemplate() {
+            if (template == null) {
+                try {
+                    template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
+                } catch (DataObjectNotFoundException ex) {
+                    logger.log(Level.SEVERE, "IcsMarker.Writer.getTemplate() cannot find: {0}", TEMPLATE_CONFIG_FILE);
+                }
+            }
+            return template;
         }
 
-        /**
-         * Creates a DataObject in the supplied folder using the supplied IcsMarker instance for
-         * DataObject contents.
-         *
-         * @param marker assigned to the DataObject
-         * @param folder where the DataObject will be created, uses the current project if null
-         * @return a BasicMarkerDataObject
-         */
-        @Override
-        public DataObject createDataObject(Marker marker, FileObject folder) {
-            if (marker instanceof IcsMarker) {
-                return MarkerSupport.createBasicMarkerDataObject((IcsMarker) marker, folder, template);
-            } else {
-                throw new IllegalArgumentException("createBasicMarkerDataObject: marker argument must be a IcsMarker, not a " + marker.getClass().getName());
-            }
-        }
     }
 }

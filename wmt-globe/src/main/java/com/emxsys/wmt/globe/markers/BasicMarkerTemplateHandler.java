@@ -44,20 +44,22 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
  * BasicMarkerTemplateHandler is a CreateFromTemplateHandler service provider that creates
+ * a new Marker XML file.
  *
  * @author Bruce Schubert
  */
 @ServiceProvider(service = CreateFromTemplateHandler.class)
 public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
+
     private static final Logger logger = Logger.getLogger(BasicMarkerTemplateHandler.class.getName());
 
     @Override
     protected boolean accept(FileObject orig) {
         String mimeType = orig.getMIMEType();
-        return mimeType.equals("text/emxsys-wmt-basicmarker+xml") || mimeType.equals("text/emxsys-worldwind-basicmarker+xml");
+        return mimeType.equals("text/emxsys-wmt-basicmarker+xml")
+                || mimeType.equals("text/emxsys-worldwind-basicmarker+xml");
     }
 
     /**
@@ -67,19 +69,21 @@ public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
      * @param folder Location for the target file
      * @param name Name for the target file
      * @param parameters Contains a "model" BasicMarker object that's copied into the target file
-     * @return
+     * @return A FileObject representing the Marker.
      * @throws IOException
      */
     @Override
     protected FileObject createFromTemplate(FileObject template, FileObject folder, String name,
                                             Map<String, Object> parameters) throws IOException {
-        // Update the target file contents from the model
+        // Get the marker object from the parameters.
         Object model = parameters.get("model");
         if (!(model instanceof BasicMarker)) {
-            String msg = "createFromTemplate 'model' parameter is null or not a BasicMarker";
+            String msg = "createFromTemplate 'model' parameter is null or not a BasicMarker.";
             logger.severe(msg);
             throw new IllegalArgumentException(msg);
         }
+        BasicMarker marker = (BasicMarker) model;
+
         // Strip any extension from the name because we'll supply the extension
         String ext = FileUtil.getExtension(name);
         if (ext.length() != 0) {
@@ -89,18 +93,21 @@ public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
 
         // Create the target file from the template
         FileObject targetFile = template.copy(folder, name, ext);
-
         try {
-            // Update the target file's contents from the model
+            // Create an XML document from the template file
             InputSource source = new InputSource(template.getInputStream());
             Document doc = XMLUtil.parse(source, false, false, null, null);
-            BasicMarkerXmlEncoder.writeDocument(doc, (BasicMarker) model);
-            OutputStream output = targetFile.getOutputStream(FileLock.NONE);
-            XMLUtil.write(doc, output, "UTF-8");
-            output.flush();
-            output.close();
-        }
-        catch (SAXException ex) {
+            // Write the marker to the XML file
+            new BasicMarkerWriter()
+                    .document(doc)
+                    .marker(marker)
+                    .write();
+            // Write the XML to disk
+            try (OutputStream output = targetFile.getOutputStream(FileLock.NONE)) {
+                XMLUtil.write(doc, output, "UTF-8");
+                output.flush();
+            }
+        } catch (SAXException ex) {
             logger.log(Level.SEVERE, "createFromTemplate could not update file from model: {0}", ex.toString());
         }
         return targetFile;

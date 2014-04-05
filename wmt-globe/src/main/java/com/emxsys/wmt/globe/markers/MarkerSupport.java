@@ -29,17 +29,24 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.marker.MarkerCatalog;
-import com.emxsys.wmt.util.FilenameUtils;
-import java.io.IOException;
-import java.util.HashMap;
+import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.wmt.gis.api.marker.MarkerManager;
+import static com.emxsys.wmt.globe.markers.BasicMarkerWriter.BASIC_MARKER_SCHEMA_FILE;
+import com.emxsys.wmt.util.TimeUtil;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.XMLConstants;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataFolder;
-import org.openide.loaders.DataObject;
+import org.openide.filesystems.URLMapper;
 import org.openide.util.Utilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -48,49 +55,75 @@ import org.openide.util.Utilities;
  */
 public class MarkerSupport {
 
-    public static final String FILENAME_PREFIX = "Marker-";
-    public static final String FILENAME_EXTENSION = "xml";
     private static final Logger logger = Logger.getLogger(MarkerSupport.class.getName());
+    private static Schema schema;
 
     /**
-     * Create a new BasicMarkerDataObject (file) from a model Marker object.
-     *
-     * @param marker The model marker who's values will be stored in the file.
-     * @param folder The folder where the DataObject will be created. If null, trys to get it from
-     * the current project.
-     * @param template The file template.
-     * @return a new BasicMarkerDataObject
-     * @see MarkerCreateFromTemplateHandler
+     * Gets a factory object from the class embedded in the Marker element.
+     * @param document The document containing the Marker element.
+     * @return A new Marker.Builder instance; throws on error.
      */
-    public static DataObject createBasicMarkerDataObject(BasicMarker marker, FileObject folder, DataObject template) {
+    public static Marker.Builder getBuilder(Document document) {
+
+        String clazz = null;
+        NodeList list = document.getElementsByTagName("Marker");
         try {
-            // Use the current project folder if not given
-            if (folder == null) {
-                Project currentProject = Utilities.actionsGlobalContext().lookup(Project.class);
-                if (currentProject != null) {
-                    MarkerCatalog catalog = currentProject.getLookup().lookup(MarkerCatalog.class);
-                    if (catalog != null) {
-                        folder = catalog.getFolder();
-                    }
-                }
-            }
-            // throws an IllegalArgumentException if not found
-            DataFolder dataFolder = DataFolder.findFolder(folder);
-
-            // Ensure the filename is unique -- appends a numeral if not
-            String filename = FilenameUtils.getUniqueEncodedFilename(
-                    folder, marker.getName(), template.getPrimaryFile().getExt());
-
-            // Create the marker file from our template -- delegated to BasicMarkerTemplateHandler, 
-            // which is a CreateFromTemplateHandler service provider
-            HashMap<String, Object> parameters = new HashMap<>();
-            parameters.put("model", marker);
-            DataObject dataObject = template.createFromTemplate(dataFolder, filename, parameters);
-
-            return dataObject;
-        } catch (IllegalArgumentException | IOException exception) {
-            logger.log(Level.SEVERE, "createBasicMarkerDataObject() failed: {0}", exception.toString());
-            return null;
+            // Construct a factory object.
+            // Use the Marker.Builder(Document document) interface.
+            clazz = ((Element) list.item(0)).getAttribute("factory");
+            return (Marker.Builder) Class.forName(clazz)
+                    .getConstructor(Document.class)
+                    .newInstance(document);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Cannot create Marker.Factory: \"{0}\". Reason: {1}",
+                    new Object[]{clazz, ex.toString()});
+            throw new RuntimeException(ex);
         }
     }
+
+    /**
+     * Called by Builder clients (e.g., actions) to get the folder for new Markers.
+     * @return A FileObject for the "markers" folder; returns null if not found.
+     */
+    public static FileObject getFolderFromCurrentProject() {
+        Project currentProject = Utilities.actionsGlobalContext().lookup(Project.class);
+        if (currentProject != null) {
+            MarkerManager manager = currentProject.getLookup().lookup(MarkerManager.class);
+            if (manager != null) {
+                return manager.getFolder();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return A FileObject for the BASIC_MARKER_SCHEMA_FILE resource.
+     * @see URLMapper#findFileObject(java.net.URL)
+     */
+    public static FileObject getLocalSchemaFile() {
+        // Get a file object from a jar file entry (URL).
+        URL resource = BasicMarkerWriter.class.getResource(BASIC_MARKER_SCHEMA_FILE);
+        return URLMapper.findFileObject(resource);
+    }
+
+    /**
+     * Loads the BasicMarkerSchema.xsd schema.
+     * @return Schema representing {@code BasicMarkerSchema.xsd}.
+     */
+    static Schema getMarkerSchema() {
+        if (schema == null) {
+            SchemaFactory f = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            URL schemaUrl = BasicMarkerWriter.class.getResource(BASIC_MARKER_SCHEMA_FILE);
+            try {
+                logger.log(Level.CONFIG, "Loading Schema ({0}) ...", schemaUrl);
+                long startMs = System.currentTimeMillis();
+                schema = f.newSchema(schemaUrl);
+                logger.log(Level.FINE, "Schema loaded: {0} secs", TimeUtil.msToSecs(System.currentTimeMillis() - startMs));
+            } catch (SAXException exception) {
+                logger.severe(exception.getMessage());
+            }
+        }
+        return schema;
+    }
+
 }
