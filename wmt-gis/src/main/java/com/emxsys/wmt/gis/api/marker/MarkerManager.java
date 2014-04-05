@@ -62,13 +62,13 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: MarkerCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
-public class MarkerCatalog extends EntityCatalog<Marker> {
+public class MarkerManager extends EntityCatalog<Marker> {
 
     private FileObject folder;
     private Lookup.Result<Renderer> rendererResults;
     private Marker.Renderer markerRenderer;
     private final ArrayList<Marker> pendingAdds = new ArrayList<>();
-    private static final Logger logger = Logger.getLogger(MarkerCatalog.class.getName());
+    private static final Logger logger = Logger.getLogger(MarkerManager.class.getName());
 
     static {
         logger.setLevel(Level.ALL);
@@ -78,7 +78,7 @@ public class MarkerCatalog extends EntityCatalog<Marker> {
      *
      * @param folder the folder where Markers are saved
      */
-    public MarkerCatalog(FileObject folder) {
+    public MarkerManager(FileObject folder) {
         setFolder(folder);
     }
 

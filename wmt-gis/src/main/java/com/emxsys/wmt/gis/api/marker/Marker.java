@@ -147,7 +147,7 @@ public interface Marker extends Feature {
      * Gets the factory class used to create this marker. The provider class may be stored in the
      * file representing this marker.
      */
-    Class<? extends Factory> getFactoryClass();
+    Class<? extends Builder> getFactoryClass();
 
     /**
      *
@@ -171,24 +171,27 @@ public interface Marker extends Feature {
     }
 
     /**
-     * Marker factories.
+     * A Marker factory. Use the Builder pattern.
      */
-    public interface Factory {
+    public interface Builder {
 
         /**
          * Creates a Marker instance.
          *
-         * @return a new Marker
+         * @return A new Marker.
          */
-        Marker newMarker();
+        Marker build();
+    }
+
+    /**
+     * A Marker writer.
+     */
+    public interface Writer {
 
         /**
-         * Creates a new DataObject representing the given Marker in the specified folder.
-         *
-         * @param marker assigned to the DataObject
-         * @param folder where the DataObject is created
-         * @return A new DataObject.
+         * Writes a marker to a persistent store.
          */
-        DataObject createDataObject(Marker marker, FileObject folder);
+        void write();
+        
     }
 }
