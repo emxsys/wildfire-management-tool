@@ -33,7 +33,7 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.capabilities.Disposable;
-import com.emxsys.wmt.gis.api.marker.MarkerCatalog;
+import com.emxsys.wmt.gis.api.marker.MarkerManager;
 import com.emxsys.wmt.gis.api.scene.BasicSceneCatalog;
 import com.emxsys.wmt.gis.api.symbology.GraphicCatalog;
 import com.emxsys.wmt.gis.api.symbology.SymbolCatalog;
@@ -229,10 +229,10 @@ public class BasicProject implements Project {
         if (!this.init.compareAndSet(State.INITIALIZED, State.CLOSING)) {
             throw new IllegalStateException("Cannot close, state must be INITIALIZED, not " + this.init.get());
         }
-        MarkerCatalog markerCatalog = getLookup().lookup(MarkerCatalog.class);
-        if (markerCatalog != null) {
-            markerCatalog.dispose();
-            this.content.remove(markerCatalog);
+        MarkerManager markerManager = getLookup().lookup(MarkerManager.class);
+        if (markerManager != null) {
+            markerManager.dispose();
+            this.content.remove(markerManager);
         }
         GraphicCatalog graphicCatalog = getLookup().lookup(GraphicCatalog.class);
         if (graphicCatalog != null) {
@@ -295,15 +295,15 @@ public class BasicProject implements Project {
     }
 
     /**
-     * Loads the markers found in a folder, adds support for Markers by placing a MarkerCatalog in
-     * the lookup.
+     * Loads the markers found in a folder, adds support for Markers by placing a MarkerManager in
+ the lookup.
      *
      * @param folderName name of folder containing markers
      */
     private void loadMarkers(String folderName) {
         logger.log(Level.INFO, "Loading {0} markers...", getProjectName());
         FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
-        this.content.add(new MarkerCatalog(subfolder));
+        this.content.add(new MarkerManager(subfolder));
 
         // Force the loading of the children so the markers are shown on the map 
         DataFolder dataFolder = DataFolder.findFolder(subfolder);
