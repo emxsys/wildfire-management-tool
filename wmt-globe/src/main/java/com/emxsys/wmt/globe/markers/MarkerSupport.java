@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2012-2014, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -97,23 +97,25 @@ public class MarkerSupport {
     }
 
     /**
+     * Gets a BasicMarkerSchema.xsd file resource.
+     * @param version The schema version, e.g., 1.0, 2.0 or later.
      * @return A FileObject for the BASIC_MARKER_SCHEMA_FILE resource.
      * @see URLMapper#findFileObject(java.net.URL)
      */
-    public static FileObject getLocalSchemaFile() {
+    public static FileObject getLocalSchemaFile(String version) {
         // Get a file object from a jar file entry (URL).
-        URL resource = BasicMarkerWriter.class.getResource(BASIC_MARKER_SCHEMA_FILE);
+        URL resource = BasicMarkerWriter.class.getResource("schemas/" + version + "/" + BASIC_MARKER_SCHEMA_FILE);
         return URLMapper.findFileObject(resource);
     }
 
     /**
-     * Loads the BasicMarkerSchema.xsd schema.
+     * Loads the BasicMarkerSchema.xsd schema. Used in Unit tests.
      * @return Schema representing {@code BasicMarkerSchema.xsd}.
      */
-    static Schema getMarkerSchema() {
+    static Schema getMarkerSchema(String version) {
         if (schema == null) {
             SchemaFactory f = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            URL schemaUrl = BasicMarkerWriter.class.getResource(BASIC_MARKER_SCHEMA_FILE);
+            URL schemaUrl = BasicMarkerWriter.class.getResource("schemas/" + version + "/"+ BASIC_MARKER_SCHEMA_FILE);
             try {
                 logger.log(Level.CONFIG, "Loading Schema ({0}) ...", schemaUrl);
                 long startMs = System.currentTimeMillis();

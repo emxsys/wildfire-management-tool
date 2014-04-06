@@ -55,7 +55,31 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * BasicMarker.Builder class.
+ * The BasicMarker.Builder class is responsible for creating a BasicMarker from a set of parameters
+ * that are set via the the Fluent interface pattern. Examples:
+ *
+ * <pre>
+ * To create a new Marker from given parameters:
+ * {@code new Builder()
+ *      .coordinate(new GeoCoord3D())
+ *      .name("Marker")
+ *      .build();
+ * }
+ *
+ * To create a new Marker from an XML document:
+ * {@code new Builder()
+ *      .document(doc)
+ *      .build();
+ * }
+ *
+ * To create a new Marker from an XML document with a new name and coordinate:
+ * {@code new Builder()
+ *      .document(doc)
+ *      .name("New Name")
+ *      .coordinate(somewhereElse)
+ *      .build();
+ * }
+ * </pre>
  *
  * @author Bruce Schubert
  */
@@ -74,19 +98,92 @@ public class BasicMarkerBuilder implements Marker.Builder {
     private static final Logger logger = Logger.getLogger(BasicMarkerBuilder.class.getName());
     private Document doc;
     private XPath xpath;
-    protected Coord3D coord;
-    protected String name;
+    private Coord3D coord;
+    private String name;
 
+    /**
+     * Basic constructor.
+     */
     public BasicMarkerBuilder() {
-        this.coord = GeoCoord3D.INVALID_POSITION;
     }
 
-    public BasicMarkerBuilder(Coord3D coord) {
-        this.coord = coord;
-    }
-
+    /**
+     * Minimal constructor for a Builder that uses an XML document for the Marker parameters.
+     * @param document The document to read.
+     */
     public BasicMarkerBuilder(Document document) {
         this.doc = document;
+    }
+
+    public BasicMarkerBuilder document(Document document) {
+        this.doc = document;
+        return this;
+    }
+
+    public BasicMarkerBuilder coordinate(Coord3D coord) {
+        this.coord = coord;
+        return this;
+    }
+
+    public BasicMarkerBuilder name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * Builds a new BasicMarker from the established parameters.
+     * @return a new BasicMarker instance.
+     */
+    @Override
+    public Marker build() {
+        BasicMarker marker = new BasicMarker();
+        if (doc != null) {
+            marker = initializeFromXml(marker);
+        }
+        return initializeFromParameters(marker);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Coord3D getCoordinate() {
+        return coord;
+    }
+
+    public Document getDocument() {
+        return doc;
+    }
+
+    /**
+     * Initializes the supplied marker from the established parameters. Allows the parameters to
+     * override the settings established by an XML document. Subclasses should call or override.
+     * @param marker The marker to update.
+     * @return The updated marker.
+     */
+    protected BasicMarker initializeFromParameters(BasicMarker marker) {
+        if (coord != null) {
+            if (doc != null) {
+                logger.log(Level.INFO, "Overriding the position set by XML document for {0}.", marker.getName());
+            }
+            marker.setPosition(coord);
+        }
+        if (name != null) {
+            if (doc != null) {
+                logger.log(Level.INFO, "Overriding the name set by XML document for {0}.", marker.getName());
+            }
+            marker.setName(name);
+        }
+        return marker;
+    }
+
+    /**
+     * Initializes the supplied marker from the Builder's XML document.
+     * @param marker The BasicMarker (or derived) instance to be initialized.
+     * @return The initialized marker; throws a RuntimeException on error.
+     * @throws RuntimeException
+     */
+    protected BasicMarker initializeFromXml(BasicMarker marker) {
         this.xpath = XPathFactory.newInstance().newXPath();
         this.xpath.setNamespaceContext(new NamespaceContext() {
             @Override
@@ -119,43 +216,9 @@ public class BasicMarkerBuilder implements Marker.Builder {
                 }
             }
         });
-    }
-
-    public BasicMarkerBuilder name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * @return a new BasicMarker.
-     */
-    @Override
-    public Marker build() {
-        if (doc == null) {
-            BasicMarker marker = new BasicMarker(coord);
-            if (name != null) {
-                marker.setName(name);
-            }
-            return marker;
-        } else {
-            return initializeFromXml(new BasicMarker());
-        }
-    }
-
-    protected Document getDocument() {
-        return doc;
-    }
-
-    /**
-     * Initializes the supplied marker from the Builder's XML document.
-     * @param marker The BasicMarker (or derived) instance to be initialized.
-     * @return The initialized marker; throws a RuntimeException on error.
-     * @throws RuntimeException
-     */
-    protected BasicMarker initializeFromXml(BasicMarker marker) {
-        // Get the Marker node, there should be [0-1]
         NodeList list;
         try {
+            // Get the Marker node, there should be [0-1]
             list = (NodeList) xpath.evaluate("//" + MKR_PREFIX + ":" + TAG_MARKER, doc, XPathConstants.NODESET);
             if (list.getLength() == 0) {
                 throw new IllegalStateException(Bundle.err_document_missing_marker(doc.getDocumentURI()));
@@ -165,6 +228,10 @@ public class BasicMarkerBuilder implements Marker.Builder {
             Element mkrElem = (Element) list.item(0);
             marker.setName(xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.NAME_PROPERTY_ELEMENT_NAME, mkrElem));
             Element pntElem = (Element) xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.POINT_PROPERTY_ELEMENT_NAME, mkrElem, XPathConstants.NODE);
+            if (pntElem == null) {
+                // pointProperty tag not found--look for depreciated Position tag.
+                pntElem = (Element) xpath.evaluate(MKR_PREFIX + ":" +TAG_POSITION, mkrElem, XPathConstants.NODE); // depreciated tag
+            }
             marker.setPosition(GmlParser.parsePosition(pntElem));
             Element symElem = (Element) xpath.evaluate(MKR_PREFIX + ":" + TAG_SYMBOL, mkrElem, XPathConstants.NODE);
             if (symElem != null) {
@@ -199,7 +266,6 @@ public class BasicMarkerBuilder implements Marker.Builder {
             throw new RuntimeException("Builder.initializeFromXml() failed!");
         }
     }
-
 
     public static URL findLocalResource(String resourceUrl, Class clazz) {
         if (resourceUrl == null || resourceUrl.isEmpty()) {

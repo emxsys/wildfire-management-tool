@@ -258,7 +258,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
     /**
      * Generates a schema file in the specified folder if one does not exist.
      *
-     * @param folder where schema should reside
+     * @param folder The folder where the schema should reside.
      * @throws IOException
      */
     private static void writeSchema(FileObject folder) throws IOException {
@@ -266,7 +266,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
         File schemaTarget = new File(folder.getPath(), BasicMarkerWriter.BASIC_MARKER_SCHEMA_FILE);
         if (!schemaTarget.exists()) {
             logger.log(Level.CONFIG, "Creating Schema: {0}", schemaTarget.getPath());
-            FileObject schemaSource = MarkerSupport.getLocalSchemaFile();
+            FileObject schemaSource = MarkerSupport.getLocalSchemaFile("2.0");
             if (schemaSource != null) {
                 FileUtil.copyFile(schemaSource, folder, schemaSource.getName());
             } else {

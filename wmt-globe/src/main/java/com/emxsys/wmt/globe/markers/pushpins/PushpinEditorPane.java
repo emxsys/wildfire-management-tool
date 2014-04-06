@@ -54,10 +54,9 @@ public class PushpinEditorPane extends javax.swing.JPanel {
 
     private PointPlacemarkAttributes renderingAttributes;
     private ImageIcon[] images;
-    private String[] names
-            = {
-                "Black", "Blue", "Brown", "Gray", "Green", "Orange", "Purple", "Red", "Teal"
-            };
+    private String[] names = {
+        "Black", "Blue", "Brown", "Gray", "Green", "Orange", "Purple", "Red", "Teal"
+    };
     private static int lastSelectionIndex = 0;
 
     /**

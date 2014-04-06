@@ -55,7 +55,6 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
-import org.w3c.dom.Document;
 import visad.Field;
 
 /**
@@ -65,11 +64,9 @@ import visad.Field;
  * @see BasicMarker
  * @see Marker
  */
-@Messages(
-        {
-            "CTL_WeatherDialogTitle=Edit Weather Marker",
-            "ERR_ViewerNotFound=WorldWindPanel not found."
-        })
+@Messages({
+    "CTL_WeatherDialogTitle=Edit Weather Marker",
+})
 public class WeatherMarker extends BasicMarker {
 
     private final Field field;
@@ -169,51 +166,35 @@ public class WeatherMarker extends BasicMarker {
     }
 
     /**
-     * Builder for creating WeatherMarkers. DataObjects will query for Marker.Builder with the
- ATTR_PROVIDER class to find the appropriate XML encoder/decoder.
-
- Note: Ensure this is a 'static' inner class so that it can be instantiated by the service
- provider framework.
+     * Builder for creating WeatherMarkers.
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
     public static class Builder extends BasicMarkerBuilder {
 
-        // See package-info.java for the declaration of the IcsMarkerTemplate
-        private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/IcsMarkerTemplate.xml";
-        private static DataObject template;
-        private static final Logger logger = Logger.getLogger(Builder.class.getName());
-
-        public Builder() {
-        }
-
-        public Builder(String name, Coord3D coord) {
-            super(coord);
-            name(name);
-        }
-
-        public Builder(Document sourceDoc) {
-            super(sourceDoc);
-        }
-
         @Override
         public Marker build() {
-            if (getDocument() == null) {
-                return new WeatherMarker(super.name, super.coord);
-            } else {               
-                return initializeFromXml(new WeatherMarker());
+            BasicMarker marker = new WeatherMarker();
+            if (getDocument() != null) {
+                marker = initializeFromXml(marker);
             }
+            return initializeFromParameters(marker);
         }
 
         @Override
         protected BasicMarker initializeFromXml(BasicMarker marker) {
-            return super.initializeFromXml(marker); //To change body of generated methods, choose Tools | Templates.
+            return super.initializeFromXml(marker);
         }
-  
+
+        @Override
+        protected BasicMarker initializeFromParameters(BasicMarker marker) {
+            return super.initializeFromParameters(marker);
+        }
+
     }
 
     /**
-     * Writer class.
+     * Writer class for writing WeatherMarkers to persistent storage.
      */
     public static class Writer extends BasicMarkerWriter {
 

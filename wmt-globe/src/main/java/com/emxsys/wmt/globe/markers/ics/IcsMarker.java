@@ -123,22 +123,17 @@ public class IcsMarker extends BasicMarker {
         public Builder() {
         }
 
-        public Builder(String name, Coord3D coord) {
-            super(coord);
-            name(name);
-        }
-
         public Builder(Document doc) {
             super(doc);
         }
 
         @Override
         public Marker build() {
-            if (getDocument() == null) {
-                return new IcsMarker(super.name, super.coord);
-            } else {
-                return initializeFromXml(new IcsMarker());
+            BasicMarker marker = new IcsMarker();
+            if (getDocument() != null) {
+                marker = initializeFromXml(marker);
             }
+            return initializeFromParameters(marker);
         }
 
         @Override

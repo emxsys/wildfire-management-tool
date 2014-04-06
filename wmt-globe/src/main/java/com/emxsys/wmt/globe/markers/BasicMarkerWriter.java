@@ -46,14 +46,20 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.loaders.XMLDataObject;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
- * BasicMarker.Writer class. Follows the Fluent interface pattern. E.g.,
+ * The BasicMarker.Writer class is responsible for writing out a marker to an XML document. It can
+ * either create an XML file or update an XML document by invoking either the {@code folder()} or
+ * the {@code document()} method, respectively. Follows the Fluent interface pattern. For example:
+ *
  * <pre>
  * To update a Marker XML document:
  * {@code new Writer()
@@ -61,13 +67,16 @@ import org.w3c.dom.NodeList;
  *      .marker(marker)
  *      .write();
  * }
- * To create a new Marker XML document:
+ *
+ * To create a new Marker XML document on disk:
  * {@code new Writer()
  *      .folder(folder)
  *      .marker(marker)
  *      .write();
- * } *
+ * }
  * </pre>
+ *
+ * @author Bruce Schubert
  */
 @NbBundle.Messages({
     "# {0} - reason",
@@ -91,15 +100,51 @@ public class BasicMarkerWriter implements Marker.Writer {
     public static final String TAG_IMAGE_SCALE = "image_scale";
     public static final String ATTR_FACTORY = "factory";
     public static final String ATTR_MOVABLE = "movable";
+    // Schema version 2.0 properties
+    public static final String TAG_IMAGE_COLOR = "image_color";
+    public static final String TAG_LABEL_FONT = "label_font";
+    public static final String TAG_LABEL_MATERIAL = "label_material";
+    public static final String TAG_LINE_MATERIAL = "line_material";
+    public static final String TAG_HEADING = "heading";
+    public static final String TAG_HEADING_REFERENCE = "heading_reference";
+    public static final String ATTR_ALTITUDE_MODE = "altitude_mode";
+    public static final String ATTR_AMBIENT = "ambient";
+    public static final String ATTR_DIFFUSE = "diffuse";
+    public static final String ATTR_SPECULAR = "specular";
+    public static final String ATTR_EMISSION = "emission";
+    public static final String ATTR_SHININESS = "shininess";
+
     // See package-info.java for the declaration of the BasicMarkerTemplate
     private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/BasicMarkerTemplate.xml";
     private static DataObject templateFile;
     private static final Logger logger = Logger.getLogger(BasicMarkerWriter.class.getName());
+
     private Document doc;
     private BasicMarker marker;
     private FileObject folder;
 
     public BasicMarkerWriter() {
+    }
+
+    /**
+     * Creates a Writer that will update the given document with the contents of the given Marker.
+     * @param doc The document to update.
+     * @param marker The marker to write.
+     */
+    public BasicMarkerWriter(Document doc, BasicMarker marker) {
+        this.doc = doc;
+        this.marker = marker;
+    }
+
+    /**
+     * Creates a Writer that will create an XML document on disk with the contents of the given
+     * Marker.
+     * @param folder The folder where the XML document will be created.
+     * @param marker The marker to write.
+     */
+    public BasicMarkerWriter(FileObject folder, BasicMarker marker) {
+        this.marker = marker;
+        this.folder = folder;
     }
 
     /**
@@ -135,19 +180,32 @@ public class BasicMarkerWriter implements Marker.Writer {
         return this;
     }
 
+    public Document getDocument() {
+        return doc;
+    }
+
+    public BasicMarker getMarker() {
+        return marker;
+    }
+
+    public FileObject getFolder() {
+        return folder;
+    }
+
     /**
      * Writes the contents of a Marker to a persistent store. Either to the given XML document, or
      * to a new XML file in the given folder.
+     * @return Returns the newly created or updated document.
      */
     @Override
-    public void write() {
+    public Document write() {
         if (marker == null) {
             throw new IllegalArgumentException("BasicMarker.Writer.write() failed: The marker object cannot be null");
         }
         if (folder != null) {
-            createDataObject();
+            return createDataObject();
         } else if (doc != null) {
-            writeDocument();
+            return writeDocument();
         } else {
             throw new IllegalStateException("BasicMarker.Writer.write() failed: Either the folder or the document must be set.");
         }
@@ -155,9 +213,10 @@ public class BasicMarkerWriter implements Marker.Writer {
 
     /**
      * Create a new BasicMarkerDataObject (file) from a model Marker object.
+     * @return The XML document from the DataObject
      * @see BasicMarkerTemplateHandler
      */
-    protected void createDataObject() {
+    protected Document createDataObject() {
         try {
             // throws an IllegalArgumentException if not found
             DataFolder dataFolder = DataFolder.findFolder(folder);
@@ -167,14 +226,19 @@ public class BasicMarkerWriter implements Marker.Writer {
             }
             // Ensure the filename is unique -- appends a numeral if not
             String filename = FilenameUtils.getUniqueEncodedFilename(folder, marker.getName(), template.getPrimaryFile().getExt());
+            
             // Get the registered templateFile (could be from a subclass).
             // Create the marker file from our templateFile. Delegates to BasicMarkerTemplateHandler,
             // which is a CreateFromTemplateHandler service provider.
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("model", marker);
-            template.createFromTemplate(dataFolder, filename, parameters);
-        } catch (IllegalStateException | IllegalArgumentException | IOException exception) {
+            BasicMarkerDataObject dataObject = (BasicMarkerDataObject) template.createFromTemplate(dataFolder, filename, parameters);
+
+            return dataObject.getDocument();
+            
+        } catch (IllegalStateException | IllegalArgumentException | IOException | SAXException exception) {
             logger.log(Level.SEVERE, "createDataObject() failed: {0}", exception.toString());
+            return null;
         }
     }
 
@@ -196,8 +260,9 @@ public class BasicMarkerWriter implements Marker.Writer {
 
     /**
      * Performs a complete rewrite of the marker XML file via DOM.
+     * @return Returns the updated document.
      */
-    protected void writeDocument() {
+    protected Document writeDocument() {
         // Clear any existing element in prep for saving new marker data
         final NodeList children = doc.getChildNodes();
         for (int i = children.getLength() - 1; i >= 0; i--) {
@@ -214,6 +279,7 @@ public class BasicMarkerWriter implements Marker.Writer {
         } else {
             logger.log(Level.SEVERE, "writeDocument unable to export marker ({0}).", marker.toString());
         }
+        return doc;
     }
 
     /**
@@ -262,6 +328,7 @@ public class BasicMarkerWriter implements Marker.Writer {
             PointPlacemarkAttributes attributes = placemark.getAttributes();
             if (attributes != null) {
                 Element symbol = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_SYMBOL);
+                // Version 1.0 properties
                 Element img_url = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_URL);
                 Element img_off_x = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_OFFSET_X);
                 Element img_off_y = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_OFFSET_Y);
@@ -280,6 +347,46 @@ public class BasicMarkerWriter implements Marker.Writer {
                 symbol.appendChild(lbl_off_x);
                 symbol.appendChild(lbl_off_y);
                 symbol.appendChild(img_scale);
+                // Version 2.0 properties
+                Element img_color = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_COLOR);
+                Element lbl_font = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_FONT);
+                Element lbl_material = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_MATERIAL);
+                Element line_material = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LINE_MATERIAL);
+                Element heading = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_HEADING);
+                Element heading_ref = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_HEADING_REFERENCE);
+                if (attributes.getImageColor() != null) {
+                    img_color.appendChild(doc.createTextNode(Integer.toHexString(attributes.getImageColor().getRGB())));
+                    symbol.appendChild(img_color);
+                }
+                if (attributes.getLabelMaterial() != null) {
+                    lbl_material.setAttribute(ATTR_AMBIENT, Integer.toHexString(attributes.getLabelMaterial().getAmbient().getRGB()));
+                    lbl_material.setAttribute(ATTR_DIFFUSE, Integer.toHexString(attributes.getLabelMaterial().getDiffuse().getRGB()));
+                    lbl_material.setAttribute(ATTR_SPECULAR, Integer.toHexString(attributes.getLabelMaterial().getSpecular().getRGB()));
+                    lbl_material.setAttribute(ATTR_EMISSION, Integer.toHexString(attributes.getLabelMaterial().getEmission().getRGB()));
+                    lbl_material.setAttribute(ATTR_SHININESS, Double.toString(attributes.getLabelMaterial().getShininess()));
+                    symbol.appendChild(lbl_material);
+                }
+                if (attributes.getLabelFont() != null) {
+                    lbl_font.appendChild(doc.createTextNode(attributes.getLabelFont().toString()));
+                    symbol.appendChild(lbl_font);
+                }
+                if (attributes.getLineMaterial() != null) {
+                    line_material.setAttribute(ATTR_AMBIENT, Integer.toHexString(attributes.getLabelMaterial().getAmbient().getRGB()));
+                    line_material.setAttribute(ATTR_DIFFUSE, Integer.toHexString(attributes.getLabelMaterial().getDiffuse().getRGB()));
+                    line_material.setAttribute(ATTR_SPECULAR, Integer.toHexString(attributes.getLabelMaterial().getSpecular().getRGB()));
+                    line_material.setAttribute(ATTR_EMISSION, Integer.toHexString(attributes.getLabelMaterial().getEmission().getRGB()));
+                    line_material.setAttribute(ATTR_SHININESS, Double.toString(attributes.getLabelMaterial().getShininess()));
+                    symbol.appendChild(line_material);
+                }
+                if (attributes.getHeading() != null) {
+                    heading.appendChild(doc.createTextNode(attributes.getHeading().toString()));
+                    heading_ref.appendChild(doc.createTextNode(attributes.getHeadingReference()));
+                    symbol.appendChild(heading);
+                    symbol.appendChild(heading_ref);
+                }
+
+                symbol.setAttribute(ATTR_ALTITUDE_MODE, Integer.toString(placemark.getAltitudeMode()));
+
                 mkr.appendChild(symbol);
             }
             return mkr;

@@ -45,7 +45,7 @@ public class Pushpin {
 
         public PushpinFactory(Document doc) {
             System.out.println(">>> Creating delgate: com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder");
-            this.delegate = new com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder(doc);
+            this.delegate = new com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder(doc);            
             if (this.delegate == null) {
                 throw new IllegalStateException("Could not create delegate: com.emxsys.wmt.globe.markers.pushpins.Pushpin.Builder");
             }

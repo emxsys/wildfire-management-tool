@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2009-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
-import gov.nasa.worldwind.util.BasicDragger;
 import java.awt.Component;
 import java.awt.Image;
 import java.net.MalformedURLException;
@@ -58,7 +57,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import org.openide.explorer.ExplorerManager;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbPreferences;
 import org.openide.util.NotImplementedException;
@@ -395,7 +393,6 @@ public class BasicMarker extends AbstractMarker {
 
         private PointPlacemarkAdapter lastPickedPlacemark = null;
         private PointPlacemarkAdapter lastSelectedPlacemark = null;
-        private BasicDragger dragDelegate;
 
         /**
          * Defers attaching the MarkerSelectListener to the WorldWindow view until the UI is ready.
@@ -410,9 +407,6 @@ public class BasicMarker extends AbstractMarker {
                             + "Marker highlighting and selection will be disabled.");
                     return;
                 }
-                // Create a SelectListener delegate for handling drags/moves
-//                dragDelegate = new BasicDragger(wwd);
-                // Listen for events signaling that this pushpin has been selected
                 wwd.addSelectListener(MarkerSelectListener.this);
             });
         }
@@ -436,14 +430,8 @@ public class BasicMarker extends AbstractMarker {
                     case SelectEvent.LEFT_DOUBLE_CLICK:
                         openMarker(event);
                         break;
-//                    default:
-//                        Object topObject = event.getTopObject();
-//                        if (topObject instanceof PointPlacemarkAdapter) {
-//                            dragDelegate.selected(event);
-//                        }
                 }
             } catch (Exception e) {
-                Exceptions.printStackTrace(e);
                 logger.warning(e.getMessage() != null ? e.getMessage() : e.toString());
             }
         }

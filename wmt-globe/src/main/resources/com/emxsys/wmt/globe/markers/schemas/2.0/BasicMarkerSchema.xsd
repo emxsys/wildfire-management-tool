@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2012, Bruce Schubert <bruce@emxsys.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<xs:schema targetNamespace="http://emxsys.com/worldwind-basicmarker" 
+           xmlns:mkr="http://emxsys.com/worldwind-basicmarker" 
+           xmlns:gml="http://www.opengis.net/gml" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           elementFormDefault="qualified" 
+           version="2.0">
+
+    <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/2.1.2/gml.xsd"/>
+    
+    <!--  
+    global element declarations 
+    -->
+    
+    <xs:element name="MarkerCollection" type="mkr:MarkerCollectionType" substitutionGroup="gml:_FeatureCollection"/>
+    <xs:element name="Marker" type="mkr:MarkerType" substitutionGroup="gml:_Feature"/>
+    <xs:element name="Symbol" type="mkr:SymbolType"/>
+    
+    <!-- 
+    type definitions for basic marker 
+    -->
+    
+    <xs:complexType name="MarkerCollectionType">
+        <xs:complexContent>
+            <xs:restriction base="gml:AbstractFeatureCollectionType">
+                <xs:sequence>
+                    <xs:element ref="gml:boundedBy"/>
+                    <xs:element ref="gml:featureMember" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:restriction>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="AbstractMarkerType" abstract="true">
+        <xs:complexContent>
+            <xs:restriction base="gml:AbstractFeatureType">
+                <xs:sequence>
+                    <xs:element ref="gml:description" minOccurs="0"/>
+                    <xs:element ref="gml:name"/>
+                    <xs:element ref="gml:boundedBy" minOccurs="0"/>
+                </xs:sequence>
+            </xs:restriction>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SymbolType">
+        <xs:annotation>
+            <xs:documentation>
+                The symbol represeting this marker.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="image_url" type="xs:anyURI"/>
+            <xs:element name="image_offset_x" type="xs:decimal"/>
+            <xs:element name="image_offset_y" type="xs:decimal"/>
+            <xs:element name="label_offset_x" type="xs:decimal"/>
+            <xs:element name="label_offset_y" type="xs:decimal"/>
+            <xs:element name="image_scale" type="xs:decimal"/>
+            <!--Version 2.0 properties-->
+            <xs:element name="image_color" type="xs:string" minOccurs="0"/>
+            <xs:element name="label_font" type="xs:string" minOccurs="0"/>
+            <xs:element name="label_material" type="xs:string" minOccurs="0"/>
+            <xs:element name="line_material" type="xs:string" minOccurs="0"/>
+            <xs:element name="heading" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="heading_reference" type="xs:string" minOccurs="0"/>           
+                        
+        </xs:sequence>
+        <xs:attribute name="altitude_mode" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="MarkerType">
+        <xs:annotation>
+            
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="mkr:AbstractMarkerType">
+                <xs:sequence>
+                    <xs:element ref="gml:pointProperty"/>
+                    <xs:element ref="mkr:Symbol" minOccurs="0"/>
+                </xs:sequence>
+                <xs:attribute name="factory" type="xs:string"/>
+                <xs:attribute name="movable" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    
+    
+</xs:schema>

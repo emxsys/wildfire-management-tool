@@ -88,27 +88,22 @@ public class Pushpin extends BasicMarker {
         public Builder() {
         }
 
-        public Builder(String name, Coord3D coord) {
-            super(coord);
-            name(name);
-        }
-
-        public Builder(Document sourceXml) {
-            super(sourceXml);
+        public Builder(Document document) {
+            super(document);
         }
 
         @Override
         public Marker build() {
-            if (getDocument() == null) {
-                return new Pushpin(super.name, super.coord);
-            } else {
-                return initializeFromXml(new Pushpin());
+            BasicMarker marker = new Pushpin();
+            if (getDocument() != null) {
+                marker = initializeFromXml(marker);
             }
+            return initializeFromParameters(marker);
         }
 
         @Override
         protected BasicMarker initializeFromXml(BasicMarker marker) {
-            return super.initializeFromXml(marker); //To change body of generated methods, choose Tools | Templates.
+            return super.initializeFromXml(marker);
         }
 
     }
@@ -125,6 +120,7 @@ public class Pushpin extends BasicMarker {
         private static DataObject template;
         private static final Logger logger = Logger.getLogger(Writer.class.getName());
 
+        
         /**
          * Called by super.createDataObject().
          * @return A template file used for new Pushpins.
