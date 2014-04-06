@@ -36,6 +36,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
+import org.w3c.dom.Document;
 
 /**
  * The Marker interface manages the placement and control of place marks.
@@ -190,8 +191,9 @@ public interface Marker extends Feature {
 
         /**
          * Writes a marker to a persistent store.
+         * @return The updated Document.
          */
-        void write();
+        Document write();
         
     }
 }
