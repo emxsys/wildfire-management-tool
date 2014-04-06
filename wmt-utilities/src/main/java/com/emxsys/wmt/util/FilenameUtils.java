@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2012-2014, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ import org.openide.filesystems.FileUtil;
  * This utility class provides methods for working with filenames.
  *
  * @author Bruce Schubert
- * @version $Id: FilenameUtils.java 361 2012-11-30 19:21:21Z bdschubert $
  */
 public class FilenameUtils {
 
@@ -111,7 +110,15 @@ public class FilenameUtils {
         return filename;
     }
 
+    /**
+     * Gets the filename and extension from the given path.
+     * @param filepath A path with a filename.
+     * @return The filename and extension; an empty string on error.
+     */
     public static String getFilename(String filepath) {
+        if (filepath==null || filepath.isEmpty()) {
+            return "";
+        }
         return new File(filepath).getName();
     }
 }
