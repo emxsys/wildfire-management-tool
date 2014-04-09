@@ -93,6 +93,7 @@ public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
 
         // Create the target file from the template
         FileObject targetFile = template.copy(folder, name, ext);
+        FileLock lock=targetFile.lock();
         try {
             // Create an XML document from the template file
             InputSource source = new InputSource(template.getInputStream());
@@ -103,13 +104,16 @@ public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
                     .marker(marker)
                     .write();
             // Write the XML to disk
-            try (OutputStream output = targetFile.getOutputStream(FileLock.NONE)) {
+            try (OutputStream output = targetFile.getOutputStream(lock)) {
                 XMLUtil.write(doc, output, "UTF-8");
                 output.flush();
             }
         } catch (SAXException ex) {
             logger.log(Level.SEVERE, "createFromTemplate could not update file from model: {0}", ex.toString());
+        } finally {
+            lock.releaseLock();
         }
+        
         return targetFile;
     }
 }

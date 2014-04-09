@@ -90,10 +90,13 @@ public class IcsMarker extends BasicMarker {
         double labelOffsetY = pref.getDouble("ics_marker.label_offset_y", 0.6);
 
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
-        PointPlacemarkAttributes attributes = placemark.getAttributes();
-        attributes.setScale(scale);
-        attributes.setImageOffset(new Offset(imageOffsetX, imageOffsetY, AVKey.FRACTION, AVKey.FRACTION));
-        attributes.setLabelOffset(new Offset(labelOffsetX, labelOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes(placemark.getAttributes());
+        attrs.setUsePointAsDefaultImage(false);
+        attrs.setScale(scale);
+        attrs.setImageOffset(new Offset(imageOffsetX, imageOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+        attrs.setLabelOffset(new Offset(labelOffsetX, labelOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+        placemark.setAttributes(attrs);
+        
     }
 
     @Override

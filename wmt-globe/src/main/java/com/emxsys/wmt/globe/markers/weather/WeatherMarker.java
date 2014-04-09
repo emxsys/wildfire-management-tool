@@ -46,15 +46,19 @@ import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import gov.nasa.worldwind.render.Size;
+import java.awt.Image;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javax.swing.ImageIcon;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
+import org.w3c.dom.Document;
 import visad.Field;
 
 /**
@@ -65,8 +69,7 @@ import visad.Field;
  * @see Marker
  */
 @Messages({
-    "CTL_WeatherDialogTitle=Edit Weather Marker",
-})
+    "CTL_WeatherDialogTitle=Edit Weather Marker",})
 public class WeatherMarker extends BasicMarker {
 
     private final Field field;
@@ -92,28 +95,38 @@ public class WeatherMarker extends BasicMarker {
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
 
-        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
-        attrs.setLabelColor("ffffffff");
-        attrs.setLineColor("ff0000ff");
-        attrs.setUsePointAsDefaultImage(true);
-        attrs.setScale(5d);
-        placemark.setAttributes(attrs);
-        overrideDefaultAttributes();
+        // Replace the base class implementation
+        overrideDefaultAttributes(placemark);
     }
 
-    private void overrideDefaultAttributes() {
+    private void overrideDefaultAttributes(PointPlacemark placemark) {
         Preferences pref = NbPreferences.forModule(getClass());
-        double scale = pref.getDouble("weather_marker.scale", 1.0);
-        double imageOffsetX = pref.getDouble("weather_marker.image_offset_x", 0.5);
+        double scale = pref.getDouble("weather_marker.scale", 10.0);
+        double imageOffsetX = pref.getDouble("weather_marker.image_offset_x", 0.0);
         double imageOffsetY = pref.getDouble("weather_marker.image_offset_y", 0.0);
         double labelOffsetX = pref.getDouble("weather_marker.label_offset_x", 0.9);
         double labelOffsetY = pref.getDouble("weather_marker.label_offset_y", 0.6);
 
-        PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
-        PointPlacemarkAttributes attributes = placemark.getAttributes();
-        attributes.setScale(scale);
-        attributes.setImageOffset(new Offset(imageOffsetX, imageOffsetY, AVKey.FRACTION, AVKey.FRACTION));
-        attributes.setLabelOffset(new Offset(labelOffsetX, labelOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes(placemark.getAttributes());
+        attrs.setLabelColor("ffffffff");
+        attrs.setLineColor("ff0000ff");
+        attrs.setScale(scale);
+        attrs.setImageOffset(new Offset(imageOffsetX, imageOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+        attrs.setLabelOffset(new Offset(labelOffsetX, labelOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+        // We'll use a point for the WW symbol.
+        attrs.setUsePointAsDefaultImage(true);
+
+        placemark.setAttributes(attrs);
+    }
+
+    /**
+     * @return An image for a Weather Marker Node tin the Projects window.
+     */
+    @Override
+    public Image getImage() {
+        URL imgUrl = getClass().getResource("sun_clouds.png");
+        ImageIcon icon = new ImageIcon(imgUrl);
+        return ImageUtilities.icon2Image(icon);
     }
 
     @Override
@@ -154,23 +167,18 @@ public class WeatherMarker extends BasicMarker {
     }
 
     /**
-     * Gets a factory for WeatherMarker objects.
-     *
-     * @return a WeatherMarkerFactory instance
-     * @see WeatherMarkerFactory
-     */
-    @Deprecated
-    public static Builder getFactory() {
-        return new WeatherMarker.Builder();
-
-    }
-
-    /**
      * Builder for creating WeatherMarkers.
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
     public static class Builder extends BasicMarkerBuilder {
+
+        public Builder(Document document) {
+            super(document);
+        }
+
+        public Builder() {
+        }
 
         @Override
         public Marker build() {

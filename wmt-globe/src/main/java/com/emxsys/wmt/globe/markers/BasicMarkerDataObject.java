@@ -202,9 +202,10 @@ public class BasicMarkerDataObject extends XMLDataObject {
         try {
             // Build the marker from the Marker.Builder class stored in the XML
             this.marker = (BasicMarker) MarkerSupport.getBuilder(getDocument()).build();
-            // Override the name property read from the XML with the filename,
+            // Override the  property read from the XML with the filename,
             // the filename IS the marker name.
             this.marker.setName(FilenameUtils.decodeFilename(getName()));
+            this.marker.setUniqueID(getName());
             // Ok to add the event listener now that the marker is initialized.
             this.marker.addPropertyChangeListener(WeakListeners.propertyChange(this.changeListener, this.marker));
         } catch (IOException | SAXException | RuntimeException exception) {

@@ -150,10 +150,8 @@ public class PushpinEditorPane extends javax.swing.JPanel {
             // We stored the image address in the description field
             ImageIcon icon = images[selectedIndex];
             renderingAttributes.setImageAddress(icon.getDescription());
+            renderingAttributes.setUsePointAsDefaultImage(false);
         }
-//        renderingAttributes.setScale(1.0);
-//        renderingAttributes.setImageOffset(new Offset(0.3d, 0.0d, AVKey.FRACTION, AVKey.FRACTION));
-//        renderingAttributes.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
     }
 
     class ComboBoxRenderer extends JLabel implements ListCellRenderer {

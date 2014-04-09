@@ -87,20 +87,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <xs:element name="label_offset_y" type="xs:decimal"/>
             <xs:element name="image_scale" type="xs:decimal"/>
             <!--Version 2.0 properties-->
+            <xs:element name="point_as_default_image" type="xs:boolean"/>           
             <xs:element name="image_color" type="xs:string" minOccurs="0"/>
             <xs:element name="label_font" type="xs:string" minOccurs="0"/>
             <xs:element name="label_material" type="xs:string" minOccurs="0"/>
             <xs:element name="line_material" type="xs:string" minOccurs="0"/>
             <xs:element name="heading" type="xs:decimal" minOccurs="0"/>
             <xs:element name="heading_reference" type="xs:string" minOccurs="0"/>           
-                        
         </xs:sequence>
         <xs:attribute name="altitude_mode" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="MarkerType">
         <xs:annotation>
-            
+            <xs:documentation>
+                A Marker in the form of a gml:Feature.            
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="mkr:AbstractMarkerType">
@@ -113,7 +115,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
-    
-    
 </xs:schema>

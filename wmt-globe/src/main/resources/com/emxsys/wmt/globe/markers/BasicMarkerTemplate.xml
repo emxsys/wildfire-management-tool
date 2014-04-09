@@ -17,7 +17,7 @@
     </gml:boundedBy>
     <gml:featureMember>
         <Marker fid="mkr-123456"
-                factory="com.emxsys.wmt.globe.markers.BasicMarker$MarkerFactory"
+                factory="com.emxsys.wmt.globe.markers.BasicMarkerBuilder"
                 movable="true">
             <gml:description>this is a test</gml:description>
             <gml:name>This is a template</gml:name>
@@ -27,12 +27,13 @@
                 </gml:Point>        
             </gml:pointProperty>
             <Symbol>
-                <image_url>jar:file:/C:/Projects/wildfire-management-tool/wmt-app/target/wmt/wmt/modules/com-emxsys-markers-ics.jar!/com/emxsys/markers/ics/resources/Drop_Point24.png</image_url>
+                <image_url></image_url>
                 <image_offset_x>0.5</image_offset_x>            
                 <image_offset_y>0.0</image_offset_y>
                 <label_offset_x>0.6</label_offset_x>
                 <label_offset_y>1.0</label_offset_y>
-                <image_scale>0.9 </image_scale>
+                <image_scale>0.9</image_scale>
+                <point_as_default_image_scale>true</point_as_default_image_scale>
             </Symbol>
         </Marker>
     </gml:featureMember>

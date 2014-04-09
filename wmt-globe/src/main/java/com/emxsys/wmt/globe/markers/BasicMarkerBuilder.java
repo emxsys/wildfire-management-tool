@@ -30,7 +30,6 @@
 package com.emxsys.wmt.globe.markers;
 
 import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.gis.gml.GmlConstants;
 import com.emxsys.wmt.gis.gml.GmlParser;
@@ -94,7 +93,6 @@ import org.w3c.dom.NodeList;
 
 public class BasicMarkerBuilder implements Marker.Builder {
 
-    public static final String MKR_PREFIX = "mkr";
     private static final Logger logger = Logger.getLogger(BasicMarkerBuilder.class.getName());
     private Document doc;
     private XPath xpath;
@@ -228,10 +226,11 @@ public class BasicMarkerBuilder implements Marker.Builder {
             Element mkrElem = (Element) list.item(0);
             marker.setName(xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.NAME_PROPERTY_ELEMENT_NAME, mkrElem));
             Element pntElem = (Element) xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.POINT_PROPERTY_ELEMENT_NAME, mkrElem, XPathConstants.NODE);
-            if (pntElem == null) {
-                // pointProperty tag not found--look for depreciated Position tag.
+            if (pntElem == null) { // pointProperty tag not found--look for depreciated Position tag.
                 pntElem = (Element) xpath.evaluate(MKR_PREFIX + ":" +TAG_POSITION, mkrElem, XPathConstants.NODE); // depreciated tag
             }
+            
+            // Get the Symbol
             marker.setPosition(GmlParser.parsePosition(pntElem));
             Element symElem = (Element) xpath.evaluate(MKR_PREFIX + ":" + TAG_SYMBOL, mkrElem, XPathConstants.NODE);
             if (symElem != null) {
@@ -241,13 +240,10 @@ public class BasicMarkerBuilder implements Marker.Builder {
                 String lblOffsetX = xpath.evaluate(MKR_PREFIX + ":" + TAG_LABEL_OFFSET_X, symElem);
                 String lblOffsetY = xpath.evaluate(MKR_PREFIX + ":" + TAG_LABEL_OFFSET_Y, symElem);
                 String imgScale = xpath.evaluate(MKR_PREFIX + ":" + TAG_IMAGE_SCALE, symElem);
+                Boolean pntDefaultImage = (Boolean) xpath.evaluate(MKR_PREFIX + ":" + TAG_POINT_AS_DEFAULT_IMAGE, symElem, XPathConstants.BOOLEAN);
                 // Update the marker's symbol implementation -- use defaults where necessary
                 PointPlacemark placemark = marker.getLookup().lookup(PointPlacemark.class);
-                PointPlacemarkAttributes attributes = placemark.getAttributes();
-                if (attributes == null) {
-                    attributes = new PointPlacemarkAttributes();
-                    placemark.setAttributes(attributes);
-                }
+                PointPlacemarkAttributes attributes = new PointPlacemarkAttributes(placemark.getAttributes());
                 Offset imgOffset = new Offset(imgOffsetX.isEmpty() ? 0.5 : Double.valueOf(imgOffsetX), imgOffsetY.isEmpty() ? 0.0 : Double.valueOf(imgOffsetY), AVKey.FRACTION, AVKey.FRACTION);
                 Offset lblOffset = new Offset(lblOffsetX.isEmpty() ? 0.9 : Double.valueOf(lblOffsetX), lblOffsetY.isEmpty() ? 0.6 : Double.valueOf(lblOffsetY), AVKey.FRACTION, AVKey.FRACTION);
                 URL localResource = findLocalResource(imgAddress, marker.getClass());
@@ -256,6 +252,9 @@ public class BasicMarkerBuilder implements Marker.Builder {
                 attributes.setScale(imgScale.isEmpty() ? 1.0 : Double.parseDouble(imgScale));
                 attributes.setImageOffset(imgOffset);
                 attributes.setLabelOffset(lblOffset);
+                attributes.setUsePointAsDefaultImage(pntDefaultImage);
+                placemark.setAttributes(attributes);
+                
             }
             //String markerID = element.getAttribute(GmlConstants.FID_ATTR_NAME);
             String movable = mkrElem.getAttribute(ATTR_MOVABLE);

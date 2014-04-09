@@ -85,6 +85,7 @@ public class BasicMarkerWriter implements Marker.Writer {
 
     public static final String BASIC_MARKER_NS_URI = "http://emxsys.com/worldwind-basicmarker";
     public static final String BASIC_MARKER_SCHEMA_FILE = "BasicMarkerSchema.xsd";
+    public static final String MKR_PREFIX = "mkr";
     public static final String TAG_MARKERS = "MarkerCollection";
     public static final String TAG_MARKER = "Marker";
     public static final String TAG_NAME = "name";
@@ -101,6 +102,7 @@ public class BasicMarkerWriter implements Marker.Writer {
     public static final String ATTR_FACTORY = "factory";
     public static final String ATTR_MOVABLE = "movable";
     // Schema version 2.0 properties
+    public static final String TAG_POINT_AS_DEFAULT_IMAGE = "point_as_default_image";
     public static final String TAG_IMAGE_COLOR = "image_color";
     public static final String TAG_LABEL_FONT = "label_font";
     public static final String TAG_LABEL_MATERIAL = "label_material";
@@ -226,7 +228,7 @@ public class BasicMarkerWriter implements Marker.Writer {
             }
             // Ensure the filename is unique -- appends a numeral if not
             String filename = FilenameUtils.getUniqueEncodedFilename(folder, marker.getName(), template.getPrimaryFile().getExt());
-            
+
             // Get the registered templateFile (could be from a subclass).
             // Create the marker file from our templateFile. Delegates to BasicMarkerTemplateHandler,
             // which is a CreateFromTemplateHandler service provider.
@@ -235,7 +237,7 @@ public class BasicMarkerWriter implements Marker.Writer {
             BasicMarkerDataObject dataObject = (BasicMarkerDataObject) template.createFromTemplate(dataFolder, filename, parameters);
 
             return dataObject.getDocument();
-            
+
         } catch (IllegalStateException | IllegalArgumentException | IOException | SAXException exception) {
             logger.log(Level.SEVERE, "createDataObject() failed: {0}", exception.toString());
             return null;
@@ -290,8 +292,9 @@ public class BasicMarkerWriter implements Marker.Writer {
      */
     protected Element createMarkersElement(GeoSector extents) {
         try {
-            Element element = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_MARKERS);
-            element.setAttribute("xmlns", BASIC_MARKER_NS_URI);
+            Element element = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_MARKERS);
+            //Element element = doc.createElement(TAG_MARKERS);
+            //element.setAttribute("xmlns:mkr", BASIC_MARKER_NS_URI);
             element.setAttribute("xmlns:gml", GmlConstants.GML_NS_URI);
             element.setAttribute("xmlns:xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
             element.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xsi:schemaLocation", BASIC_MARKER_NS_URI + " " + BASIC_MARKER_SCHEMA_FILE);
@@ -311,8 +314,8 @@ public class BasicMarkerWriter implements Marker.Writer {
      */
     protected Element createMarkerElement() {
         try {
-            Element mkr = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_MARKER);
-            mkr.setAttribute(GmlConstants.FID_ATTR_NAME, "mkr-" + Long.toString(marker.getUniqueID()));
+            Element mkr = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_MARKER);
+            //mkr.setAttributeNS(GmlConstants.GML_NS_URI, GmlConstants.FID_ATTR_NAME, "mkr-" + marker.getUniqueID());
             mkr.setAttribute(ATTR_FACTORY, marker.getFactoryClass().getName());
             mkr.setAttribute(ATTR_MOVABLE, Boolean.toString(marker.isMovable()));
             Element desc = doc.createElementNS(GmlConstants.GML_NS_URI, GmlConstants.GML_PREFIX + ":" + GmlConstants.DESCRIPTION_PROPERTY_ELEMENT_NAME);
@@ -327,14 +330,15 @@ public class BasicMarkerWriter implements Marker.Writer {
             PointPlacemark placemark = marker.getLookup().lookup(PointPlacemark.class);
             PointPlacemarkAttributes attributes = placemark.getAttributes();
             if (attributes != null) {
-                Element symbol = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_SYMBOL);
+                Element symbol = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_SYMBOL);
+                symbol.setAttribute(ATTR_ALTITUDE_MODE, Integer.toString(placemark.getAltitudeMode()));
                 // Version 1.0 properties
-                Element img_url = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_URL);
-                Element img_off_x = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_OFFSET_X);
-                Element img_off_y = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_OFFSET_Y);
-                Element lbl_off_x = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_OFFSET_X);
-                Element lbl_off_y = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_OFFSET_Y);
-                Element img_scale = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_SCALE);
+                Element img_url = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_IMAGE_URL);
+                Element img_off_x = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_IMAGE_OFFSET_X);
+                Element img_off_y = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_IMAGE_OFFSET_Y);
+                Element lbl_off_x = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_LABEL_OFFSET_X);
+                Element lbl_off_y = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_LABEL_OFFSET_Y);
+                Element img_scale = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_IMAGE_SCALE);
                 img_url.appendChild(doc.createTextNode(FilenameUtils.getFilename(attributes.getImageAddress())));
                 img_off_x.appendChild(doc.createTextNode(Double.toString(attributes.getImageOffset().getX())));
                 img_off_y.appendChild(doc.createTextNode(Double.toString(attributes.getImageOffset().getY())));
@@ -348,15 +352,24 @@ public class BasicMarkerWriter implements Marker.Writer {
                 symbol.appendChild(lbl_off_y);
                 symbol.appendChild(img_scale);
                 // Version 2.0 properties
-                Element img_color = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_IMAGE_COLOR);
-                Element lbl_font = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_FONT);
-                Element lbl_material = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LABEL_MATERIAL);
-                Element line_material = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_LINE_MATERIAL);
-                Element heading = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_HEADING);
-                Element heading_ref = doc.createElementNS(BASIC_MARKER_NS_URI, TAG_HEADING_REFERENCE);
+                Element pnt_default_image = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_POINT_AS_DEFAULT_IMAGE);
+                Element img_color = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_IMAGE_COLOR);
+                Element lbl_font = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_LABEL_FONT);
+                Element lbl_material = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_LABEL_MATERIAL);
+                Element line_material = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_LINE_MATERIAL);
+                Element heading = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_HEADING);
+                Element heading_ref = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + TAG_HEADING_REFERENCE);
+
                 if (attributes.getImageColor() != null) {
                     img_color.appendChild(doc.createTextNode(Integer.toHexString(attributes.getImageColor().getRGB())));
                     symbol.appendChild(img_color);
+                }
+                pnt_default_image.appendChild(doc.createTextNode(Boolean.toString(attributes.isUsePointAsDefaultImage())));
+                symbol.appendChild(pnt_default_image);
+
+                if (attributes.getLabelFont() != null) {
+                    lbl_font.appendChild(doc.createTextNode(attributes.getLabelFont().toString()));
+                    symbol.appendChild(lbl_font);
                 }
                 if (attributes.getLabelMaterial() != null) {
                     lbl_material.setAttribute(ATTR_AMBIENT, Integer.toHexString(attributes.getLabelMaterial().getAmbient().getRGB()));
@@ -365,10 +378,6 @@ public class BasicMarkerWriter implements Marker.Writer {
                     lbl_material.setAttribute(ATTR_EMISSION, Integer.toHexString(attributes.getLabelMaterial().getEmission().getRGB()));
                     lbl_material.setAttribute(ATTR_SHININESS, Double.toString(attributes.getLabelMaterial().getShininess()));
                     symbol.appendChild(lbl_material);
-                }
-                if (attributes.getLabelFont() != null) {
-                    lbl_font.appendChild(doc.createTextNode(attributes.getLabelFont().toString()));
-                    symbol.appendChild(lbl_font);
                 }
                 if (attributes.getLineMaterial() != null) {
                     line_material.setAttribute(ATTR_AMBIENT, Integer.toHexString(attributes.getLabelMaterial().getAmbient().getRGB()));
@@ -384,8 +393,6 @@ public class BasicMarkerWriter implements Marker.Writer {
                     symbol.appendChild(heading);
                     symbol.appendChild(heading_ref);
                 }
-
-                symbol.setAttribute(ATTR_ALTITUDE_MODE, Integer.toString(placemark.getAltitudeMode()));
 
                 mkr.appendChild(symbol);
             }

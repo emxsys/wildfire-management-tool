@@ -49,7 +49,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -73,8 +73,7 @@ public class BasicMarker extends AbstractMarker {
     public static final String PROP_MARKER_ATTRIBUTES = "marker.attributes";
     private static final Logger logger = Logger.getLogger(BasicMarker.class.getName());
     private static MarkerSelectListener selectListener = null;
-    private static Random idGenerator = new Random();
-    private long markerID = idGenerator.nextLong();
+    private String markerID;
     private boolean movable = true;
     private PointPlacemarkAdapter impl;
     private Image image = null;
@@ -106,7 +105,7 @@ public class BasicMarker extends AbstractMarker {
         private void initializeDefaultAttributes() {
             Preferences pref = NbPreferences.forModule(getClass());
             double scale = pref.getDouble("basic_marker.scale", 1.0);
-            double imageOffsetX = pref.getDouble("basic_marker.image_offset_x", 0.3);
+            double imageOffsetX = pref.getDouble("basic_marker.image_offset_x", 0.0);
             double imageOffsetY = pref.getDouble("basic_marker.image_offset_y", 0.0);
             double labelOffsetX = pref.getDouble("basic_marker.label_offset_x", 0.9);
             double labelOffsetY = pref.getDouble("basic_marker.label_offset_y", 0.6);
@@ -115,6 +114,7 @@ public class BasicMarker extends AbstractMarker {
             attributes.setScale(scale);
             attributes.setImageOffset(new Offset(imageOffsetX, imageOffsetY, AVKey.FRACTION, AVKey.FRACTION));
             attributes.setLabelOffset(new Offset(labelOffsetX, labelOffsetY, AVKey.FRACTION, AVKey.FRACTION));
+            attributes.setUsePointAsDefaultImage(false);
 
             this.setAttributes(attributes);
         }
@@ -167,7 +167,7 @@ public class BasicMarker extends AbstractMarker {
      * Constructor with an invalid position.
      */
     public BasicMarker() {
-        this(GeoCoord3D.INVALID_POSITION);
+        this(GeoCoord3D.INVALID_POSITION);        
     }
 
     /**
@@ -177,7 +177,7 @@ public class BasicMarker extends AbstractMarker {
     public BasicMarker(Coord3D coord) {
         super.setPosition(coord);
         this.impl = new PointPlacemarkAdapter(Positions.fromCoord3D(coord), this);
-        this.markerID = idGenerator.nextLong();
+        this.markerID = UUID.randomUUID().toString();
 
         // Add the renderable to the lookup so the MarkerLayer can find it and render it.
         getInstanceContent().add(this.impl);
@@ -234,12 +234,12 @@ public class BasicMarker extends AbstractMarker {
     }
 
     @Override
-    public long getUniqueID() {
+    public String getUniqueID() {
         return this.markerID;
     }
 
     @Override
-    public void setUniqueID(long uniqueID) {
+    public void setUniqueID(String uniqueID) {
         this.markerID = uniqueID;
     }
 
@@ -355,7 +355,7 @@ public class BasicMarker extends AbstractMarker {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 43 * hash + (int) (this.markerID ^ (this.markerID >>> 32));
+        hash = 43 * hash + (this.markerID != null ? this.markerID.hashCode() : 0);
         return hash;
     }
 
@@ -371,14 +371,10 @@ public class BasicMarker extends AbstractMarker {
         if (!super.equals(obj)) {
             return false;
         }
-        if (this.markerID != other.markerID) {
+        if ((this.markerID == null) ? (other.markerID != null) : !this.markerID.equals(other.markerID)) {
             return false;
         }
         return true;
-    }
-
-    protected static long nextUniqueID() {
-        return idGenerator.nextLong();
     }
 
     /**

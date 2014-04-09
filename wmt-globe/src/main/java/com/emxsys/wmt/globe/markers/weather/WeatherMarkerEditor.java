@@ -77,12 +77,12 @@ public class WeatherMarkerEditor {
                 wxMarker.setMovable(dialogPane.isMovable());
             }
             // Update attributes if image changed
-            String oldImageAddress = placemark.getAttributes().getImageAddress();
-            String newImageAddress = dialogPane.getMarkerRenderingAttributes().getImageAddress();
-            if (oldImageAddress == null || oldImageAddress.isEmpty() || !oldImageAddress.equals(newImageAddress)) {
-                // fires a property change event
-                wxMarker.setAttributes(dialogPane.getMarkerRenderingAttributes());
-            }
+//            String oldImageAddress = placemark.getAttributes().getImageAddress();
+//            String newImageAddress = dialogPane.getMarkerRenderingAttributes().getImageAddress();
+//            if (oldImageAddress == null || oldImageAddress.isEmpty() || !oldImageAddress.equals(newImageAddress)) {
+//                // fires a property change event
+//                wxMarker.setAttributes(dialogPane.getMarkerRenderingAttributes());
+//            }
             return true;
         }
         return false;

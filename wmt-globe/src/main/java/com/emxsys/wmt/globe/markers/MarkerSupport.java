@@ -66,8 +66,14 @@ public class MarkerSupport {
     public static Marker.Builder getBuilder(Document document) {
 
         String clazz = null;
-        NodeList list = document.getElementsByTagName("Marker");
         try {
+            NodeList list = document.getElementsByTagName("Marker");
+            if (list.getLength()==0) {
+                list = document.getElementsByTagName("mkr:Marker");               
+            }
+            if (list.getLength()==0) {
+                throw new IllegalArgumentException("Document does not contain a Marker or mkr:Marker element.");
+            }
             // Construct a factory object.
             // Use the Marker.Builder(Document document) interface.
             clazz = ((Element) list.item(0)).getAttribute("factory");
