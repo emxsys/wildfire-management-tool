@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2010-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.api.data;
+package com.emxsys.wmt.gis.api.index;
 
 import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Coord2D;
@@ -35,9 +35,9 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- *
+ * A container of type T, indexed by morton codes. 
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: LinearQuadtree.java 540 2013-04-18 15:48:26Z bdschubert $
+ * @param <T>
  */
 public class LinearQuadtree<T> {
 
@@ -45,24 +45,29 @@ public class LinearQuadtree<T> {
     final long EVEN_MASK = 0x5555555555555555L;
     final long ODD_HASH_MASK = 0xAAAAAAAAAAA00000L;
     final long EVEN_HASH_MASK = 0x5555555555000000L;
-    private TreeMap<Long, Set<T>> map = new TreeMap<Long, Set<T>>();
+    private final TreeMap<Long, Set<T>> map = new TreeMap<>();
 
     public LinearQuadtree() {
     }
 
+    /**
+     * Adds an item to the container.
+     * @param pt The coordinate used to generate a morton code.
+     * @param item The item to be placed in the container.
+     * @return Returns true if the item is not already in the container.
+     */
     public boolean add(Coord2D pt, T item) {
         long mortonCode = MortonCodes.generate(pt);
         Set<T> values = map.get(mortonCode);
         if (values == null) {
-            values = new HashSet<T>();
+            values = new HashSet<>();
             map.put(mortonCode, values);
         }
         return values.add(item);
     }
 
     public Collection<T> findByBruteForce(GeoSector sector) {
-        //ArrayList<T> result = new ArrayList<T>();
-        HashSet<T> result = new HashSet<T>();
+        HashSet<T> result = new HashSet<>();
 
         long zMin = MortonCodes.generate(sector.getSouthwest());
         long zMax = MortonCodes.generate(sector.getNortheast());
@@ -75,8 +80,8 @@ public class LinearQuadtree<T> {
 //        System.out.println("findByBruteForce...");
 //        System.out.println(" - Num keys in sector: " + keySet.size());
         for (Long key : keySet) {
-            long x = key.longValue() & EVEN_MASK;
-            long y = key.longValue() & ODD_MASK;
+            long x = key & EVEN_MASK;
+            long y = key & ODD_MASK;
             if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
                 Set<T> values = map.get(key);
                 result.addAll(values);
@@ -87,23 +92,19 @@ public class LinearQuadtree<T> {
     }
 
     public Collection<T> findByRangeSubDivision(GeoSector sector) {
-        //ArrayList<T> result = new ArrayList<T>();
-        HashSet<T> result = new HashSet<T>();
+        HashSet<T> result = new HashSet<>();
         long zMin = MortonCodes.generate(sector.getSouthwest());
         long zMax = MortonCodes.generate(sector.getNortheast());
-
+        
         Range inputRange = new Range(zMin, zMax);
-        ArrayList<Range> subRanges = new ArrayList<Range>();
-        HashSet<Long> keysToIgnore = new HashSet<Long>();
-
+        ArrayList<Range> subRanges = new ArrayList<>();
+        HashSet<Long> keysToIgnore = new HashSet<>();
 //        System.out.println("findByRangeSubDivision...");
         scanRangeForKeys(inputRange, subRanges, keysToIgnore);
 
-//        int numKeys = 0;
+// Old: Faster!
         for (Range range : subRanges) {
             Set<Entry<Long, Set<T>>> entrySet = map.subMap(range.min, range.max).entrySet();
-//            numKeys += entrySet.size();
-
             for (Entry<Long, Set<T>> entry : entrySet) {
                 if (keysToIgnore.contains(entry.getKey())) {
                     continue;
@@ -111,6 +112,13 @@ public class LinearQuadtree<T> {
                 result.addAll(entry.getValue());
             }
         }
+// Java8: Slower  :(
+//        subRanges.stream().map((range) -> map.subMap(range.min, range.max).entrySet()).forEach((entrySet) -> {
+//            entrySet.stream().filter((entry) -> !(keysToIgnore.contains(entry.getKey()))).forEach((entry) -> {
+//                result.addAll(entry.getValue());
+//            });
+//        });
+        
 //        System.out.println(" - Num ranges to test: " + subRanges.size());
 //        System.out.println(" - Num keys in ranges: " + numKeys);
 //        System.out.println(" - Num keys to ignore: " + keysToIgnore.size());
@@ -121,6 +129,7 @@ public class LinearQuadtree<T> {
     private void scanRangeForKeys(Range inputRange,
                                   ArrayList<Range> outputRanges,
                                   Set<Long> keysOutsideRange) {
+        // Start a recursive scan
         scanRangeForKeys(inputRange, outputRanges, keysOutsideRange, 0);
     }
 
@@ -168,7 +177,6 @@ public class LinearQuadtree<T> {
         if (numSubdivides == 0) {
             outputRanges.add(inputRange);
         }
-
     }
 
     private Range[] subDivideRange(Range range) {
@@ -237,7 +245,7 @@ public class LinearQuadtree<T> {
         long min;
         long max;
 
-        public Range(long min, long max) {
+        Range(long min, long max) {
             this.min = min;
             this.max = max;
         }

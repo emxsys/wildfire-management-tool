@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.gis.api.data;
+package com.emxsys.wmt.gis.api.index;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.MathUtil;
@@ -42,6 +42,11 @@ import com.emxsys.wmt.util.MathUtil;
  */
 public class MortonCodes {
 
+    /**
+     * Generates a 64-bit morton code from the supplied coordinate.
+     * @param point The coordinate for the morton code.
+     * @return A 64-bit morton code.
+     */
     public static long generate(Coord2D point) {
         int x = degreesToFixed((float) (point.getLongitudeDegrees()));
         int y = degreesToFixed((float) (point.getLatitudeDegrees()));
@@ -87,10 +92,9 @@ public class MortonCodes {
     }
 
     /**
-     * Converts degrees to a 32-bit fixed-point integer.
+     * Converts a 32-bit fixed-point integer to degrees.
      * <p/>
-     * @param degrees Angle must be between +/-180 degrees
-     * @return A fixed-point representation of Q9.22.
+     * @return A double value in degrees.
      */
     public static double fixedToDegrees(int fixed) {
         double degrees = MathUtil.fixedToDouble(22, fixed);
