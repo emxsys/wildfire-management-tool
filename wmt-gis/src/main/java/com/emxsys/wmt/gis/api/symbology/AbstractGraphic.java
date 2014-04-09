@@ -29,15 +29,16 @@
  */
 package com.emxsys.wmt.gis.api.symbology;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.viewer.Viewers;
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.symbology.Graphic;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
+import com.emxsys.wmt.gis.api.viewer.Viewers;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
 
@@ -49,7 +50,7 @@ import org.openide.util.Lookup;
  */
 public abstract class AbstractGraphic implements Graphic {
 
-    private long uniqueID;
+    private String uniqueID;
     private String name;
     private boolean deleted = false;
     private boolean selected = false;
@@ -61,10 +62,10 @@ public abstract class AbstractGraphic implements Graphic {
     private static final Logger LOG = Logger.getLogger(AbstractSymbol.class.getName());
 
     public AbstractGraphic() {
-        this(random.nextLong());
+        this(UUID.randomUUID().toString());
     }
 
-    public AbstractGraphic(long uniqueID) {
+    public AbstractGraphic(String uniqueID) {
         this.uniqueID = uniqueID;
         this.pcs = new PropertyChangeSupport(this);
     }
@@ -85,13 +86,13 @@ public abstract class AbstractGraphic implements Graphic {
     }
 
     @Override
-    public long getUniqueID() {
+    public String getUniqueID() {
         return uniqueID;
     }
 
     @Override
-    public void setUniqueID(long uniqueID) {
-        long oldUniqueID = getUniqueID();
+    public void setUniqueID(String uniqueID) {
+        String oldUniqueID = getUniqueID();
         this.uniqueID = uniqueID;
         pcs.firePropertyChange(PROP_GRAPHIC_UNIQUE_ID, oldUniqueID, this.uniqueID);
     }

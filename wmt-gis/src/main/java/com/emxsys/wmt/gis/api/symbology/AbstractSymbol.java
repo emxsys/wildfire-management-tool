@@ -29,15 +29,16 @@
  */
 package com.emxsys.wmt.gis.api.symbology;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.viewer.Viewers;
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.symbology.Symbol;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
+import com.emxsys.wmt.gis.api.viewer.Viewers;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -50,7 +51,7 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractSymbol implements Symbol {
 
-    private long uniqueID;
+    private String uniqueID;
     protected String name;
     private boolean deleted = false;
     private boolean selected = false;
@@ -62,10 +63,10 @@ public abstract class AbstractSymbol implements Symbol {
     private static final Logger LOG = Logger.getLogger(AbstractSymbol.class.getName());
 
     public AbstractSymbol() {
-        this.uniqueID = random.nextLong();
+        this.uniqueID = UUID.randomUUID().toString();
     }
 
-    public AbstractSymbol(long uniqueID) {
+    public AbstractSymbol(String uniqueID) {
         this.uniqueID = uniqueID;
     }
 
@@ -82,13 +83,13 @@ public abstract class AbstractSymbol implements Symbol {
     }
 
     @Override
-    public long getUniqueID() {
+    public String getUniqueID() {
         return uniqueID;
     }
 
     @Override
-    public void setUniqueID(long uniqueID) {
-        long oldUniqueID = getUniqueID();
+    public void setUniqueID(String uniqueID) {
+        String oldUniqueID = getUniqueID();
         this.uniqueID = uniqueID;
         pcs.firePropertyChange(PROP_SYMBOL_UNIQUE_ID, oldUniqueID, this.uniqueID);
     }

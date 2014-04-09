@@ -42,12 +42,12 @@ public interface Unique {
      *
      * @return the unique ID.
      */
-    long getUniqueID();
+    String getUniqueID();
 
     /**
      * Sets the ID for this object.
      *
      * @param uniqueID the unique ID.
      */
-    void setUniqueID(long uniqueID);
+    void setUniqueID(String uniqueID);
 }

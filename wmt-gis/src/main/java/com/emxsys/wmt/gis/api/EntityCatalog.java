@@ -69,7 +69,7 @@ public class EntityCatalog<T extends Entity> implements PropertyChangeListener {
     public static final String PROP_ITEM_CHANGED = "PROP_ITEM_CHANGED";
     public static final String PROP_ITEM_REMOVED = "PROP_ITEM_REMOVED";
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private final Map<Long, T> itemMap = new TreeMap<>();
+    private final Map<String, T> itemMap = new TreeMap<>();
     private static final Logger logger = Logger.getLogger(EntityCatalog.class.getName());
 
     /**
