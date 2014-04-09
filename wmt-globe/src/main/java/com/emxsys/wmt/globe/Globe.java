@@ -47,6 +47,7 @@ import com.emxsys.wmt.globe.layers.DummyLayer;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
+import com.emxsys.wmt.globe.ribbons.MarkerTools;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
@@ -184,9 +185,10 @@ public class Globe implements GisViewer {
         }
 
         // Update the UI
-        ReticuleStatusLine.getInstance().initialize();
+        MarkerTools.getInstance();  // Creates the Marker Tools contextual task pane
+        ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar
+        
         this.wwm.getWorldWindow().setVisible(true);
-
         this.initialized = true;
     }
 
