@@ -92,6 +92,24 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>install-geosoft-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/geosoft/G.jar</file>
+                            <sources>${project.basedir}/src/main/repository/geosoft/G_src.jar</sources>
+                            <javadoc>${project.basedir}/src/main/repository/geosoft/G_doc.jar</javadoc>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>no.geosoft.cc</groupId>
+                            <artifactId>G</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-jogl-library</id>
                         <phase>install</phase>
                         <goals>
