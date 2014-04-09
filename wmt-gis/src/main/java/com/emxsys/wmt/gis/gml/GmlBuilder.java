@@ -148,7 +148,7 @@ public class GmlBuilder {
         else {
             throw new UnsupportedOperationException(geometry.getClass().getSimpleName() + " not supported (yet)");
         }
-        e.setAttribute(GID_ATTR_NAME, Long.toString(feature.getUniqueID()));
+        e.setAttribute(GID_ATTR_NAME, feature.getUniqueID());
         this.element.appendChild(e);
 
     }
