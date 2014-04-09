@@ -105,7 +105,7 @@ public class BasicMarker extends AbstractMarker {
         private void initializeDefaultAttributes() {
             Preferences pref = NbPreferences.forModule(getClass());
             double scale = pref.getDouble("basic_marker.scale", 1.0);
-            double imageOffsetX = pref.getDouble("basic_marker.image_offset_x", 0.0);
+            double imageOffsetX = pref.getDouble("basic_marker.image_offset_x", 0.3);
             double imageOffsetY = pref.getDouble("basic_marker.image_offset_y", 0.0);
             double labelOffsetX = pref.getDouble("basic_marker.label_offset_x", 0.9);
             double labelOffsetY = pref.getDouble("basic_marker.label_offset_y", 0.6);

@@ -7,15 +7,16 @@
             <folder name="MarkerTools">
                 <attr name="menuText" stringvalue="Marker"/>
                 <attr name="position" intvalue="1000"/> 
-                <attr name="contextualTaskGroup" stringvalue="Marker Tools"/>
+                <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_MarkerTools"/>
+                <!--<attr name="contextualTaskGroup" stringvalue="Marker Tools"/>-->
                     
                 <folder name="Edit">
                     <attr name="position" intvalue="100"/>
                     <attr name="menuText" stringvalue="Edit"/>
                 </folder> 
-                <folder name="Adjust">
+                <folder name="View">
                     <attr name="position" intvalue="200"/>
-                    <attr name="menuText" stringvalue="Adjust"/>
+                    <attr name="menuText" stringvalue="View"/>
                 </folder> 
             </folder>
         </folder>                

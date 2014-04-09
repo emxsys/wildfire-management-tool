@@ -45,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
 
 /**
- * This is a context sensitive action that toggles the locked state on a BasicMarker.  The marker
+ * This is a context sensitive action that toggles the locked state on a BasicMarker. The marker
  * must have the BasicMarker
  * <p>
  * @see BasicMarker
@@ -61,12 +61,17 @@ import org.openide.util.Utilities;
         buttonStyle = "toggle",
         priority = "top",
         description = "#CTL_ToggleLockAction_Hint",
+        tooltipTitle = "#CTL_ToggleLockAction_TooltipTitle",
+        tooltipBody = "#CTL_ToggleLockAction_TooltipBody",
         position = 400,
         autoRepeatAction = false)
 @Messages({
     "CTL_ToggleLockAction=Lock",
-    "CTL_ToggleLockAction_Hint=Toggle the locked state the selected marker;"
-            + " a locked marker cannot be moved."
+    "CTL_ToggleLockAction_Hint=Toggle the locked state the selected marker.",
+    "CTL_ToggleLockAction_TooltipTitle=Toggle Lock",
+    "CTL_ToggleLockAction_TooltipBody=Locks or unlocks the currently selected marker."
+            + "A locked marker cannot be moved."
+
 })
 public final class ToggleLockMarkerAction extends AbstractAction implements LookupListener,
         ContextAwareAction {
