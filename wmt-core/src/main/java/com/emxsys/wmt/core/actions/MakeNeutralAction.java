@@ -42,10 +42,10 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_neutral_gnd.png",
         displayName = "#CTL_MakeNeutralAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
-        position = 200,
-        description = "#HINT_MakeNeutralAction",
-        autoRepeatAction = false)
+//@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+//        position = 200,
+//        description = "#HINT_MakeNeutralAction",
+//        autoRepeatAction = false)
 @Messages(
         {
             "CTL_MakeNeutralAction=Neutral",

@@ -50,15 +50,15 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/design.png",
         displayName = "#CTL_DesignAction")
 //@ActionReference(path = "Menu/Edit", position = 505)
-@RibbonActionReference(path = "Menu/Home/Edit",
-        position = 200,
-        priority = "top",
-        description = "#CTL_DesignAction_Hint",
-        tooltipTitle = "#CTL_DesignAction_TooltipTitle",
-        tooltipBody = "#CTL_DesignAction_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/core/images/design32.png",
-        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+//@RibbonActionReference(path = "Menu/Home/Edit",
+//        position = 200,
+//        priority = "top",
+//        description = "#CTL_DesignAction_Hint",
+//        tooltipTitle = "#CTL_DesignAction_TooltipTitle",
+//        tooltipBody = "#CTL_DesignAction_TooltipBody",
+//        tooltipIcon = "com/emxsys/wmt/core/images/design32.png",
+//        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+//        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
             "CTL_DesignAction=Design",

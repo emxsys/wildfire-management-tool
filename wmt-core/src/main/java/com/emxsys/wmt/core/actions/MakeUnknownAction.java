@@ -41,10 +41,10 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.core.actions.MakeUnknownAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_unknown_gnd.png",
         displayName = "#CTL_MakeUnknownAction")
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
-        position = 400,
-        description = "#CTL_MakeUnknownAction_Hint",
-        autoRepeatAction = false)
+//@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+//        position = 400,
+//        description = "#CTL_MakeUnknownAction_Hint",
+//        autoRepeatAction = false)
 @Messages(
         {
             "CTL_MakeUnknownAction=Unknown",

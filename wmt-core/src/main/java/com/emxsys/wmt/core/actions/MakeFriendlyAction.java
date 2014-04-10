@@ -42,10 +42,10 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/affiliation_friend_gnd.png",
         displayName = "#CTL_MakeFriendlyAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
-        position = 100,
-        description = "#CTL_MakeFriendlyAction_Hint",
-        autoRepeatAction = false)
+//@RibbonActionReference(path = "Menu/Home/Edit/Affiliation",
+//        position = 100,
+//        description = "#CTL_MakeFriendlyAction_Hint",
+//        autoRepeatAction = false)
 @Messages(
         {
             "CTL_MakeFriendlyAction=Friendly",

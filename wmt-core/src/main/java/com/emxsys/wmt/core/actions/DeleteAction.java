@@ -50,21 +50,21 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_DeleteAction",
         surviveFocusChange = false,
         key = "delete")
-@ActionReferences(
-        {
-            //@ActionReference(path = "Menu/Edit", position = 300),
-            @ActionReference(path = "Toolbars/Edit", position = 300)
-        })
-@RibbonActionReference(path = "Menu/Home/Edit",
-        position = 300,
-        priority = "top",
-        description = "#CTL_DeleteAction_Hint",
-        autoRepeatAction = false,
-        tooltipTitle = "#CTL_DeleteAction_TooltipTitle",
-        tooltipBody = "#CTL_DeleteAction_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/core/images/delete32.png",
-        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+//@ActionReferences(
+//        {
+//            //@ActionReference(path = "Menu/Edit", position = 300),
+//            @ActionReference(path = "Toolbars/Edit", position = 300)
+//        })
+//@RibbonActionReference(path = "Menu/Home/Edit",
+//        position = 300,
+//        priority = "top",
+//        description = "#CTL_DeleteAction_Hint",
+//        autoRepeatAction = false,
+//        tooltipTitle = "#CTL_DeleteAction_TooltipTitle",
+//        tooltipBody = "#CTL_DeleteAction_TooltipBody",
+//        tooltipIcon = "com/emxsys/wmt/core/images/delete32.png",
+//        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+//        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 
 @Messages(
         {

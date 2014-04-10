@@ -56,14 +56,14 @@ import org.openide.util.Utilities;
 @ActionRegistration(displayName = "#CTL_ToggleLockAction",
         surviveFocusChange = false,
         lazy = false)
-@ActionReference(path = "Toolbars/Edit", position = 310)
-// Create a button on the ribbon bar to represent this action
-@RibbonActionReference(path = "Menu/Home/Edit",
-        buttonStyle = "toggle",
-        priority = "medium",
-        description = "#CTL_ToggleLockAction_Hint",
-        position = 400,
-        autoRepeatAction = false)
+//@ActionReference(path = "Toolbars/Edit", position = 310)
+//// Create a button on the ribbon bar to represent this action
+//@RibbonActionReference(path = "Menu/Home/Edit",
+//        buttonStyle = "toggle",
+//        priority = "medium",
+//        description = "#CTL_ToggleLockAction_Hint",
+//        position = 400,
+//        autoRepeatAction = false)
 @Messages(
         {
             "CTL_ToggleLockAction=Lock",

@@ -47,10 +47,10 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/status_unknown_planned.png",
         displayName = "#CTL_MakePlannedAction")
 
-@RibbonActionReference(path = "Menu/Home/Edit/Status",
-        position = 200,
-        description = "CTL_MakePlannedAction_Hint",
-        autoRepeatAction = false)
+//@RibbonActionReference(path = "Menu/Home/Edit/Status",
+//        position = 200,
+//        description = "CTL_MakePlannedAction_Hint",
+//        autoRepeatAction = false)
 @Messages({
     "CTL_MakePlannedAction=Planned",
     "CTL_MakePlannedAction_Hint=Sets the selected item's determination/declaration to planned or anticipated."
