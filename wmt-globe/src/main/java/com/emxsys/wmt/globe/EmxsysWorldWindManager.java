@@ -31,10 +31,13 @@ package com.emxsys.wmt.globe;
 
 import com.terramenta.globe.WorldWindManager;
 import com.terramenta.globe.options.GlobeOptions;
+import gov.nasa.worldwindx.examples.util.SessionState;
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.openide.modules.InstalledFileLocator;
+import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -48,6 +51,7 @@ public class EmxsysWorldWindManager extends WorldWindManager {
 
     public static final String EMXSYS_CONFIG = "modules/worldwind-overrides.xml";
     private static final Preferences prefs = NbPreferences.forModule(GlobeOptions.class);
+    private final SessionState sessionState = new SessionState("." + NbBundle.getBranding());
     private static final Logger logger = Logger.getLogger(EmxsysWorldWindManager.class.getName());
 
     /**
@@ -70,11 +74,28 @@ public class EmxsysWorldWindManager extends WorldWindManager {
     }
 
     @Override
-    public void restoreSessionState() {
+    public void saveSessionState() {
+        logger.log(Level.INFO, "Saving Session ({0})...", sessionState.getSessionKey());
+        try {
+            sessionState.saveSessionState(getWorldWindow());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to save session state!", e);
+            return;
+        }
+        logger.info("Session has been saved.");
     }
 
     @Override
-    public void saveSessionState() {
+    public void restoreSessionState() {
+        logger.info("Restoring Session...");
+        try {
+            sessionState.restoreSessionState(getWorldWindow());
+            getWorldWindow().redraw();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to restore session state!", e);
+            return;
+        }
+        logger.info("Session has been restored.");
     }
 
 }
