@@ -29,18 +29,18 @@
  */
 package com.emxsys.wmt.core.actions;
 
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 /**
  * This context sensitive action invokes the OpenProjects.close method action and provides custom UI
- * registration for the Ribbon and Menu Bar.
+ * registration for the Ribbon AppMenu.
  *
  * See ProjectAssistant GlobalContextProviderProxy for insight into how the current project is
  * maintained.
@@ -51,27 +51,24 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert
  */
 @ActionID(category = "File", id = "com.emxsys.wmt.core.actions.CloseProjectAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/remove.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/folder_remove.png",
         displayName = "#CTL_CloseProjectAction",
         surviveFocusChange = false,
         lazy = true)
-//@ActionReference(path = "Menu/File", position = 500)
-//// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 500,
-//                       tooltipTitle = "#CTL_CloseProjectAction_TooltipTitle",
-//                       tooltipBody = "#CTL_CloseProjectAction_TooltipBody",
-//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_remove32.png",
-//                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
-@Messages(
-        {
-            "CTL_CloseProjectAction=Close",
-            "CTL_CloseProjectAction_Hint=Close the current project.",
-            "CTL_CloseProjectAction_TooltipTitle=Close Project",
-            "CTL_CloseProjectAction_TooltipBody=Closes the current project.\n"
-            + "If there are modified files, you will be prompted to save the files, "
-            + "discard the changes, or cancel the close."
-        })
+@RibbonActionReference(path = "Ribbon/AppMenu", position = 700,
+        tooltipTitle = "#CTL_CloseProjectAction_TooltipTitle",
+        tooltipBody = "#CTL_CloseProjectAction_TooltipBody",
+        tooltipIcon = "com/emxsys/wmt/core/images/folder_remove32.png",
+        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+@Messages({
+    "CTL_CloseProjectAction=Close Project",
+    "CTL_CloseProjectAction_Hint=Close the current project.",
+    "CTL_CloseProjectAction_TooltipTitle=Close Project",
+    "CTL_CloseProjectAction_TooltipBody=Closes the current project.\n"
+    + "If there are modified files, you will be prompted to save the files, "
+    + "discard the changes, or cancel the close."
+})
 
 public final class CloseProjectAction implements ActionListener {
 
