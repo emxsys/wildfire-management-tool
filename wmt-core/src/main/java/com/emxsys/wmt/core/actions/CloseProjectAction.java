@@ -55,12 +55,12 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_CloseProjectAction",
         surviveFocusChange = false,
         lazy = true)
-@RibbonActionReference(path = "Ribbon/AppMenu", position = 700,
-        tooltipTitle = "#CTL_CloseProjectAction_TooltipTitle",
-        tooltipBody = "#CTL_CloseProjectAction_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/core/images/folder_remove32.png",
-        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+//@RibbonActionReference(path = "Ribbon/AppMenu", position = 700,
+//        tooltipTitle = "#CTL_CloseProjectAction_TooltipTitle",
+//        tooltipBody = "#CTL_CloseProjectAction_TooltipBody",
+//        tooltipIcon = "com/emxsys/wmt/core/images/folder_remove32.png",
+//        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+//        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages({
     "CTL_CloseProjectAction=Close Project",
     "CTL_CloseProjectAction_Hint=Close the current project.",

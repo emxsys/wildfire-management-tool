@@ -166,6 +166,13 @@
         </folder>
     </folder>
         
+    <folder name="OptionsDialog">
+        <folder name="Advanced">
+            <file name="org-netbeans-core-ui-options-filetypes-FileAssociationsOptionsPanelController.instance_hidden"/>
+        </folder>
+        <file name="Keymaps.instance_hidden"/>
+    </folder>
+    
     <!--RIBBON Menu-->
     <folder name="Ribbon">
         <!--FILE Tab (Application Menu-->
