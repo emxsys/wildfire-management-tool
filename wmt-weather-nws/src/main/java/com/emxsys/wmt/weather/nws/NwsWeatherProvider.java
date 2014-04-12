@@ -33,12 +33,14 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.HttpUtil;
 import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
@@ -139,7 +141,7 @@ public class NwsWeatherProvider implements WeatherProvider {
     /** Singleton */
     private static NwsWeatherProvider instance;
     private static final Logger logger = Logger.getLogger(NwsWeatherProvider.class.getName());
-    
+
     static {
         logger.setLevel(Level.ALL);
     }
@@ -166,8 +168,6 @@ public class NwsWeatherProvider implements WeatherProvider {
         imageIcon.setDescription(getClass().getSimpleName());
         return imageIcon;
     }
-    
-    
 
     /**
      * Do not call! Used by @ServiceProvider.
@@ -202,15 +202,19 @@ public class NwsWeatherProvider implements WeatherProvider {
         System.out.println(urlString);
 
         // Invoke the REST service and get the JSON results
-        String dwml = HttpUtil.callWebService(urlString);
-        System.out.println(dwml);
-
+        String dwml;
+        try {
+            dwml = HttpUtil.callWebService(urlString);
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "callWebService() failed: {0}", ex.getMessage());
+            return null;
+        }
         // Parse the XML
         List<FlatField> fields = new DwmlParser(dwml).parse();
-        if (!fields.isEmpty()) {
-            return fields.get(0);
+        if (fields.isEmpty()) {
+            return null;
         }
-        return null;
+        return fields.get(0);
     }
 
 }

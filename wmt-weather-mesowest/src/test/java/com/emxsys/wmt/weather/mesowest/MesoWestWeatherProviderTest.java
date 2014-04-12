@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import visad.Data;
@@ -114,7 +115,14 @@ public class MesoWestWeatherProviderTest {
         Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
         Real radius = Reals.newDistance(52800, GeneralUnit.foot);
         MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
-        Field result = instance.getLatestWeather(coord, radius);
+        
+        Field result = null;
+        try {
+            result = instance.getLatestWeather(coord, radius);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            Assume.assumeNoException(e);
+        }
         assertNotNull(result);
         System.out.println(result.toString());
 
@@ -141,7 +149,13 @@ public class MesoWestWeatherProviderTest {
         Real radius = Reals.newDistance(52800, GeneralUnit.foot);
         Duration age = Duration.ofMinutes(60);
         MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
-        Field result = instance.getLatestWeather(coord, radius, age);
+        Field result = null;
+        try {
+            result = instance.getLatestWeather(coord, radius, age);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            Assume.assumeNoException(e);
+        }
         assertNotNull(result);
         System.out.println(result.toString());
 

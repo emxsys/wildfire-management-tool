@@ -38,6 +38,7 @@ import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import static com.emxsys.wmt.weather.api.WeatherType.*;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
@@ -172,18 +174,22 @@ public class MesoWestWeatherProvider implements WeatherProvider {
             sb.append(STATIONS_URI);
             sb.append(query);
             String urlString = sb.toString();
-            //System.out.println(urlString);
 
+            logger.info(urlString);
             // Invoke the REST service and get the JSON results
             String jsonResult = HttpUtil.callWebService(urlString);
             //System.out.println(jsonResult);
             return parseJsonResults(jsonResult);
-
-        } catch (java.text.ParseException | ParseException | VisADException | RemoteException ex) {
+        
+        } catch (RuntimeException ex) {
+            logger.severe(ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
             logger.severe(ex.getMessage());
             throw new RuntimeException(ex);
         }
     }
+
     /**
      * Gets the latest weather observations within the age and inside the area of interest.
      * @param coord The center of the area of interest.
@@ -199,14 +205,17 @@ public class MesoWestWeatherProvider implements WeatherProvider {
             StringBuilder sb = new StringBuilder();
             sb.append(STATIONS_URI).append(query);
             String urlString = sb.toString();
-            //System.out.println(urlString);
 
             // Invoke the REST service and get the JSON results
+            logger.info(urlString);
             String jsonResult = HttpUtil.callWebService(urlString);
             //System.out.println(jsonResult);
             return parseJsonResults(jsonResult);
 
-        } catch (java.text.ParseException | ParseException | VisADException | RemoteException ex) {
+        } catch (RuntimeException ex) {
+            logger.severe(ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
             logger.severe(ex.getMessage());
             throw new RuntimeException(ex);
         }
@@ -271,7 +280,7 @@ public class MesoWestWeatherProvider implements WeatherProvider {
                 Number value = (Number) ((JSONArray) obs.get(sensor)).get(1);
                 // Skip stale observations that are truely erroneous
                 if (ageHrs[dateIndex.intValue()] > 24) {
-                    logger.log(Level.INFO, "Ignoring {0} sensor variable {1}. Appears to be stale: {2} ({3} hours old).", 
+                    logger.log(Level.INFO, "Ignoring {0} sensor variable {1}. Appears to be stale: {2} ({3} hours old).",
                             new Object[]{name, sensor, times.get(dateIndex.intValue()), ageHrs[dateIndex.intValue()]});
                     continue;
                 }

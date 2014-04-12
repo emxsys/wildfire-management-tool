@@ -73,7 +73,7 @@ public class YahooPlaceProvider implements PlaceProvider {
     /** YQL geo.places query param: SQL like text */
     protected static final String QUERY_PLACES_PARAM = "select * from geo.places where text=\"%1$f %2$f\"";
     /** Common logger */
-    private static final Logger LOG = Logger.getLogger(YahooPlaceProvider.class.getName());
+    private static final Logger logger = Logger.getLogger(YahooPlaceProvider.class.getName());
     private static final ArrayList<Place> EMPTY_LIST = new ArrayList<>();
 
     /**
@@ -123,9 +123,15 @@ public class YahooPlaceProvider implements PlaceProvider {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(lookupCriteria);
         }
-        String xmlString = HttpUtil.callWebService(urlString);
-        if (xmlString == null || xmlString.length() < 1) {
-            return EMPTY_LIST;
+        String xmlString;
+        try {
+            xmlString = HttpUtil.callWebService(urlString);
+            if (xmlString == null || xmlString.isEmpty()) {
+                throw new RuntimeException("null or empty string.");
+            }
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "callWebService failed: {0}", ex.getMessage());
+                return EMPTY_LIST;
         }
         return parsePlacefinderResults(xmlString);
     }
@@ -151,9 +157,15 @@ public class YahooPlaceProvider implements PlaceProvider {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(coord.toString());
         }
-        String xmlString = HttpUtil.callWebService(urlString);
-        if (xmlString == null || xmlString.length() < 1) {
-            return EMPTY_LIST;
+        String xmlString;
+        try {
+            xmlString = HttpUtil.callWebService(urlString);
+            if (xmlString == null || xmlString.isEmpty()) {
+                throw new RuntimeException("null or empty string.");
+            }
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "callWebService failed: {0}", ex.getMessage());
+                return EMPTY_LIST;
         }
         return this.parsePlaceResults(xmlString);
     }
@@ -277,9 +289,9 @@ public class YahooPlaceProvider implements PlaceProvider {
             }
             return places;
         } catch (XPathExpressionException e) {
-            LOG.log(Level.SEVERE, "URLException {0}", xmlString);
+            logger.log(Level.SEVERE, "URLException {0}", xmlString);
         } catch (RuntimeException e) {
-            LOG.log(Level.SEVERE, "RuntimeException {0}", xmlString);
+            logger.log(Level.SEVERE, "RuntimeException {0}", xmlString);
         }
         return EMPTY_LIST;
     }
