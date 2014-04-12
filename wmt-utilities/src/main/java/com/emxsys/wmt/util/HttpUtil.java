@@ -52,13 +52,15 @@ public class HttpUtil {
     private static final Logger logger = Logger.getLogger(HttpUtil.class.getName());
 
     /**
-     * Requests a Web service with an HTTP GET. 
+     * Requests a Web service with an HTTP GET.
      *
      * @param urlString the HTTP GET request.
      * @return the web service results.
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws RuntimeException
      */
-    public static String callWebService(String urlString) {
-        try {
+    public static String callWebService(String urlString) throws MalformedURLException, IOException {
             if (urlString == null || urlString.isEmpty()) {
                 throw new IllegalArgumentException("URL cannot be null or empty.");
             }
@@ -67,26 +69,14 @@ public class HttpUtil {
 
             int responseCode = connection.getResponseCode();
             String responseMessage = connection.getResponseMessage();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Connection Failed: " + responseMessage + " [" + urlString + "]");
+            }
             String contentType = connection.getContentType();
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                String charsetName = getCharsetName(contentType);
-                return readStreamToString(connection.getInputStream(), charsetName);
-            }
-            else {
-                throw new RuntimeException(responseMessage);
-            }
-        }
-        catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
+            String charsetName = getCharsetName(contentType);
+            return readStreamToString(connection.getInputStream(), charsetName);
     }
 
-    
     /**
      * Reads an input stream to a String.
      * @param stream the input stream to read
