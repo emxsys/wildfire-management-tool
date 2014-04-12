@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 
 @Messages(
@@ -51,7 +50,7 @@ import org.openide.util.NbBundle.Messages;
             "# {0} - marker id",
             "err.marker.already.exists=The marker ID ({0}) already exists.",
             "# {0} - marker id",
-            "err.marker.renderer.not.found=A renderer for the marker was not found. The marker {0} will not be displayed.",
+            "err.marker.renderer.not.found=A renderer for the marker was not found. The marker {0} may not be displayed.",
             "# {0} - marker id",
             "info.adding.marker.to.renderer=Adding the {0} marker to a renderer.",
             "# {0} - marker id",
@@ -114,6 +113,7 @@ public class MarkerManager extends EntityCatalog<Marker> {
             logger.fine(Bundle.info_adding_marker_to_renderer(marker.getName()));
             renderer.addMarker(marker);
         }
+        // Queue markers while waiter for a renderer to show up.
         else {
             logger.warning(Bundle.err_marker_renderer_not_found(marker.getName()));
             pendingAdds.add(marker);
@@ -130,6 +130,8 @@ public class MarkerManager extends EntityCatalog<Marker> {
             logger.fine(Bundle.info_removing_marker_from_renderer(item.getName()));
             renderer.removeMarker(item);
         } 
+        // Remove to queue.
+        pendingAdds.remove(item);
     }
 
     /**
@@ -137,14 +139,14 @@ public class MarkerManager extends EntityCatalog<Marker> {
      */
     @Override
     public void dispose() {
-        Renderer markerRenderer = getMarkerRenderer();
-        if (markerRenderer != null) {
+        Renderer renderer = getMarkerRenderer();
+        if (renderer != null) {
             // The renderer may force the removal of the item from the catalog, so copy
             // the markers to array that won't be modified by a subsequent nested call 
             // to removeItem invoked the the Renderer
             Marker[] array = this.getItems().toArray(new Marker[0]);
             for (Marker marker : array) {
-                markerRenderer.removeMarker(marker);
+                renderer.removeMarker(marker);
             }
         }
         pendingAdds.clear();
