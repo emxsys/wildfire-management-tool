@@ -61,6 +61,8 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.BasicDragger;
+import gov.nasa.worldwindx.examples.util.BalloonController;
+import gov.nasa.worldwindx.examples.util.HotSpotController;
 import java.awt.Component;
 import java.util.List;
 import java.util.logging.Level;
@@ -150,8 +152,10 @@ public class Globe implements GisViewer {
      */
     @Override
     public void initializeResources() {
-        
+
         // Assemble the components of the globe
+        this.content.add(new HotSpotController(this.wwm.getWorldWindow())); // 1) Sends input events to BrowserBalloons.
+        this.content.add(new BalloonController(this.wwm.getWorldWindow())); // 2) Handles link and navigation events in BrowserBalloons.
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
         this.content.add(new GlobeTerrainProvider());
@@ -187,7 +191,7 @@ public class Globe implements GisViewer {
         // Update the UI
         MarkerTools.getInstance();  // Creates the Marker Tools contextual task pane
         ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar
-        
+
         this.wwm.getWorldWindow().setVisible(true);
         this.initialized = true;
     }

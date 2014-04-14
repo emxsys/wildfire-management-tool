@@ -39,7 +39,6 @@ import com.emxsys.wmt.gis.api.layer.LayerType;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 import java.util.Collection;
@@ -162,12 +161,14 @@ public class MarkerLayer extends RenderableLayer implements GisLayer, Marker.Ren
     public void addMarkers(Collection<? extends Marker> markers) {
         synchronized (this) {
             markers.stream().forEach((marker) -> {
-                Renderable renderable = marker.getLookup().lookup(Renderable.class);
-                if (renderable != null) {
-                    super.addRenderable(renderable);
-                    super.firePropertyChange(Marker.Renderer.PROP_MARKER_ADDED, null, marker);
-                } else {
+                Collection<? extends Renderable> allRenderables = marker.getLookup().lookupAll(Renderable.class);
+                if (allRenderables.isEmpty()) {
                     logger.warning(Bundle.err_add_marker_failed(Bundle.err_marker_not_compatible()));
+                } else {
+                    allRenderables.stream().forEach((renderable) -> {
+                        super.addRenderable(renderable);
+                    });
+                    super.firePropertyChange(Marker.Renderer.PROP_MARKER_ADDED, null, marker);
                 }
             });
         }
@@ -186,11 +187,10 @@ public class MarkerLayer extends RenderableLayer implements GisLayer, Marker.Ren
             logger.warning(Bundle.err_add_marker_failed(Bundle.err_marker_not_compatible()));
             return;
         }
-        //for (Renderable renderable : allRenderables) {
         allRenderables.stream().forEach((renderable) -> {
             super.addRenderable(renderable);
-            super.firePropertyChange(Marker.Renderer.PROP_MARKER_ADDED, null, marker);
         });
+        super.firePropertyChange(Marker.Renderer.PROP_MARKER_ADDED, null, marker);
         refreshLayer();
     }
 
@@ -204,11 +204,10 @@ public class MarkerLayer extends RenderableLayer implements GisLayer, Marker.Ren
             logger.warning(Bundle.err_add_marker_failed(Bundle.err_marker_not_compatible()));
             return;
         }
-        //for (Renderable renderable : allRenderables) {
         allRenderables.stream().forEach((renderable) -> {
             super.removeRenderable(renderable);
-            super.firePropertyChange(Marker.Renderer.PROP_MARKER_REMOVED, marker, null);
         });
+        super.firePropertyChange(Marker.Renderer.PROP_MARKER_REMOVED, marker, null);
         refreshLayer();
     }
 

@@ -74,20 +74,18 @@ import org.xml.sax.SAXException;
  * @author Bruce Schubert
  * @see BasicMarker
  */
-@Messages(
-        {
-            "LBL_Marker_LOADER=Marker Files",
-            "# {0} - marker name",
-            "error_cannot_load_marker=Cannot load marker. {0}",
-            "# {0} - marker name",
-            "error_cannot_save_marker=Cannot save marker. {0}",
-            "# {0} - marker name",
-            "error_cannot_delete_marker=Cannot delete marker. {0}",})
+@Messages({
+    "LBL_Marker_LOADER=Marker Files",
+    "# {0} - marker name",
+    "error_cannot_load_marker=Cannot load marker. {0}",
+    "# {0} - marker name",
+    "error_cannot_save_marker=Cannot save marker. {0}",
+    "# {0} - marker name",
+    "error_cannot_delete_marker=Cannot delete marker. {0}",})
 @MIMEResolver.NamespaceRegistration(
         displayName = "#LBL_Marker_LOADER",
         mimeType = "text/emxsys-wmt-basicmarker+xml",
-        elementNS
-        = {
+        elementNS = {
             "http://emxsys.com/wmt-basicmarker",
             "http://emxsys.com/worldwind-basicmarker"
         })
@@ -96,31 +94,30 @@ import org.xml.sax.SAXException;
         iconBase = "com/emxsys/wmt/globe/markers/plain-black.png",
         displayName = "#LBL_Marker_LOADER",
         position = 300)
-@ActionReferences(
-        {
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-                    position = 100,
-                    separatorAfter = 200),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-                    position = 300),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-                    position = 400,
-                    separatorAfter = 500),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-                    position = 600),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-                    position = 700,
-                    separatorAfter = 800),
+@ActionReferences({
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
 //    @ActionReference(
 //        path = "Loaders/text/emxsys-worldwind-basicmarker+xml/Actions",
 //                     id =
@@ -138,11 +135,11 @@ import org.xml.sax.SAXException;
 //                     id =
 //    @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
 //                     position = 1300),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
-                    id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-                    position = 1400)
-        })
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
+})
 // This file was created by the IDE's New FileType Wizard and then the base class was changed from
 // MultiDataObject to XMLDataObject.
 public class BasicMarkerDataObject extends XMLDataObject {
@@ -202,9 +199,9 @@ public class BasicMarkerDataObject extends XMLDataObject {
         try {
             // Build the marker from the Marker.Builder class stored in the XML
             this.marker = (BasicMarker) MarkerSupport.getBuilder(getDocument()).build();
-            // Override the  property read from the XML with the filename,
-            // the filename IS the marker name.
+            // Override the property read from the XML, the filename IS the marker name.
             this.marker.setName(FilenameUtils.decodeFilename(getName()));
+            // The filesystem ensures unique filenames
             this.marker.setUniqueID(getName());
             // Ok to add the event listener now that the marker is initialized.
             this.marker.addPropertyChangeListener(WeakListeners.propertyChange(this.changeListener, this.marker));
@@ -231,7 +228,6 @@ public class BasicMarkerDataObject extends XMLDataObject {
         }
     }
 
-
     /**
      * Write the marker to persistent storage.
      */
@@ -242,7 +238,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
                     .document(getDocument())
                     .marker(this.marker)
                     .write();
-            // Write to disk
+            // Write the document to disk
             try (OutputStream output = getPrimaryFile().getOutputStream(FileLock.NONE)) {
                 XMLUtil.write(this.getDocument(), output, "UTF-8");
                 output.flush();
@@ -317,19 +313,15 @@ public class BasicMarkerDataObject extends XMLDataObject {
     protected Node createNodeDelegate() {
         if (init.get() != State.INITIALIZED) {   // fallback on invalid DataObjects
             return new DataNode(this, Children.LEAF);
-
         }
         try {
             // Remove the default XML editor and its cookies from this DataObject
-            OpenCookie openCookie = getCookieSet().getCookie(OpenCookie.class
-            );
-            if (openCookie
-                    != null) {
+            OpenCookie openCookie = getCookieSet().getCookie(OpenCookie.class);
+            if (openCookie != null) {
                 getCookieSet().remove(openCookie);
             }
+            return new BasicMarkerNode(this, this.marker, getCookieSet().getLookup());
 
-            return new BasicMarkerNode(this,
-                    this.marker, getCookieSet().getLookup());
         } catch (RuntimeException ex) {
             logger.severe(ex.getMessage());
             return new DataNode(this, Children.LEAF, getCookieSet().getLookup());
@@ -350,7 +342,6 @@ public class BasicMarkerDataObject extends XMLDataObject {
                 removeSaveCookie();
             }
             super.setModified(modified);
-
         }
     }
 
@@ -363,17 +354,14 @@ public class BasicMarkerDataObject extends XMLDataObject {
             getCookieSet()
                     .add(this.saveCookie);
         }
-
     }
 
     /**
      * Removes the SaveCapability cookie.
      */
     private void removeSaveCookie() {
-        SaveCookie save = getLookup().lookup(SaveCookie.class
-        );
-        if (save
-                != null) {
+        SaveCookie save = getLookup().lookup(SaveCookie.class);
+        if (save != null) {
             getCookieSet().remove(save);
         }
     }

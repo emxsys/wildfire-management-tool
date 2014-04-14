@@ -36,12 +36,11 @@ import com.emxsys.wmt.globe.markers.BasicMarker;
 import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
 import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.util.HttpUtil;
+import com.emxsys.wmt.weather.nws.NwsWeatherProvider;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.BalloonAttributes;
 import gov.nasa.worldwind.render.BasicBalloonAttributes;
-import gov.nasa.worldwind.render.GlobeBrowserBalloon;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
@@ -66,16 +65,18 @@ import visad.Field;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @see BasicMarker
- * @see Marker
  */
 @Messages({
     "CTL_WeatherDialogTitle=Edit Weather Marker",})
 public class WeatherMarker extends BasicMarker {
 
     private final Field field;
-    private final String moreInfoLink;
-    private GlobeBrowserBalloon balloon;
+    private Image image;
     private static final Logger logger = Logger.getLogger(WeatherMarker.class.getName());
+
+    static {
+        logger.setLevel(Level.ALL);
+    }
 
     WeatherMarker() {
         this("Wx Marker", GeoCoord3D.INVALID_POSITION, null, null);
@@ -89,7 +90,6 @@ public class WeatherMarker extends BasicMarker {
         super(location);
         setName(name);
         this.field = field;
-        this.moreInfoLink = null;//moreInfo.toString();
 
         // Get the implementation from the super class' lookup
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
@@ -97,6 +97,15 @@ public class WeatherMarker extends BasicMarker {
 
         // Replace the base class implementation
         overrideDefaultAttributes(placemark);
+
+        // Create a balloon renderable
+        WeatherBalloon balloon = makeBrowserBalloon();
+        if (balloon != null) {
+            // The BalloonController looks for this value when an object is clicked.            
+            placemark.setValue(AVKey.BALLOON, balloon);
+            // The MarkerLayer will look for Renderables in the lookup
+            getInstanceContent().add(balloon);
+        }
     }
 
     private void overrideDefaultAttributes(PointPlacemark placemark) {
@@ -124,36 +133,41 @@ public class WeatherMarker extends BasicMarker {
      */
     @Override
     public Image getImage() {
-        URL imgUrl = getClass().getResource("sun_clouds.png");
-        ImageIcon icon = new ImageIcon(imgUrl);
-        return ImageUtilities.icon2Image(icon);
+        if (image == null) {
+            URL imgUrl = getClass().getResource("sun_clouds.png");
+            ImageIcon icon = new ImageIcon(imgUrl);
+            image = ImageUtilities.icon2Image(icon);
+        }
+        return image;
+    }
+
+    @Override
+    public void setPosition(Coord3D coord) {
+        super.setPosition(coord); 
+        WeatherBalloon balloon = getLookup().lookup(WeatherBalloon.class);
+        if (balloon != null && balloon.isVisible())
+        {
+            balloon.setVisible(false);
+        }
     }
 
     @Override
     public void edit() {
-        if (balloon == null) {
-            makeBrowserBalloon();
-        }
-        if (balloon != null) {
-            balloon.setVisible(true);
-        }
+//        if (balloon != null) {
+//            balloon.setVisible(true);
+//        }
     }
+    // TODO: implmement timer based weather query
 
-    protected void makeBrowserBalloon() {
-
-        String htmlString = HttpUtil.callWebService(moreInfoLink);
-        if (htmlString == null) {
-            return;
+    // TODO: implement wind barb symbol
+    private WeatherBalloon makeBrowserBalloon() {
+        try {
+            WeatherBalloon balloon = new WeatherBalloon(Positions.fromCoord3D(getPosition()), NwsWeatherProvider.getInstance());
+            return balloon;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "callWebService() failed :{0}", e.getMessage());
+            return null;
         }
-        this.balloon = new GlobeBrowserBalloon(htmlString, Positions.fromCoord3D(getPosition()));
-
-        // Size the balloon to provide enough space for its content.
-        BalloonAttributes attrs = new BasicBalloonAttributes();
-        attrs.setSize(new Size(Size.NATIVE_DIMENSION, 0d, null, Size.NATIVE_DIMENSION, 0d, null));
-        balloon.setAttributes(attrs);
-
-        // Add the renderable to the Marker
-        getInstanceContent().add(balloon);
     }
 
     /**
