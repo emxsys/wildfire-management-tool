@@ -60,27 +60,44 @@ public class HttpUtil {
      * @throws IOException
      * @throws RuntimeException
      */
-    public static String callWebService(String urlString) throws MalformedURLException, IOException {
-            if (urlString == null || urlString.isEmpty()) {
-                throw new IllegalArgumentException("URL cannot be null or empty.");
-            }
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            int responseCode = connection.getResponseCode();
-            String responseMessage = connection.getResponseMessage();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("Connection Failed: " + responseMessage + " [" + urlString + "]");
-            }
-            String contentType = connection.getContentType();
-            String charsetName = getCharsetName(contentType);
-            return readStreamToString(connection.getInputStream(), charsetName);
+    @Deprecated
+    public static synchronized String callWebService(String urlString) throws MalformedURLException, IOException {
+        if (urlString == null || urlString.isEmpty()) {
+            throw new IllegalArgumentException("URL cannot be null or empty.");
+        }
+        URL url = new URL(urlString);
+        return callWebService(url);
     }
 
     /**
-     * Reads an input stream to a String.
-     * @param stream the input stream to read
-     * @param charsetName if null will default to UTF-8
+     * Requests a Web service with an HTTP GET.
+     *
+     * @param url The HTTP GET request URL.
+     * @return The web service results (e.g., HTML, XML, JSON, ...).
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws RuntimeException
+     */
+    public static String callWebService(URL url) throws MalformedURLException, IOException {
+        if (url == null) {
+            throw new IllegalArgumentException("URL cannot be null.");
+        }
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        int responseCode = connection.getResponseCode();
+        String responseMessage = connection.getResponseMessage();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            throw new RuntimeException("Connection Failed: " + responseMessage + " [" + url.toString() + "]");
+        }
+        String contentType = connection.getContentType();
+        String charsetName = getCharsetName(contentType);
+        return readStreamToString(connection.getInputStream(), charsetName);
+    }
+
+    /**
+     * Reads an input stream to a String using the given charset.
+     * @param stream The HTML input stream to read.
+     * @param charsetName If null will default to UTF-8.
      * @return The input as a string; closes the InputStream.
      */
     public static String readStreamToString(InputStream stream, String charsetName) {
@@ -101,6 +118,11 @@ public class HttpUtil {
         return sb.toString();
     }
 
+    /**
+     * Gets the charset for the given contentType.
+     * @param contentType 
+     * @return 
+     */
     public static String getCharsetName(String contentType) {
 
         if (contentType == null || contentType.toLowerCase().indexOf("charset") == -1) {
