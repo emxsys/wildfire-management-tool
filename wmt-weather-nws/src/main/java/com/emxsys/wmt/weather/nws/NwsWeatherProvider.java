@@ -35,6 +35,7 @@ import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import java.io.IOException;
 import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -138,6 +139,48 @@ public class NwsWeatherProvider implements WeatherProvider {
             + "&wx=wx"
             + "&critfireo=critfireo";
 
+    private static final String HOURLY_GRAPH_PAGE = "http://forecast.weather.gov/MapClick.php"
+            + "?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
+            + "&Submit=Submit"
+            + "&FcstType=graphical"
+            + "&textField1=%1$f" // Lat
+            + "&textField2=%2$f" // Lon
+            + "&site=all"
+            + "&menu=1";
+    private static final String TABULAR_PAGE = "http://forecast.weather.gov/MapClick.php"
+            + "?w0=t&w1=td&w2=wc&w3=sfcwind&w3u=1&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
+            + "&Submit=Submit"
+            + "&FcstType=digital"
+            + "&textField1=%1$f" // Lat
+            + "&textField2=%2$f" // Lon
+            + "&site=all"
+            + "&unit=0"
+            + "&menu=1"
+            + "&dd=&bw=";
+    private static final String SVN_DAY_PRINTABLE_PAGE = "http://forecast.weather.gov/MapClick.php"
+            + "?lat=%1$f"
+            + "&lon=%2$f"
+            + "&unit=0"
+            + "&lg=english"
+            + "&FcstType=text"
+            + "&TextType=2";
+    private static final String SVN_DAY_TEXT_ONLY_PAGE = "http://forecast.weather.gov/MapClick.php"
+            + "?lat=%1$f"
+            + "&lon=%2$f"
+            + "&unit=0"
+            + "&lg=english"
+            + "&FcstType=text"
+            + "&TextType=1";
+    private static final String SVN_DAY_FORECAST_PAGE = "http://forecast.weather.gov/MapClick.php"
+            + "?lat=%1$f"
+            + "&lon=%2$f"
+            + "&smap=1"
+            + "&unit=0"
+            + "&lg=en"
+            + "&FcstType=text";
+    private static final String QUICK_FORECAST_PAGE = "http://forecast.weather.gov/afm/PointClick.php"
+            + "?lat=%1$f"
+            + "&lon=%2$f";
     /** Singleton */
     private static NwsWeatherProvider instance;
     private static final Logger logger = Logger.getLogger(NwsWeatherProvider.class.getName());
@@ -186,6 +229,50 @@ public class NwsWeatherProvider implements WeatherProvider {
     @Override
     public Weather getWeather(Date utcTime, Coord2D coord) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public String getPointForecastPage(Coord2D coord) {
+        URL logo = getClass().getResource("nws_logo.png");
+        URL quick = getClass().getResource("quick.jpg");
+        URL svnday = getClass().getResource("7day.jpg");
+        URL hourly = getClass().getResource("hourlygraph.jpg");
+        URL tabular = getClass().getResource("tabular.jpg");
+        String htmlTemplate = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+                + "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+                + "\n"
+                + "<head>\n"
+                + "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n"
+                + "<title>National Weather Service Point Forecast</title>\n"
+                + "</head>\n"
+                + "<body>\n"
+                + "<table>\n"
+                + "	<tr>\n"
+                + "		<td rowspan=\"2\" style=\"width: 100px; height: 100px\">\n"
+                + "			<img alt=\"National Weather Service\" height=\"100\" src=\""+logo+"\" width=\"100\" />\n"
+                + "		</td>\n"
+                + "		<th colspan=\"4\">Point Forecast for "+ coord.toString() +"</th>\n"
+                + "	</tr>\n"
+                + "	<tr>\n"
+                + "		<td style=\"width: 50px\" valign=\"top\">\n"
+                + "		<a href=\""+QUICK_FORECAST_PAGE+"\"><img alt=\"Quick Forecast\" height=\"45\" src=\""+quick+"\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\""+QUICK_FORECAST_PAGE+"\">Quick Forecast</a></td>\n"
+                + "		<td style=\"width: 50px\" valign=\"top\">\n"
+                + "		<a href=\""+SVN_DAY_PRINTABLE_PAGE+"\"><img alt=\"7-Day Forecast\" height=\"45\" src=\""+svnday+"\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\""+SVN_DAY_PRINTABLE_PAGE+"\">7-Day</a></td>\n"
+                + "		<td style=\"width: 50px\" valign=\"top\">\n"
+                + "		<a href=\""+HOURLY_GRAPH_PAGE+"\"><img alt=\"Hourly Graph\" height=\"45\" src=\""+hourly+"\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\""+HOURLY_GRAPH_PAGE+"\">Hourly Graph</a></td>\n"
+                + "		<td style=\"width: 50px\" valign=\"top\">\n"
+                + "		<a href=\""+TABULAR_PAGE+"\"><img alt=\"Tabular Data\" height=\"45\" src=\""+tabular+"\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\""+TABULAR_PAGE+"\">Tabular Data</a></td>\n"
+                + "	</tr>\n"
+                + "</table>\n"
+                + "</body>"
+                + "</html>";
+                
+                String html = String.format(htmlTemplate, coord.getLatitudeDegrees(), coord.getLongitudeDegrees());
+                System.out.println(html);
+                return html;
     }
 
     @Override
