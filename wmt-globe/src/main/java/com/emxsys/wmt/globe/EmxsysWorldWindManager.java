@@ -31,13 +31,9 @@ package com.emxsys.wmt.globe;
 
 import com.terramenta.globe.WorldWindManager;
 import com.terramenta.globe.options.GlobeOptions;
-import gov.nasa.worldwindx.examples.util.SessionState;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.openide.modules.InstalledFileLocator;
-import org.openide.util.NbBundle;
 import org.openide.util.NbPreferences;
 import org.openide.util.lookup.ServiceProvider;
 
