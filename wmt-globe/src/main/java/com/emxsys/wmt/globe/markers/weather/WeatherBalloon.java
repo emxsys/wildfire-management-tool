@@ -30,7 +30,8 @@
 package com.emxsys.wmt.globe.markers.weather;
 
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.weather.nws.NwsWeatherProvider;
+import com.emxsys.wmt.weather.api.PointForecastPage;
+import com.emxsys.wmt.weather.api.WeatherProvider;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.BalloonAttributes;
@@ -41,32 +42,42 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The WeatherBalloon class is responsible for displaying HTML forecast presentations attached
+ * to a WeatherMarker.
+ * 
  * @author Bruce Schubert
  */
 public final class WeatherBalloon extends GlobeBrowserBalloon {
 
     private String html;
-    private final NwsWeatherProvider provider;
+    private WeatherProvider provider;
     private static final Logger logger = Logger.getLogger(WeatherBalloon.class.getName());
 
     static {
         logger.setLevel(Level.ALL);
     }
 
-    public WeatherBalloon(Position position, NwsWeatherProvider provider) {
-        super("Loading...", position);
+    public WeatherBalloon(Position position, WeatherProvider provider) {
+        super("Not supported.", position);
         this.provider = provider;
+
         BalloonAttributes attrs = new BasicBalloonAttributes();
         attrs.setSize(new Size(Size.NATIVE_DIMENSION, 0d, null, Size.NATIVE_DIMENSION, 0d, null));
         //attrs.setSize(Size.fromPixels(512, 256));
         setAttributes(attrs);
+
         // Setup the balloon to restore the last looked at page.
         setVisibilityAction(AVKey.VISIBILITY_ACTION_RETAIN);
         setVisible(false);
         setAlwaysOnTop(true);
     }
 
+    public void setProvider(WeatherProvider provider) {
+        this.provider = provider;
+        updatePage();
+    }
+
+    
     @Override
     public void setVisible(boolean visible) {
         if (!isVisible() && visible) {
@@ -79,19 +90,35 @@ public final class WeatherBalloon extends GlobeBrowserBalloon {
     }
 
     @Override
-    public void setPosition(Position position) {
+    public void setPosition(Position newPos) {
         // Hide the balloon when moving the marker.
         if (isVisible()) {
             setVisible(false);
         }
-        super.setPosition(position);
-        updatePage();
+
+        Position oldPos = getPosition();
+        super.setPosition(newPos);
+
+        // Update the web page if the positon changes
+        if (!oldPos.equals(newPos)) {
+            updatePage();
+        }
     }
+    
+    
 
     private void updatePage() {
-        Position pos = getPosition();
-        html = provider.getPointForecastPage(Positions.toGeoCoord2D(pos));
-        //System.out.println(html);
+        Position curPos = getPosition();
+        if (provider == null) {
+            setText(html = "No weather provider.");
+            return;
+        }
+        PointForecastPage cap = provider.getLookup().lookup(PointForecastPage.class);
+        if (cap == null) {
+            setText(html = "No point forecaster available.");
+            return;
+        }
+        html = cap.getForecastPage(Positions.toGeoCoord2D(curPos));
         setText(html);
     }
 

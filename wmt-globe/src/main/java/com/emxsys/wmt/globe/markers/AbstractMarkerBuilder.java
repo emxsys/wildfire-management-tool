@@ -33,7 +33,7 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.gis.gml.GmlConstants;
 import com.emxsys.wmt.gis.gml.GmlParser;
-import static com.emxsys.wmt.globe.markers.BasicMarkerWriter.*;
+import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.*;
 import com.emxsys.wmt.util.FilenameUtils;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
@@ -91,9 +91,9 @@ import org.w3c.dom.NodeList;
     "# {0} - document",
     "err.document.has.extra.markers={0} contains more than one Marker element. Only one Marker will be processed.",})
 
-public class BasicMarkerBuilder implements Marker.Builder {
+public abstract class AbstractMarkerBuilder implements Marker.Builder {
 
-    private static final Logger logger = Logger.getLogger(BasicMarkerBuilder.class.getName());
+    private static final Logger logger = Logger.getLogger(AbstractMarkerBuilder.class.getName());
     private Document doc;
     private XPath xpath;
     private Coord3D coord;
@@ -102,28 +102,28 @@ public class BasicMarkerBuilder implements Marker.Builder {
     /**
      * Basic constructor.
      */
-    public BasicMarkerBuilder() {
+    public AbstractMarkerBuilder() {
     }
 
     /**
      * Minimal constructor for a Builder that uses an XML document for the Marker parameters.
      * @param document The document to read.
      */
-    public BasicMarkerBuilder(Document document) {
+    public AbstractMarkerBuilder(Document document) {
         this.doc = document;
     }
 
-    public BasicMarkerBuilder document(Document document) {
+    public AbstractMarkerBuilder document(Document document) {
         this.doc = document;
         return this;
     }
 
-    public BasicMarkerBuilder coordinate(Coord3D coord) {
+    public AbstractMarkerBuilder coordinate(Coord3D coord) {
         this.coord = coord;
         return this;
     }
 
-    public BasicMarkerBuilder name(String name) {
+    public AbstractMarkerBuilder name(String name) {
         this.name = name;
         return this;
     }
@@ -133,13 +133,15 @@ public class BasicMarkerBuilder implements Marker.Builder {
      * @return a new BasicMarker instance.
      */
     @Override
-    public Marker build() {
-        BasicMarker marker = new BasicMarker();
-        if (doc != null) {
-            marker = initializeFromXml(marker);
-        }
-        return initializeFromParameters(marker);
-    }
+    public abstract Marker build();
+// Suggested method body template
+//    {
+//        BasicMarker marker = new BasicMarker();
+//        if (doc != null) {
+//            marker = initializeFromXml(marker);
+//        }
+//        return initializeFromParameters(marker);
+//    }
 
     public String getName() {
         return name;
@@ -183,37 +185,7 @@ public class BasicMarkerBuilder implements Marker.Builder {
      */
     protected BasicMarker initializeFromXml(BasicMarker marker) {
         this.xpath = XPathFactory.newInstance().newXPath();
-        this.xpath.setNamespaceContext(new NamespaceContext() {
-            @Override
-            public Iterator getPrefixes(String namespaceURI) {
-                throw new UnsupportedOperationException("getPrefixes");
-            }
-
-            @Override
-            public String getPrefix(String namespaceURI) {
-                throw new UnsupportedOperationException("getPrefix");
-            }
-
-            @Override
-            public String getNamespaceURI(String prefix) {
-                // xmlns="http://emxsys.com/worldwind-basicmarker"
-                // xmlns:gml="http://www.opengis.net/gml"
-                // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                // xsi:schemaLocation="http://emxsys.com/worldwind-basicmarker BasicMarkerSchema.xsd"
-                switch (prefix) {
-                    case MKR_PREFIX:
-                        return BASIC_MARKER_NS_URI;
-                    case XMLConstants.DEFAULT_NS_PREFIX:
-                        return XMLConstants.DEFAULT_NS_PREFIX;
-                    case XMLConstants.XML_NS_PREFIX:
-                        return XMLConstants.XML_NS_URI;
-                    case GmlConstants.GML_PREFIX:
-                        return GmlConstants.GML_NS_URI;
-                    default:
-                        throw new IllegalStateException(prefix);
-                }
-            }
-        });
+        this.xpath.setNamespaceContext(MarkerSupport.getNamespaceContext());
         NodeList list;
         try {
             // Get the Marker node, there should be [0-1]

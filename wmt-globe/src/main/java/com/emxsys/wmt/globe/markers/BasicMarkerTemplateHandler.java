@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.globe.markers;
 
+import com.emxsys.wmt.gis.api.marker.Marker;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
@@ -78,11 +79,19 @@ public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
         // Get the marker object from the parameters.
         Object model = parameters.get("model");
         if (!(model instanceof BasicMarker)) {
-            String msg = "createFromTemplate 'model' parameter is null or not a BasicMarker.";
+            String msg = "createFromTemplate: 'model' parameter is null or not a BasicMarker.";
             logger.severe(msg);
             throw new IllegalArgumentException(msg);
         }
         BasicMarker marker = (BasicMarker) model;
+        
+        // ASSERT that our marker has a writer
+        AbstractMarkerWriter writer = marker.getLookup().lookup(AbstractMarkerWriter.class);
+        if (writer == null) {
+            String msg = "createFromTemplate: marker must have an AbstractMarkerWriter instance in its lookup.";
+            logger.severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
         // Strip any extension from the name because we'll supply the extension
         String ext = FileUtil.getExtension(name);
@@ -98,11 +107,10 @@ public class BasicMarkerTemplateHandler extends CreateFromTemplateHandler {
             // Create an XML document from the template file
             InputSource source = new InputSource(template.getInputStream());
             Document doc = XMLUtil.parse(source, false, false, null, null);
-            // Write the marker to the XML file
-            new BasicMarkerWriter()
-                    .document(doc)
-                    .marker(marker)
-                    .write();
+            
+            // Write the marker data to the XML file
+            writer.document(doc).write();
+            
             // Write the XML to disk
             try (OutputStream output = targetFile.getOutputStream(lock)) {
                 XMLUtil.write(doc, output, "UTF-8");

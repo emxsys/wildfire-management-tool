@@ -233,18 +233,19 @@ public class BasicMarkerDataObject extends XMLDataObject {
      */
     protected final void writeFile() {
         try {
+            AbstractMarkerWriter writer = this.marker.getLookup().lookup(AbstractMarkerWriter.class);
+            if (writer == null) {
+                throw new IllegalStateException("marker must have an AbstractMarkerWriter instance in its lookup.");
+            }
             // Write to the XML document
-            new BasicMarkerWriter()
-                    .document(getDocument())
-                    .marker(this.marker)
-                    .write();
+            writer.document(getDocument()).write();
+            
             // Write the document to disk
             try (OutputStream output = getPrimaryFile().getOutputStream(FileLock.NONE)) {
                 XMLUtil.write(this.getDocument(), output, "UTF-8");
                 output.flush();
             }
             setModified(false);
-
             // Add a schema file
             writeSchema(getPrimaryFile().getParent());
         } catch (IOException | SAXException exception) {
@@ -260,7 +261,7 @@ public class BasicMarkerDataObject extends XMLDataObject {
      */
     private static void writeSchema(FileObject folder) throws IOException {
         // Copy an XML schema to the document folder
-        File schemaTarget = new File(folder.getPath(), BasicMarkerWriter.BASIC_MARKER_SCHEMA_FILE);
+        File schemaTarget = new File(folder.getPath(), AbstractMarkerWriter.BASIC_MARKER_SCHEMA_FILE);
         if (!schemaTarget.exists()) {
             logger.log(Level.CONFIG, "Creating Schema: {0}", schemaTarget.getPath());
             FileObject schemaSource = MarkerSupport.getLocalSchemaFile("2.0");

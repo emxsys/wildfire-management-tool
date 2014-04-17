@@ -49,7 +49,7 @@ public class WeatherMarkerEditor {
     public static boolean edit(WeatherMarker wxMarker, boolean isNew) {
         // Create the dialog content panel
         PointPlacemark placemark = wxMarker.getLookup().lookup(PointPlacemark.class);
-        WeatherMarkerEditorPane dialogPane = new WeatherMarkerEditorPane(
+        WeatherMarkerEditorPane dialog = new WeatherMarkerEditorPane(
                 wxMarker.getName(),
                 wxMarker.getPosition(),
                 wxMarker.isMovable(),
@@ -57,7 +57,7 @@ public class WeatherMarkerEditor {
 
         // Wrap the panel in a standard dialog...
         DialogDescriptor descriptor = new DialogDescriptor(
-                dialogPane,
+                dialog,
                 isNew ? Bundle.CTL_DialogTitleAdd() : Bundle.CTL_DialogTitleEdit(),
                 true, // Modal?
                 DialogDescriptor.OK_CANCEL_OPTION,
@@ -69,20 +69,15 @@ public class WeatherMarkerEditor {
         // Update the weather
         if (result != null && result == DialogDescriptor.OK_OPTION) {
             // Update name
-            if (!wxMarker.getName().equals(dialogPane.getMarkerName())) {
-                wxMarker.setName(dialogPane.getMarkerName());
+            if (!wxMarker.getName().equals(dialog.getMarkerName())) {
+                wxMarker.setName(dialog.getMarkerName());
             }
             // Update movable flag
-            if (wxMarker.isMovable() != dialogPane.isMovable()) {
-                wxMarker.setMovable(dialogPane.isMovable());
-            }
-            // Update attributes if image changed
-//            String oldImageAddress = placemark.getAttributes().getImageAddress();
-//            String newImageAddress = dialogPane.getMarkerRenderingAttributes().getImageAddress();
-//            if (oldImageAddress == null || oldImageAddress.isEmpty() || !oldImageAddress.equals(newImageAddress)) {
-//                // fires a property change event
-//                wxMarker.setAttributes(dialogPane.getMarkerRenderingAttributes());
-//            }
+            if (wxMarker.isMovable() != dialog.isMovable()) {
+                wxMarker.setMovable(dialog.isMovable());
+            }           
+            wxMarker.setProvider(dialog.getWeatherProvider());
+            
             return true;
         }
         return false;

@@ -42,12 +42,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.XMLConstants;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.loaders.XMLDataObject;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -81,7 +77,7 @@ import org.xml.sax.SAXException;
 @NbBundle.Messages({
     "# {0} - reason",
     "err.cannot.export.marker=Cannot export marker. {0}",})
-public class BasicMarkerWriter implements Marker.Writer {
+public abstract class AbstractMarkerWriter implements Marker.Writer {
 
     public static final String BASIC_MARKER_NS_URI = "http://emxsys.com/worldwind-basicmarker";
     public static final String BASIC_MARKER_SCHEMA_FILE = "BasicMarkerSchema.xsd";
@@ -116,16 +112,18 @@ public class BasicMarkerWriter implements Marker.Writer {
     public static final String ATTR_EMISSION = "emission";
     public static final String ATTR_SHININESS = "shininess";
 
-    // See package-info.java for the declaration of the BasicMarkerTemplate
-    private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/BasicMarkerTemplate.xml";
-    private static DataObject templateFile;
-    private static final Logger logger = Logger.getLogger(BasicMarkerWriter.class.getName());
+    private static final Logger logger = Logger.getLogger(AbstractMarkerWriter.class.getName());
 
+    private final BasicMarker marker;
     private Document doc;
-    private BasicMarker marker;
     private FileObject folder;
 
-    public BasicMarkerWriter() {
+    /**
+     * Constructs a Writer for the the given Marker.
+     * @param marker The marker to write.
+     */
+    public AbstractMarkerWriter(BasicMarker marker) {
+        this.marker = marker;
     }
 
     /**
@@ -133,7 +131,7 @@ public class BasicMarkerWriter implements Marker.Writer {
      * @param doc The document to update.
      * @param marker The marker to write.
      */
-    public BasicMarkerWriter(Document doc, BasicMarker marker) {
+    public AbstractMarkerWriter(Document doc, BasicMarker marker) {
         this.doc = doc;
         this.marker = marker;
     }
@@ -144,7 +142,7 @@ public class BasicMarkerWriter implements Marker.Writer {
      * @param folder The folder where the XML document will be created.
      * @param marker The marker to write.
      */
-    public BasicMarkerWriter(FileObject folder, BasicMarker marker) {
+    public AbstractMarkerWriter(FileObject folder, BasicMarker marker) {
         this.marker = marker;
         this.folder = folder;
     }
@@ -154,7 +152,7 @@ public class BasicMarkerWriter implements Marker.Writer {
      * @param doc The document to write to.
      * @return The updated Writer.
      */
-    public BasicMarkerWriter document(Document doc) {
+    public AbstractMarkerWriter document(Document doc) {
         this.doc = doc;
         this.folder = null;
         return this;
@@ -166,19 +164,9 @@ public class BasicMarkerWriter implements Marker.Writer {
      * @param folder The folder where the new Marker file will be created.
      * @return The updated Writer.
      */
-    public BasicMarkerWriter folder(FileObject folder) {
+    public AbstractMarkerWriter folder(FileObject folder) {
         this.folder = folder;
         this.doc = null;
-        return this;
-    }
-
-    /**
-     * Sets the Marker to be written to a persistent store. Mandatory.
-     * @param marker The Marker to write.
-     * @return The updated Writer.
-     */
-    public BasicMarkerWriter marker(BasicMarker marker) {
-        this.marker = marker;
         return this;
     }
 
@@ -245,20 +233,11 @@ public class BasicMarkerWriter implements Marker.Writer {
     }
 
     /**
-     * Gets the template file used by createDataObject(). Allows subclasses to define the template.
+     * Gets the template file used by createDataObject(). Subclasses must define the template.
      *
      * @return A template file file for new Markers.
      */
-    protected DataObject getTemplate() {
-        if (templateFile == null) {
-            try {
-                templateFile = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
-            } catch (DataObjectNotFoundException ex) {
-                logger.log(Level.SEVERE, "BasicMarker.MarkerFactory.getTemplate() cannot find: {0}", TEMPLATE_CONFIG_FILE);
-            }
-        }
-        return templateFile;
-    }
+    protected abstract DataObject getTemplate();
 
     /**
      * Performs a complete rewrite of the marker XML file via DOM.
@@ -270,11 +249,12 @@ public class BasicMarkerWriter implements Marker.Writer {
         for (int i = children.getLength() - 1; i >= 0; i--) {
             doc.removeChild(children.item(i));
         }
-        // Write the data
+        // Create the nodes
         Element root = createMarkersElement(new GeoSector(marker.getPosition(), marker.getPosition()));
         Element feature = doc.createElementNS(GmlConstants.GML_NS_URI, GmlConstants.GML_PREFIX + ":" + GmlConstants.FEATURE_MEMBER_PROPERTY_ELEMENT_NAME);
         Element markerElement = createMarkerElement();
         if (root != null && feature != null && markerElement != null) {
+            // Assemble the document
             doc.appendChild(root);
             root.appendChild(feature);
             feature.appendChild(markerElement);
@@ -321,12 +301,15 @@ public class BasicMarkerWriter implements Marker.Writer {
             Element desc = doc.createElementNS(GmlConstants.GML_NS_URI, GmlConstants.GML_PREFIX + ":" + GmlConstants.DESCRIPTION_PROPERTY_ELEMENT_NAME);
             //name.appendChild(doc.createTextNode(marker.getDescription()));
             mkr.appendChild(desc);
+            
             Element name = doc.createElementNS(GmlConstants.GML_NS_URI, GmlConstants.GML_PREFIX + ":" + GmlConstants.NAME_PROPERTY_ELEMENT_NAME);
             name.appendChild(doc.createTextNode(marker.getName()));
             mkr.appendChild(name);
+            
             GmlBuilder gmlBuilder = new GmlBuilder(doc, GmlConstants.GML_NS_URI, GmlConstants.GML_PREFIX + ":" + GmlConstants.POINT_PROPERTY_ELEMENT_NAME);
             gmlBuilder.append(marker.getPosition());
             mkr.appendChild(gmlBuilder.toElement());
+            
             PointPlacemark placemark = marker.getLookup().lookup(PointPlacemark.class);
             PointPlacemarkAttributes attributes = placemark.getAttributes();
             if (attributes != null) {
@@ -393,7 +376,6 @@ public class BasicMarkerWriter implements Marker.Writer {
                     symbol.appendChild(heading);
                     symbol.appendChild(heading_ref);
                 }
-
                 mkr.appendChild(symbol);
             }
             return mkr;

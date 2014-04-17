@@ -30,13 +30,18 @@
 package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.markers.MarkerPositioner;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.markers.ics.IcsMarker;
+import com.emxsys.wmt.globe.markers.ics.IcsMarker.Writer;
 import com.emxsys.wmt.globe.markers.ics.IcsMarkerEditor;
+import com.terramenta.globe.WorldWindManager;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
@@ -72,6 +77,7 @@ import org.openide.util.NbBundle.Messages;
 public final class AddIcsMarkerAction implements ActionListener {
 
     private final Project context;
+    private static final WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
     private static final Logger logger = Logger.getLogger(AddIcsMarkerAction.class.getName());
 
     /**
@@ -91,15 +97,28 @@ public final class AddIcsMarkerAction implements ActionListener {
             logger.severe(Bundle.ERR_ICSNullPosition());
             return;
         }
-        // Create and edit the marker
-        IcsMarker marker = new IcsMarker("Marker", position);
-        boolean success = IcsMarkerEditor.edit(marker, true);   // true = new
-        if (success) {
-            // Creates a DataObject in the current project
-            new IcsMarker.Writer()
-                    .marker(marker)
-                    .folder(MarkerSupport.getFolderFromCurrentProject())
-                    .write();
-        }
+        IcsMarker marker = new IcsMarker("Marker", GeoCoord3D.INVALID_POSITION);
+        // Position the marker on the globe
+        MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), marker);
+        positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
+                // Abort if the user pressed ESC--the position will be unaltered
+                if (marker.getPosition().equals(GeoCoord3D.INVALID_POSITION)) {
+                    return;
+                }
+                // Launch the editor in the "new" marker mode
+                boolean success = IcsMarkerEditor.edit(marker, true);
+                if (success) {
+                    // Save the marker into the current project 
+                    marker.getLookup().lookup(Writer.class)
+                            .folder(MarkerSupport.getFolderFromCurrentProject())
+                            .write();
+                }
+            }
+        });
+        // Force keyboard focus to globe
+        wwm.getWorldWindow().requestFocusInWindow();
+        // Invoke the positioner
+        positioner.setArmed(true);
     }
 }

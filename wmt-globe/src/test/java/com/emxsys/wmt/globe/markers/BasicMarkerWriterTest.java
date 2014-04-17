@@ -30,14 +30,12 @@
 package com.emxsys.wmt.globe.markers;
 
 import com.emxsys.wmt.gis.api.GeoCoord3D;
-import static com.emxsys.wmt.globe.markers.BasicMarkerWriter.BASIC_MARKER_NS_URI;
+import com.emxsys.wmt.gis.api.marker.Marker;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -46,6 +44,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 import org.openide.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -55,6 +56,7 @@ import org.xml.sax.SAXException;
  * @author Bruce Schubert
  */
 public class BasicMarkerWriterTest {
+
     private static Schema schema;
 
     private Document doc;
@@ -119,11 +121,48 @@ public class BasicMarkerWriterTest {
         this.doc = f.newDocumentBuilder().newDocument();
 
         // create the marker that we'll save
-        this.marker = (BasicMarker) new BasicMarkerBuilder()
-                .name("KOXR")
-                .coordinate(GeoCoord3D.fromDegreesAndMeters(34.2, -119.2, 15))
+        MockMarkerBuilder builder = new MockMarkerBuilder();
+        this.marker = (BasicMarker) builder
+                .name("KOXR").coordinate(GeoCoord3D.fromDegreesAndMeters(34.2, -119.2, 15))
                 .build();
 
+    }
+
+    class MockMarker extends BasicMarker {
+
+        MockMarker() {
+            getInstanceContent().add(new MockMarkerWriter(this));
+        }
+
+    }
+
+    public class MockMarkerBuilder extends AbstractMarkerBuilder {
+
+        @Override
+        public Marker build() {
+            return initializeFromParameters(new MockMarker());
+        }
+
+    }
+
+    class MockMarkerWriter extends AbstractMarkerWriter {
+
+        // See package-info.java for the declaration of the BasicMarkerTemplate
+        private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/BasicMarkerTemplate.xml";
+
+        MockMarkerWriter(BasicMarker marker) {
+            super(marker);
+        }
+
+        @Override
+        protected DataObject getTemplate() {
+            try {
+                return DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
+            } catch (DataObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+                return null;
+            }
+        }
     }
 
     /**
@@ -134,64 +173,52 @@ public class BasicMarkerWriterTest {
     }
 
     /**
-     * Test of document method, of class BasicMarkerWriter.
+     * Test of document method, of class AbstractMarkerWriter.
      */
     @Test
     public void testDocument() {
         System.out.println("document");
-        BasicMarkerWriter instance = new BasicMarkerWriter();
+        AbstractMarkerWriter instance = new MockMarkerWriter(marker);
         instance.document(doc);
         assertEquals(instance.getDocument(), doc);
     }
 
     /**
-     * Test of folder method, of class BasicMarkerWriter.
+     * Test of folder method, of class AbstractMarkerWriter.
      */
     @Test
-    public void testFolder()  {
+    public void testFolder() {
         System.out.println("folder");
-        BasicMarkerWriter instance = new BasicMarkerWriter();
+        AbstractMarkerWriter instance = new MockMarkerWriter(marker);
         instance.folder(folder);
         assertEquals(instance.getFolder(), folder);
     }
 
     /**
-     * Test of marker method, of class BasicMarkerWriter.
-     */
-    @Test
-    public void testMarker() {
-        System.out.println("marker");
-        BasicMarkerWriter instance = new BasicMarkerWriter();
-        instance.marker(marker);
-        assertEquals(instance.getMarker(), marker);
-    }
-
-    /**
-     * Test of write method, of class BasicMarkerWriter.
+     * Test of write method, of class AbstractMarkerWriter.
      */
     @Test
     public void testWriteToADocument() throws IOException, SAXException {
         System.out.println("write to document");
-        BasicMarkerWriter instance = new BasicMarkerWriter();
-        instance.marker(marker);
+        AbstractMarkerWriter instance = new MockMarkerWriter(marker);
         instance.document(doc);
         Document result = instance.write();
         assertNotNull(result);
-        
+
         // Does not validate correctly.  However XML Document created by the BasicMarkerDataObject
         // works correctly.  I don't know why the Document created by the factory doesn't work. ARGH!
         //validate(result);
         //>>>Validating XML...FAILED! NAMESPACE_ERR: An attempt is made to create or change an object in a way which is incorrect with regard to namespaces.
     }
+
     /**
-     * Test of write method, of class BasicMarkerWriter.
+     * Test of write method, of class AbstractMarkerWriter.
      */
     @Test
     public void testWrite() throws IOException, SAXException {
         // Create the document
         System.out.println("write to folder");
-        BasicMarkerWriter instance = new BasicMarkerWriter();
-        instance.marker(marker);
+        AbstractMarkerWriter instance = new MockMarkerWriter(marker);
         instance.folder(folder);
         Document doc1 = instance.write();
         assertNotNull(doc1);
@@ -199,7 +226,7 @@ public class BasicMarkerWriterTest {
 
         // Update the document
 //        System.out.println("write to document");
-//        instance = new BasicMarkerWriter();
+//        instance = new AbstractMarkerWriter();
 //        marker.setName("Oxnard Airport");
 //        instance.marker(marker);
 //        instance.document(doc1);
@@ -207,7 +234,6 @@ public class BasicMarkerWriterTest {
 //        assertNotNull(doc2);
 //        validate(doc1);
         //>>>Validating XML...FAILED! NAMESPACE_ERR: An attempt is made to create or change an object in a way which is incorrect with regard to namespaces.
-
     }
 
 }

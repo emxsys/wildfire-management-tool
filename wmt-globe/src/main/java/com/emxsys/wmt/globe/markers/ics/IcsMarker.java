@@ -33,8 +33,8 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
-import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
-import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
+import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
+import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
@@ -79,6 +79,8 @@ public class IcsMarker extends BasicMarker {
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
         overrideDefaultAttributes();
+        // Add persistance capability
+        getInstanceContent().add(new Writer(this));        
     }
 
     private void overrideDefaultAttributes() {
@@ -121,7 +123,7 @@ public class IcsMarker extends BasicMarker {
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
-    public static class Builder extends BasicMarkerBuilder {
+    public static class Builder extends AbstractMarkerBuilder {
 
         public Builder() {
         }
@@ -142,7 +144,7 @@ public class IcsMarker extends BasicMarker {
         @Override
         protected BasicMarker initializeFromXml(BasicMarker marker) {
             // Let the base class handle the heavy lifting.
-            return super.initializeFromXml(marker); //To change body of generated methods, choose Tools | Templates.
+            return super.initializeFromXml(marker); 
         }
 
     }
@@ -152,13 +154,18 @@ public class IcsMarker extends BasicMarker {
      *
      * @author Bruce Schubert
      */
-    public static class Writer extends BasicMarkerWriter {
+    public static class Writer extends AbstractMarkerWriter {
 
         // See package-info.java for the declaration of the IcsMarkerTemplate
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/IcsMarkerTemplate.xml";
         private static DataObject template;
         private static final Logger logger = Logger.getLogger(Writer.class.getName());
 
+        public Writer(BasicMarker marker) {
+            super(marker);
+        }
+
+        
         /**
          * Called by super.createDataObject().
          * @return A template file used for writing new IcsMarkers.

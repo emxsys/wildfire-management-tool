@@ -30,10 +30,11 @@
 package com.emxsys.wmt.globe.markers.pushpins;
 
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
-import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
-import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
+import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
+import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;
 import gov.nasa.worldwind.render.PointPlacemark;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,12 +54,14 @@ public class Pushpin extends BasicMarker {
     private static final Logger logger = Logger.getLogger(Pushpin.class.getName());
 
     Pushpin() {
-        super();
+        this("Pushpin", GeoCoord3D.INVALID_POSITION);
     }
 
     public Pushpin(String name, Coord3D location) {
         super(location);
         setName(name);
+        // Add persistance capability
+        getInstanceContent().add(new Writer(this));        
     }
 
     @Override
@@ -83,7 +86,7 @@ public class Pushpin extends BasicMarker {
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
-    public static class Builder extends BasicMarkerBuilder {
+    public static class Builder extends AbstractMarkerBuilder {
 
         public Builder() {
         }
@@ -113,12 +116,16 @@ public class Pushpin extends BasicMarker {
      *
      * @author Bruce Schubert
      */
-    public static class Writer extends BasicMarkerWriter {
+    public static class Writer extends AbstractMarkerWriter {
 
         // See package-info.java for the declaration of the PushpinMarkerTemplate
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/PushpinMarkerTemplate.xml";
         private static DataObject template;
         private static final Logger logger = Logger.getLogger(Writer.class.getName());
+
+        public Writer(BasicMarker marker) {
+            super(marker);
+        }
 
         
         /**

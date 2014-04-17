@@ -344,7 +344,7 @@ public class BasicMarker extends AbstractMarker {
 
     @Override
     public Class<? extends Marker.Builder> getFactoryClass() {
-        return BasicMarkerBuilder.class;
+        return AbstractMarkerBuilder.class;
     }
 
     @Override

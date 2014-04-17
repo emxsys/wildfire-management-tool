@@ -31,12 +31,17 @@ package com.emxsys.wmt.globe.markers;
 
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.gis.api.marker.MarkerManager;
-import static com.emxsys.wmt.globe.markers.BasicMarkerWriter.BASIC_MARKER_SCHEMA_FILE;
+import com.emxsys.wmt.gis.gml.GmlConstants;
+import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.BASIC_MARKER_NS_URI;
+import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.BASIC_MARKER_SCHEMA_FILE;
+import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
 import com.emxsys.wmt.util.TimeUtil;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.netbeans.api.project.Project;
@@ -57,6 +62,7 @@ public class MarkerSupport {
 
     private static final Logger logger = Logger.getLogger(MarkerSupport.class.getName());
     private static Schema schema;
+    private static NamespaceContext namespaceContext;
 
     /**
      * Gets a factory object from the class embedded in the Marker element.
@@ -68,10 +74,10 @@ public class MarkerSupport {
         String clazz = null;
         try {
             NodeList list = document.getElementsByTagName("Marker");
-            if (list.getLength()==0) {
-                list = document.getElementsByTagName("mkr:Marker");               
+            if (list.getLength() == 0) {
+                list = document.getElementsByTagName("mkr:Marker");
             }
-            if (list.getLength()==0) {
+            if (list.getLength() == 0) {
                 throw new IllegalArgumentException("Document does not contain a Marker or mkr:Marker element.");
             }
             // Construct a factory object.
@@ -110,7 +116,7 @@ public class MarkerSupport {
      */
     public static FileObject getLocalSchemaFile(String version) {
         // Get a file object from a jar file entry (URL).
-        URL resource = BasicMarkerWriter.class.getResource("schemas/" + version + "/" + BASIC_MARKER_SCHEMA_FILE);
+        URL resource = AbstractMarkerWriter.class.getResource("schemas/" + version + "/" + BASIC_MARKER_SCHEMA_FILE);
         return URLMapper.findFileObject(resource);
     }
 
@@ -121,7 +127,7 @@ public class MarkerSupport {
     static Schema getMarkerSchema(String version) {
         if (schema == null) {
             SchemaFactory f = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            URL schemaUrl = BasicMarkerWriter.class.getResource("schemas/" + version + "/"+ BASIC_MARKER_SCHEMA_FILE);
+            URL schemaUrl = AbstractMarkerWriter.class.getResource("schemas/" + version + "/" + BASIC_MARKER_SCHEMA_FILE);
             try {
                 logger.log(Level.CONFIG, "Loading Schema ({0}) ...", schemaUrl);
                 long startMs = System.currentTimeMillis();
@@ -134,4 +140,44 @@ public class MarkerSupport {
         return schema;
     }
 
+    /**
+     * @return An XPath NamespaceContext for BasicMarkers
+     */
+    public static NamespaceContext getNamespaceContext() {
+        if (namespaceContext == null) {
+            namespaceContext = new NamespaceContext() {
+                @Override
+                public Iterator getPrefixes(String namespaceURI) {
+                    throw new UnsupportedOperationException("getPrefixes");
+                }
+
+                @Override
+                public String getPrefix(String namespaceURI) {
+                    throw new UnsupportedOperationException("getPrefix");
+                }
+
+                @Override
+                public String getNamespaceURI(String prefix) {
+                    // xmlns="http://emxsys.com/worldwind-basicmarker"
+                    // xmlns:gml="http://www.opengis.net/gml"
+                    // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    // xsi:schemaLocation="http://emxsys.com/worldwind-basicmarker BasicMarkerSchema.xsd"
+                    switch (prefix) {
+                        case MKR_PREFIX:
+                            return BASIC_MARKER_NS_URI;
+                        case XMLConstants.DEFAULT_NS_PREFIX:
+                            return XMLConstants.DEFAULT_NS_PREFIX;
+                        case XMLConstants.XML_NS_PREFIX:
+                            return XMLConstants.XML_NS_URI;
+                        case GmlConstants.GML_PREFIX:
+                            return GmlConstants.GML_NS_URI;
+                        default:
+                            throw new IllegalStateException(prefix);
+                    }
+                }
+
+            };
+        }
+        return namespaceContext;
+    }
 }

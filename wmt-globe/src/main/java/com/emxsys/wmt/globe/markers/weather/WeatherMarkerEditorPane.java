@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.markers.weather;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.globe.markers.weather.*;
+import com.emxsys.wmt.weather.api.PointForecast;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import java.awt.Component;
@@ -56,9 +57,8 @@ import org.openide.util.NbBundle.Messages;
  */
 public class WeatherMarkerEditorPane extends javax.swing.JPanel {
 
-    private PointPlacemarkAttributes renderingAttributes;
-    private ImageIcon[] images;
-    private String[] names;
+    private WeatherProvider provider;
+    private WeatherProvider[] providers;
     private static int lastSelectionIndex = 0;
 
     /**
@@ -72,20 +72,20 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
                                    final PointPlacemarkAttributes attributes) {
         initComponents();
 
-        // Initialize the rendering attributes that will be used for the Weather
-        renderingAttributes = new PointPlacemarkAttributes(attributes);
-
-        Collection<? extends WeatherProvider> providers = Lookup.getDefault().lookupAll(WeatherProvider.class);
-        //Load the weather images and create an array of indexes.
-        images = new ImageIcon[providers.size()];
-        names = new String[providers.size()];
-        Integer[] intArray = new Integer[providers.size()];
+        // Find all the Weather service providers that support point forecasts
+        Collection<? extends WeatherProvider> allProviders = Lookup.getDefault().lookupAll(WeatherProvider.class);
+        Integer[] intArray = new Integer[allProviders.size()];
+        providers = new WeatherProvider[allProviders.size()];
         int i = 0;
-        for (WeatherProvider provider : providers) {
-            intArray[i] = i;
-            images[i] = provider.getImageIcon();
-            names[i] = provider.getClass().getSimpleName();
-            ++i;
+        for (WeatherProvider p : allProviders) {
+            // TODO: Load only providers that support a PointForecast
+            PointForecast forecast = p.getLookup().lookup(PointForecast.class);
+            //if (forecast != null) 
+            {
+                intArray[i] = i;
+                providers[i] = p;
+                ++i;
+            }
         }
 
         // Create the name field -- autoselect the text to ease the editing of default names
@@ -124,7 +124,6 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
         lockToggleButtonStateChanged(null);
     }
 
-
     public String getMarkerName() {
         return nameTextField.getText().trim();
     }
@@ -133,19 +132,14 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
         return !lockToggleButton.isSelected();
     }
 
-    public PointPlacemarkAttributes getMarkerRenderingAttributes() {
-        return renderingAttributes;
+    public WeatherProvider getWeatherProvider() {
+        return provider;
     }
 
-    private void updateRenderingAttributes(int selectedIndex) {
-//        if (selectedIndex > -1) {
-//            // We stored the image address in the description field
-//            ImageIcon icon = images[selectedIndex];
-//            renderingAttributes.setImageAddress(icon.getDescription());
-//        }
-//        renderingAttributes.setScale(1.0);
-//        renderingAttributes.setImageOffset(new Offset(0.3d, 0.0d, AVKey.FRACTION, AVKey.FRACTION));
-//        renderingAttributes.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+    private void updateProvider(int selectedIndex) {
+        if (selectedIndex > -1) {
+            provider = providers[selectedIndex];
+        }
     }
 
     class ComboBoxRenderer extends JLabel implements ListCellRenderer {
@@ -182,14 +176,14 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
             }
 
             //Set the icon and text.  If icon was null, say so.
-            ImageIcon icon = images[selectedIndex];
-            String weather = names[selectedIndex];
+            ImageIcon icon = providers[selectedIndex].getImageIcon();
+            String name = providers[selectedIndex].getClass().getSimpleName();
             setIcon(icon);
             if (icon != null) {
-                setText(weather);
+                setText(name);
                 setFont(list.getFont());
             } else {
-                setUhOhText(weather + " (no image available)",
+                setUhOhText(name + " (no image available)",
                         list.getFont());
             }
 
@@ -338,7 +332,7 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
 private void iconsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iconsComboBoxActionPerformed
     // Remember the last selection so we can preselect this icon the next time the dialog is displayed
     int selectedIndex = iconsComboBox.getSelectedIndex();
-    updateRenderingAttributes(selectedIndex);
+    updateProvider(selectedIndex);
     lastSelectionIndex = selectedIndex;
 }//GEN-LAST:event_iconsComboBoxActionPerformed
 

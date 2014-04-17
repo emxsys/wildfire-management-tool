@@ -29,14 +29,18 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.markers.MarkerPositioner;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.markers.weather.WeatherMarker;
+import com.emxsys.wmt.globe.markers.weather.WeatherMarker.Writer;
 import com.emxsys.wmt.globe.markers.weather.WeatherMarkerEditor;
+import com.terramenta.globe.WorldWindManager;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
@@ -69,38 +73,46 @@ import org.openide.util.NbBundle.Messages;
             "ERR_WeatherMarkerManagerNotFound=A Marker.Renderer was not found in the viewer lookup.",
             "ERR_WeatherNullPosition=The gis viewer returned a null lat/lon for the center position."
         })
-public final class WeatherMarkerAction implements ActionListener {
+public final class AddWeatherMarkerAction implements ActionListener {
 
     private final Project context;
-    private static final Logger logger = Logger.getLogger(WeatherMarkerAction.class.getName());
+    private static final WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
+    private static final Logger logger = Logger.getLogger(AddWeatherMarkerAction.class.getName());
 
     /**
      * Constructor for a context-sensitive action that requires a Project.
      *
      * @param context
      */
-    public WeatherMarkerAction(Project context) {
+    public AddWeatherMarkerAction(Project context) {
         this.context = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // We'll place the new marker at the center of the viewer
-        Coord3D position = Globe.getInstance().getLocationAtCenter();
-        if (position == null) {
-            logger.severe(Bundle.ERR_WeatherNullPosition());
-            return;
-        }
+        // Create a Wx marker in memory
+        WeatherMarker wxMkr = new WeatherMarker("Wx Marker", GeoCoord3D.INVALID_POSITION);
+        // Position the marker on the globe
+        MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), wxMkr);
+        positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
+                // Abort if the user pressed ESC--the position will be unaltered
+                if (wxMkr.getPosition().equals(GeoCoord3D.INVALID_POSITION)) {
+                    return;
+                }
+                // Edit the marker attributes
+                boolean success = WeatherMarkerEditor.edit(wxMkr, true);
+                if (success) {
+                    // Save the marker into the current project
+                    Writer writer = wxMkr.getLookup().lookup(Writer.class);
+                    writer.folder(MarkerSupport.getFolderFromCurrentProject()).write();
+                }
+            }
+        });
+        // Force keyboard focus to globe
+        wwm.getWorldWindow().requestFocusInWindow();
+        // Invoke the positioner
+        positioner.setArmed(true);
 
-        // Create and edit the marker
-        WeatherMarker marker = new WeatherMarker("Wx Marker", position);
-        boolean success = WeatherMarkerEditor.edit(marker, true);
-        if (success) {
-            // Save the pushpin into the current project 
-            new WeatherMarker.Writer()
-                    .marker(marker)
-                    .folder(MarkerSupport.getFolderFromCurrentProject())
-                    .write();
-        }
     }
 }

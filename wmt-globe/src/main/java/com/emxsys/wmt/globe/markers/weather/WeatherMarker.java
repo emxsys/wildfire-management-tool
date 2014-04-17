@@ -32,36 +32,43 @@ package com.emxsys.wmt.globe.markers.weather;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
+import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;
+import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
 import com.emxsys.wmt.globe.markers.BasicMarker;
-import com.emxsys.wmt.globe.markers.BasicMarkerBuilder;
-import com.emxsys.wmt.globe.markers.BasicMarkerWriter;
+import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.weather.nws.NwsWeatherProvider;
+import com.emxsys.wmt.weather.api.WeatherProvider;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.BalloonAttributes;
-import gov.nasa.worldwind.render.BasicBalloonAttributes;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
-import gov.nasa.worldwind.render.Size;
 import java.awt.Image;
 import java.net.URL;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import visad.Field;
 
 /**
- * This class extends BasicMarker to provide Weather data and symbols.
+ * The WeatherMarker class extends BasicMarker to provide weather data and symbols.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @see BasicMarker
@@ -71,6 +78,8 @@ import visad.Field;
 public class WeatherMarker extends BasicMarker {
 
     private final Field field;
+    private WeatherProvider provider;
+    private WeatherBalloon balloon;
     private Image image;
     private static final Logger logger = Logger.getLogger(WeatherMarker.class.getName());
 
@@ -91,6 +100,9 @@ public class WeatherMarker extends BasicMarker {
         setName(name);
         this.field = field;
 
+        // Add persistance capability
+        getInstanceContent().add(new Writer(this));
+
         // Get the implementation from the super class' lookup
         PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
@@ -98,14 +110,8 @@ public class WeatherMarker extends BasicMarker {
         // Replace the base class implementation
         overrideDefaultAttributes(placemark);
 
-        // Create a balloon renderable
-        WeatherBalloon balloon = makeBrowserBalloon();
-        if (balloon != null) {
-            // The BalloonController looks for this value when an object is clicked.            
-            placemark.setValue(AVKey.BALLOON, balloon);
-            // The MarkerLayer will look for Renderables in the lookup
-            getInstanceContent().add(balloon);
-        }
+        // Must allocate all the renderables now, before the Marker is assigned to a Renderer.
+        makeBrowserBalloon();
     }
 
     private void overrideDefaultAttributes(PointPlacemark placemark) {
@@ -122,10 +128,19 @@ public class WeatherMarker extends BasicMarker {
         attrs.setScale(scale);
         attrs.setImageOffset(new Offset(imageOffsetX, imageOffsetY, AVKey.FRACTION, AVKey.FRACTION));
         attrs.setLabelOffset(new Offset(labelOffsetX, labelOffsetY, AVKey.FRACTION, AVKey.FRACTION));
-        // We'll use a point for the WW symbol.
+        // We'll use a point instead of an icon for the symbol.
         attrs.setUsePointAsDefaultImage(true);
 
         placemark.setAttributes(attrs);
+    }
+
+    public WeatherProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(WeatherProvider provider) {
+        this.provider = provider;
+        this.balloon.setProvider(provider);
     }
 
     /**
@@ -143,36 +158,44 @@ public class WeatherMarker extends BasicMarker {
 
     @Override
     public void setPosition(Coord3D coord) {
-        super.setPosition(coord); 
+        super.setPosition(coord);
         WeatherBalloon balloon = getLookup().lookup(WeatherBalloon.class);
-        if (balloon != null && balloon.isVisible())
-        {
+        if (balloon != null && balloon.isVisible()) {
             balloon.setVisible(false);
         }
     }
 
     @Override
     public void edit() {
-//        if (balloon != null) {
-//            balloon.setVisible(true);
-//        }
+
     }
     // TODO: implmement timer based weather query
 
     // TODO: implement wind barb symbol
-    private WeatherBalloon makeBrowserBalloon() {
+    private void makeBrowserBalloon() {
         try {
-            WeatherBalloon balloon = new WeatherBalloon(Positions.fromCoord3D(getPosition()), NwsWeatherProvider.getInstance());
-            return balloon;
+            // Remove existing balloon
+            if (balloon != null) {
+                getInstanceContent().remove(balloon);
+            }
+            // Create new balloon
+            balloon = new WeatherBalloon(Positions.fromCoord3D(getPosition()), provider);
+            
+            // Attach balloon to this marker
+            if (balloon != null) {
+                PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
+                // The BalloonController looks for this value when an object is clicked.            
+                placemark.setValue(AVKey.BALLOON, balloon);
+                // The MarkerLayer will look for Renderables in the lookup
+                getInstanceContent().add(balloon);
+            }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "callWebService() failed :{0}", e.getMessage());
-            return null;
+            logger.log(Level.SEVERE, "makeBrowserBalloon() failed :{0}", e.getMessage());
         }
     }
 
     /**
      * Gets the class responsible for creating WeatherMarkers from XML Elements.
-     *
      * @return WeatherMarker.Builder.class.
      */
     @Override
@@ -185,7 +208,7 @@ public class WeatherMarker extends BasicMarker {
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
-    public static class Builder extends BasicMarkerBuilder {
+    public static class Builder extends AbstractMarkerBuilder {
 
         public Builder(Document document) {
             super(document);
@@ -203,9 +226,44 @@ public class WeatherMarker extends BasicMarker {
             return initializeFromParameters(marker);
         }
 
+        /**
+         * Initializes the supplied marker with the WeatherProvider property from the XML.
+         * @param marker The WeatherMarker to be initialized.
+         * @return The updated WeatherMarker.
+         */
         @Override
         protected BasicMarker initializeFromXml(BasicMarker marker) {
-            return super.initializeFromXml(marker);
+            // Let the base class do all the heavy lifting
+            WeatherMarker wxMarker = (WeatherMarker) super.initializeFromXml(marker);
+
+            // Now set the marker's WeatherProvider from the XML
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            xpath.setNamespaceContext(MarkerSupport.getNamespaceContext());
+            try {
+                // Get all WeatherProviders in the document [0..1]
+                String providerClass = xpath.evaluate("//"+MKR_PREFIX + ":" + "WeatherProvider", getDocument());
+                if (providerClass == null || providerClass.isEmpty()) {
+                    throw new RuntimeException("WeatherProvider is not defined in XML.");
+                }
+                // Look for the provider on the global lookup.
+                Class<?> clazz = Class.forName(providerClass);
+                Collection<? extends WeatherProvider> allProviders = Lookup.getDefault().lookupAll(WeatherProvider.class);
+                for (WeatherProvider provider : allProviders) {
+                    if (clazz.isInstance(provider)) {
+                        // Found it! Set the marker's Wx Provider
+                        wxMarker.setProvider(provider);
+                        return wxMarker;
+                    }
+                }
+                logger.log(Level.WARNING, "Could not find WeatherProvider for {0}", wxMarker.getName());
+            } catch (XPathExpressionException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ClassNotFoundException ex) {
+                logger.severe(ex.toString());
+            } catch (IllegalStateException ex) {
+                logger.warning(ex.toString());
+            }
+            return wxMarker;
         }
 
         @Override
@@ -218,16 +276,37 @@ public class WeatherMarker extends BasicMarker {
     /**
      * Writer class for writing WeatherMarkers to persistent storage.
      */
-    public static class Writer extends BasicMarkerWriter {
+    public static class Writer extends AbstractMarkerWriter {
 
         // See package-info.java for the declaration of the WeatherMarkerTemplate
         private static final Logger logger = Logger.getLogger(Writer.class.getName());
         private static final String TEMPLATE_CONFIG_FILE = "Templates/Marker/WeatherMarkerTemplate.xml";
         private static DataObject template;
 
+        public Writer(BasicMarker marker) {
+            super(marker);
+        }
+
+        /**
+         * Adds the WeatherProvider node to the Marker node.
+         * @return The updated Document.
+         */
+        @Override
+        protected Document writeDocument() {
+            Document doc = super.writeDocument();
+            NodeList markers = doc.getElementsByTagNameNS(BASIC_MARKER_NS_URI, TAG_MARKER);
+            if (markers.getLength() == 1) {
+                Element mkr = (Element) markers.item(0);
+                Element provider = doc.createElementNS(BASIC_MARKER_NS_URI, MKR_PREFIX + ":" + "WeatherProvider");
+                provider.appendChild(doc.createTextNode(((WeatherMarker) super.getMarker()).getProvider().getClass().getName()));
+                mkr.appendChild(provider);
+            }
+            return doc;
+        }
+
         /**
          * Called by super.createDataObject().
-         * @return
+         * @return A DataObject for WeatherMarkerTemplate.xml
          */
         @Override
         protected DataObject getTemplate() {

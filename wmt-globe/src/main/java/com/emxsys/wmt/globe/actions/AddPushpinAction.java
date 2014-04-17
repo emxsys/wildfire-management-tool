@@ -30,13 +30,18 @@
 package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.markers.MarkerPositioner;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.markers.pushpins.Pushpin;
+import com.emxsys.wmt.globe.markers.pushpins.Pushpin.Writer;
 import com.emxsys.wmt.globe.markers.pushpins.PushpinEditor;
+import com.terramenta.globe.WorldWindManager;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
@@ -78,6 +83,7 @@ public final class AddPushpinAction implements ActionListener {
 
     private static final Logger logger = Logger.getLogger(AddPushpinAction.class.getName());
     private final Project context;
+    private final WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
 
     /**
      * Constructor for a context-sensitive action that requires a Project.
@@ -89,24 +95,30 @@ public final class AddPushpinAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // We'll place the new pushpin at the center of the viewer
-        Coord3D position = Globe.getInstance().getLocationAtCenter();
-        if (position == null) {
-            logger.severe(Bundle.ERR_NullPosition());
-            return;
-        }
-
         // Create a pushpin in memory (not a DataObject)
-        Pushpin pushpin = new Pushpin("Pushpin", position);
+        Pushpin pushpin = new Pushpin("Pushpin", GeoCoord3D.INVALID_POSITION);
+        // Position the marker on the globe
+        MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), pushpin);
+        positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
+                // Abort if the user pressed ESC--the position will be unaltered
+                if (pushpin.getPosition().equals(GeoCoord3D.INVALID_POSITION)) {
+                    return;
+                }
 
-        // Launch the editor in the "new" pushpin mode
-        boolean success = PushpinEditor.edit(pushpin, true);
-        if (success) {
-            // Save the pushpin into the current project 
-            new Pushpin.Writer()   
-                    .marker(pushpin)
-                    .folder(MarkerSupport.getFolderFromCurrentProject())
-                    .write();
-        }
+                // Launch the editor in the "new" pushpin mode
+                boolean success = PushpinEditor.edit(pushpin, true);
+                if (success) {
+                    // Save the pushpin into the current project 
+                    pushpin.getLookup().lookup(Writer.class)
+                            .folder(MarkerSupport.getFolderFromCurrentProject())
+                            .write();
+                }
+            }
+        });
+        // Force keyboard focus to globe
+        wwm.getWorldWindow().requestFocusInWindow();
+        // Invoke the positioner
+        positioner.setArmed(true);
     }
 }
