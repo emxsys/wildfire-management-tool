@@ -31,8 +31,8 @@ package com.emxsys.wmt.weather.api.yahoo;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.ImageUtil;
+import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
 import com.emxsys.wmt.weather.api.Weather;
-import com.emxsys.wmt.weather.api.WeatherProvider;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -41,7 +41,7 @@ import visad.Field;
 /**
  * @author Bruce Schubert
  */
-public class YahooWeatherProvider implements WeatherProvider {
+public class YahooWeatherProvider extends AbstractWeatherProvider {
 
     /** URI for YQL public service. */
     protected static final String PUBLIC_URI = "http://query.yahooapis.com/v1/public/yql?";
@@ -234,19 +234,20 @@ public class YahooWeatherProvider implements WeatherProvider {
      * 3200 	not available
      * </pre>
      */
-    @Override
     public Weather getWeather(Date utcTime, Coord2D coord) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
     public ImageIcon getImageIcon() {
         return ImageUtil.createImageIconFromResource("yql.png", getClass());
         
     }
 
-    @Override
     public Field getPointForecast(Coord2D coord) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public String getPointForecastPage(Coord2D coord) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

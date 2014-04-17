@@ -35,10 +35,10 @@ import com.emxsys.wmt.util.HttpUtil;
 import com.emxsys.wmt.util.ImageUtil;
 import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
-import com.emxsys.wmt.weather.api.Weather;
+import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import static com.emxsys.wmt.weather.api.WeatherType.*;
-import java.io.IOException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -46,7 +46,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +55,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
@@ -74,7 +73,7 @@ import visad.VisADException;
  * @author Bruce Schubert
  */
 @ServiceProvider(service = WeatherProvider.class)
-public class MesoWestWeatherProvider implements WeatherProvider {
+public class MesoWestWeatherProvider extends AbstractWeatherProvider {
 
     /** URI for MesoWest Stations. */
     protected static final String STATIONS_URI = "http://api.mesowest.net/stations?";
@@ -134,7 +133,13 @@ public class MesoWestWeatherProvider implements WeatherProvider {
      */
     static public MesoWestWeatherProvider getInstance() {
         if (instance == null) {
-            return Lookup.getDefault().lookup(MesoWestWeatherProvider.class);
+            // Calls default constructor
+            Lookup.Result<WeatherProvider> result = Lookup.getDefault().lookupResult(WeatherProvider.class);
+            for (Lookup.Item<WeatherProvider> item : result.allItems()) {
+                if (item.getType().equals(MesoWestWeatherProvider.class)){
+                    return (MesoWestWeatherProvider) item.getInstance();
+                }
+            }
         }
         return instance;
     }
@@ -146,17 +151,13 @@ public class MesoWestWeatherProvider implements WeatherProvider {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public MesoWestWeatherProvider() {
-        // Catch the second invocation, which should indicate incorrect usage.
+        // Catches the second invocation, which should indicate incorrect usage.
         if (instance != null) {
             throw new IllegalStateException("Do not call constructor. Use getInstance() or Lookup.");
         }
         instance = this;
     }
 
-    @Override
-    public Weather getWeather(Date utcTime, Coord2D coord) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     /**
      * Gets the latest weather observations within the area of interest.
@@ -173,17 +174,15 @@ public class MesoWestWeatherProvider implements WeatherProvider {
             StringBuilder sb = new StringBuilder();
             sb.append(STATIONS_URI);
             sb.append(query);
-            String urlString = sb.toString();
-
-            logger.info(urlString);
+            URL url = new URL(sb.toString());
+            logger.info(url.toString());
+            
             // Invoke the REST service and get the JSON results
-            String jsonResult = HttpUtil.callWebService(urlString);
+            String jsonResult = HttpUtil.callWebService(url);
+            
             //System.out.println(jsonResult);
             return parseJsonResults(jsonResult);
         
-        } catch (RuntimeException ex) {
-            logger.severe(ex.getMessage());
-            throw ex;
         } catch (Exception ex) {
             logger.severe(ex.getMessage());
             throw new RuntimeException(ex);
@@ -325,8 +324,4 @@ public class MesoWestWeatherProvider implements WeatherProvider {
         return ImageUtil.createImageIconFromResource("images/mesowest.png", getClass());
     }
 
-    @Override
-    public Field getPointForecast(Coord2D coord) {
-        return getLatestWeather(coord, Reals.newDistance(25, GeneralUnit.mile));
-    }
 }

@@ -31,18 +31,20 @@ package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.HttpUtil;
-import com.emxsys.wmt.weather.api.Weather;
+import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
+import com.emxsys.wmt.weather.api.PointForecast;
+import com.emxsys.wmt.weather.api.PointForecastPage;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
 import visad.FlatField;
@@ -115,7 +117,7 @@ import visad.FlatField;
  * @author Bruce Schubert
  */
 @ServiceProvider(service = WeatherProvider.class)
-public class NwsWeatherProvider implements WeatherProvider {
+public class NwsWeatherProvider extends AbstractWeatherProvider {
 
     public static final String IMAGE_ICON_NAME = "nws_logo.png";
     /** URI for MapClick service */
@@ -195,21 +197,15 @@ public class NwsWeatherProvider implements WeatherProvider {
      */
     static public NwsWeatherProvider getInstance() {
         if (instance == null) {
-            return Lookup.getDefault().lookup(NwsWeatherProvider.class);
+            // Calls default constructor
+            Lookup.Result<WeatherProvider> result = Lookup.getDefault().lookupResult(WeatherProvider.class);
+            for (Lookup.Item<WeatherProvider> item : result.allItems()) {
+                if (item.getType().equals(NwsWeatherProvider.class)){
+                    return (NwsWeatherProvider) item.getInstance();
+                }
+            }
         }
         return instance;
-    }
-
-    @Override
-    public ImageIcon getImageIcon() {
-        URL imgURL = getClass().getResource("nws_logo32.png");
-        if (imgURL == null) {
-            logger.warning("Image icon " + IMAGE_ICON_NAME + " was not found on the classpath.");
-            return null;
-        }
-        ImageIcon imageIcon = new ImageIcon(imgURL);
-        imageIcon.setDescription(getClass().getSimpleName());
-        return imageIcon;
     }
 
     /**
@@ -224,14 +220,26 @@ public class NwsWeatherProvider implements WeatherProvider {
             throw new IllegalStateException("Do not call constructor. Use getInstance() or Lookup.");
         }
         instance = this;
+
+        // Initialize the lookup with this provider's capabilities
+        InstanceContent content = getContent();
+        content.add((PointForecast) this::getPointForecast);
+        content.add((PointForecastPage) this::getPointForecastPage);
     }
 
     @Override
-    public Weather getWeather(Date utcTime, Coord2D coord) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ImageIcon getImageIcon() {
+        URL imgURL = getClass().getResource("nws_logo32.png");
+        if (imgURL == null) {
+            logger.warning("Image icon " + IMAGE_ICON_NAME + " was not found on the classpath.");
+            return null;
+        }
+        ImageIcon imageIcon = new ImageIcon(imgURL);
+        imageIcon.setDescription(getClass().getSimpleName());
+        return imageIcon;
     }
 
-    public String getPointForecastPage(Coord2D coord) {
+    private String getPointForecastPage(Coord2D coord) {
         URL logo = getClass().getResource("nws_logo.png");
         URL quick = getClass().getResource("quick.jpg");
         URL svnday = getClass().getResource("7day.jpg");
@@ -248,60 +256,62 @@ public class NwsWeatherProvider implements WeatherProvider {
                 + "<table>\n"
                 + "	<tr>\n"
                 + "		<td rowspan=\"2\" style=\"width: 100px; height: 100px\">\n"
-                + "			<img alt=\"National Weather Service\" height=\"100\" src=\""+logo+"\" width=\"100\" />\n"
+                + "			<img alt=\"National Weather Service\" height=\"100\" src=\"" + logo + "\" width=\"100\" />\n"
                 + "		</td>\n"
-                + "		<th colspan=\"4\">Point Forecast for "+ coord.toString() +"</th>\n"
+                + "		<th colspan=\"4\">Point Forecast for " + coord.toString() + "</th>\n"
                 + "	</tr>\n"
                 + "	<tr>\n"
                 + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\""+QUICK_FORECAST_PAGE+"\"><img alt=\"Quick Forecast\" height=\"45\" src=\""+quick+"\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\""+QUICK_FORECAST_PAGE+"\">Quick Forecast</a></td>\n"
+                + "		<a href=\"" + QUICK_FORECAST_PAGE + "\"><img alt=\"Quick Forecast\" height=\"45\" src=\"" + quick + "\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\"" + QUICK_FORECAST_PAGE + "\">Quick Forecast</a></td>\n"
                 + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\""+SVN_DAY_PRINTABLE_PAGE+"\"><img alt=\"7-Day Forecast\" height=\"45\" src=\""+svnday+"\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\""+SVN_DAY_PRINTABLE_PAGE+"\">7-Day</a></td>\n"
+                + "		<a href=\"" + SVN_DAY_PRINTABLE_PAGE + "\"><img alt=\"7-Day Forecast\" height=\"45\" src=\"" + svnday + "\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\"" + SVN_DAY_PRINTABLE_PAGE + "\">7-Day</a></td>\n"
                 + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\""+HOURLY_GRAPH_PAGE+"\"><img alt=\"Hourly Graph\" height=\"45\" src=\""+hourly+"\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\""+HOURLY_GRAPH_PAGE+"\">Hourly Graph</a></td>\n"
+                + "		<a href=\"" + HOURLY_GRAPH_PAGE + "\"><img alt=\"Hourly Graph\" height=\"45\" src=\"" + hourly + "\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\"" + HOURLY_GRAPH_PAGE + "\">Hourly Graph</a></td>\n"
                 + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\""+TABULAR_PAGE+"\"><img alt=\"Tabular Data\" height=\"45\" src=\""+tabular+"\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\""+TABULAR_PAGE+"\">Tabular Data</a></td>\n"
+                + "		<a href=\"" + TABULAR_PAGE + "\"><img alt=\"Tabular Data\" height=\"45\" src=\"" + tabular + "\" width=\"50\" /></a><br/>\n"
+                + "		<a href=\"" + TABULAR_PAGE + "\">Tabular Data</a></td>\n"
                 + "	</tr>\n"
                 + "</table>\n"
                 + "</body>"
                 + "</html>";
-                
-                String html = String.format(htmlTemplate, coord.getLatitudeDegrees(), coord.getLongitudeDegrees());
-                System.out.println(html);
-                return html;
+
+        String html = String.format(htmlTemplate, coord.getLatitudeDegrees(), coord.getLongitudeDegrees());
+        //System.out.println(html);
+        return html;
     }
 
-    @Override
-    public Field getPointForecast(Coord2D coord) {
-        // Build the query string and URL
-        String pointForecastQuery = String.format(NDFD_POINT_FORECAST,
-                coord.getLatitudeDegrees(),
-                coord.getLongitudeDegrees(),
-                "", // empty = first available time
-                "");    // empty = last available time
-        StringBuilder sb = new StringBuilder();
-        sb.append(NDFD_REST_URI).append(pointForecastQuery);
-        String urlString = sb.toString();
-        System.out.println(urlString);
-
-        // Invoke the REST service and get the JSON results
-        String dwml;
+    private Field getPointForecast(Coord2D coord) {
         try {
-            dwml = HttpUtil.callWebService(urlString);
+            // Build the query string and URL
+            String pointForecastQuery = String.format(NDFD_POINT_FORECAST,
+                    coord.getLatitudeDegrees(),
+                    coord.getLongitudeDegrees(),
+                    "", // empty = first available time
+                    "");    // empty = last available time
+            StringBuilder sb = new StringBuilder();
+            sb.append(NDFD_REST_URI).append(pointForecastQuery);
+            URL url = new URL(sb.toString());
+            //System.out.println(url.toString());
+
+            // Invoke the REST service and get the JSON results
+            String dwml = HttpUtil.callWebService(url);
+
+            // Parse the XML
+            List<FlatField> fields = new DwmlParser(dwml).parse();
+            if (fields.isEmpty()) {
+                return null;
+            }
+            return fields.get(0);
+
+        } catch (MalformedURLException ex) {
+            logger.log(Level.SEVERE, "getPointForecast() failed: {0}", ex.getMessage());
         } catch (IOException ex) {
             logger.log(Level.SEVERE, "callWebService() failed: {0}", ex.getMessage());
-            return null;
         }
-        // Parse the XML
-        List<FlatField> fields = new DwmlParser(dwml).parse();
-        if (fields.isEmpty()) {
-            return null;
-        }
-        return fields.get(0);
+        return null;
     }
 
 }

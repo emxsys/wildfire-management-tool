@@ -30,6 +30,7 @@
 package com.emxsys.wmt.weather.spi;
 
 import com.emxsys.wmt.gis.api.Coord2D;
+import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
 import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import com.emxsys.wmt.weather.api.WeatherTuple;
@@ -44,7 +45,7 @@ import visad.Gridded1DSet;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DefaultWeatherProvider implements WeatherProvider {
+public class DefaultWeatherProvider extends AbstractWeatherProvider {
 
     private static WeatherProvider instance = null;
 
@@ -83,7 +84,6 @@ public class DefaultWeatherProvider implements WeatherProvider {
 //        throw new UnsupportedOperationException("generateWinds");
 //    }
 //
-    @Override
     public Weather getWeather(Date utcTime, Coord2D coord) {
         // TODO: lookup the weather, if not found use general weather
         return new WeatherTuple();
@@ -101,11 +101,6 @@ public class DefaultWeatherProvider implements WeatherProvider {
 
     @Override
     public ImageIcon getImageIcon() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Field getPointForecast(Coord2D coord) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

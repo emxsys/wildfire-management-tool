@@ -31,6 +31,8 @@ package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.wmt.weather.api.PointForecast;
+import com.emxsys.wmt.weather.api.PointForecastPage;
 import com.emxsys.wmt.weather.api.Weather;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -84,38 +86,50 @@ public class NwsWeatherProviderTest {
         // 1st instance tests lookup
         NwsWeatherProvider result = NwsWeatherProvider.getInstance();
         assertNotNull(result);
+        
         // 2nd call of constructor should throw exeception
         exception.expect(IllegalStateException.class);
-        NwsWeatherProvider instance = new NwsWeatherProvider();
+        new NwsWeatherProvider();
     }
 
-    /**
-     * Test of getWeather method, of class NwsWeatherProvider.
-     */
-    @Test
-    public void testGetWeather() {
-        System.out.println("getWeather");
-        //fail("The test case is a prototype.");
-    }
-
-    /**
+     /**
      * Test of getPointForecast method, of class NwsWeatherProvider.
      */
     @Test
     public void testGetPointForecast() throws VisADException, RemoteException {
         System.out.println("getPointForecast");
         NwsWeatherProvider instance = NwsWeatherProvider.getInstance();
-        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        Field pointForecast = instance.getPointForecast(coord);
-        assertNotNull(pointForecast);
+        PointForecast ptFcst = instance.getLookup().lookup(PointForecast.class);
+        assertNotNull(ptFcst);
         
-        System.out.println(pointForecast.getDomainSet().getType());
-        double[][] times = pointForecast.getDomainSet().getDoubles();
+        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
+        Field forecast = ptFcst.getForecast(coord);
+        assertNotNull(forecast);
+        
+        System.out.println(forecast.getDomainSet().getType());
+        double[][] times = forecast.getDomainSet().getDoubles();
         for (double time : times[0]) {
             System.out.println(new DateTime(time));
         }
-        System.out.println(pointForecast.longString());
+        System.out.println(forecast.longString());
 
+    }
+
+    /**
+     * Test of getPointForecastPage method, of class NwsWeatherProvider.
+     */
+    @Test
+    public void testGetPointForecastPage() throws VisADException, RemoteException {
+        System.out.println("getPointForecastPage");
+        NwsWeatherProvider instance = NwsWeatherProvider.getInstance();
+        PointForecastPage ptFcst = instance.getLookup().lookup(PointForecastPage.class);
+        assertNotNull(ptFcst);
+        
+        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
+        String html = ptFcst.getForecastPage(coord);
+        assertNotNull(html);
+        
+        System.out.println(html);
     }
 
 }
