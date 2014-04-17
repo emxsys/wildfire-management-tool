@@ -51,8 +51,6 @@ public class EmxsysWorldWindManager extends WorldWindManager {
 
     public static final String EMXSYS_CONFIG = "modules/worldwind-overrides.xml";
     private static final Preferences prefs = NbPreferences.forModule(GlobeOptions.class);
-    private final SessionState sessionState = new SessionState("." + NbBundle.getBranding());
-    private static final Logger logger = Logger.getLogger(EmxsysWorldWindManager.class.getName());
 
     /**
      * Override WorldWind Configuration Settings with our application defaults while preserving the
@@ -71,31 +69,6 @@ public class EmxsysWorldWindManager extends WorldWindManager {
 
     public EmxsysWorldWindManager() {
         super();
-    }
-
-    @Override
-    public void saveSessionState() {
-        logger.log(Level.INFO, "Saving Session ({0})...", sessionState.getSessionKey());
-        try {
-            sessionState.saveSessionState(getWorldWindow());
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to save session state!", e);
-            return;
-        }
-        logger.info("Session has been saved.");
-    }
-
-    @Override
-    public void restoreSessionState() {
-        logger.info("Restoring Session...");
-        try {
-            sessionState.restoreSessionState(getWorldWindow());
-            getWorldWindow().redraw();
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to restore session state!", e);
-            return;
-        }
-        logger.info("Session has been restored.");
     }
 
 }
