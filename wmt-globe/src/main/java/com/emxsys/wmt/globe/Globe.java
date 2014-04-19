@@ -60,7 +60,6 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.util.BasicDragger;
 import gov.nasa.worldwindx.examples.util.BalloonController;
 import gov.nasa.worldwindx.examples.util.HotSpotController;
 import java.awt.Component;
@@ -94,7 +93,7 @@ public class Globe implements GisViewer {
 
     public static final String GLOBE_TOP_COMPONENT_ID = "GlobeTopComponent";
     private static final Logger logger = Logger.getLogger(Globe.class.getName());
-    private final WorldWindManager wwm = Lookup.getDefault().lookup(WorldWindManager.class);
+    private final EmxsysWorldWindManager wwm = (EmxsysWorldWindManager) Lookup.getDefault().lookup(WorldWindManager.class);
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
     private final GisLayerList gisLayers = new GisLayerList();
@@ -167,18 +166,18 @@ public class Globe implements GisViewer {
         // Disable painting during the initialization
         this.wwm.getWorldWindow().setVisible(false);
 
-        // Create TOC layers
+        // Create table-of-contents layers
         for (BasicLayerGroup layerGroup : BasicLayerGroup.values()) {
             DummyLayer dummyLayer = new DummyLayer(layerGroup);
             this.wwm.getLayers().add(layerGroup.getIndex(), dummyLayer);
             this.gisLayers.add(new GisLayerProxy(dummyLayer));
         }
+        // Add all the map layers
         addAll(BackgroundLayers.getLayers());
         addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
-        addAll(WidgetLayers.getLayers());
-
-        // Some layers provide capabilities. Find them and them to the Globe's lookup.
+        addAll(WidgetLayers.getLayers());        
+        // Some layers provide capabilities. Find them and add them to the Globe's lookup.
         Marker.Renderer markerRenderer = this.gisLayers.getLookup().lookup(Marker.Renderer.class);
         if (markerRenderer != null) {
             this.content.add(markerRenderer);
@@ -189,7 +188,7 @@ public class Globe implements GisViewer {
         }
 
         // Update the UI
-        MarkerTools.getInstance();  // Creates the Marker Tools contextual task pane
+        MarkerTools.getInstance();                      // Creates the Marker Tools contextual task pane
         ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar
 
         this.wwm.getWorldWindow().setVisible(true);
@@ -255,14 +254,14 @@ public class Globe implements GisViewer {
                     throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + "must have a Layer implemenation in its lookup.");
                 }
             }
-            // Don't re-add the layer to WorldWind, just add it to our internal list
+            // Remove preloaded layers from WW so we can reload it the proper position.
             for (Layer l : this.wwm.getLayers()) {
-                if (l.equals(layerImpl)) {
-                    this.gisLayers.add(gisLayer);
-                    return;
+                if (l.getName().equals(layerImpl.getName())) {
+                    this.wwm.getLayers().remove(l);
+                    break;
                 }
             }
-            // Find the layer that marks the position where this layer should be inserted in WorldWind
+            // Now find the TOC layer that marks the position where this layer should be inserted in WorldWind
             int groupLayerPosition = -1;
             boolean foundGroupLayer = false;
             for (Layer l : this.wwm.getLayers()) {
