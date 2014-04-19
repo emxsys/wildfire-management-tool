@@ -56,7 +56,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Markers", id = "com.emxsys.wmt.globe.actions.AddIcsMarkerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/ics/Fire_Origin.png", displayName = "#CTL_AddICSMarkerAction")
 @ActionReference(path = "Toolbars/Create", position = 300)
-@RibbonActionReference(path = "Menu/Insert/Create",
+@RibbonActionReference(path = "Menu/Insert/Markers",
         position = 300,
         priority = "top",
         description = "#CTL_AddICSMarkerAction_Hint",
@@ -68,7 +68,7 @@ import org.openide.util.NbBundle.Messages;
             "CTL_AddICSMarkerAction=ICS Marker",
             "CTL_AddICSMarkerAction_Hint=Adds an ICS Marker to the map.",
             "CTL_AddICSMarkerAction_TooltipTitle=Create ICS Marker",
-            "CTL_AddICSMarkerAction_TooltipBody=Create a new ICS marker at the center of the map.",
+            "CTL_AddICSMarkerAction_TooltipBody=Create a new ICS marker at the location clicked on the globe.",
             "ERR_NoICSMarker_WorldWindNotFound=WorldWind Viewer not found.",
             "ERR_ICSMarkerImageNotFound=Image not found",
             "ERR_ICSMarkerManagerNotFound=A Marker.Renderer was not found in the viewer lookup.",
@@ -102,8 +102,7 @@ public final class AddIcsMarkerAction implements ActionListener {
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), marker);
         positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
-                // Abort if the user pressed ESC--the position will be unaltered
-                if (marker.getPosition().equals(GeoCoord3D.INVALID_POSITION)) {
+                if (positioner.isCanceled()) {
                     return;
                 }
                 // Launch the editor in the "new" marker mode

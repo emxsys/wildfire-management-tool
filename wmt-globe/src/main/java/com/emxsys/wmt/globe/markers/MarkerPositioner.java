@@ -40,6 +40,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 /**
  * The MarkerPositioner will set the position of a marker at a clicked position on the globe.
@@ -53,12 +55,14 @@ public class MarkerPositioner {
     private final WorldWindow wwd;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean armed = false;
+    private boolean canceled = false;
+    private static final ArrayList<WeakReference<MarkerPositioner>> instances = new ArrayList<>();
 
     private final KeyAdapter ka = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent keyEvent) {
             if (armed && keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                setArmed(false);
+                cancel();
             }
         }
     };
@@ -90,15 +94,23 @@ public class MarkerPositioner {
     public MarkerPositioner(final WorldWindow wwd, BasicMarker marker) {
         this.wwd = wwd;
         this.marker = marker;
+//        instances.add(new WeakReference<>(this));
     }
 
     /**
      * Arms and disarms the positioner. When armed, the positioner monitors the cursor position and
      * sets the marker at the clicked position.
-     * @param armed Pass true to arm the positioner, false to disarm it.
+     * @param shouldArm Pass true to arm the positioner, false to disarm it.
      */
-    public void setArmed(boolean armed) {
-        if (armed) {
+    public void setArmed(boolean shouldArm) {
+        if (shouldArm) {
+            // Disarm all other positioners
+//            for (WeakReference<MarkerPositioner> instance : instances) {
+//                MarkerPositioner mp = instance.get();
+//                if (mp != null && mp != this) {
+//                    mp.cancel();
+//                }
+//            }
             this.wwd.getInputHandler().addKeyListener(ka);
             this.wwd.getInputHandler().addMouseListener(ma);
             ((Component) wwd).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -107,7 +119,7 @@ public class MarkerPositioner {
             this.wwd.getInputHandler().removeMouseListener(ma);
             ((Component) wwd).setCursor(Cursor.getDefaultCursor());
         }
-        pcs.firePropertyChange("armed", this.armed, this.armed = armed);
+        pcs.firePropertyChange("armed", armed, armed = shouldArm);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -122,4 +134,12 @@ public class MarkerPositioner {
         this.marker.setPosition(Positions.toGeoCoord3D(curPos));
     }
 
+    public void cancel() {
+        canceled = true;
+        setArmed(false);
+    }
+    
+    public boolean isCanceled() {
+        return canceled;
+    }
 }

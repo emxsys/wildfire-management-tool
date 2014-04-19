@@ -42,12 +42,15 @@ import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.logging.Logger;
+import javafx.beans.value.WeakChangeListener;
 import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.WeakListeners;
 
 /**
  * Creates a new Pushpin marker at the current view location and opens an editor on the new pushpin.
@@ -58,7 +61,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/pushpins/castshadow-green.png",
         displayName = "#CTL_AddPushpinAction")
 @ActionReference(path = "Toolbars/Create", position = 200)
-@RibbonActionReference(path = "Menu/Insert/Create",
+@RibbonActionReference(path = "Menu/Insert/Markers",
         position = 200,
         description = "#CTL_AddPushpinAction_Hint",
         priority = "top",
@@ -72,7 +75,7 @@ import org.openide.util.NbBundle.Messages;
             "CTL_AddPushpinAction=Pushpin",
             "CTL_AddPushpinAction_Hint=Adds a pushpin to the map.",
             "CTL_AddPushpinAction_TooltipTitle=Create Pushpin",
-            "CTL_AddPushpinAction_TooltipBody=Create a new pushpin at the center of the map.",
+            "CTL_AddPushpinAction_TooltipBody=Create a new pushpin at the clicked location on the globe.",
             "ERR_NoPushpin_WorldWindNotFound=WorldWind Viewer not found.",
             "ERR_PushpinImageNotFound=Image not found",
             "ERR_PushpinManagerNotFound=A Marker.Renderer was not found in the viewer lookup.",
@@ -97,15 +100,14 @@ public final class AddPushpinAction implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         // Create a pushpin in memory (not a DataObject)
         Pushpin pushpin = new Pushpin("Pushpin", GeoCoord3D.INVALID_POSITION);
-        // Position the marker on the globe
+
+        // Position the marker on the globe where clicked. The positioner is released on click or ESC.
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), pushpin);
-        positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+        PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
             if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
-                // Abort if the user pressed ESC--the position will be unaltered
-                if (pushpin.getPosition().equals(GeoCoord3D.INVALID_POSITION)) {
+                if (positioner.isCanceled()) {
                     return;
                 }
-
                 // Launch the editor in the "new" pushpin mode
                 boolean success = PushpinEditor.edit(pushpin, true);
                 if (success) {
@@ -115,7 +117,9 @@ public final class AddPushpinAction implements ActionListener {
                             .write();
                 }
             }
-        });
+        };
+        positioner.addPropertyChangeListener(WeakListeners.propertyChange(listener, positioner));
+
         // Force keyboard focus to globe
         wwm.getWorldWindow().requestFocusInWindow();
         // Invoke the positioner

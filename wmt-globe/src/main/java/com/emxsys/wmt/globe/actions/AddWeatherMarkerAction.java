@@ -55,7 +55,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Markers", id = "com.emxsys.wmt.globe.actions.AddWeatherMarkerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/weather/sun_clouds.png", displayName = "#CTL_AddWeatherMarkerAction")
 @ActionReference(path = "Toolbars/Create", position = 300)
-@RibbonActionReference(path = "Menu/Insert/Create",
+@RibbonActionReference(path = "Menu/Insert/Markers",
         position = 300,
         priority = "top",
         description = "#CTL_AddWeatherMarkerAction_Hint",
@@ -67,7 +67,7 @@ import org.openide.util.NbBundle.Messages;
             "CTL_AddWeatherMarkerAction=Weather Marker",
             "CTL_AddWeatherMarkerAction_Hint=Adds an Weather Marker to the map.",
             "CTL_AddWeatherMarkerAction_TooltipTitle=Create Weather Marker",
-            "CTL_AddWeatherMarkerAction_TooltipBody=Create a new Weather marker at the center of the map.",
+            "CTL_AddWeatherMarkerAction_TooltipBody=Create a new Weather marker at the location clicked on the globe.",
             "ERR_NoWeatherMarker_WorldWindNotFound=WorldWind Viewer not found.",
             "ERR_WeatherMarkerImageNotFound=Image not found",
             "ERR_WeatherMarkerManagerNotFound=A Marker.Renderer was not found in the viewer lookup.",
@@ -96,8 +96,7 @@ public final class AddWeatherMarkerAction implements ActionListener {
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), wxMkr);
         positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
-                // Abort if the user pressed ESC--the position will be unaltered
-                if (wxMkr.getPosition().equals(GeoCoord3D.INVALID_POSITION)) {
+                if (positioner.isCanceled()) {
                     return;
                 }
                 // Edit the marker attributes
