@@ -30,6 +30,7 @@
 package com.emxsys.wmt.core.ribbon;
 
 import com.terramenta.ribbon.api.RibbonPreferences;
+import com.terramenta.ribbon.spi.Office2013CompactRibbonPreferences;
 import com.terramenta.ribbon.spi.Office2013RibbonPreferences;
 import com.terramenta.ribbon.spi.RibbonPreferencesProvider;
 import java.net.URL;
@@ -39,7 +40,6 @@ import org.openide.util.lookup.ServiceProvider;
  * Service Provider for Ribbon preferences.
  * <p>
  * @author Bruce Schubert
- * @version $Id$
  */
 @ServiceProvider(service = com.terramenta.ribbon.spi.RibbonPreferencesProvider.class)
 public class EmxsysRibbonPreferencesProvider extends RibbonPreferencesProvider {
@@ -51,16 +51,16 @@ public class EmxsysRibbonPreferencesProvider extends RibbonPreferencesProvider {
 
     @Override
     public String getDescription() {
-        return "Customizations for the Office 2013 Ribbon look and feel.";
+        return "Customizations for the Office 2013 Compact Ribbon look and feel.";
     }
 
     @Override
     public URL getPreview() {
-        return Office2013RibbonPreferences.class.getResource("/com/terramenta/ribbon/images/preview-office2013.png");
+        return Office2013RibbonPreferences.class.getResource("/com/terramenta/ribbon/images/preview-office2013-compact.png");
     }
 
-    private class EmxsysRibbonPreferences extends Office2013RibbonPreferences {
-        // TODO: override the predefined preferences
+    private class EmxsysRibbonPreferences extends Office2013CompactRibbonPreferences {
+
     };
 
     private RibbonPreferences preferences;

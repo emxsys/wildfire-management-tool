@@ -152,7 +152,14 @@
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Rotate"/>
             </folder>              
         </folder>
+        <folder name="Tools">
+            <folder name="Create">
+                <file name="com-terramenta-globe-actions-ScreenShotAction.shadow_hidden"/>
+            </folder>
+            <file name="org-netbeans-modules-templates-actions-TemplatesAction.shadow_hidden"/>
+        </folder>
         <folder name="Window">
+            <file name="GroupsMenuAction.shadow_hidden"/>
             <folder name="Show">
                 <!--Start/Welcome Page -->
                 <file name="com-emxsys-welcome-ShowWelcomeAction.shadow">

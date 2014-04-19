@@ -51,26 +51,26 @@ import org.openide.windows.WindowManager;
         category = "Screenshot",
         id = "com.emxsys.wmt.core.actions.ScreenshotWindowAction")
 @ActionRegistration(
-        iconBase = "com/emxsys/wmt/core/images/photo_camera.png",
+        iconBase = "com/emxsys/wmt/core/images/screenshot.png",
         displayName = "#CTL_ScreenshotWindowAction")
 @ActionReference(path = "Toolbars/Create", position = 0)
-@RibbonActionReference(path = "Menu/Home/Create/Screenshot",
+@RibbonActionReference(path = "Menu/Tools/Create/Screenshot",
         position = 200,
         priority = "top",
         menuText = "#CTL_ScreenshotWindowAction_Text",
         description = "#CTL_ScreenshotWindowAction_Hint",
         tooltipTitle = "#CTL_ScreenshotWindowAction_TooltipTitle",
         tooltipBody = "#CTL_ScreenshotWindowAction_TooltipBody",
-        tooltipIcon = "com/emxsys/basicui/resoures/window32.png",
+        tooltipIcon = "com/emxsys/wmt/core/images/window32.png",
         tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
         tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
-            "CTL_ScreenshotWindowAction=Capture Window",
+            "CTL_ScreenshotWindowAction=Screenshot Window",
             "CTL_ScreenshotWindowAction_Text=Of Current Window",
-            "CTL_ScreenshotWindowAction_Hint=Creates a screenshot",
+            "CTL_ScreenshotWindowAction_Hint=Creates a screenshot of the current Window",
             "CTL_ScreenshotWindowAction_TooltipTitle=Screenshot of Window",
-            "CTL_ScreenshotWindowAction_TooltipBody=Capture a screenshot of the active window and save it to a file."
+            "CTL_ScreenshotWindowAction_TooltipBody=Capture a screenshot of the active window and saves it to a file."
         })
 public final class ScreenshotWindowAction implements ActionListener {
 

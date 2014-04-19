@@ -49,27 +49,27 @@ import org.openide.windows.WindowManager;
         category = "Screenshot",
         id = "com.emxsys.wmt.core.actions.ScreenshotApplicationAction")
 @ActionRegistration(
-        iconBase = "com/emxsys/wmt/core/images/photo_camera.png",
+        iconBase = "com/emxsys/wmt/core/images/screenshot.png",
         displayName = "#CTL_ScreenshotApplicationAction")
 @ActionReference(path = "Toolbars/Create", position = 0)
-@RibbonActionReference(path = "Menu/Home/Create/Screenshot",
-        defaultAction = true,
+@RibbonActionReference(path = "Menu/Tools/Create/Screenshot",
+        defaultAction = true, 
         position = 100,
         priority = "top",
         menuText = "#CTL_ScreenshotApplicationAction_Text",
         description = "#CTL_ScreenshotApplicationAction_Hint",
         tooltipTitle = "#CTL_ScreenshotApplicationAction_TooltipTitle",
         tooltipBody = "#CTL_ScreenshotApplicationAction_TooltipBody",
-        tooltipIcon = "com/emxsys/basicui/resoures/application32.png",
+        tooltipIcon = "com/emxsys/wmt/core/images/application32.png",
         tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
         tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
-            "CTL_ScreenshotApplicationAction=Capture Application",
+            "CTL_ScreenshotApplicationAction=Screenshot Application",
             "CTL_ScreenshotApplicationAction_Text=Of Application",
-            "CTL_ScreenshotApplicationAction_Hint=Creates a screenshot",
+            "CTL_ScreenshotApplicationAction_Hint=Creates a screenshot of the application",
             "CTL_ScreenshotApplicationAction_TooltipTitle=Screenshot of Application",
-            "CTL_ScreenshotApplicationAction_TooltipBody=Capture a screenshot of the application and save it to a file."
+            "CTL_ScreenshotApplicationAction_TooltipBody=Capture a screenshot of the application and saves it to a file."
         })
 public final class ScreenshotApplicationAction implements ActionListener {
 
