@@ -254,10 +254,12 @@ public class Globe implements GisViewer {
                     throw new IllegalStateException("addGisLayer() layer " + gisLayer.getName() + "must have a Layer implemenation in its lookup.");
                 }
             }
-            // Remove preloaded layers from WW so we can reload it the proper position.
+            // Remove preloaded layers (by SessionState) so we can reload it the proper position.
             for (Layer l : this.wwm.getLayers()) {
                 if (l.getName().equals(layerImpl.getName())) {
                     this.wwm.getLayers().remove(l);
+                    // Override the enabled setting with the SessionState setting
+                    layerImpl.setEnabled(l.isEnabled());
                     break;
                 }
             }
