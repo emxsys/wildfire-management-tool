@@ -67,6 +67,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     }
 
     public DefaultTimeProvider() {
+        getDateProvider();
     }
 
     private DateProvider getDateProvider() {
@@ -103,6 +104,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     public void update(Observable dateProvider, Object date) {
         Date oldTime = curTime;
         curTime = (Date) date;
+        //System.out.println("update:" + curTime.toString());
         TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
         for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {
             listener.updateTime(timeEvent);
