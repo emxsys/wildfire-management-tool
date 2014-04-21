@@ -30,20 +30,19 @@
 package com.emxsys.wmt.weather.api;
 
 import com.emxsys.wmt.gis.api.Coord2D;
-import visad.Field;
 
 /**
- * A functional interface that provides a point weather forecast.
+ * A capability interface that provides a point weather forecast.
  * @author Bruce Schubert
  */
-public interface PointForecast {
+public interface PointForecastPresenter {
 
     /**
-     * Gets a point forecast for the given position.
+     * Gets a point forecast web presentation for the given position.
      * 
      * @param coord The position for the forecast
-     * @return A VisAD field in the form ( Time -> ( Weather ) )
+     * @return An HTML web page
      */
-    public Field getForecast(Coord2D coord);
+    public String getPresentation(Coord2D coord);
 
 }

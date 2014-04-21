@@ -32,8 +32,8 @@ package com.emxsys.wmt.weather.nws;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.util.HttpUtil;
 import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
-import com.emxsys.wmt.weather.api.PointForecast;
-import com.emxsys.wmt.weather.api.PointForecastPage;
+import com.emxsys.wmt.weather.api.PointForecaster;
+import com.emxsys.wmt.weather.api.PointForecastPresenter;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -223,8 +223,8 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
 
         // Initialize the lookup with this provider's capabilities
         InstanceContent content = getContent();
-        content.add((PointForecast) this::getPointForecast);
-        content.add((PointForecastPage) this::getPointForecastPage);
+        content.add((PointForecaster) this::getPointForecast);
+        content.add((PointForecastPresenter) this::getPointForecastPage);
     }
 
     @Override
