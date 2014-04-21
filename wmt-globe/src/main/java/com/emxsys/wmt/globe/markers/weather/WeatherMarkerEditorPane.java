@@ -31,7 +31,7 @@ package com.emxsys.wmt.globe.markers.weather;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.globe.markers.weather.*;
-import com.emxsys.wmt.weather.api.PointForecast;
+import com.emxsys.wmt.weather.api.PointForecaster;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import java.awt.Component;
@@ -78,8 +78,8 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
         providers = new WeatherProvider[allProviders.size()];
         int i = 0;
         for (WeatherProvider p : allProviders) {
-            // TODO: Load only providers that support a PointForecast
-            PointForecast forecast = p.getLookup().lookup(PointForecast.class);
+            // TODO: Load only providers that support a PointForecaster
+            PointForecaster forecast = p.getLookup().lookup(PointForecaster.class);
             //if (forecast != null) 
             {
                 intArray[i] = i;

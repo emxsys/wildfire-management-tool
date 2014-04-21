@@ -37,14 +37,17 @@ import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.GlobeTopComponent;
 import com.terramenta.globe.dnd.Draggable;
+import com.terramenta.globe.utilities.DateBasedVisibilitySupport;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
+import gov.nasa.worldwind.render.PreRenderable;
 import java.awt.Component;
 import java.awt.Image;
 import java.net.MalformedURLException;
@@ -75,7 +78,7 @@ public class BasicMarker extends AbstractMarker {
     private static MarkerSelectListener selectListener = null;
     private String markerID;
     private boolean movable = true;
-    private PointPlacemarkAdapter impl;
+    private Placemark impl;
     private Image image = null;
     private Node node = null;
     private final Object imageLock = new Object();
@@ -86,16 +89,18 @@ public class BasicMarker extends AbstractMarker {
 
     /**
      * Implementation class overrides move operations to keep the BasicMarker position synchronized
-     * with the implementation position.
+     * with the implementation position. The PreRenderable interface works with the Terramenta Time
+     * module to provide visibility/style based on date/time
      *
-     * @author Bruce
+     * @author Bruce Schubert
      */
-    private class PointPlacemarkAdapter extends PointPlacemark implements Draggable {
+    protected class Placemark extends PointPlacemark implements Draggable, PreRenderable {
 
         GeoCoord3D syncPosition;
         BasicMarker owner;
+        PreRenderable preRenderDelegate;
 
-        PointPlacemarkAdapter(Position position, BasicMarker owner) {
+        Placemark(Position position, BasicMarker owner) {
             super(position);
             this.owner = owner;
             this.syncPosition = Positions.toGeoCoord3D(position);
@@ -155,19 +160,29 @@ public class BasicMarker extends AbstractMarker {
          */
         @Override
         public void setPosition(Position position) {
-                syncPosition = Positions.toGeoCoord3D(position);
-                super.setPosition(position); 
-                owner.setPosition(syncPosition);
+            syncPosition = Positions.toGeoCoord3D(position);
+            super.setPosition(position);
+            owner.setPosition(syncPosition);
         }
-        
-        
+
+        @Override
+        public void preRender(DrawContext dc) {
+            if (preRenderDelegate==null) {
+                return;
+            }
+            preRenderDelegate.preRender(dc);
+        }
+
+        public void setPreRenderableDelegate(PreRenderable delegate) {
+            this.preRenderDelegate = delegate;
+        }
     }
 
     /**
      * Constructor with an invalid position.
      */
     public BasicMarker() {
-        this(GeoCoord3D.INVALID_POSITION);        
+        this(GeoCoord3D.INVALID_POSITION);
     }
 
     /**
@@ -176,7 +191,7 @@ public class BasicMarker extends AbstractMarker {
      */
     public BasicMarker(Coord3D coord) {
         super.setPosition(coord);
-        this.impl = new PointPlacemarkAdapter(Positions.fromCoord3D(coord), this);
+        this.impl = new Placemark(Positions.fromCoord3D(coord), this);
         this.markerID = UUID.randomUUID().toString();
 
         // Add the renderable to the lookup so the MarkerLayer can find it and render it.
@@ -387,8 +402,8 @@ public class BasicMarker extends AbstractMarker {
      */
     protected static class MarkerSelectListener implements SelectListener {
 
-        private PointPlacemarkAdapter lastPickedPlacemark = null;
-        private PointPlacemarkAdapter lastSelectedPlacemark = null;
+        private Placemark lastPickedPlacemark = null;
+        private Placemark lastSelectedPlacemark = null;
 
         /**
          * Defers attaching the MarkerSelectListener to the WorldWindow view until the UI is ready.
@@ -443,8 +458,8 @@ public class BasicMarker extends AbstractMarker {
                 this.lastPickedPlacemark = null;
             }
             // Turn on highlight for pushpins when they are selected.
-            if (obj instanceof PointPlacemarkAdapter) {
-                this.lastPickedPlacemark = (PointPlacemarkAdapter) obj;
+            if (obj instanceof Placemark) {
+                this.lastPickedPlacemark = (Placemark) obj;
                 this.lastPickedPlacemark.setHighlighted(true);
             }
         }
@@ -464,8 +479,8 @@ public class BasicMarker extends AbstractMarker {
                 this.lastSelectedPlacemark = null;
             }
 
-            if (obj instanceof PointPlacemarkAdapter) {
-                this.lastSelectedPlacemark = (PointPlacemarkAdapter) obj;
+            if (obj instanceof Placemark) {
+                this.lastSelectedPlacemark = (Placemark) obj;
                 this.lastSelectedPlacemark.owner.setSelected(true);
             }
         }
@@ -476,8 +491,8 @@ public class BasicMarker extends AbstractMarker {
          */
         protected void openMarker(SelectEvent event) {
             // Only one option, so invoke it instead of showing menu...
-            if ((event.getTopObject() instanceof PointPlacemarkAdapter)) {
-                PointPlacemarkAdapter placemark = (PointPlacemarkAdapter) event.getTopObject();
+            if ((event.getTopObject() instanceof Placemark)) {
+                Placemark placemark = (Placemark) event.getTopObject();
                 placemark.owner.edit();
             }
 
@@ -489,8 +504,8 @@ public class BasicMarker extends AbstractMarker {
          */
         protected void showContextMenu(SelectEvent event) {
             // Only one option, so invoke it instead of showing menu...
-            if ((event.getTopObject() instanceof PointPlacemarkAdapter)) {
-                PointPlacemarkAdapter placemark = (PointPlacemarkAdapter) event.getTopObject();
+            if ((event.getTopObject() instanceof Placemark)) {
+                Placemark placemark = (Placemark) event.getTopObject();
                 Node node = placemark.owner.node;
                 if (node != null) {
                     JPopupMenu contextMenu = node.getContextMenu();

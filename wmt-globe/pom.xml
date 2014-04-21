@@ -95,6 +95,11 @@
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>
+            <artifactId>terramenta-time</artifactId>
+            <groupId>com.terramenta</groupId>
+            <version>${terramenta.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>worldwind</artifactId>
             <groupId>gov.nasa</groupId>
             <version>1.5.1</version>
@@ -193,11 +198,7 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-weather-nws</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
     </dependencies>
 
     <build>

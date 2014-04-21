@@ -76,7 +76,7 @@ public class WeatherMarkerEditor {
             if (wxMarker.isMovable() != dialog.isMovable()) {
                 wxMarker.setMovable(dialog.isMovable());
             }           
-            wxMarker.setProvider(dialog.getWeatherProvider());
+            wxMarker.setWeatherProvider(dialog.getWeatherProvider());
             
             return true;
         }

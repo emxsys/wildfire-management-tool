@@ -38,15 +38,22 @@ import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
 import com.emxsys.wmt.globe.markers.BasicMarker;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.util.Positions;
+import com.emxsys.wmt.time.api.TimeEvent;
+import com.emxsys.wmt.time.api.TimeListener;
+import com.emxsys.wmt.time.api.TimeProvider;
+import com.emxsys.wmt.weather.api.PointForecaster;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
+import gov.nasa.worldwind.render.PreRenderable;
 import java.awt.Image;
 import java.net.URL;
-import java.util.Collection;
+import java.rmi.RemoteException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -62,10 +69,15 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
+import org.openide.util.RequestProcessor;
+import org.openide.util.WeakListeners;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import visad.DateTime;
 import visad.Field;
+import visad.RealTuple;
+import visad.VisADException;
 
 /**
  * The WeatherMarker class extends BasicMarker to provide weather data and symbols.
@@ -77,14 +89,102 @@ import visad.Field;
     "CTL_WeatherDialogTitle=Edit Weather Marker",})
 public class WeatherMarker extends BasicMarker {
 
-    private final Field field;
-    private WeatherProvider provider;
-    private WeatherBalloon balloon;
-    private Image image;
     private static final Logger logger = Logger.getLogger(WeatherMarker.class.getName());
+    private Field forecast;
+    private Image image;
+    private Placemark placemark;
+    private WeatherProvider wxProvider;
+    private WeatherBalloon balloon;
+    private Loader loader = new Loader(this);
+    private Updater updater = new Updater(this);
+    private PreRenderable preRenderDelegate = new PreRenderable() {
+        @Override
+        public void preRender(DrawContext dc) {
+//            if (dc != null && placemark.hasKey("DISPLAY_DATE") && dc.hasKey("DISPLAY_DATEINTERVAL")) {
+//                Date displayDate = (Date) placemark.getValue("DISPLAY_DATE");
+//                DateInterval displayDateInterval = (DateInterval) dc.getValue("DISPLAY_DATEINTERVAL");
+//
+//                if (displayDate != null && displayDateInterval != null) {
+//                    //does this displayDate exist within the displayDateInterval?
+//                    long displayDateMillis = displayDate.getTime();
+//                    //return (displayDateMillis >= displayDateInterval.getStartMillis() && displayDateMillis <= displayDateInterval.getEndMillis()) ? true : false;
+//                }
+//            }
+        }
+    };
 
     static {
         logger.setLevel(Level.ALL);
+    }
+
+    /**
+     * An Executor for processing TimeEvents in a sliding task.
+     */
+    private static class Updater implements TimeListener, Runnable {
+
+        private static final RequestProcessor processor = new RequestProcessor(WeatherMarker.class);
+        private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
+        private final AtomicReference<TimeEvent> lastEvent = new AtomicReference<>(new TimeEvent(this, null, null));
+        private final WeatherMarker marker;
+
+        Updater(WeatherMarker marker) {
+            this.marker = marker;
+        }
+
+        @Override
+        public void updateTime(TimeEvent evt) {
+            // Sliding task: coallese the update events into fixed intervals
+            this.lastEvent.set(evt);
+            if (this.updatingTask.isFinished()) {
+                this.updatingTask.schedule(1000);
+            }
+        }
+
+        @Override
+        public void run() {
+            TimeEvent event = this.lastEvent.get();
+            if (event == null) {
+                return;
+            }
+            if (marker.forecast == null) {
+                return;
+            }
+            try {
+                RealTuple wx = (RealTuple) marker.forecast.evaluate(new DateTime(event.getNewTime()));
+                double[] values = wx.getValues();
+                marker.placemark.setLabelText(wx.isMissing() ? "missing" : String.format("T: %1$.0f, RH: %2$.0f", values[0], values[1]));
+            } catch (VisADException | RemoteException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
+    /**
+     * An Executor for loading weather forecasts.
+     */
+    private static class Loader implements Runnable {
+
+        private static final RequestProcessor processor = new RequestProcessor(WeatherMarker.class);
+        private final RequestProcessor.Task loadingTask = processor.create(this, true); // true = initiallyFinished
+        private final WeatherMarker marker;
+
+        Loader(WeatherMarker marker) {
+            this.marker = marker;
+        }
+
+        public void loadWeatherForecast() {
+            processor.post(this);
+        }
+
+        @Override
+        public void run() {
+            PointForecaster forecaster = marker.getProvider().getLookup().lookup(PointForecaster.class);
+            if (forecaster == null) {
+                logger.warning("No point forecaster available.");
+                return;
+            }
+            marker.forecast = forecaster.getForecast(marker.getPosition());
+        }
     }
 
     WeatherMarker() {
@@ -93,28 +193,31 @@ public class WeatherMarker extends BasicMarker {
 
     public WeatherMarker(String name, Coord3D location) {
         this(name, location, null, null);
+
     }
 
     public WeatherMarker(String name, Coord3D location, Field field, URL moreInfo) {
         super(location);
         setName(name);
-        this.field = field;
+        this.forecast = field;
+        this.placemark = getLookup().lookup(Placemark.class);
+
+        // Initialize renderables
+        initializePlacemark();
+        initializeBrowserBalloon();
+
+        // Listen to the application time
+        TimeProvider tp = Lookup.getDefault().lookup(TimeProvider.class);
+        tp.addTimeListener(WeakListeners.create(TimeListener.class, updater, tp));
 
         // Add persistance capability
         getInstanceContent().add(new Writer(this));
-
-        // Get the implementation from the super class' lookup
-        PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
-        placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
-
-        // Replace the base class implementation
-        overrideDefaultAttributes(placemark);
-
-        // Must allocate all the renderables now, before the Marker is assigned to a Renderer.
-        makeBrowserBalloon();
     }
 
-    private void overrideDefaultAttributes(PointPlacemark placemark) {
+    private void initializePlacemark() {
+        placemark.setPreRenderableDelegate(preRenderDelegate);
+        placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);  // CLAMP_TO_GROUND, RELATIVE_TO_GROUND or ABSOLUTE
+
         Preferences pref = NbPreferences.forModule(getClass());
         double scale = pref.getDouble("weather_marker.scale", 10.0);
         double imageOffsetX = pref.getDouble("weather_marker.image_offset_x", 0.0);
@@ -135,11 +238,11 @@ public class WeatherMarker extends BasicMarker {
     }
 
     public WeatherProvider getProvider() {
-        return provider;
+        return wxProvider;
     }
 
-    public void setProvider(WeatherProvider provider) {
-        this.provider = provider;
+    public void setWeatherProvider(WeatherProvider provider) {
+        this.wxProvider = provider;
         this.balloon.setProvider(provider);
     }
 
@@ -172,15 +275,15 @@ public class WeatherMarker extends BasicMarker {
     // TODO: implmement timer based weather query
 
     // TODO: implement wind barb symbol
-    private void makeBrowserBalloon() {
+    private void initializeBrowserBalloon() {
         try {
             // Remove existing balloon
             if (balloon != null) {
                 getInstanceContent().remove(balloon);
             }
             // Create new balloon
-            balloon = new WeatherBalloon(Positions.fromCoord3D(getPosition()), provider);
-            
+            balloon = new WeatherBalloon(Positions.fromCoord3D(getPosition()), wxProvider);
+
             // Attach balloon to this marker
             if (balloon != null) {
                 PointPlacemark placemark = getLookup().lookup(PointPlacemark.class);
@@ -204,11 +307,13 @@ public class WeatherMarker extends BasicMarker {
     }
 
     /**
-     * Builder for creating WeatherMarkers.
+     * Builder class used for creating WeatherMarkers.
      *
      * @author Bruce Schubert <bruce@emxsys.com>
      */
     public static class Builder extends AbstractMarkerBuilder {
+
+        private WeatherProvider provider;
 
         public Builder(Document document) {
             super(document);
@@ -217,13 +322,24 @@ public class WeatherMarker extends BasicMarker {
         public Builder() {
         }
 
+        public WeatherProvider getWeatherProvider() {
+            return provider;
+        }
+
+        public Builder weatherProvider(WeatherProvider provider) {
+            this.provider = provider;
+            return this;
+        }
+
         @Override
         public Marker build() {
-            BasicMarker marker = new WeatherMarker();
+            WeatherMarker marker = new WeatherMarker();
             if (getDocument() != null) {
-                marker = initializeFromXml(marker);
+                marker = initializeWxFromXml(marker);
             }
-            return initializeFromParameters(marker);
+            marker = initializeWxFromParameters(marker);
+            marker.loader.loadWeatherForecast();
+            return marker;
         }
 
         /**
@@ -231,44 +347,46 @@ public class WeatherMarker extends BasicMarker {
          * @param marker The WeatherMarker to be initialized.
          * @return The updated WeatherMarker.
          */
-        @Override
-        protected BasicMarker initializeFromXml(BasicMarker marker) {
+        protected WeatherMarker initializeWxFromXml(WeatherMarker marker) {
             // Let the base class do all the heavy lifting
-            WeatherMarker wxMarker = (WeatherMarker) super.initializeFromXml(marker);
+            super.initializeFromXml(marker);
 
             // Now set the marker's WeatherProvider from the XML
             XPath xpath = XPathFactory.newInstance().newXPath();
             xpath.setNamespaceContext(MarkerSupport.getNamespaceContext());
             try {
-                // Get all WeatherProviders in the document [0..1]
-                String providerClass = xpath.evaluate("//"+MKR_PREFIX + ":" + "WeatherProvider", getDocument());
+                // Get the WeatherProvider class name defined in the document [0..1]
+                String providerClass = xpath.evaluate("//" + MKR_PREFIX + ":" + "WeatherProvider", getDocument());
                 if (providerClass == null || providerClass.isEmpty()) {
                     throw new RuntimeException("WeatherProvider is not defined in XML.");
                 }
-                // Look for the provider on the global lookup.
-                Class<?> clazz = Class.forName(providerClass);
-                Collection<? extends WeatherProvider> allProviders = Lookup.getDefault().lookupAll(WeatherProvider.class);
-                for (WeatherProvider provider : allProviders) {
-                    if (clazz.isInstance(provider)) {
-                        // Found it! Set the marker's Wx Provider
-                        wxMarker.setProvider(provider);
-                        return wxMarker;
+                // Look for the WeatherProvider instance on the global lookup.
+                Lookup.Result<WeatherProvider> result = Lookup.getDefault().lookupResult(WeatherProvider.class);
+                for (Lookup.Item<WeatherProvider> item : result.allItems()) {
+                    if (item.getType().getName().equals(providerClass)) {
+                        // Found it! Set the marker's wx provider.
+                        marker.setWeatherProvider(item.getInstance());
+                        return marker;
                     }
                 }
-                logger.log(Level.WARNING, "Could not find WeatherProvider for {0}", wxMarker.getName());
+                logger.log(Level.WARNING, "Could not find WeatherProvider for {0}", marker.getName());
             } catch (XPathExpressionException ex) {
                 Exceptions.printStackTrace(ex);
-            } catch (ClassNotFoundException ex) {
-                logger.severe(ex.toString());
             } catch (IllegalStateException ex) {
                 logger.warning(ex.toString());
             }
-            return wxMarker;
+            return marker;
         }
 
-        @Override
-        protected BasicMarker initializeFromParameters(BasicMarker marker) {
-            return super.initializeFromParameters(marker);
+        protected WeatherMarker initializeWxFromParameters(WeatherMarker marker) {
+            super.initializeFromParameters(marker);
+            if (provider != null) {
+                if (getDocument() != null) {
+                    logger.log(Level.INFO, "Overriding the WeatherProvider set by XML document for {0}.", marker.getName());
+                }
+                marker.setWeatherProvider(provider);
+            }
+            return marker;
         }
 
     }
@@ -319,6 +437,5 @@ public class WeatherMarker extends BasicMarker {
             }
             return template;
         }
-
     }
 }
