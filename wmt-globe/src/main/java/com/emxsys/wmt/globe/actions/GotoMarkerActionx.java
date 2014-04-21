@@ -45,9 +45,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Goto", id = "com.emxsys.wmt.globe.actions.GotoMarkerAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/world_pushpin.png",
-        displayName = "#CTL_GotoAction")
-
+@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/world_pushpin.png", displayName = "#CTL_GotoAction")
 // Note, this action registered in a contextual ribbon task pane instead of the general Menu system.
 // See layer.xml in this module.
 @RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/View",
@@ -66,11 +64,11 @@ import org.openide.util.NbBundle.Messages;
             "CTL_GotoAction_TooltipTitle=Center On Marker",
             "CTL_GotoAction_TooltipBody=Centers the globe on the currently selected marker."
         })
-public final class GotoMarkerAction implements ActionListener {
+public final class GotoMarkerActionx implements ActionListener {
 
     private final BasicMarker context;
 
-    public GotoMarkerAction(BasicMarker context) {
+    public GotoMarkerActionx(BasicMarker context) {
         this.context = context;
     }
 
