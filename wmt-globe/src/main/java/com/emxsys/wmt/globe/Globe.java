@@ -48,6 +48,8 @@ import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.emxsys.wmt.globe.ribbons.MarkerTools;
+import com.emxsys.wmt.globe.ribbons.SceneTools;
+import com.emxsys.wmt.globe.scenes.BasicScene;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
@@ -161,6 +163,7 @@ public class Globe implements GisViewer {
         this.content.add(DefaultTimeProvider.getInstance());
         this.content.add(DefaultSunlightProvider.getInstance());
         this.content.add(DefaultWeatherProvider.getInstance());
+        this.content.add(BasicScene.SceneFactory.getInstance());
         this.wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization
@@ -176,7 +179,8 @@ public class Globe implements GisViewer {
         addAll(BackgroundLayers.getLayers());
         addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
-        addAll(WidgetLayers.getLayers());        
+        addAll(WidgetLayers.getLayers());
+        
         // Some layers provide capabilities. Find them and add them to the Globe's lookup.
         Marker.Renderer markerRenderer = this.gisLayers.getLookup().lookup(Marker.Renderer.class);
         if (markerRenderer != null) {
@@ -188,7 +192,8 @@ public class Globe implements GisViewer {
         }
 
         // Update the UI
-        MarkerTools.getInstance();                      // Creates the Marker Tools contextual task pane
+        MarkerTools.getInstance();  // Creates the Marker Tools contextual task pane
+        SceneTools.getInstance();   // Creates the Scene Tools contextual task pane
         ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar
 
         this.wwm.getWorldWindow().setVisible(true);
