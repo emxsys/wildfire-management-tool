@@ -163,7 +163,6 @@ public class Globe implements GisViewer {
         this.content.add(DefaultTimeProvider.getInstance());
         this.content.add(DefaultSunlightProvider.getInstance());
         this.content.add(DefaultWeatherProvider.getInstance());
-        this.content.add(BasicScene.SceneFactory.getInstance());
         this.wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization
