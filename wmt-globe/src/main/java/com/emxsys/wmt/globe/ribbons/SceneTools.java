@@ -5,7 +5,7 @@
  */
 package com.emxsys.wmt.globe.ribbons;
 
-import com.emxsys.wmt.globe.markers.BasicMarker;
+import com.emxsys.wmt.globe.scenes.BasicSceneNode;
 import com.terramenta.ribbon.RibbonManager;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -16,36 +16,35 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbon;
 import org.pushingpixels.flamingo.api.ribbon.RibbonContextualTaskGroup;
 
 /**
- * The MarkerTools instance listens for the existence of a BasicMarkerNode object on the lookup, and
- * if found it displays the "Marker Tools" contextual task group.
+ * The SceneTools instance listens for the existence of a BasicSceneNode object on the lookup, and
+ * if found it displays the "Scene Tools" contextual task group.
  * <p>
  * NOTE: The singleton must be instantiated for this contextual menu to work. You should call
- * {@code MarkerTools.getInstance()} in the {@code Globe.initializeResources()} body.
+ * {@code SceneTools.getInstance()} in the Globe {@code initializeResources()} body.
  * <p>
- * See the {@code Ribbon/TaskPanes/MarkerTools} folder in {@code layer.xml} and
- * {@code generated-layer.xml} for content.
+ * See the {@code Ribbon/TaskPanes/SceneTools} folder in {@code layer.xml} and {@code generated-layer.xml} for content.
  * 
-* @author Bruce Schubert
+ * @author Bruce Schubert
  */
 @Messages({
-    "CTL_MarkerTools=Marker Tools"
+    "CTL_SceneTools=Scene Tools"
 })
-public final class MarkerTools implements LookupListener {
+public final class SceneTools implements LookupListener {
 
     private RibbonContextualTaskGroup taskGroup;
-    private final Lookup.Result<BasicMarker> lookupResult;
+    private final Lookup.Result<BasicSceneNode> lookupResult;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    private MarkerTools() {
+    private SceneTools() {
         // Initilize the lookup listener
-        this.lookupResult = Utilities.actionsGlobalContext().lookupResult(BasicMarker.class);
+        this.lookupResult = Utilities.actionsGlobalContext().lookupResult(BasicSceneNode.class);
         this.lookupResult.addLookupListener(this);
         // Trigger initial show/hide
         resultChanged(null);
     }
 
     /**
-     * Enables the task group if a single BasicMarkerNode is in the lookup.
+     * Enables the task group if a single BasicSceneNode is in the lookup.
      * @param ev ignored
      */
     @Override
@@ -65,7 +64,7 @@ public final class MarkerTools implements LookupListener {
 
     private RibbonContextualTaskGroup getTaskGroup() {
         if (this.taskGroup == null) {
-            this.taskGroup = RibbonUtil.getContextualTaskGroup(Bundle.CTL_MarkerTools());
+            this.taskGroup = RibbonUtil.getContextualTaskGroup(Bundle.CTL_SceneTools());
         }
         return this.taskGroup;
     }
@@ -74,13 +73,13 @@ public final class MarkerTools implements LookupListener {
      * Gets the singleton instance.
      * @return singleton
      */
-    public static MarkerTools getInstance() {
-        return MarkerToolsHolder.INSTANCE;
+    public static SceneTools getInstance() {
+        return SceneToolsHolder.INSTANCE;
     }
 
-    private static class MarkerToolsHolder {
+    private static class SceneToolsHolder {
 
-        private static final MarkerTools INSTANCE = new MarkerTools();
+        private static final SceneTools INSTANCE = new SceneTools();
     }
 
 }
