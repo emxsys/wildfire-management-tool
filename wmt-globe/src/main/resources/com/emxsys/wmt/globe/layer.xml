@@ -8,11 +8,45 @@
                 <attr name="menuText" stringvalue="Marker"/>
                 <attr name="position" intvalue="1000"/> 
                 <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_MarkerTools"/>
-                <!--<attr name="contextualTaskGroup" stringvalue="Marker Tools"/>-->
                     
                 <folder name="Edit">
                     <attr name="position" intvalue="100"/>
                     <attr name="menuText" stringvalue="Edit"/>
+                </folder> 
+                <folder name="View">
+                    <attr name="position" intvalue="200"/>
+                    <attr name="menuText" stringvalue="View"/>
+                </folder> 
+            </folder>
+            <!-- Scene Tools - CONTEXTUAL TAB -->
+            <folder name="SceneTools">
+                <attr name="menuText" stringvalue="Scene"/>
+                <attr name="position" intvalue="1000"/> 
+                <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_SceneTools"/>
+                    
+                <folder name="Edit">
+                    <attr name="position" intvalue="100"/>
+                    <attr name="menuText" stringvalue="Change"/>
+                    <file name="com-emxsys-wmt-globe-scene-rename.instance">
+                        <attr name="instanceClass" stringvalue="org.openide.actions.RenameAction"/>
+                        <attr name="displayName" stringvalue="Rename"/>
+                        <attr name="description" stringvalue="Rename the selected scene."/>
+                        <attr name="tooltipTitle" stringvalue="Rename Scene"/>
+                        <attr name="tooltipBody" stringvalue="Renames the scene using an editor."/>
+                        <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/edit32.png"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/edit.png"/>    
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                    <file name="com-emxsys-wmt-globe-scene-delete.instance">
+                        <attr name="instanceClass" stringvalue="org.openide.actions.DeleteAction"/>
+                        <attr name="displayName" stringvalue="Delete"/>
+                        <attr name="description" stringvalue="Delete the selected scene."/>
+                        <attr name="tooltipTitle" stringvalue="Delete Scene"/>
+                        <attr name="tooltipBody" stringvalue="Deletes the selected scene after confirmation."/>
+                        <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/delete32.png"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/delete.png"/>    
+                        <attr name="position" intvalue="200"/>
+                    </file>
                 </folder> 
                 <folder name="View">
                     <attr name="position" intvalue="200"/>
