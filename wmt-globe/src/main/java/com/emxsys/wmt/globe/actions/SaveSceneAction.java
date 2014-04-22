@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.gis.api.scene.Scene;
 import com.emxsys.wmt.gis.api.scene.Scene.Factory;
+import com.emxsys.wmt.globe.scenes.BasicScene;
 import com.emxsys.wmt.util.ProjectUtil;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
@@ -80,9 +81,9 @@ import org.openide.util.NbBundle.Messages;
 public final class SaveSceneAction implements ActionListener {
 
     private static final Logger LOG = Logger.getLogger(SaveSceneAction.class.getName());
-    private final Factory context;
+    private final Project context;
 
-    public SaveSceneAction(Factory context) {
+    public SaveSceneAction(Project context) {
         this.context = context;
     }
 
@@ -94,7 +95,8 @@ public final class SaveSceneAction implements ActionListener {
                 throw new IllegalStateException(Bundle.ERR_ProjectRequired());
             }
             // Record the viewer's contents in a scene
-            Scene scene = context.createScene();
+            BasicScene.SceneFactory factory = BasicScene.SceneFactory.getInstance();
+            Scene scene = factory.createScene();
             if (scene == null) {
                 throw new IllegalStateException(Bundle.ERR_NullScene());
             }
@@ -107,7 +109,7 @@ public final class SaveSceneAction implements ActionListener {
             Object retval = DialogDisplayer.getDefault().notify(d);
             if (retval == NotifyDescriptor.OK_OPTION) {
                 scene.setName(d.getInputText());
-                this.context.createDataObject(scene, null); // null > create in current project
+                factory.createDataObject(scene, null); // null > create in current project
             }
         } catch (IllegalStateException e) {
             LOG.warning(e.getMessage());

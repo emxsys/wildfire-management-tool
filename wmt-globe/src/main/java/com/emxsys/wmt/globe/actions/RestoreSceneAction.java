@@ -95,11 +95,7 @@ import org.openide.util.Utilities;
 public final class RestoreSceneAction implements ActionListener {
 
     private static final Logger LOG = Logger.getLogger(RestoreSceneAction.class.getName());
-//    private final Project context;
-//
-//    public RestoreSceneAction(Project context) {
-//        this.context = context;
-//    }
+
 
     @Override
     public void actionPerformed(ActionEvent ev) {
