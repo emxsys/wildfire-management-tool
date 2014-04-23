@@ -30,6 +30,9 @@
 package com.emxsys.wmt.globe.ribbons;
 
 import com.terramenta.ribbon.RibbonManager;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
 import org.openide.util.Lookup;
 import org.pushingpixels.flamingo.api.ribbon.JRibbon;
 import org.pushingpixels.flamingo.api.ribbon.RibbonContextualTaskGroup;
@@ -39,7 +42,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonContextualTaskGroup;
  * @author Bruce Schubert
  */
 public class RibbonUtil {
-
+    private static final Logger logger = Logger.getLogger(RibbonUtil.class.getName());
     /**
      * Gets the contextual task group with the given title.
      * @param groupTitle The title of the group to locate (case insensitive).
@@ -48,7 +51,8 @@ public class RibbonUtil {
     public static RibbonContextualTaskGroup getContextualTaskGroup(String groupTitle) {
         JRibbon ribbon = Lookup.getDefault().lookup(RibbonManager.class).getRibbon();
         if (ribbon == null) {
-            throw new IllegalStateException("Ribbon cannot be null.");
+            logger.log(WARNING,"getContextualTaskGroup({0}) failed. The Ribbon is null.", groupTitle);
+            return null;
         }
         // Find the named task group
         for (int i = 0; i < ribbon.getContextualTaskGroupCount(); i++) {
@@ -57,6 +61,7 @@ public class RibbonUtil {
                 return group;
             }
         }
+        logger.log(SEVERE,"getContextualTaskGroup({0}) failed. Cannot find task pane titled {0}.", groupTitle);
         return null;
     }
 
