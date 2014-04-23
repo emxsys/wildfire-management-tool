@@ -42,46 +42,46 @@ import org.openide.windows.TopComponent;
  * Top component which displays something.
  */
 @ConvertAsProperties(
-        dtd = "-//com.emxsys.wmt.cps//CpsForces//EN",
+        dtd = "-//com.emxsys.wmt.cps//PrimaryForces//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "CpsForcesTopComponent",
+        preferredID = "PrimaryForcesTopComponent",
         iconBase = "com/emxsys/wmt/cps/images/cps-icon.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.CpsForcesTopComponent")
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.PrimaryForcesTopComponent")
 @RibbonActionReference(path = "Menu/Window/Show",
         position = 200,
         priority = "top",
-        description = "#CTL_CpsForcesAction_Hint",
-        tooltipTitle = "#CTL_CpsForcesAction_TooltipTitle",
-        tooltipBody = "#CTL_CpsForcesAction_TooltipBody",
+        description = "#CTL_PrimaryForcesAction_Hint",
+        tooltipTitle = "#CTL_PrimaryForcesAction_TooltipTitle",
+        tooltipBody = "#CTL_PrimaryForcesAction_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/cps/images/cps-icon32.png")
-//        tooltipFooter = "#CTL_CpsForcesAction_TooltipFooter",
+//        tooltipFooter = "#CTL_PrimaryForcesAction_TooltipFooter",
 //        tooltipFooterIcon = "com/terramenta/images/help.png")
 @Messages({
-    "CTL_CpsForcesTopComponent=Primary Forces",
-    "CTL_CpsForcesTopComponent_Hint=This is CPS Primary Forces window.",
-    "CTL_CpsForcesAction=CPS Forces",
-    "CTL_CpsForcesAction_Hint=Show the Primary Forces.",
-    "CTL_CpsForcesAction_TooltipTitle=Show Primary Forces",
-    "CTL_CpsForcesAction_TooltipBody=Activates the Primary Forces used for visualizing "
+    "CTL_PrimaryForcesTopComponent=Primary Forces",
+    "CTL_PrimaryForcesTopComponent_Hint=The CPS Primary Forces window.",
+    "CTL_PrimaryForcesAction=Primary Forces",
+    "CTL_PrimaryForcesAction_Hint=Show the CPS Primary Forces.",
+    "CTL_PrimaryForcesAction_TooltipTitle=Show CPS Primary Forces",
+    "CTL_PrimaryForcesAction_TooltipBody=Activates the Primary Forces window used for visualizing "
     + "the primary forces influencing fire behavior.",
-    "CTL_CpsForcesAction_TooltipFooter=Press F1 for more help."
+    "CTL_PrimaryForcesAction_TooltipFooter=Press F1 for more help."
 })
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_CpsForcesAction",
-        preferredID = "CpsForcesTopComponent"
+        displayName = "#CTL_PrimaryForcesAction",
+        preferredID = "PrimaryForcesTopComponent"
 )
-public final class CpsForcesTopComponent extends TopComponent {
+public final class PrimaryForcesTopComponent extends TopComponent {
 
-    public CpsForcesTopComponent() {
+    public PrimaryForcesTopComponent() {
         initComponents();
         initializeResources();
-        setName(Bundle.CTL_CpsForcesTopComponent());
-        setToolTipText(Bundle.CTL_CpsForcesTopComponent_Hint());
+        setName(Bundle.CTL_PrimaryForcesTopComponent());
+        setToolTipText(Bundle.CTL_PrimaryForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
     }
