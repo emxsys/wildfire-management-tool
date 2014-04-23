@@ -57,7 +57,7 @@ import org.openide.util.Utilities;
  */
 @ActionID(category = "Scenes", id = "com.emxsys.wmt.globe.actions.RestoreSceneAction")
 @ActionRegistration(displayName = "#CTL_RestoreSceneAction",
-        iconBase = "com/emxsys/wmt/core/images/image_accept.png",
+        iconBase = "com/emxsys/wmt/globe/images/restore-globe.png",
         surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Find", position = 300)
 @RibbonActionReferences({
@@ -67,7 +67,7 @@ import org.openide.util.Utilities;
             description = "#CTL_RestoreSceneAction_Hint",
             tooltipTitle = "#CTL_RestoreSceneAction_TooltipTitle",
             tooltipBody = "#CTL_RestoreSceneAction_TooltipBody",
-            tooltipIcon = "com/emxsys/wmt/core/images/image_accept32.png"),
+            tooltipIcon = "com/emxsys/wmt/core/images/restore-globe32.png"),
 //                       tooltipFooter = "com.emxsys.wmt.globe.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
     @RibbonActionReference(path = "Ribbon/TaskPanes/SceneTools/View",
@@ -76,7 +76,7 @@ import org.openide.util.Utilities;
             description = "#CTL_RestoreSceneAction_Hint",
             tooltipTitle = "#CTL_RestoreSceneAction_TooltipTitle",
             tooltipBody = "#CTL_RestoreSceneAction_TooltipBody",
-            tooltipIcon = "com/emxsys/wmt/core/images/image_accept32.png")
+            tooltipIcon = "com/emxsys/wmt/globe/images/restore-globe32.png")
 //                       tooltipFooter = "com.emxsys.wmt.globe.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 })

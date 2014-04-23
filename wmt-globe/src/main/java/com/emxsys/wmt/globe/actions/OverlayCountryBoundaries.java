@@ -54,7 +54,7 @@ import org.openide.util.NbBundle.Messages;
         priority = "top",
         tooltipTitle = "#CTL_CountryBoundaries_TooltipTitle",
         tooltipBody = "#CTL_CountryBoundaries_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/globe.png")
+        tooltipIcon = "com/emxsys/wmt/globe/images/show-borders32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
@@ -68,7 +68,7 @@ public final class OverlayCountryBoundaries extends AbstractGisLayerToggleAction
 
     private static final Logger logger = Logger.getLogger(OverlayCountryBoundaries.class.getName());
     private static final String OVERLAY_NAME = OverlayLayers.LAYER_COUNTRY_BOUNDARIES;
-    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/globe.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/show-borders.png";
 
     public OverlayCountryBoundaries() {
         // The base class will use the layer's display name to find the GisLayer that will be operated on.

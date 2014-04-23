@@ -45,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(category = "Goto", id = "com.emxsys.wmt.globe.actions.GotoMarkerAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/world_pushpin.png", displayName = "#CTL_GotoAction")
+@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/goto-location.png", displayName = "#CTL_GotoAction")
 // Note, this action registered in a contextual ribbon task pane instead of the general Menu system.
 // See layer.xml in this module.
 @RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/View",
@@ -54,7 +54,7 @@ import org.openide.util.NbBundle.Messages;
         description = "#CTL_GotoAction_Hint",
         tooltipTitle = "#CTL_GotoAction_TooltipTitle",
         tooltipBody = "#CTL_GotoAction_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/world_pushpin32.png")
+        tooltipIcon = "com/emxsys/wmt/globe/images/goto-location32.png")
 //        tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
 //        tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(

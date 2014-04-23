@@ -54,7 +54,7 @@ import org.openide.util.NbBundle.Messages;
         priority = "top",
         tooltipTitle = "#CTL_PlaceNames_TooltipTitle",
         tooltipBody = "#CTL_PlaceNames_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/images/globe.png")
+        tooltipIcon = "com/emxsys/wmt/globe/images/show-placenames32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages({
@@ -68,7 +68,7 @@ public final class OverlayPlaceNames extends AbstractGisLayerToggleAction {
 
     private static final Logger logger = Logger.getLogger(OverlayPlaceNames.class.getName());
     private static final String OVERLAY_NAME = OverlayLayers.LAYER_PLACE_NAMES;
-    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/globe.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/show-placenames.png";
 
     public OverlayPlaceNames() {
         // The base class will use the layer's display name to find the GisLayer that will be operated on.

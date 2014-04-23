@@ -53,7 +53,7 @@ import org.openide.util.NbBundle.Messages;
  * @version $Id: SaveSceneAction.java 440 2012-12-12 13:09:59Z bdschubert $
  */
 @ActionID(category = "Scenes", id = "com.emxsys.wmt.globe.actions.SaveSceneAction")
-@ActionRegistration(iconBase = "com/emxsys/wmt/core/images/image_add.png",
+@ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/save-globe.png",
         displayName = "#CTL_SaveSceneAction", surviveFocusChange = true)
 @ActionReference(path = "Toolbars/Create", position = 100)
 @RibbonActionReference(path = "Menu/Home/Manage",
@@ -62,7 +62,7 @@ import org.openide.util.NbBundle.Messages;
         description = "#CTL_SaveSceneAction_Hint",
         tooltipTitle = "#CTL_SaveSceneAction_TooltipTitle",
         tooltipBody = "#CTL_SaveSceneAction_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/core/images/image_add32.png")
+        tooltipIcon = "com/emxsys/wmt/globe/images/save-globe32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages(

@@ -57,7 +57,7 @@ import org.openide.util.NbBundle.Messages;
         priority = "top",
         tooltipTitle = "#CTL_Markers_TooltipTitle",
         tooltipBody = "#CTL_Markers_TooltipBody",
-        tooltipIcon = "com/emxsys/wmt/globe/markers/pushpins/plain-black.png")
+        tooltipIcon = "com/emxsys/wmt/globe/images/placemark-group-blue32.png")
 //                       tooltipFooter = "com.emxsys.basicui.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/basicui/resources/help.png")
 @Messages(
@@ -72,7 +72,7 @@ public final class OverlayMarkers extends AbstractGisLayerToggleAction {
 
     private static final Logger logger = Logger.getLogger(OverlayMarkers.class.getName());
     private static final String OVERLAY_NAME = OverlayLayers.LAYER_MARKERS;
-    private static final String ICON_BASE = "com/emxsys/wmt/globe/markers/pushpins/plain-black.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/globe/images/placemark-group-blue.png";
 
     public OverlayMarkers() {
         // The base class will use the layer's display name to find the GisLayer that will be operated on.
