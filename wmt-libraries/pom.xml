@@ -74,6 +74,40 @@
                 <version>2.5.1</version>
                 <executions>
                     <execution>
+                        <id>install-jfreechart-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/jfreechart/jfreechart-1.0.14.jar</file>
+                            <sources>${project.basedir}/src/main/repository/jfreechart/jfreechart-src.jar</sources>
+                            <javadoc>${project.basedir}/src/main/repository/jfreechart/jfreechart-doc.jar</javadoc>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>org.jfree</groupId>
+                            <artifactId>jfreechart</artifactId>
+                            <version>1.0.14</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jcommon-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/jcommon/jcommon-1.0.17.jar</file>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>org.jfree</groupId>
+                            <artifactId>jcommon</artifactId>
+                            <version>1.0.17</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-visad-library</id>
                         <phase>install</phase>
                         <goals>
