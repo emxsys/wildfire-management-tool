@@ -52,7 +52,7 @@ import org.openide.util.Exceptions;
 import visad.*;
 
 /**
- * A reference to this object can be obtained via SunlightFactory.getInstance();
+ * A reference to this object can be obtained via SunlightProvider.getInstance();
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: RothermelSunlightFactory.java 675 2013-05-24 20:05:05Z bdschubert $
@@ -62,6 +62,11 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
     private static final Logger logger = Logger.getLogger(RothermelSolarFactory.class.getName());
 
     public RothermelSolarFactory() {
+    }
+
+    @Override
+    public Real getSolarTime(Real longitude, Date utcTime) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

@@ -65,4 +65,13 @@ public interface SunlightProvider {
      */
     SunlightHours getSunlightHours(Real latitude, Date utcTime);
 
+    /**
+     * Constructs a new SunlightHours object for a given longitude and date.
+     *
+     * @param longitude angular degrees west/east
+     * @param utcTime a UTC date/time
+     * @return The solar hour for the given utcTime as a SolarType.SOLAR_HOUR
+     */
+    Real getSolarTime(Real longitude, Date utcTime);
+
 }

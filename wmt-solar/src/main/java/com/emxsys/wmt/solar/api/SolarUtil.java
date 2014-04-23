@@ -270,7 +270,7 @@ public class SolarUtil {
      * @param clockTime
      * @param lonTzStdMer is the longitude of time zone's meridian
      * @param lonActualLoc is the longitude of the actual location
-     * @param dstMins
+     * @param dstMins 
      * @return solar hour
      */
     public static double LocalSolarTimeFromClockTime(Date clockTime,
