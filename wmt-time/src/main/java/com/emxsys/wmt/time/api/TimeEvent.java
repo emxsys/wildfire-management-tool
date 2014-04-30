@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.time.api;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.EventObject;
 
 /**
@@ -39,21 +39,21 @@ import java.util.EventObject;
  */
 public class TimeEvent extends EventObject {
 
-    private final Date oldTime;
-    private final Date newTime;
+    private final ZonedDateTime oldTime;
+    private final ZonedDateTime newTime;
 
-    public TimeEvent(Object source, Date oldTime, Date newTime) {
+    public TimeEvent(Object source, ZonedDateTime oldTime, ZonedDateTime newTime) {
         super(source);
         this.oldTime = oldTime;
         this.newTime = newTime;
     }
 
-    public Date getNewTime() {
+    public ZonedDateTime getNewTime() {
         return newTime;
     }
 
     ;
-    public Date getOldTime() {
+    public ZonedDateTime getOldTime() {
         return oldTime;
     }
 

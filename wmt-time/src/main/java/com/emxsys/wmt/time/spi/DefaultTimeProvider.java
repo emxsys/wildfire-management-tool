@@ -33,6 +33,8 @@ import com.emxsys.wmt.time.api.TimeEvent;
 import com.emxsys.wmt.time.api.TimeListener;
 import com.emxsys.wmt.time.api.TimeProvider;
 import com.terramenta.time.DateProvider;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
@@ -41,7 +43,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * DefaultTimeProvider provides the central time for the application.
+ * DefaultTimeProvider provides the central time for the application as provided by Terramenta.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -51,7 +53,8 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     static TimeProvider instance = null;
     private final EventListenerList listenerList = new EventListenerList();
     private DateProvider dateProvider;
-    private Date curTime;
+    private ZonedDateTime curTime;
+    private final ZoneId UTC_ZONE = ZoneId.of("UTC");
 
     public static TimeProvider getInstance() {
         if (instance == null) {
@@ -81,13 +84,14 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     }
 
     @Override
-    public Date getTime() {
+    public ZonedDateTime getTime() {
         return curTime;
     }
 
     @Override
-    public void setTime(Date utcTime) {
-        getDateProvider().setDate(utcTime);
+    public void setTime(ZonedDateTime utcTime) {
+        // Update Terramenta
+        getDateProvider().setDate(Date.from(utcTime.toInstant()));
     }
 
     @Override
@@ -102,8 +106,8 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
 
     @Override
     public void update(Observable dateProvider, Object date) {
-        Date oldTime = curTime;
-        curTime = (Date) date;
+        ZonedDateTime oldTime = curTime;
+        curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), UTC_ZONE);
         //System.out.println("update:" + curTime.toString());
         TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
         for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {

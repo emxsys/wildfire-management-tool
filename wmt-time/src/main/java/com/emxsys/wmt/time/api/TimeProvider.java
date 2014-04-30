@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.time.api;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * TimeProvider is an interface for a service that provides the central time for WMT.
@@ -42,14 +42,14 @@ public interface TimeProvider {
      * Gets the current time for the application.
      * @return the current time
      */
-    Date getTime();
+    ZonedDateTime getTime();
 
     /**
      * Sets the time for the application.
      *
      * @param time current time
      */
-    void setTime(Date time);
+    void setTime(ZonedDateTime time);
 
     /**
      * Registers a TimeListener on this provider. The listener will be notified when the time
