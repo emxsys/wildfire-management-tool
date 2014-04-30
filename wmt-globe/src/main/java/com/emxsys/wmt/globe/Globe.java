@@ -33,6 +33,7 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.GeoSector;
+import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
@@ -49,7 +50,6 @@ import com.emxsys.wmt.globe.layers.OverlayLayers;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.emxsys.wmt.globe.ribbons.MarkerTools;
 import com.emxsys.wmt.globe.ribbons.SceneTools;
-import com.emxsys.wmt.globe.scenes.BasicScene;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
@@ -179,7 +179,7 @@ public class Globe implements GisViewer {
         addAll(BaseMapLayers.getLayers());
         addAll(OverlayLayers.getLayers());
         addAll(WidgetLayers.getLayers());
-        
+
         // Some layers provide capabilities. Find them and add them to the Globe's lookup.
         Marker.Renderer markerRenderer = this.gisLayers.getLookup().lookup(Marker.Renderer.class);
         if (markerRenderer != null) {
@@ -199,6 +199,15 @@ public class Globe implements GisViewer {
         this.initialized = true;
     }
 
+    
+    /**
+     * Gets the Globe's ShadedTerrainProvider.
+     * @return The GlobeTerrainProvider instance.
+     */
+    public ShadedTerrainProvider getShadedTerrainProvider() {
+        return getLookup().lookup(GlobeTerrainProvider.class);
+    }
+        
     /**
      * Get the Globe's lookup which actually a proxy for the WorldWindManager's lookup.
      * @return the WorldWindManager's lookup.
