@@ -36,7 +36,6 @@ import java.awt.GradientPaint;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import org.jfree.chart.ChartPanel;
@@ -74,18 +73,15 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.StandardGradientPaintTransformer;
 import org.jfree.ui.TextAnchor;
 
-
 /**
  * Utility class for assiting in setting up JFreeChart instances
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: ChartUtil.java 315 2012-10-20 13:42:54Z bdschubert $
  */
-public class ChartUtil
-{
+public class ChartUtil {
 
-    private ChartUtil()
-    {
+    private ChartUtil() {
     }
     /**
      * Long line without arrowhead
@@ -118,17 +114,13 @@ public class ChartUtil
     public static final int ARROW_NEEDLE = 8;
     public static final int MIDDLE_PIN_NEEDLE = 9;
 
-
-    public static JFreeChart createCommonCompassChart(String title, String subTitle)
-    {
+    public static JFreeChart createCommonCompassChart(String title, String subTitle) {
         return createCommonCompassChart(title, subTitle, WIND_NEEDLE, Color.red);
     }
 
-
     @SuppressWarnings("unchecked")
     public static JFreeChart createCommonCompassChart(String title, String subTitle, int needleType,
-        Color roseColor)
-    {
+                                                      Color roseColor) {
 
         ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
         CompassPlot plot = new CompassPlot(dataset);
@@ -145,18 +137,15 @@ public class ChartUtil
         // Set the chart title ...
         chart.setTitle(title);
         // ... and subtitle(s)
-        if (subTitle != null)
-        {
+        if (subTitle != null) {
             chart.addSubtitle(new TextTitle(subTitle));
         }
         //ChartUtilities.applyCurrentTheme(chart);
         return chart;
     }
 
-
     @SuppressWarnings("unchecked")
-    public static JFreeChart createCommonDialChart(String title, String subTitle)
-    {
+    public static JFreeChart createCommonDialChart(String title, String subTitle, int minScale, int maxScale) {
 
         ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
         // get data for diagrams
@@ -173,15 +162,14 @@ public class ChartUtil
         plot.setDialFrame(dialFrame);
 
         GradientPaint gp = new GradientPaint(new Point(),
-            new Color(255, 255, 255), new Point(),
-            new Color(240, 240, 240));
+                new Color(255, 255, 255), new Point(),
+                new Color(240, 240, 240));
         DialBackground sdb = new DialBackground(gp);
         sdb.setGradientPaintTransformer(new StandardGradientPaintTransformer(
-            GradientPaintTransformType.VERTICAL));
+                GradientPaintTransformType.VERTICAL));
         plot.addLayer(sdb);
 
-//        StandardDialScale scale = new StandardDialScale(0, 100, 2, 45,
-        StandardDialScale scale = new StandardDialScale(0, 50, -8, 16.0, 10.0, 4);
+        StandardDialScale scale = new StandardDialScale(minScale, maxScale, -8, 16.0, 10.0, 4);
         scale.setTickRadius(0.82);
         scale.setTickLabelOffset(-0.04);
         scale.setMajorTickIncrement(25.0);
@@ -196,19 +184,16 @@ public class ChartUtil
         // Set the chart title ...
         chart.setTitle(title);
         // ... and subtitle(s)
-        if (subTitle != null)
-        {
-            List subTitles = new ArrayList();
+        if (subTitle != null) {
+            ArrayList<TextTitle> subTitles = new ArrayList<>();
             subTitles.add(new TextTitle(subTitle));
             chart.setSubtitles(subTitles);
         }
         return chart;
     }
 
-
     @SuppressWarnings("unchecked")
-    public static JFreeChart createCommonWebChart(String title, String subTitle, int numCategories)
-    {
+    public static JFreeChart createCommonWebChart(String title, String subTitle, int numCategories) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         SpiderWebPlot plot = new SpiderWebPlot(dataset);
         // Offset the first category to the NE instead of at directly at 3:00
@@ -221,18 +206,15 @@ public class ChartUtil
         LegendTitle legend = new LegendTitle(plot);
         legend.setPosition(RectangleEdge.BOTTOM);
         chart.addSubtitle(legend);
-        if (subTitle != null)
-        {
+        if (subTitle != null) {
             chart.addSubtitle(new TextTitle(subTitle));
         }
         return chart;
     }
 
-
     public static JFreeChart createWindChart(
-        VectorXYDataset dataset, Date sunset[], Date sunrise[],
-        String title, String timeAxisLabel, String valueAxisLabel)
-    {
+            VectorXYDataset dataset, Date sunset[], Date sunrise[],
+            String title, String timeAxisLabel, String valueAxisLabel) {
 
         ValueAxis timeAxis = new DateAxis(timeAxisLabel);
         timeAxis.setLowerMargin(0.02);  // reduce the default margins
@@ -241,8 +223,8 @@ public class ChartUtil
         NumberAxis valueAxis = new NumberAxis(valueAxisLabel);
         valueAxis.setAutoRangeIncludesZero(false);  // override default
 
-        XYToolTipGenerator toolTipGenerator =
-            StandardXYToolTipGenerator.getTimeSeriesInstance();
+        XYToolTipGenerator toolTipGenerator
+                = StandardXYToolTipGenerator.getTimeSeriesInstance();
 
         VectorRenderer renderer = new VectorRenderer();
         renderer.setBaseToolTipGenerator(toolTipGenerator);
@@ -257,11 +239,11 @@ public class ChartUtil
 
         // Create date/time intervals for deliniating between day and night
         plot.addDomainMarker(createIntervalMarker(sunset[0], sunrise[0], "Last Night",
-            new Color(0, 0, 255, 25)), Layer.BACKGROUND);
+                new Color(0, 0, 255, 25)), Layer.BACKGROUND);
         plot.addDomainMarker(createIntervalMarker(sunrise[0], sunset[1], "Today",
-            new Color(255, 255, 255, 25)), Layer.BACKGROUND);
+                new Color(255, 255, 255, 25)), Layer.BACKGROUND);
         plot.addDomainMarker(createIntervalMarker(sunset[1], sunrise[1], "Tonight",
-            new Color(0, 0, 255, 25)), Layer.BACKGROUND);
+                new Color(0, 0, 255, 25)), Layer.BACKGROUND);
 
         plot.setRenderer(renderer);
 
@@ -271,10 +253,8 @@ public class ChartUtil
 
     }
 
-
     public static JFreeChart createDiurnalChart(
-        XYDataset dataset, String title, String timeAxisLabel, String valueAxisLabel)
-    {
+            XYDataset dataset, String title, String timeAxisLabel, String valueAxisLabel) {
 
         ValueAxis timeAxis = new DateAxis(timeAxisLabel);
         timeAxis.setLowerMargin(0.02);  // reduce the default margins
@@ -283,8 +263,8 @@ public class ChartUtil
         NumberAxis valueAxis = new NumberAxis(valueAxisLabel);
         valueAxis.setAutoRangeIncludesZero(false);  // override default
 
-        XYToolTipGenerator toolTipGenerator =
-            StandardXYToolTipGenerator.getTimeSeriesInstance();
+        XYToolTipGenerator toolTipGenerator
+                = StandardXYToolTipGenerator.getTimeSeriesInstance();
         XYLineAndShapeRenderer renderer = new CpsXYLineAndShapeRenderer(true, true);
         renderer.setBaseToolTipGenerator(toolTipGenerator);
         renderer.setBaseShapesVisible(true);
@@ -306,16 +286,14 @@ public class ChartUtil
 
     }
 
-
     /**
      * Create a marker band used to depict daytime or nighttime.
      */
-    public static Marker createIntervalMarker(Date begin, Date end, String label, Color color)
-    {
+    public static Marker createIntervalMarker(Date begin, Date end, String label, Color color) {
         IntervalMarker marker = new IntervalMarker(
-            begin.getTime(),
-            end.getTime(),
-            color, new BasicStroke(1.0f), null, null, 1.0f);
+                begin.getTime(),
+                end.getTime(),
+                color, new BasicStroke(1.0f), null, null, 1.0f);
         marker.setLabel(label);
         marker.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
         marker.setLabelFont(new Font("SansSerif", Font.ITALIC + Font.BOLD, 9));
@@ -323,16 +301,14 @@ public class ChartUtil
         return marker;
     }
 
-
-    public static ChartPanel createCommonChartPanel(JFreeChart chart)
-    {
+    public static ChartPanel createCommonChartPanel(JFreeChart chart) {
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(600, 250));
         chartPanel.setDomainZoomable(true);
         chartPanel.setRangeZoomable(true);
         Border border = BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(4, 4, 4, 4),
-            BorderFactory.createEtchedBorder());
+                BorderFactory.createEmptyBorder(4, 4, 4, 4),
+                BorderFactory.createEtchedBorder());
         chartPanel.setBorder(border);
 
         return chartPanel;
