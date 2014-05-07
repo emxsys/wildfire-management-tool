@@ -405,4 +405,17 @@ public class Globe implements GisViewer {
         double distance = angle.radians * radius;
         return Reals.newDistance(distance, CommonUnit.meter);
     }
+    
+    /**
+     * Computes the azimuth angle from coord1 to coord2.
+     * @param coord1
+     * @param coord2
+     * @return 
+     */
+    public static double computeGreatCircleAzimuth(Coord2D coord1, Coord2D coord2) {
+        Position pos1 = Positions.fromCoord2D(coord1);
+        Position pos2 = Positions.fromCoord2D(coord2);
+        Angle angle = LatLon.greatCircleAzimuth(pos1, pos2);
+        return angle.degrees;
+    }
 }
