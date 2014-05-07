@@ -33,22 +33,48 @@ import visad.Data;
 import visad.Real;
 
 /**
- * A Sunlight instance contains solar angles representing the position of the sun.
- * 
+ * A Sunlight instance contains key solar values pertaining to a date and an earth location.
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public interface Sunlight extends Data {
 
     /**
-     * Declination is the earth's tilt angle relative to the sun at a given date and time.
-     * @return [degrees]
+     * Declination is the earth's tilt angle relative to the sun at a given date and time. It is
+     * also the latitude where the sun is overhead.
+     * @return The declination angle [degrees].
      */
     Real getDeclination();
 
     /**
-     * Longitude is earth longitude for where the sun is overhead at a given date and time.
+     * Longitude is earth longitude for where the sun is overhead at a given date and time.  This is
+     * roughly equivalent to the right ascension, but on the terrestrial sphere.
      * @return [degrees]
      */
     Real getLongitude();
+
+    /**
+     * Gets the solar altitude angle--how high is the sun from the horizon.
+     * @return The solar altitude angle (A). [degrees]
+     */
+    Real getSolarAltitudeAngle();
+
+    /**
+     * Gets the solar azimuth angle--where is sun relative to North.
+     * @return The solar azimuth angle (Z). [degrees]
+     */
+    Real getSolarAzimuthAngle();
+
+    /**
+     * Gets the time of sunrise in solar hours, where 0.00 is noon, 0600 is -6.0, and 1800 is +6.0.
+     * @return Sunrise solar hour relative to solar noon. [hours]
+     */
+    Real getSunriseHour();
+
+    /**
+     * Gets the time of sunset in solar hours, where noon is 0.00, 0600 is -6.0, and 1800 is +6.0.
+     * @return Sunset solar hour relative to solar noon. [hours]
+     */
+    Real getSunsetHour();
 
 }
