@@ -29,21 +29,25 @@
  */
 package com.emxsys.wmt.solar.internal;
 
+import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.gis.api.Latitude;
+import com.emxsys.wmt.solar.api.SolarType;
 import com.emxsys.wmt.solar.api.SolarUtil;
 import com.emxsys.wmt.solar.api.Sunlight;
-import com.emxsys.wmt.solar.api.SunlightHoursTuple;
-import com.emxsys.wmt.solar.api.SolarType;
 import com.emxsys.wmt.solar.api.SunlightHours;
+import com.emxsys.wmt.solar.api.SunlightHoursTuple;
 import com.emxsys.wmt.solar.api.SunlightTuple;
+import static com.emxsys.wmt.solar.internal.RothermelSupport.*;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
+import com.emxsys.wmt.util.AngleUtil;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.visad.Times;
-import static com.emxsys.wmt.solar.internal.RothermelSupport.*;
 import java.rmi.RemoteException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,20 +74,67 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
     }
 
     @Override
-    public Coord3D getSunPosition(Date utcTime) {
-        return SolarUtil.getSunPosition(utcTime);
+    public Coord3D getSunPosition(ZonedDateTime time) {
+        return SolarUtil.getSunPosition(time);
     }
 
     /**
-     * Creates a new SunlightTuple object from VisAD type
+     * Creates a new Sunlight instance for the given date and location.
      *
-     * @param utcTime determines sun position
-     * @return SunlightTuple
+     * @param time The local time for the sunlight calculation.
+     * @param coord The location for the sunlight calculation.
+     * @return A new SunlightTuple for the given date and location.
      */
     @Override
-    public Sunlight getSunlight(Date utcTime) {
-        GeoCoord3D sunPosition = SolarUtil.getSunPosition(utcTime);
-        return new SunlightTuple(sunPosition.getLatitude(), sunPosition.getLongitude());
+    public Sunlight getSunlight(ZonedDateTime time, Coord2D coord) {
+
+        try {
+            ZonedDateTime utc = time.withZoneSameInstant(ZoneId.of("Z"));
+            System.out.println(time);
+            System.out.println(utc);
+            
+            Coord3D sunPosition = SolarUtil.getSunPosition(utc);
+            System.out.println("Sun Position: " + sunPosition.toString());
+            
+            Real declination = RothermelSupport.calcSolarDeclinationAngle(utc.getDayOfYear());
+
+            // calc local hour angle via reference to sun longitude and cur longitude.
+            double sunLongitude = sunPosition.getLongitudeDegrees();
+            double curLongitude = coord.getLongitudeDegrees();
+            double solarHour = AngleUtil.angularDistanceBetween(sunLongitude, curLongitude) / 15; // 15 DEGREES per HOUR
+            System.out.println("Solar Hour: " + solarHour);
+            // Sun is rising (neg solar hour) if it's longitude is east of the current location.
+            if (Math.signum(sunLongitude) >= Math.signum(curLongitude)) {
+                solarHour *= curLongitude < sunLongitude ? -1 : 1;
+            } else {
+                // Special case for handling longitudes crossing the int'l dateline
+                solarHour *= sunLongitude < curLongitude ? -1 : 1;
+            }
+            solarHour += 12; // Noon is 1200 in Rothermel equations.
+            System.out.println("Solar Hour: " + solarHour);
+            
+            double h = RothermelSupport.calcLocalHourAngle(solarHour);              // hour angle [radians]
+            double phi = coord.getLatitude().getValue(CommonUnit.radian);           // latitude [radians]
+            //double delta = sunPosition.getLatitude().getValue(CommonUnit.radian);   // declination [radians]
+            double delta = declination.getValue(CommonUnit.radian);                 // declination [radians]
+                    
+            double A = RothermelSupport.calcSolarAltitudeAngle(h, phi, delta);      // altitude angle [radians]
+            double Z = RothermelSupport.calcSolarAzimuthAngle(h, phi, delta, A);    // azimuth angle [radians]
+            
+            double t_r = calcSunriseSolarHour(coord.getLatitude(), sunPosition.getLatitude());
+            double t_s = 24 - t_r;
+            
+            return new SunlightTuple(
+                    declination, 
+                    sunPosition.getLongitude(), 
+                    new Real(SolarType.ALTITUDE_ANGLE, Math.toDegrees(A)), 
+                    new Real(SolarType.AZIMUTH_ANGLE, Math.toDegrees(Z) + 90), // adjust for 0600 reference
+                    new Real(SolarType.SUNRISE_HOUR, t_r), 
+                    new Real(SolarType.SUNSET_HOUR, t_s));
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     /**
@@ -95,7 +146,8 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
      */
     @Override
     public SunlightHours getSunlightHours(Real latitude, Date date) {
-        Real declination = calcSolarDeclinationAngle(date);
+        int julianDay = LocalDateTime.ofInstant(date.toInstant(), ZoneId.of("Z")).getDayOfYear();
+        Real declination = calcSolarDeclinationAngle(julianDay);
         DateTime[] times;
         Real sunrise;
         Real sunset;
@@ -121,6 +173,7 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
      */
     @Override
     public FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2) {
+ 
         try {
             // Define our function type: solar data = function(latitude, date)
             RealTupleType domainType
@@ -146,9 +199,10 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
                 DateTime time = new DateTime(domainSamples[0][i]);
                 Real lat = Latitude.fromDegrees(domainSamples[1][i]);
 
-                Real declination = calcSolarDeclinationAngle(Times.toDate(time));
-                Real sunrise = new Real(SolarType.SUNRISE_HOUR, calcSunriseHour(lat, declination));
-                Real sunset = new Real(SolarType.SUNSET_HOUR, calcSunsetHour(lat, declination));
+                int julian = LocalDateTime.ofInstant(Times.toDate(time).toInstant(),ZoneId.of("Z")).getDayOfYear();
+                Real declination = calcSolarDeclinationAngle(julian);
+                Real sunrise = new Real(SolarType.SUNRISE_HOUR, calcSunriseSolarHour(lat, declination));
+                Real sunset = new Real(SolarType.SUNSET_HOUR, calcSunsetSolarHour(lat, declination));
 
                 // TODO: add LocalHourAngle, SolarAltitudeAngle, SolarAzimuthAngle to the solar data tuple
 //                // Latitude [radians]
