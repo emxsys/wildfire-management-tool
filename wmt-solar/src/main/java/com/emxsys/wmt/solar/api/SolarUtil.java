@@ -29,70 +29,372 @@
  */
 package com.emxsys.wmt.solar.api;
 
+import com.emxsys.wmt.gis.api.Coord2D;
+import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
+import static com.emxsys.wmt.util.AngleUtil.*;
 import static java.lang.Math.*;
+import java.rmi.RemoteException;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.JulianFields;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static visad.CommonUnit.*;
+import visad.Real;
+import visad.RealTuple;
+import visad.VisADException;
 
 public class SolarUtil {
 
     private static final Logger logger = Logger.getLogger(SolarUtil.class.getName());
 
+    static {
+        logger.setLevel(Level.ALL);
+    }
+
     /**
      * Computes the position of the sun at the given time relative to the earth lat/lon/altitude
      * coordinate system.
      *
-     * @param utcTime the UTC time for which to obtain the sun position
-     * @return a Coord3D representing the sun's position as lat and lon with elevation set to 1 A.U.
-     * @author heidtmare
+     * @param time The time for which to obtain the sun position (will be converted to UTC).
+     * @return A Coord3D representing the sun's position as lat and lon with elevation set to 1 A.U.
+     * @author Bruce Schubert
      */
-    static public GeoCoord3D getSunPosition(Date utcTime) {
+    public static Coord3D getSunPosition(ZonedDateTime time) {
         final double ASTRONOMICAL_UNIT_METERS = 149597870700.0;
 
-        Calendar time = Calendar.getInstance();
-        time.setTime(utcTime);
-        double[] ll = subsolarPoint(time);
-        GeoCoord3D sunPosition = GeoCoord3D.fromRadiansAndMeters(ll[0], ll[1], ASTRONOMICAL_UNIT_METERS);
-        logger.log(Level.FINE, "SUN Position: {0}", sunPosition.toString());
-
+        // Get the right ascension and declination (lat/lon)
+        double[] latLon = calcSubsolarPoint(calcJulianDate(time));
+        GeoCoord3D sunPosition = GeoCoord3D.fromDegreesAndMeters(
+                toDegrees(latLon[0]), toDegrees(latLon[1]), ASTRONOMICAL_UNIT_METERS);
+//        Coord2D point = calcSubsolarPointAppox(time);
+//        GeoCoord3D sunPosition = GeoCoord3D.fromDegreesAndMeters(point.getLatitudeDegrees(), point.getLongitudeDegrees(), ASTRONOMICAL_UNIT_METERS);
         return sunPosition;
     }
 
     /**
-     * Calculate the LatLon of sun at given time. Latitude is equivalent to declination. Longitude
-     * is equivalent to right ascension.
      *
-     * Posted on WorldWind Java Development forum by heidtmare, "This implementation of
-     * subsolarPoint is from the old sunlight package."
      *
-     * @author heidtmare
+     * @author Bruce Schubert
      * @param time UTC time
      * @return latitude and longitude of sun on the celestial sphere
      */
-    static double[] subsolarPoint(Calendar time) {
+    static public RealTuple getRightAscentionDeclination(ZonedDateTime time) throws VisADException, RemoteException {
+
+        double epsilon_g = 279.403303;  // eclipticLongitudeAtEpoch
+        double omega_g = 282.768422;    // eclipticLongitudeOfPerigee
+        double e = 0.016713;            // eccentricityOfOrbit
+
+        // Calculate difference in days between the current Julian Day
+        // and JD 2447891.5, which is 1 January 1990 Universal Time
+        double D = calcJulianDate(time) - 2447891.5;
+        double N = normalize360((360. / 365.242191) * D);
+        double meanSun = N + epsilon_g - omega_g;
+        double E_c = (360. / PI) * e * sin(toRadians(meanSun));
+        double eclipticLongitude = normalize360(N + E_c + epsilon_g);  
+        double eclipticLatitude = 0;   
+
+        // Ecliptic to equatorial coordinate conversion
+        return getEquatorialCoordinates(eclipticLatitude, toRadians(eclipticLongitude));
+    }
+
+    public static RealTuple getEquatorialCoordinates(double eclipticLatitude, double eclipticLongitude) throws VisADException, RemoteException {
+        // Ecliptic to equatorial coordinate conversion
+        double eclipticObliquity = toRadians(23.441884); // eclipticObliquity
+        double delta = toDegrees(asin(sin(eclipticLatitude) * cos(eclipticObliquity)
+                + cos(eclipticLatitude) * sin(eclipticObliquity) * sin(eclipticLongitude)));
+
+        double y = sin(eclipticLongitude) * cos(eclipticObliquity) - tan(eclipticLatitude) * sin(eclipticObliquity);
+        double x = cos(eclipticLongitude);
+        double alpha = toDegrees(atan2(y, x)); // right ascension
+
+        Real ascension = new Real(SolarType.RIGHT_ASCENSION, alpha);
+        Real declination = new Real(SolarType.DECLINATION, delta);
+
+        return new RealTuple(SolarType.EQUATORIAL_COORDINATES, new Real[]{ascension, declination}, null);
+    }
+
+    /**
+     * Gets the solar azimuth and altitude angles from the observer's position to the sun.
+     *
+     * @param observer The observer's coordinates.
+     * @param sun The sun's sub-solar point coordinates
+     * @return The horizon coordinates (azimuth and altitude) to the sun.
+     */
+    public static RealTuple getAzimuthAltitude(Coord2D observer, Coord2D sun) {
+
+        try {
+            if (observer.isMissing() || sun.isMissing()) {
+                throw new IllegalArgumentException(observer.longString() + ", " + sun.longString());
+            }
+            double phi = observer.getLatitude().getValue(radian);
+            double sigma = sun.getLatitude().getValue(radian);
+            double H = observer.getLongitude().getValue(radian);
+            double a = calcAltitudeAngle(phi, sigma, H);
+            double A = calcAzimuthAngle(phi, sigma, a, H);
+
+            Real azimuth = new Real(SolarType.AZIMUTH_ANGLE, toDegrees(A));
+            Real altitude = new Real(SolarType.ALTITUDE_ANGLE, toDegrees(a));
+
+            return new RealTuple(SolarType.HORIZON_COORDINATES, new Real[]{azimuth, altitude}, null);
+
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Computes the Julian date from the given date/time.
+     *
+     * @param datetime The date and time.
+     * @return The Julian date.
+     */
+    public static double calcJulianDate(ZonedDateTime datetime) {
+        final long SECONDS_IN_FULL_DAY = 86400;
+        final long SECONDS_IN_HALF_DAY = 43200;
+        ZonedDateTime utc = datetime.withZoneSameInstant(ZoneId.of("Z"));
+        // Add the offset from noon to the Julian date.
+        return utc.getLong(JulianFields.JULIAN_DAY)
+                + ((double) (utc.getLong(ChronoField.SECOND_OF_DAY) - SECONDS_IN_HALF_DAY)) / SECONDS_IN_FULL_DAY;
+    }
+
+    /**
+     * Computes the Julian date from the given date/time.
+     *
+     * From "Practical Astronomy with Your Calculator" by Peter Duffet-Smith
+     * @param utc The date and time to convert.
+     * @return The Julian date.
+     */
+    public static double calcJulianDate(Date utc) {
+        final long SECONDS_IN_FULL_DAY = 86400;
+        final long SECONDS_IN_HALF_DAY = 43200;
+        // Create Gregorian start date used for comparison
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.set(1592, 10, 15);
+        Date start = cal.getTime();
+
+        // Convert incoming date to UTC
+        cal.setTime(utc);
+
+        long y = cal.get(Calendar.YEAR);
+        long m = cal.get(Calendar.MONTH) + 1;
+        long d = cal.get(Calendar.DAY_OF_MONTH);
+        if (m <= 2) {
+            y -= 1;
+            m += 12;
+        }
+        long A = y / 100;
+        long B = utc.after(start) ? 2 - A + (A / 4) : 0;
+        long C = (y < 0) ? (long) ((365.25 * y) - 0.75) : (long) (365.25 * y);
+        long D = (long) (30.6001 * (m + 1));
+        double offsetFromNoon = ((double) (cal.get(Calendar.HOUR_OF_DAY) * 60 * 60
+                + cal.get(Calendar.MINUTE) * 60
+                + cal.get(Calendar.SECOND) - SECONDS_IN_HALF_DAY)) / SECONDS_IN_FULL_DAY;
+        return B + C + D + d + 1720995 + offsetFromNoon;
+
+    }
+
+    /**
+     * Computes the hour angle (H) from UTC.
+     * @param time The time (will be converted to UTC).
+     * @return The computed hour-angle (H).
+     */
+    public static Real calcHourAngle(ZonedDateTime time) {
+        LocalTime utc = time.withZoneSameInstant(ZoneId.of("Z")).toLocalTime();
+        double t = utc.getHour() + ((utc.getMinute() + (utc.getSecond() / 60.0)) / 60.0);
+        double H = 15 * t;  // 15 degrees per hour
+        return new Real(SolarType.HOUR_ANGLE, H);
+    }
+
+    /**
+     * Calculates altitude angle (a), from equatorial coordinates.
+     *
+     * @param latitude Observer's geographic latitude.
+     * @param declination Earth's declination angle.
+     * @param solarHour The solar hour-angle.
+     * @return The computed altitude angle (a).
+     */
+    public static Real getAltitudeAngle(Real latitude, Real declination, Real solarHour) {
+        try {
+            if (latitude.isMissing() || declination.isMissing() || solarHour.isMissing()) {
+                throw new IllegalArgumentException(latitude.longString() + ", " + declination.longString() + ", " + solarHour.longString());
+            }
+            double phi = latitude.getValue(radian);
+            double sigma = declination.getValue(radian);
+            double H = solarHour.getValue(radian);
+
+            double a = calcAltitudeAngle(phi, sigma, H);
+            return new Real(SolarType.ALTITUDE_ANGLE, toDegrees(a));
+
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Calculates the solar altitude angle (a), from equatorial coordinates.
+     *
+     * See: "Practical Astronomy with you Calculator", #25.
+     *
+     * @param phi Observer's geographic latitude [radians]
+     * @param sigma Earth's declination angle. [radians]
+     * @param H Solar hour-angle [radians]
+     *
+     * @return The computed altitude angle (a).
+     */
+    public static double calcAltitudeAngle(double phi, double sigma, double H) {
+        double t = sin(phi) * sin(sigma);
+        double u = cos(phi) * cos(H) * cos(sigma);
+        double a = asin(t + u);
+        return a;
+    }
+
+    /**
+     * Calculates the solar azimuth angle (A), from equatorial coordinates.
+     * @param latitude Observer's geographic latitude.
+     * @param declination Earth's declination angle.
+     * @param altitude Sun's altitude angle.
+     * @return The computed Azimuth angle (A).
+     */
+    public static Real calcAzimuthAngle(Real latitude, Real declination, Real altitude, Real solarHour) {
+        try {
+            if (latitude.isMissing() || declination.isMissing() || altitude.isMissing()) {
+                throw new IllegalArgumentException(latitude.longString() + ", " + declination.longString() + ", " + altitude.longString());
+            }
+            double phi = latitude.getValue(radian);
+            double sigma = declination.getValue(radian);
+            double a = altitude.getValue(radian);
+            double H = solarHour.getValue(radian);
+
+            double A = calcAzimuthAngle(phi, sigma, a, H);
+            return new Real(SolarType.AZIMUTH_ANGLE, toDegrees(A));
+
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Calculates Azimuth angle (A), from equatorial coordinates.
+     *
+     * See: "Practical Astronomy with you Calculator", #25.
+     *
+     * @param phi Observer's geographic latitude [radians]
+     * @param sigma Earth's declination angle. [radians]
+     * @param a Sun's altitude angle [radians]
+     * @param H Sun's hour-angle [radians]
+     *
+     * @return The computed azimuth angle (Z).
+     */
+    public static double calcAzimuthAngle(double phi, double sigma, double a, double H) {
+        double t = sin(sigma) - sin(phi) * sin(a);
+        double u = cos(phi) * cos(a);
+        double A = acos(t / u);
+        if (signum(sin(H)) == -1) {
+            return A;
+        } else {
+            return (2 * PI) - A;
+        }
+    }
+
+    /**
+     *
+     * Calculate the LatLon of sun at given time. Latitude is equivalent to declination. Longitude
+     * is equivalent to right ascension. The subsolar point on a planet is where its sun is
+     * perceived to be directly overhead (in zenith), that is where the sun's rays are hitting the
+     * planet exactly perpendicular to its surface.
+     *
+     * See: http://en.wikipedia.org/wiki/Position_of_the_Sun
+     *
+     * @author Bruce Schubert
+     * @param time UTC time
+     * @return latitude and longitude of sun on the celestial sphere
+     */
+    static public Coord2D calcSubsolarPointAppox(ZonedDateTime time) {
         // Main variables
         double elapsedJulianDays;
-        double decimalHours;
         double eclipticLongitude;
         double eclipticObliquity;
         double rightAscension, declination;
         // Calculate difference in days between the current Julian Day
         // and JD 2451545.0, which is noon 1 January 2000 Universal Time
         {
-            // Calculate time of the day in UT decimal hours
-            decimalHours = time.get(Calendar.HOUR_OF_DAY)
-                    + (time.get(Calendar.MINUTE) + time.get(Calendar.SECOND) / 60.0)
-                    / 60.0;
-            // Calculate current Julian Day
-            long aux1 = (time.get(Calendar.MONTH) - 14) / 12;
-            long aux2 = (1461 * (time.get(Calendar.YEAR) + 4800 + aux1)) / 4
-                    + (367 * (time.get(Calendar.MONTH) - 2 - 12 * aux1)) / 12
-                    - (3 * ((time.get(Calendar.YEAR) + 4900 + aux1) / 100)) / 4
-                    + time.get(Calendar.DAY_OF_MONTH) - 32075;
-            double julianDate = (double) (aux2) - 0.5 + decimalHours / 24.0;
-            // Calculate difference between current Julian Day and JD 2451545.0
+            elapsedJulianDays = calcJulianDate(time) - 2451545.0;
+        }
+        // Calculate ecliptic coordinates (ecliptic longitude and obliquity of the
+        // ecliptic in radians but without limiting the angle to be less than 2*Pi
+        // (i.e., the result may be greater than 2*Pi)
+        {
+            // The mean longitude of the Sun, corrected for the aberration of light, is:
+            double meanLongitude = toRadians(normalize360(280.460 + 0.9856474 * elapsedJulianDays));
+            double meanAnomaly = toRadians(normalize360(357.528 + 0.9856003 * elapsedJulianDays));
+            eclipticLongitude = meanLongitude
+                    + toRadians(1.915) * sin(meanAnomaly)
+                    + toRadians(0.020) * sin(2 * meanAnomaly);
+            eclipticObliquity = toRadians(23.439 - 0.0000004 * elapsedJulianDays);
+        }
+        // Calculate celestial coordinates ( right ascension and declination ) in radians
+        {
+//            double sinEclipticLongitude = sin(eclipticLongitude);
+//            double dY = cos(eclipticObliquity) * sinEclipticLongitude;
+//            double dX = cos(eclipticLongitude);
+//            rightAscension = atan2(dY, dX);
+            rightAscension = atan(cos(eclipticObliquity) * tan(eclipticLongitude));
+            if (rightAscension < 0.0) {
+                rightAscension = rightAscension + Math.PI * 2.0;
+            }
+            declination = asin(sin(eclipticObliquity) * sin(eclipticLongitude));
+        }
+        double longitude = rightAscension;
+
+        while (declination > Math.PI / 2.0) {
+            declination -= Math.PI;
+        }
+        while (declination <= -Math.PI / 2.0) {
+            declination += Math.PI;
+        }
+        while (longitude > Math.PI) {
+            longitude -= Math.PI * 2.0;
+        }
+        while (longitude <= -Math.PI) {
+            longitude += Math.PI * 2.0;
+        }
+        return GeoCoord2D.fromRadians(declination, longitude);
+    }
+
+    /**
+     * Calculate the LatLon of sun at given time. Latitude is equivalent to declination. Longitude
+     * is equivalent to right ascension. The subsolar point on a planet is where its sun is
+     * perceived to be directly overhead (in zenith), that is where the sun's rays are hitting the
+     * planet exactly perpendicular to its surface.
+     *
+     * Posted on WorldWind Java Development forum by heidtmare, "This implementation of
+     * calcSubsolarPointAppox is from the old sunlight package."
+     *
+     * Original c++ source here: http://www.psa.es/sdg/archive/SunPos.cpp
+     *
+     * @author heidtmare
+     * @param time UTC time
+     * @return latitude and longitude of sun on the celestial sphere
+     */
+    static double[] calcSubsolarPoint(double julianDate) {
+        // Main variables
+        double decimalHours;
+        double elapsedJulianDays;
+        double eclipticLongitude;
+        double eclipticObliquity;
+        double rightAscension, declination;
+        // Calculate difference in days between the current Julian Day
+        // and JD 2451545.0, which is noon 1 January 2000 Universal Time
+        {
+            decimalHours = 0;
             elapsedJulianDays = julianDate - 2451545.0;
         }
         // Calculate ecliptic coordinates (ecliptic longitude and obliquity of the
@@ -102,11 +404,12 @@ public class SolarUtil {
             double omega = 2.1429 - 0.0010394594 * elapsedJulianDays;
             double meanLongitude = 4.8950630 + 0.017202791698 * elapsedJulianDays; // Radians
             double meanAnomaly = 6.2400600 + 0.0172019699 * elapsedJulianDays;
-            eclipticLongitude = meanLongitude + 0.03341607
-                    * Math.sin(meanAnomaly) + 0.00034894
-                    * Math.sin(2 * meanAnomaly) - 0.0001134 - 0.0000203
-                    * Math.sin(omega);
-            eclipticObliquity = 0.4090928 - 6.2140e-9 * elapsedJulianDays
+            eclipticLongitude = meanLongitude
+                    + 0.03341607 * Math.sin(meanAnomaly)
+                    + 0.00034894 * Math.sin(2 * meanAnomaly)
+                    - 0.0001134 - 0.0000203 * Math.sin(omega);
+            eclipticObliquity = 0.4090928
+                    - 6.2140e-9 * elapsedJulianDays
                     + 0.0000396 * Math.cos(omega);
         }
         // Calculate celestial coordinates ( right ascension and declination ) in radians
@@ -122,11 +425,10 @@ public class SolarUtil {
             }
             declination = Math.asin(Math.sin(eclipticObliquity) * sinEclipticLongitude);
         }
-
-        double greenwichMeanSiderealTime = 6.6974243242 + 0.0657098283 * elapsedJulianDays + decimalHours;
-        double longitude = rightAscension - Math.toRadians(greenwichMeanSiderealTime * 15.0);
-
-        //longitude += Math.PI;//This was putting the sun on the wrong side of the earth!!
+        //double greenwichMeanSiderealTime = 6.6974243242 + 0.0657098283 * elapsedJulianDays + decimalHours;
+        double greenwichMeanSiderealTime = (18.697374558 + 24.06570982441908 * elapsedJulianDays) % 24; 
+        double longitude = rightAscension - toRadians(greenwichMeanSiderealTime * 15.0);
+        
         while (declination > Math.PI / 2.0) {
             declination -= Math.PI;
         }
@@ -160,16 +462,14 @@ public class SolarUtil {
 
         // The apparent direct normal solar flux at the outer edge of the earth's atmosphere
         // on the 21st day of each month
-        final double[] SOLAR_FLUX
-                = {
-                    1230, 1215, 1186, 1136, 1104, 1088, 1085, 1107, 1151, 1192, 1221, 1233
-                };
+        final double[] SOLAR_FLUX = {
+            1230, 1215, 1186, 1136, 1104, 1088, 1085, 1107, 1151, 1192, 1221, 1233
+        };
 
         // The apparent atmospheric extinction coefficient on the 21st day of each month
-        final double[] EXTINCTION
-                = {
-                    0.142, 0.144, 0.145, 0.180, 0.196, 0.205, 0.207, 0.201, 0.177, 0.160, 0.149, 0.142
-                };
+        final double[] EXTINCTION = {
+            0.142, 0.144, 0.145, 0.180, 0.196, 0.205, 0.207, 0.201, 0.177, 0.160, 0.149, 0.142
+        };
 
         final int EPOCH_DATE = 21;
 
@@ -241,7 +541,7 @@ public class SolarUtil {
     }
 
     /**
-     * The declination angle thoughout the year can be well approximated by a sine function.
+     * The declination angle throughout the year can be well approximated by a sine function.
      *
      * @returns the sun's declination angle (in radians)
      * @param dayOfYear Day of the year (1-365).
@@ -270,7 +570,7 @@ public class SolarUtil {
      * @param clockTime
      * @param lonTzStdMer is the longitude of time zone's meridian
      * @param lonActualLoc is the longitude of the actual location
-     * @param dstMins 
+     * @param dstMins
      * @return solar hour
      */
     public static double LocalSolarTimeFromClockTime(Date clockTime,
@@ -312,18 +612,6 @@ public class SolarUtil {
         double u = (cos(l) * cos(h) * cos(d));
         double zenith = acos(t + u);
         return toDegrees(zenith);
-    }
-
-    public static double AltitudeAngleDegrees(
-            double latitudeDegrees, double solarHourDegrees, double declinationDegrees) {
-        double l = toRadians(latitudeDegrees);
-        double h = toRadians(solarHourDegrees);
-        double d = toRadians(declinationDegrees);
-
-        double t = sin(l) * sin(d);
-        double u = cos(l) * cos(h) * cos(d);
-        double altitude = asin(t + u);
-        return toDegrees(altitude);
     }
 
     /**
@@ -393,4 +681,5 @@ public class SolarUtil {
         //azimuth = acos((t - u) / cos(a));
         //return toDegrees(azimuth);
     }
+
 }
