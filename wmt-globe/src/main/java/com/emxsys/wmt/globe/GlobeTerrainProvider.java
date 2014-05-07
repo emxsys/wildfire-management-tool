@@ -35,6 +35,7 @@ import com.emxsys.wmt.gis.api.Terrain;
 import com.emxsys.wmt.gis.api.TerrainTuple;
 import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.solar.api.SolarUtil;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Intersection;
@@ -120,14 +121,16 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
         }
     }
 
+    
     @Override
     public boolean isCoordinateTerrestialShaded(Coord2D coord, Date datetime) {
-        Position positionA = Positions.fromCoord2D(coord);
-        Position positionB = Positions.fromCoord2D(SolarUtil.getSunPosition(datetime));
-        Intersection[] intersect = terrain.intersect(positionA, positionB);
-
-        // The position is shaded if there is an interesection with the terrain between the two positions
-        return intersect != null;
+//        Position positionA = Positions.fromCoord2D(coord);
+//        Position positionB = Positions.fromCoord3D(SolarUtil.getSunPosition(datetime));
+//        Intersection[] intersect = terrain.intersect(positionA, positionB);
+//
+//        // The position is shaded if there is an interesection with the terrain between the two positions
+//        return intersect != null;
+        throw new UnsupportedOperationException("isCoordinateTerrestialShaded");
     }
 
     private double getBestElevation(LatLon latLon) {
