@@ -48,9 +48,17 @@ public class SolarType {
     public static final RealType SUNRISE_HOUR;
     public static final RealType SUNSET_HOUR;
     public static final RealTupleType SUNRISE_SUNSET;
-    public static final RealType LONGITUDE;
+    public static final RealType RIGHT_ASCENSION;
     public static final RealType DECLINATION;
-    public final static RealTupleType SUNLIGHT_ANGLES;
+    public static final RealType HOUR_ANGLE;
+    public static final RealType LATITUDE;
+    public static final RealType LONGITUDE;
+    public static final RealType ALTITUDE_ANGLE;
+    public static final RealType AZIMUTH_ANGLE;
+    public static final RealTupleType HORIZON_COORDINATES;
+    public static final RealTupleType EQUATORIAL_COORDINATES;
+    
+    public final static RealTupleType SUNLIGHT;
 
     static {
         TIME = RealType.getRealType("local_time:sec", CommonUnit.secondsSinceTheEpoch, null);
@@ -61,11 +69,24 @@ public class SolarType {
                 new RealType[]{
                     SOLAR_HOUR, SOLAR_HOUR
                 });
-        LONGITUDE = RealType.getRealType("longitude:deg", CommonUnit.degree, null);
+        RIGHT_ASCENSION = RealType.getRealType("right_ascention:deg", CommonUnit.degree, null);
         DECLINATION = RealType.getRealType("declination:deg", CommonUnit.degree, null);
-        SUNLIGHT_ANGLES = Reals.newRealTupleType(
+        HOUR_ANGLE = RealType.getRealType("hour:deg", CommonUnit.degree, null);
+        LATITUDE = RealType.getRealType("latitude:deg", CommonUnit.degree, null);
+        LONGITUDE = RealType.getRealType("longitude:deg", CommonUnit.degree, null);
+        ALTITUDE_ANGLE = RealType.getRealType("altitude:deg", CommonUnit.degree, null);
+        AZIMUTH_ANGLE = RealType.getRealType("azimuth:deg", CommonUnit.degree, null);
+        HORIZON_COORDINATES = Reals.newRealTupleType(
                 new RealType[]{
-                    DECLINATION, LONGITUDE
+                    AZIMUTH_ANGLE, ALTITUDE_ANGLE
+                });
+        EQUATORIAL_COORDINATES = Reals.newRealTupleType(
+                new RealType[]{
+                    RIGHT_ASCENSION, DECLINATION
+                });
+        SUNLIGHT = Reals.newRealTupleType(
+                new RealType[]{
+                    DECLINATION, LONGITUDE, ALTITUDE_ANGLE, AZIMUTH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR
                 });
 
     }
