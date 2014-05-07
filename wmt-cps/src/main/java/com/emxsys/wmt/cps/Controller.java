@@ -33,27 +33,23 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.gis.api.TerrainProvider;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateEvent;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.globe.Globe;
-import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.solar.api.SolarUtil;
 import com.emxsys.wmt.solar.api.SunlightProvider;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
 import com.emxsys.wmt.time.api.TimeEvent;
 import com.emxsys.wmt.time.api.TimeListener;
 import com.emxsys.wmt.time.api.TimeProvider;
-import com.emxsys.wmt.util.AngleUtil;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Position;
 import java.awt.EventQueue;
+import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -61,6 +57,7 @@ import org.openide.util.LookupListener;
 import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
 import org.openide.windows.WindowManager;
+import visad.RealTuple;
 import visad.VisADException;
 
 /**
@@ -71,23 +68,25 @@ import visad.VisADException;
  */
 public class Controller {
 
+    private static final Logger logger = Logger.getLogger(Controller.class.getName());
+    private static PrimaryForcesTopComponent tc;
     private ShadedTerrainProvider earth;
     private SunlightProvider sun;
     private TimeProvider clock;
+    private ReticuleCoordinateProvider reticule;
 
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_POSITION);
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
 
-    private Coord3D coordinate;
-    private Terrain terrain;
-    private ZonedDateTime time;
-    private double solarHour;
 
-    private final ReticuleMonitor reticuleMonitor;
-    private final ClockMonitor clockMonitor;
+    private final TerrainUpdater terrainUpdater;
+    private final SolarUpdater solarUpdater;
     private Lookup.Result<ReticuleCoordinateProvider> reticuleResult;
     private final LookupListener reticuleLookupListener;
 
+    static {
+        logger.setLevel(Level.ALL);
+    }
     /**
      * Gets the Controller singleton instance.
      *
@@ -109,39 +108,52 @@ public class Controller {
      * Constructs the Controller singleton.
      */
     private Controller() {
-        // Event handlers
-        clockMonitor = new ClockMonitor(this);
-        reticuleMonitor = new ReticuleMonitor(this);
+        // Event handlers used to update charts
+        solarUpdater = new SolarUpdater(this);
+        terrainUpdater = new TerrainUpdater(this);
 
         // Data providers
         sun = DefaultSunlightProvider.getInstance();
         earth = Globe.getInstance().getShadedTerrainProvider();
         clock = Lookup.getDefault().lookup(TimeProvider.class);
 
-        // Listener for the TimeEvents
-        clock.addTimeListener(WeakListeners.create(TimeListener.class, clockMonitor, clock));
-        clockMonitor.updateTime(new TimeEvent(this, null, ZonedDateTime.now(ZoneId.of("UTC"))));
+        // Clock listens for TimeEvents and notifies SolarUpdater
+        clock.addTimeListener(WeakListeners.create(TimeListener.class, solarUpdater, clock));
+        solarUpdater.updateTime(new TimeEvent(this, null, ZonedDateTime.now(ZoneId.of("UTC"))));
 
-        // Listen for the arrival of a ReticuleCoordinateProvider on the lookup (handles resultChanged())
+        // LookupListener waits for arrival of  ReticuleCoordinateProvider ...
         reticuleLookupListener = (LookupEvent le) -> {
             if (reticuleResult != null && reticuleResult.allInstances().iterator().hasNext()) {
-                ReticuleCoordinateProvider reticule = reticuleResult.allInstances().iterator().next();
-
-                // Listener for the ReticuleCoordinateEvents
+                // ... on arrival, reticule listens for ReticuleCoordinateEvents and notifies TerrainUpdater
+                reticule = reticuleResult.allInstances().iterator().next();
                 reticule.addReticuleCoordinateListener(
-                        WeakListeners.create(ReticuleCoordinateListener.class, reticuleMonitor, reticule));
+                        WeakListeners.create(ReticuleCoordinateListener.class, terrainUpdater, reticule));
             }
         };
+        // Initiate the ReticuleCoordinateProvider lookup 
         reticuleResult = Globe.getInstance().getLookup().lookupResult(ReticuleCoordinateProvider.class);
         reticuleResult.addLookupListener(reticuleLookupListener);
         reticuleLookupListener.resultChanged(null);
     }
 
     /**
+     * Convenience method.
+     */
+    private static PrimaryForcesTopComponent getTopComponent() {
+        if (tc == null) {
+            tc = (PrimaryForcesTopComponent) WindowManager.getDefault().findTopComponent(PrimaryForcesTopComponent.PREFERRED_ID);
+            if (tc == null) {
+                throw new IllegalStateException("Cannot find tc: " + PrimaryForcesTopComponent.PREFERRED_ID);
+            }
+        }
+        return tc;
+    }
+
+    /**
      * ReticuleMonitor monitors the reticule (cross-hairs) layer and updates the UI with the
      * coordinate under the cross-hairs.
      */
-    private static class ReticuleMonitor implements ReticuleCoordinateListener, Runnable {
+    private static class TerrainUpdater implements ReticuleCoordinateListener, Runnable {
 
         private final Controller controller;
         private static final RequestProcessor processor = new RequestProcessor(SlopePanel.class);
@@ -149,7 +161,7 @@ public class Controller {
         private final AtomicReference<ReticuleCoordinateEvent> lastEvent = new AtomicReference<>(new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
         private final int UPDATE_INTERVAL_MS = 100;
 
-        ReticuleMonitor(Controller controller) {
+        TerrainUpdater(Controller controller) {
             this.controller = controller;
         }
 
@@ -168,15 +180,15 @@ public class Controller {
             if (event == null) {
                 return;
             }
-            controller.coordinate = event.getCoordinate();
-            controller.coordRef.set(event.getCoordinate());
+            Coord3D coordinate = event.getCoordinate();
+            controller.coordRef.set(coordinate);
+            logger.log(Level.FINE, "Coord: {0}", coordinate);
 
-            controller.terrain = controller.earth == null ? null : controller.earth.getTerrain(controller.coordinate);
+            Terrain terrain = controller.earth == null ? null : controller.earth.getTerrain(coordinate);
 
             // Update the CPS components (in the Event thread)
             EventQueue.invokeLater(() -> {
-                PrimaryForcesTopComponent tc = (PrimaryForcesTopComponent) WindowManager.getDefault().findTopComponent("PrimaryForcesTopComponent");
-                tc.updateCharts(controller.coordinate, controller.terrain);
+                getTopComponent().updateCharts(coordinate, terrain);
             });
         }
     }
@@ -185,14 +197,14 @@ public class Controller {
      * The ClockMonitor monitors the clock and updates the CPS components with the current
      * application time.
      */
-    private static class ClockMonitor implements TimeListener, Runnable {
+    private static class SolarUpdater implements TimeListener, Runnable {
 
         private final Controller controller;
         private static final RequestProcessor processor = new RequestProcessor(PreheatPanel.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<TimeEvent> lastTimeEvent = new AtomicReference<>(new TimeEvent(this, null, null));
 
-        ClockMonitor(Controller controller) {
+        SolarUpdater(Controller controller) {
             this.controller = controller;
         }
 
@@ -210,33 +222,27 @@ public class Controller {
             if (timeEvent == null) {
                 return;
             }
-            controller.time = timeEvent.getNewTime();
-            controller.timeRef.set(timeEvent.getNewTime());
-            Coord3D sunCoord = controller.sun.getSunPosition(Date.from(controller.time.toInstant()));
+            ZonedDateTime time = timeEvent.getNewTime();
+            controller.timeRef.set(time);
+
+            Coord3D sunCoord = controller.sun.getSunPosition(time);
             Coord3D curCoord = controller.coordRef.get();
+            logger.fine("Sun coord: " + sunCoord);
 
-            try {
-                double sunAngle = SolarUtil.getSolarAzimuthAngle(Date.from(controller.time.toInstant()), curCoord);
-
-//            double sunLongitude = sunPosition.getLongitudeDegrees();
-//            double curLongitude = curPosition.getLongitudeDegrees();
-//
-//            controller.solarHour = AngleUtil.angularDistanceBetween(sunLongitude, curLongitude) / 15; // 15 DEGREES per HOUR
-//            // Sun is rising (neg solar hour) if it's longitude is east of the current location.
-//            if (Math.signum(sunLongitude) >= Math.signum(curLongitude)) {
-//                controller.solarHour *= curLongitude < sunLongitude ? -1 : 1;
-//            } else { // Special case for handling longitudes crossing the int'l dateline
-//                controller.solarHour *= sunLongitude < curLongitude ? -1 : 1;
-//            }
-                boolean isShaded = false;// earth.isCoordinateTerrestialShaded(coordEvent.getCoordinate(), timeEvent.getNewTime());
-                // Update the CPS components (in the Event thread)
-                EventQueue.invokeLater(() -> {
-                    PrimaryForcesTopComponent tc = (PrimaryForcesTopComponent) WindowManager.getDefault().findTopComponent("PrimaryForcesTopComponent");
-                    tc.updateCharts(controller.time, sunAngle);
-                });
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
+            RealTuple azimuthAltitude = SolarUtil.getAzimuthAltitude(curCoord, sunCoord);
+            logger.fine("Sun Az Al: " + azimuthAltitude);
+            
+            if (azimuthAltitude.isMissing()) {
+                return;
             }
+            boolean isShaded = false;// earth.isCoordinateTerrestialShaded(coordEvent.getCoordinate(), timeEvent.getNewTime());
+            // Update the CPS components in the Event thread
+            EventQueue.invokeLater(() -> {
+                try {
+                    getTopComponent().updateCharts(time, azimuthAltitude.getRealComponents()[0]);
+                } catch (VisADException | RemoteException ex) {
+                }
+            });
 
         }
     }

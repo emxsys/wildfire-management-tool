@@ -41,7 +41,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CompassPlot;
 import org.jfree.data.general.DefaultValueDataset;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import visad.CommonUnit;
+import visad.Real;
+import visad.VisADException;
 
 /**
  * The PreheatPanel depicts the direction of the sun's rays onto the terrain and shows the surface
@@ -68,18 +72,23 @@ public class PreheatPanel extends javax.swing.JPanel {
      *
      * @param time UTC time.
      */
-    public void updateCharts(ZonedDateTime time, double sunAngle) {
+    public void updateCharts(ZonedDateTime time, Real sunAzimuth) {
         
-        CompassPlot compassPlot = (CompassPlot) solarChart.getPlot();
-        DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[0];
-        compassData.setValue(sunAngle);
-
+        try {
+            double angle = sunAzimuth.getValue(CommonUnit.degree);
+            CompassPlot compassPlot = (CompassPlot) solarChart.getPlot();
+            DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[0];
+            compassData.setValue(angle);
+            
 //        if (hour >= solar.getSunriseHour() && hour <= solar.getSunsetHour())
-        {
+            {
             compassPlot.setSeriesPaint(0, Color.black);
             compassPlot.setSeriesOutlinePaint(0, Color.black);
-            String title = String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(sunAngle));
+            String title = String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(angle));
             solarChart.setTitle(title);
+        }
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
         }
 
     }

@@ -38,6 +38,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
+import visad.Real;
 
 /**
  * Top component which displays something.
@@ -74,10 +75,11 @@ import org.openide.windows.TopComponent;
 })
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_PrimaryForcesAction",
-        preferredID = "PrimaryForcesTopComponent"
+        preferredID = PrimaryForcesTopComponent.PREFERRED_ID
 )
 public final class PrimaryForcesTopComponent extends TopComponent {
 
+    public static final String PREFERRED_ID = "PrimaryForcesTopComponent";
     private PreheatPanel preheatPanel;
     private WindPanel windPanel;
     private SlopePanel slopePanel;
@@ -95,7 +97,7 @@ public final class PrimaryForcesTopComponent extends TopComponent {
         slopePanel.updateCharts(terrain);
     }
 
-    public void updateCharts(ZonedDateTime time, double sunAzimuth) {
+    public void updateCharts(ZonedDateTime time, Real sunAzimuth) {
         preheatPanel.updateCharts(time, sunAzimuth);
     }
 
