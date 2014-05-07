@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.api;
+package com.emxsys.wmt.solar.internal;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import static java.lang.Math.*;
@@ -582,7 +582,7 @@ public class SolarPosition implements Cloneable {
         throw new UnsupportedOperationException("getPosition");
     }
 
-    static double limit_degrees(double degrees) {
+    public static double limit_degrees(double degrees) {
         double limited;
         degrees /= 360.0;
         limited = 360.0 * (degrees - floor(degrees));
@@ -592,7 +592,7 @@ public class SolarPosition implements Cloneable {
         return limited;
     }
 
-    static double limit_degrees180pm(double degrees) {
+    public static double limit_degrees180pm(double degrees) {
         double limited;
         degrees /= 360.0;
         limited = 360.0 * (degrees - floor(degrees));
@@ -604,7 +604,7 @@ public class SolarPosition implements Cloneable {
         return limited;
     }
 
-    static double limit_degrees180(double degrees) {
+    public static double limit_degrees180(double degrees) {
         double limited;
         degrees /= 180.0;
         limited = 180.0 * (degrees - floor(degrees));
@@ -614,7 +614,7 @@ public class SolarPosition implements Cloneable {
         return limited;
     }
 
-    static double limit_zero2one(double value) {
+    public static double limit_zero2one(double value) {
         double limited;
         limited = value - floor(value);
         if (limited < 0) {
@@ -623,7 +623,7 @@ public class SolarPosition implements Cloneable {
         return limited;
     }
 
-    static double limit_minutes(double minutes) {
+    public static double limit_minutes(double minutes) {
         double limited = minutes;
         if (limited < -20.0) {
             limited += 1440.0;
@@ -633,15 +633,15 @@ public class SolarPosition implements Cloneable {
         return limited;
     }
 
-    static double dayfrac_to_local_hr(double dayfrac, double timezone) {
+    public static double dayfrac_to_local_hr(double dayfrac, double timezone) {
         return 24.0 * limit_zero2one(dayfrac + timezone / 24.0);
     }
 
-    static double third_order_polynomial(double a, double b, double c, double d, double x) {
+    public static double third_order_polynomial(double a, double b, double c, double d, double x) {
         return ((a * x + b) * x + c) * x + d;
     }
 
-    static double julian_day(int year, int month, int day, int hour, int minute, int second, double tz) {
+    public static double julian_day(int year, int month, int day, int hour, int minute, int second, double tz) {
         double day_decimal, julian_day, a;
         day_decimal = day + (hour - tz + (minute + second / 60.0) / 60.0) / 24.0;
         if (month < 3) {
@@ -656,23 +656,23 @@ public class SolarPosition implements Cloneable {
         return julian_day;
     }
 
-    static double julian_century(double jd) {
+    public static double julian_century(double jd) {
         return (jd - 2451545.0) / 36525.0;
     }
 
-    static double julian_ephemeris_day(double jd, double delta_t) {
+    public static double julian_ephemeris_day(double jd, double delta_t) {
         return jd + delta_t / 86400.0;
     }
 
-    static double julian_ephemeris_century(double jde) {
+    public static double julian_ephemeris_century(double jde) {
         return (jde - 2451545.0) / 36525.0;
     }
 
-    static double julian_ephemeris_millennium(double jce) {
+    public static double julian_ephemeris_millennium(double jce) {
         return (jce / 10.0);
     }
 
-    static double earth_periodic_term_summation(final double terms[][], int count, double jme) {
+    public static double earth_periodic_term_summation(final double terms[][], int count, double jme) {
         double sum = 0;
         for (int i = 0; i < count; i++) {
             sum += terms[i][TERM_A] * cos(terms[i][TERM_B]
@@ -681,7 +681,7 @@ public class SolarPosition implements Cloneable {
         return sum;
     }
 
-    static double earth_values(double term_sum[], int count, double jme) {
+    public static double earth_values(double term_sum[], int count, double jme) {
         double sum = 0;
         for (int i = 0; i < count; i++) {
             sum += term_sum[i] * pow(jme, i);
@@ -690,7 +690,7 @@ public class SolarPosition implements Cloneable {
         return sum;
     }
 
-    static double earth_heliocentric_longitude(double jme) {
+    public static double earth_heliocentric_longitude(double jme) {
         double sum[] = new double[L_COUNT];
         for (int i = 0; i < L_COUNT; i++) {
             sum[i] = earth_periodic_term_summation(L_TERMS[i], l_subcount[i], jme);
@@ -698,7 +698,7 @@ public class SolarPosition implements Cloneable {
         return limit_degrees(toDegrees(earth_values(sum, L_COUNT, jme)));
     }
 
-    static double earth_heliocentric_latitude(double jme) {
+    public static double earth_heliocentric_latitude(double jme) {
         double sum[] = new double[B_COUNT];
         for (int i = 0; i < B_COUNT; i++) {
             sum[i] = earth_periodic_term_summation(B_TERMS[i], b_subcount[i], jme);
@@ -706,7 +706,7 @@ public class SolarPosition implements Cloneable {
         return toDegrees(earth_values(sum, B_COUNT, jme));
     }
 
-    static double earth_radius_vector(double jme) {
+    public static double earth_radius_vector(double jme) {
         double sum[] = new double[R_COUNT];
         for (int i = 0; i < R_COUNT; i++) {
             sum[i] = earth_periodic_term_summation(R_TERMS[i], r_subcount[i], jme);
@@ -714,7 +714,7 @@ public class SolarPosition implements Cloneable {
         return earth_values(sum, R_COUNT, jme);
     }
 
-    static double geocentric_longitude(double l) {
+    public static double geocentric_longitude(double l) {
         double theta = l + 180.0;
         if (theta >= 360.0) {
             theta -= 360.0;
@@ -722,31 +722,31 @@ public class SolarPosition implements Cloneable {
         return theta;
     }
 
-    static double geocentric_latitude(double b) {
+    public static double geocentric_latitude(double b) {
         return -b;
     }
 
-    static double mean_elongation_moon_sun(double jce) {
+    public static double mean_elongation_moon_sun(double jce) {
         return third_order_polynomial(1.0 / 189474.0, -0.0019142, 445267.11148, 297.85036, jce);
     }
 
-    static double mean_anomaly_sun(double jce) {
+    public static double mean_anomaly_sun(double jce) {
         return third_order_polynomial(-1.0 / 300000.0, -0.0001603, 35999.05034, 357.52772, jce);
     }
 
-    static double mean_anomaly_moon(double jce) {
+    public static double mean_anomaly_moon(double jce) {
         return third_order_polynomial(1.0 / 56250.0, 0.0086972, 477198.867398, 134.96298, jce);
     }
 
-    static double argument_latitude_moon(double jce) {
+    public static double argument_latitude_moon(double jce) {
         return third_order_polynomial(1.0 / 327270.0, -0.0036825, 483202.017538, 93.27191, jce);
     }
 
-    static double ascending_longitude_moon(double jce) {
+    public static double ascending_longitude_moon(double jce) {
         return third_order_polynomial(1.0 / 450000.0, 0.0020708, -1934.136261, 125.04452, jce);
     }
 
-    static double xy_term_summation(int i, double x[]) {
+    public static double xy_term_summation(int i, double x[]) {
         double sum = 0;
         for (int j = 0; j < TERM_Y_COUNT; j++) {
             sum += x[j] * Y_TERMS[i][j];
@@ -761,7 +761,7 @@ public class SolarPosition implements Cloneable {
      * argument_latitude_moon, ascending_longitude_moon }
      * @return Array: {nutation longitude, nutation obliquity} [degrees]
      */
-    static double[] nutation_longitude_and_obliquity(double jce, double x[]) {
+    public static double[] nutation_longitude_and_obliquity(double jce, double x[]) {
         double xy_term_sum, sum_psi = 0, sum_epsilon = 0;
         for (int i = 0; i < Y_COUNT; i++) {
             xy_term_sum = toRadians(xy_term_summation(i, x));
@@ -774,56 +774,56 @@ public class SolarPosition implements Cloneable {
         return new double[]{del_psi, del_epsilon};
     }
 
-    static double ecliptic_mean_obliquity(double jme) {
+    public static double ecliptic_mean_obliquity(double jme) {
         double u = jme / 10.0;
         return 84381.448 + u * (-4680.96 + u * (-1.55 + u * (1999.25 + u * (-51.38 + u * (-249.67
                 + u * (-39.05 + u * (7.12 + u * (27.87 + u * (5.79 + u * 2.45)))))))));
     }
 
-    static double ecliptic_true_obliquity(double delta_epsilon, double epsilon0) {
+    public static double ecliptic_true_obliquity(double delta_epsilon, double epsilon0) {
         return delta_epsilon + epsilon0 / 3600.0;
     }
 
-    static double aberration_correction(double r) {
+    public static double aberration_correction(double r) {
         return -20.4898 / (3600.0 * r);
     }
 
-    static double apparent_sun_longitude(double theta, double delta_psi, double delta_tau) {
+    public static double apparent_sun_longitude(double theta, double delta_psi, double delta_tau) {
         return theta + delta_psi + delta_tau;
     }
 
-    static double greenwich_mean_sidereal_time(double jd, double jc) {
+    public static double greenwich_mean_sidereal_time(double jd, double jc) {
         return limit_degrees(280.46061837 + 360.98564736629 * (jd - 2451545.0)
                 + jc * jc * (0.000387933 - jc / 38710000.0));
     }
 
-    static double greenwich_sidereal_time(double nu0, double delta_psi, double epsilon) {
+    public static double greenwich_sidereal_time(double nu0, double delta_psi, double epsilon) {
         return nu0 + delta_psi * cos(toRadians(epsilon));
     }
 
-    static double geocentric_sun_right_ascension(double lamda, double epsilon, double beta) {
+    public static double geocentric_sun_right_ascension(double lamda, double epsilon, double beta) {
         double lamda_rad = toRadians(lamda);
         double epsilon_rad = toRadians(epsilon);
         return limit_degrees(toDegrees(atan2(sin(lamda_rad) * cos(epsilon_rad)
                 - tan(toRadians(beta)) * sin(epsilon_rad), cos(lamda_rad))));
     }
 
-    static double geocentric_sun_declination(double beta, double epsilon, double lamda) {
+    public static double geocentric_sun_declination(double beta, double epsilon, double lamda) {
         double beta_rad = toRadians(beta);
         double epsilon_rad = toRadians(epsilon);
         return toDegrees(asin(sin(beta_rad) * cos(epsilon_rad)
                 + cos(beta_rad) * sin(epsilon_rad) * sin(toRadians(lamda))));
     }
 
-    static double observer_hour_angle(double nu, double longitude, double alpha_deg) {
+    public static double observer_hour_angle(double nu, double longitude, double alpha_deg) {
         return limit_degrees(nu + longitude - alpha_deg);
     }
 
-    static double sun_equatorial_horizontal_parallax(double r) {
+    public static double sun_equatorial_horizontal_parallax(double r) {
         return 8.794 / (3600.0 * r);
     }
 
-    static double[] sun_right_ascension_parallax_and_topocentric_dec(double latitude, double elevation,
+    public static double[] sun_right_ascension_parallax_and_topocentric_dec(double latitude, double elevation,
                                                                      double xi, double h, double delta) {
         double delta_alpha_rad;
         double lat_rad = toRadians(latitude);
@@ -841,22 +841,22 @@ public class SolarPosition implements Cloneable {
         return new double[]{delta_alpha, delta_prime};
     }
 
-    static double topocentric_sun_right_ascension(double alpha_deg, double delta_alpha) {
+    public static double topocentric_sun_right_ascension(double alpha_deg, double delta_alpha) {
         return alpha_deg + delta_alpha;
     }
 
-    static double topocentric_local_hour_angle(double h, double delta_alpha) {
+    public static double topocentric_local_hour_angle(double h, double delta_alpha) {
         return h - delta_alpha;
     }
 
-    static double topocentric_elevation_angle(double latitude, double delta_prime, double h_prime) {
+    public static double topocentric_elevation_angle(double latitude, double delta_prime, double h_prime) {
         double lat_rad = toRadians(latitude);
         double delta_prime_rad = toRadians(delta_prime);
         return toDegrees(asin(sin(lat_rad) * sin(delta_prime_rad)
                 + cos(lat_rad) * cos(delta_prime_rad) * cos(toRadians(h_prime))));
     }
 
-    static double atmospheric_refraction_correction(double pressure, double temperature,
+    public static double atmospheric_refraction_correction(double pressure, double temperature,
                                                     double atmos_refract, double e0) {
         double del_e = 0;
         if (e0 >= -1 * (SUN_RADIUS + atmos_refract)) {
@@ -866,15 +866,15 @@ public class SolarPosition implements Cloneable {
         return del_e;
     }
 
-    static double topocentric_elevation_angle_corrected(double e0, double delta_e) {
+    public static double topocentric_elevation_angle_corrected(double e0, double delta_e) {
         return e0 + delta_e;
     }
 
-    static double topocentric_zenith_angle(double e) {
+    public static double topocentric_zenith_angle(double e) {
         return 90.0 - e;
     }
 
-    static double topocentric_azimuth_angle_neg180_180(double h_prime, double latitude, double delta_prime) {
+    public static double topocentric_azimuth_angle_neg180_180(double h_prime, double latitude, double delta_prime) {
         double h_prime_rad = toRadians(h_prime);
         double lat_rad = toRadians(latitude);
         return toDegrees(atan2(sin(h_prime_rad),
@@ -882,11 +882,11 @@ public class SolarPosition implements Cloneable {
                 - tan(toRadians(delta_prime)) * cos(lat_rad)));
     }
 
-    static double topocentric_azimuth_angle_zero_360(double azimuth180) {
+    public static double topocentric_azimuth_angle_zero_360(double azimuth180) {
         return azimuth180 + 180.0;
     }
 
-    static double surface_incidence_angle(double zenith, double azimuth180, double azm_rotation, double slope) {
+    public static double surface_incidence_angle(double zenith, double azimuth180, double azm_rotation, double slope) {
         double zenith_rad = toRadians(zenith);
         double slope_rad = toRadians(slope);
         return toDegrees(acos(cos(zenith_rad) * cos(slope_rad)
@@ -894,20 +894,20 @@ public class SolarPosition implements Cloneable {
                                 - azm_rotation))));
     }
 
-    static double sun_mean_longitude(double jme) {
+    public static double sun_mean_longitude(double jme) {
         return limit_degrees(280.4664567 + jme * (360007.6982779 + jme * (0.03032028
                 + jme * (1 / 49931.0 + jme * (-1 / 15300.0 + jme * (-1 / 2000000.0))))));
     }
 
-    static double eot(double m, double alpha, double del_psi, double epsilon) {
+    public static double eot(double m, double alpha, double del_psi, double epsilon) {
         return limit_minutes(4.0 * (m - 0.0057183 - alpha + del_psi * cos(toRadians(epsilon))));
     }
 
-    static double approx_sun_transit_time(double alpha_zero, double longitude, double nu) {
+    public static double approx_sun_transit_time(double alpha_zero, double longitude, double nu) {
         return (alpha_zero - longitude - nu) / 360.0;
     }
 
-    static double sun_hour_angle_at_rise_set(double latitude, double delta_zero, double h0_prime) {
+    public static double sun_hour_angle_at_rise_set(double latitude, double delta_zero, double h0_prime) {
         double h0 = -99999;
         double latitude_rad = toRadians(latitude);
         double delta_zero_rad = toRadians(delta_zero);
@@ -919,14 +919,14 @@ public class SolarPosition implements Cloneable {
         return h0;
     }
 
-    static void approx_sun_rise_and_set(double[] m_rts, double h0) {
+    public static void approx_sun_rise_and_set(double[] m_rts, double h0) {
         double h0_dfrac = h0 / 360.0;
         m_rts[SUN_RISE] = limit_zero2one(m_rts[SUN_TRANSIT] - h0_dfrac);
         m_rts[SUN_SET] = limit_zero2one(m_rts[SUN_TRANSIT] + h0_dfrac);
         m_rts[SUN_TRANSIT] = limit_zero2one(m_rts[SUN_TRANSIT]);
     }
 
-    static double rts_alpha_delta_prime(double[] ad, double n) {
+    public static double rts_alpha_delta_prime(double[] ad, double n) {
         double a = ad[JD_ZERO] - ad[JD_MINUS];
         double b = ad[JD_PLUS] - ad[JD_ZERO];
         if (abs(a) >= 2.0) {
@@ -938,14 +938,14 @@ public class SolarPosition implements Cloneable {
         return ad[JD_ZERO] + n * (a + b + (b - a) * n) / 2.0;
     }
 
-    static double rts_sun_altitude(double latitude, double delta_prime, double h_prime) {
+    public static double rts_sun_altitude(double latitude, double delta_prime, double h_prime) {
         double latitude_rad = toRadians(latitude);
         double delta_prime_rad = toRadians(delta_prime);
         return toDegrees(asin(sin(latitude_rad) * sin(delta_prime_rad)
                 + cos(latitude_rad) * cos(delta_prime_rad) * cos(toRadians(h_prime))));
     }
 
-    static double sun_rise_and_set(double[] m_rts, double[] h_rts, double[] delta_prime, double latitude,
+    public static double sun_rise_and_set(double[] m_rts, double[] h_rts, double[] delta_prime, double latitude,
                                    double[] h_prime, double h0_prime, int sun) {
         return m_rts[sun] + (h_rts[sun] - h0_prime)
                 / (360.0 * cos(toRadians(delta_prime[sun])) * cos(toRadians(latitude))

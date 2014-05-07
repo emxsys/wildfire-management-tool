@@ -33,6 +33,7 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
+import com.emxsys.wmt.solar.internal.SolarPosition;
 import static com.emxsys.wmt.util.AngleUtil.*;
 import static java.lang.Math.*;
 import java.rmi.RemoteException;
@@ -98,8 +99,8 @@ public class SolarUtil {
         double N = normalize360((360. / 365.242191) * D);
         double meanSun = N + epsilon_g - omega_g;
         double E_c = (360. / PI) * e * sin(toRadians(meanSun));
-        double eclipticLongitude = normalize360(N + E_c + epsilon_g);  
-        double eclipticLatitude = 0;   
+        double eclipticLongitude = normalize360(N + E_c + epsilon_g);
+        double eclipticLatitude = 0;
 
         // Ecliptic to equatorial coordinate conversion
         return getEquatorialCoordinates(eclipticLatitude, toRadians(eclipticLongitude));
@@ -128,15 +129,16 @@ public class SolarUtil {
      * @param sun The sun's sub-solar point coordinates
      * @return The horizon coordinates (azimuth and altitude) to the sun.
      */
-    public static RealTuple getAzimuthAltitude(Coord2D observer, Coord2D sun) {
+    public static RealTuple getAzimuthAltitude(Coord2D observer, ZonedDateTime time) {
 
         try {
-            if (observer.isMissing() || sun.isMissing()) {
-                throw new IllegalArgumentException(observer.longString() + ", " + sun.longString());
+            if (observer.isMissing()) {
+                throw new IllegalArgumentException("getAzimuthAltitude(" + observer + ")");
             }
+            RealTuple rightAscentionDeclination = getRightAscentionDeclination(time);
             double phi = observer.getLatitude().getValue(radian);
-            double sigma = sun.getLatitude().getValue(radian);
-            double H = observer.getLongitude().getValue(radian);
+            double sigma = rightAscentionDeclination.getRealComponents()[1].getValue(radian);
+            double H = calcHourAngle(time).getValue(radian);
             double a = calcAltitudeAngle(phi, sigma, H);
             double A = calcAzimuthAngle(phi, sigma, a, H);
 
@@ -145,9 +147,10 @@ public class SolarUtil {
 
             return new RealTuple(SolarType.HORIZON_COORDINATES, new Real[]{azimuth, altitude}, null);
 
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalArgumentException(ex.getMessage());
+        } catch (VisADException | RemoteException | IllegalArgumentException ex) {
+            logger.log(Level.SEVERE, ex.toString());
         }
+        return new RealTuple(SolarType.HORIZON_COORDINATES);
     }
 
     /**
@@ -386,7 +389,6 @@ public class SolarUtil {
      */
     static double[] calcSubsolarPoint(double julianDate) {
         // Main variables
-        double decimalHours;
         double elapsedJulianDays;
         double eclipticLongitude;
         double eclipticObliquity;
@@ -394,7 +396,6 @@ public class SolarUtil {
         // Calculate difference in days between the current Julian Day
         // and JD 2451545.0, which is noon 1 January 2000 Universal Time
         {
-            decimalHours = 0;
             elapsedJulianDays = julianDate - 2451545.0;
         }
         // Calculate ecliptic coordinates (ecliptic longitude and obliquity of the
@@ -425,10 +426,9 @@ public class SolarUtil {
             }
             declination = Math.asin(Math.sin(eclipticObliquity) * sinEclipticLongitude);
         }
-        //double greenwichMeanSiderealTime = 6.6974243242 + 0.0657098283 * elapsedJulianDays + decimalHours;
-        double greenwichMeanSiderealTime = (18.697374558 + 24.06570982441908 * elapsedJulianDays) % 24; 
+        double greenwichMeanSiderealTime = (18.697374558 + 24.06570982441908 * elapsedJulianDays) % 24;
         double longitude = rightAscension - toRadians(greenwichMeanSiderealTime * 15.0);
-        
+
         while (declination > Math.PI / 2.0) {
             declination -= Math.PI;
         }
