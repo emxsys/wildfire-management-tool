@@ -150,7 +150,7 @@ public class WeatherMarker extends BasicMarker {
                 return;
             }
             try {
-                RealTuple wx = (RealTuple) marker.forecast.evaluate(new DateTime(event.getNewTime()));
+                RealTuple wx = (RealTuple) marker.forecast.evaluate(new DateTime(event.getNewTime().toEpochSecond()));
                 double[] values = wx.getValues();
                 marker.placemark.setLabelText(wx.isMissing() ? "missing" : String.format("T: %1$.0f, RH: %2$.0f", values[0], values[1]));
             } catch (VisADException | RemoteException ex) {

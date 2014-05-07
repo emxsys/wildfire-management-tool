@@ -38,30 +38,43 @@ import visad.VisADException;
 
 /**
  * A SunlightTuple contains the position of the sun for a given date and time.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class SunlightTuple extends RealTuple implements Sunlight {
 
     private final Real declination;
     private final Real longitude;
+    private final Real altitudeAngle;
+    private final Real azimuthAngle;
+    private final Real sunriseHour;
+    private final Real sunsetHour;
+
     private Data[] components;
 
-    public SunlightTuple(Real declination, Real longitude) {
-        super(SolarType.SUNLIGHT_ANGLES);
-        this.declination = declination;
-        this.longitude = longitude;
+    public SunlightTuple(Real declination, Real longitude, Real altitudeAngle, Real azimuthAngle, Real sunriseHour, Real sunsetHour) {
+        super(SolarType.SUNLIGHT);
+        this.declination = Reals.convertTo(SolarType.DECLINATION, declination);
+        this.longitude = Reals.convertTo(SolarType.LONGITUDE, longitude);
+        this.altitudeAngle = Reals.convertTo(SolarType.ALTITUDE_ANGLE, altitudeAngle);
+        this.azimuthAngle = Reals.convertTo(SolarType.AZIMUTH_ANGLE, azimuthAngle);
+        this.sunriseHour = Reals.convertTo(SolarType.SUNRISE_HOUR, sunriseHour);
+        this.sunsetHour = Reals.convertTo(SolarType.SUNSET_HOUR, sunsetHour);
 
     }
 
     public SunlightTuple() {
-        super(SolarType.SUNLIGHT_ANGLES);
+        super(SolarType.SUNLIGHT);
         this.declination = new Real(SolarType.DECLINATION);
         this.longitude = new Real(SolarType.LONGITUDE);
+        this.altitudeAngle = new Real(SolarType.ALTITUDE_ANGLE);
+        this.azimuthAngle = new Real(SolarType.AZIMUTH_ANGLE);
+        this.sunriseHour = new Real(SolarType.SUNRISE_HOUR);
+        this.sunsetHour = new Real(SolarType.SUNSET_HOUR);
     }
 
     /**
-     * Declination is the earth's tilt angle relative to the sun at the given date and time.
+     * Declination is the earth's tilt angle relative to the sun at a given date and time.
      *
      * @return [degrees]
      */
@@ -78,6 +91,44 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @Override
     public Real getLongitude() {
         return this.longitude;
+    }
+
+    /**
+     * Gets the solar altitude angle--how high is the sun from the horizon.
+     * @return The solar altitude angle (A).
+     */
+    @Override
+    public Real getSolarAltitudeAngle() {
+        return this.altitudeAngle;
+
+    }
+
+    /**
+     * Gets the solar azimuth angle--where is sun relative to North.
+     * @return The solar azimuth angle (Z).
+     */
+    @Override
+    public Real getSolarAzimuthAngle() {
+        return this.azimuthAngle;
+    }
+
+    /**
+     * Gets the time of sunrise.
+     * @return Sunrise solar hour relative to solar noon.
+     */
+    @Override
+    public Real getSunriseHour() {
+        return this.sunriseHour;
+
+    }
+
+    /**
+     * Gets the time of sunset.
+     * @return Sunset solar hour relative to solar noon.
+     */
+    @Override
+    public Real getSunsetHour() {
+        return this.sunsetHour;
     }
 
     /**
@@ -145,8 +196,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
      * Indicates if this Tuple is identical to an object.
      *
      * @param obj The object.
-     * @return true if and only if the object is
-     * a Tuple and both Tuple-s have identical component
+     * @return true if and only if the object is a Tuple and both Tuple-s have identical component
      * sequences.
      */
     @Override
@@ -179,6 +229,14 @@ public class SunlightTuple extends RealTuple implements Sunlight {
      */
     @Override
     public String toString() {
-        return getDeclination() + " " + getLongitude();
+        try {
+        return getDeclination().longString() + ", " + getLongitude().longString()
+                + ", " + getSolarAltitudeAngle().longString()
+                + ", " + getSolarAzimuthAngle().longString()
+                + ", " + getSunriseHour().longString()
+                + ", " + getSunsetHour().longString();
+        } catch (VisADException | RemoteException e) {
+            return "";
+        }
     }
 }

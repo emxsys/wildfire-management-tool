@@ -29,7 +29,9 @@
  */
 package com.emxsys.wmt.solar.api;
 
+import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import visad.Real;
 
@@ -42,19 +44,22 @@ public interface SunlightProvider {
 
     /**
      * Gets the coordinate where the position of the sun is overhead at the given date and time.
+     * The latitude is the same as declination, the longitude is the right ascension converted to
+     * a terrestrial coordinate.
      *
-     * @param utcTime UTC time used to get sun's position
-     * @return the position of the sun
+     * @param time The time used to get sun's position.
+     * @return The position of the sun as a latitude/longitude.
      */
-    Coord3D getSunPosition(Date utcTime);
+    Coord3D getSunPosition(ZonedDateTime time);
 
     /**
-     * Constructs a new Sunlight object represent the sun angles for a given date/time.
+     * Constructs a new Sunlight instance represent the sun angles for a given date/time and location.
      *
-     * @param utcTime a UTC date/time
-     * @return a Sunlight object for the given date/time
+     * @param time The time for the sunlight.
+     * @param coord The location for the sunlight.
+     * @return A Sunlight object.
      */
-    Sunlight getSunlight(Date utcTime);
+    Sunlight getSunlight(ZonedDateTime time, Coord2D coord);
 
     /**
      * Constructs a new SunlightHours object for a given longitude and date.

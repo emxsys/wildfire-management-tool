@@ -95,11 +95,6 @@
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>
-            <artifactId>terramenta-time</artifactId>
-            <groupId>com.terramenta</groupId>
-            <version>${terramenta.version}</version>
-        </dependency>
-        <dependency>
             <artifactId>worldwind</artifactId>
             <groupId>gov.nasa</groupId>
             <version>1.5.1</version>
@@ -212,11 +207,9 @@
                         <publicPackage>com.emxsys.wmt.globe</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.actions</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.layers</publicPackage>
-                        <publicPackage>com.emxsys.wmt.globe.markers</publicPackage>
-                        <publicPackage>com.emxsys.wmt.globe.markers.ics</publicPackage>
-                        <publicPackage>com.emxsys.wmt.globe.markers.pushpins</publicPackage>
-                        <publicPackage>com.emxsys.wmt.globe.markers.weather</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.markers.*</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.render</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.util</publicPackage>
                     </publicPackages>
                     <nbmResources> 
                         <nbmResource>

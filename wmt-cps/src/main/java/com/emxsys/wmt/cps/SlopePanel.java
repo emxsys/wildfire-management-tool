@@ -30,35 +30,74 @@
 package com.emxsys.wmt.cps;
 
 import com.emxsys.wmt.cps.charts.ChartUtil;
+import com.emxsys.wmt.gis.api.Terrain;
+import com.emxsys.wmt.util.AngleUtil;
 import java.awt.Color;
+import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CompassPlot;
+import org.jfree.chart.plot.dial.DialPlot;
+import org.jfree.data.general.DefaultValueDataset;
 import org.openide.util.NbBundle.Messages;
 
 /**
+ * The SlopePanel depicts the terrain's aspect and slope with a compass chart and dial chart
+ * respectively. Slope is one of the primary forces in the CPS assessment of fire behavior.
  *
  * @author Bruce Schubert
  */
 @Messages({
-    "CTL_SlopeChartTitle=Aspect and Slope",
-})
+    "# {0} - cardinal point",
+    "CTL_AspectChartTitle={0} Aspect",
+    "# {0} - percent",
+    "CTL_SlopeChartTitle={0}% Grade",
+    "# {0} - degrees",
+    "CTL_SlopeChartSubTitle={0}° Slope",})
 public class SlopePanel extends javax.swing.JPanel {
 
-    private JFreeChart compassChart;
+    private static final Logger logger = Logger.getLogger(SlopePanel.class.getName());
+    private JFreeChart aspectChart;
+    private JFreeChart slopeChart;
 
     /**
      * Creates new form SlopePanel
      */
     public SlopePanel() {
         initComponents();
-        initChartPanel();
+        createCharts();
     }
 
-    private void initChartPanel() {
-        // Create a compass chart to depict aspect
-        compassChart = ChartUtil.createCommonCompassChart(
-                Bundle.CTL_SlopeChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.GREEN);
-        jPanelChart.add(new ChartPanel(compassChart));
+    /**
+     * Updates the JFreeCharts.
+     *
+     * @param terrain
+     */
+    public void updateCharts(Terrain terrain) {
+
+        // Update Aspect Chart
+        double aspect = AngleUtil.normalize360(terrain.getAspectDegrees());
+        CompassPlot compassPlot = (CompassPlot) aspectChart.getPlot();
+        DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[0];
+        compassData.setValue(aspect);
+        aspectChart.setTitle(Bundle.CTL_AspectChartTitle(AngleUtil.degreesToCardinalPoint8(aspect)));
+
+        // Update Slope Chart
+        DialPlot dialPlot = (DialPlot) slopeChart.getPlot();
+        DefaultValueDataset dialData = (DefaultValueDataset) dialPlot.getDataset();
+        dialData.setValue(terrain.getSlopePercent());
+        slopeChart.setTitle(Bundle.CTL_SlopeChartTitle(Long.toString(Math.round(terrain.getSlopePercent()))));
+    }
+
+    /**
+     * Creates the JFreeCharts.
+     */
+    private void createCharts() {
+        aspectChart = ChartUtil.createCommonCompassChart(Bundle.CTL_AspectChartTitle(""), null, ChartUtil.WIND_NEEDLE, Color.GREEN);
+        aspectPanel.add(new ChartPanel(aspectChart));
+
+        slopeChart = ChartUtil.createCommonDialChart(Bundle.CTL_SlopeChartTitle(""), null, 0, 100);
+        slopePanel.add(new ChartPanel(slopeChart));
     }
 
     /**
@@ -71,27 +110,37 @@ public class SlopePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelChart = new javax.swing.JPanel();
+        aspectPanel = new javax.swing.JPanel();
+        slopePanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(SlopePanel.class, "SlopePanel.border.title"))); // NOI18N
 
-        jPanelChart.setLayout(new javax.swing.BoxLayout(jPanelChart, javax.swing.BoxLayout.LINE_AXIS));
+        aspectPanel.setLayout(new javax.swing.BoxLayout(aspectPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        slopePanel.setLayout(new javax.swing.BoxLayout(slopePanel, javax.swing.BoxLayout.LINE_AXIS));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelChart, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(aspectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(slopePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelChart, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addComponent(aspectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(slopePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanelChart;
+    private javax.swing.JPanel aspectPanel;
+    private javax.swing.JPanel slopePanel;
     // End of variables declaration//GEN-END:variables
 
 }

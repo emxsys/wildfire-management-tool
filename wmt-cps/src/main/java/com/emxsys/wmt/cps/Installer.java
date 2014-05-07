@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2014, bruce 
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+ *     - Neither the name of bruce,  nor the names of its 
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -27,42 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.time.api;
+package com.emxsys.wmt.cps;
 
-import java.time.ZonedDateTime;
+import org.openide.modules.ModuleInstall;
+import org.openide.windows.WindowManager;
 
-/**
- * TimeProvider is an interface for a service that provides the central time for WMT.
- *
- * @author Bruce Schubert <bruce@emxsys.com>
- */
-public interface TimeProvider {
+public class Installer extends ModuleInstall {
 
-    /**
-     * Gets the current time for the application.
-     * @return the current time
-     */
-    ZonedDateTime getTime();
+    @Override
+    public void restored() {
+        WindowManager.getDefault().invokeWhenUIReady(() -> {
+            Controller.getInstance();
+        });
+                
+    }
 
-    /**
-     * Sets the time for the application.
-     *
-     * @param time current time
-     */
-    void setTime(ZonedDateTime time);
-
-    /**
-     * Registers a TimeListener on this provider. The listener will be notified when the time
-     * changes.
-     *
-     * @param listener the listener to be registered.
-     */
-    void addTimeListener(TimeListener listener);
-
-    /**
-     * Unregisters a TimeListener from this provider.
-     *
-     * @param listener the listener to be unregistered.
-     */
-    void removeTimeListener(TimeListener listener);
 }

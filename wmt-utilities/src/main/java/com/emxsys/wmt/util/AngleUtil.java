@@ -32,11 +32,35 @@ package com.emxsys.wmt.util;
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: AngleUtil.java 209 2012-09-05 23:09:19Z bdschubert $
  */
 public class AngleUtil {
 
     private AngleUtil() {
+    }
+
+    /**
+     * Computes the shortest distance between two angles.
+     *
+     * @param angle1Degrees
+     * @param angle2Degrees
+     * @return The angular distance in degrees.
+     */
+    public static double angularDistanceBetween(double angle1Degrees, double angle2Degrees) {
+        double differenceDegrees = angle1Degrees - angle2Degrees;
+        while (differenceDegrees < -180) {
+            differenceDegrees += 360;
+        }
+        while (differenceDegrees > 180) {
+            differenceDegrees -= 360;
+        }
+        return Math.abs(differenceDegrees);
+    }
+
+    public static boolean crossesMeridian(double angle1Degrees, double angle2Degrees) {
+        // An angular chord crosses a merdian (prime merdian or date line) if end pos have different
+        // longitude signs and are more than 180 degrees longitude apart
+        return (Math.signum(angle1Degrees) != Math.signum(angle2Degrees))
+                && (Math.abs(angle1Degrees - angle2Degrees) > 180);
     }
 
     /**

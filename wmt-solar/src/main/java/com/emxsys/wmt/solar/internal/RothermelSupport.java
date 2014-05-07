@@ -29,7 +29,11 @@
  */
 package com.emxsys.wmt.solar.internal;
 
+import com.emxsys.wmt.solar.api.SolarType;
 import com.emxsys.wmt.visad.Times;
+import static java.lang.Math.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -40,12 +44,11 @@ import visad.CommonUnit;
 import visad.DateTime;
 import visad.Real;
 import visad.RealType;
-import static java.lang.Math.*;
 import visad.VisADException;
 
 /**
  * A utility class for computing solar angles using Rothermel formulas.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class RothermelSupport {
@@ -57,24 +60,20 @@ public class RothermelSupport {
      * Computes the solar declination angle for a given day of the year.
      *
      * Solar Declination angle is the angle between a plane perpendicular to incoming solar
-     * radiation and the rotational axis of the earth. It varies form +23.5 degress on June 21/22
+     * radiation and the rotational axis of the earth. It varies form +23.5 degrees on June 21/22
      * and -23.5 degrees on December 21/22.
      *
      * @see "Rothermel et al, 1986, page 11"
      *
-     * @param date the date used to compute the angle
-     * @return the solar declination angle [degrees]
+     * @param NJ the julian date used to compute the angle
+     * @return the solar declination angle [radians]
      */
-    static public Real calcSolarDeclinationAngle(Date date) {
+    static public Real calcSolarDeclinationAngle(int julianDay) {
         // Rothermel et al, 1986, page 11
         // Equation #8
         // 0.9863 = 360 degrees /365 days
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        long julianDay = calendar.get(Calendar.DAY_OF_YEAR);
-
         double delta = 23.5 * sin(toRadians(0.9863) * (284 + julianDay));
-        return new Real(RealType.Declination, delta); // [degrees]
+        return new Real(SolarType.DECLINATION, delta); // [degrees]
     }
 
     /**
@@ -85,7 +84,7 @@ public class RothermelSupport {
      * @return two element array of times (solar noon == 12 LST)
      */
     static public DateTime[] calcSunriseSunset(Real latitude, Real declination, Date date) {
-        double sunriseHour = calcSunriseHour(latitude, declination);
+        double sunriseHour = calcSunriseSolarHour(latitude, declination);
         double sunsetHour = 24 - sunriseHour;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -112,7 +111,7 @@ public class RothermelSupport {
      * @see "Rothermel et al, 1986, page 48"
      * @return time of sunrise relative to solar noon
      */
-    static public double calcSunriseHour(Real latitude, Real declination) {
+    static public double calcSunriseSolarHour(Real latitude, Real declination) {
         // Based on Equation #1
         // sin h = (sin A - sin phi * sin delta) / (cos phi * cos delta);
         //  The text includes additional conditions for testing
@@ -125,10 +124,12 @@ public class RothermelSupport {
             }
             // TODO: Add tests for perpetual day/night (return 0 for no sunrise/sunset)
 
-            // This equation computes the hour angle when the solar altitude angle = 0
+            // This equation computes the hour angle relative to 0600hrs when the solar altitude angle == 0
             double h = asin(0 - sin(phi) * sin(delta)) / (cos(phi) * cos(delta));
-            // 15 degrees of rotation per hour; relative to 0600hrs
+
+            // Convert to local solar time: 15 degrees of rotation per hour; h relative to 0600hrs
             double t = (toDegrees(h) / 15) + 6;
+
             return t;
 
         } catch (IllegalArgumentException | VisADException ex) {
@@ -143,8 +144,8 @@ public class RothermelSupport {
      * @see "Rothermel et al, 1986, page 48"
      * @return time of sunset relative to solar noon
      */
-    static public double calcSunsetHour(Real latitude, Real declination) {
-        double t_r = calcSunriseHour(latitude, declination);
+    static public double calcSunsetSolarHour(Real latitude, Real declination) {
+        double t_r = calcSunriseSolarHour(latitude, declination);
         double t_s = 24 - t_r;
         return t_s;
     }
@@ -164,6 +165,17 @@ public class RothermelSupport {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Computes hour angle from local 6am
+     * @param timeProjection local time in 24hr format
+     * @return hour angle 0600=0 deg; 1200=90 deg; 1800=180 deg; 0000=270[radians]
+     */
+    static public double calcLocalHourAngle(double t) {
+        // deg per hour = (360.0 / 24.0) = 15
+        double h = 15 * ((t >= 6.0 ? t : t + 24) - 6.0);
+        return toRadians(h);
     }
 
     /**
@@ -225,14 +237,4 @@ public class RothermelSupport {
         return Z;
     }
 
-    /**
-     * Computes hour angle from local 6am
-     * @param timeProjection local time in 24hr format
-     * @return hour angle 0600=0 deg; 1200=90 deg; 1800=180 deg; 0000=270[radians]
-     */
-    static public double calcLocalHourAngle(double t) {
-        // deg per hour = (360.0 / 24.0) = 15
-        double h = 15 * ((t >= 6.0 ? t : t + 24) - 6.0);
-        return toRadians(h);
-    }
 }
