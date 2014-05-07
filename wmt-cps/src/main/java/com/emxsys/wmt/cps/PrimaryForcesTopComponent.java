@@ -29,12 +29,13 @@
  */
 package com.emxsys.wmt.cps;
 
+import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.wmt.gis.api.Terrain;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
+import java.time.ZonedDateTime;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
@@ -77,20 +78,35 @@ import org.openide.windows.TopComponent;
 )
 public final class PrimaryForcesTopComponent extends TopComponent {
 
+    private PreheatPanel preheatPanel;
+    private WindPanel windPanel;
+    private SlopePanel slopePanel;
+
     public PrimaryForcesTopComponent() {
         initComponents();
-        initializeResources();
+        createPanels();
         setName(Bundle.CTL_PrimaryForcesTopComponent());
         setToolTipText(Bundle.CTL_PrimaryForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
     }
 
-    private void initializeResources() {
+    public void updateCharts(Coord3D coord, Terrain terrain) {
+        slopePanel.updateCharts(terrain);
+    }
+
+    public void updateCharts(ZonedDateTime time, double sunAzimuth) {
+        preheatPanel.updateCharts(time, sunAzimuth);
+    }
+
+    private void createPanels() {
+        preheatPanel = new PreheatPanel();
+        windPanel = new WindPanel();
+        slopePanel = new SlopePanel();
         // Layout the page
-        jSplitPane1.setTopComponent(new PreheatPanel());
-        jSplitPane2.setTopComponent(new WindPanel());
-        jSplitPane2.setBottomComponent(new SlopePanel());
+        jSplitPane1.setTopComponent(preheatPanel);
+        jSplitPane2.setTopComponent(windPanel);
+        jSplitPane2.setBottomComponent(slopePanel);
     }
 
     /**
@@ -137,8 +153,6 @@ public final class PrimaryForcesTopComponent extends TopComponent {
     public void componentClosed() {
         // TODO add custom code on component closing
     }
-    
-    
 
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
@@ -156,7 +170,7 @@ public final class PrimaryForcesTopComponent extends TopComponent {
     public void setPreferredSize(Dimension preferredSize) {
         super.setPreferredSize(preferredSize); //To change body of generated methods, choose Tools | Templates.
         System.out.println(preferredSize.toString());
-        
+
     }
 
 }

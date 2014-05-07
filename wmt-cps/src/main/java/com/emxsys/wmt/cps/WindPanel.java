@@ -40,10 +40,12 @@ import org.openide.util.NbBundle;
  * @author Bruce Schubert
  */
 @NbBundle.Messages({
-    "CTL_WindChartTitle=Direction and Speed",})
+    "CTL_WindDirChartTitle=Direction",
+    "CTL_WindSpdChartTitle=Speed",})
 public class WindPanel extends javax.swing.JPanel {
 
-    private JFreeChart compassChart;
+    private JFreeChart dirChart;
+    private JFreeChart spdChart;
 
     /**
      * Creates new form WindPanel
@@ -55,9 +57,10 @@ public class WindPanel extends javax.swing.JPanel {
 
     private void initChartPanel() {
         // Create a compass chart to depict wind direction
-        compassChart = ChartUtil.createCommonCompassChart(
-                Bundle.CTL_WindChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.BLUE);
-        jPanelChart.add(new ChartPanel(compassChart));
+        dirChart = ChartUtil.createCommonCompassChart(Bundle.CTL_WindDirChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.BLUE);
+        spdChart = ChartUtil.createCommonDialChart(Bundle.CTL_WindSpdChartTitle(), null, 0, 50);
+        dirPanel.add(new ChartPanel(dirChart));
+        spdPanel.add(new ChartPanel(spdChart));
     }
 
     /**
@@ -70,27 +73,36 @@ public class WindPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelChart = new javax.swing.JPanel();
+        dirPanel = new javax.swing.JPanel();
+        spdPanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindPanel.class, "WindPanel.border.title"))); // NOI18N
 
-        jPanelChart.setLayout(new javax.swing.BoxLayout(jPanelChart, javax.swing.BoxLayout.LINE_AXIS));
+        dirPanel.setLayout(new javax.swing.BoxLayout(dirPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        spdPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelChart, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(dirPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelChart, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+            .addComponent(dirPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+            .addComponent(spdPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanelChart;
+    private javax.swing.JPanel dirPanel;
+    private javax.swing.JPanel spdPanel;
     // End of variables declaration//GEN-END:variables
 
 }

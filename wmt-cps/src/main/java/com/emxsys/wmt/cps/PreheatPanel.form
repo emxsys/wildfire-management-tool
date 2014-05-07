@@ -25,17 +25,17 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanelChart" alignment="0" pref="255" max="32767" attributes="0"/>
+          <Component id="solarPanel" alignment="0" pref="255" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanelChart" alignment="0" pref="212" max="32767" attributes="0"/>
+          <Component id="solarPanel" alignment="0" pref="212" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanelChart">
+    <Container class="javax.swing.JPanel" name="solarPanel">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
     </Container>
