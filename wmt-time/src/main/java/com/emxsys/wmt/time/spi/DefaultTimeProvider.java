@@ -38,6 +38,8 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
@@ -49,7 +51,7 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service = TimeProvider.class)
 public class DefaultTimeProvider implements TimeProvider, Observer {
-
+    private static final Logger logger = Logger.getLogger(DefaultTimeProvider.class.getName());
     static TimeProvider instance = null;
     private final EventListenerList listenerList = new EventListenerList();
     private DateProvider dateProvider;
@@ -70,6 +72,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     }
 
     public DefaultTimeProvider() {
+        logger.config("Constructed TimeProvider");
         getDateProvider();
     }
 
@@ -108,7 +111,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     public void update(Observable dateProvider, Object date) {
         ZonedDateTime oldTime = curTime;
         curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), UTC_ZONE);
-        //System.out.println("update:" + curTime.toString());
+        logger.log(Level.FINEST, "update: {0}", curTime.toString());
         TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
         for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {
             listener.updateTime(timeEvent);
