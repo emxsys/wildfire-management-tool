@@ -30,7 +30,7 @@
 
 package com.emxsys.wmt.gis.api;
 
-import java.util.Date;
+import visad.Real;
 
 /**
  * ShadedTerrainProvider extends the TerrainProvider interface with methods to test for 
@@ -42,9 +42,10 @@ public interface ShadedTerrainProvider extends TerrainProvider {
 
     /**
      * Returns true if the location is shaded by the terrain at the given date and time.
-     * @param coord coordinate to test
-     * @param datetime UTC time used to determine sun's position
+     * @param coord The coordinate to evaluate.
+     * @param azimuth The azimuth angle to the sun.
+     * @param zenith The zenith angle of the sun.
      * @return true if the position is shaded by surrounding terrain.
      */
-    boolean isCoordinateTerrestialShaded(Coord2D coord, Date datetime);
+    boolean isCoordinateTerrestialShaded(Coord3D coord, Real azimuth, Real zenith);
 }
