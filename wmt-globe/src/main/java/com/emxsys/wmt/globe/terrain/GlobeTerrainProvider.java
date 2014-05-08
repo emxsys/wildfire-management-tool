@@ -27,15 +27,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.globe;
+package com.emxsys.wmt.globe.terrain;
 
 import com.emxsys.wmt.gis.api.Coord2D;
+import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.Terrain;
 import com.emxsys.wmt.gis.api.TerrainTuple;
-import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.solar.api.SolarUtil;
-import gov.nasa.worldwind.WorldWind;
+import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Intersection;
@@ -43,20 +42,27 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
-import java.util.Date;
+import static java.lang.Math.PI;
+import static java.lang.Math.tan;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.lookup.ServiceProvider;
+import static visad.CommonUnit.degree;
+import static visad.CommonUnit.meter;
+import static visad.CommonUnit.radian;
 import visad.Real;
 import visad.RealType;
+import visad.VisADException;
 
-//TODO: Implement hi-res terrain and shading tests.
 /**
  * GlobeTerrainProvider is concrete TerrainProvider based on the WorldWind globe elevation model.
  *
  * @author Bruce Schubert
  */
+@ServiceProvider(service = ShadedTerrainProvider.class)
 public class GlobeTerrainProvider implements ShadedTerrainProvider {
 
-    private final HighResolutionTerrain terrain;
+    private HighResolutionTerrain hiResTerrain;
     /** WorldWind globe provides the elevation model */
     private static gov.nasa.worldwind.globes.Globe globe;
     /** The vertical resolution (meters) */
@@ -66,12 +72,19 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
     private static final Logger logger = Logger.getLogger(GlobeTerrainProvider.class.getName());
 
     public GlobeTerrainProvider() {
-        // Create a Terrain object that uses high-resolution elevation data to compute intersections.
-        this.terrain = new HighResolutionTerrain(lookupGlobe(), TARGET_RESOLUTION);
-        this.terrain.setCacheCapacity(CACHE_SIZE); // larger cache speeds up repeat calculations
     }
 
-    private gov.nasa.worldwind.globes.Globe lookupGlobe() {
+    private HighResolutionTerrain getHiResTerrain() {
+        // Deferred initialization
+        if (hiResTerrain == null) {
+            // Create a Terrain object that uses high-resolution elevation data to compute intersections.
+            this.hiResTerrain = new HighResolutionTerrain(getGlobe(), TARGET_RESOLUTION);
+            this.hiResTerrain.setCacheCapacity(CACHE_SIZE); // larger cache speeds up repeat calculations
+        }
+        return this.hiResTerrain;
+    }
+
+    private gov.nasa.worldwind.globes.Globe getGlobe() {
         if (globe == null) {
             WorldWindow wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
             if (wwd != null) {
@@ -79,10 +92,6 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
             }
         }
         return globe;
-    }
-
-    private HighResolutionTerrain getHighResolutionTerrain() {
-        return this.terrain;
     }
 
     @Override
@@ -101,7 +110,8 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
      */
     @Override
     public Terrain getTerrain(Coord2D coord) {
-        gov.nasa.worldwind.globes.Globe g = lookupGlobe();
+        gov.nasa.worldwind.globes.Globe g = getGlobe();
+        // The globe must be available to compute slope and aspect
         if (g != null) {
             // Convert from VisAD to WW lat/lon
             LatLon latLon = LatLon.fromDegrees(
@@ -112,6 +122,7 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
             Angle[] angles = computeSlopeAndAspect(latLon);
             Angle slope = angles[0];
             Angle aspect = angles[1];
+            // Get the elevation 
             Real elevation = getElevation(coord);
 
             return new TerrainTuple(aspect.degrees, slope.degrees, elevation.getValue());
@@ -121,27 +132,59 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
         }
     }
 
-    
     @Override
-    public boolean isCoordinateTerrestialShaded(Coord2D coord, Date datetime) {
-//        Position positionA = Positions.fromCoord2D(coord);
-//        Position positionB = Positions.fromCoord3D(SolarUtil.getSunPosition(datetime));
-//        Intersection[] intersect = terrain.intersect(positionA, positionB);
-//
-//        // The position is shaded if there is an interesection with the terrain between the two positions
-//        return intersect != null;
-        throw new UnsupportedOperationException("isCoordinateTerrestialShaded");
+    public boolean isCoordinateTerrestialShaded(Coord3D coord, Real azimuth, Real zenith) {
+        try {
+            if (coord.isMissing() || azimuth.isMissing() || zenith.isMissing()) {
+                logger.log(Level.WARNING, "Illegal argument(s) in isCoordinateTerrestialShaded({0}, {1}, {2})", new Object[]{coord, azimuth, zenith});
+                return false;
+            }
+
+            // Is sun below the horizon?
+            if (zenith.getValue(degree) > 90) {
+                return true;
+            }
+            // Compute the position of object that would obscure the sun at fixed distance from the coord.
+            // Set distance to one nautical mile, e.g., one minute of latitude.
+            final Real ANGULAR_DISTANCE = new Real(RealType.getRealType("Angle", degree), 1.0 / 60);
+            Coord2D endPos = Globe.computeGreatCircleCoordinate(coord, azimuth, ANGULAR_DISTANCE);
+
+            // Compute the height of a fake Sun object that would obscure the real Sun at the 
+            // end positon--ignoring the curvature of earth (negligable over short distances).
+            double tanAltitudeAngle = tan(PI / 2 - zenith.getValue(radian));
+            double distanceMeters = Globe.computeGreatCircleDistance(coord, endPos).getValue(meter);
+            double heightMeters = tanAltitudeAngle * distanceMeters; // height of fake Sun
+
+            // Determine position offsets above the terrain
+            LatLon latlonA = LatLon.fromDegrees(coord.getLatitudeDegrees(), coord.getLongitudeDegrees());
+            LatLon latlonB = LatLon.fromDegrees(endPos.getLatitudeDegrees(), endPos.getLongitudeDegrees());
+            double elevA = getBestElevation(latlonA);
+            double elevB = getBestElevation(latlonB);
+            double offsetA = Math.max(coord.getAltitudeMeters() - elevA, 0);
+            double offsetB = Math.max(heightMeters - elevB, 0);  // AGL of fake Sun 
+
+            // Test for intersecting terrain
+            Position positionA = new Position(latlonA, offsetA);
+            Position positionB = new Position(latlonB, offsetB);
+            Intersection[] intersect = getHiResTerrain().intersect(positionA, positionB);
+
+            // The position is shaded if there is an intersection with the terrain between the two positions.
+            return intersect != null;
+
+        } catch (VisADException ex) {
+            logger.warning(ex.getMessage());
+            return false;
+        }
     }
 
     private double getBestElevation(LatLon latLon) {
-        return getFastElevation(latLon);
-//        // First, lookup hi resolution terrain, then fallback on view altitude-sensitive elevation
-//        Double elevation = terrain.getElevation(latLon);    // does this block?
-//        if (elevation == null)
-//        {
-//            elevation = getFastElevation(latLon);
-//        }
-//        return elevation.doubleValue();
+//        return getFastElevation(latLon);
+        // First, lookup hi resolution terrain, then fallback on view altitude-sensitive elevation
+        Double elevation = getHiResTerrain().getElevation(latLon);    // does this block?
+        if (elevation == null) {
+            elevation = getFastElevation(latLon);
+        }
+        return elevation;
     }
 
     private double getFastElevation(LatLon latLon) {

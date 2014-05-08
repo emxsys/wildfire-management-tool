@@ -33,7 +33,6 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
@@ -42,6 +41,7 @@ import com.emxsys.wmt.gis.api.layer.LayerGroup;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.gis.api.symbology.Graphic;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
+import com.emxsys.wmt.gis.spi.DefaultShadedTerrainProvider;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
@@ -68,6 +68,7 @@ import java.awt.Component;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.AbstractLookup;
@@ -159,10 +160,10 @@ public class Globe implements GisViewer {
         this.content.add(new BalloonController(this.wwm.getWorldWindow())); // 2) Handles link and navigation events in BrowserBalloons.
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
-        this.content.add(new GlobeTerrainProvider());
-        this.content.add(DefaultTimeProvider.getInstance());
+        this.content.add(DefaultShadedTerrainProvider.getInstance());
         this.content.add(DefaultSunlightProvider.getInstance());
         this.content.add(DefaultWeatherProvider.getInstance());
+        this.content.add(DefaultTimeProvider.getInstance());
         this.wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization
@@ -199,15 +200,7 @@ public class Globe implements GisViewer {
         this.initialized = true;
     }
 
-    
-    /**
-     * Gets the Globe's ShadedTerrainProvider.
-     * @return The GlobeTerrainProvider instance.
-     */
-    public ShadedTerrainProvider getShadedTerrainProvider() {
-        return getLookup().lookup(GlobeTerrainProvider.class);
-    }
-        
+
     /**
      * Get the Globe's lookup which actually a proxy for the WorldWindManager's lookup.
      * @return the WorldWindManager's lookup.
@@ -300,7 +293,7 @@ public class Globe implements GisViewer {
             }
             // Update the WorldWind model
             if (groupLayerPosition > -1) {
-                logger.log(Level.INFO, "addGisLayer() : added {0} to group {1} at {2}", new Object[]{
+                logger.log(Level.FINE, "addGisLayer() : added {0} to group {1} at {2}", new Object[]{
                     gisLayer.getName(), group.getName(), groupLayerPosition
                 });
                 this.wwm.getLayers().add(insertFirstInGroup ? groupLayerPosition + 1 : groupLayerPosition, layerImpl);
@@ -405,12 +398,12 @@ public class Globe implements GisViewer {
         double distance = angle.radians * radius;
         return Reals.newDistance(distance, CommonUnit.meter);
     }
-    
+
     /**
      * Computes the azimuth angle from coord1 to coord2.
      * @param coord1
      * @param coord2
-     * @return 
+     * @return
      */
     public static double computeGreatCircleAzimuth(Coord2D coord1, Coord2D coord2) {
         Position pos1 = Positions.fromCoord2D(coord1);
@@ -418,4 +411,27 @@ public class Globe implements GisViewer {
         Angle angle = LatLon.greatCircleAzimuth(pos1, pos2);
         return angle.degrees;
     }
+
+    /**
+     * Computes the coordinate at the given distance along the azimuth.
+     * @param origin The start position from which to travel.
+     * @param azimuth The sun's azimuth. [degrees]
+     * @param distance The angular distance to travel along the azimuth. [degrees]
+     * @return The end position.
+     */
+    public static Coord2D computeGreatCircleCoordinate(Coord2D origin, Real azimuth, Real distance) {
+        try {
+            Position startPosition = Positions.fromCoord2D(origin);
+            Angle greatCircleAzimuth = Angle.fromDegrees(azimuth.getValue(CommonUnit.degree));
+            Angle pathLength = Angle.fromDegrees(distance.getValue(CommonUnit.degree));
+            
+            LatLon endPosition = LatLon.greatCircleEndPosition(startPosition, greatCircleAzimuth, pathLength);
+            
+            return GeoCoord2D.fromDegrees(endPosition.latitude.degrees, endPosition.longitude.degrees);
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
+
 }
