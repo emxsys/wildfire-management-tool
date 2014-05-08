@@ -55,9 +55,10 @@ public class SolarType {
     public static final RealType LONGITUDE;
     public static final RealType ALTITUDE_ANGLE;
     public static final RealType AZIMUTH_ANGLE;
+    public static final RealType ZENITH_ANGLE;
     public static final RealTupleType HORIZON_COORDINATES;
     public static final RealTupleType EQUATORIAL_COORDINATES;
-    
+    public static final RealTupleType SUN_POSITION;
     public final static RealTupleType SUNLIGHT;
 
     static {
@@ -76,6 +77,7 @@ public class SolarType {
         LONGITUDE = RealType.getRealType("longitude:deg", CommonUnit.degree, null);
         ALTITUDE_ANGLE = RealType.getRealType("altitude:deg", CommonUnit.degree, null);
         AZIMUTH_ANGLE = RealType.getRealType("azimuth:deg", CommonUnit.degree, null);
+        ZENITH_ANGLE = RealType.getRealType("zenith:deg", CommonUnit.degree, null);
         HORIZON_COORDINATES = Reals.newRealTupleType(
                 new RealType[]{
                     AZIMUTH_ANGLE, ALTITUDE_ANGLE
@@ -86,7 +88,11 @@ public class SolarType {
                 });
         SUNLIGHT = Reals.newRealTupleType(
                 new RealType[]{
-                    DECLINATION, LONGITUDE, ALTITUDE_ANGLE, AZIMUTH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR
+                    LATITUDE, LONGITUDE, ALTITUDE_ANGLE, AZIMUTH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR
+                });
+        SUN_POSITION = Reals.newRealTupleType(
+                new RealType[]{
+                    LATITUDE, LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,
                 });
 
     }

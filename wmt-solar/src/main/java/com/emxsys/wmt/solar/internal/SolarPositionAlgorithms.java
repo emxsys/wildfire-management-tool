@@ -29,10 +29,7 @@
  */
 package com.emxsys.wmt.solar.internal;
 
-import com.emxsys.wmt.gis.api.Coord3D;
 import static java.lang.Math.*;
-import java.time.ZonedDateTime;
-import visad.RealTuple;
 
 /**
  * "Solar Position Algorithms for Data-Processing Software" ported to Java.
@@ -44,141 +41,8 @@ import visad.RealTuple;
  *
  * @author Bruce Schubert
  */
-public class SolarPosition implements Cloneable {
+public class SolarPositionAlgorithms  {
 
-    //-----------------INPUT VALUES--------------------
-    /** 4-digit year, valid range: -2000 to 6000, error code: 1 */
-    int year;
-    /** 2-digit month, valid range: 1 to 12, error code: 2 */
-    int month;
-    /** 2-digit day, valid range: 1 to 31, error code: 3 */
-    int day;
-    /** Observer local hour, valid range: 0 to 24, error code: 4 */
-    int hour;
-    /** Observer local minute, valid range: 0 to 59, error code: 5 */
-    int minute;
-    /** Observer local second, valid range: 0 to 59, error code: 6 */
-    int second;
-    /** Observer time zone (negative west of Greenwich) */
-    double timezone;
-    /** Difference between earth rotation time and terrestrial time. It is derived from observation
-     * only and is reported in this bulletin: http://maia.usno.navy.mil/ser7/ser7.dat, where delta_t
-     * = 32.184 + (TAI-UTC) + DUT1. Valid range: -8000 to 8000 seconds */
-    double delta_t = 67;    // testing
-    /** Observer longitude (negative west of Greenwich). Valid range: -180 to 180 degrees */
-    double longitude;
-    /** Observer latitude (negative south of equator). Valid range: -90 to 90 degrees */
-    double latitude;
-    /** Observer elevation [meters]. Valid range: -6500000 or higher meters */
-    double elevation;
-    /** Annual average local pressure [millibars]. Valid range: 0 to 5000 millibars */
-    double pressure = 820; //1013.2;   // 29.92 hg standard pressure - aviation
-    /** Annual average local temperature [degrees Celsius]. Valid range: -273 to 6000 degrees
-     * Celsius */
-    double temperature = 11; //= 15;    // 59 F standard pressure - aviation
-    /** Surface slope (measured from the horizontal plane). Valid range: -360 to 360 degrees */
-    double slope = 30; // for testing
-    /** Surface azimuth rotation (measured from south to projection of surface normal on horizontal
-     * plane, negative west) */
-    double azm_rotation = -10;
-    /** Atmospheric refraction at sunrise and sunset (0.5667 deg is typical). Valid range: -5 to 5
-     * degrees */
-    double atmos_refract = 0.5667;
-    /** Switch to choose functions for desired output (from enumeration) */
-    int function;
-    //-----------------Intermediate OUTPUT VALUES--------------------
-    /** Julian day */
-    double jd;
-    /** Julian century */
-    double jc;
-    /** Julian ephemeris day */
-    double jde;
-    /** Julian ephemeris century */
-    double jce;
-    /** Julian ephemeris millennium */
-    double jme;
-    /** earth heliocentric longitude [degrees] */
-    double l;
-    /** earth heliocentric latitude [degrees] */
-    double b;
-    /** earth radius vector [Astronomical Units, AU] */
-    double r;
-    /** geocentric longitude [degrees] */
-    double theta;
-    /** geocentric latitude [degrees] */
-    double beta;
-    /** mean elongation (moon-sun) [degrees] */
-    double x0;
-    /** mean anomaly (sun) [degrees] */
-    double x1;
-    /** mean anomaly (moon) [degrees] */
-    double x2;
-    /** argument latitude (moon) [degrees] */
-    double x3;
-    /** ascending longitude (moon) [degrees] */
-    double x4;
-    /** nutation longitude [degrees] */
-    double del_psi;
-    /** nutation obliquity [degrees] */
-    double del_epsilon;
-    /** ecliptic mean obliquity [arc seconds] */
-    double epsilon0;
-    /** ecliptic true obliquity [degrees] */
-    double epsilon;
-    /** aberration correction [degrees] */
-    double del_tau;
-    /** apparent sun longitude [degrees] */
-    double lamda;
-    /** Greenwich mean sidereal time [degrees] */
-    double nu0;
-    /** Greenwich sidereal time [degrees] */
-    double nu;
-    /** geocentric sun right ascension [degrees] */
-    double alpha;
-    /** geocentric sun declination [degrees] */
-    double delta;
-    /** observer hour angle [degrees] */
-    double h;
-    /** sun equatorial horizontal parallax [degrees] */
-    double xi;
-    /** sun right ascension parallax [degrees] */
-    double del_alpha;
-    /** topocentric sun declination [degrees] */
-    double delta_prime;
-    /** topocentric sun right ascension [degrees] */
-    double alpha_prime;
-    /** topocentric local hour angle [degrees] */
-    double h_prime;
-    /** topocentric elevation angle (uncorrected) [degrees] */
-    double e0;
-    /** atmospheric refraction correction [degrees] */
-    double del_e;
-    /** topocentric elevation angle (corrected) [degrees] */
-    double e;
-    /** equation of time [minutes] */
-    double eot;
-    /** sunrise hour angle [degrees] */
-    double srha;
-    /** sunset hour angle [degrees] */
-    double ssha;
-    /** sun transit altitude [degrees] */
-    double sta;
-
-    //---------------------Final OUTPUT VALUES------------------------
-    /** topocentric zenith angle [degrees] */
-    double zenith;
-    /** topocentric azimuth angle (westward from south) [-180 to 180 degrees] */
-    double azimuth180;
-    /** topocentric azimuth angle (eastward from north) [ 0 to 360 degrees] */
-    double azimuth;
-    /** surface incidence angle [degrees] */
-    double incidence;
-    /** local sun transit time (or solar noon) [fractional hour] */
-    double suntransit;
-    /** local sunrise time (+/- 30 seconds) [fractional hour] */
-    double sunrise;
-    /** local sunset time (+/- 30 seconds) [fractional hour] */
-    double sunset;
 
     final static int L_COUNT = 6;
     final static int B_COUNT = 2;
@@ -189,11 +53,12 @@ public class SolarPosition implements Cloneable {
     final static int b_subcount[] = {5, 2};
     final static int r_subcount[] = {40, 10, 6, 2, 1};
 
+    // Array indices
     final static int TERM_A = 0;
     final static int TERM_B = 1;
     final static int TERM_C = 2;
     final static int TERM_COUNT = 3;
-
+    // Array indices
     final static int TERM_X0 = 0;
     final static int TERM_X1 = 1;
     final static int TERM_X2 = 2;
@@ -201,18 +66,18 @@ public class SolarPosition implements Cloneable {
     final static int TERM_X4 = 4;
     final static int TERM_X_COUNT = 5;
     final static int TERM_Y_COUNT = TERM_X_COUNT;
-
+    // Array indices
     final static int TERM_PSI_A = 0;
     final static int TERM_PSI_B = 1;
     final static int TERM_EPS_C = 2;
     final static int TERM_EPS_D = 3;
     final static int TERM_PE_COUNT = 4;
-
+    // Julian array indices
     final static int JD_MINUS = 0;
     final static int JD_ZERO = 1;
     final static int JD_PLUS = 2;
     final static int JD_COUNT = 3;
-
+    // Sun array indices
     final static int SUN_TRANSIT = 0;
     final static int SUN_RISE = 1;
     final static int SUN_SET = 2;
@@ -553,34 +418,6 @@ public class SolarPosition implements Cloneable {
                                         {-3, 0, 0, 0},
                                         {-3, 0, 0, 0},};
 
-    /**
-     *
-     * @param time
-     * @param observer
-     */
-    public SolarPosition(ZonedDateTime time, Coord3D observer) {
-        this.year = time.getYear();
-        this.month = time.getMonthValue();
-        this.day = time.getDayOfMonth();
-        this.hour = time.getHour();
-        this.minute = time.getMinute();
-        this.second = time.getSecond();
-        this.timezone = time.getOffset().getTotalSeconds() / 3600.;
-        this.latitude = observer.getLatitudeDegrees();
-        this.longitude = observer.getLongitudeDegrees();
-        this.elevation = observer.getAltitudeMeters();
-        spa_calculate(this);
-    }
-
-    @Override
-    public String toString() {
-        return "SolarPosition{" + "jd=" + jd + ", l=" + l + ", b=" + b + ", r=" + r + ", del_psi=" + del_psi + ", del_epsilon=" + del_epsilon + ", epsilon=" + epsilon + ", h=" + h + ", zenith=" + zenith + ", azimuth=" + azimuth + ", incidence=" + incidence + ", sunrise=" + sunrise + ", sunset=" + sunset + '}';
-    }
-
-    public RealTuple getData() {
-
-        throw new UnsupportedOperationException("getPosition");
-    }
 
     public static double limit_degrees(double degrees) {
         double limited;
@@ -953,12 +790,12 @@ public class SolarPosition implements Cloneable {
     }
 
     /**
-     * Calculate required SPA parameters to get the right ascension (alpha) and declination (delta).
+     * Calculate required SolarPositionAlgorithms parameters to get the right ascension (alpha) and declination (delta).
      *
      * Precondition: JD must be already calculated and in structure.
      * @param spa
      */
-    static void calculate_geocentric_sun_right_ascension_and_declination(SolarPosition spa) {
+    public static void calculate_geocentric_sun_right_ascension_and_declination(SolarData spa) {
         double x[] = new double[TERM_X_COUNT];
 
         spa.jc = julian_century(spa.jd);
@@ -992,10 +829,10 @@ public class SolarPosition implements Cloneable {
      * Calculate Equation of Time (EOT) and Sun Rise, Transit, & Set (RTS)
      * @param spa
      */
-    static void calculate_eot_and_sun_rise_transit_set(SolarPosition spa) {
-        SolarPosition sun_rts;
+    public static void calculate_eot_and_sun_rise_transit_set(SolarData spa) {
+        SolarData sun_rts;
         try {
-            sun_rts = (SolarPosition) spa.clone();
+            sun_rts = (SolarData) spa.clone();
         } catch (CloneNotSupportedException ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -1054,11 +891,11 @@ public class SolarPosition implements Cloneable {
     }
 
     /**
-     * Calculate all SPA parameters and put into structure.
+     * Calculate all SolarPositionAlgorithms parameters and put into structure.
      *
      * Prerequisite: All inputs values (listed in header file) must already be in structure.
      */
-    static void spa_calculate(SolarPosition spa) {
+    static void spa_calculate(SolarData spa) {
         //validate_inputs();
         spa.jd = julian_day(spa.year, spa.month, spa.day,
                 spa.hour, spa.minute, spa.second, spa.timezone);
@@ -1086,9 +923,5 @@ public class SolarPosition implements Cloneable {
 //        }
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

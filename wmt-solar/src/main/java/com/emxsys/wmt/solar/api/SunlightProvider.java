@@ -34,6 +34,7 @@ import com.emxsys.wmt.gis.api.Coord3D;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import visad.Real;
+import visad.RealTuple;
 
 /**
  * A SunlightProvider instance provides solar angles and times.
@@ -43,9 +44,9 @@ import visad.Real;
 public interface SunlightProvider {
 
     /**
-     * Gets the coordinate where the position of the sun is overhead at the given date and time.
-     * The latitude is the same as declination, the longitude is the right ascension converted to
-     * a terrestrial coordinate.
+     * Gets the coordinate where the position of the sun is overhead at the given date and time. The
+     * latitude is the same as declination, the longitude is the right ascension converted to a
+     * terrestrial coordinate.
      *
      * @param time The time used to get sun's position.
      * @return The position of the sun as a latitude/longitude.
@@ -53,7 +54,18 @@ public interface SunlightProvider {
     Coord3D getSunPosition(ZonedDateTime time);
 
     /**
-     * Constructs a new Sunlight instance represent the sun angles for a given date/time and location.
+     * Gets the subsolar point coordinates of the sun at the given date and time, and the 
+     * horizonal coordinates relative to the observer.
+     *
+     * @param time The time used to get sun's position.
+     * @param observer The coordinates of the observer.
+     * @return A SolarType.SUN_POSITION tuple.
+     */
+    RealTuple getSunPosition(ZonedDateTime time, Coord3D observer);
+
+    /**
+     * Constructs a new Sunlight instance represent the sun angles for a given date/time and
+     * location.
      *
      * @param time The time for the sunlight.
      * @param coord The location for the sunlight.

@@ -32,6 +32,7 @@ package com.emxsys.wmt.solar.spi;
 import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.solar.api.SunlightProvider;
 import com.emxsys.wmt.solar.internal.RothermelSolarFactory;
+import com.emxsys.wmt.solar.internal.SPASolarProvider;
 import org.openide.util.Lookup;
 import visad.FlatField;
 import visad.Gridded1DSet;
@@ -61,7 +62,7 @@ public abstract class DefaultSunlightProvider implements SunlightProvider {
 
             // Use our default factory if no registered provider.
             if (instance == null) {
-                instance = new RothermelSolarFactory();
+                instance = new SPASolarProvider();
             }
         }
         return instance;

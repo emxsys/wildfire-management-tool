@@ -242,4 +242,9 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
                 timeDomain, sector.getSouthwest().getLatitude(), sector.getNortheast().getLatitude());
     }
 
+    @Override
+    public RealTuple getSunPosition(ZonedDateTime time, Coord3D observer) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

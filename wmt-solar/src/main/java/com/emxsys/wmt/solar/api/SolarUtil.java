@@ -33,7 +33,7 @@ import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.solar.internal.SolarPosition;
+import com.emxsys.wmt.solar.internal.SolarPositionAlgorithms;
 import static com.emxsys.wmt.util.AngleUtil.*;
 import static java.lang.Math.*;
 import java.rmi.RemoteException;
