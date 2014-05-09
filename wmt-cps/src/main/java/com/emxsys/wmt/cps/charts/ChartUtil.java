@@ -144,6 +144,7 @@ public class ChartUtil {
         return chart;
     }
 
+    
     @SuppressWarnings("unchecked")
     public static JFreeChart createCommonDialChart(String title, String subTitle, int minScale, int maxScale) {
 

@@ -41,54 +41,51 @@ import org.openide.windows.TopComponent;
 import visad.Real;
 
 /**
- * Top component which displays something.
+ * Top component which displays the CPS Primary Forces.
  */
-@ConvertAsProperties(
-        dtd = "-//com.emxsys.wmt.cps//PrimaryForces//EN",
-        autostore = false
-)
+@ConvertAsProperties(dtd = "-//com.emxsys.wmt.cps//Forces//EN", autostore = false)
 @TopComponent.Description(
-        preferredID = "PrimaryForcesTopComponent",
+        preferredID = ForcesTopComponent.PREFERRED_ID,
         iconBase = "com/emxsys/wmt/cps/images/cps-icon.png",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
-)
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.PrimaryForcesTopComponent")
+
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ForcesTopComponent")
 @RibbonActionReference(path = "Menu/Window/Show",
         position = 200,
         priority = "top",
-        description = "#CTL_PrimaryForcesAction_Hint",
-        tooltipTitle = "#CTL_PrimaryForcesAction_TooltipTitle",
-        tooltipBody = "#CTL_PrimaryForcesAction_TooltipBody",
+        description = "#CTL_ForcesAction_Hint",
+        tooltipTitle = "#CTL_ForcesAction_TooltipTitle",
+        tooltipBody = "#CTL_ForcesAction_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/cps/images/cps-icon32.png")
-//        tooltipFooter = "#CTL_PrimaryForcesAction_TooltipFooter",
+//        tooltipFooter = "#CTL_ForcesAction_TooltipFooter",
 //        tooltipFooterIcon = "com/terramenta/images/help.png")
 @Messages({
-    "CTL_PrimaryForcesTopComponent=Primary Forces",
-    "CTL_PrimaryForcesTopComponent_Hint=The CPS Primary Forces window.",
-    "CTL_PrimaryForcesAction=Primary Forces",
-    "CTL_PrimaryForcesAction_Hint=Show the CPS Primary Forces.",
-    "CTL_PrimaryForcesAction_TooltipTitle=Show CPS Primary Forces",
-    "CTL_PrimaryForcesAction_TooltipBody=Activates the Primary Forces window used for visualizing "
+    "CTL_ForcesTopComponent=Forces",
+    "CTL_ForcesTopComponent_Hint=The CPS Primary Forces window.",
+    "CTL_ForcesAction=Primary Forces",
+    "CTL_ForcesAction_Hint=Show the CPS Primary Forces.",
+    "CTL_ForcesAction_TooltipTitle=Show CPS Primary Forces",
+    "CTL_ForcesAction_TooltipBody=Activates the Primary Forces window used for visualizing "
     + "the primary forces influencing fire behavior.",
-    "CTL_PrimaryForcesAction_TooltipFooter=Press F1 for more help."
+    "CTL_ForcesAction_TooltipFooter=Press F1 for more help."
 })
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_PrimaryForcesAction",
-        preferredID = PrimaryForcesTopComponent.PREFERRED_ID
+        displayName = "#CTL_ForcesAction",
+        preferredID = ForcesTopComponent.PREFERRED_ID
 )
-public final class PrimaryForcesTopComponent extends TopComponent {
+public final class ForcesTopComponent extends TopComponent {
 
-    public static final String PREFERRED_ID = "PrimaryForcesTopComponent";
-    private PreheatPanel preheatPanel;
+    public static final String PREFERRED_ID = "ForcesTopComponent";
+    private HeatPanel heatPanel;
     private WindPanel windPanel;
     private SlopePanel slopePanel;
 
-    public PrimaryForcesTopComponent() {
+    public ForcesTopComponent() {
         initComponents();
         createPanels();
-        setName(Bundle.CTL_PrimaryForcesTopComponent());
-        setToolTipText(Bundle.CTL_PrimaryForcesTopComponent_Hint());
+        setName(Bundle.CTL_ForcesTopComponent());
+        setToolTipText(Bundle.CTL_ForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
     }
@@ -97,16 +94,16 @@ public final class PrimaryForcesTopComponent extends TopComponent {
         slopePanel.updateCharts(terrain);
     }
 
-    public void updateCharts(ZonedDateTime time, Real sunAzimuth) {
-        preheatPanel.updateCharts(time, sunAzimuth);
+    public void updateCharts(ZonedDateTime time, Real azimuth, Real zenith, boolean isShaded) {
+        heatPanel.updateCharts(time, azimuth, zenith, isShaded);
     }
 
     private void createPanels() {
-        preheatPanel = new PreheatPanel();
+        heatPanel = new HeatPanel();
         windPanel = new WindPanel();
         slopePanel = new SlopePanel();
         // Layout the page
-        jSplitPane1.setTopComponent(preheatPanel);
+        jSplitPane1.setTopComponent(heatPanel);
         jSplitPane2.setTopComponent(windPanel);
         jSplitPane2.setBottomComponent(slopePanel);
     }

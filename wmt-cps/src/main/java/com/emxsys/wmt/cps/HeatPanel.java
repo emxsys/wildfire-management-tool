@@ -29,18 +29,17 @@
  */
 package com.emxsys.wmt.cps;
 
-import com.emxsys.wmt.cps.charts.ChartUtil;
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.globe.util.Positions;
+import static com.emxsys.wmt.cps.charts.CompassClockPlot.CLOCK_HAND_NEEDLE;
+import static com.emxsys.wmt.cps.charts.CompassClockPlot.WIND_NEEDLE;
+import com.emxsys.wmt.cps.charts.CompassClockPlot;
 import com.emxsys.wmt.util.AngleUtil;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Position;
 import java.awt.Color;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CompassPlot;
 import org.jfree.data.general.DefaultValueDataset;
+import org.jfree.data.general.ValueDataset;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import visad.CommonUnit;
@@ -48,21 +47,23 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The PreheatPanel depicts the direction of the sun's rays onto the terrain and shows the surface
+ * The HeatPanel depicts the direction of the sun's rays onto the terrain and shows the surface
  * temperature of the fuels. The panel listens to the application time and the reticule coordinate.
  *
  * @author Bruce Schubert
  */
 @NbBundle.Messages({
     "CTL_PreheatChartTitle=Solar Heating",})
-public class PreheatPanel extends javax.swing.JPanel {
+public class HeatPanel extends javax.swing.JPanel {
 
     private JFreeChart solarChart;
+    private final int AZIMUTH_SERIES = 0;
+    private final int HOUR_SERIES = 1;
 
     /**
      * Creates new form PreheatPanel
      */
-    public PreheatPanel() {
+    public HeatPanel() {
         initComponents();
         createCharts();
     }
@@ -72,21 +73,40 @@ public class PreheatPanel extends javax.swing.JPanel {
      *
      * @param time UTC time.
      */
-    public void updateCharts(ZonedDateTime time, Real sunAzimuth) {
-        
+    public void updateCharts(ZonedDateTime time, Real azimuth, Real zenith, boolean isShaded) {
+
         try {
-            double angle = sunAzimuth.getValue(CommonUnit.degree);
-            CompassPlot compassPlot = (CompassPlot) solarChart.getPlot();
-            DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[0];
-            compassData.setValue(angle);
+            // Update the Azimuth Plot
+            CompassClockPlot compassPlot = (CompassClockPlot) solarChart.getPlot();
+            double A = azimuth.getValue(CommonUnit.degree);
+            DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[AZIMUTH_SERIES];
+            compassData.setValue(A);
             
-//        if (hour >= solar.getSunriseHour() && hour <= solar.getSunsetHour())
-            {
-            compassPlot.setSeriesPaint(0, Color.black);
-            compassPlot.setSeriesOutlinePaint(0, Color.black);
-            String title = String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(angle));
-            solarChart.setTitle(title);
-        }
+            // Update the Hour plot
+            DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
+            final double DEG_PER_HOUR12 = 360 / 12.0;
+            double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
+            double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
+            hourData.setValue(hourDegrees);
+            
+            // Color the background based on the Zenith angle (above or below the horizon)
+            double Z = Math.abs(zenith.getValue(CommonUnit.degree));
+            if (Z < 90) {
+                // Sun above the horizon
+                compassPlot.setSeriesPaint(AZIMUTH_SERIES, Color.red);
+                compassPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red);
+                compassPlot.setRoseCenterPaint(isShaded ? Color.lightGray : Color.white);
+                String title = String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
+                solarChart.setTitle(title);
+            } else {
+                // Sun below the horizon
+                compassPlot.setSeriesPaint(AZIMUTH_SERIES, Color.lightGray);
+                compassPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, Color.lightGray);
+                compassPlot.setRoseCenterPaint(Color.darkGray);
+                String title = "Nighttime";
+                solarChart.setTitle(title);
+            }
+
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -97,7 +117,37 @@ public class PreheatPanel extends javax.swing.JPanel {
      * Creates the JFreeCharts.
      */
     private void createCharts() {
-        solarChart = ChartUtil.createCommonCompassChart(Bundle.CTL_PreheatChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.ORANGE);
+        //solarChart = ChartUtil.createCommonCompassChart(Bundle.CTL_PreheatChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.ORANGE);
+        CompassClockPlot plot = new CompassClockPlot();
+
+        plot.setRosePaint(Color.orange);
+        plot.setRoseHighlightPaint(Color.gray);
+        plot.setRoseCenterPaint(Color.white);
+        plot.setDrawBorder(false);
+        
+        // The first (default) dataset is the direction of Solar Radiation
+        //ValueDataset dataset2 = new DefaultValueDataset(new Double(0.0));
+        //plot.addDataset(dataset2, null);
+        plot.setSeriesNeedle(AZIMUTH_SERIES, WIND_NEEDLE);
+        plot.setSeriesPaint(AZIMUTH_SERIES, Color.red);        // arrow heads
+        plot.setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
+        
+        // The second  dataset is the Time / Clock
+        ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
+        plot.addDataset(dataset, null);
+        plot.setSeriesNeedle(HOUR_SERIES, CLOCK_HAND_NEEDLE);
+        plot.setSeriesPaint(HOUR_SERIES, Color.black);        // arrow heads
+        plot.setSeriesOutlinePaint(HOUR_SERIES, Color.black); // arrow shafts and arrow head outline
+
+
+        // Create the chart
+        solarChart = new JFreeChart(plot);
+        
+        // Set the chart title ...
+        solarChart.setTitle(Bundle.CTL_PreheatChartTitle());
+        // ... and subtitle(s)
+        //chart.addSubtitle(new TextTitle(subTitle));
+        
         solarPanel.add(new ChartPanel(solarChart));
     }
 
@@ -113,7 +163,7 @@ public class PreheatPanel extends javax.swing.JPanel {
 
         solarPanel = new javax.swing.JPanel();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(PreheatPanel.class, "PreheatPanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(HeatPanel.class, "HeatPanel.border.title"))); // NOI18N
 
         solarPanel.setLayout(new javax.swing.BoxLayout(solarPanel, javax.swing.BoxLayout.LINE_AXIS));
 

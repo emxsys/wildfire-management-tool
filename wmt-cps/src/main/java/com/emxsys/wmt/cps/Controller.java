@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, bruce 
+ * Copyright (c) 2014, Bruce Schubert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,15 @@ import com.emxsys.wmt.gis.api.Terrain;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateEvent;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
+import com.emxsys.wmt.gis.spi.DefaultShadedTerrainProvider;
 import com.emxsys.wmt.globe.Globe;
-import com.emxsys.wmt.solar.api.SolarUtil;
+import com.emxsys.wmt.solar.api.SolarType;
 import com.emxsys.wmt.solar.api.SunlightProvider;
 import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
 import com.emxsys.wmt.time.api.TimeEvent;
 import com.emxsys.wmt.time.api.TimeListener;
 import com.emxsys.wmt.time.api.TimeProvider;
+import com.emxsys.wmt.time.spi.DefaultTimeProvider;
 import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
@@ -57,6 +59,7 @@ import org.openide.util.LookupListener;
 import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
 import org.openide.windows.WindowManager;
+import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
 
@@ -69,15 +72,16 @@ import visad.VisADException;
 public class Controller {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
-    private static PrimaryForcesTopComponent tc;
-    private ShadedTerrainProvider earth;
-    private SunlightProvider sun;
-    private TimeProvider clock;
+    private static ForcesTopComponent tc;
+    private final ShadedTerrainProvider earth;
+    private final SunlightProvider sun;
+    private final TimeProvider clock;
     private ReticuleCoordinateProvider reticule;
 
-    private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_POSITION);
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
-
+    private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_POSITION);
+    private final AtomicReference<Real> azimuthRef = new AtomicReference<>(new Real(SolarType.AZIMUTH_ANGLE));
+    private final AtomicReference<Real> zenithRef = new AtomicReference<>(new Real(SolarType.ZENITH_ANGLE));
 
     private final TerrainUpdater terrainUpdater;
     private final SolarUpdater solarUpdater;
@@ -85,8 +89,9 @@ public class Controller {
     private final LookupListener reticuleLookupListener;
 
     static {
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.FINE);
     }
+
     /**
      * Gets the Controller singleton instance.
      *
@@ -114,8 +119,8 @@ public class Controller {
 
         // Data providers
         sun = DefaultSunlightProvider.getInstance();
-        earth = Globe.getInstance().getShadedTerrainProvider();
-        clock = Lookup.getDefault().lookup(TimeProvider.class);
+        earth = DefaultShadedTerrainProvider.getInstance();
+        clock = DefaultTimeProvider.getInstance();
 
         // Clock listens for TimeEvents and notifies SolarUpdater
         clock.addTimeListener(WeakListeners.create(TimeListener.class, solarUpdater, clock));
@@ -139,19 +144,19 @@ public class Controller {
     /**
      * Convenience method.
      */
-    private static PrimaryForcesTopComponent getTopComponent() {
+    private static ForcesTopComponent getTopComponent() {
         if (tc == null) {
-            tc = (PrimaryForcesTopComponent) WindowManager.getDefault().findTopComponent(PrimaryForcesTopComponent.PREFERRED_ID);
+            tc = (ForcesTopComponent) WindowManager.getDefault().findTopComponent(ForcesTopComponent.PREFERRED_ID);
             if (tc == null) {
-                throw new IllegalStateException("Cannot find tc: " + PrimaryForcesTopComponent.PREFERRED_ID);
+                throw new IllegalStateException("Cannot find tc: " + ForcesTopComponent.PREFERRED_ID);
             }
         }
         return tc;
     }
 
     /**
-     * ReticuleMonitor monitors the reticule (cross-hairs) layer and updates the UI with the
-     * coordinate under the cross-hairs.
+     * TerrainUpdater monitors the reticule (cross-hairs) layer and updates the UI with the
+     * terrain under the cross-hairs.
      */
     private static class TerrainUpdater implements ReticuleCoordinateListener, Runnable {
 
@@ -177,32 +182,40 @@ public class Controller {
         @Override
         public void run() {
             ReticuleCoordinateEvent event = this.lastEvent.get();
-            if (event == null) {
+            if (event == null || controller.earth == null) {
                 return;
             }
             Coord3D coordinate = event.getCoordinate();
             controller.coordRef.set(coordinate);
-            logger.log(Level.FINE, "Coord: {0}", coordinate);
+            
+            ZonedDateTime time = controller.timeRef.get();
+            Real azimuth = controller.azimuthRef.get();
+            Real zenith = controller.zenithRef.get();            
+            Terrain terrain = controller.earth .getTerrain(coordinate);
+            boolean isShaded = controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith);
 
-            Terrain terrain = controller.earth == null ? null : controller.earth.getTerrain(coordinate);
-
-            // Update the CPS components (in the Event thread)
+            // Update the CPS UI components (in the Event thread)
             EventQueue.invokeLater(() -> {
                 getTopComponent().updateCharts(coordinate, terrain);
+                getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+
             });
         }
     }
 
     /**
-     * The ClockMonitor monitors the clock and updates the CPS components with the current
+     * The SolarUpdater monitors the clock and updates the CPS components with the current
      * application time.
      */
     private static class SolarUpdater implements TimeListener, Runnable {
 
         private final Controller controller;
-        private static final RequestProcessor processor = new RequestProcessor(PreheatPanel.class);
+        private static final RequestProcessor processor = new RequestProcessor(HeatPanel.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<TimeEvent> lastTimeEvent = new AtomicReference<>(new TimeEvent(this, null, null));
+        // Array indicies
+        private static final int AZIMUTH_INDEX = SolarType.SUN_POSITION.getIndex(SolarType.AZIMUTH_ANGLE);
+        private static final int ZENITH_INDEX = SolarType.SUN_POSITION.getIndex(SolarType.ZENITH_ANGLE);
 
         SolarUpdater(Controller controller) {
             this.controller = controller;
@@ -225,24 +238,25 @@ public class Controller {
             ZonedDateTime time = timeEvent.getNewTime();
             controller.timeRef.set(time);
 
-            Coord3D sunCoord = controller.sun.getSunPosition(time);
-            Coord3D curCoord = controller.coordRef.get();
-            logger.fine("Sun coord: " + sunCoord);
-
-            RealTuple azimuthAltitude = SolarUtil.getAzimuthAltitude(curCoord, sunCoord);
-            logger.fine("Sun Az Al: " + azimuthAltitude);
-            
-            if (azimuthAltitude.isMissing()) {
-                return;
-            }
-            boolean isShaded = false;// earth.isCoordinateTerrestialShaded(coordEvent.getCoordinate(), timeEvent.getNewTime());
-            // Update the CPS components in the Event thread
-            EventQueue.invokeLater(() -> {
-                try {
-                    getTopComponent().updateCharts(time, azimuthAltitude.getRealComponents()[0]);
-                } catch (VisADException | RemoteException ex) {
+            try {
+                RealTuple sunPosition = controller.sun.getSunPosition(time, controller.coordRef.get());
+                if (sunPosition.isMissing()) {
+                    return;
                 }
-            });
+                Real azimuth = (Real) sunPosition.getComponent(AZIMUTH_INDEX);
+                Real zenith = (Real) sunPosition.getComponent(ZENITH_INDEX);
+                controller.azimuthRef.set(azimuth);
+                controller.zenithRef.set(zenith);
+                
+                boolean isShaded = controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith);
+                
+                EventQueue.invokeLater(() -> {
+                    getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                });
+
+            } catch (VisADException | RemoteException ex) {
+                Exceptions.printStackTrace(ex);
+            }
 
         }
     }

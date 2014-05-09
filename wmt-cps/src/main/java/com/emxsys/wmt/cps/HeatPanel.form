@@ -5,7 +5,7 @@
     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
         <TitledBorder title="Preheat">
-          <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/Bundle.properties" key="PreheatPanel.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/Bundle.properties" key="HeatPanel.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </TitledBorder>
       </Border>
     </Property>
