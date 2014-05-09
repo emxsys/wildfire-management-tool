@@ -33,15 +33,20 @@ import com.emxsys.wmt.time.api.TimeEvent;
 import com.emxsys.wmt.time.api.TimeListener;
 import com.emxsys.wmt.time.api.TimeProvider;
 import com.terramenta.time.DateProvider;
+import com.terramenta.time.options.TimeOptions;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javax.swing.event.EventListenerList;
 import org.openide.util.Lookup;
+import org.openide.util.NbPreferences;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -52,6 +57,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = TimeProvider.class)
 public class DefaultTimeProvider implements TimeProvider, Observer {
     private static final Logger logger = Logger.getLogger(DefaultTimeProvider.class.getName());
+    private static final Preferences prefs = NbPreferences.forModule(TimeOptions.class);
     static TimeProvider instance = null;
     private final EventListenerList listenerList = new EventListenerList();
     private DateProvider dateProvider;
@@ -110,7 +116,8 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     @Override
     public void update(Observable dateProvider, Object date) {
         ZonedDateTime oldTime = curTime;
-        curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), UTC_ZONE);
+        TimeZone timeZone = TimeZone.getTimeZone(prefs.get(TimeOptions.TIMEZONE, TimeZone.getDefault().getID()));
+        curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), timeZone.toZoneId());
         logger.log(Level.FINEST, "update: {0}", curTime.toString());
         TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
         for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {

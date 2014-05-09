@@ -47,6 +47,11 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
+            <artifactId>org-openide-util</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.terramenta</groupId>
             <artifactId>terramenta-time</artifactId>
             <version>${terramenta.version}</version>
