@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Fire Behavior files are VisAD FlatFields stored in a NetCdf file format.
+They hold an array of values within spatio-temporal domain.
+
+For syntax and rules, see:
+ http://bits.netbeans.org/dev/javadoc/org-openide-filesystems/org/openide/filesystems/doc-files/HOWTO-MIME.html
+ http://bits.netbeans.org/dev/javadoc/org-openide-filesystems/org/openide/filesystems/doc-files/resolverDocumentation.html
+-->
+<!DOCTYPE MIME-resolver PUBLIC "-//NetBeans//DTD MIME Resolver 1.0//EN" "http://www.netbeans.org/dtds/mime-resolver-1_0.dtd">
+<MIME-resolver>
+    <file>
+        <ext name="nc"/>
+        <name name="fire_behavior" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-fire_behavior"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="terrain" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-terrain"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="fuel_model" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-fuel_model"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="fuel_temperature" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-fuel_temperature"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="fuel_dead" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-fuel_moisture"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="fuel_live" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-fuel_moisture"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="air_temps" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-weather"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="humidities" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-weather"/>
+    </file>
+    <file>
+        <ext name="nc"/>
+        <name name="winds" substring="true" ignorecase="true"/>
+        <resolver mime="application/x-weather"/>
+    </file>
+    
+</MIME-resolver>
