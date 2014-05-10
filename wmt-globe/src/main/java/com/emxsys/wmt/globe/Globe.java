@@ -160,6 +160,7 @@ public class Globe implements GisViewer {
         this.content.add(new BalloonController(this.wwm.getWorldWindow())); // 2) Handles link and navigation events in BrowserBalloons.
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
+        this.content.add(new GlobeSectorEditor(this.content));
         this.content.add(DefaultShadedTerrainProvider.getInstance());
         this.content.add(DefaultSunlightProvider.getInstance());
         this.content.add(DefaultWeatherProvider.getInstance());

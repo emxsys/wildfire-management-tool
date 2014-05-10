@@ -41,6 +41,7 @@ import com.emxsys.wmt.globe.util.Positions;
 import com.emxsys.wmt.time.api.TimeEvent;
 import com.emxsys.wmt.time.api.TimeListener;
 import com.emxsys.wmt.time.api.TimeProvider;
+import com.emxsys.wmt.time.spi.DefaultTimeProvider;
 import com.emxsys.wmt.weather.api.PointForecaster;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import gov.nasa.worldwind.WorldWind;
@@ -207,7 +208,7 @@ public class WeatherMarker extends BasicMarker {
         initializeBrowserBalloon();
 
         // Listen to the application time
-        TimeProvider tp = Lookup.getDefault().lookup(TimeProvider.class);
+        TimeProvider tp = DefaultTimeProvider.getInstance();
         tp.addTimeListener(WeakListeners.create(TimeListener.class, updater, tp));
 
         // Add persistance capability
