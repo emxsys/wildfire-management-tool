@@ -105,7 +105,9 @@
                 <configuration>
                     <publicPackages>
                         <publicPackage>com.emxsys.wmt.wildfire.api</publicPackage>
+                        <publicPackage>com.emxsys.wmt.wildfire.behave</publicPackage>
                         <publicPackage>com.emxsys.wmt.wildfire.spi</publicPackage>
+                        <publicPackage>com.emxsys.wmt.wildfire.surfacefire</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
