@@ -65,6 +65,8 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwindx.examples.util.BalloonController;
 import gov.nasa.worldwindx.examples.util.HotSpotController;
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,15 +95,19 @@ import visad.VisADException;
 })
 @ServiceProvider(service = GisViewer.class)
 public class Globe implements GisViewer {
-
+    
     public static final String GLOBE_TOP_COMPONENT_ID = "GlobeTopComponent";
     private static final Logger logger = Logger.getLogger(Globe.class.getName());
-    private final EmxsysWorldWindManager wwm = (EmxsysWorldWindManager) Lookup.getDefault().lookup(WorldWindManager.class);
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
     private final GisLayerList gisLayers = new GisLayerList();
+    private WorldWindManager worldWindManager;
     private boolean initialized = false;
     private static Globe INSTANCE;
+
+    static {
+        logger.setLevel(Level.ALL);
+    }
 
     /**
      * Do not call! Used by @ServiceProvider. Use getInstance() or
@@ -109,6 +115,7 @@ public class Globe implements GisViewer {
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public Globe() {
+        logger.finest("Globe() constructor called");
         if (INSTANCE != null) {
             throw new IllegalStateException("Do not call constructor. Use getInstance().");
         }
@@ -121,6 +128,7 @@ public class Globe implements GisViewer {
      */
     public static Globe getInstance() {
         if (INSTANCE == null) {
+            logger.finest("getInstance() looking up Globe.class");
             return Lookup.getDefault().lookup(Globe.class);
         } else {
             return INSTANCE;
@@ -144,20 +152,30 @@ public class Globe implements GisViewer {
      * @return the WorldWindManager found on the global lookup.
      */
     public WorldWindManager getWorldWindManager() {
-        return this.wwm;
+        if (this.worldWindManager == null) {
+            logger.fine("getWorldWindManager() looking up WorldWindManager.class");
+            this.worldWindManager = Lookup.getDefault().lookup(WorldWindManager.class);
+        }
+        return this.worldWindManager;
     }
 
     /**
-     * Initializes the Globe's capabilities, and the underlying WorldWindow LayerList via the merged
-     * and sorted collection of WorldWind/Layers files are instantiated here via lookupAll. See this
-     * module's layer.xml.
+     * initializeResources() is invoked by the Installer class on the Event thread after the UI is
+     * ready. It initializes the WorldWind environment, the Globe's capabilities, and the underlying
+     * WorldWindow LayerList--the merged and sorted collection of WorldWind/Layers files are
+     * instantiated here via lookupAll. See this module's layer.xml.
      */
     @Override
     public void initializeResources() {
+        logger.fine("initializeResources() started");
+
+        // We've deferred creating the WorldWind environment until now
+        // to prevent an application lockup while loading modules.
+        WorldWindManager wwm = getWorldWindManager();
 
         // Assemble the components of the globe
-        this.content.add(new HotSpotController(this.wwm.getWorldWindow())); // 1) Sends input events to BrowserBalloons.
-        this.content.add(new BalloonController(this.wwm.getWorldWindow())); // 2) Handles link and navigation events in BrowserBalloons.
+        this.content.add(new HotSpotController(wwm.getWorldWindow())); // 1) Sends input events to BrowserBalloons.
+        this.content.add(new BalloonController(wwm.getWorldWindow())); // 2) Handles link and navigation events in BrowserBalloons.
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
         this.content.add(new GlobeSectorEditor(this.content));
@@ -165,15 +183,15 @@ public class Globe implements GisViewer {
         this.content.add(DefaultSunlightProvider.getInstance());
         this.content.add(DefaultWeatherProvider.getInstance());
         this.content.add(DefaultTimeProvider.getInstance());
-        this.wwm.addLookup(this.lookup);
+        wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization
-        this.wwm.getWorldWindow().setVisible(false);
+        ((Component) wwm.getWorldWindow()).setVisible(false);
 
         // Create table-of-contents layers
         for (BasicLayerGroup layerGroup : BasicLayerGroup.values()) {
             DummyLayer dummyLayer = new DummyLayer(layerGroup);
-            this.wwm.getLayers().add(layerGroup.getIndex(), dummyLayer);
+            wwm.getLayers().add(layerGroup.getIndex(), dummyLayer);
             this.gisLayers.add(new GisLayerProxy(dummyLayer));
         }
         // Add all the map layers
@@ -197,10 +215,9 @@ public class Globe implements GisViewer {
         SceneTools.getInstance();   // Creates the Scene Tools contextual task pane
         ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar
 
-        this.wwm.getWorldWindow().setVisible(true);
+        ((Component) wwm.getWorldWindow()).setVisible(true);
         this.initialized = true;
     }
-
 
     /**
      * Get the Globe's lookup which actually a proxy for the WorldWindManager's lookup.
@@ -208,9 +225,14 @@ public class Globe implements GisViewer {
      */
     @Override
     public Lookup getLookup() {
-        return this.wwm.getLookup();
+        if (!this.initialized) {
+            // Return an empty or sparse lookup
+            return this.lookup;
+        }
+        // Return the merged lookup
+        return getWorldWindManager().getLookup();
     }
-
+    
     @Override
     public void setVisible(boolean show) {
         TopComponent tc = getGlobeTopComponent();
@@ -229,24 +251,40 @@ public class Globe implements GisViewer {
         TopComponent tc = getGlobeTopComponent();
         return tc != null ? tc.isVisible() : false;
     }
-
+    
     @Override
     public GisLayerList getGisLayerList() {
         return this.gisLayers;
     }
-
+    
     @Override
     public void addGisLayer(GisLayer gisLayer) {
         addGisLayer(gisLayer, false);   // false = last in layer group
     }
-
+    
     private void addAll(List<GisLayer> list) {
         list.stream().forEach((gisLayer) -> {
             addGisLayer(gisLayer, false);
         });
     }
-
+    
+    private final ArrayList<GisLayer> startupLayers = new ArrayList<>();
     public synchronized void addGisLayer(GisLayer gisLayer, boolean insertFirstInGroup) {
+        // Special handling reqd for initialization of other map modules before WorldWindManager is ready
+        if (this.worldWindManager == null) {
+            // Cache the layer until WorldWindManager is ready.
+            logger.log(Level.FINE, "addGisLayer({0}): caching layer at startup", gisLayer.getName());
+            startupLayers.add(gisLayer);
+            return;
+        } else if (!startupLayers.isEmpty()) {
+            // Process the cached layers
+            ArrayList<GisLayer> copy = new ArrayList<>();
+            copy.addAll(startupLayers);
+            startupLayers.clear();
+            logger.log(Level.FINE, "addGisLayer() processing {0} cached layers.", copy.size());
+            this.addAll(copy);
+        }
+        WorldWindManager wwm = getWorldWindManager();
         try {
             LayerGroup group = gisLayer.getLookup().lookup(LayerGroup.class);
             if (group == null) {
@@ -262,9 +300,9 @@ public class Globe implements GisViewer {
                 }
             }
             // Remove preloaded layers (by SessionState) so we can reload it the proper position.
-            for (Layer l : this.wwm.getLayers()) {
+            for (Layer l : wwm.getLayers()) {
                 if (l.getName().equals(layerImpl.getName())) {
-                    this.wwm.getLayers().remove(l);
+                    wwm.getLayers().remove(l);
                     // Override the enabled setting with the SessionState setting
                     layerImpl.setEnabled(l.isEnabled());
                     break;
@@ -273,12 +311,12 @@ public class Globe implements GisViewer {
             // Now find the TOC layer that marks the position where this layer should be inserted in WorldWind
             int groupLayerPosition = -1;
             boolean foundGroupLayer = false;
-            for (Layer l : this.wwm.getLayers()) {
+            for (Layer l : wwm.getLayers()) {
                 if (l instanceof DummyLayer) {
                     if (group.equals(((DummyLayer) l).getLayerGroup())) {
                         if (insertFirstInGroup) {
                             // Found the layer that marks the beginning of the group
-                            groupLayerPosition = this.wwm.getLayers().indexOf(l);
+                            groupLayerPosition = wwm.getLayers().indexOf(l);
                             break;
                         }
                         foundGroupLayer = true;
@@ -287,7 +325,7 @@ public class Globe implements GisViewer {
                     }
                     if (foundGroupLayer) {
                         // Found the layer that marks the beginning of the next group
-                        groupLayerPosition = this.wwm.getLayers().indexOf(l);
+                        groupLayerPosition = wwm.getLayers().indexOf(l);
                         break;
                     }
                 }
@@ -297,10 +335,10 @@ public class Globe implements GisViewer {
                 logger.log(Level.FINE, "addGisLayer() : added {0} to group {1} at {2}", new Object[]{
                     gisLayer.getName(), group.getName(), groupLayerPosition
                 });
-                this.wwm.getLayers().add(insertFirstInGroup ? groupLayerPosition + 1 : groupLayerPosition, layerImpl);
+                wwm.getLayers().add(insertFirstInGroup ? groupLayerPosition + 1 : groupLayerPosition, layerImpl);
             } else {
-                logger.log(Level.WARNING, "addGisLayer() : layer group not found; adding {0} at an arbitrary position.", gisLayer.getName());
-                this.wwm.getLayers().add(layerImpl);
+                logger.log(Level.INFO, "addGisLayer() : layer group not found; adding {0} at an arbitrary position.", gisLayer.getName());
+                wwm.getLayers().add(layerImpl);
             }
             // Sync our internal list
             this.gisLayers.add(gisLayer);
@@ -308,50 +346,63 @@ public class Globe implements GisViewer {
             logger.severe(e.getMessage());
         }
     }
-
+    
     @Override
     public void removeGisLayer(GisLayer gisLayer) {
         // Update the WW Model
         Layer layerImpl = gisLayer.getLookup().lookup(Layer.class);
         if (layerImpl != null) {
-            this.wwm.getLayers().remove(layerImpl);
+            WorldWindManager wwm = getWorldWindManager();
+            wwm.getLayers().remove(layerImpl);
         }
         // Syncronize our internal list 
         this.gisLayers.remove(gisLayer);
     }
-
+    
     @Override
     public void centerOn(Coord2D latlon) {
         getWorldWindManager().gotoPosition(Positions.fromCoord2D(latlon), true); // true = animate
     }
 
+    /**
+     * Gets the reticule coordinates at the center of the screen.
+     * @return The coordinates from the ReticuleCoordinateProvider.
+     */
     @Override
     public Coord3D getLocationAtCenter() {
         return getLookup().lookup(ReticuleCoordinateProvider.class).getReticuleCoordinate();
     }
-
+    
     @Override
     public Coord3D getLocationAtScreenPoint(double x, double y) {
         throw new UnsupportedOperationException("getLocationAtScreenPoint");
     }
 
+    /**
+     * Gets the name of the TopComponent hosting the Globe.
+     * @return TopComponent.getName().
+     */
     @Override
     public String getName() {
         TopComponent tc = getGlobeTopComponent();
         return tc != null ? tc.getName() : "";
-
+        
     }
 
+    /**
+     * Gets a reference to the WorldWindManager.getWorldWindow() component.
+     * @return A WorldWindow instance.
+     */
     @Override
     public Component getRendererComponent() {
-        return this.wwm.getWorldWindow();
+        return (Component) getWorldWindManager().getWorldWindow();
     }
-
+    
     @Override
     public void refreshView() {
-        this.wwm.getWorldWindow().redraw();
+        getWorldWindManager().getWorldWindow().redraw();
     }
-
+    
     @Override
     public GeoSector computeSector(Coord2D point, Real radius) {
         double meters;
@@ -365,8 +416,9 @@ public class Globe implements GisViewer {
         }
 
         // Compute N/S and E/W distances in radians
+        WorldWindManager wwm = getWorldWindManager();
         Position position = Positions.fromCoord2D(point);
-        gov.nasa.worldwind.globes.Globe globe = this.wwm.getWorldWindow().getModel().getGlobe();
+        gov.nasa.worldwind.globes.Globe globe = wwm.getWorldWindow().getModel().getGlobe();
         double deltaLatRadians = meters / globe.getEquatorialRadius();
         double deltaLonRadians = deltaLatRadians / Math.cos(position.getLatitude().radians);
 
@@ -393,7 +445,7 @@ public class Globe implements GisViewer {
         Position pos1 = Positions.fromCoord2D(coord1);
         Position pos2 = Positions.fromCoord2D(coord2);
         Angle angle = LatLon.greatCircleDistance(pos2, pos1);
-
+        
         WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
         double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
         double distance = angle.radians * radius;
@@ -434,5 +486,5 @@ public class Globe implements GisViewer {
             return null;
         }
     }
-
+    
 }
