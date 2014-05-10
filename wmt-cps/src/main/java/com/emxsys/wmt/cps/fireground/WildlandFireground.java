@@ -29,19 +29,19 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
+import com.emxsys.wmt.cps.actions.SelectFuelModelProvider;
 import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.actions.Disposable;
-import com.emxsys.wmt.util.Times;
-import com.emxsys.wmt.weather.WeatherTuple;
-import com.emxsys.wmt.wildfire.api.StdFuelMoistureScenario;
+import com.emxsys.wmt.gis.api.capabilities.Disposable;
+import com.emxsys.wmt.gis.api.viewer.Viewers;
+import com.emxsys.wmt.visad.Times;
+import com.emxsys.wmt.weather.api.WeatherTuple;
 import com.emxsys.wmt.wildfire.api.FireEnvironment;
 import com.emxsys.wmt.wildfire.api.Fireground;
 import com.emxsys.wmt.wildfire.api.FuelCondition;
 import com.emxsys.wmt.wildfire.api.FuelModelProvider;
 import com.emxsys.wmt.wildfire.api.FuelMoisture;
-import com.emxsys.wmt.wildfire.fireground.actions.SelectFuelModelProvider;
-import com.emxsys.wmt.wildfire.fireground.views.FuelTempTopComponent;
+import com.emxsys.wmt.wildfire.api.StdFuelMoistureScenario;
 import com.emxsys.wmt.wildfire.spi.FuelModelFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -62,7 +62,12 @@ import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.Cancellable;
 import org.openide.util.Exceptions;
-import visad.*;
+import visad.DateTime;
+import visad.FieldImpl;
+import visad.FlatField;
+import visad.Gridded1DDoubleSet;
+import visad.Real;
+import visad.VisADException;
 
 
 /**
@@ -724,10 +729,11 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
         @Override
         public void run()
         {
+            // TODO: update FuelTemp UI
             // code to be invoked when system UI is ready
-            FuelTempTopComponent tc = new FuelTempTopComponent(temps);
-            tc.open();
-            tc.requestActive();
+//            FuelTempTopComponent tc = new FuelTempTopComponent(temps);
+//            tc.open();
+//            tc.requestActive();
         }
     }
 

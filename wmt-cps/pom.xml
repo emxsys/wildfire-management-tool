@@ -67,6 +67,25 @@
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>wmt-visad</artifactId>
+            <groupId>com.emxsys</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-weather</artifactId>
+            <groupId>com.emxsys</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-wildfire</artifactId>
+            <groupId>com.emxsys</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>visad</artifactId>
+            <groupId>visad</groupId>
+        </dependency>
         <!--Terramenta-->
         <dependency>
             <groupId>com.terramenta</groupId>
@@ -109,6 +128,16 @@
             <artifactId>org-netbeans-modules-settings</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-modules</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 <!--        <dependency>
             <artifactId>xpp3</artifactId>
             <groupId>xpp3</groupId>
@@ -128,26 +157,40 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <artifactId>org-openide-filesystems</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-modules</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>wmt-visad</artifactId>
-            <groupId>com.emxsys</groupId>
             <type>jar</type>
-            <version>4.0-SNAPSHOT</version>
+            <version>RELEASE80</version>
         </dependency>
         <dependency>
-            <artifactId>visad</artifactId>
-            <groupId>visad</groupId>
-            <type>jar</type>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
+            <artifactId>org-openide-loaders</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-options-api</artifactId>
-            <version>${netbeans.version}</version>
+            <type>jar</type>
+            <version>RELEASE80</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-nodes</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <type>jar</type>
+            <version>RELEASE80</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-netbeans-modules-projectapi</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <type>jar</type>
+            <version>RELEASE80</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-dialogs</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <type>jar</type>
+            <version>RELEASE80</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-netbeans-api-progress</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <type>jar</type>
+            <version>RELEASE80</version>
         </dependency>
     </dependencies>
 

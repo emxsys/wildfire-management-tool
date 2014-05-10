@@ -62,7 +62,7 @@ import org.openide.util.RequestProcessor;
     position = 200)
 @DataObject.Registration(
     mimeType = "application/x-fire_behavior",
-    iconBase = "com/emxsys/wildfire/fireground/resources/Fire_Location.png",
+    iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
     displayName = "#LBL_Behave_LOADER",
     position = 300)
 @ActionReferences(

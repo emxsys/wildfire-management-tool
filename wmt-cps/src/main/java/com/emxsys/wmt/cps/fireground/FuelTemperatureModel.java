@@ -29,30 +29,26 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import static com.emxsys.wmt.behave.BehaveUtil.*;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.gis.api.TerrainTuple;
-import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
 import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
-import com.emxsys.wmt.time.Times;
 import com.emxsys.wmt.weather.api.Weather;
-import com.emxsys.wmt.weather.api.WeatherTuple;
 import com.emxsys.wmt.weather.api.WeatherType;
 import com.emxsys.wmt.wildfire.api.FuelModel;
 import com.emxsys.wmt.wildfire.api.WildfireType;
+import static com.emxsys.wmt.wildfire.behave.BehaveUtil.calcAttenuatedIrradiance;
+import static com.emxsys.wmt.wildfire.behave.BehaveUtil.calcFuelTemp;
+import static com.emxsys.wmt.wildfire.behave.BehaveUtil.calcIrradianceOnASlope;
+import static com.emxsys.wmt.wildfire.behave.BehaveUtil.calcOpticalAirMass;
+import static com.emxsys.wmt.wildfire.behave.BehaveUtil.calcRelativeHumidityNearFuel;
+import static com.emxsys.wmt.wildfire.behave.BehaveUtil.calcWindSpeedAtFuelLevel;
 import java.rmi.RemoteException;
-
-import java.util.Date;
 import java.util.logging.Logger;
-
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
-import visad.FlatField;
 import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
@@ -212,87 +208,88 @@ public class FuelTemperatureModel
 
     private FieldImpl createHourlyFuelTemperatures()
     {
-        try
-        {
-            SolarFactory solarFactory = SolarFactory.getInstance();
-
-            // Function Type: ((lat, lon) -> (fuel temp, fuel RH))
-            FlatField tempsFlatField = this.domain.newSpatialField(FUEL_TEMP_TUPLE);
-            // FunctionType return e.g., (hour -> ((lat, lon) -> (fuel temp, fuel RH)))
-            FieldImpl hourlyTempsField = this.domain.newTemporalField(tempsFlatField.getType());
-
-            final int numLatLons = this.domain.getSpatialDomainSetLength();
-            final int numTimeValues = this.domain.getTemporalDomainSet().getLength();
-
-
-            // Get the solar data to be used in the computations; no need to compute for 
-            // every lat/lon, just use the first coordinate and date values in our domain
-            Date date = this.domain.getStartDate();
-            Real latitude = this.domain.getGeoPointAt(0).getLatitude();
-            final Solar solar = solarFactory.newSolar(latitude, date);
-
-
-            // Loop through the temporal-spatial domain and compute the range temperature outputs
-
-            for (int t = 0; t < numTimeValues; t++)
-            {
-
-                DateTime dateTime = this.domain.getDateTimeAt(t);
-                System.out.println("Computing fuel temps for: " + dateTime.toValueString());
-
-                // Get the general weather at this time
-                WeatherTuple wx = this.weather.getWeatherAt(t);
-
-                // Compute constant values used for all geographic calculations
-                // Latitude [radians]
-                double phi = solar.getLatitude().getValue(CommonUnit.radian);
-                // Declination [radialans]
-                double delta = solar.getDeclination().getValue(CommonUnit.radian);
-                // Local time
-                double time = Times.toClockTime(dateTime);
-
-                // TODO: add LocalHourAngle, SolarAltitudeAngle, SolarAzimuthAngle to the solar data tuple
-                double h = calcLocalHourAngle(time);
-                double A = calcSolarAltitudeAngle(h, phi, delta);
-                double Z = calcSolarAzimuthAngle(h, phi, delta, A);
-
-
-
-                // Generate geographic temperature samples for this hour
-                double[][] rangeSamples = new double[FUEL_TEMP_TUPLE.getDimension()][numLatLons];
-                for (int j = 0; j < numLatLons; j++)
-                {
-                    TerrainTuple terrain = this.terrain.getTerrainSample(j);
-                    FuelModel fuel = this.fuels.getFuelModelAt(j);
-                    if (fuel==null)
-                    {
-                        rangeSamples[0][j] = 0;// or missing/NAN for fuelTemp
-                        rangeSamples[1][j] = 0;//fuelRH
-                        rangeSamples[2][j] = 0;//elevation
-                        continue;
-                    }
-                    RealTuple tuple = computeFuelTempAndRH(A, Z, terrain, fuel, wx);
-
-                    // Populate our range samples, performing any necessary unit convertions
-                    Real fuelTemp = (Real) tuple.getComponent(0);
-                    Real fuelRH = (Real) tuple.getComponent(1);
-                    Real elevation = terrain.getElevation();
-                    rangeSamples[0][j] = fuelTemp.getValue(FUEL_TEMP_TUPLE.getDefaultUnits()[0]);
-                    rangeSamples[1][j] = fuelRH.getValue(FUEL_TEMP_TUPLE.getDefaultUnits()[1]);
-                    rangeSamples[2][j] = elevation.getValue(FUEL_TEMP_TUPLE.getDefaultUnits()[2]);
-                }
-                // Add the samples to the fields
-                tempsFlatField.setSamples(rangeSamples);
-
-                hourlyTempsField.setSample(t, tempsFlatField);
-            }
-
-            return hourlyTempsField;
-        }
-        catch (VisADException | RemoteException ex)
-        {
-            LOG.severe(ex.toString());
-        }
+        // TODO: implement createHourlyFuelTemperatures
+//        try
+//        {
+//            SolarFactory solarFactory = SolarFactory.getInstance();
+//
+//            // Function Type: ((lat, lon) -> (fuel temp, fuel RH))
+//            FlatField tempsFlatField = this.domain.newSpatialField(FUEL_TEMP_TUPLE);
+//            // FunctionType return e.g., (hour -> ((lat, lon) -> (fuel temp, fuel RH)))
+//            FieldImpl hourlyTempsField = this.domain.newTemporalField(tempsFlatField.getType());
+//
+//            final int numLatLons = this.domain.getSpatialDomainSetLength();
+//            final int numTimeValues = this.domain.getTemporalDomainSet().getLength();
+//
+//
+//            // Get the solar data to be used in the computations; no need to compute for 
+//            // every lat/lon, just use the first coordinate and date values in our domain
+//            Date date = this.domain.getStartDate();
+//            Real latitude = this.domain.getGeoPointAt(0).getLatitude();
+//            final Solar solar = solarFactory.newSolar(latitude, date);
+//
+//
+//            // Loop through the temporal-spatial domain and compute the range temperature outputs
+//
+//            for (int t = 0; t < numTimeValues; t++)
+//            {
+//
+//                DateTime dateTime = this.domain.getDateTimeAt(t);
+//                System.out.println("Computing fuel temps for: " + dateTime.toValueString());
+//
+//                // Get the general weather at this time
+//                WeatherTuple wx = this.weather.getWeatherAt(t);
+//
+//                // Compute constant values used for all geographic calculations
+//                // Latitude [radians]
+//                double phi = solar.getLatitude().getValue(CommonUnit.radian);
+//                // Declination [radialans]
+//                double delta = solar.getDeclination().getValue(CommonUnit.radian);
+//                // Local time
+//                double time = Times.toClockTime(dateTime);
+//
+//                // TODO: add LocalHourAngle, SolarAltitudeAngle, SolarAzimuthAngle to the solar data tuple
+//                double h = calcLocalHourAngle(time);
+//                double A = calcSolarAltitudeAngle(h, phi, delta);
+//                double Z = calcSolarAzimuthAngle(h, phi, delta, A);
+//
+//
+//
+//                // Generate geographic temperature samples for this hour
+//                double[][] rangeSamples = new double[FUEL_TEMP_TUPLE.getDimension()][numLatLons];
+//                for (int j = 0; j < numLatLons; j++)
+//                {
+//                    TerrainTuple terrain = this.terrain.getTerrainSample(j);
+//                    FuelModel fuel = this.fuels.getFuelModelAt(j);
+//                    if (fuel==null)
+//                    {
+//                        rangeSamples[0][j] = 0;// or missing/NAN for fuelTemp
+//                        rangeSamples[1][j] = 0;//fuelRH
+//                        rangeSamples[2][j] = 0;//elevation
+//                        continue;
+//                    }
+//                    RealTuple tuple = computeFuelTempAndRH(A, Z, terrain, fuel, wx);
+//
+//                    // Populate our range samples, performing any necessary unit convertions
+//                    Real fuelTemp = (Real) tuple.getComponent(0);
+//                    Real fuelRH = (Real) tuple.getComponent(1);
+//                    Real elevation = terrain.getElevation();
+//                    rangeSamples[0][j] = fuelTemp.getValue(FUEL_TEMP_TUPLE.getDefaultUnits()[0]);
+//                    rangeSamples[1][j] = fuelRH.getValue(FUEL_TEMP_TUPLE.getDefaultUnits()[1]);
+//                    rangeSamples[2][j] = elevation.getValue(FUEL_TEMP_TUPLE.getDefaultUnits()[2]);
+//                }
+//                // Add the samples to the fields
+//                tempsFlatField.setSamples(rangeSamples);
+//
+//                hourlyTempsField.setSample(t, tempsFlatField);
+//            }
+//
+//            return hourlyTempsField;
+//        }
+//        catch (VisADException | RemoteException ex)
+//        {
+//            LOG.severe(ex.toString());
+//        }
         return null;
     }
 

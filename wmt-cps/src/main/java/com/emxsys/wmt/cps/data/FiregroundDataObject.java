@@ -102,7 +102,7 @@ import visad.VisADException;
 })
 @DataObject.Registration(
     mimeType = "text/fireground+xml",
-    iconBase = "com/emxsys/wildfire/fireground/resources/region.png",
+    iconBase = "com/emxsys/wmt/cps/images/region.png",
     displayName = "#LBL_Fireground_LOADER",
     position = 300)
 @ActionReferences(

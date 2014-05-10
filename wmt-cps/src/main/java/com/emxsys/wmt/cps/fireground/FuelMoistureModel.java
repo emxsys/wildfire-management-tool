@@ -31,13 +31,13 @@ package com.emxsys.wmt.cps.fireground;
 
 import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.time.Times;
+import com.emxsys.wmt.visad.Times;
 import com.emxsys.wmt.weather.api.WeatherTuple;
 import com.emxsys.wmt.weather.api.WeatherType;
 import com.emxsys.wmt.wildfire.api.FuelMoistureTuple;
 import com.emxsys.wmt.wildfire.api.FuelMoisture;
 import static com.emxsys.wmt.wildfire.api.WildfireType.*;
-import static com.emxsys.wmt.wildfire.fireground.FuelMoistureUtil.*;
+import static com.emxsys.wmt.cps.fireground.FuelMoistureUtil.*;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
@@ -53,53 +53,32 @@ import visad.RealTuple;
 import visad.RealTupleType;
 import visad.VisADException;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class FuelMoistureModel
-{
+public class FuelMoistureModel {
+
     private final SpatioTemporalDomain domain;
-    /**
-     * The fireground elevations
-     */
+    /** The fireground elevations */
     private final TerrainModel terrain;
-    /**
-     * The fuel models
-     */
+    /** The fuel models */
     private final FuelTypeModel fuel;
     private final WeatherModel weather;
     private final FuelTemperatureModel fuelTemps;
-    /**
-     * A fuel moisture scenario for deriving fuel moistures
-     */
+    /** A fuel moisture scenario for deriving fuel moistures */
     private final FuelMoisture scenario;
-    /**
-     * The hourly 1 hour fuel moisture data
-     */
+    /** The hourly 1 hour fuel moisture data */
     private FieldImpl moisture1h;
-    /**
-     * The hourly 10 hour fuel moisture data
-     */
+    /** The hourly 10 hour fuel moisture data */
     private FieldImpl moisture10h;
-    /**
-     * The hourly 100 hour fuel moisture data
-     */
+    /** The hourly 100 hour fuel moisture data */
     private FieldImpl moisture100h;
-    /**
-     * The hourly live herbaceous fuel moisture data
-     */
+    /** The hourly live herbaceous fuel moisture data */
     private FieldImpl moistureHerb;
-    /**
-     * The hourly live woody fuel moisture data
-     */
+    /** The hourly live woody fuel moisture data */
     private FieldImpl moistureWoody;
-    /**
-     * The Error logger
-     */
     private static final Logger LOG = Logger.getLogger(FuelMoistureModel.class.getName());
-
 
     /**
      * Constructs the FuelMoistureModel with a deferred initialization of the FuelMoisture FlatField
@@ -108,13 +87,11 @@ public class FuelMoistureModel
      * @param domain the FuelMoisture's domain (geographic bounds)
      */
     public FuelMoistureModel(SpatioTemporalDomain domain, TerrainModel terrain,
-        FuelTypeModel fuel, FuelTemperatureModel temps, WeatherModel weather,
-        FuelMoisture scenario)
-    {
+                             FuelTypeModel fuel, FuelTemperatureModel temps, WeatherModel weather,
+                             FuelMoisture scenario) {
         // Defer initialization of FuelMoisture flatfield member
         this(domain, terrain, fuel, temps, weather, scenario, false);
     }
-
 
     /**
      *
@@ -123,17 +100,15 @@ public class FuelMoistureModel
      * false, the FuelMoisture data is initialized on the first call to getFuelMoistureData.
      */
     public FuelMoistureModel(SpatioTemporalDomain domain, TerrainModel terrain,
-        FuelTypeModel fuel, FuelTemperatureModel temps, WeatherModel weather,
-        FuelMoisture scenario, boolean immediate)
-    {
+                             FuelTypeModel fuel, FuelTemperatureModel temps, WeatherModel weather,
+                             FuelMoisture scenario, boolean immediate) {
         this.domain = domain;
         this.terrain = terrain;
         this.fuel = fuel;
         this.weather = weather;
         this.fuelTemps = temps;
         this.scenario = scenario;
-        if (immediate)
-        {
+        if (immediate) {
             getDead1HrFuelMoistureData();
             getDead10HrFuelMoistureData();
             getDead100HrFuelMoistureData();
@@ -141,13 +116,10 @@ public class FuelMoistureModel
             getLiveWoodyFuelMoistureData();
         }
 
-
     }
 
-
     public FuelMoistureModel(FieldImpl moisture1h, FieldImpl moisture10h, FieldImpl moisture100h,
-        FieldImpl moistureHerb, FieldImpl moistureWoody)
-    {
+                             FieldImpl moistureHerb, FieldImpl moistureWoody) {
         this.domain = null;
         this.terrain = null;
         this.fuel = null;
@@ -162,53 +134,38 @@ public class FuelMoistureModel
         this.moistureWoody = moistureWoody;
     }
 
-
-    public Real getDead1HrFuelMoisture(Real hour, Coord2D latLon)
-    {
+    public Real getDead1HrFuelMoisture(Real hour, Coord2D latLon) {
         return evaluateFuelMoisture(getDead1HrFuelMoistureData(), hour, latLon);
     }
 
-
-    public Real getDead10HrFuelMoisture(Real hour, Coord2D latLon)
-    {
+    public Real getDead10HrFuelMoisture(Real hour, Coord2D latLon) {
         return evaluateFuelMoisture(getDead10HrFuelMoistureData(), hour, latLon);
     }
 
-
-    public Real getDead100HrFuelMoisture(Real hour, Coord2D latLon)
-    {
+    public Real getDead100HrFuelMoisture(Real hour, Coord2D latLon) {
         return evaluateFuelMoisture(getDead100HrFuelMoistureData(), hour, latLon);
     }
 
-
-    public Real getLiveHerbFuelMoisture(Real hour, Coord2D latLon)
-    {
+    public Real getLiveHerbFuelMoisture(Real hour, Coord2D latLon) {
         return evaluateFuelMoisture(getLiveHerbFuelMoistureData(), hour, latLon);
     }
 
-
-    public Real getLiveWoodyFuelMoisture(Real hour, Coord2D latLon)
-    {
+    public Real getLiveWoodyFuelMoisture(Real hour, Coord2D latLon) {
         return evaluateFuelMoisture(getLiveWoodyFuelMoistureData(), hour, latLon);
     }
 
-
-    public FuelMoistureTuple getFuelMoisture(Real hour, Coord2D latLon)
-    {
+    public FuelMoistureTuple getFuelMoisture(Real hour, Coord2D latLon) {
         FuelMoistureTuple fuelMoisture = new FuelMoistureTuple(
-            getDead1HrFuelMoisture(hour, latLon),
-            getDead10HrFuelMoisture(hour, latLon),
-            getDead100HrFuelMoisture(hour, latLon),
-            getLiveHerbFuelMoisture(hour, latLon),
-            getLiveWoodyFuelMoisture(hour, latLon));
+                getDead1HrFuelMoisture(hour, latLon),
+                getDead10HrFuelMoisture(hour, latLon),
+                getDead100HrFuelMoisture(hour, latLon),
+                getLiveHerbFuelMoisture(hour, latLon),
+                getLiveWoodyFuelMoisture(hour, latLon));
         return fuelMoisture;
     }
 
-
-    public FuelMoistureTuple getFuelMoistureAt(int timeIndex, int spatialIndex)
-    {
-        try
-        {
+    public FuelMoistureTuple getFuelMoistureAt(int timeIndex, int spatialIndex) {
+        try {
             Real dead1Hr = (Real) ((FieldImpl) getDead1HrFuelMoistureData().getSample(timeIndex)).getSample(spatialIndex);
             Real dead10Hr = (Real) ((FieldImpl) getDead10HrFuelMoistureData().getSample(timeIndex)).getSample(0);
             Real dead100Hr = (Real) ((FieldImpl) getDead100HrFuelMoistureData().getSample(timeIndex)).getSample(0);
@@ -217,87 +174,63 @@ public class FuelMoistureModel
 
             FuelMoistureTuple fuelMoisture = new FuelMoistureTuple(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
             return fuelMoisture;
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             Exceptions.printStackTrace(ex);
             throw new RuntimeException(ex);
         }
     }
 
-
-    public final FieldImpl getDead1HrFuelMoistureData()
-    {
-        if (this.moisture1h == null)
-        {
+    public final FieldImpl getDead1HrFuelMoistureData() {
+        if (this.moisture1h == null) {
             this.moisture1h = createFineFuelMoisture(this.scenario.getDead1HrFuelMoisture());
         }
         return this.moisture1h;
     }
 
-
-    public final FieldImpl getDead10HrFuelMoistureData()
-    {
-        if (this.moisture10h == null)
-        {
+    public final FieldImpl getDead10HrFuelMoistureData() {
+        if (this.moisture10h == null) {
             this.moisture10h = createFixedFuelMoisture(this.scenario.getDead10HrFuelMoisture());
         }
         return this.moisture10h;
     }
 
-
-    public final FieldImpl getDead100HrFuelMoistureData()
-    {
-        if (this.moisture100h == null)
-        {
+    public final FieldImpl getDead100HrFuelMoistureData() {
+        if (this.moisture100h == null) {
             this.moisture100h = createFixedFuelMoisture(this.scenario.getDead100HrFuelMoisture());
         }
         return this.moisture100h;
     }
 
-
-    public final FieldImpl getLiveHerbFuelMoistureData()
-    {
-        if (this.moistureHerb == null)
-        {
+    public final FieldImpl getLiveHerbFuelMoistureData() {
+        if (this.moistureHerb == null) {
             this.moistureHerb = createFixedFuelMoisture(this.scenario.getLiveHerbFuelMoisture());
         }
         return this.moistureHerb;
     }
 
-
-    public final FieldImpl getLiveWoodyFuelMoistureData()
-    {
-        if (this.moistureWoody == null)
-        {
+    public final FieldImpl getLiveWoodyFuelMoistureData() {
+        if (this.moistureWoody == null) {
             this.moistureWoody = createFixedFuelMoisture(this.scenario.getLiveWoodyFuelMoisture());
         }
         return this.moistureWoody;
     }
 
-
-    private Real evaluateFuelMoisture(FieldImpl temporalSpatialData, Real hour, Coord2D latLon)
-    {
+    private Real evaluateFuelMoisture(FieldImpl temporalSpatialData, Real hour, Coord2D latLon) {
         Real value = null;
-        try
-        {
-            RealTuple latLonTuple = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]
-            {
+        try {
+            RealTuple latLonTuple = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]{
                 latLon.getLatitudeDegrees(), latLon.getLongitudeDegrees()
             });
 
             FlatField spatialData = (FlatField) temporalSpatialData.evaluate(hour, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             value = (Real) spatialData.evaluate(latLonTuple, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             LOG.warning(ex.toString());
             Exceptions.printStackTrace(ex);
         }
         return value;
     }
-
 
     /**
      * Compute the fine fuel moisture which varies by time and location: <br/>
@@ -309,10 +242,8 @@ public class FuelMoistureModel
      * @param initialFuelMoisture
      * @return
      */
-    private FieldImpl createFineFuelMoisture(Real initialFuelMoisture)
-    {
-        try
-        {
+    private FieldImpl createFineFuelMoisture(Real initialFuelMoisture) {
+        try {
             FlatField moistureFlatField = this.domain.newSpatialField(FUEL_MOISTURE_1H);
             FieldImpl hourlyMoistureField = this.domain.newTemporalField(moistureFlatField.getType());
 
@@ -323,16 +254,13 @@ public class FuelMoistureModel
             float[] m_1200 = new float[numLatLons];
             float[] prev_m = new float[numLatLons];
 
-
             // Update the the field samples: loop through the time domain
-            for (int t = 0; t < numTimes; t++)
-            {
+            for (int t = 0; t < numTimes; t++) {
                 DateTime dateTime = this.domain.getDateTimeAt(t);
                 double local24HourTime = Times.toClockTime(dateTime);
 
                 // Set the fuel moisture sample(s) in the terrain's lat/lon domain
-                for (int xy = 0; xy < numLatLons; xy++)
-                {
+                for (int xy = 0; xy < numLatLons; xy++) {
                     WeatherTuple genWx = weather.getWeatherAt(t);
                     RealTuple fuelCond = fuelTemps.getFuelTemperatureAt(t, xy);
 
@@ -347,8 +275,7 @@ public class FuelMoistureModel
 
                     // Noontime weather is used to compute 1400 fuel moisture; 
                     // it will be used in a subsequent iteration in the loop.
-                    if (local24HourTime >= 11.5 && local24HourTime < 12.5)
-                    {
+                    if (local24HourTime >= 11.5 && local24HourTime < 12.5) {
                         Real m = calcCanadianStandardDailyFineFuelMoisture(m_0, T_f, H_f, W, R);
                         m_1400[xy] = (float) m.getValue();
                     }
@@ -357,18 +284,13 @@ public class FuelMoistureModel
                     float m;
 
                     // At 1300 intepolate between noon and 1400
-                    if (local24HourTime >= 12.5 && local24HourTime < 13.5)
-                    {
+                    if (local24HourTime >= 12.5 && local24HourTime < 13.5) {
                         m = (float) (m_0.getValue() + m_14.getValue()) / 2.0f;
-                    }
-                    // At 1400 use the fuel moisture that was computed at 1200 (see above)
-                    else if (local24HourTime >= 13.5 && local24HourTime < 14.5)
-                    {
+                    } // At 1400 use the fuel moisture that was computed at 1200 (see above)
+                    else if (local24HourTime >= 13.5 && local24HourTime < 14.5) {
                         m = (float) m_14.getValue();
-                    }
-                    // Otherwise, compute fine fuel moisture for this hour
-                    else
-                    {
+                    } // Otherwise, compute fine fuel moisture for this hour
+                    else {
                         m = (float) calcCanadianHourlyFineFuelMoisture(m_0, T_f, H_f, W).getValue();
                     }
                     values[0][xy] = m;
@@ -385,14 +307,11 @@ public class FuelMoistureModel
                 hourlyMoistureField.setSample(t, moistureFlatField);
             }
             return hourlyMoistureField;
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
         }
         return null;
     }
-
 
     /**
      * Create a non-variable fuel moisture organized as: <br/>
@@ -401,18 +320,16 @@ public class FuelMoistureModel
      * @param fuelMoisture
      * @return hourly fuel moistures
      */
-    private FieldImpl createFixedFuelMoisture(Real fuelMoisture)
-    {
-        try
-        {
+    private FieldImpl createFixedFuelMoisture(Real fuelMoisture) {
+        try {
             // Instead of using the spatial domain's set, we'll define 
             // a very simple domain with just one sample
             Box sector = this.domain.getSector();
             int numSamples = 1;
             Linear2DSet fixedDomainSet = new LinearLatLonSet(
-                this.domain.getSpatialDomainType(),
-                sector.getSouthwest().getLatitudeDegrees(), sector.getNortheast().getLatitudeDegrees(), numSamples,
-                sector.getSouthwest().getLongitudeDegrees(), sector.getNortheast().getLongitudeDegrees(), numSamples);
+                    this.domain.getSpatialDomainType(),
+                    sector.getSouthwest().getLatitudeDegrees(), sector.getNortheast().getLatitudeDegrees(), numSamples,
+                    sector.getSouthwest().getLongitudeDegrees(), sector.getNortheast().getLongitudeDegrees(), numSamples);
 
             // Create the simplified FlatField for fuel moisture
             FunctionType functionType = new FunctionType(this.domain.getSpatialDomainType(), fuelMoisture.getType());
@@ -423,17 +340,16 @@ public class FuelMoistureModel
             FieldImpl hourlyFieldImpl = this.domain.newTemporalField(functionType);
 
             // Create the output range: just one row for with one value
-            double[][] moistureSample =
-            {
-                {
-                    fuelMoisture.getValue()
-                }
-            };
+            double[][] moistureSample
+                    = {
+                        {
+                            fuelMoisture.getValue()
+                        }
+                    };
 
             // Update the the field samples: Loop through the time domain
             int tSamples = this.domain.getTemporalDomainSet().getLength();
-            for (int t = 0; t < tSamples; t++)
-            {
+            for (int t = 0; t < tSamples; t++) {
                 // Set the fuel moisture sample(s) in the lat/lon domain ...
                 moistureFlatField.setSamples(moistureSample);
 
@@ -442,9 +358,7 @@ public class FuelMoistureModel
             }
             return hourlyFieldImpl;
 
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
         }
         return null;

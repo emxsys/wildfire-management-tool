@@ -31,10 +31,11 @@ package com.emxsys.wmt.cps.fireground;
 
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.TerrainTuple;
 import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.spi.DefaultShadedTerrainProvider;
 import com.emxsys.wmt.gis.api.viewer.GisViewer;
+import com.emxsys.wmt.gis.spi.DefaultShadedTerrainProvider;
 import com.emxsys.wmt.wildfire.api.WildfireType;
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -74,7 +75,7 @@ public class TerrainModel
     /**
      * The terrain data provider
      */
-    private final TerrainFactory terrainFactory;
+    private final ShadedTerrainProvider terrainFactory;
     /**
      * The Elevation data lookup
      */
@@ -115,7 +116,7 @@ public class TerrainModel
     {
         this.domain = domain;
         // Find the TerrainProvider Service Provider (possibly from either the WorldWind or LANDFIRE module)
-        this.terrainFactory = TerrainFactory.getInstance();//Lookup.getDefault().lookup(TerrainProvider.class);
+        this.terrainFactory = DefaultShadedTerrainProvider.getInstance();
         checkForDEMLayer();
 
         if (immediate)
@@ -132,7 +133,7 @@ public class TerrainModel
     {
         this.domain = null;
         this.terrain = terrain;
-        this.terrainFactory = TerrainFactory.getInstance();
+        this.terrainFactory = DefaultShadedTerrainProvider.getInstance();
     }
 
     /**
@@ -272,7 +273,7 @@ public class TerrainModel
 
 
                 // ... and then get the terrain at that lat/lon
-                TerrainTuple tuple = (TerrainTuple) this.terrainFactory.newTerrain(latLon);
+                TerrainTuple tuple = (TerrainTuple) this.terrainFactory.getTerrain(latLon);
 
                 // TEST
 // The LANDFIRE Dem layer is useless: the resolution is extremely low!                

@@ -29,10 +29,15 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.time.Times;
+import com.emxsys.wmt.visad.Times;
 import com.emxsys.wmt.weather.api.WeatherTuple;
+import static com.emxsys.wmt.weather.api.WeatherType.AIR_TEMP_F;
+import static com.emxsys.wmt.weather.api.WeatherType.CLOUD_COVER;
+import static com.emxsys.wmt.weather.api.WeatherType.FIRE_WEATHER;
+import static com.emxsys.wmt.weather.api.WeatherType.REL_HUMIDITY;
+import static com.emxsys.wmt.weather.api.WeatherType.WIND_DIR;
+import static com.emxsys.wmt.weather.api.WeatherType.WIND_SPEED_MPH;
 import com.emxsys.wmt.weather.api.WeatherUtil;
-import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;

@@ -67,7 +67,7 @@ import org.openide.util.RequestProcessor;
     position = 100)
 @DataObject.Registration(
     mimeType = "application/x-weather",
-    iconBase = "com/emxsys/wildfire/fireground/resources/sun_clouds.png",
+    iconBase = "com/emxsys/wmt/cps/images/sun_clouds.png",
     displayName = "#LBL_Weather_LOADER",
     position = 300)
 @ActionReferences(

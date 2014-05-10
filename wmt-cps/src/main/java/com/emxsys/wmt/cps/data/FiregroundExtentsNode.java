@@ -160,7 +160,8 @@ public class FiregroundExtentsNode extends AbstractNode
         @Override
         public Image getIcon(int type)
         {
-            return ImageUtilities.loadImage("com/emxsys/wildfire/fireground/resources/region.png");
+            return ImageUtilities.loadImage("com/emxsys/wmt/cps/images/region.png" +
+"");
         }
 
 
