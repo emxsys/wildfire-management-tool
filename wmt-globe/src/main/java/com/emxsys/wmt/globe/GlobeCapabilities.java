@@ -41,7 +41,7 @@ import com.emxsys.wmt.core.capabilities.ZoomInCapability;
 import com.emxsys.wmt.core.capabilities.ZoomOutCapability;
 import com.terramenta.globe.WorldWindManager;
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
@@ -129,7 +129,7 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
     }
 
     protected void panMap(Angle direction, double panStep) {
-        WorldWindowGLJPanel wwd = wwm.getWorldWindow();
+        WorldWindow wwd = wwm.getWorldWindow();
         if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
@@ -152,7 +152,7 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
     }
 
     protected void rotateMap(Angle amount) {
-        WorldWindowGLJPanel wwd = wwm.getWorldWindow();
+        WorldWindow wwd = wwm.getWorldWindow();
         if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
@@ -162,7 +162,7 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
     }
 
     protected void tiltMap(Angle amount) {
-        WorldWindowGLJPanel wwd = wwm.getWorldWindow();
+        WorldWindow wwd = wwm.getWorldWindow();
         if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }
@@ -176,7 +176,7 @@ public class GlobeCapabilities implements PanUpCapability, PanDownCapability,
     }
 
     protected void zoomMap(double amount) {
-        WorldWindowGLJPanel wwd = wwm.getWorldWindow();
+        WorldWindow wwd = wwm.getWorldWindow();
         if (wwd == null) {
             throw new IllegalStateException(Bundle.ERR_NullWorldWindow());
         }

@@ -95,23 +95,10 @@
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>
+            <!--Needed for Unit Tests-->
             <artifactId>worldwind</artifactId>
             <groupId>gov.nasa</groupId>
-            <version>1.5.1</version>
-            <scope>provided</scope>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <artifactId>jogl</artifactId>
-            <groupId>com.sun</groupId>
-            <version>1.1.2</version>
-            <scope>provided</scope>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <artifactId>gluegen-rt</artifactId>
-            <groupId>com.sun</groupId>
-            <version>1.0</version>
+            <version>2.0.0</version>
             <scope>provided</scope>
             <type>jar</type>
         </dependency>
@@ -198,6 +185,18 @@
             <artifactId>org-netbeans-api-progress</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <artifactId>jogl-all-main</artifactId>
+            <groupId>org.jogamp.jogl</groupId>
+            <type>jar</type>
+            <version>2.1.5-01</version>
+        </dependency>
+        <dependency>
+            <artifactId>gluegen-rt-main</artifactId>
+            <groupId>org.jogamp.gluegen</groupId>
+            <type>jar</type>
+            <version>2.1.5-01</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -210,6 +209,7 @@
                     <publicPackages>
                         <publicPackage>com.emxsys.wmt.globe</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.actions</publicPackage>
+                        <publicPackage>com.emxsys.wmt.globe.analytics</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.layers</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.markers.*</publicPackage>
                         <publicPackage>com.emxsys.wmt.globe.render</publicPackage>

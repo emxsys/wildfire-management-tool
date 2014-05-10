@@ -38,7 +38,7 @@ import org.openide.util.NbPreferences;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * A specialized WorldWindManager for the WMT.
+ * A specialized WorldWindManager for the WMT. 
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -63,6 +63,9 @@ public class EmxsysWorldWindManager extends WorldWindManager {
         }
     }
 
+    /**
+     * Constructor called by ServiceProvider.
+     */
     public EmxsysWorldWindManager() {
         super();
     }

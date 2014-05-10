@@ -35,7 +35,10 @@ import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
-import com.emxsys.wmt.time.api.TimeControl;
+import com.emxsys.wmt.time.api.TimeEvent;
+import com.emxsys.wmt.time.api.TimeListener;
+import com.emxsys.wmt.time.api.TimeProvider;
+import com.emxsys.wmt.time.spi.DefaultTimeProvider;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
@@ -50,9 +53,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -77,21 +79,19 @@ import visad.RealType;
 import visad.Set;
 import visad.VisADException;
 
-
 /**
  * Particle Analytics draws moving particles on the surface of the globe with comet-like trail. This
  * class was inspired the Wind Map by Fernanda Viégas and Martin Wattenberg at
  * http://hint.fm/projects/wind/
  *
  * @author Bruce Schubert
- * @version $Id$
  */
-public class ParticleAnalytics
-{
+public class ParticleAnalytics {
+
     public static final String PREF_PARTICLE_ANALYTICS_NUM_PARTICLES = "particle_analytics_num_particles";
     public static final int DEFAULT_NUM_PARTICLES = 2000;
     private final String layerName;
-    private final TimeControl controller;
+    private final TimeProvider controller = DefaultTimeProvider.getInstance();
     private SurfaceImage surface;
     private BufferedImage image;
     private Sector sector;
@@ -105,6 +105,8 @@ public class ParticleAnalytics
     private int magnitudeIndex;
     private int numTimeValues;
     // Annimation controllers
+    private ZonedDateTime time;
+    private ZonedDateTime oldTime;
     private Timer timer;
     private int timeIndex = -1;
     private int oldTimeIndex = 0;
@@ -117,22 +119,30 @@ public class ParticleAnalytics
     double deltaLonDegrees;
     int height;
     int width;
-    private PropertyChangeListener timerListener = new PropertyChangeListener()
-    {
+    private final TimeListener timerListener = new TimeListener() {
+
         @Override
-        public void propertyChange(PropertyChangeEvent evt)
-        {
-            if (evt.getPropertyName().equals(TimeControl.PROP_TIMER_INDEX))
-            {
-                oldTimeIndex = timeIndex;
-                timeIndex = (Integer) evt.getNewValue();
-            }
+        public void updateTime(TimeEvent evt) {
+            oldTime = time;
+            time = evt.getNewTime();
         }
+
     };
+    // TODO: BDS - refactor to use TimeEvent instead of old TimeController
+//    {
+//        @Override
+//        public void propertyChange(PropertyChangeEvent evt)
+//        {
+//            if (evt.getPropertyName().equals(TimeControl.PROP_TIMER_INDEX))
+//            {
+//                oldTimeIndex = timeIndex;
+//                timeIndex = (Integer) evt.getNewValue();
+//            }
+//        }
+//    };
     private static final RequestProcessor THREAD_POOL = new RequestProcessor(ParticleAnalytics.class.getName(), 1);
     private static final Logger logger = Logger.getLogger(ParticleAnalytics.class.getName());
     private GisLayerProxy gisLayerAdaptor;
-
 
     /**
      * Constructs particle engine analytics object that animates particles based on their direction,
@@ -143,59 +153,50 @@ public class ParticleAnalytics
      * @param velocityType
      * @param magnitudeType
      */
-    public ParticleAnalytics(String uniqueLayerName, TimeControl controller, DataImpl data,
-        MathType directionType, MathType velocityType, MathType magnitudeType)
-    {
-        if (controller == null)
-        {
+    public ParticleAnalytics(String uniqueLayerName, DataImpl data,
+                             MathType directionType, MathType velocityType, MathType magnitudeType) {
+        if (controller == null) {
             throw new IllegalArgumentException("controller cannot be null!");
         }
-        if (data == null)
-        {
+        if (data == null) {
             throw new IllegalArgumentException("data cannot be null!");
         }
 
         logger.log(Level.INFO, "Intializing TemporalSpatialAnalytics for : {0}", data.getType().prettyString());
 
-        try
-        {
+        try {
             // Validate temporal requirements
             this.temporalFunction = (FunctionType) data.getType();
             if (this.temporalFunction == null
-                || !(this.temporalFunction.getDomain().getComponent(0).equals(RealType.Time)))
-            {
+                    || !(this.temporalFunction.getDomain().getComponent(0).equals(RealType.Time))) {
                 throw new IllegalArgumentException("data domain type must be RealType.Time : "
-                    + data.getType().prettyString());
+                        + data.getType().prettyString());
             }
 
             // Validate spatial requirements
             this.spatialFunction = (FunctionType) this.temporalFunction.getRange();
             if (this.spatialFunction == null
-                || !(this.spatialFunction.getDomain().equals(RealTupleType.LatitudeLongitudeTuple)
-                || this.spatialFunction.getDomain().equals(GeoCoord2D.DEFAULT_TUPLE_TYPE)))
-            {
+                    || !(this.spatialFunction.getDomain().equals(RealTupleType.LatitudeLongitudeTuple)
+                    || this.spatialFunction.getDomain().equals(GeoCoord2D.DEFAULT_TUPLE_TYPE))) {
                 throw new IllegalArgumentException("data range's domain type must be [RealType.Latitude, RealType.Longitude] : "
-                    + data.getType().prettyString());
+                        + data.getType().prettyString());
             }
 
             // Validate spatial range data contains given types
             this.directionIndex = this.spatialFunction.getFlatRange().getIndex(directionType);
-            if (directionIndex < 0)
-            {
+            if (directionIndex < 0) {
                 throw new IllegalArgumentException("data range does not have supplied type : "
-                    + directionType.prettyString() + " : " + data.getType().prettyString());
+                        + directionType.prettyString() + " : " + data.getType().prettyString());
             }
             this.velocityIndex = this.spatialFunction.getFlatRange().getIndex(velocityType);
-            if (velocityIndex < 0)
-            {
+            if (velocityIndex < 0) {
                 throw new IllegalArgumentException("data range does not have supplied type : "
-                    + velocityType.prettyString() + " : " + data.getType().prettyString());
+                        + velocityType.prettyString() + " : " + data.getType().prettyString());
             }
             this.magnitudeIndex = this.spatialFunction.getFlatRange().getIndex(magnitudeType);
-            if (magnitudeIndex < 0)
-            {
+            if (magnitudeIndex < 0) {
                 throw new IllegalArgumentException("data range does not have supplied type : "
-                    + velocityType.prettyString() + " : " + data.getType().prettyString());
+                        + velocityType.prettyString() + " : " + data.getType().prettyString());
             }
 
             this.layerName = uniqueLayerName;
@@ -205,39 +206,32 @@ public class ParticleAnalytics
             this.numTimeValues = timeSet.getLength();
 
             // Attach to animation controller
-            this.controller = controller;
-            this.controller.addPropertyChangeListener(WeakListeners.propertyChange(this.timerListener, this.controller));
+            this.controller.addTimeListener(WeakListeners.create(TimeListener.class, this.timerListener, this.controller));
 
             // Intialize the surface
             initialize();
 
-
-        }
-        catch (VisADException ex)
-        {
+        } catch (VisADException ex) {
             throw new IllegalStateException(ex.toString());
         }
     }
 
-
     /**
      * Initializes the RenderableLayer and SurfaceImage.
      */
-    private void initialize()
-    {
+    private void initialize() {
         // Create Layer
         this.analyticSurfaceLayer = new RenderableLayer();
         this.analyticSurfaceLayer.setPickEnabled(false);
         this.analyticSurfaceLayer.setName(this.layerName);
         this.analyticSurfaceLayer.setEnabled(true);
-        
-        this.gisLayerAdaptor = new GisLayerProxy(analyticSurfaceLayer, 
-            BasicLayerType.Other, 
-            BasicLayerGroup.Analytic, 
-            BasicLayerCategory.Other);
-                
-        try
-        {
+
+        this.gisLayerAdaptor = new GisLayerProxy(analyticSurfaceLayer,
+                BasicLayerType.Other,
+                BasicLayerGroup.Analytic,
+                BasicLayerCategory.Other);
+
+        try {
             // Create SurfaceImage based on the Field dimension
 
             FlatField spatialField = (FlatField) field.getSample(0);
@@ -271,15 +265,11 @@ public class ParticleAnalytics
             this.width = image.getWidth();
 
             // TODO: Make number of particles relative to pixel dimensions of sector
-            
             int numParticles = NbPreferences.forModule(this.getClass()).getInt(
-                PREF_PARTICLE_ANALYTICS_NUM_PARTICLES, DEFAULT_NUM_PARTICLES);
+                    PREF_PARTICLE_ANALYTICS_NUM_PARTICLES, DEFAULT_NUM_PARTICLES);
             makeParticles(numParticles);
 
-
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             String msg = String.format("initialize() failed! %1s", ex);
             logger.severe(msg);
             throw new RuntimeException(msg, ex);
@@ -287,41 +277,31 @@ public class ParticleAnalytics
 
     }
 
-
-    public String getLayerName()
-    {
+    public String getLayerName() {
         return layerName;
     }
-
 
     /**
      * Creates the particle collection
      *
      * @param count
      */
-    private void makeParticles(int count)
-    {
+    private void makeParticles(int count) {
         this.particles = new ArrayList<>(count);
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             this.particles.add(new Particle());
         }
     }
 
-
-    private void resetParticles()
-    {
-        for (Particle p : particles)
-        {
+    private void resetParticles() {
+        for (Particle p : particles) {
             p.firstTime = true;
             p.initialize();
             p.firstTime = false;
         }
     }
 
-
-    private void clearImage()
-    {
+    private void clearImage() {
         Graphics2D g2 = this.image.createGraphics();
         g2.setBackground(new Color(0f, 0f, 0f, 0f));
         g2.clearRect(0, 0, width, height);
@@ -329,39 +309,31 @@ public class ParticleAnalytics
 
     }
 
-
     /**
      * Initiates the particle animation.
      *
      * @param intervalMs
      */
-    public final void animate(final int intervalMs)
-    {
+    public final void animate(final int intervalMs) {
         // Start the time domain animation
-        this.controller.run();
+        // FIXME
+        //this.controller.run();
 
         // Start the animation for a given time slice
-        if (this.timer != null)
-        {
+        if (this.timer != null) {
             this.timer.stop();
         }
-        this.timer = new Timer(intervalMs, new ActionListener()
-        {
+        this.timer = new Timer(intervalMs, new ActionListener() {
             private int counter = 0;
             private int lastTimeIndex = 0;
             private FlatField spatialField;
 
-
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
-                    if (timeIndex != lastTimeIndex || spatialField == null)
-                    {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (timeIndex != lastTimeIndex || spatialField == null) {
                         spatialField = (FlatField) field.getSample(timeIndex);
-                        if (timeIndex < lastTimeIndex)
-                        {
+                        if (timeIndex < lastTimeIndex) {
                             clearImage();
                             resetParticles();
                         }
@@ -374,45 +346,39 @@ public class ParticleAnalytics
 
                     analyticSurfaceLayer.firePropertyChange(AVKey.LAYER, null, analyticSurfaceLayer);
 
-                }
-                catch (VisADException | RemoteException ex)
-                {
+                } catch (VisADException | RemoteException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
         });
         timer.start();
-        
+
         // Add the renderable layer to the viewer's layers (and indirectly to the layer manager) 
-        Globe.getInstance().addGisLayer(gisLayerAdaptor); 
-        
-        // Add this instance to the viewer lookup so that actions can find it (and invoke cancel).
-        Globe.getInstance().addParticleAnalytics(this);
+        Globe.getInstance().addGisLayer(gisLayerAdaptor);
+
+        // Add this instance to the viewer lookup so that actions can find it (and invoke cancel).\
+        // FIXME
+        //Globe.getInstance().addParticleAnalytics(this);
     }
 
-
-    public static void cancelAll()
-    {
+    public static void cancelAll() {
         Collection<? extends ParticleAnalytics> instances = Globe.getInstance().getLookup().lookupAll(ParticleAnalytics.class);
-        for (ParticleAnalytics instance : instances)
-        {
+        for (ParticleAnalytics instance : instances) {
             instance.cancel();
         }
     }
 
-
     /**
      *
      */
-    public void cancel()
-    {
+    public void cancel() {
         timer.stop();
         this.gisLayerAdaptor.setEnabled(false);
-        ViewerUtil.getViewerFromLookup().removeParticleAnalytics(this);
-        ViewerUtil.getViewerFromLookup().removeGisLayer(gisLayerAdaptor);
+        // FIXME
+        //ViewerUtil.getViewerFromLookup().removeParticleAnalytics(this);
+        Globe.getInstance().removeGisLayer(gisLayerAdaptor);
 
     }
-
 
     /**
      * Move and age the particles based on their position within the spatial field.
@@ -424,12 +390,9 @@ public class ParticleAnalytics
      * @param particles to be moved
      */
     static void moveParticles(FlatField spatialField, int directionIndex,
-        int velocityIndex, int magnitudeIndex, List<Particle> particles)
-    {
-        for (Particle p : particles)
-        {
-            try
-            {
+                              int velocityIndex, int magnitudeIndex, List<Particle> particles) {
+        for (Particle p : particles) {
+            try {
                 // TODO: Fire Behavior -- extinquish this particle if the fuel is unburnable
 
                 // Nearest Neighbor should be faster than weighted average.
@@ -439,15 +402,12 @@ public class ParticleAnalytics
                 Real vel = (Real) tuple.getComponent(velocityIndex);
                 Real mag = (Real) tuple.getComponent(magnitudeIndex);
                 p.move(dir, vel, mag);
-            }
-            catch (VisADException | RemoteException ex)
-            {
+            } catch (VisADException | RemoteException ex) {
                 logger.log(Level.SEVERE, "moveParticles() failed: {0}", ex.toString());
                 throw new IllegalStateException(ex);
             }
         }
     }
-
 
     /**
      * Draws the image in a two step process: first, the image is darkened which fades the trails of
@@ -458,19 +418,16 @@ public class ParticleAnalytics
      * @param image
      */
     static BufferedImage drawImage(final List<Particle> particles, final Sector sector,
-        final BufferedImage image)
-    {
+                                   final BufferedImage image) {
         // Fade the existing trails of the particles
 
         BufferedImage newImage = fadeImage(image);
 
         // Draw the particles
-
         Graphics2D g2 = newImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR); // or VALUE_INTERPOLATION_BILINEAR
-        for (Particle p : particles)
-        {
+        for (Particle p : particles) {
             p.draw(g2);
         }
         g2.dispose();
@@ -478,31 +435,28 @@ public class ParticleAnalytics
         return newImage;
     }
 
-
-    static BufferedImage fadeImage(final BufferedImage image)
-    {
+    static BufferedImage fadeImage(final BufferedImage image) {
         // TODO: make darken percentage relative to delay time
         // Create a new image that is darken by a %
         //  offsets adjust brightness
         //  scaleFactors adjust contrast
-        float[] scales =
-        {
-            0.98f, 0.98f, 0.98f, 0.98f
-        };
+        float[] scales
+                = {
+                    0.98f, 0.98f, 0.98f, 0.98f
+                };
         float[] offsets = new float[4];
         RescaleOp op = new RescaleOp(scales, offsets, null); // scale factor, offsets, hints
         BufferedImage newImage = op.filter(image, null);
         return newImage;
     }
 
-
     /**
      * Particle class maintains the position, age, and renderable properties of a particle
      *
      * @author Bruce Schubert
      */
-    class Particle
-    {
+    class Particle {
+
         public static final double SCALE = 0.0007;
         public static final int MAX_AGE = 35;
         private double lat;
@@ -515,19 +469,15 @@ public class ParticleAnalytics
         private double mag;
         private boolean firstTime = true;
 
-
-        Particle()
-        {
+        Particle() {
             initialize();
             this.firstTime = false;
         }
 
-
         /**
          * Assigns a random position and age to the particle.
          */
-        final void initialize()
-        {
+        final void initialize() {
 
             // Randomly place this particle within the sector bounds
             double dx = Math.random();
@@ -540,11 +490,9 @@ public class ParticleAnalytics
             this.y = (int) Math.floor(height * dy);
 
             // TODO: create configuration option for random age vs fixed age...which is better?
-            
             // Random Age Theory: more frequent runs should create a higher density of fading trails
             this.age = (int) (1 + Math.random() * MAX_AGE);  // Random age between 1 and MAX_AGE 
-            
-            
+
             // TODO: Fix Age particles aren't working correctly: it pulses.  
             // Hunch: I suspect the first path through move() is reseting all the particles
             // Fixed Age Theory: longer runs should create a higher density of fading trails             
@@ -552,28 +500,21 @@ public class ParticleAnalytics
             //this.age = this.firstTime ? (int) (1 + Math.random() * MAX_AGE) : MAX_AGE;  
         }
 
-
         /**
          * @return the current lat/lon
          */
-        RealTuple getLatLonTuple()
-        {
+        RealTuple getLatLonTuple() {
             // return GeoCoord2D.fromDegrees(this.lat, this.lon);
-            try
-            {
+            try {
                 // Create a tuple compatible with the spatial field's domain coordinate system.
                 return new RealTuple(RealTupleType.LatitudeLongitudeTuple,
-                    new double[]
-                {
-                    this.lat, this.lon
-                });
-            }
-            catch (VisADException | RemoteException ex)
-            {
+                        new double[]{
+                            this.lat, this.lon
+                        });
+            } catch (VisADException | RemoteException ex) {
                 throw new RuntimeException(ex);
             }
         }
-
 
         /**
          * Moves the particle to a new position based on the direction, speed and magnitude.
@@ -582,21 +523,18 @@ public class ParticleAnalytics
          * @param speed velocity
          * @param size magnitude
          */
-        void move(Real direction, Real speed, Real size)
-        {
+        void move(Real direction, Real speed, Real size) {
             // Missing values can result from moving the particle outside of the sector
-            if (direction.isMissing() || speed.isMissing() || size.isMissing())
-            {
+            if (direction.isMissing() || speed.isMissing() || size.isMissing()) {
                 initialize();
             }
-            if (this.age-- > 0)
-            {
+            if (this.age-- > 0) {
                 // TODO: make scale relative to delay time
-                
+
                 // Compute the new lat lon coordinates of particle
                 Angle distToMove = Angle.fromDegrees(speed.getValue() * SCALE);
                 LatLon newPos = Position.linearEndPosition(LatLon.fromDegrees(lat, lon),
-                    Angle.fromDegrees(direction.getValue()), distToMove);
+                        Angle.fromDegrees(direction.getValue()), distToMove);
 
                 this.lat = newPos.latitude.degrees;
                 this.lon = newPos.longitude.degrees;
@@ -605,19 +543,16 @@ public class ParticleAnalytics
                 this.mag = size.getValue();    // meters
 
                 // Extiquish this particle after drawing if it goes outside the sector
-                if (!sector.contains(newPos))
-                {
+                if (!sector.contains(newPos)) {
                     // Set to zero to allow this cycle draw up to the sector border.
                     this.age = 0;
                 }
             }
             // Allow the particle to remain idle (invisible) for awhile before renewing
-            if (this.age < -2)
-            {
+            if (this.age < -2) {
                 initialize();
             }
         }
-
 
         /**
          * Draws this particle via a line segment from previous position to new position with a
@@ -625,14 +560,12 @@ public class ParticleAnalytics
          *
          * @param g
          */
-        void draw(Graphics2D g)
-        {
+        void draw(Graphics2D g) {
             // Don't draw if expired
-            if (this.age < 0)
-            {
+            if (this.age < 0) {
                 return;
             }
-            
+
             // Dtermine the new end point
             double dx = Math.abs(leftLon - this.lon) / deltaLonDegrees;
             double dy = (upperLat - this.lat) / deltaLatDegrees;
@@ -640,32 +573,25 @@ public class ParticleAnalytics
             int y2 = (int) Math.floor(height * dy);
 
             // TODO: pass in a lookup table for colors
-            
             // Compute the color
             Color c;
-            if (this.mag > 4.5)         // 15 ft
+            if (this.mag > 4.5) // 15 ft
             {
                 c = Color.red;// EXTREME
-            }
-            else if (this.mag > 2.1)    // 7ft
+            } else if (this.mag > 2.1) // 7ft
             {
                 c = Color.magenta;// VERY ACTIVE
-            }
-            else if (this.mag > 0.9)    // 3ft
+            } else if (this.mag > 0.9) // 3ft
             {
                 c = Color.orange;// ACTIVE
-            }
-            else if (this.mag > 0.3)    // 1ft
+            } else if (this.mag > 0.3) // 1ft
             {
                 c = Color.green;// MODERAGE
-            }
-            else
-            {
+            } else {
                 c = Color.blue;// LOW
             }
 
             // TODO: Vary the the color and/or the alpha component based on velocity
-            
             //  Reducing the alpha component if speed less than 1 m/s (~2.25 mph)
             float[] rgba = c.getRGBComponents(null);
             rgba[3] = (float) Math.min(1.0, Math.max(0.6, this.spd));

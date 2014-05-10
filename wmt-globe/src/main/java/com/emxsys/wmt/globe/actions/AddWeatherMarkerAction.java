@@ -109,7 +109,7 @@ public final class AddWeatherMarkerAction implements ActionListener {
             }
         });
         // Force keyboard focus to globe
-        wwm.getWorldWindow().requestFocusInWindow();
+        Globe.getInstance().getRendererComponent().requestFocusInWindow();
         // Invoke the positioner
         positioner.setArmed(true);
 

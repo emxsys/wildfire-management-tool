@@ -37,9 +37,8 @@ import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.GlobeTopComponent;
 import com.terramenta.globe.dnd.Draggable;
-import com.terramenta.globe.utilities.DateBasedVisibilitySupport;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Position;
@@ -412,7 +411,7 @@ public class BasicMarker extends AbstractMarker {
          */
         public void attachToGlobe() {
             WindowManager.getDefault().invokeWhenUIReady(() -> {
-                WorldWindowGLJPanel wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
+                WorldWindow wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
                 if (wwd == null) {
                     logger.severe("attachToGlobe failed. The MarkerSelectListener is not attached to a WorldWindow. "
                             + "Marker highlighting and selection will be disabled.");

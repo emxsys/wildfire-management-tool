@@ -39,6 +39,7 @@ import com.emxsys.wmt.globe.markers.ics.IcsMarker.Writer;
 import com.emxsys.wmt.globe.markers.ics.IcsMarkerEditor;
 import com.terramenta.globe.WorldWindManager;
 import com.terramenta.ribbon.RibbonActionReference;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -116,7 +117,7 @@ public final class AddIcsMarkerAction implements ActionListener {
             }
         });
         // Force keyboard focus to globe
-        wwm.getWorldWindow().requestFocusInWindow();
+        ((Component)this.wwm.getWorldWindow()).requestFocusInWindow();
         // Invoke the positioner
         positioner.setArmed(true);
     }

@@ -59,7 +59,7 @@ public class GlobeCoordinateProvider implements CursorCoordinateProvider, Reticu
     private Coord3D reticuleCoord = GeoCoord3D.INVALID_POSITION;
 
     GlobeCoordinateProvider() {
-        WorldWindowGLJPanel wwd = Globe.getInstance().getWorldWindManager().getWorldWindow();
+        WorldWindowGLJPanel wwd = (WorldWindowGLJPanel) Globe.getInstance().getWorldWindManager().getWorldWindow();
         wwd.addPositionListener(new PositionListener() {
 
             @Override
