@@ -115,6 +115,11 @@
             <artifactId>org-openide-awt</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-wildfire</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

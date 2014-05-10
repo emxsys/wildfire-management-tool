@@ -39,6 +39,9 @@ import com.emxsys.wmt.gis.api.symbology.GraphicCatalog;
 import com.emxsys.wmt.gis.api.symbology.SymbolCatalog;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.project.capabilities.ProjectSelectionHandler;
+import com.emxsys.wmt.wildfire.api.Fireground;
+import com.emxsys.wmt.wildfire.api.FiregroundProvider;
+import com.emxsys.wmt.wildfire.spi.DefaultFiregroundProvider;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -91,6 +94,8 @@ public class BasicProject implements Project {
     public static final String MARKER_FOLDER_NAME = "markers"; //NOI18N
     public static final String SCENE_FOLDER_NAME = "scenes"; //NOI18N
     public static final String SYMBOLOGY_FOLDER_NAME = "symbology"; //NOI18N
+    public static final String FIREGROUND_FOLDER_NAME = "fireground";  //NOI18N
+    public static final String FIREGROUND_FILENAME = "fireground";  //NOI18N
     public static final String STARTUP_LATITUDE = "startupLatitudeDegrees"; //NOI18N
     public static final String STARTUP_LONGITUDE = "startupLongitudeDegrees"; //NOI18N
     public static final boolean CREATE_IF_MISSING = true;
@@ -194,24 +199,27 @@ public class BasicProject implements Project {
         }
         THREAD_POOL.post(() -> {
             logger.log(Level.INFO, "Loading project {0} data files...", getProjectName()); //NOI18N
-            
+
             final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading data files...");
             handle.start(); // start in indeterminate mode
             try {
                 handle.progress("Loading scenes...");
                 loadScenes(SCENE_FOLDER_NAME);
-                
+
                 handle.progress("Loading markers...");
                 loadMarkers(MARKER_FOLDER_NAME);
-                
+
                 handle.progress("Loading symbology...");
                 loadSymbology(SYMBOLOGY_FOLDER_NAME);
-                
+
+                handle.progress("Loading fireground...");
+                loadFireground(FIREGROUND_FOLDER_NAME);
+
                 // Ok to Load/convert file formats in the project root now
                 // that the project folder hierarchay has been established
                 handle.progress("Loading/converting legacy files...");
                 loadLegacyFiles();
-                
+
                 init.set(State.INITIALIZED);
             } catch (Exception exception) {
                 logger.severe(exception.toString());
@@ -247,6 +255,10 @@ public class BasicProject implements Project {
         BasicSceneCatalog sceneCatalog = getLookup().lookup(BasicSceneCatalog.class);
         if (sceneCatalog != null) {
             this.content.remove(sceneCatalog);
+        }
+        Fireground fireground = getLookup().lookup(Fireground.class);
+        if (fireground != null) {
+            this.content.remove(fireground);
         }
         // TODO: query project extensions; find a way to signal them that the project is closed.
         Collection<? extends Disposable> lookupAll = this.compositeLookup.lookupAll(Disposable.class);
@@ -296,7 +308,7 @@ public class BasicProject implements Project {
 
     /**
      * Loads the markers found in a folder, adds support for Markers by placing a MarkerManager in
- the lookup.
+     * the lookup.
      *
      * @param folderName name of folder containing markers
      */
@@ -327,6 +339,26 @@ public class BasicProject implements Project {
         DataFolder dataFolder = DataFolder.findFolder(subfolder);
         DataObject[] children = dataFolder.getChildren();
         logger.log(Level.FINE, "Loaded {0} symbols and graphics.", children.length);
+    }
+
+    /**
+     * Adds support for firegrounds by adding a Fireground object to the project's lookup.
+     *
+     * @param folderName name of folder containing fireground data.
+     */
+    private void loadFireground(String folderName) {
+        logger.log(Level.INFO, "Loading {0} fireground...", getProjectName());
+        FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
+        // Use the factory to get a fireground dataobject from the disk file(s)        
+        FiregroundProvider factory = DefaultFiregroundProvider.getInstance();
+        // Read the fireground.xml file
+        DataObject dataObject = factory.getFiregroundDataObject(subfolder, FIREGROUND_FILENAME);
+        if (dataObject == null) {
+            // Create the file
+            dataObject = factory.newFiregroundDataObject(subfolder, FIREGROUND_FILENAME);
+        }
+        // Add the Fireground to the project's lookup 
+        this.content.add(dataObject.getLookup().lookup(Fireground.class));
     }
 
     /**
