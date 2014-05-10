@@ -36,7 +36,6 @@ import com.terramenta.time.DateProvider;
 import com.terramenta.time.options.TimeOptions;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
@@ -47,15 +46,16 @@ import java.util.prefs.Preferences;
 import javax.swing.event.EventListenerList;
 import org.openide.util.Lookup;
 import org.openide.util.NbPreferences;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
- * DefaultTimeProvider provides the central time for the application as provided by Terramenta.
+ * DefaultTimeProvider provides the central time for the application as provided by Terramenta. The
+ * default instance can be overridden by registering a TimeProvider service provider on the global
+ * lookup.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-@ServiceProvider(service = TimeProvider.class)
 public class DefaultTimeProvider implements TimeProvider, Observer {
+
     private static final Logger logger = Logger.getLogger(DefaultTimeProvider.class.getName());
     private static final Preferences prefs = NbPreferences.forModule(TimeOptions.class);
     static TimeProvider instance = null;
@@ -64,9 +64,15 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     private ZonedDateTime curTime;
     private final ZoneId UTC_ZONE = ZoneId.of("UTC");
 
+    /**
+     * Gets a TimeProvider instance, either from the global lookup or a default implementation.
+     * 
+     * @return A TimeProvider service provider found on the global lookup, or, if not found, a
+     * DefaultTimeProvider instance.
+     */
     public static TimeProvider getInstance() {
         if (instance == null) {
-            // Check the general Lookup for a service provider
+            // Check the general Lookup for a registered service provider
             instance = Lookup.getDefault().lookup(TimeProvider.class);
 
             // Use our default instance if no registered provider.
@@ -77,7 +83,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
         return instance;
     }
 
-    public DefaultTimeProvider() {
+    private DefaultTimeProvider() {
         logger.config("Constructed TimeProvider");
         getDateProvider();
     }
