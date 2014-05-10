@@ -66,7 +66,7 @@ public final class LayerFactory {
     private static final Logger logger = Logger.getLogger(LayerFactory.class.getName());
 
     static {
-        logger.setLevel(Level.ALL);
+        logger.setLevel(null/*Level.ALL*/);
     }
 
     /**

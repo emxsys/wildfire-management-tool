@@ -74,7 +74,7 @@ public class MarkerLayer extends RenderableLayer implements GisLayer, Marker.Ren
     private static final Logger logger = Logger.getLogger(MarkerLayer.class.getName());
 
     static {
-        logger.setLevel(Level.ALL);
+        logger.setLevel(null/*Level.ALL*/);
     }
 
     /**
@@ -99,7 +99,7 @@ public class MarkerLayer extends RenderableLayer implements GisLayer, Marker.Ren
         // Update WW Layer implemenation from the XML config
         LayerFactory.updateLayerFromFileAttributes(layer, instanceFile);
 
-        logger.log(Level.INFO, "Created new instance of {0}", layer.toString());
+        logger.log(Level.CONFIG, "Created new instance of {0}", layer.toString());
         return layer;
     }
 

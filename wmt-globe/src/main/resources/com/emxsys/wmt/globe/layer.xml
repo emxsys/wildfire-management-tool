@@ -6,7 +6,7 @@
             <!-- Marker Tools - CONTEXTUAL TAB -->
             <folder name="MarkerTools">
                 <attr name="menuText" stringvalue="Marker"/>
-                <attr name="position" intvalue="1000"/> 
+                <attr name="position" intvalue="100"/> 
                 <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_MarkerTools"/>
                     
                 <folder name="Edit">
@@ -21,7 +21,7 @@
             <!-- Scene Tools - CONTEXTUAL TAB -->
             <folder name="SceneTools">
                 <attr name="menuText" stringvalue="Scene"/>
-                <attr name="position" intvalue="1000"/> 
+                <attr name="position" intvalue="200"/> 
                 <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_SceneTools"/>
                     
                 <folder name="Edit">
