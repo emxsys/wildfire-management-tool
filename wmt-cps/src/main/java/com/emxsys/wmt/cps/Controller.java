@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.cps;
 
+import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
@@ -52,10 +53,14 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
 import org.openide.windows.WindowManager;
@@ -85,8 +90,11 @@ public class Controller {
 
     private final TerrainUpdater terrainUpdater;
     private final SolarUpdater solarUpdater;
-    private Lookup.Result<ReticuleCoordinateProvider> reticuleResult;
     private final LookupListener reticuleLookupListener;
+    private Lookup.Result<ReticuleCoordinateProvider> reticuleResult;
+
+    private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
+    private boolean computeTerrestrialShading = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
 
     static {
         logger.setLevel(Level.FINE);
@@ -139,6 +147,12 @@ public class Controller {
         reticuleResult = Globe.getInstance().getLookup().lookupResult(ReticuleCoordinateProvider.class);
         reticuleResult.addLookupListener(reticuleLookupListener);
         reticuleLookupListener.resultChanged(null);
+
+        // Listen for changes in the CPS Options...
+        prefs.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+            computeTerrestrialShading = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
+        });
+
     }
 
     /**
@@ -187,17 +201,21 @@ public class Controller {
             }
             Coord3D coordinate = event.getCoordinate();
             controller.coordRef.set(coordinate);
-            
+
+            Terrain terrain = controller.earth.getTerrain(coordinate);
             ZonedDateTime time = controller.timeRef.get();
             Real azimuth = controller.azimuthRef.get();
-            Real zenith = controller.zenithRef.get();            
-            Terrain terrain = controller.earth .getTerrain(coordinate);
-            boolean isShaded = controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith);
+            Real zenith = controller.zenithRef.get();
+            boolean isShaded = (controller.computeTerrestrialShading)
+                    ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith)
+                    : false;
 
             // Update the CPS UI components (in the Event thread)
             EventQueue.invokeLater(() -> {
                 getTopComponent().updateCharts(coordinate, terrain);
-                getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                if (controller.computeTerrestrialShading) {
+                    getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                }
 
             });
         }
@@ -247,9 +265,10 @@ public class Controller {
                 Real zenith = (Real) sunPosition.getComponent(ZENITH_INDEX);
                 controller.azimuthRef.set(azimuth);
                 controller.zenithRef.set(zenith);
-                
-                boolean isShaded = controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith);
-                
+                boolean isShaded = (controller.computeTerrestrialShading)
+                        ? controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith)
+                        : false;
+
                 EventQueue.invokeLater(() -> {
                     getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
                 });
