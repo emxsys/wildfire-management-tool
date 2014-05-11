@@ -157,7 +157,7 @@
         -->
         
         <!--Dependencies needed for Tests-->
-<!--        <dependency>
+        <!--        <dependency>
             <artifactId>trident</artifactId>
             <groupId>org.pushingpixels</groupId>
             <version>1.3</version>
@@ -179,9 +179,18 @@
                     <installerLicenseFile>emxsys-bsd3.txt</installerLicenseFile>
                     <!--License shown in installer-->
                     <licenseName>BSD 3-Clause</licenseName>
-                    <licenseFile>emxsys-bsd3.txt</licenseFile>
+                    <licenseFile>LICENSE.txt</licenseFile>
                     <!--Runtime parameters-->
                     <etcConfFile>wmt.conf</etcConfFile>
+                    <nbmResources>
+                        <nbmResource>
+                              <directory>src/main/java/resources</directory>
+                              <targetPath>etc</targetPath>
+                              <includes>
+                                    <include>logging.properties</include>
+                            </includes>
+                        </nbmResource>                        
+                    </nbmResources>                   
                 </configuration>
             </plugin>
 
@@ -216,7 +225,7 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
-                    <!-- Copy JOGL natives into Terramenta cluster -->
+                    <!-- Copy logging properties file to etc folder -->
                     <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
@@ -224,11 +233,13 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/${brandingToken}/terramenta/modules/lib</outputDirectory>
+                            <outputDirectory>${project.build.directory}/${brandingToken}/etc</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.build.directory}/terramenta/terramenta/modules/lib</directory>
-                                    <filtering>false</filtering>
+                                    <directory>src/main/java/resources</directory>
+                                    <includes>
+                                        <include>logging.properties</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
