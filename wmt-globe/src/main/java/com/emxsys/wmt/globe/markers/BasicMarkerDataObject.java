@@ -157,9 +157,6 @@ public class BasicMarkerDataObject extends XMLDataObject {
         NEW, INITIALIZING, INITIALIZED, DELETING, DELETED, INVALID
     };
 
-    static {
-        logger.setLevel(Level.ALL);
-    }
 
     public BasicMarkerDataObject(FileObject primaryFile, MultiFileLoader loader) throws
             DataObjectExistsException, IOException {

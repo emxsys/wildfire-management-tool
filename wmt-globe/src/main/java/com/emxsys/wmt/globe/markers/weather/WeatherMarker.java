@@ -114,9 +114,6 @@ public class WeatherMarker extends BasicMarker {
         }
     };
 
-    static {
-        logger.setLevel(Level.ALL);
-    }
 
     /**
      * An Executor for processing TimeEvents in a sliding task.

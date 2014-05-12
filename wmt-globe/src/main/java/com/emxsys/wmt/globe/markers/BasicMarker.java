@@ -82,9 +82,6 @@ public class BasicMarker extends AbstractMarker {
     private Node node = null;
     private final Object imageLock = new Object();
 
-    static {
-        logger.setLevel(Level.ALL);
-    }
 
     /**
      * Implementation class overrides move operations to keep the BasicMarker position synchronized

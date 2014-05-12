@@ -73,9 +73,6 @@ public class MarkerLayer extends RenderableLayer implements GisLayer, Marker.Ren
     private final InstanceContent content = new InstanceContent();
     private static final Logger logger = Logger.getLogger(MarkerLayer.class.getName());
 
-    static {
-        logger.setLevel(null/*Level.ALL*/);
-    }
 
     /**
      * Factory method used to create a MarkerLayer from an XML .instance file.

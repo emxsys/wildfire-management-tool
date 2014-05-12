@@ -53,9 +53,6 @@ public final class WeatherBalloon extends GlobeBrowserBalloon {
     private WeatherProvider provider;
     private static final Logger logger = Logger.getLogger(WeatherBalloon.class.getName());
 
-    static {
-        logger.setLevel(Level.ALL);
-    }
 
     public WeatherBalloon(Position position, WeatherProvider provider) {
         super("Not supported.", position);
