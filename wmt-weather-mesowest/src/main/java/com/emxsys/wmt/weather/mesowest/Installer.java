@@ -32,13 +32,18 @@ package com.emxsys.wmt.weather.mesowest;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.weather.mesowest.layers.MesoWestLayer;
 import org.openide.modules.ModuleInstall;
+import org.openide.windows.WindowManager;
 
 public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
-        // Add the MesoWestLayer to the globe.
-        Globe.getInstance().addGisLayer(new MesoWestLayer(),true); // true = first in group.        
+        // Add the MesoWestLayer to the globe. 
+        // But don't create the layer until Globe has been initialized, 
+        // else WorldWind configs are read from native WW instead of Globe.
+        WindowManager.getDefault().invokeWhenUIReady(() -> {
+            Globe.getInstance().addGisLayer(new MesoWestLayer());
+        });
     }
 
 }
