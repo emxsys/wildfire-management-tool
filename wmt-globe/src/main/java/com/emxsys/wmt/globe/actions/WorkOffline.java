@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(displayName = "#CTL_WorkOffline",
         iconBase = "com/emxsys/wmt/globe/images/world_remove.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Map Tools", position = 1300)
+@ActionReference(path = "Toolbars/Map Tools", position = 4100)
 @RibbonActionReference(path = "Menu/Tools/Network",
         position = 100,
         priority = "top",

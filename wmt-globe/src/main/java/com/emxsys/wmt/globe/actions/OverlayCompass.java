@@ -44,8 +44,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_OverlayCompass",
         lazy = false)
-@ActionReference(path = "Toolbars/Overlays", position = 110)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 100,
+@ActionReference(path = "Toolbars/Overlays", position = 5101)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 101,
         buttonStyle = "toggle",
         description = "#CTL_OverlayCompass_Hint",
         priority = "top",

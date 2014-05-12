@@ -57,8 +57,8 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_NewProjectAction")
 @ActionReferences(
         {
-            //@ActionReference(path = "Menu/File", position = 200),
-            @ActionReference(path = "Toolbars/File", position = 100),
+            //@ActionReference(path = "Menu/File", position = 201),
+            @ActionReference(path = "Toolbars/File", position = 201),
             @ActionReference(path = "Shortcuts", name = "O-N")
         })
 // Nest this ribbon bar button within the Projects dropdown list

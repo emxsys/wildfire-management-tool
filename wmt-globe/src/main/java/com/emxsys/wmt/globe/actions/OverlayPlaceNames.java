@@ -46,10 +46,9 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_PlaceNames",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@ActionReference(path = "Toolbars/Overlays", position = 311)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Labels",
+@ActionReference(path = "Toolbars/Overlays", position = 3100)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Labels", position = 100,
         buttonStyle = "toggle",
-        position = 100,
         description = "#CTL_PlaceNames_Hint",
         priority = "top",
         tooltipTitle = "#CTL_PlaceNames_TooltipTitle",

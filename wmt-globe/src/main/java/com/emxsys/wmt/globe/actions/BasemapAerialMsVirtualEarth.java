@@ -50,9 +50,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         iconBase = "com/emxsys/wmt/globe/images/basemap-vearth-aerial.png",
         displayName = "#CTL_BasemapMsVirtualEarth")
-@ActionReference(path = "Toolbars/Basemap", position = 320)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Aerial",
-        position = 300,
+@ActionReference(path = "Toolbars/Basemap", position = 2300)
+@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Aerial", position = 300,
         description = "#CTL_BasemapMsVirtualEarth_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapMsVirtualEarth_TooltipTitle",

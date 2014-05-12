@@ -49,9 +49,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(displayName = "#CTL_SelectSector",
         iconBase = "com/emxsys/wmt/globe/images/select.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Map Tools", position = 1000)
-@RibbonActionReference(path = "Menu/Tools/Map Cache",
-        position = 100,
+@ActionReference(path = "Toolbars/Map Tools", position = 1100)
+@RibbonActionReference(path = "Menu/Tools/Map Cache", position = 100,
         priority = "top",
         description = "#CTL_SelectSector_Hint",
         tooltipTitle = "#CTL_SelectSector_TooltipTitle",

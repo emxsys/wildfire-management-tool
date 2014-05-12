@@ -41,7 +41,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.RotateCwAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/rotate_cw.png",
         displayName = "#CTL_RotateCwAction", surviveFocusChange = false)
-@ActionReference(path = "Toolbars/Map", position = 5200)
+@ActionReference(path = "Toolbars/Map", position = 3200)
 @RibbonActionReference(path = "Menu/Home/Rotate",
         position = 200,
         description = "#CTL_RotateCwAction_Hint",

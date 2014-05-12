@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(displayName = "#CTL_SelectSector",
         iconBase = "com/emxsys/wmt/cps/images/select.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Fire", position = 100)
+@ActionReference(path = "Toolbars/Fire", position = 1100)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 100)
 
 @Messages({

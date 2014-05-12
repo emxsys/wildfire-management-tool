@@ -56,9 +56,8 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(category = "Markers", id = "com.emxsys.wmt.globe.actions.AddIcsMarkerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/ics/Fire_Origin.png", displayName = "#CTL_AddICSMarkerAction")
-@ActionReference(path = "Toolbars/Create", position = 300)
-@RibbonActionReference(path = "Menu/Insert/Markers",
-        position = 300,
+@ActionReference(path = "Toolbars/Create", position = 2300)
+@RibbonActionReference(path = "Menu/Insert/Markers", position = 300,
         priority = "top",
         description = "#CTL_AddICSMarkerAction_Hint",
         tooltipTitle = "#CTL_AddICSMarkerAction_TooltipTitle",
@@ -117,7 +116,7 @@ public final class AddIcsMarkerAction implements ActionListener {
             }
         });
         // Force keyboard focus to globe
-        ((Component)this.wwm.getWorldWindow()).requestFocusInWindow();
+        ((Component) this.wwm.getWorldWindow()).requestFocusInWindow();
         // Invoke the positioner
         positioner.setArmed(true);
     }

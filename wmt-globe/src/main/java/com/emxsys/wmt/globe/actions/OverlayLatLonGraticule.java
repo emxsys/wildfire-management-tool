@@ -46,10 +46,9 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_LatLonGraticule",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@ActionReference(path = "Toolbars/Overlays", position = 312)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graticules",
+@ActionReference(path = "Toolbars/Overlays", position = 1100)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graticules", position = 100,
         buttonStyle = "toggle",
-        position = 100,
         description = "#CTL_LatLonGraticule_Hint",
         priority = "top",
         tooltipTitle = "#CTL_LatLonGraticule_TooltipTitle",

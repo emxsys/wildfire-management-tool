@@ -61,8 +61,7 @@ import org.openide.util.Utilities;
         surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Find", position = 300)
 @RibbonActionReferences({
-    @RibbonActionReference(path = "Menu/Home/Manage",
-            position = 600,
+    @RibbonActionReference(path = "Menu/Home/Manage", position = 600,
             priority = "top",
             description = "#CTL_RestoreSceneAction_Hint",
             tooltipTitle = "#CTL_RestoreSceneAction_TooltipTitle",

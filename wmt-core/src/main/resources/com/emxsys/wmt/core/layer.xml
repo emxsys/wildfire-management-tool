@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
-
+    <folder name="Ribbon">
+        <folder name="TaskPanes">
+            <folder name="AnnotationTools">
+                <attr name="position" intvalue="1001"/>                
+            </folder>
+            <folder name="LayerTools">
+                <attr name="position" intvalue="2001"/>                
+            </folder>
+        </folder>
+    </folder> 
     <folder name="Menu">
         <folder name="Home">
             <!-- Manage Group (e.g., Base Maps, Overlays, Layer Manager -->
@@ -53,6 +62,10 @@
                     <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_overlays.png"/>
                     <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
                     <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
+                    <folder name="Graticules">
+                        <attr name="position" intvalue="700"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysGraticules"/>
+                    </folder>
                     <folder name="Hazards">
                         <attr name="position" intvalue="800"/>
                         <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysHazards"/>
@@ -152,12 +165,40 @@
                 <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Rotate"/>
             </folder>              
         </folder>
+        
+        <!--INSERT Tab-->
+        <folder name="Insert">
+            <attr name="position" intvalue="200"/> 
+            <folder name="Annotations">
+                <attr name="position" intvalue="100"/>
+            </folder>
+            <folder name="Layers">
+                <attr name="position" intvalue="200"/>
+            </folder>
+            <folder name="Markers">
+                <attr name="position" intvalue="300"/>
+            </folder>
+        </folder>  
+              
+        <!--TOOLS Tab-->
         <folder name="Tools">
+            <file name="org-netbeans-modules-templates-actions-TemplatesAction.shadow_hidden"/>
             <folder name="Create">
+                <attr name="position" intvalue="100"/>
                 <file name="com-terramenta-globe-actions-ScreenShotAction.shadow_hidden"/>
             </folder>
-            <file name="org-netbeans-modules-templates-actions-TemplatesAction.shadow_hidden"/>
+            <folder name="Launch">
+                <attr name="position" intvalue="200"/>
+            </folder>
+            <folder name="Map Cache">
+                <attr name="position" intvalue="300"/>
+            </folder>
+            <folder name="Network">
+                <attr name="position" intvalue="400"/>
+            </folder>
         </folder>
+        
+        <!--VIEW Tab-->
         <folder name="Window">
             <file name="GroupsMenuAction.shadow_hidden"/>
             <folder name="Show">

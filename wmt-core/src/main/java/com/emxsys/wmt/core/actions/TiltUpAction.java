@@ -41,7 +41,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.TiltUpAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/tilt_up.png",
         displayName = "#CTL_TiltUpAction", surviveFocusChange = false)
-@ActionReference(path = "Toolbars/Map", position = 300)
+@ActionReference(path = "Toolbars/Map", position = 3400)
 @RibbonActionReference(path = "Menu/Home/Rotate", 
         position = 400, 
         description = "#CTL_TiltUpAction_Hint",

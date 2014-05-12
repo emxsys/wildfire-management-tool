@@ -51,9 +51,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         iconBase = "com/emxsys/wmt/globe/images/basemap-openstreet.png",
         displayName = "#CTL_BasemapOpenStreetMapBlend")
-@ActionReference(path = "Toolbars/Basemap", position = 420)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Street",
-        position = 200,
+@ActionReference(path = "Toolbars/Basemap", position = 4200)
+@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Street", position = 200,
         description = "#CTL_BasemapOpenStreetMapBlend_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapOpenStreetMapBlend_TooltipTitle",

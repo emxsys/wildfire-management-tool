@@ -59,12 +59,12 @@ import org.openide.util.RequestProcessor;
 @MIMEResolver.Registration(
     displayName = "#LBL_FuelModel_LOADER",
     resource = "FiregroundResolver.xml",
-    position = 200)
+    position = 1300)
 @DataObject.Registration(
     mimeType = "application/x-fuel_model",
     iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
     displayName = "#LBL_FuelModel_LOADER",
-    position = 300)
+    position = 1300)
 @ActionReferences(
     {
     @ActionReference(

@@ -50,9 +50,8 @@ import org.openide.windows.WindowManager;
 @ActionRegistration(displayName = "#CTL_ClearMapCache",
         iconBase = "com/emxsys/wmt/globe/images/mapset-remove.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Map Tools", position = 1200)
-@RibbonActionReference(path = "Menu/Tools/Map Cache",
-        position = 1000,
+@ActionReference(path = "Toolbars/Map Tools", position = 1400)
+@RibbonActionReference(path = "Menu/Tools/Map Cache", position = 400,
         description = "#CTL_ClearMapCache_Hint",
         priority = "top",
         tooltipTitle = "#CTL_ClearMapCache_TooltipTitle",

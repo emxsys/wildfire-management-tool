@@ -41,7 +41,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Map", id = "com.emxsys.wmt.core.actions.PanRightAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_right.png",
         displayName = "#CTL_PanRightAction", surviveFocusChange = false)
-@ActionReference(path = "Toolbars/Map", position = 3300)
+@ActionReference(path = "Toolbars/Map", position = 2300)
 @RibbonActionReference(path = "Menu/Home/Move",
         position = 300,
         description = "#CTL_PanRightAction_Hint",

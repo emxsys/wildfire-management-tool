@@ -50,9 +50,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(displayName = "#CTL_ClearSector",
         iconBase = "com/emxsys/wmt/globe/images/selected-delete.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Map Tools", position = 1010)
-@RibbonActionReference(path = "Menu/Tools/Map Cache",
-        position = 200,
+@ActionReference(path = "Toolbars/Map Tools", position = 1200)
+@RibbonActionReference(path = "Menu/Tools/Map Cache", position = 200,
         priority = "top",
         description = "#CTL_ClearSector_Hint",
         tooltipTitle = "#CTL_ClearSector_TooltipTitle",

@@ -49,10 +49,9 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/markers/pushpins/plain-black.png",
         displayName = "#CTL_Markers",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@ActionReference(path = "Toolbars/Overlays", position = 311)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graphics",
+@ActionReference(path = "Toolbars/Overlays", position = 2100)
+@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Graphics", position = 100,
         buttonStyle = "toggle",
-        position = 100,
         description = "#CTL_Markers_Hint",
         priority = "top",
         tooltipTitle = "#CTL_Markers_TooltipTitle",

@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_OverlayWorldMap",
         lazy = true)
-@ActionReference(path = "Toolbars/Overlays", position = 120)
+@ActionReference(path = "Toolbars/Overlays", position = 5200)
 @RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 200,
         buttonStyle = "toggle",
         description = "#CTL_OverlayWorldMap_Hint",

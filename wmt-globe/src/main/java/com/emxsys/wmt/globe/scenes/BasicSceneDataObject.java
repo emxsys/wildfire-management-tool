@@ -82,12 +82,13 @@ import org.openide.xml.XMLUtil;
 @MIMEResolver.NamespaceRegistration(
         displayName = "#LBL_Scene_LOADER",
         mimeType = "text/emxsys-worldwind-basicscene+xml",
+        position = 2200,
         elementNS = {"http://emxsys.com/worldwind-basicscene"})
 @DataObject.Registration(
         mimeType = "text/emxsys-worldwind-basicscene+xml",
         iconBase = "com/emxsys/wmt/core/images/image.png",
         displayName = "#LBL_Scene_LOADER",
-        position = 300)
+        position = 2200)
 @ActionReferences({
     @ActionReference(path = "Loaders/text/emxsys-worldwind-basicscene+xml/Actions",
             id = @ActionID(category = "Scenes", id = "com.emxsys.wmt.globe.actions.RestoreSceneAction"), position = 100,

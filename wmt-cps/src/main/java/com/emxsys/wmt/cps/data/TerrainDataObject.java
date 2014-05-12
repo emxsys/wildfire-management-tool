@@ -59,12 +59,12 @@ import org.openide.util.RequestProcessor;
 @MIMEResolver.Registration(
     displayName = "#LBL_Terrain_LOADER",
     resource = "FiregroundResolver.xml",
-    position = 200)
+    position = 1600)
 @DataObject.Registration(
     mimeType = "application/x-terrain",
     iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
     displayName = "#LBL_Terrain_LOADER",
-    position = 300)
+    position = 1600)
 @ActionReferences(
     {
     @ActionReference(

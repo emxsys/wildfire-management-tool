@@ -67,7 +67,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(displayName = "#CTL_AddSectorToFireground",
         iconBase = "com/emxsys/wmt/cps/images/layer-add.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Fire", position = 200)
+@ActionReference(path = "Toolbars/Fire", position = 1200)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 200)
 @Messages({
     "CTL_AddSectorToFireground=Add Sector to Fireground",

@@ -43,10 +43,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_OverlayCrosshairs",
         lazy = false)
-@ActionReference(path = "Toolbars/Overlays", position = 150)
-@com.terramenta.ribbon.RibbonActionReference(
-        path = "Menu/Home/Manage/Overlays/Controls",
-        position = 10,
+@ActionReference(path = "Toolbars/Overlays", position = 5100)
+@com.terramenta.ribbon.RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 100,
         buttonStyle = "toggle",
         description = "#CTL_OverlayCrosshairs_Hint",
         priority = "top",

@@ -54,9 +54,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(displayName = "#CTL_DownloadMaps",
         iconBase = "com/emxsys/wmt/globe/images/mapset-save.png",
         iconInMenu = true)
-@ActionReference(path = "Toolbars/Map Tools", position = 1100)
-@RibbonActionReference(path = "Menu/Tools/Map Cache",
-        position = 300,
+@ActionReference(path = "Toolbars/Map Tools", position = 1300)
+@RibbonActionReference(path = "Menu/Tools/Map Cache", position = 300,
         description = "#CTL_DownloadMaps_Hint",
         priority = "top",
         tooltipTitle = "#CTL_DownloadMaps_TooltipTitle",

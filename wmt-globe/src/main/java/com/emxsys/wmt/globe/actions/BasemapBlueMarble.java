@@ -50,9 +50,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         iconBase = "com/emxsys/wmt/globe/images/icon-earth.png",
         displayName = "#CTL_BasemapBlueMarble")
-@ActionReference(path = "Toolbars/Basemap", position = 100)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Satellite",
-        position = 200,
+@ActionReference(path = "Toolbars/Basemap", position = 1100)
+@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Satellite", position = 100,
         description = "#CTL_BasemapBlueMarble_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapBlueMarble_TooltipTitle",

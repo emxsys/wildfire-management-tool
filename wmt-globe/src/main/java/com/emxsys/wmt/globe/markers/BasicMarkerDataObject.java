@@ -85,6 +85,7 @@ import org.xml.sax.SAXException;
 @MIMEResolver.NamespaceRegistration(
         displayName = "#LBL_Marker_LOADER",
         mimeType = "text/emxsys-wmt-basicmarker+xml",
+        position = 2100,
         elementNS = {
             "http://emxsys.com/wmt-basicmarker",
             "http://emxsys.com/worldwind-basicmarker"
@@ -93,7 +94,7 @@ import org.xml.sax.SAXException;
         mimeType = "text/emxsys-wmt-basicmarker+xml",
         iconBase = "com/emxsys/wmt/globe/markers/plain-black.png",
         displayName = "#LBL_Marker_LOADER",
-        position = 300)
+        position = 2100)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/text/emxsys-wmt-basicmarker+xml/Actions",

@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
         id = "com.emxsys.wmt.cps.actions.DeleteSectorFromFireground")
 @ActionRegistration(iconBase = "com/emxsys/wmt/cps/images/layer-delete.png",
         displayName = "#CTL_DeleteSectorFromFireground")
-@ActionReference(path = "Toolbars/Fire", position = 300)
+@ActionReference(path = "Toolbars/Fire", position = 1300)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 300)
 @Messages({
     "CTL_DeleteSectorFromFireground=Delete Fireground Sector ",

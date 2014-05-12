@@ -96,17 +96,14 @@ import visad.VisADException;
 @MIMEResolver.NamespaceRegistration(
     displayName = "#LBL_Fireground_LOADER",
     mimeType = "text/fireground+xml",
-    elementNS =
-{
-    "http://emxsys.com/fireground"
-})
+    position = 1000,
+    elementNS ={"http://emxsys.com/fireground"})
 @DataObject.Registration(
     mimeType = "text/fireground+xml",
     iconBase = "com/emxsys/wmt/cps/images/region.png",
     displayName = "#LBL_Fireground_LOADER",
-    position = 300)
-@ActionReferences(
-    {
+    position = 1000)
+@ActionReferences({
     @ActionReference(
         path = "Loaders/text/fireground+xml/Actions",
         id =

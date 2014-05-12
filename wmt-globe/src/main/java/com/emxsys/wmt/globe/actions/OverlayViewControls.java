@@ -45,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_OverlayViewControls",
         iconBase = "com/emxsys/wmt/globe/images/view_pan.png",
         lazy = true)
-@ActionReference(path = "Toolbars/Overlays", position = 140)
+@ActionReference(path = "Toolbars/Overlays", position = 5400)
 @RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 400,
         buttonStyle = "toggle",
         description = "#CTL_OverlayViewControls_Hint",

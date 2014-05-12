@@ -64,12 +64,12 @@ import org.openide.util.RequestProcessor;
 @MIMEResolver.Registration(
     displayName = "#LBL_Weather_LOADER",
     resource = "FiregroundResolver.xml",
-    position = 100)
+    position = 1700)
 @DataObject.Registration(
     mimeType = "application/x-weather",
     iconBase = "com/emxsys/wmt/cps/images/sun_clouds.png",
     displayName = "#LBL_Weather_LOADER",
-    position = 300)
+    position = 1700)
 @ActionReferences(
     {
     @ActionReference(

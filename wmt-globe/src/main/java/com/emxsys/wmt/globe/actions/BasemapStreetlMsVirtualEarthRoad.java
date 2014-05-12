@@ -50,7 +50,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         iconBase = "com/emxsys/wmt/globe/images/basemap-vearth-hybrid.png",
         displayName = "#CTL_BasemapMsVirtualEarthRoad")
-@ActionReference(path = "Toolbars/Basemap", position = 430)
+@ActionReference(path = "Toolbars/Basemap", position = 4300)
 @RibbonActionReference(path = "Menu/Home/Manage/Basemap/Street", position = 300,
         description = "#CTL_BasemapMsVirtualEarthRoad_Hint",
         priority = "top",
