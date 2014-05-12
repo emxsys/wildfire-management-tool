@@ -79,7 +79,7 @@ public class GisLayerList implements Lookup.Provider {
      */
     public void add(GisLayer layer) {
         this.content.add(layer);
-        logger.log(Level.CONFIG, "{0} added.", layer.getName());
+        logger.log(Level.FINE, "{0} added.", layer.getName());
     }
 
     /**
@@ -88,7 +88,7 @@ public class GisLayerList implements Lookup.Provider {
      */
     public void remove(GisLayer layer) {
         this.content.remove(layer);
-        logger.log(Level.CONFIG, "{0} removed.", layer.getName());
+        logger.log(Level.FINE, "{0} removed.", layer.getName());
     }
 
     /**
@@ -98,13 +98,13 @@ public class GisLayerList implements Lookup.Provider {
      */
     public GisLayer find(String layerName) {
         Collection<? extends GisLayer> layers = getLayers();
-        logger.log(Level.CONFIG, "find: getLayers size is {0}", layers.size() );
+        logger.log(Level.FINE, "find: getLayers size is {0}", layers.size() );
         for (GisLayer layer : layers) {
             if (layer.getName().equals(layerName)) {
                 return layer;
             }
         }
-        logger.log(Level.CONFIG, "find({0}) not found!", layerName);
+        logger.log(Level.FINE, "find({0}) not found!", layerName);
         return null;
     }
 
