@@ -36,6 +36,27 @@
 
     <dependencies>
         <dependency>
+            <artifactId>wmt-gis</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-globe</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-libraries</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>wmt-utilities</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
             <version>${netbeans.version}</version>
@@ -46,68 +67,43 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-gis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.emxsys</groupId>
-            <artifactId>wmt-globe</artifactId>
-            <version>4.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <artifactId>org-openide-util-lookup</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>wmt-utilities</artifactId>
-            <groupId>com.emxsys</groupId>
-            <type>jar</type>
-            <version>4.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <artifactId>org-netbeans-api-progress</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-netbeans-modules-projectuiapi</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-loaders</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-filesystems</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-nodes</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-util</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
             <artifactId>org-openide-actions</artifactId>
             <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
@@ -119,6 +115,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>wmt-wildfire</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-dialogs</artifactId>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 

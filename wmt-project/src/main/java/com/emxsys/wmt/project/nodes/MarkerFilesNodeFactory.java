@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.project.nodes;
 
-import com.emxsys.wmt.project.BasicProject;
+import com.emxsys.wmt.project.WmtProject;
 import com.emxsys.wmt.gis.api.marker.Marker;
 import com.emxsys.wmt.util.DragDropUtil;
 import java.awt.Image;
@@ -90,7 +90,7 @@ public class MarkerFilesNodeFactory implements NodeFactory {
         private Image icon;
 
         MarkerFilesNode(Project project) throws DataObjectNotFoundException {
-            this(DataFolder.findFolder(project.getProjectDirectory().getFileObject(BasicProject.MARKER_FOLDER_NAME)));
+            this(DataFolder.findFolder(project.getProjectDirectory().getFileObject(WmtProject.MARKER_FOLDER_NAME)));
         }
 
         MarkerFilesNode(DataFolder folder) {

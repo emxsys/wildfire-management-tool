@@ -53,11 +53,11 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Bruce Schubert
  */
 @ServiceProvider(service = ProjectFactory.class)
-public class BasicProjectFactory implements ProjectFactory2
+public class WmtProjectFactory implements ProjectFactory2
 {
 
-    private static final Logger logger = Logger.getLogger(BasicProjectFactory.class.getName());
-    private static final ImageIcon projectIcon = ImageUtilities.loadImageIcon(BasicProjectInfo.ICON_BASE, false);
+    private static final Logger logger = Logger.getLogger(WmtProjectFactory.class.getName());
+    private static final ImageIcon projectIcon = ImageUtilities.loadImageIcon(WmtProjectInfo.ICON_BASE, false);
 
 
     /**
@@ -83,33 +83,33 @@ public class BasicProjectFactory implements ProjectFactory2
      * emxsys.properties or cps.properties in the config folder.
      *
      * @param folder folder to test
-     * @return true if the folder is a BasicProject
+     * @return true if the folder is a WmtProject
      */
     @Override
     public boolean isProject(FileObject folder)
     {
         // Test whether the folder contains a config sub-folder
-        FileObject configDir = folder.getFileObject(BasicProject.CONFIG_FOLDER_NAME);
+        FileObject configDir = folder.getFileObject(WmtProject.CONFIG_FOLDER_NAME);
         if (configDir == null || !configDir.isFolder())
         {
             return false;
         }
         // Test for the existance of the project's property file
-        boolean fileExists = configDir.getFileObject(BasicProject.CONFIG_PROPFILE_NAME) != null;
-        boolean legacyFileExists = configDir.getFileObject(BasicProject.LEGACY_CONFIG_PROPFILE_NAME) != null;
+        boolean fileExists = configDir.getFileObject(WmtProject.CONFIG_PROPFILE_NAME) != null;
+        boolean legacyFileExists = configDir.getFileObject(WmtProject.LEGACY_CONFIG_PROPFILE_NAME) != null;
 
         return fileExists || legacyFileExists;
     }
 
 
     /**
-     * Load a {@code BasicProject} from a folder on the disk. This method can be invoked via the
+     * Load a {@code WmtProject} from a folder on the disk. This method can be invoked via the
      * ProjectChooser UI in its attempt to get ProjectInformation from the project's Lookup; so, the
      * constructor and lookup implementations should be lightweight.
      *
      * @param projectDirectory the root folder of the project.
      * @param state a callback allowing the project to notify ProjectManager if "dirty"
-     * @return a new {@code BasicProject} if it exists on disk, else null.
+     * @return a new {@code WmtProject} if it exists on disk, else null.
      */
     @Override
     public Project loadProject(FileObject projectDirectory, ProjectState state) throws IOException
@@ -117,7 +117,7 @@ public class BasicProjectFactory implements ProjectFactory2
         Project project = null;
         if (isProject(projectDirectory))
         {
-            project = new BasicProject(projectDirectory, state);
+            project = new WmtProject(projectDirectory, state);
         }
         return project;
     }
@@ -138,7 +138,7 @@ public class BasicProjectFactory implements ProjectFactory2
             throw exception;
         }
         // Force the creation of the sub folders if they are missing/deleted:
-        BasicProject.getSubfolder(projectRoot, BasicProject.DATA_FOLDER_NAME, BasicProject.CREATE_IF_MISSING);
+        WmtProject.getSubfolder(projectRoot, WmtProject.DATA_FOLDER_NAME, WmtProject.CREATE_IF_MISSING);
         // others...
 
         saveProjectProperties(project);
@@ -148,21 +148,21 @@ public class BasicProjectFactory implements ProjectFactory2
     /**
      * Saves the project properties.
      *
-     * @param project a {@code BasicProject} who's properties will be saved
+     * @param project a {@code WmtProject} who's properties will be saved
      */
     static void saveProjectProperties(final Project project)
     {
-        FileObject configFolder = BasicProject.getSubfolder(project.getProjectDirectory(), BasicProject.CONFIG_FOLDER_NAME, BasicProject.CREATE_IF_MISSING);
+        FileObject configFolder = WmtProject.getSubfolder(project.getProjectDirectory(), WmtProject.CONFIG_FOLDER_NAME, WmtProject.CREATE_IF_MISSING);
         try
         {
             // Find the project properties file, creating it if necessary:
-            FileObject propertiesFile = configFolder.getFileObject(BasicProject.CONFIG_PROPFILE_NAME);
+            FileObject propertiesFile = configFolder.getFileObject(WmtProject.CONFIG_PROPFILE_NAME);
             if (propertiesFile == null)
             {
-                propertiesFile = configFolder.createData(BasicProject.CONFIG_PROPFILE_NAME);
+                propertiesFile = configFolder.createData(WmtProject.CONFIG_PROPFILE_NAME);
             }
             // Get the project properties from the project's Lookup and write them to a property file
-            Properties properties = project.getLookup().lookup(BasicProjectProperties.class);
+            Properties properties = project.getLookup().lookup(ProjectProperties.class);
             File file = FileUtil.toFile(propertiesFile);
             properties.store(new FileOutputStream(file), "Project Properties:"); //NOI18N
         }

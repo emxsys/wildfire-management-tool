@@ -35,9 +35,9 @@ import java.util.Properties;
 import org.netbeans.spi.project.ProjectState;
 
 /**
- * This class sets project's state to "dirty" whenever a property is modified.
+ * This class sets the project's ProjectState to "dirty" whenever a property is modified.
  */
-public class BasicProjectProperties extends Properties {
+public class ProjectProperties extends Properties {
 
     private final ProjectState state;
     private boolean isLoading = false;
@@ -48,7 +48,7 @@ public class BasicProjectProperties extends Properties {
      * @param state will be set to "modified" when a property is updated.
      * @see ProjectState
      */
-    BasicProjectProperties(ProjectState state) {
+    ProjectProperties(ProjectState state) {
         this.state = state;
     }
 

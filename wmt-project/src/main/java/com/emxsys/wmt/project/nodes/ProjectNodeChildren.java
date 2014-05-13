@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.project.nodes;
 
-import com.emxsys.wmt.project.BasicProject;
+import com.emxsys.wmt.project.WmtProject;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.FilterNode;
@@ -43,9 +43,9 @@ import org.openide.nodes.Node;
  */
 public class ProjectNodeChildren extends FilterNode.Children {
 
-    private final BasicProject project;
+    private final WmtProject project;
 
-    public ProjectNodeChildren(Node original, BasicProject project) {
+    public ProjectNodeChildren(Node original, WmtProject project) {
         super(original);
         this.project = project;
     }
@@ -79,8 +79,8 @@ public class ProjectNodeChildren extends FilterNode.Children {
     @Override
     protected Node[] createNodes(Node node) {
         final String name = node.getName();
-        if (name.equals(BasicProject.CONFIG_FOLDER_NAME)
-                || name.equals(BasicProject.DATA_FOLDER_NAME)) //                || name.equals(BasicProject.BEHAVE_DIR))
+        if (name.equals(WmtProject.CONFIG_FOLDER_NAME)
+                || name.equals(WmtProject.DATA_FOLDER_NAME)) //                || name.equals(WmtProject.BEHAVE_DIR))
         {   // returning an empty Node array suppresses these folders.
             return new Node[0];
         } else {

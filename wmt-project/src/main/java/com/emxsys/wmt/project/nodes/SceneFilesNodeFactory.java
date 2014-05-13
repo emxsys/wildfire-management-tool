@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.project.nodes;
 
-import com.emxsys.wmt.project.BasicProject;
+import com.emxsys.wmt.project.WmtProject;
 import com.emxsys.wmt.util.DragDropUtil;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -79,7 +79,7 @@ public class SceneFilesNodeFactory implements NodeFactory {
     public class SceneFilesNode extends FilterNode {
 
         SceneFilesNode(Project project) throws DataObjectNotFoundException {
-            super(DataObject.find(project.getProjectDirectory().getFileObject(BasicProject.SCENE_FOLDER_NAME)).getNodeDelegate());
+            super(DataObject.find(project.getProjectDirectory().getFileObject(WmtProject.SCENE_FOLDER_NAME)).getNodeDelegate());
         }
 
         @Override

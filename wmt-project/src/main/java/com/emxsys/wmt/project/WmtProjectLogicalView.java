@@ -44,15 +44,15 @@ import org.openide.nodes.Node;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id $
  */
-public class BasicProjectLogicalView implements LogicalViewProvider {
+public class WmtProjectLogicalView implements LogicalViewProvider {
 
-    private final BasicProject project;
-    private static final Logger logger = Logger.getLogger(BasicProjectLogicalView.class.getName());
+    private final WmtProject project;
+    private static final Logger logger = Logger.getLogger(WmtProjectLogicalView.class.getName());
 
     /**
      * The sole constructor.
      */
-    public BasicProjectLogicalView(BasicProject project) {
+    public WmtProjectLogicalView(WmtProject project) {
         this.project = project;
     }
 

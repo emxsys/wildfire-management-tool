@@ -74,21 +74,18 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
 /**
- * This class represents a basic Emxsys project in memory. The project's properties are stored in
- * its lookup.
- *
+ * This class represents a "com-emxsys-wmt-project" project in memory. The project's properties
+ * are stored in its lookup.
+ * <p>
  * This project type can be extended through the ProjectServiceProvider annotation using
  * "com-emxsys-basic-project" for the projectType parameter.
  *
  * @author Bruce Schubert
- * @version $Id: BasicProject.java 695 2013-05-28 11:19:15Z bdschubert $
  */
-public class BasicProject implements Project {
+public class WmtProject implements Project {
 
-    /**
-     * "projectType" string used by ProjectServiceProviders extending this project
-     */
-    public static final String PROJECT_TYPE = "com-emxsys-basic-project";
+    /** "projectType" string used by ProjectServiceProviders extending this project */
+    public static final String PROJECT_TYPE = "com-emxsys-wmt-project";
     public static final String CONFIG_FOLDER_NAME = "config"; //NOI18N
     public static final String DATA_FOLDER_NAME = "data"; //NOI18N
     public static final String MARKER_FOLDER_NAME = "markers"; //NOI18N
@@ -100,19 +97,19 @@ public class BasicProject implements Project {
     public static final String STARTUP_LONGITUDE = "startupLongitudeDegrees"; //NOI18N
     public static final boolean CREATE_IF_MISSING = true;
     public static final boolean DO_NOT_CREATE = false;
-    static final String CONFIG_PROPFILE_NAME = "emxsys.properties"; //NOI18N
+    static final String CONFIG_PROPFILE_NAME = "wmt.properties"; //NOI18N
     static final String LEGACY_CONFIG_PROPFILE_NAME = "cps.properties"; //NOI18N
     private final FileObject projectFolder;
     private final ProjectState projectState;
-    final BasicProjectProperties projectProperties;
+    final ProjectProperties projectProperties;
     Lookup baseLookup;
     Lookup compositeLookup;
     InstanceContent content = new InstanceContent();
     //private boolean ungoingDeletion = false;
     private final AtomicReference<State> init = new AtomicReference<>(State.NEW);
     private final AtomicReference<Operation> operation = new AtomicReference<>(Operation.IDLE);
-    private static final RequestProcessor THREAD_POOL = new RequestProcessor("BasicProject processor", 1);
-    private static final Logger logger = Logger.getLogger(BasicProject.class.getName());
+    private static final RequestProcessor THREAD_POOL = new RequestProcessor("WmtProject processor", 1);
+    private static final Logger logger = Logger.getLogger(WmtProject.class.getName());
 
     private enum State {
 
@@ -134,7 +131,7 @@ public class BasicProject implements Project {
      * @param projectFolder the folder containing the project
      * @param projectState the state of the project, e.g., modified
      */
-    BasicProject(FileObject projectFolder, ProjectState projectState) {
+    WmtProject(FileObject projectFolder, ProjectState projectState) {
         this.projectFolder = projectFolder;
         this.projectState = projectState;
         this.projectProperties = loadProjectProperties();
@@ -156,7 +153,7 @@ public class BasicProject implements Project {
      * @return the name of this project
      */
     public String getProjectName() {
-        return ProjectUtils.getInformation(BasicProject.this).getDisplayName();
+        return ProjectUtils.getInformation(WmtProject.this).getDisplayName();
     }
 
     @Override
@@ -164,9 +161,9 @@ public class BasicProject implements Project {
         if (this.baseLookup == null) {
             // Project info
             this.content.add(this); // required for LazyLookupProviders in createCompositeLookup()
-            this.content.add(new BasicProjectInfo(this));
-            this.content.add(new BasicProjectLogicalView(this));
-            this.content.add(new BasicProjectCustomizerProvider(this));
+            this.content.add(new WmtProjectInfo(this));
+            this.content.add(new WmtProjectLogicalView(this));
+            this.content.add(new WmtProjectCustomizerProvider(this));
             // Now we add our project specific content
             this.content.add(this.projectState);
             this.content.add(this.projectProperties);
@@ -276,8 +273,8 @@ public class BasicProject implements Project {
      * updated.
      * @see ProjectState
      */
-    private BasicProjectProperties loadProjectProperties() {
-        BasicProjectProperties properties = new BasicProjectProperties(this.projectState);
+    private ProjectProperties loadProjectProperties() {
+        ProjectProperties properties = new ProjectProperties(this.projectState);
         FileObject fo = getConfigFolder().getFileObject(CONFIG_PROPFILE_NAME);
         if (fo != null) {
             try {
@@ -452,7 +449,7 @@ public class BasicProject implements Project {
         Coord3D pos = Globe.getInstance().getLocationAtCenter();
         this.projectProperties.put(STARTUP_LATITUDE, Double.toString(pos.getLatitudeDegrees()));
         this.projectProperties.put(STARTUP_LONGITUDE, Double.toString(pos.getLongitudeDegrees()));
-        BasicProjectFactory.saveProjectProperties(this);
+        WmtProjectFactory.saveProjectProperties(this);
     }
 
     /**
@@ -476,13 +473,13 @@ public class BasicProject implements Project {
         @Override
         public void invokeAction(String command, Lookup context) throws IllegalArgumentException {
             if (command.equalsIgnoreCase(ActionProvider.COMMAND_DELETE)) {
-                DefaultProjectOperations.performDefaultDeleteOperation(BasicProject.this);
+                DefaultProjectOperations.performDefaultDeleteOperation(WmtProject.this);
             } else if (command.equalsIgnoreCase(ActionProvider.COMMAND_COPY)) {
-                DefaultProjectOperations.performDefaultCopyOperation(BasicProject.this);
+                DefaultProjectOperations.performDefaultCopyOperation(WmtProject.this);
             } else if (command.equalsIgnoreCase(ActionProvider.COMMAND_RENAME)) {
-                DefaultProjectOperations.performDefaultRenameOperation(BasicProject.this, null);
+                DefaultProjectOperations.performDefaultRenameOperation(WmtProject.this, null);
             } else if (command.equalsIgnoreCase(ActionProvider.COMMAND_MOVE)) {
-                DefaultProjectOperations.performDefaultMoveOperation(BasicProject.this);
+                DefaultProjectOperations.performDefaultMoveOperation(WmtProject.this);
             }
         }
 
@@ -509,24 +506,24 @@ public class BasicProject implements Project {
         @Override
         public void notifyDeleting() throws IOException {
             logger.fine("Project starting delete ...");
-            BasicProject.this.init.set(State.DELETING);
+            WmtProject.this.init.set(State.DELETING);
         }
 
         @Override
         public void notifyDeleted() throws IOException {
             logger.info("Project deleted.");
-            BasicProject.this.init.set(State.DELETED);
-            BasicProject.this.projectState.notifyDeleted();
+            WmtProject.this.init.set(State.DELETED);
+            WmtProject.this.projectState.notifyDeleted();
         }
 
         @Override
         public List<FileObject> getMetadataFiles() {
-            return BasicProject.this.getMetadataFiles();
+            return WmtProject.this.getMetadataFiles();
         }
 
         @Override
         public List<FileObject> getDataFiles() {
-            return BasicProject.this.getDataFiles();
+            return WmtProject.this.getDataFiles();
         }
     }
 
@@ -541,28 +538,28 @@ public class BasicProject implements Project {
         @Override
         public void notifyCopying() throws IOException {
             logger.fine("Project starting copy...");
-            BasicProject.this.operation.set(Operation.COPYING);
+            WmtProject.this.operation.set(Operation.COPYING);
         }
 
         @Override
         public void notifyCopied(Project original, File originalPath, String nueName)
                 throws IOException {
             logger.log(Level.INFO, "Project copied to {0}", nueName);
-            Properties properties = BasicProject.this.getLookup().lookup(Properties.class);
+            Properties properties = WmtProject.this.getLookup().lookup(Properties.class);
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             properties.put("copied", sdf.format(cal.getTime()));
-            BasicProject.this.operation.set(Operation.IDLE);
+            WmtProject.this.operation.set(Operation.IDLE);
         }
 
         @Override
         public List<FileObject> getMetadataFiles() {
-            return BasicProject.this.getMetadataFiles();
+            return WmtProject.this.getMetadataFiles();
         }
 
         @Override
         public List<FileObject> getDataFiles() {
-            return BasicProject.this.getDataFiles();
+            return WmtProject.this.getDataFiles();
         }
     }
 
@@ -576,36 +573,36 @@ public class BasicProject implements Project {
 
         @Override
         public List<FileObject> getMetadataFiles() {
-            return BasicProject.this.getMetadataFiles();
+            return WmtProject.this.getMetadataFiles();
         }
 
         @Override
         public List<FileObject> getDataFiles() {
-            return BasicProject.this.getDataFiles();
+            return WmtProject.this.getDataFiles();
         }
 
         @Override
         public void notifyRenaming() throws IOException {
             logger.fine("Project starting rename...");
-            BasicProject.this.operation.set(Operation.RENAMING);
+            WmtProject.this.operation.set(Operation.RENAMING);
         }
 
         @Override
         public void notifyRenamed(String string) throws IOException {
             logger.log(Level.INFO, "Project renamed to {0}", string);
-            BasicProject.this.operation.set(Operation.IDLE);
+            WmtProject.this.operation.set(Operation.IDLE);
         }
 
         @Override
         public void notifyMoving() throws IOException {
             logger.fine("Project starting move...");
-            BasicProject.this.operation.set(Operation.MOVING);
+            WmtProject.this.operation.set(Operation.MOVING);
         }
 
         @Override
         public void notifyMoved(Project original, File file, String nueName) throws IOException {
             logger.log(Level.INFO, "Project starting moved to {0}", nueName);
-            BasicProject.this.operation.set(Operation.IDLE);
+            WmtProject.this.operation.set(Operation.IDLE);
             if (original != null) {
                 ProjectState prjState = original.getLookup().lookup(ProjectState.class);
                 prjState.notifyDeleted();
@@ -619,14 +616,14 @@ public class BasicProject implements Project {
      * this action in this "hook" of which an instance is found in the project's lookup.
      *
      * @author Bruce Schubert
-     * @version $Id: BasicProject.java 695 2013-05-28 11:19:15Z bdschubert $
+     * @version $Id: WmtProject.java 695 2013-05-28 11:19:15Z bdschubert $
      */
     public class ProjectOpenedOrClosedHook extends ProjectOpenedHook {
 
         @Override
         protected void projectOpened() {
             synchronized (this) {
-                logger.log(Level.INFO, "Project opened: {0}", ProjectUtils.getInformation(BasicProject.this).getDisplayName()); //NOI18N
+                logger.log(Level.INFO, "Project opened: {0}", ProjectUtils.getInformation(WmtProject.this).getDisplayName()); //NOI18N
                 open();
                 //restoreStartupPosition();
             }
@@ -634,15 +631,15 @@ public class BasicProject implements Project {
 
         @Override
         protected void projectClosed() {
-            String displayName = ProjectUtils.getInformation(BasicProject.this).getDisplayName();
+            String displayName = ProjectUtils.getInformation(WmtProject.this).getDisplayName();
             logger.log(Level.INFO, "Closing project {0}...", displayName); //NOI18N
 
             // Save the startup position for next time.
             if (operation.get() != Operation.DELETING) {
                 // Save the default startup position if it doesn't exist
-                BasicProjectProperties properties = BasicProject.this.getLookup().lookup(BasicProjectProperties.class);
-                String lat = properties.getProperty(BasicProject.STARTUP_LATITUDE);
-                String lon = properties.getProperty(BasicProject.STARTUP_LONGITUDE);
+                ProjectProperties properties = WmtProject.this.getLookup().lookup(ProjectProperties.class);
+                String lat = properties.getProperty(WmtProject.STARTUP_LATITUDE);
+                String lon = properties.getProperty(WmtProject.STARTUP_LONGITUDE);
                 if (lat == null || lon == null) {
                     logger.log(Level.INFO, "...Saving view coordinates for {0}", displayName); //NOI18N
                     saveStartupPosition();

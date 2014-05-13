@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.project.nodes;
 
-import com.emxsys.wmt.project.BasicProject;
+import com.emxsys.wmt.project.WmtProject;
 import com.emxsys.wmt.util.ImageUtil;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -61,7 +61,7 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public class ProjectNode extends FilterNode {
 
-    private final BasicProject project;
+    private final WmtProject project;
     private static final Logger logger = Logger.getLogger(ProjectNode.class.getName());
 
     /**
@@ -69,11 +69,11 @@ public class ProjectNode extends FilterNode {
      * the {@code Projects/com-emxsys-basic-project/Nodes} path.
      *
      * @param original The original {@link Node} to be cloned in this {@link FilterNode}
-     * @param project The current {@link BasicProject}.
+     * @param project The current {@link WmtProject}.
      *
      * @see NodeFactorySupport
      */
-    public ProjectNode(Node original, BasicProject project) {
+    public ProjectNode(Node original, WmtProject project) {
 
         super(original,
                 //Create the project's child nodes via registered NodeFactories

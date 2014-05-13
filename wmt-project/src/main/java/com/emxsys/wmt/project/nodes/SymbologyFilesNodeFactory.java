@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.project.nodes;
 
-import com.emxsys.wmt.project.BasicProject;
+import com.emxsys.wmt.project.WmtProject;
 import com.emxsys.wmt.gis.api.symbology.Graphic;
 import com.emxsys.wmt.gis.api.symbology.Symbol;
 import com.emxsys.wmt.util.DragDropUtil;
@@ -77,7 +77,7 @@ public class SymbologyFilesNodeFactory implements NodeFactory {
     public class SymbolFilesNode extends FilterNode {
 
         SymbolFilesNode(Project project) {
-            this(DataFolder.findFolder(project.getProjectDirectory().getFileObject(BasicProject.SYMBOLOGY_FOLDER_NAME)));
+            this(DataFolder.findFolder(project.getProjectDirectory().getFileObject(WmtProject.SYMBOLOGY_FOLDER_NAME)));
         }
 
         SymbolFilesNode(DataFolder folder) {

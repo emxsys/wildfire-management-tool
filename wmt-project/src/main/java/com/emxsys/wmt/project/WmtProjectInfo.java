@@ -29,63 +29,59 @@
  */
 package com.emxsys.wmt.project;
 
-import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectUtils;
-import org.netbeans.spi.project.ui.CustomizerProvider;
-import org.netbeans.spi.project.ui.support.ProjectCustomizer;
-import org.openide.awt.StatusDisplayer;
-import org.openide.util.lookup.Lookups;
-
+import org.netbeans.api.project.ProjectInformation;
+import org.openide.util.ImageUtilities;
 
 /**
+ * General information about a WmtProject. An instance of this class can be accessed through the
+ * project's lookup.
  *
  * @author Bruce Schubert
- * @version $Id: BasicProjectCustomizerProvider.java 446 2012-12-12 17:25:13Z bdschubert $
+ * @see WmtProject
  */
-public class BasicProjectCustomizerProvider implements CustomizerProvider
-{
+public class WmtProjectInfo implements ProjectInformation {
 
-    private final Project project;
-    public static final String CUSTOMIZER_FOLDER_PATH =
-        "Projects/com-emxsys-wmt-project/Customizer";
+    public static final String ICON_BASE = "com/emxsys/wmt/project/images/wmt.png";
 
+    private final WmtProject project;
 
-    public BasicProjectCustomizerProvider(Project project)
-    {
+    public WmtProjectInfo(WmtProject project) {
         this.project = project;
     }
 
-
     @Override
-    public void showCustomizer()
-    {
-        Dialog dialog = ProjectCustomizer.createCustomizerDialog(
-            //Path to layer folder:
-            CUSTOMIZER_FOLDER_PATH,
-            //Lookup, which must contain, at least, the Project:
-            Lookups.fixed(project),
-            //Preselected category:
-            "",
-            //OK button listener:
-            new OkOptionListener(),
-            //HelpCtx for Help button of dialog:
-            null);
-        dialog.setTitle(ProjectUtils.getInformation(project).getDisplayName());
-        dialog.setVisible(true);
+    public String getName() {
+        return this.project.getProjectDirectory().getName();
     }
 
+    @Override
+    public String getDisplayName() {
+        return getName();
+    }
 
-    private class OkOptionListener implements ActionListener
-    {
+    @Override
+    public Icon getIcon() {
+        // TODO: Create an extension point to give project extension the ability to set the icon.
+        // IDEA: Query the compositeLookup for an icon
+//        Icon icon = this.project.getLookup().lookup(Icon.class);
+//        return icon != null ? icon : 
+        return new ImageIcon(ImageUtilities.loadImage(ICON_BASE));
+    }
 
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            StatusDisplayer.getDefault().setStatusText("OK button clicked for "
-                + project.getProjectDirectory().getName() + " customizer!");
-        }
+    @Override
+    public Project getProject() {
+        return this.project;
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
     }
 }
