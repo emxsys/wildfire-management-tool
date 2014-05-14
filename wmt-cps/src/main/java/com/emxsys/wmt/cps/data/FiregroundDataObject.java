@@ -78,7 +78,6 @@ import visad.Gridded1DDoubleSet;
 import visad.Linear1DSet;
 import visad.VisADException;
 
-
 /**
  * This class represents the contents of an XML Fireground file when the data loader finds one in
  * our project folder.
@@ -90,73 +89,55 @@ import visad.VisADException;
  * @version $Id: FiregroundDataObject.java 733 2013-06-06 16:09:06Z bdschubert $
  */
 @NbBundle.Messages(
-    {
-    "LBL_Fireground_LOADER=Files of Fireground"
-})
+        {
+            "LBL_Fireground_LOADER=Files of Fireground"
+        })
 @MIMEResolver.NamespaceRegistration(
-    displayName = "#LBL_Fireground_LOADER",
-    mimeType = "text/fireground+xml",
-    position = 1000,
-    elementNS ={"http://emxsys.com/fireground"})
+        displayName = "#LBL_Fireground_LOADER",
+        mimeType = "text/fireground+xml",
+        position = 1000,
+        elementNS = {"http://emxsys.com/fireground"})
 @DataObject.Registration(
-    mimeType = "text/fireground+xml",
-    iconBase = "com/emxsys/wmt/cps/images/region.png",
-    displayName = "#LBL_Fireground_LOADER",
-    position = 1000)
+        mimeType = "text/fireground+xml",
+        iconBase = "com/emxsys/wmt/cps/images/region.png",
+        displayName = "#LBL_Fireground_LOADER",
+        position = 1000)
 @ActionReferences({
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-        position = 100,
-        separatorAfter = 200),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-        position = 300),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-        position = 400,
-        separatorAfter = 500),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-        position = 600),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-        position = 700,
-        separatorAfter = 800),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
-        position = 900,
-        separatorAfter = 1000),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
-        position = 1100,
-        separatorAfter = 1200),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
-        position = 1300),
-    @ActionReference(
-        path = "Loaders/text/fireground+xml/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-        position = 1400)
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
+            position = 900,
+            separatorAfter = 1000),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
+            position = 1100,
+            separatorAfter = 1200),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+            position = 1300),
+    @ActionReference(path = "Loaders/text/fireground+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
 })
-public class FiregroundDataObject extends XMLDataObject
-{
+public class FiregroundDataObject extends XMLDataObject {
+    
     public static final String GENERAL_AIR_TEMPS_FILE = "general_air_temps.nc";
     public static final String GENERAL_HUMIDITIES_FILE = "general_humidities.nc";
     public static final String GENERAL_WINDS_FILE = "general_winds.nc";
@@ -177,37 +158,29 @@ public class FiregroundDataObject extends XMLDataObject
     private static int waitTimeMs = -1;
     private Lookup lookup;
     private final InstanceContent content = new InstanceContent();
-    
-    /**
-     * The primary object that this DataObject represents.
-     */
+
+    /** The primary object that this DataObject represents. */
     private WildlandFireground fireground;
-    /**
-     * Capability added to the lookup when modified.
-     */
-    private SaveCapability saveCookie = new SaveCapability();
-    /**
-     * Listener for changes in the Fireground object.
-     */
-    private final PropertyChangeListener firegroundListener = new PropertyChangeListener()
-    {
+
+    /** Capability added to the lookup when modified. */
+    private final SaveCapability saveCookie = new SaveCapability();
+
+    /** Listener for changes in the Fireground object. */
+    private final PropertyChangeListener firegroundListener = new PropertyChangeListener() {
         @Override
-        public void propertyChange(PropertyChangeEvent pce)
-        {
-            if (pce.getSource() instanceof WildlandFireground)
-            {
+        public void propertyChange(PropertyChangeEvent pce) {
+            if (pce.getSource() instanceof WildlandFireground) {
                 setModified(true);
             }
         }
     };
-    /**
-     * Listener for changes in the fireground folder
-     */
-    private FileChangeListener folderListener = new SimpleFileChangeListener();
-    private static final Logger logger = Logger.getLogger(FiregroundDataObject.class.getName());
 
-    static
-    {
+    /** Listener for changes in the fireground folder */
+    private final FileChangeListener folderListener = new SimpleFileChangeListener();
+    
+    private static final Logger logger = Logger.getLogger(FiregroundDataObject.class.getName());
+    
+    static {
         logger.setLevel(Level.ALL);
     }
 
@@ -218,23 +191,19 @@ public class FiregroundDataObject extends XMLDataObject
      * @param loader to use
      */
     public FiregroundDataObject(FileObject primaryFile, MultiFileLoader loader) throws
-        DataObjectExistsException, IOException
-    {
+            DataObjectExistsException, IOException {
         super(primaryFile, loader);
-        if (waitTimeMs == -1)
-        {
+        if (waitTimeMs == -1) {
             Preferences pref = NbPreferences.forModule(this.getClass());
             waitTimeMs = pref.getInt(PREF_WAIT_TIME_MS, DEFAULT_WAIT_TIME_MS);
         }
         createFireground();
     }
 
-
     /**
      * Creates the Fireground object backed by this DataObject.
      */
-    private void createFireground()
-    {
+    private void createFireground() {
         this.fireground = new WildlandFireground();
         this.content.add(this.fireground);
 
@@ -245,14 +214,12 @@ public class FiregroundDataObject extends XMLDataObject
         this.fireground.addPropertyChangeListener(this.firegroundListener);
     }
 
-
     /**
      *
      * @return
      */
     @Override
-    public Lookup getLookup()
-    {
+    public Lookup getLookup() {
         // Per: http://wiki.netbeans.org/DevFaqNodesCustomLookup
         // If you are really sure that nothing is going to use your DataObject's 
         // CookieSet at all, you can omit merging getCookieSet().getLookup() into 
@@ -261,8 +228,7 @@ public class FiregroundDataObject extends XMLDataObject
         // If you are going to do that, replace getCookieSet().getLookup() with 
         // Lookups.singleton(this) to ensure it is present and cannot be removed
         // or replaced.
-        if (this.lookup == null)
-        {
+        if (this.lookup == null) {
             // If you want to use the CookieSet, you'll need to remove the EditorCookie first, 
             // otherwise you might get this error:
             //      IllegalStateException: may not call Project.getLookup().lookup(...) 
@@ -278,15 +244,13 @@ public class FiregroundDataObject extends XMLDataObject
         return lookup;
     }
 
-
     /**
      * Creates a Node to represent this DataObject.
      *
      * @return a new FiregroundDataNode
      */
     @Override
-    protected Node createNodeDelegate()
-    {
+    protected Node createNodeDelegate() {
         // Per: http://wiki.netbeans.org/DevFaqNodesCustomLookup
         // You really must override createNodeDelegate() or otherwise (in your 
         // DataNode subclass) pass your DataObject's Lookup to your DataNode's 
@@ -296,11 +260,10 @@ public class FiregroundDataObject extends XMLDataObject
         // So, if you use AbstractLookup in a DataObject, make sure its Node is
         // really using your DataObject's Lookup.
         FiregroundDataNode node = new FiregroundDataNode(this, getLookup());
-        node.setIconBaseWithExtension("com/emxsys/wildfire/fireground/resources/polygon.png");
+        node.setIconBaseWithExtension("com/emxsys/wmt/cps/images/polygon.png");
         return node;
         
     }
-
 
     /**
      * Adds or removes a SaveCookie to/from the lookup.
@@ -308,52 +271,46 @@ public class FiregroundDataObject extends XMLDataObject
      * @param modified flag adds SaveCookie if true
      */
     @Override
-    public void setModified(boolean modified)
-    {
+    public void setModified(boolean modified) {
         super.setModified(modified);
         
-        if (modified)
-        {
+        if (modified) {
             addSaveCookie();
-        }
-        else
-        {
+        } else {
             removeSaveCookie();
         }
     }
     
-    
-    private void addSaveCookie()
-    {
-        if (getLookup().lookup(SaveCookie.class) == null)
-        {
+    private void addSaveCookie() {
+        if (getLookup().lookup(SaveCookie.class) == null) {
             getCookieSet().add(saveCookie);
         }
     }
-
 
     /**
      * This method retrieves the Fireground object associated with the XmlDataObject.
      *
      * @return The associated fireground.
      */
-    private void readFireground()
-    {
+    private void readFireground() {
         final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading fireground");
         handle.start(); // start in indeterminate mode
 
-        try
-        {
+        // Step 1: Initialize the spatial domain from the sectors.
+        // Step 2: Initialize the temporal domain - we derive this from the weather data's domain.
+        // Step 3: Intitialize the data models
+        try {
             FileObject parentFolder = this.getPrimaryFile().getParent();
 
-            // Step 1: Initialize the temporal domain - we derive this from the weather data's domain.
-            // Step 2: Initialize the spatial domain from the sectors.
-            // Step 3: Intitialize the data models
+            // Read the fireground xml data - initializes the spatial domain
+            List<Box> sectors = FiregroundXmlEncoder.parseSectors(this.getDocument());
+            for (Box sector : sectors) {
+                this.fireground.addSector(sector, null);
+            }
 
             // Load the weather data from the weather folder
             FileObject weatherFolder = parentFolder.getFileObject(WEATHER_FOLDER);
-            if (weatherFolder == null)
-            {
+            if (weatherFolder == null) {
                 throw new IllegalStateException("Cannot open " + WEATHER_FOLDER);
             }
             DataImpl airtemps = loadWeatherData(weatherFolder, GENERAL_AIR_TEMPS_FILE);
@@ -362,31 +319,20 @@ public class FiregroundDataObject extends XMLDataObject
 
             // Initailize the temporal domain: create the timeset based on any one of the weather 
             // fields they should all have a coincident time domain.
-            if (airtemps == null)
-            {
-                throw new IllegalStateException("Unable to set the temporal domain from air temps.");
-            }
-            Linear1DSet domainSet = (Linear1DSet) ((FlatField) airtemps).getDomainSet();
-            Gridded1DDoubleSet timeset = new Gridded1DDoubleSet(domainSet.getType(), domainSet.getDoubles(true), domainSet.getLength());
-            this.fireground.addTimeset(timeset);
-
-            // Read the fireground xml data - initializes the spatial domain
-            List<Box> sectors = FiregroundXmlEncoder.parseSectors(this.getDocument());
-            for (Box sector : sectors)
-            {
-                this.fireground.addSector(sector, null);
+            if (airtemps != null) {
+                Linear1DSet domainSet = (Linear1DSet) ((FlatField) airtemps).getDomainSet();
+                Gridded1DDoubleSet timeset = new Gridded1DDoubleSet(domainSet.getType(), domainSet.getDoubles(true), domainSet.getLength());
+                this.fireground.addTimeset(timeset);
+                this.fireground.addWeather((FlatField) airtemps, (FlatField) rh, (FlatField) winds);
+            } else {
+                logger.warning("Unable to set the temporal domain from air temps.");
             }
 
-            // OK to initialize the weather now that temporal spatial domain is set
-            this.fireground.addWeather((FlatField) airtemps, (FlatField) rh, (FlatField) winds);
-
-            // Load the fire behavior data from the behave folder 
+            // Load the fire behavior data models from the behave folder 
             FileObject behaveFolder = parentFolder.getFileObject(BEHAVE_FOLDER);
-            if (behaveFolder != null)
-            {
+            if (behaveFolder != null) {
                 int suffix = 1;
-                for (Box box : sectors)
-                {
+                for (Box box : sectors) {
                     DataImpl terrain = loadFireBehaviorData(behaveFolder, getSuffixedFilename(TERRAIN_FILE, suffix));
                     DataImpl fuelTypes = loadFireBehaviorData(behaveFolder, getSuffixedFilename(FUEL_MODEL_FILE, suffix));
                     DataImpl fuelTemps = loadFireBehaviorData(behaveFolder, getSuffixedFilename(FUEL_TEMPERATURE_FILE, suffix));
@@ -402,81 +348,70 @@ public class FiregroundDataObject extends XMLDataObject
                     this.fireground.addFuelTypes(box, (FlatField) fuelTypes);
                     this.fireground.addFuelTemperatures(box, (FieldImpl) fuelTemps);
                     this.fireground.addFuelMoistures(box,
-                        (FieldImpl) fuelDead1hr, (FieldImpl) fuelDead10hr, (FieldImpl) fuelDead100hr,
-                        (FieldImpl) fuelLiveHerb, (FieldImpl) fuelLiveWoody);                    
+                            (FieldImpl) fuelDead1hr, (FieldImpl) fuelDead10hr, (FieldImpl) fuelDead100hr,
+                            (FieldImpl) fuelLiveHerb, (FieldImpl) fuelLiveWoody);
                     this.fireground.addFireBehavior(box, (FieldImpl) maxBehaviors, (FieldImpl) minBehaviors);
                     
                     ++suffix;
                 }
                 
             }
-        }
-        // Fail silently
-        catch (IllegalStateException| IllegalArgumentException | IOException | SAXException | VisADException ex)
-        {
+        } // Fail silently
+        catch (IllegalStateException | IllegalArgumentException | IOException | SAXException | VisADException ex) {
             logger.log(Level.SEVERE, "readFireground() failed! {0}", ex.toString());
-        }
-        finally
-        {
+        } finally {
             handle.finish();
         }
     }
     
-    
-    private DataImpl loadWeatherData(FileObject weatherFolder, String filename) throws IOException
-    {
-        try
-        {
-            DataObject dataObj = DataObject.find(weatherFolder.getFileObject(filename));
+    private DataImpl loadWeatherData(FileObject weatherFolder, String filename) throws IOException {
+        try {
+            FileObject weatherFile = weatherFolder.getFileObject(filename);
+            if (weatherFile == null) {
+                throw new IllegalArgumentException(filename);
+            }
+            DataObject dataObj = DataObject.find(weatherFile);
             return getDataImpl(dataObj, waitTimeMs);
-        }
-        catch (DataObjectNotFoundException | InterruptedException e)
-        {
+            
+        } catch (IllegalArgumentException | DataObjectNotFoundException | InterruptedException e) {
             logger.log(Level.SEVERE, "loadWeatherData() failed for {0} in {1} : {2}",
-                new Object[]
-            {
-                filename, weatherFolder.getName(), e.toString()
-            });
+                    new Object[]{
+                        filename, weatherFolder.getName(), e.toString()
+                    });
             return null;
         }
     }
     
-    
-    private DataImpl loadFireBehaviorData(FileObject behaveFolder, String filename) throws
-        IOException
-    {
-        try
-        {
-            DataObject dataObj = DataObject.find(behaveFolder.getFileObject(filename));
+    private DataImpl loadFireBehaviorData(FileObject behaveFolder, String filename) throws IOException {
+        try {
+            FileObject behaveFile = behaveFolder.getFileObject(filename);
+            if (behaveFile == null) {
+                throw new IllegalArgumentException(filename);
+            }
+            DataObject dataObj = DataObject.find(behaveFile);
             return getDataImpl(dataObj, waitTimeMs);
-        }
-        catch (DataObjectNotFoundException | InterruptedException e)
-        {
+            
+        } catch (IllegalArgumentException | DataObjectNotFoundException | InterruptedException e) {
             logger.log(Level.SEVERE, "loadFireBehaviorData() failed for {0} in {1} : {2}",
-                new Object[]
-            {
-                filename, behaveFolder.getName(), e.toString()
-            });
+                    new Object[]{
+                        filename, behaveFolder.getName(), e.toString()
+                    });
             return null;
         }
     }
-
 
     /**
      * This method writes the Fireground object to XML.
      *
      */
-    private void writeFireground()
-    {
+    private void writeFireground() {
         final ProgressHandle handle = ProgressHandleFactory.createHandle("Saving fireground");
         handle.start(); // start in indeterminate mode
 
-        try
-        {
+        try {
             // Write the fireground xml file
             FiregroundXmlEncoder.encodeSectors(this.getDocument(), this.fireground);
-            try (OutputStream output = getPrimaryFile().getOutputStream(FileLock.NONE))
-            {
+            try (OutputStream output = getPrimaryFile().getOutputStream(FileLock.NONE)) {
                 XMLUtil.write(this.getDocument(), output, "UTF-8");
                 output.flush();
             }
@@ -484,8 +419,7 @@ public class FiregroundDataObject extends XMLDataObject
             // Write out the weather netCDF files
             FileObject parentFolder = this.getPrimaryFile().getParent();
             FileObject weatherFolder = FileUtil.createFolder(parentFolder, WEATHER_FOLDER);
-            if (weatherFolder != null)
-            {
+            if (weatherFolder != null) {
                 saveWeatherData(this.fireground.getAirTemperature(), weatherFolder, GENERAL_AIR_TEMPS_FILE);
                 saveWeatherData(this.fireground.getRelativeHumidity(), weatherFolder, GENERAL_HUMIDITIES_FILE);
                 saveWeatherData(this.fireground.getGeneralWinds(), weatherFolder, GENERAL_WINDS_FILE);
@@ -493,8 +427,7 @@ public class FiregroundDataObject extends XMLDataObject
 
             // Write out fire behavior netCDF files
             FileObject behaveFolder = FileUtil.createFolder(parentFolder, BEHAVE_FOLDER);
-            if (behaveFolder != null)
-            {
+            if (behaveFolder != null) {
                 saveBehaveData(this.fireground.getTerrain(), behaveFolder, TERRAIN_FILE);
                 saveBehaveData(this.fireground.getFuelModels(), behaveFolder, FUEL_MODEL_FILE);
                 saveBehaveData(this.fireground.getFuelTemperature(), behaveFolder, FUEL_TEMPERATURE_FILE);
@@ -508,17 +441,12 @@ public class FiregroundDataObject extends XMLDataObject
             }
             
             setModified(false);
-        }
-        catch (IOException | SAXException ex)
-        {
+        } catch (IOException | SAXException ex) {
             Exceptions.printStackTrace(ex);
-        }
-        finally
-        {
+        } finally {
             handle.finish();
         }
     }
-
 
     /**
      * Save weather data to disk files.
@@ -527,41 +455,31 @@ public class FiregroundDataObject extends XMLDataObject
      * @param weatherFolder
      * @param filename
      */
-    private void saveWeatherData(DataImpl data, FileObject weatherFolder, String filename)
-    {
-        if (data == null)
-        {
+    private void saveWeatherData(DataImpl data, FileObject weatherFolder, String filename) {
+        if (data == null) {
             return;
         }
-        try
-        {
+        try {
             // Look for an existing file
             FileObject fo = weatherFolder.getFileObject(filename);
-            if (fo == null)
-            {
+            if (fo == null) {
                 // Create the file
                 fo = weatherFolder.createData(filename);
             }
             // Find the registered data object for this file type.
             DataObject dataObj = DataObject.find(fo);
-            if (dataObj instanceof WeatherDataObject)
-            {
+            if (dataObj instanceof WeatherDataObject) {
                 WeatherDataObject wxDataObj = (WeatherDataObject) dataObj;
                 wxDataObj.setData(data);
                 wxDataObj.writeFile();
-            }
-            else
-            {
+            } else {
                 throw new RuntimeException("Incompatible DataObject: " + dataObj.getClass().getName());
             }
-        }
-        catch (IOException | RuntimeException ex)
-        {
+        } catch (IOException | RuntimeException ex) {
             logger.log(Level.SEVERE, "saveWeatherData() failed: {0}", ex.toString());
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Save fire behavior data to disk files.
@@ -571,128 +489,101 @@ public class FiregroundDataObject extends XMLDataObject
      * @param baseFilename
      */
     private void saveBehaveData(Collection<? extends FieldImpl> fields,
-        FileObject behaveFolder,
-        String baseFilename)
-    {
+                                FileObject behaveFolder,
+                                String baseFilename) {
         // Save each field with a numerical suffix appended to the filename
         int suffix = 1;
-        for (FieldImpl data : fields)
-        {
-            if (data == null)
-            {
+        for (FieldImpl data : fields) {
+            if (data == null) {
                 return;
             }
             String filename = getSuffixedFilename(baseFilename, suffix++);
-            try
-            {
+            try {
                 // Look for an existing file
                 FileObject fo = behaveFolder.getFileObject(filename);
-                if (fo == null)
-                {
+                if (fo == null) {
                     // Create the file
                     fo = behaveFolder.createData(filename);
                 }
                 // Find the registered data object for this file type.
                 //  See BehaveResolver.xml for registrations.
                 DataObject dataObj = DataObject.find(fo);
-                if (dataObj instanceof NetCdfDataObject)
-                {
+                if (dataObj instanceof NetCdfDataObject) {
                     NetCdfDataObject ncDataObj = (NetCdfDataObject) dataObj;
                     ncDataObj.setData(data);
                     ncDataObj.writeFile();
-                }
-                else
-                {
+                } else {
                     throw new RuntimeException("Incompatible DataObject: " + dataObj.getClass().getName());
                 }
-            }
-            catch (IOException | RuntimeException ex)
-            {
+            } catch (IOException | RuntimeException ex) {
                 logger.log(Level.SEVERE, "saveBehaveData() failed: {0}", ex.toString());
                 throw new IllegalStateException(ex);
             }
         }
     }
     
-    
-    
     @Override
-    protected DataObject handleCreateFromTemplate(DataFolder df, String name) throws IOException
-    {
+    protected DataObject handleCreateFromTemplate(DataFolder df, String name) throws IOException {
         logger.log(Level.FINE, "handleCreateFromTemplate({0}, {1}) called.", new Object[]{df.getName(), name});
-        DataObject dob = super.handleCreateFromTemplate(df, name);        
-        FileUtil.createFolder(df.getPrimaryFile(), WEATHER_FOLDER);        
-        FileUtil.createFolder(df.getPrimaryFile(), BEHAVE_FOLDER);        
+        DataObject dob = super.handleCreateFromTemplate(df, name);
+        FileUtil.createFolder(df.getPrimaryFile(), WEATHER_FOLDER);
+        FileUtil.createFolder(df.getPrimaryFile(), BEHAVE_FOLDER);
         return dob;
     }
     
-    
-    private void removeSaveCookie()
-    {
+    private void removeSaveCookie() {
         SaveCookie save = getLookup().lookup(SaveCookie.class);
         
         if (save
-            != null)
-        {
+                != null) {
             getCookieSet().remove(save);
         }
     }
     
-    
-    private String getSuffixedFilename(String baseFilename, int suffix)
-    {
+    private String getSuffixedFilename(String baseFilename, int suffix) {
         int dot = baseFilename.lastIndexOf(".");
         String name = baseFilename.substring(0, dot) + "-" + suffix;
         String ext = baseFilename.substring(dot);
         String filename = name + ext;
         return filename;
         
-        
-        
     }
-
 
     /**
      * Save capability class
      */
-    private class SaveCapability implements SaveCookie
-    {
+    private class SaveCapability implements SaveCookie {
+        
         @Override
-        public void save() throws IOException
-        {
-            writeFireground();
+        public void save() {
+            try {
+                writeFireground();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "save() failed.", e);
+            }
         }
     }
     
-    
-    class SimpleFileChangeListener extends FileChangeAdapter
-    {
+    class SimpleFileChangeListener extends FileChangeAdapter {
+        
         @Override
-        public void fileDataCreated(FileEvent fe)
-        {
-            if (fe.getFile().getMIMEType().equals("text/emxsys-fireground-sector+xml"))
-            {
-                try
-                {
+        public void fileDataCreated(FileEvent fe) {
+            if (fe.getFile().getMIMEType().equals("text/emxsys-fireground-sector+xml")) {
+                try {
                     DataObject dob = DataObject.find(fe.getFile());
                     Box extents = dob.getLookup().lookup(Box.class);
                     fireground.addSector(extents, null);
-                }
-                catch (DataObjectNotFoundException ex)
-                {
+                } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
         }
         
-        
         @Override
-        public void fileDeleted(FileEvent fe)
-        {
+        public void fileDeleted(FileEvent fe) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
-
 
     /**
      * Gets the DataImpl from the DataObject's lookup with a wait on the loading thread.
@@ -702,15 +593,11 @@ public class FiregroundDataObject extends XMLDataObject
      * @return the DataImpl stored in the lookup; may be null.
      * @throws InterruptedException
      */
-    static DataImpl getDataImpl(DataObject dob, long msWaitTime) throws InterruptedException
-    {
+    static DataImpl getDataImpl(DataObject dob, long msWaitTime) throws InterruptedException {
         DataImpl data = dob.getLookup().lookup(DataImpl.class);
-        synchronized (dob)
-        {
-            if (data == null)
-            {
-                logger.log(Level.FINE, "getDataImpl() waiting {1} ms for {0}", new Object[]
-                {
+        synchronized (dob) {
+            if (data == null) {
+                logger.log(Level.FINE, "getDataImpl() waiting {1} ms for {0}", new Object[]{
                     dob.getName(), msWaitTime
                 });
                 

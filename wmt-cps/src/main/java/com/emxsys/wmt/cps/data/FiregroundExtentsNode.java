@@ -50,134 +50,100 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.WeakListeners;
 import org.openide.util.lookup.Lookups;
 
-
 /**
  * This class provides a {@link org.openide.nodes.Node} for the {@link Fireground}'s {@code extents}
  * member. This node represents the geographic extents of the fireground.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: FiregroundExtentsNode.java 643 2013-05-16 19:02:48Z bdschubert $
  */
-public class FiregroundExtentsNode extends AbstractNode
-{
-    public FiregroundExtentsNode(Fireground fireground)
-    {
-        super(Children.create(new ExtentsChildren(fireground), true),
-            Lookups.singleton(fireground.getSectors()));
-    }
+public class FiregroundExtentsNode extends AbstractNode {
 
+    public FiregroundExtentsNode(Fireground fireground) {
+        super(Children.create(new ExtentsChildren(fireground), true),
+                Lookups.singleton(fireground.getSectors()));
+    }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return "Sectors";
     }
-
 
     /**
      * ChildFactory for the ExtentsNode
      */
-    private static class ExtentsChildren extends ChildFactory<Box> implements
-        PropertyChangeListener
-    {
+    private static class ExtentsChildren extends ChildFactory<Box> implements PropertyChangeListener {
+
         private final Fireground fireground;
 
-
         @SuppressWarnings("LeakingThisInConstructor")
-        public ExtentsChildren(Fireground fireground)
-        {
+        ExtentsChildren(Fireground fireground) {
             this.fireground = fireground;
             fireground.addPropertyChangeListener(WeakListeners.propertyChange(this, fireground));
         }
 
-
         @Override
-        protected boolean createKeys(List<Box> toPopulate)
-        {
-            for (Box box : this.fireground.getSectors())
-            {
+        protected boolean createKeys(List<Box> toPopulate) {
+            for (Box box : this.fireground.getSectors()) {
                 toPopulate.add(box);
             }
             return true;
         }
 
-
         @Override
-        protected Node[] createNodesForKey(Box key)
-        {
-            return new Node[]
-            {
+        protected Node[] createNodesForKey(Box key) {
+            return new Node[]{
                 new SectorNode(key)
             };
         }
 
-
         @Override
-        public void propertyChange(PropertyChangeEvent pce)
-        {
+        public void propertyChange(PropertyChangeEvent pce) {
             if (WildlandFireground.SECTOR_ADDED_EVENT.equals(pce.getPropertyName())
-                || WildlandFireground.SECTOR_REMOVED_EVENT.equals(pce.getPropertyName()))
-            {
+                    || WildlandFireground.SECTOR_REMOVED_EVENT.equals(pce.getPropertyName())) {
                 refresh(true);  // boolean = refresh immediately? 
             }
 
         }
     }
 
-
     /**
      * Node representing a sector.
      */
-    public static class SectorNode extends AbstractNode
-    {
-        public SectorNode(Box sector)
-        {
+    public static class SectorNode extends AbstractNode {
+
+        public SectorNode(Box sector) {
             super(Children.LEAF, Lookups.singleton(sector));
             setName(sector.toString());
         }
 
-
-        public Box getSector()
-        {
+        public Box getSector() {
             return getLookup().lookup(Box.class);
         }
 
-
         @Override
-        public String getDisplayName()
-        {
+        public String getDisplayName() {
             return getName();
         }
 
-
         @Override
-        public Image getOpenedIcon(int i)
-        {
+        public Image getOpenedIcon(int i) {
             return getIcon(i);
         }
 
-
         @Override
-        public Image getIcon(int type)
-        {
-            return ImageUtilities.loadImage("com/emxsys/wmt/cps/images/region.png" +
-"");
+        public Image getIcon(int type) {
+            return ImageUtilities.loadImage("com/emxsys/wmt/cps/images/region.png");
         }
 
-
         @Override
-        public Action[] getActions(boolean context)
-        {
-            return new Action[]
-            {
+        public Action[] getActions(boolean context) {
+            return new Action[]{
                 new DeleteSectorFromFireground(getSector())
             };
         }
 
-
         @Override
-        protected Sheet createSheet()
-        {
+        protected Sheet createSheet() {
             Sheet sheet = super.createSheet();
             Sheet.Set set = Sheet.createPropertiesSet();
             set.setName("southwest"); // use a unique name to prevent overwriting existing file-based property set
@@ -202,82 +168,62 @@ public class FiregroundExtentsNode extends AbstractNode
             return sheet;
         }
 
+        private class LatitudeProperty extends PropertySupport.ReadOnly<Double> {
 
-        private class LatitudeProperty extends PropertySupport.ReadOnly<Double>
-        {
             private Coord2D point;
 
-
-            LatitudeProperty(Coord2D point)
-            {
+            LatitudeProperty(Coord2D point) {
                 super("latitude", Double.class, "Latitude", "Degrees of Latitude (North/South)");
                 this.point = point;
             }
 
-
             @Override
-            public Double getValue() throws IllegalAccessException, InvocationTargetException
-            {
+            public Double getValue() throws IllegalAccessException, InvocationTargetException {
                 return this.point.getLatitudeDegrees();
             }
         }
 
+        private class LongitudeProperty extends PropertySupport.ReadOnly<Double> {
 
-        private class LongitudeProperty extends PropertySupport.ReadOnly<Double>
-        {
             private Coord2D point;
 
-
-            LongitudeProperty(Coord2D point)
-            {
+            LongitudeProperty(Coord2D point) {
                 super("longitude", Double.class, "Longitude", "Degrees of Longitude (East/West)");
                 this.point = point;
             }
 
-
             @Override
-            public Double getValue() throws IllegalAccessException, InvocationTargetException
-            {
+            public Double getValue() throws IllegalAccessException, InvocationTargetException {
                 return this.point.getLongitudeDegrees();
             }
         }
 
+        private class WidthProperty extends PropertySupport.ReadOnly<Double> {
 
-        private class WidthProperty extends PropertySupport.ReadOnly<Double>
-        {
             private Box sector;
 
-
-            WidthProperty(Box sector)
-            {
+            WidthProperty(Box sector) {
                 super("width", Double.class, "Sector Width", "Sector width measured in degrees of longitude");
                 this.sector = sector;
             }
 
-
             @Override
-            public Double getValue() throws IllegalAccessException, InvocationTargetException
-            {
+            public Double getValue() throws IllegalAccessException, InvocationTargetException {
                 return this.sector.getWidth().getValue();
             }
         }
 
+        private class HeightProperty extends PropertySupport.ReadOnly<Double> {
 
-        private class HeightProperty extends PropertySupport.ReadOnly<Double>
-        {
             private Box sector;
 
-
-            HeightProperty(Box sector)
-            {
+            HeightProperty(Box sector) {
                 super("height", Double.class, "Sector Height", "Sector width measured in degrees of latitude");
                 this.sector = sector;
             }
 
-
             @Override
-            public Double getValue() throws IllegalAccessException, InvocationTargetException
-            {
+            public Double getValue() throws IllegalAccessException, InvocationTargetException {
                 return this.sector.getWidth().getValue();
             }
         }

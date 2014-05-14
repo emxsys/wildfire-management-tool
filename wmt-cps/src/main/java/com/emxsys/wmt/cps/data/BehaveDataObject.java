@@ -45,91 +45,68 @@ import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 
-
 /**
  * The BehaveDataObject is a specialized NetCdfDataObject that overrides the icon.
  *
  * @author Bruce Schubert
  */
 @Messages(
-    {
-    "LBL_Behave_LOADER=Files of Fire Behavior"
-})
+        {
+            "LBL_Behave_LOADER=Files of Fire Behavior"
+        })
 // Using a complex MIME resolver which overrides default NetCDF .nc extention mimeResolver.
 @MIMEResolver.Registration(
-    displayName = "#LBL_Behave_LOADER",
-    resource = "FiregroundResolver.xml",
-    position = 1100)
+        displayName = "#LBL_Behave_LOADER",
+        resource = "FiregroundResolver.xml",
+        position = 1100)
 @DataObject.Registration(
-    mimeType = "application/x-fire_behavior",
-    iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
-    displayName = "#LBL_Behave_LOADER",
-    position = 1100)
-@ActionReferences(
-    {
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-        position = 100,
-        separatorAfter = 200),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-        position = 300),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-        position = 400,
-        separatorAfter = 500),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-        position = 600),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-        position = 700,
-        separatorAfter = 800),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
-        position = 900,
-        separatorAfter = 1000),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
-        position = 1100,
-        separatorAfter = 1200),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
-        position = 1300),
-    @ActionReference(
-        path = "Loaders/application/x-fire_behavior/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-        position = 1400)
+        mimeType = "application/x-fire_behavior",
+        iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
+        displayName = "#LBL_Behave_LOADER",
+        position = 1100)
+@ActionReferences({
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
+            position = 900,
+            separatorAfter = 1000),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
+            position = 1100,
+            separatorAfter = 1200),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+            position = 1300),
+    @ActionReference(path = "Loaders/application/x-fire_behavior/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
 })
-public class BehaveDataObject extends NetCdfDataObject
-{
+public class BehaveDataObject extends NetCdfDataObject {
+
     private static final long serialVersionUID = 20130506L;
     private static final Logger logger = Logger.getLogger(BehaveDataObject.class.getName());
     private static final RequestProcessor EXECUTOR = new RequestProcessor(BehaveDataObject.class);
 
-
-    static
-    {
+    static {
         logger.setLevel(Level.ALL);
     }
-
 
     /**
      * Constructor that proxies the cookieSet lookup with a dynamic lookup containing the FlatField.
@@ -142,16 +119,13 @@ public class BehaveDataObject extends NetCdfDataObject
      * @throws IOException
      */
     public BehaveDataObject(FileObject primaryFile, MultiFileLoader loader) throws
-        DataObjectExistsException, IOException
-    {
+            DataObjectExistsException, IOException {
         super(primaryFile, loader);
         registerEditor("application/x-fire_behavior", false);
     }
 
-
     @Override
-    protected Node createNodeDelegate()
-    {
+    protected Node createNodeDelegate() {
         return new BehaveDataNode(this, super.lookup); // Don't call super.getLookup() else recursion
     }
 }

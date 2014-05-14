@@ -45,16 +45,15 @@ import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 
-
 /**
  * The WeatherDataObject is a specialized NetCdfDataObject that overrides the icon.
  *
  * @author Bruce Schubert
  */
 @Messages(
-    {
-    "LBL_Weather_LOADER=Files of Weather"
-})
+        {
+            "LBL_Weather_LOADER=Files of Weather"
+        })
 // Using a complex MIME resolver instead of the extension registration below
 // Also, the position is set to override default NetCDF .nc extention mimeResolver.
 //@MIMEResolver.ExtensionRegistration(
@@ -62,79 +61,57 @@ import org.openide.util.RequestProcessor;
 //    mimeType = "application/x-weather",
 //    extension = {".nc"})
 @MIMEResolver.Registration(
-    displayName = "#LBL_Weather_LOADER",
-    resource = "FiregroundResolver.xml",
-    position = 1700)
+        displayName = "#LBL_Weather_LOADER",
+        resource = "FiregroundResolver.xml",
+        position = 1700)
 @DataObject.Registration(
-    mimeType = "application/x-weather",
-    iconBase = "com/emxsys/wmt/cps/images/sun_clouds.png",
-    displayName = "#LBL_Weather_LOADER",
-    position = 1700)
-@ActionReferences(
-    {
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-        position = 100,
-        separatorAfter = 200),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-        position = 300),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-        position = 400,
-        separatorAfter = 500),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-        position = 600),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-        position = 700,
-        separatorAfter = 800),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
-        position = 900,
-        separatorAfter = 1000),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
-        position = 1100,
-        separatorAfter = 1200),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
-        position = 1300),
-    @ActionReference(
-        path = "Loaders/application/x-weather/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-        position = 1400)
+        mimeType = "application/x-weather",
+        iconBase = "com/emxsys/wmt/cps/images/sun_clouds.png",
+        displayName = "#LBL_Weather_LOADER",
+        position = 1700)
+@ActionReferences({
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
+            position = 900,
+            separatorAfter = 1000),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
+            position = 1100,
+            separatorAfter = 1200),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+            position = 1300),
+    @ActionReference(path = "Loaders/application/x-weather/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
 })
-public class WeatherDataObject extends NetCdfDataObject
-{
+public class WeatherDataObject extends NetCdfDataObject {
+
     private static final long serialVersionUID = 20130506L;
     private static final Logger logger = Logger.getLogger(WeatherDataObject.class.getName());
     private static final RequestProcessor EXECUTOR = new RequestProcessor(WeatherDataObject.class);
 
-
-    static
-    {
+    static {
         logger.setLevel(Level.ALL);
     }
-
 
     /**
      * Constructor that proxies the cookieSet lookup with a dynamic lookup containing the FlatField.
@@ -147,16 +124,13 @@ public class WeatherDataObject extends NetCdfDataObject
      * @throws IOException
      */
     public WeatherDataObject(FileObject primaryFile, MultiFileLoader loader) throws
-        DataObjectExistsException, IOException
-    {
+            DataObjectExistsException, IOException {
         super(primaryFile, loader);
         registerEditor("application/x-weather", false);
     }
 
-
     @Override
-    protected Node createNodeDelegate()
-    {
+    protected Node createNodeDelegate() {
         return new WeatherDataNode(this, super.lookup); // Don't call super.getLookup() else recursion
     }
 }

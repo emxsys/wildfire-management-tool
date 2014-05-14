@@ -39,55 +39,46 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import org.openide.util.Lookup;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BehaveDataNode.java 689 2013-05-27 15:29:33Z bdschubert $
  */
-public class BehaveDataNode extends NetCdfDataNode
-{
+public class BehaveDataNode extends NetCdfDataNode {
 
     private BehaveDataObject behaveDataObject;
-    
+
     /**
      * Constructor for a Node representing a Weather NetCDF file.
      *
      * @param dataObject for a FlatField that backs this node
      * @param cookieSet the DataObject's cookieSet that manages the SaveCookie capability
      */
-    public BehaveDataNode(BehaveDataObject dataObject, Lookup cookieSet)
-    {
+    public BehaveDataNode(BehaveDataObject dataObject, Lookup cookieSet) {
         super(dataObject, cookieSet);
         this.behaveDataObject = dataObject;
     }
-    
-    
+
     @Override
-    public Action[] getActions(boolean context)
-    {
+    public Action[] getActions(boolean context) {
         LinkedList<Action> actions = new LinkedList<>();
         Collections.addAll(actions, super.getActions(context)); // base actions
 
         // TODO: insert this nodes actions into the collection
-        actions.addFirst(new AbstractAction("Visualize!")
-        {
+        actions.addFirst(new AbstractAction("Visualize!") {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 BehaveAnalyticsPrototype.visualize(behaveDataObject, WildfireType.FLAME_LENGTH_SI);
             }
         });
-        actions.addFirst(new AbstractAction("Animate!")
-        {
+        actions.addFirst(new AbstractAction("Animate!") {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                BehaveAnalyticsPrototype.animate(behaveDataObject, 
-                    WildfireType.DIR_OF_SPREAD, WildfireType.RATE_OF_SPREAD_SI, WildfireType.FLAME_LENGTH_SI);
+            public void actionPerformed(ActionEvent e) {
+                BehaveAnalyticsPrototype.animate(behaveDataObject,
+                        WildfireType.DIR_OF_SPREAD, WildfireType.RATE_OF_SPREAD_SI, WildfireType.FLAME_LENGTH_SI);
             }
         });
-        
+
         Action[] allActions = new Action[0];
         return actions.toArray(allActions);
     }
