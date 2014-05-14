@@ -92,7 +92,7 @@ public class WmtProject implements Project {
     public static final String SCENE_FOLDER_NAME = "scenes"; //NOI18N
     public static final String SYMBOLOGY_FOLDER_NAME = "symbology"; //NOI18N
     public static final String FIREGROUND_FOLDER_NAME = "fireground";  //NOI18N
-    public static final String FIREGROUND_FILENAME = "fireground";  //NOI18N
+    public static final String FIREGROUND_FILENAME = "fireground.xml";  //NOI18N
     public static final String STARTUP_LATITUDE = "startupLatitudeDegrees"; //NOI18N
     public static final String STARTUP_LONGITUDE = "startupLongitudeDegrees"; //NOI18N
     public static final boolean CREATE_IF_MISSING = true;
@@ -121,9 +121,6 @@ public class WmtProject implements Project {
         IDLE, COPYING, DELETING, MOVING, RENAMING
     };
 
-    static {
-        logger.setLevel(Level.ALL);
-    }
 
     /**
      * Lightweight constructor. Heavyweight operations are deferred to the ProjectOpenHook.
