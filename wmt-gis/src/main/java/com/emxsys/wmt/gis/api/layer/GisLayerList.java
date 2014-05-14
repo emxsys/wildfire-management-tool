@@ -50,9 +50,7 @@ public class GisLayerList implements Lookup.Provider {
     private final AbstractLookup lookup = new AbstractLookup(content);
     private static final Logger logger = Logger.getLogger(GisLayerList.class.getName());
 
-    static {
-//        logger.setLevel(Level.ALL);
-    }
+
 
     public GisLayerList() {
     }

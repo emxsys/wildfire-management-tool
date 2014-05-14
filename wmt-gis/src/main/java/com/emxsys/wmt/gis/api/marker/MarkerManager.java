@@ -69,9 +69,7 @@ public class MarkerManager extends EntityCatalog<Marker> {
     private final ArrayList<Marker> pendingAdds = new ArrayList<>();
     private static final Logger logger = Logger.getLogger(MarkerManager.class.getName());
 
-    static {
-        logger.setLevel(Level.ALL);
-    }
+
     /**
      * Constructs a EntityCatalog who's contents are backed by a folder.
      *
