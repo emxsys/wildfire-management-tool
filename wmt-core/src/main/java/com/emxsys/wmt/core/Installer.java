@@ -30,26 +30,74 @@
 package com.emxsys.wmt.core;
 
 import com.emxsys.wmt.core.project.CurrentProjectTracker;
+import com.emxsys.wmt.core.welcome.WelcomeComponent;
+import com.emxsys.wmt.core.welcome.WelcomeOptions;
+import com.emxsys.wmt.core.welcome.FeedbackSurvey;
+import java.util.Set;
 import org.openide.modules.ModuleInstall;
+import org.openide.windows.Mode;
+import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
+import org.openide.windows.WindowSystemEvent;
+import org.openide.windows.WindowSystemListener;
 
 public class Installer extends ModuleInstall {
 
     @Override
-    public void restored()
-    {
-        
-        WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+    public void restored() {
 
+        WindowManager.getDefault().invokeWhenUIReady(() -> {
+            // Install component that tracks the current project and updates the global lookup
+            CurrentProjectTracker.getDefault();
+            
+            // Launch feedback survey...if its active
+            FeedbackSurvey.start();
+        });
+
+        // Show the Welcome Screen/Start Page
+        WindowManager.getDefault().addWindowSystemListener(new WindowSystemListener() {
+            @Override
+            public void beforeLoad(WindowSystemEvent event) {
+            }
 
             @Override
-            public void run()
-            {
-                // Initialize a CurrentProjectTracker instance...getDefault() forces the lookup for a 
-                // service provider, and if not found creates a BasicProjectAssistant instance.
-                CurrentProjectTracker.getDefault();
+            public void afterLoad(WindowSystemEvent event) {
+            }
+
+            @Override
+            public void beforeSave(WindowSystemEvent event) {
+                WindowManager.getDefault().removeWindowSystemListener(this);
+                WelcomeComponent topComp = null;
+                boolean isEditorShowing = false;
+                Set<TopComponent> tcs = TopComponent.getRegistry().getOpened();
+                for (Mode mode : WindowManager.getDefault().getModes()) {
+                    TopComponent tc = mode.getSelectedTopComponent();
+                    if (tc instanceof WelcomeComponent) {
+                        topComp = (WelcomeComponent) tc;
+                    }
+                    if (null != tc && WindowManager.getDefault().isEditorTopComponent(tc)) {
+                        isEditorShowing = true;
+                    }
+                }
+                if (WelcomeOptions.getDefault().isShowOnStartup() && isEditorShowing) {
+                    if (topComp == null) {
+                        topComp = WelcomeComponent.findComp();
+                    }
+                    //activate welcome screen at shutdown to avoid editor initialization
+                    //before the welcome screen is activated again at startup
+                    topComp.open();
+                    topComp.requestActive();
+                }
+                else if (topComp != null) {
+                    topComp.close();
+                }
+            }
+
+            @Override
+            public void afterSave(WindowSystemEvent event) {
             }
         });
+
     }
 
 }

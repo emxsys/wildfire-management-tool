@@ -145,6 +145,11 @@
             <scope>runtime</scope>
         </dependency>
         <!--Other Dependencies-->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
