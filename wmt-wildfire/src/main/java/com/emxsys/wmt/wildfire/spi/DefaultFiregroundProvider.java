@@ -68,7 +68,7 @@ public class DefaultFiregroundProvider implements FiregroundProvider {
             if (instance == null) {
                 instance = new DefaultFiregroundProvider();
             }
-            LOG.log(Level.INFO, "getInstance() returning a {0}", instance.getClass().getName());
+            LOG.log(Level.CONFIG, "Providing a {0} instance.", instance.getClass().getName());
             return instance;
         }
     }

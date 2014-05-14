@@ -32,13 +32,27 @@ package com.emxsys.wmt.wildfire.api;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface FiregroundProvider
-{
+public interface FiregroundProvider {
+
+    /**
+     * Gets a Fireground DataObject from the registered loader of the give filename.
+     *
+     * @param folder The folder where fireground file resides
+     * @param filename of the fireground file
+     * @return DataObject representing the fireground
+     */
     DataObject getFiregroundDataObject(FileObject folder, String name);
+
+    /**
+     * Creates a new Fireground DataObject from the registered loader of the supplied file.
+     *
+     * @param folder where fireground file resides
+     * @param name of the fireground file
+     * @return DataObject representing the fireground
+     */
     DataObject newFiregroundDataObject(FileObject folder, String name);
 }
