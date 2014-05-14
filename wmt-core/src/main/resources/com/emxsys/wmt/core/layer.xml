@@ -2,6 +2,7 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Ribbon">
+        <!--Establish or Override positions from Terrament-->
         <folder name="TaskPanes">
             <folder name="AnnotationTools">
                 <attr name="position" intvalue="1001"/>                
@@ -10,6 +11,10 @@
                 <attr name="position" intvalue="2001"/>                
             </folder>
         </folder>
+        <folder name="AppMenu">
+            <!--NetBeans CloseProject action is replaced by a WMT action -->
+            <file name="org-netbeans-modules-project-ui-CloseProject.shadow_hidden"/>
+        </folder> 
     </folder> 
     <folder name="Menu">
         <folder name="Home">
@@ -202,14 +207,20 @@
         <folder name="Window">
             <file name="GroupsMenuAction.shadow_hidden"/>
             <folder name="Show">
-                <!--Start/Welcome Page -->
-                <file name="com-emxsys-welcome-ShowWelcomeAction.shadow">
-                    <attr name="position" intvalue="4015"/>
-                    <attr name="priority" stringvalue="medium"/>
-                    <attr name="originalFile" stringvalue="Actions/Help/com-emxsys-welcome-ShowWelcomeAction.instance"/>
-                    <attr name="iconBase" stringvalue="com/emxsys/welcome/resources/welcome.gif"/>
-                    <attr name="menuText" bundlevalue="com.emxsys.welcome.Bundle#LBL_Action"/>
+                <!--NetBeans Projects action is replaced by a WMT action -->
+                <file name="org-netbeans-modules-project-ui-logical-tab-action.shadow_hidden"/>
+                <!--NetBeans Files action is replaced by a WMT action -->
+                <file name="org-netbeans-modules-project-ui-physical-tab-action.shadow_hidden"/>
+                <!--Override priority for Favorites action -->
+                <file name="org-netbeans-modules-favorites-View.shadow">
+                    <attr name="position" intvalue="2300"/>
+                    <attr name="priority" stringvalue="top"/>
                 </file>
+                <file name="Separator1.instance">
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                    <attr name="position" intvalue="3000"/>
+                </file>
+                <!--Welcome/Start Page goes here, after separator-->
             </folder>
         </folder>
     </folder>
@@ -221,23 +232,5 @@
         <file name="Keymaps.instance_hidden"/>
     </folder>
     
-    <!--RIBBON Menu-->
-    <folder name="Ribbon">
-        <!--FILE Tab (Application Menu-->
-        <folder name="AppMenu">
-            <!--Close actions-->
-            <file name="org-netbeans-modules-project-ui-CloseProject.shadow_hidden"/>
-            <!-- <file name="org-netbeans-modules-project-ui-CloseProject.shadow">
-                <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-CloseProject.instance"/>
-                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CloseProject"/>
-                <attr name="position" intvalue="700"/>
-            </file>-->
-<!--            <file name="com-emxsys-wmt-core-actions-CloseProjectAction.shadow">
-                <attr name="originalFile" stringvalue="Actions/File/com-emxsys-wmt-core-actions-CloseProjectAction.instance"/>
-                <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_CloseProject"/>
-                <attr name="position" intvalue="700"/>
-            </file>-->
-        </folder>
-    </folder>
-   
+    
 </filesystem>
