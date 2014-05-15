@@ -433,7 +433,6 @@ public class WmtProject implements Project {
         String lon = this.projectProperties.getProperty(STARTUP_LONGITUDE);
         if (lat != null && lon != null) {
             Coord2D latLon = GeoCoord2D.fromDegrees(Double.parseDouble(lat), Double.parseDouble(lon));
-
             if (latLon.isMissing()) {
                 logger.warning("The startup latitude/longitude is invalid: cannot restore view position."); //NOI18N
                 return;
@@ -444,6 +443,10 @@ public class WmtProject implements Project {
 
     public void saveStartupPosition() {
         Coord3D pos = Globe.getInstance().getLocationAtCenter();
+        if (pos.isMissing()) {
+            logger.warning("Cannot save startup position: Globe.getLocationAtCenter returned a \"missing\" coordinate.");
+            return;
+        }
         this.projectProperties.put(STARTUP_LATITUDE, Double.toString(pos.getLatitudeDegrees()));
         this.projectProperties.put(STARTUP_LONGITUDE, Double.toString(pos.getLongitudeDegrees()));
         WmtProjectFactory.saveProjectProperties(this);
