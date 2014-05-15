@@ -96,6 +96,6 @@ public class SingleFuelModelProvider implements FuelModelProvider {
 
     @Override
     public String toString() {
-        return "SingleFuelModelProvider{" + "box=" + box + ", fuelModel=" + fuelModel+ '}';
+        return "Single Fuel Model [" + getSource() + "]: " + fuelModel;
     }
 }

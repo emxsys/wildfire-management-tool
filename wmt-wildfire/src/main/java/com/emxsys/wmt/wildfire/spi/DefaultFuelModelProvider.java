@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.wildfire.spi;
 
+import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.wildfire.api.FuelModelProvider;
@@ -78,7 +79,7 @@ public class DefaultFuelModelProvider {
                         "System: Std 13");
                 instances.add(provider);
             }
-            logger.log(Level.CONFIG, "Providing Std 13 {0} instances.", SingleFuelModelProvider.class.getName());
+            logger.log(Level.CONFIG, "Providing Std 13 {0} instances.", SingleFuelModelProvider.class.getSimpleName());
             // Add the Standard 40 FuelModels
             for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
                 FuelModelProvider provider = new SingleFuelModelProvider(
@@ -87,13 +88,13 @@ public class DefaultFuelModelProvider {
                         "System: Std 40");
                 instances.add(provider);
             }
-            logger.log(Level.CONFIG, "Providing Std 40 {0} instances.", SingleFuelModelProvider.class.getName());
+            logger.log(Level.CONFIG, "Providing Std 40 {0} instances.", SingleFuelModelProvider.class.getSimpleName());
         }
         return instances;
     }
 
     /**
-     * Gets the FuelModelProvider instances that are valid for the given coordinate.
+     * Gets the FuelModelProvider instances that contain the given coordinate.
      *
      * @param coord The coordinate that will be tested against the provider's extents.
      * @return A collection of FuelModelProvider instances that are valid for the coordinate.
@@ -108,4 +109,23 @@ public class DefaultFuelModelProvider {
                 });
         return providers;
     }
+    
+    /**
+     * Gets the FuelModelProvider instances that intersect the given extents.
+     *
+     * @param extents The box that will be tested for intersection with the provider's extents.
+     * @return A collection of FuelModelProvider instances that are valid for the box.
+     */
+    public static List<FuelModelProvider> getInstances(Box extents)
+    {
+        ArrayList<FuelModelProvider> providers = new ArrayList<>();
+
+        getInstances().stream()
+                .filter((provider) -> (provider.getExtents().intersects(extents)))
+                .forEach((provider) -> {
+                    providers.add(provider);
+                });
+        return providers;
+      }
+    
 }
