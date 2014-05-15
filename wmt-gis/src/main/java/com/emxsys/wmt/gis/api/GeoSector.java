@@ -59,7 +59,13 @@ public class GeoSector extends AbstractGeometry implements Box {
     private Coord2D northeast;
     private final Real ONE_HALF_LAT = new Real(RealType.Latitude, 0.5);
     private final Real ONE_HALF_LON = new Real(RealType.Longitude, 0.5);
-    public static GeoSector INVALID_BOX = new GeoSector();
+    public static GeoSector INVALID = new GeoSector();
+    public static GeoSector WORLD = new GeoSector(-90, -180, 90, 180);
+    public static GeoSector CONUS = new GeoSector(24.396308, -124.848974, 49.384358, -66.885444);
+    public static GeoSector NORTHERN_HEMISPHERE = new GeoSector(0, -180, 90, 180);
+    public static GeoSector SOUTHERN_HEMISPHERE = new GeoSector(-90, -180, 0, 180);
+    public static GeoSector WESTERN_HEMISPHERE = new GeoSector(-90, -180, 90, 0);
+    public static GeoSector EASTERN_HEMISPHERE = new GeoSector(-90, 0, 90, 180);
 
     /**
      * Create a sector with "missing" values.
