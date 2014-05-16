@@ -57,12 +57,18 @@ public interface Fireground
 
     /**
      * Add a geographic bounding box that defines the boundaries of the fireground.
+     * 
+     * @param sector The sector to add.
+     * @param provider The fuel model provider mapped to the sector.
      */
-    void addSector(Box sector, FuelModelProvider fuelModels);
+    void addSector(Box sector, FuelModelProvider provider);
+    
 
 
     /**
      * Remove a geographic bounding box that defines the boundaries of the fireground.
+     * 
+     * @param sector The sector to remove.
      */
     void removeSector(Box sector);
 
@@ -74,7 +80,14 @@ public interface Fireground
      */
     List<Box> getSectors();
 
-
+    /**
+     * Gets the FuelModelProvider associated with the given sector.
+     * 
+     * @param sector The sector to lookup.
+     * @return The FuelModelProvider mapped to the sector.
+     */
+    FuelModelProvider getFuelModelProvider(Box sector);
+    
     /**
      * Fuel model variable inputs within the fireground.
      *
@@ -121,8 +134,9 @@ public interface Fireground
 
 
     /**
-     * Fire behavior observations within the fireground by time of day. return (time -> ((latitude,
-     * longitude) -> (fl, ros, dir)))
+     * Fire behavior observations within the fireground by time of day. 
+     * 
+     * @return (time -> ((latitude, longitude) -> (fl, ros, dir)))
      */
     FlatField getFireSignatures();
 
