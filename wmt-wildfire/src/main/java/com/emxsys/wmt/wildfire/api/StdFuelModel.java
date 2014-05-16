@@ -29,10 +29,11 @@
  */
 package com.emxsys.wmt.wildfire.api;
 
+import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.visad.Reals;
+import com.emxsys.wmt.wildfire.behave.Behave;
 import java.util.*;
 import visad.Real;
-
 
 /**
  * Class responsible for transforming fuel model inputs into SI units used by the Behave class. It
@@ -45,10 +46,9 @@ import visad.Real;
  * @see Behave
  *
  * @author Bruce D. Schubert
- * @version $Id: StdFuelModel.java 729 2013-06-06 15:34:57Z bdschubert $
  */
-public class StdFuelModel implements FuelModel
-{
+public class StdFuelModel implements FuelModel {
+
     /**
      * A non-burnable fuel model representing an INVALID model; Fuel model number: -1
      */
@@ -93,18 +93,15 @@ public class StdFuelModel implements FuelModel
     private Real moistureOfExtinction;
     private Real lowHeatContent;
 
-
-    static
-    {
+    static {
         fuelModels = new HashMap<>();
         fuelModelGroups = new HashSet<>();
         INVALID = new StdFuelModel.Builder(-1, "INVALID", "Invalid Fuel Model",
-            Builder.FUEL_LOAD_ZERO,
-            Builder.SAV_RATIO_ZERO,
-            Builder.FUEL_DEPTH_ZERO,
-            Builder.EXT_MOISTURE_ZERO).build();
+                Builder.FUEL_LOAD_ZERO,
+                Builder.SAV_RATIO_ZERO,
+                Builder.FUEL_DEPTH_ZERO,
+                Builder.EXT_MOISTURE_ZERO).build();
     }
-
 
     /**
      * Returns a FuelModel object matching the fuel model number.
@@ -113,39 +110,30 @@ public class StdFuelModel implements FuelModel
      * of the original '13' or standard '40' fuel model codes.
      * @return null if the FuelModel doesn't exist or cannot be created.
      */
-    public static FuelModel getFuelModel(int fuelModelNo)
-    {
+    public static FuelModel getFuelModel(int fuelModelNo) {
         // First, look for an existing fuel model instance...
         FuelModel fm = fuelModels.get(fuelModelNo);
-        if (fm == null)
-        {
+        if (fm == null) {
             // ... attempt to create a fuel model from one of the fuel model enums
             final String fmt = "FBFM%02d";
             String name = String.format(fmt, fuelModelNo);
-            try
-            {
-                if (fuelModelNo < 100)
-                {
+            try {
+                if (fuelModelNo < 100) {
                     StdFuelModelParams13 params = StdFuelModelParams13.valueOf(name);
                     fm = new Builder(params).build();
-                }
-                else
-                {
+                } else {
                     StdFuelModelParams40 params = StdFuelModelParams40.valueOf(name);
                     fm = new Builder(params).build();
                 }
-            }
-            catch (IllegalArgumentException e)
-            {
+            } catch (IllegalArgumentException e) {
                 // fm remains null if not a valid enum
             }
         }
         return fm;
     }
 
+    public static final class Builder {
 
-    public static final class Builder
-    {
         // -------------------
         // Required parameters
         // -------------------
@@ -179,20 +167,20 @@ public class StdFuelModel implements FuelModel
         static final Real FUEL_DEPTH_ZERO = new Real(WildfireType.FUEL_DEPTH_SI, 0.0);
         static final Real EXT_MOISTURE_ZERO = new Real(WildfireType.MOISTURE_OF_EXTINCTION, 0.0);
 
-
         /**
          * Builder constructor for custom fuel models using just the required Fuel Model parameters.
          *
          * @param fuelModelNo fuel model number [common id]
-         * @param setDead1HrFuelLoad 1-hour dead fuel loading [kg/m2]
-         * @param setDead1HrSAVRatio 1-hour dead fuel surface-area-to-volumne ratio [1/m]
-         * @param setFuelBedDepth fuel bed depth [m]
-         * @param setMoistureOfExtinction Moisture of extinction for dead fuels [percent]
+         * @param modelCode fuel model code
+         * @param modelName fuel model name
+         * @param dead1HrFuelLoad 1-hour dead fuel loading [kg/m2]
+         * @param dead1HrSAVRatio 1-hour dead fuel surface-area-to-volumne ratio [1/m]
+         * @param fuelBedDepth fuel bed depth [m]
+         * @param moistureOfExtinction Moisture of extinction for dead fuels [percent]
          */
         public Builder(int fuelModelNo, String modelCode, String modelName,
-            Real dead1HrFuelLoad, Real dead1HrSAVRatio,
-            Real fuelBedDepth, Real moistureOfExtinction)
-        {
+                       Real dead1HrFuelLoad, Real dead1HrSAVRatio,
+                       Real fuelBedDepth, Real moistureOfExtinction) {
             // Required params
             this.modelNo = fuelModelNo;
             this.modelCode = modelCode;
@@ -214,14 +202,12 @@ public class StdFuelModel implements FuelModel
             this.setHeatContent(HEAT_CONTENT_US);
         }
 
-
         /**
          * Fuel model builder from the one of original '13' fuel models
          *
          * @param fbfm - "fire behavior fuel model" enum representing a LANDFIRE code
          */
-        public Builder(StdFuelModelParams13 fbfm)
-        {
+        public Builder(StdFuelModelParams13 fbfm) {
             // Note: The 13 standard fuel models don't have separate live
             // herbaceus and live woody fuel components, just live fuel.
             // Upon examination of all of the nffl property input files created
@@ -247,14 +233,12 @@ public class StdFuelModel implements FuelModel
             this.setDead100HrSAVRatio(SAV_RATIO_100HR_US);
         }
 
-
         /**
          * Fuel model builder from the one of new fuel models defined by Scott and Burgan.
          *
          * @param fbfm "fire behavior fuel model" enum representing a LANDFIRE code
          */
-        public Builder(StdFuelModelParams40 fbfm)
-        {
+        public Builder(StdFuelModelParams40 fbfm) {
             this.setDead1HrFuelLoad(fbfm.getDead1HrFuelLoad());
             this.setDead10HrFuelLoad(fbfm.getDead10HrFuelLoad());
             this.setDead100HrFuelLoad(fbfm.getDead100HrFuelLoad());
@@ -275,150 +259,117 @@ public class StdFuelModel implements FuelModel
             this.setDead100HrSAVRatio(SAV_RATIO_100HR_US);
         }
 
-
         /**
-         * 1 hour dead fuel loading [kg/m2]
+         * @param fuelLoad 1 hour dead fuel loading [kg/m2]
          */
-        public void setDead1HrFuelLoad(Real fuelLoad)
-        {
+        public void setDead1HrFuelLoad(Real fuelLoad) {
             this.dead1HrFuelLoad = Reals.convertTo(WildfireType.FUEL_LOAD_SI, fuelLoad);
         }
 
-
         /**
-         * 10 hour dead fuel loading [kg/m2]
+         * @param fuelLoad 10 hour dead fuel loading [kg/m2]
          */
-        public void setDead10HrFuelLoad(Real fuelLoad)
-        {
+        public void setDead10HrFuelLoad(Real fuelLoad) {
             this.dead10HrFuelLoad = Reals.convertTo(WildfireType.FUEL_LOAD_SI, fuelLoad);
         }
 
-
         /**
-         * 100 hour dead fuel loading [kg/m2]
+         * @param fuelLoad 100 hour dead fuel loading [kg/m2]
          */
-        public void setDead100HrFuelLoad(Real fuelLoad)
-        {
+        public void setDead100HrFuelLoad(Real fuelLoad) {
             this.dead100HrFuelLoad = Reals.convertTo(WildfireType.FUEL_LOAD_SI, fuelLoad);
         }
 
-
         /**
-         * Live herbatious fuel loading [kg/m2]
+         * @param fuelLoad Live herbatious fuel loading [kg/m2]
          */
-        public void setLiveHerbFuelLoad(Real fuelLoad)
-        {
+        public void setLiveHerbFuelLoad(Real fuelLoad) {
             this.liveHerbFuelLoad = Reals.convertTo(WildfireType.FUEL_LOAD_SI, fuelLoad);
         }
 
-
         /**
-         * Live woody fuel loading [kg/m2]
+         * @param fuelLoad Live woody fuel loading [kg/m2]
          */
-        public void setLiveWoodyFuelLoad(Real fuelLoad)
-        {
+        public void setLiveWoodyFuelLoad(Real fuelLoad) {
             this.liveWoodyFuelLoad = Reals.convertTo(WildfireType.FUEL_LOAD_SI, fuelLoad);
         }
 
-
         /**
-         * Dead 1Hr fuel surface-area-to-volumne ratio [1/m]
+         * @param savRatio Dead 1Hr fuel surface-area-to-volumne ratio [1/m]
          */
-        public void setDead1HrSAVRatio(Real savRatio)
-        {
+        public void setDead1HrSAVRatio(Real savRatio) {
             this.dead1HrSAVRatio = Reals.convertTo(WildfireType.SAV_RATIO_SI, savRatio);
         }
 
-
         /**
-         * Dead 1Hr fuel surface-area-to-volumne ratio [1/m]
+         * @param savRatio Dead 1Hr fuel surface-area-to-volumne ratio [1/m]
          */
-        public void setDead10HrSAVRatio(Real savRatio)
-        {
+        public void setDead10HrSAVRatio(Real savRatio) {
             this.dead10HrSAVRatio = Reals.convertTo(WildfireType.SAV_RATIO_SI, savRatio);
         }
 
-
         /**
-         * Dead 1Hr fuel surface-area-to-volumne ratio [1/m]
+         * @param savRatio Dead 1Hr fuel surface-area-to-volumne ratio [1/m]
          */
-        public void setDead100HrSAVRatio(Real savRatio)
-        {
+        public void setDead100HrSAVRatio(Real savRatio) {
             this.dead100HrSAVRatio = Reals.convertTo(WildfireType.SAV_RATIO_SI, savRatio);
         }
 
-
         /**
-         * Live herbatious fuel surface-area-to-volumne ratio [1/m]
+         * @param savRatio Live herbatious fuel surface-area-to-volumne ratio [1/m]
          */
-        public void setLiveHerbSAVRatio(Real savRatio)
-        {
+        public void setLiveHerbSAVRatio(Real savRatio) {
             this.liveHerbSAVRatio = Reals.convertTo(WildfireType.SAV_RATIO_SI, savRatio);
         }
 
-
         /**
-         * Live woody fuel loading surface-area-to-volumne ratio [1/m]
+         * @param savRatio Live woody fuel loading surface-area-to-volumne ratio [1/m]
          */
-        public void setLiveWoodySAVRatio(Real savRatio)
-        {
+        public void setLiveWoodySAVRatio(Real savRatio) {
             this.liveWoodySAVRatio = Reals.convertTo(WildfireType.SAV_RATIO_SI, savRatio);
         }
 
-
         /**
-         * fuel bed depth [m]
+         * @param depth fuel bed depth [m]
          */
-        public void setFuelBedDepth(Real depth)
-        {
+        public void setFuelBedDepth(Real depth) {
             this.fuelBedDepth = Reals.convertTo(WildfireType.FUEL_DEPTH_SI, depth);
         }
 
-
         /**
-         * moisture of extinction [%]
+         * @param percent moisture of extinction [%]
          */
-        public void setMoistureOfExtinction(Real percent)
-        {
+        public void setMoistureOfExtinction(Real percent) {
             this.moistureOfExtinction = Reals.convertTo(WildfireType.MOISTURE_OF_EXTINCTION, percent);
         }
 
-
         /**
-         * low heat content [kJ/kg]
+         * @param heat low heat content [kJ/kg]
          */
-        public void setHeatContent(Real heat)
-        {
+        public void setHeatContent(Real heat) {
             this.heatContent = Reals.convertTo(WildfireType.HEAT_SI, heat);
         }
 
-
         /**
-         * Fuel model type
+         * @param isDynamic Fuel model type
          */
-        public void setDynamic(boolean isDynamic)
-        {
+        public void setDynamic(boolean isDynamic) {
             this.dynamic = isDynamic;
         }
 
-
         /**
-         * fuel model code
+         * @param modelCode Fuel model code
          */
-        public void setModelCode(String modelCode)
-        {
+        public void setModelCode(String modelCode) {
             this.modelCode = modelCode;
         }
 
-
         /**
-         * fuel type complex
+         * @param modelName fuel type complex
          */
-        public void setModelName(String modelName)
-        {
+        public void setModelName(String modelName) {
             this.modelName = modelName;
         }
-
 
         /**
          * Build a Fuel Model
@@ -426,20 +377,18 @@ public class StdFuelModel implements FuelModel
          * @return a fuel model ready for use
          * @throws IllegalStateException
          */
-        public StdFuelModel build()
-        {
+        public StdFuelModel build() {
             return new StdFuelModel(this);
         }
     }
-
 
     /**
      * Private constructor called by Builder
      *
      * @param builder
      */
-    private StdFuelModel(Builder builder)
-    {
+    @SuppressWarnings("LeakingThisInConstructor")
+    private StdFuelModel(Builder builder) {
         // Init members
         this.dead100HrFuelLoad = builder.dead100HrFuelLoad;
         this.dead10HrFuelLoad = builder.dead10HrFuelLoad;
@@ -465,211 +414,173 @@ public class StdFuelModel implements FuelModel
         fuelModelGroups.add(modelGroup);
     }
 
-
     /**
      * fuel model number
      */
     @Override
-    public int getModelNo()
-    {
+    public int getModelNo() {
         return this.modelNo;
     }
-
 
     /**
      * fuel model code
      */
     @Override
-    public String getModelCode()
-    {
+    public String getModelCode() {
         return this.modelCode;
     }
-
 
     /**
      * fuel type complex
      */
     @Override
-    public String getModelName()
-    {
+    public String getModelName() {
         return this.modelName;
     }
-
 
     /**
      * fuel type group
      */
     @Override
-    public String getModelGroup()
-    {
+    public String getModelGroup() {
         return this.modelGroup;
     }
-
 
     /**
      * 1 hour dead fuel loading [kg/m2]
      */
     @Override
-    public Real getDead1HrFuelLoad()
-    {
+    public Real getDead1HrFuelLoad() {
         return this.dead1HrFuelLoad;
     }
-
 
     /**
      * 10 hour dead fuel loading [kg/m2]
      */
     @Override
-    public Real getDead10HrFuelLoad()
-    {
+    public Real getDead10HrFuelLoad() {
         return this.dead10HrFuelLoad;
     }
-
 
     /**
      * 100 hour dead fuel loading [kg/m2]
      */
     @Override
-    public Real getDead100HrFuelLoad()
-    {
+    public Real getDead100HrFuelLoad() {
         return this.dead100HrFuelLoad;
     }
-
 
     /**
      * Live herbatious fuel loading [kg/m2]
      */
     @Override
-    public Real getLiveHerbFuelLoad()
-    {
+    public Real getLiveHerbFuelLoad() {
         return this.liveHerbFuelLoad;
     }
-
 
     /**
      * Live woody fuel loading [kg/m2]
      */
     @Override
-    public Real getLiveWoodyFuelLoad()
-    {
+    public Real getLiveWoodyFuelLoad() {
         return this.liveWoodyFuelLoad;
     }
-
 
     /**
      * Fuel model type
      */
     @Override
-    public boolean isDynamic()
-    {
+    public boolean isDynamic() {
         return this.dynamic;
     }
-
 
     /**
      * 1 hour dead fuel surface-area-to-volumne ratio [1/m]
      */
     @Override
-    public Real getDead1HrSAVRatio()
-    {
+    public Real getDead1HrSAVRatio() {
         return this.dead1HrSAVRatio;
     }
-
 
     /**
      * 10 hour dead fuel surface-area-to-volumne ratio [1/m]
      */
     @Override
-    public Real getDead10HrSAVRatio()
-    {
+    public Real getDead10HrSAVRatio() {
         return this.dead10HrSAVRatio;
     }
-
 
     /**
      * 100 hour dead fuel surface-area-to-volumne ratio [1/m]
      */
     @Override
-    public Real getDead100HrSAVRatio()
-    {
+    public Real getDead100HrSAVRatio() {
         return this.dead100HrSAVRatio;
     }
-
 
     /**
      * Live herbatious fuel surface-area-to-volumne ratio [1/m]
      */
     @Override
-    public Real getLiveHerbSAVRatio()
-    {
+    public Real getLiveHerbSAVRatio() {
         return this.liveHerbSAVRatio;
     }
-
 
     /**
      * Live woody fuel loading surface-area-to-volumne ratio [1/m]
      */
     @Override
-    public Real getLiveWoodySAVRatio()
-    {
+    public Real getLiveWoodySAVRatio() {
         return this.liveWoodySAVRatio;
     }
-
 
     /**
      * Fuel bed depth [meters]
      */
     @Override
-    public Real getFuelBedDepth()
-    {
+    public Real getFuelBedDepth() {
         return this.fuelBedDepth;
     }
-
 
     /**
      * Moisture of extinction for dead fuels [percent]. This is the value of fuel moisture content
      * for which a fire would not spread.
      */
     @Override
-    public Real getMoistureOfExtinction()
-    {
+    public Real getMoistureOfExtinction() {
         return this.moistureOfExtinction;
     }
-
 
     /**
      * Heat content [kJ/kg]
      */
     @Override
-    public Real getLowHeatContent()
-    {
+    public Real getLowHeatContent() {
         return this.lowHeatContent;
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "[" + this.modelNo + "] " + this.modelCode + " - " + this.modelName;
     }
 
-
-    public String toLongString()
-    {
+    public String toLongString() {
         return "[" + this.modelNo + "] " + this.modelCode + " - " + this.modelName
-            + "\n 1Hr Load:   " + this.getDead1HrFuelLoad().toValueString()
-            + "\n 10Hr Load:  " + this.getDead10HrFuelLoad().toValueString()
-            + "\n 100Hr Load: " + this.getDead100HrFuelLoad().toValueString()
-            + "\n Herb Load:  " + this.getLiveHerbFuelLoad().toValueString()
-            + "\n Woody Load: " + this.getLiveWoodyFuelLoad().toValueString()
-            + "\n 1Hr SAV:    " + this.getDead1HrSAVRatio().toValueString()
-            + "\n 10Hr SAV:   " + this.getDead10HrSAVRatio().toValueString()
-            + "\n 100Hr SAV:  " + this.getDead100HrSAVRatio().toValueString()
-            + "\n Herb SAV:   " + this.getLiveHerbSAVRatio().toValueString()
-            + "\n Woody SAV:  " + this.getLiveWoodySAVRatio().toValueString()
-            + "\n Extinction: " + this.getMoistureOfExtinction().toValueString()
-            + "\n Fuel Bed Depth:   " + this.getFuelBedDepth().toValueString()
-            + "\n Low Heat Content: " + this.getLowHeatContent().toValueString();
+                + "\n 1Hr Load:   " + this.getDead1HrFuelLoad().toValueString()
+                + "\n 10Hr Load:  " + this.getDead10HrFuelLoad().toValueString()
+                + "\n 100Hr Load: " + this.getDead100HrFuelLoad().toValueString()
+                + "\n Herb Load:  " + this.getLiveHerbFuelLoad().toValueString()
+                + "\n Woody Load: " + this.getLiveWoodyFuelLoad().toValueString()
+                + "\n 1Hr SAV:    " + this.getDead1HrSAVRatio().toValueString()
+                + "\n 10Hr SAV:   " + this.getDead10HrSAVRatio().toValueString()
+                + "\n 100Hr SAV:  " + this.getDead100HrSAVRatio().toValueString()
+                + "\n Herb SAV:   " + this.getLiveHerbSAVRatio().toValueString()
+                + "\n Woody SAV:  " + this.getLiveWoodySAVRatio().toValueString()
+                + "\n Extinction: " + this.getMoistureOfExtinction().toValueString()
+                + "\n Fuel Bed Depth:   " + this.getFuelBedDepth().toValueString()
+                + "\n Low Heat Content: " + this.getLowHeatContent().toValueString();
 
     }
+
+
 }
