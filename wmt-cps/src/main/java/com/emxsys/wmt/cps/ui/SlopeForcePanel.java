@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps;
+package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.wmt.cps.charts.ChartUtil;
 import com.emxsys.wmt.gis.api.Terrain;
@@ -42,8 +42,8 @@ import org.jfree.data.general.DefaultValueDataset;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * The SlopePanel depicts the terrain's aspect and slope with a compass chart and dial chart
- * respectively. Slope is one of the primary forces in the CPS assessment of fire behavior.
+ * The SlopeForcePanel depicts the terrain's aspect and slope with a compass chart and dial chart
+ respectively. Slope is one of the primary forces in the CPS assessment of fire behavior.
  *
  * @author Bruce Schubert
  */
@@ -54,16 +54,16 @@ import org.openide.util.NbBundle.Messages;
     "CTL_SlopeChartTitle={0}% Grade",
     "# {0} - degrees",
     "CTL_SlopeChartSubTitle={0}° Slope",})
-public class SlopePanel extends javax.swing.JPanel {
+public class SlopeForcePanel extends javax.swing.JPanel {
 
-    private static final Logger logger = Logger.getLogger(SlopePanel.class.getName());
+    private static final Logger logger = Logger.getLogger(SlopeForcePanel.class.getName());
     private JFreeChart aspectChart;
     private JFreeChart slopeChart;
 
     /**
      * Creates new form SlopePanel
      */
-    public SlopePanel() {
+    public SlopeForcePanel() {
         initComponents();
         createCharts();
     }
@@ -113,7 +113,7 @@ public class SlopePanel extends javax.swing.JPanel {
         aspectPanel = new javax.swing.JPanel();
         slopePanel = new javax.swing.JPanel();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(SlopePanel.class, "SlopePanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(SlopeForcePanel.class, "SlopeForcePanel.border.title"))); // NOI18N
 
         aspectPanel.setLayout(new javax.swing.BoxLayout(aspectPanel, javax.swing.BoxLayout.LINE_AXIS));
 

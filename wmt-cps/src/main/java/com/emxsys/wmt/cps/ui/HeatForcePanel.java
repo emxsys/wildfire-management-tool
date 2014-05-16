@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps;
+package com.emxsys.wmt.cps.ui;
 
 import static com.emxsys.wmt.cps.charts.CompassClockPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.wmt.cps.charts.CompassClockPlot.WIND_NEEDLE;
@@ -47,14 +47,14 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The HeatPanel depicts the direction of the sun's rays onto the terrain and shows the surface
- * temperature of the fuels. The panel listens to the application time and the reticule coordinate.
+ * The HeatForcePanel depicts the direction of the sun's rays onto the terrain and shows the surface
+ temperature of the fuels. The panel listens to the application time and the reticule coordinate.
  *
  * @author Bruce Schubert
  */
 @NbBundle.Messages({
     "CTL_PreheatChartTitle=Solar Heating",})
-public class HeatPanel extends javax.swing.JPanel {
+public class HeatForcePanel extends javax.swing.JPanel {
 
     private JFreeChart solarChart;
     private final int AZIMUTH_SERIES = 0;
@@ -63,7 +63,7 @@ public class HeatPanel extends javax.swing.JPanel {
     /**
      * Creates new form PreheatPanel
      */
-    public HeatPanel() {
+    public HeatForcePanel() {
         initComponents();
         createCharts();
     }
@@ -163,7 +163,7 @@ public class HeatPanel extends javax.swing.JPanel {
 
         solarPanel = new javax.swing.JPanel();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(HeatPanel.class, "HeatPanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(HeatForcePanel.class, "HeatForcePanel.border.title"))); // NOI18N
 
         solarPanel.setLayout(new javax.swing.BoxLayout(solarPanel, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -171,11 +171,15 @@ public class HeatPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(solarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(solarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(solarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(solarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

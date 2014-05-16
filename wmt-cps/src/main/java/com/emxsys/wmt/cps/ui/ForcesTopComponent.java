@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps;
+package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.Terrain;
@@ -43,14 +43,17 @@ import visad.Real;
 /**
  * Top component which displays the CPS Primary Forces.
  */
-@ConvertAsProperties(dtd = "-//com.emxsys.wmt.cps//Forces//EN", autostore = false)
+@ConvertAsProperties(dtd = "-//com.emxsys.wmt.cps.ui//Forces//EN", autostore = false)
 @TopComponent.Description(
         preferredID = ForcesTopComponent.PREFERRED_ID,
         iconBase = "com/emxsys/wmt/cps/images/cps-icon.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+@TopComponent.OpenActionRegistration(
+        displayName = "#CTL_ForcesAction",
+        preferredID = ForcesTopComponent.PREFERRED_ID
+)
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
-
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ForcesTopComponent")
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ui.ForcesTopComponent")
 @RibbonActionReference(path = "Menu/Window/Show",
         position = 200,
         priority = "top",
@@ -70,16 +73,12 @@ import visad.Real;
     + "the primary forces influencing fire behavior.",
     "CTL_ForcesAction_TooltipFooter=Press F1 for more help."
 })
-@TopComponent.OpenActionRegistration(
-        displayName = "#CTL_ForcesAction",
-        preferredID = ForcesTopComponent.PREFERRED_ID
-)
 public final class ForcesTopComponent extends TopComponent {
 
     public static final String PREFERRED_ID = "ForcesTopComponent";
-    private HeatPanel heatPanel;
-    private WindPanel windPanel;
-    private SlopePanel slopePanel;
+    private HeatForcePanel heatPanel;
+    private WindForcePanel windPanel;
+    private SlopeForcePanel slopePanel;
 
     public ForcesTopComponent() {
         initComponents();
@@ -99,13 +98,13 @@ public final class ForcesTopComponent extends TopComponent {
     }
 
     private void createPanels() {
-        heatPanel = new HeatPanel();
-        windPanel = new WindPanel();
-        slopePanel = new SlopePanel();
-        // Layout the page
-        jSplitPane1.setTopComponent(heatPanel);
-        jSplitPane2.setTopComponent(windPanel);
-        jSplitPane2.setBottomComponent(slopePanel);
+        heatPanel = new HeatForcePanel();
+        windPanel = new WindForcePanel();
+        slopePanel = new SlopeForcePanel();
+        // Layout the panels to the Grid Layout
+        add(heatPanel);
+        add(windPanel);
+        add(slopePanel);
     }
 
     /**
@@ -117,31 +116,10 @@ public final class ForcesTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jSplitPane2 = new javax.swing.JSplitPane();
-
-        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPane1.setResizeWeight(0.333);
-
-        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPane2.setResizeWeight(0.5);
-        jSplitPane1.setBottomComponent(jSplitPane2);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.GridLayout(3, 1));
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JSplitPane jSplitPane2;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {

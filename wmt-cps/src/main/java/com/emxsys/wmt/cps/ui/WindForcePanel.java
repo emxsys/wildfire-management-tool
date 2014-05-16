@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps;
+package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.wmt.cps.charts.ChartUtil;
 import java.awt.Color;
@@ -42,7 +42,7 @@ import org.openide.util.NbBundle;
 @NbBundle.Messages({
     "CTL_WindDirChartTitle=Direction",
     "CTL_WindSpdChartTitle=Speed",})
-public class WindPanel extends javax.swing.JPanel {
+public class WindForcePanel extends javax.swing.JPanel {
 
     private JFreeChart dirChart;
     private JFreeChart spdChart;
@@ -50,7 +50,7 @@ public class WindPanel extends javax.swing.JPanel {
     /**
      * Creates new form WindPanel
      */
-    public WindPanel() {
+    public WindForcePanel() {
         initComponents();
         initChartPanel();
     }
@@ -76,7 +76,7 @@ public class WindPanel extends javax.swing.JPanel {
         dirPanel = new javax.swing.JPanel();
         spdPanel = new javax.swing.JPanel();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindPanel.class, "WindPanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title"))); // NOI18N
 
         dirPanel.setLayout(new javax.swing.BoxLayout(dirPanel, javax.swing.BoxLayout.LINE_AXIS));
 
