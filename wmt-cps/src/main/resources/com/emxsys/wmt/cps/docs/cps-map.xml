@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2014, Bruce Schubert <bruce@emxsys.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN" "http://java.sun.com/products/javahelp/map_2_0.dtd">
+<map version="2.0">
+    <mapID target="com.emxsys.wmt.cps.about" url="cps-about.html"/>
+    <mapID target="com.emxsys.wmt.cps.overview" url="cps-overview.html"/>
+    <mapID target="com.emxsys.wmt.cps.language" url="cps-language.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40" url="cps-fuelmodel-40.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR1" url="cps-fuelmodel-40_GR1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR2" url="cps-fuelmodel-40_GR2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR3" url="cps-fuelmodel-40_GR3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR4" url="cps-fuelmodel-40_GR4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR5" url="cps-fuelmodel-40_GR5.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR6" url="cps-fuelmodel-40_GR6.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR7" url="cps-fuelmodel-40_GR7.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR8" url="cps-fuelmodel-40_GR8.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR9" url="cps-fuelmodel-40_GR9.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GS1" url="cps-fuelmodel-40_GS1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GS2" url="cps-fuelmodel-40_GS2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GS3" url="cps-fuelmodel-40_GS3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GS4" url="cps-fuelmodel-40_GS4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH1" url="cps-fuelmodel-40_SH1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH2" url="cps-fuelmodel-40_SH2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH3" url="cps-fuelmodel-40_SH3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH4" url="cps-fuelmodel-40_SH4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH5" url="cps-fuelmodel-40_SH5.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH6" url="cps-fuelmodel-40_SH6.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH7" url="cps-fuelmodel-40_SH7.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH8" url="cps-fuelmodel-40_SH8.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SH9" url="cps-fuelmodel-40_SH9.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TU1" url="cps-fuelmodel-40_TU1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TU2" url="cps-fuelmodel-40_TU2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TU3" url="cps-fuelmodel-40_TU3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TU4" url="cps-fuelmodel-40_TU4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TU5" url="cps-fuelmodel-40_TU5.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL1" url="cps-fuelmodel-40_TL1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL2" url="cps-fuelmodel-40_TL2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL3" url="cps-fuelmodel-40_TL3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL4" url="cps-fuelmodel-40_TL4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL5" url="cps-fuelmodel-40_TL5.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL6" url="cps-fuelmodel-40_TL6.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL7" url="cps-fuelmodel-40_TL7.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL8" url="cps-fuelmodel-40_TL8.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-TL9" url="cps-fuelmodel-40_TL9.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SB1" url="cps-fuelmodel-40_SB1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SB2" url="cps-fuelmodel-40_SB2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SB3" url="cps-fuelmodel-40_SB3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-40-SB4" url="cps-fuelmodel-40_SB4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13" url="cps-fuelmodel-13.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#1" url="cps-fuelmodel-13_1.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#2" url="cps-fuelmodel-13_2.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#3" url="cps-fuelmodel-13_3.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#4" url="cps-fuelmodel-13_4.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#5" url="cps-fuelmodel-13_5.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#6" url="cps-fuelmodel-13_6.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#7" url="cps-fuelmodel-13_7.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#8" url="cps-fuelmodel-13_8.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#9" url="cps-fuelmodel-13_9.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#10" url="cps-fuelmodel-13_10.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#11" url="cps-fuelmodel-13_11.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#12" url="cps-fuelmodel-13_12.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmodel-13#13" url="cps-fuelmodel-13_13.html"/>
+</map>
