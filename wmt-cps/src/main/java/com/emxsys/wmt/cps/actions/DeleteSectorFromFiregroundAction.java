@@ -45,9 +45,9 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-@ActionID(category = "Fire",
-        id = "com.emxsys.wmt.cps.actions.DeleteSectorFromFireground")
-@ActionRegistration(iconBase = "com/emxsys/wmt/cps/images/layer-delete.png",
+@ActionID(category = "Fire", id = "com.emxsys.wmt.cps.actions.DeleteSectorFromFireground")
+@ActionRegistration(
+        iconBase = "com/emxsys/wmt/cps/images/layer-delete.png",
         displayName = "#CTL_DeleteSectorFromFireground")
 @ActionReference(path = "Toolbars/Fire", position = 1300)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 300)

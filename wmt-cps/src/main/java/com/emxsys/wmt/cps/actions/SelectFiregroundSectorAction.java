@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
@@ -46,14 +45,14 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(id = "com.emxsys.wmt.cps.actions.SelectFiregroundSector", category = "Fire")
-@ActionRegistration(displayName = "#CTL_SelectSector",
-        iconBase = "com/emxsys/wmt/cps/images/select.png",
-        iconInMenu = true)
+@ActionRegistration(
+        displayName = "#CTL_SelectFiregroundSector",
+        iconBase = "com/emxsys/wmt/cps/images/select.png")
 @ActionReference(path = "Toolbars/Fire", position = 1100)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 100)
 
 @Messages({
-    "CTL_SelectSector=Select a Sector"
+    "CTL_SelectFiregroundSector=Select a Sector"
 })
 public class SelectFiregroundSectorAction extends AbstractAction {
 

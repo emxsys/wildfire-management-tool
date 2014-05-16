@@ -30,6 +30,9 @@
 package com.emxsys.wmt.cps;
 
 import com.emxsys.wmt.cps.options.CpsOptions;
+import com.emxsys.wmt.cps.ui.ForcesTopComponent;
+import com.emxsys.wmt.cps.ui.HeatForcePanel;
+import com.emxsys.wmt.cps.ui.SlopeForcePanel;
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.gis.api.GeoCoord3D;
 import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
@@ -174,7 +177,7 @@ public class Controller {
     private static class TerrainUpdater implements ReticuleCoordinateListener, Runnable {
 
         private final Controller controller;
-        private static final RequestProcessor processor = new RequestProcessor(SlopePanel.class);
+        private static final RequestProcessor processor = new RequestProcessor(SlopeForcePanel.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<ReticuleCoordinateEvent> lastEvent = new AtomicReference<>(new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
         private final int UPDATE_INTERVAL_MS = 100;
@@ -229,7 +232,7 @@ public class Controller {
     private static class SolarUpdater implements TimeListener, Runnable {
 
         private final Controller controller;
-        private static final RequestProcessor processor = new RequestProcessor(HeatPanel.class);
+        private static final RequestProcessor processor = new RequestProcessor(HeatForcePanel.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<TimeEvent> lastTimeEvent = new AtomicReference<>(new TimeEvent(this, null, null));
         // Array indicies

@@ -37,6 +37,7 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
         WindowManager.getDefault().invokeWhenUIReady(() -> {
+            // Instantiate the Controller
             Controller.getInstance();
         });
                 
