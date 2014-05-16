@@ -1,0 +1,292 @@
+<!--
+Copyright (c) 2014, Bruce Schubert <bruce@emxsys.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>CPS Fuel Models - Original 13</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="nbdocs:/org/netbeans/modules/usersguide/ide.css" type="text/css">
+        <style type="text/css">
+            .style1 {
+                text-align: center;
+            }
+            .style2 {
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Fire Behavior Fuel Models - The Original 13</h1>
+        <p>This help text contains excerpts from USFS General Technical Report
+		INT-122, April 1982</p>
+
+        <h2>Aids to Determining Fuel Models For Estimating Fire Behavior</h2>
+        <h3>Hal E. Anderson</h3>
+        <h2>HOW FUEL MODELS ARE DESCRIBED</h2>
+        <p>Fuels have been classified into four groups—grasses, brush, timber,
+		and slash. The differences in fire behavior among these groups are 
+		basically related to the fuel load and its distribution among the 
+		fuel particle size classes. This can be illustrated by the shift in 
+		size class containing the maximum fraction of load when considering 
+		the four fuel groups shown in figure 1. Notice that the fraction of 
+		the total load in the less than 4-inch (0.6-cm) size class decreases 
+		as we go from grasses to slash. The reverse is true for the 1- to 3- 
+		inch (2.5- to 7.6-cm) material. In grasses, the entire fuel load may 
+		be herbaceous material less than one fourth inch (0.6 cm), but grass 
+		may include up to 25 percent material between one-fourth and 1 
+		inch (0.6 and 2.5 cm) and up to 10 percent material between 1 and 3 
+		inches (2.5 cm and 7.6 cm). Each fuel group has a range of fuel loads 
+		for each size class, with maximum fuel load per size class 
+		approximately as shown in figure 1.</p>
+        <p>Fuel load and depth are significant fuel properties for predicting
+		whether a fire will be ignited, its rate of spread, and its 
+		intensity. The relationship of fuel load and depth segregates the 13 
+		fuel models into two distinctive orientations, with two fuel groups 
+		in each (fig. 2). Grasses and brush are vertically oriented fuel 
+		groups, which rapidly increase in depth with increasing load. 
+		Timber litter and slash are horizontally positioned and slowly 
+		increase in depth as the load is increased. Observations of the 
+		location and positioning of fuels in the field help one decide which 
+		fuel groups are represented. Selection of a fuel model can be 
+		simplified if one recognizes those features that distinguish one fuel 
+		group from another. </p>
+        <p>The 13 fuel models (table 1) under consideration are presented on
+		page 92 of Albini’s (1976) paper, “Estimating Wildfire Behavior and 
+		Effects.” Each fuel model is described by the fuel load and the ratio 
+		of surface area to volume for each size class; the depth of the fuel 
+		bed involved in the fire front; and fuel moisture, including that 
+		at which fire will not spread, called the moisture of extinction. The 
+		descriptions of the fuel models include the total fuel load less than 
+		3 inches (7.6 cm), dead fuel load less than one-fourth inch (0.6 cm), 
+		live fuel load of less than one-fourth inch (0.6 cm), and herbaceous 
+		material and fuel depth used to compute the fire behavior values 
+		given in the nomographs.</p>
+
+        <table style="width: 100%" align="center">
+            <tr>
+                <th>Fuel model</th>
+                <th>Typical fuel complex</th>
+                <th>1 hour</th>
+                <th>10 hours</th>
+                <th>100 hours</th>
+                <th>Live</th>
+                <th>Fuel Bed Depth</th>
+                <th style="width: 100">Moisture of Extinction Dead Fuels</th>
+            </tr>
+            <tr>
+                <td class="style1" colspan="2"></td>
+                <td class="style1" colspan="4"><em>Tons/acre</em></td>
+                <td class="style1"><em>Feet</em></td>
+                <td class="style1"><em>Percent</em></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="style1" colspan="2"><strong>Grass and grass-dominated</strong></td>
+            </tr>
+            <tr>
+                <td class="style1">1</td>
+                <td>Short grass (1 foot) </td>
+                <td class="style2">0.74</td>
+                <td class="style2">0.00</td>
+                <td class="style2">0.00</td>
+                <td class="style2">0.00</td>
+                <td class="style1">1.0</td>
+                <td class="style1">12</td>
+            </tr>
+            <tr>
+                <td class="style1">2</td>
+                <td>Timber (grass and understory) </td>
+                <td class="style2">2.00</td>
+                <td class="style2">1.00</td>
+                <td class="style2">.50</td>
+                <td class="style2">.50</td>
+                <td class="style1">1.0</td>
+                <td class="style1">15</td>
+            </tr>
+            <tr>
+                <td class="style1">3</td>
+                <td>Tall grass</td>
+                <td class="style2">3.01</td>
+                <td class="style2">.00</td>
+                <td class="style2">.00</td>
+                <td class="style2">.00</td>
+                <td class="style1">2.5</td>
+                <td class="style1">25</td>
+            </tr>
+            <tr>
+                <td class="style1" colspan="2"><strong>Chaparral and shrub
+				fields</strong></td>
+            </tr>
+            <tr>
+                <td class="style1">4</td>
+                <td>Chaparral (6 feet)</td>
+                <td class="style2">5.01</td>
+                <td class="style2">4.01</td>
+                <td class="style2">2.00</td>
+                <td class="style2">5.01</td>
+                <td class="style1">6.0</td>
+                <td class="style1">20</td>
+            </tr>
+            <tr>
+                <td class="style1">5</td>
+                <td>Brush (2 feet)</td>
+                <td class="style2">1.00</td>
+                <td class="style2">.50</td>
+                <td class="style2">.00</td>
+                <td class="style2">2.00</td>
+                <td class="style1">2.0</td>
+                <td class="style1">20</td>
+            </tr>
+            <tr>
+                <td class="style1">6</td>
+                <td>Dormant brush, hardwood slash</td>
+                <td class="style2">1.50</td>
+                <td class="style2">2.50</td>
+                <td class="style2">2.00</td>
+                <td class="style2">.00</td>
+                <td class="style1">2.5</td>
+                <td class="style1">25</td>
+            </tr>
+            <tr>
+                <td class="style1">7</td>
+                <td>Southern rough</td>
+                <td class="style2">1.13</td>
+                <td class="style2">1.87</td>
+                <td class="style2">1.5</td>
+                <td class="style2">.37</td>
+                <td class="style1">2.5</td>
+                <td class="style1">40</td>
+            </tr>
+            <tr>
+                <td class="style1" colspan="2"><strong>Timber Litter</strong></td>
+            </tr>
+            <tr>
+                <td class="style1">8</td>
+                <td>Closed timber litter</td>
+                <td class="style2">1.50</td>
+                <td class="style2">1.00</td>
+                <td class="style2">2.50</td>
+                <td class="style2">0.00</td>
+                <td class="style1">0.2</td>
+                <td class="style1">30</td>
+            </tr>
+            <tr>
+                <td class="style1">9</td>
+                <td>Hardwood litter</td>
+                <td class="style2">2.92</td>
+                <td class="style2">.41</td>
+                <td class="style2">.15</td>
+                <td class="style2">.00</td>
+                <td class="style1">.2</td>
+                <td class="style1">25</td>
+            </tr>
+            <tr>
+                <td class="style1">10</td>
+                <td>Timber (litter and understory)</td>
+                <td class="style2">3.01</td>
+                <td class="style2">2.00</td>
+                <td class="style2">5.01</td>
+                <td class="style2">2.00</td>
+                <td class="style1">1.0</td>
+                <td class="style1">25</td>
+            </tr>
+            <tr>
+                <td class="style1" colspan="2"><strong>Logging slash</strong></td>
+            </tr>
+            <tr>
+                <td class="style1">11</td>
+                <td>Light logging slash</td>
+                <td class="style2">1.50</td>
+                <td class="style2">4.51</td>
+                <td class="style2">5.51</td>
+                <td class="style2">0.00</td>
+                <td class="style1">1.0</td>
+                <td class="style1">15</td>
+            </tr>
+            <tr>
+                <td class="style1">12</td>
+                <td>Medium logging slash</td>
+                <td class="style2">4.01</td>
+                <td class="style2">14.03</td>
+                <td class="style2">16.53</td>
+                <td class="style2">.00</td>
+                <td class="style1">2.3</td>
+                <td class="style1">20</td>
+            </tr>
+            <tr>
+                <td class="style1">13</td>
+                <td>Heavy logging slash</td>
+                <td class="style2">7.01</td>
+                <td class="style2">23.04</td>
+                <td class="style2">28.05</td>
+                <td class="style2">.00</td>
+                <td class="style1">3.0</td>
+                <td class="style1">25</td>
+            </tr>
+        </table>
+        <p>
+            The criteria for choosing a fuel model includes the fact
+            that the fire burns in the fuel stratum best conditioned to
+            support the fire. This means situations will occur where
+            one fuel model represents rate of spread most accurately
+            and another best depicts fire intensity. In other situations,
+            two fuel conditions may exist, so the spread of
+            fire across the area must be weighted by the fraction of
+            the area occupied by each fuel. Fuel models are simply
+            tools to help the user realistically estimate fire behavior.
+            The user must maintain a flexible frame of mind and an
+            adaptive method of operating to totally utilize these aids.
+            For this reason, the fuel models are described in terms of
+            both expected fire behavior and vegetation.</p>
+        <p>
+            The National Fire Danger Rating System (NFDRS)
+            depends upon an ordered set of weather records to
+            establish conditions of the day. These weather conditions
+            along with the 1978 NFDRS fuel models are used to
+            represent the day-to-day and seasonal trends in fire
+            danger. Modifications to the fuel models are possible by
+            changes in live/dead ratios, moisture content, fuel loads,
+            and drought influences by the large fuel effect on fire
+            danger. The 13 fuel models for fire behavior estimation
+            are for the severe period of the fire season when wildfires
+            pose greater control problems and impact on land resources.
+            Fire behavior predictions must utilize on-site
+            observations and short term data extrapolated from
+            remote measurement stations. The field use situation
+            generally is one of stress and urgency. Therefore, the
+            selection options and modifications for fuel models are
+            limited to maintain a reasonably simple procedure to use
+            with fire behavior nomographs, moisture content adjustment
+            charts, and wind reduction procedures. The NFDRS
+            fuel models are part of a computer data processing
+            system that presently is not suited to real time, in-thefield
+            prediction of fire behavior.</p>
+    </body>
+</html>

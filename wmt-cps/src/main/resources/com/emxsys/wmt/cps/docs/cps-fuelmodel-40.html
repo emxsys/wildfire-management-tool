@@ -1,0 +1,73 @@
+<!--
+Copyright (c) 2014, Bruce Schubert <bruce@emxsys.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<title>Standard Fire Behavior Fuel Models</title>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<link href="nbdocs:/org/netbeans/modules/usersguide/ide.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h1>Standard Fire Behavior Fuel Models: A Comprehensive Set for Use with Rothermel’s 
+Surface Fire Spread Model</h1>
+<p>Joe H. Scott<br>Robert E. Burgan</p>
+<p>This new set of standard fire behavior fuel models is designed to stand alone; 
+none of the original 13 fire behavior fuel models is repeated in the new set; the 
+fuel model selection guide points to the new fuel models only. However, the original 
+13 fire behavior fuel models will still be available, and they are still called 
+fire behavior fuel models 1- 13. There is no immediate need to reanalyze existing 
+fuel model maps or lookup tables that are sufficient for their purpose. However, 
+we anticipate that new fuel model mapping projects will use this new set rather 
+than the original 13.</p>
+<p>Documentation and naming of the new fuel models refer to fuel or fuel types, 
+not vegetation or vegetation types. For example, what was formerly termed a “Chaparral” 
+fuel model might now be called a “Heavy Load, Tall Brush” model because one fuel 
+model can be applied in many vegetation types. Likewise, the fuel model selection 
+guide does not refer to specific vegetation types except as necessary to illustrate 
+an example.</p>
+<p>In this new set, all fuel models with an herbaceous component are dynamic. In 
+a dynamic fuel model, live herbaceous load is transferred to dead as a function 
+of the live herbaceous moisture content. Although the new fuel model parameters 
+can be input to a nondynamic fire behavior processor, that approach does not produce 
+the intended result. Using the dynamic fuel models in a nondynamic fire behavior 
+model would leave the live herbaceous load in the live category, regardless of moisture 
+content. The grass models will therefore predict no (or very little) spread and 
+intensity under any wind or moisture condition. The change to dynamic fuel models 
+is really a change in both the fire behavior processors and, concurrently, how fuel 
+models for grass- or herbaceousdominated fuelbeds are conceived. In this case, our 
+desire for grass and herbaceous fuel models that could be used at various levels 
+of curing precipitated the change in fire behavior processors.</p>
+
+</body>
+
+</html>

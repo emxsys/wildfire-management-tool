@@ -1,0 +1,371 @@
+<!--
+Copyright (c) 2014, Bruce Schubert <bruce@emxsys.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>CPS Overview</title>
+        <link rel="stylesheet" href="nbdocs:/org/netbeans/modules/usersguide/ide.css" type="text/css">
+    </head>
+    <body>
+        <h2>Campbell Prediction System (CPS) </h2>
+        <h4>Overview</h4>
+        <p>Following is an overview of the CPS v1.0 software. this version
+			contains the following features:</p>
+        <ul>
+            <li>3D Map &amp; Terrain Viewer for selecting and viewing a
+				point of interest on the fireground</li>
+            <li>Complete Fuel Model Selection: 40 Standard (static and dynamic) and
+				the original 13 -- complete with help guides</li>
+            <li>Fully interactive: all fire environmental inputs are
+				dynamically coupled to fire behavior outputs -- for example, any
+				change in location in the map viewer will change the fire
+				behavior according to the new location&#39;s slope and aspect. </li>
+            <li>Screen layout can be setup to demonstrate the <em>alignment of
+				forces</em> concept taught in the Campbell Prediction System
+				training.</li>
+        </ul>
+
+        <p><img src="images/cps_v1-example-sm.jpg" />
+            <br>
+            <em>Figure 1. Example demonstrating the alignment of forces concept.</em></p>
+        <p>
+			Figure 1 shows an overview of the CPS software.&nbsp; On the left
+			are a series of panels used for controlling and depicting the fire
+			behavior inputs.&nbsp; In the center is a map and terrain viewer.&nbsp;
+			On the right are the fire behavior outputs.</p>
+        <h4>Map / Terrain Viewer</h4>
+        <p>The
+            <em>Map Viewer</em> is a 3D tool for selecting and viewing the
+			location used for fire behavior calculations. Terrain can viewed
+			from any&nbsp; perspective and on a variety of maps. The location of
+			crosshairs at the center of the map viewer are used to obtain the
+			terrain&#39;s slope and aspect, as well a the defining the latitude used
+			to determine solar preheating of the fuel.</p>
+        <h5>Map Viewer</h5>
+        <p><img height="589" src="images/cps_v1-map.JPG" width="385" /><br />
+						Figure 2. Map Viewer Crosshairs</p>
+        <p>The Map Viewer contains a set of crosshairs at the center of the
+			viewer.&nbsp; The location of these crosshairs are used for the
+			slope and aspect within the fie behavior calculations.&nbsp; Any
+			change in location will be reflected immediately in the Map Location
+			panel and the fire behavior panels.</p>
+        <h5>View Controls</h5>
+        <p>Several buttons are displayed in the lower-left corner of the
+			viewer which are used for controlling the view angles, panning and
+			zooming.</p>
+        <h6>Pan Navigation</h6>
+        <ul>
+            <li><strong>Mouse</strong><br />
+				Click on the terrain to pan the crosshairs to the clicked location;
+                <em>Left drag-click</em> to scroll the terrain to the desired
+				location.</li>
+            <li><strong>Keyboard</strong><br />
+				Use the [Left/Right] and [Up/Down] arrow keys to move the
+				crosshairs.<br />
+				Use the [ALT]+[Left/Right] or [Left/Right] keys to move around
+				slowly.</li>
+        </ul>
+        <h6>Zoom</h6>
+        <ul>
+            <li><strong>Mouse</strong><br />
+				PC: Use the mouse wheel to zoom in and out.<br />
+				MAC: Use the two-finger up/down gesture on the mouse pad.</li>
+            <li><strong>Keyboard</strong><br />
+				Use the [+] and [-] keys to zoom in and out respectively.<br />
+				Use the [ALT]+[+] [-] keys to zoom in and out slowly.</li>
+        </ul>
+        <h6>Rotate</h6>
+        <ul>
+            <li><strong>Mouse</strong><br />
+				PC: Use the <em>Right drag-click</em> in the left/right
+				directions to rotate the view around the crosshairs.<br />
+				MAC: Use the two-finger left-right gesture on the mouse pad.</li>
+            <li><strong>Keyboard<br />
+                </strong>Use the [Shift]+[Left/Right] keys to rotate the view
+				around the crosshairs.<br />
+				Use the [N] key to return to a &quot;north up&quot; orientation.</li>
+        </ul>
+        <h6>Tilt</h6>
+        <ul>
+            <li><strong>Mouse</strong><br />
+				PC: Use the <em>Right drag-click</em> in the up/down directions
+				to rotate the view around the crosshairs.</li>
+            <li><strong>Keyboard<br />
+                </strong>Use the [Shift]+[Up/Down] arrow keys to tilt the view.
+				Use the [R] key to return to a &quot;look down&quot; orientation.</li>
+        </ul>
+        <h5>Map Location</h5>
+        <p>The Map Location panel shows the location of the crosshairs
+			within the map viewer. </p>
+        <p><img height="256" src="images/cps_v1-location.JPG" width="358" /><br />
+            <em>Figure 3. &nbsp;Map Location panel showing location of
+			crosshairs.</em></p>
+        <p>Note that the accuracy of the slope and aspect increases as
+			you zoom in on the terrain.</p>
+        <h5>Map Layers</h5>
+        <p>The Map Layers panel allows control of the maps, imagery, and&nbsp;
+			controls and annotations displayed in the map viewer.</p>
+        <p>
+            <img height="328" src="images/cps_v1-maplayers.JPG" width="358" /><br />
+            <em>Figure 4. Map Layers</em></p>
+        <p>The Map Layers panel controls which layers are visible.&nbsp;
+			The layers are displayed in a tree, which may need to be expanded by
+			clicking on handle next to the name. </p>
+        <p>Simply check or uncheck the various layers to change the display
+			within the map Viewer.</p>
+
+        <h4>
+			Alignment of Forces</h4>
+        <p>One of the fundamental principles of the Campbell Prediction System method
+			 is that firefighters should recognize how the three primary forces of wind, slope and preheat
+			control fire behavior.&nbsp; When these three forces are in
+            &quot;alignment&quot;, fire behavior is at its worst.</p>
+        <p>The CPS Dashboard allows these three forces to be displayed
+			together so as to see their alignment.</p>
+        <h5>Dashboard</h5>
+        <p>
+            <img height="592" src="images/cps_v1-forces.JPG" width="358" />
+            <br><em>Figure 5. Dashboard with controls arrayed to show Alignment of Forces.</em></p>
+        <p>Figure 5 shows the CPS Dashboard configured to show the direction and strength for each of three
+			primary
+			forces.&nbsp; Fire behavior is greatest when the directional arrows
+			are all pointing in a similar direction.</p>
+        <h4>Fire Environment</h4>
+        <p>Several control panels are used to establish the fire&#39;s
+			environment.&nbsp; These controls are all dynamically coupled to the
+			fire behavior outputs.&nbsp; Any change to the environment will be
+			reflected immediately in the fire behavior displays.</p>
+        <h5>Solar Preheating by Date and Time</h5>
+        <p><img height="117" src="images/cps_v1-datetime.JPG" width="357" /><br />
+            <em>Figure 6. &nbsp;Solar heating and date and time controls.</em></p>
+        <p>Solar preheating is controlled by date, time and location.&nbsp;
+			This panel allows you to control the date and time.&nbsp; The
+			location is controlled by the map viewer.</p>
+        <p>The direction of the solar rays is shown within the yellow
+			compass rose.</p>
+        <h5>Fuel Models</h5>
+        <p>
+            <img height="188" src="images/cps_v1-fuelmodel.JPG" width="357" /><br />
+            <em>Figure 7. &nbsp;Fuel tab showing the selected fuel model with a fuel loading
+			graph</em></p>
+        <p>The Fuel tab contains a control for selecting a fuel model.&nbsp;
+			A graph of the fuel loading is shown for the selected model.&nbsp;
+			Clicking the [?] icon will display a help guide with photos for the
+			selected model.</p>
+        <h5>Feel Moisture Scenarios</h5>
+        <p>
+            <img height="189" src="images/cps_v1-fuelmoisture.JPG" width="357" /><br />
+            <em>Figure 8.&nbsp;Moisture tab showing a selected fuel moisture scenario&nbsp;</em></p>
+        <p>The Moisture tab allows you to select the initial fuel moistures
+			used in the fire behavior calculations.&nbsp; Note that the 1hr dead
+			fuel moisture will be adjusted by hourly air temperature, humidity
+			and solar heating.</p>
+        <h5>Yesterday&#39;s and Today&#39;s Air Temperature</h5>
+        <p><img height="189" src="images/cps_v1-airtemp.JPG" width="356" /><br />
+            <em>Figure 9. Air Temp tab showing air temperature cycle and
+			editable table. </em></p>
+        <p>The Air Temp tab allows you to establish the yesterday&#39;s actual
+			temperatures and today&#39;s forecasted temperatures.&nbsp; The table is
+			used to set the parameters for the hourly temperature curves
+			displayed in the chart.</p>
+        <p>These values affect the dead 1 hour and cured herbaceous fuel
+			moistures.</p>
+        <h5>Yesterday&#39;s and Today&#39;s Humidity</h5>
+        <p><img height="191" src="images/cps_v1-humidity.JPG" width="358" /><br />
+            <em>Figure 10. Humidity tab showing relative humidity cycle and
+			editable table.</em></p>
+        <p>The Humidity tab allows you to establish the yesterday&#39;s actual
+			relative humidity and today&#39;s forecasted relative humidity.&nbsp;
+			The table is editable and it is used to set the parameters for the
+			hourly temperature curves displayed in the chart.</p>
+        <p>These values affect the dead 1 hour and cured herbaceous fuel
+			moistures.</p>
+        <h5>General Winds</h5>
+        <p><img height="189" src="images/cps_v1-wind.JPG" width="357" /><br />
+            <em>Figure 11. &nbsp;Wind tab showing general wind speed and
+			direction with slider controls </em></p>
+        <p>The Wind tab lets you control the general winds used throughout
+			the fire behavior calculations.&nbsp; The sliders allow you to
+			control the wind speed and the wind direction.</p>
+        <p>When experimenting with the effects of wind, you may note that
+			the wind speed also has a cooling effect on the fuel.</p>
+        <h5>Map Location</h5>
+        <p><img height="256" src="images/cps_v1-location.JPG" width="358" /><br />
+            <em>Figure 12. Map Crosshairs panel showing current location and
+			terrain.&nbsp;</em></p>
+        <p>The Map Location panel shows the location of the map viewer&#39;s
+			crosshairs.&nbsp; This location affects the terrain and aspect, the
+			sunrise and sunset times, and solar preheating. </p>
+
+        <h4>Fire Behavior</h4>
+        <p>The fire behavior panels display various outputs from the
+			Rothermel fire spread equations. All of the fire behavior panels are
+			dynamic.&nbsp; That is, any change in time, location, wind, fuel
+			model, moisture, air temperature or humidity will be reflected
+			immediately in the following panels.</p>
+        <h5>Direction of Max Fire Spread</h5>
+        <p>
+            <img height="253" src="images/cps_v1-maxspread.JPG" width="394" /><br />
+            <em>Figure 13. Fire Spread</em></p>
+        <p>This dynamic panel shows the direction of maximum spread and the
+			flame length.&nbsp; Wind is often a dominating force, but note that
+			when the wind speed is low that the terrain aspect and slope become
+			a greater influence.</p>
+        <p>Experiment with various wind directions and speeds on different
+			terrain aspects and slopes to better understand this relationship.</p>
+        <h5>Fuel Flammability</h5>
+        <p><img height="282" src="images/cps_v1-fueltemp.JPG" width="394" /><br />
+            <em>Figure 14. Fuel Temperatures</em></p>
+        <p>This dynamic panel shows the computed fuel temperature and air
+			temperature at the current location. This chart reflects the solar
+			preheating of fuel and responds to changes in location.</p>
+        <p>A precept of the Campbell Prediction System method is
+			that firefighters should recognize when fuel is, or will be, at its
+			peak temperature. Experiment with changes in the terrain aspect to see
+			when the hours of peak fuel temperature occur.</p>
+        <h5>Haul Chart</h5>
+        <p>
+            <img height="305" src="images/cps_v1-haulchart.JPG" width="397" /><br />
+            <em>Figure 15. Haul Chart</em></p>
+        <p>The Hauling Chart is recognizable fire behavior diagram in
+			wildland firefighting. The Haul Chart was so named because it infers
+			the relative intensity of the fire behavior through graphical
+			representations of firefighters working—haul firefighters, equipment
+			working—haul equipment, trees torching—haul retardant, and crown
+			fire—haul everybody to safety. Since fireline intensity and flame
+			length are directly proportional (Byram, 1959)—the larger one gets
+			the larger the other gets—and since we can visually assess the flame
+			length the Haul Chart is an excellent tool for measuring the safety
+			and effectiveness of various fireline resources.</p>
+        <p>The fireline interpretations of the Haul Chart are as follows:
+			Figure 15. Haul Chart Interpretations (from Fireline Handbook,
+			Appendix B.)</p>
+        <p>
+        <table style="width: 100%" class="style8">
+            <tr>
+                <th>FLAME LENGTH (Feet)</th>
+                <th>FIRELINE INTENSITY (BTU/Ft/Sec</th>
+                <th>INTERPRETATIONS</th>
+            </tr>
+            <tr>
+                <td>0-4</td>
+                <td>0-100</td>
+                <td>Persons using handtools can generally attack fires at
+					the head or flanks. Handline should hold the fire.</td>
+            </tr>
+            <tr>
+                <td>4-8</td>
+                <td>100-500</td>
+                <td>Fires are too intense for direct attack on the head by
+					persons using handtools. Handline can not be relied on to
+					hold fire. Equipment such as dozers, engines, and retardant
+					aircraft can be effective.</td>
+            </tr>
+            <tr>
+                <td>8-11</td>
+                <td>500-1,000</td>
+                <td>Fires may present serious control problems such as
+					torching, crowning, and spotting. Control efforts at the
+					head of the fire will probably be ineffective.</td>
+            </tr>
+            <tr>
+                <td>11+</td>
+                <td>1000+</td>
+                <td>Crowning, spotting, and major runs are common, control
+					efforts at the head of the fire are ineffective.</td>
+            </tr>
+        </table>
+
+        <p>
+        <table style="width: 100%" class="style8">
+            <tr>
+                <th style="height: 32px">ADJECTIVE RATING</th>
+                <th style="height: 32px">FLAME LENGTH</th>
+                <th style="height: 32px">IMPLICATION</th>
+            </tr>
+            <tr>
+                <td class="style3">LOW</td>
+                <td>0-1</td>
+                <td>Fire will burn and will spread however it presents very
+					little resistance to control and direct attack with
+					firefighters is possible</td>
+            </tr>
+            <tr>
+                <td class="style4">MODERATE</td>
+                <td>1-3</td>
+                <td>Fire spreads rapidly presenting moderate resistance to
+					control but can be countered with direct attack by
+					firefighters</td>
+            </tr>
+            <tr>
+                <td class="style5">ACTIVE</td>
+                <td>3-7</td>
+                <td>Fire spreads very rapidly presenting substantial
+					resistance to control. Direct attack with firefighters must
+					be supplemented with equipment and/or air support.</td>
+            </tr>
+            <tr>
+                <td class="style6">VERY ACTIVE</td>
+                <td>7-15</td>
+                <td>Fire spreads very rapidly presenting extreme resistance
+					to control. Indirect attack may be effective. Safety of
+					firefighters in the area becomes a concern.</td>
+            </tr>
+            <tr>
+                <td class="style7">EXTREME</td>
+                <td>&gt;15</td>
+                <td>Fire spreads very rapidly presenting extreme resistance
+					to control. Any form of attack will probably not be
+					effective. Safety of firefighters in the area is of critical
+					concern.</td>
+            </tr>
+        </table>
+
+        <h4>Fuel Model Guides</h4>
+        <p>Selecting the appropriate fuel model is an important aspect for computing fire behavior.
+			Portions of the<em> GTR-INT-122 - Aids to Determining Fuel Models For Estimating
+			Fire Behavior</em> and <em>RMRS GTR-153 - Standard Fire Behavior Fuel Models</em> have been included to assist
+			in this task.</p>
+        <p><img height="450" src="images/cps_v1-help.JPG" width="571" /><br />
+            <em>Figure 16. Fuel Model help.</em></p>
+        <p>&nbsp;The guides for fuel models can be browed in the help system.&nbsp;
+			Also, help for a specific fuel model can be obtained from the help
+			button on the Fuel tab.</p>
+        <h4>Auto Update</h4>
+        <p>The CPS software supports an auto-update feature.&nbsp; This
+			feature ensures you have the latest software modules and plugins
+			installed.&nbsp; The updates are delivered via the Web.</p>
+        <p>
+            <img height="280" src="images/cps_v1-autoupdate.JPG" width="494" /><br />
+            <em>Figure 17. Auto-update screen.</em></p>
+        <p>The auto-update feature can be accessed via the <em>Check for
+			Updates</em> item in menu system
+    </body>
+</html>
