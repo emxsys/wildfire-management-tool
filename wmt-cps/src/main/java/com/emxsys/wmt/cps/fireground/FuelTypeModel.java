@@ -35,7 +35,6 @@ import com.emxsys.wmt.gis.api.layer.GisLayer;
 import com.emxsys.wmt.wildfire.api.FuelModel;
 import com.emxsys.wmt.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.wildfire.api.FuelModelProvider;
-import com.emxsys.wmt.wildfire.spi.FuelModelFactory;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

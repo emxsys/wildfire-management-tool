@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.wmt.cps.actions.SelectFuelModelProvider;
+import com.emxsys.wmt.cps.actions.SelectFuelModelProviderAction;
 import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.gis.api.capabilities.Disposable;
@@ -42,7 +42,6 @@ import com.emxsys.wmt.wildfire.api.FuelCondition;
 import com.emxsys.wmt.wildfire.api.FuelModelProvider;
 import com.emxsys.wmt.wildfire.api.FuelMoisture;
 import com.emxsys.wmt.wildfire.api.StdFuelMoistureScenario;
-import com.emxsys.wmt.wildfire.spi.FuelModelFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -85,9 +84,9 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public static final String FIRE_BEHAVIOR_ADDED_EVENT = "fire_behavior_added";
     /** FIRE_WEATHER_ADDED_EVENT property change accompanied by weather data in FieldImpl */
     public static final String FIRE_WEATHER_ADDED_EVENT = "fire_weather_added";
-    
+
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    
+
 // Fire environment inputs
     private final List<Box> sectors = new ArrayList<>();
     private FlatField firePredictions;
@@ -109,7 +108,7 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     private final Map<Box, FuelTemperatureModel> fuelTempModels = new HashMap<>();
     private final Map<Box, FuelMoistureModel> fuelMoistureModels = new HashMap<>();
     private final Map<Box, FireBehaviorModel> fireBehaviorModels = new HashMap<>();
-    
+
     private boolean cancelAnalysis = false;
     private boolean analysisRunning = false;
 
@@ -132,10 +131,10 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     @Override
     public TreeMap<Date, FireEnvironment> getFireEnvironment(List<Date> dates, Coord2D position) {
         TreeMap<Date, FireEnvironment> map = new TreeMap<>();
-        for (Date date : dates) {
+        dates.stream().forEach((date) -> {
             DateTime dateTime = Times.fromDate(date);
             map.put(date, getFireEnvironment(dateTime, position));
-        }
+        });
         return map;
     }
 
@@ -255,10 +254,9 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
 
     @Override
     public void dispose() {
-        // Remove shapes from the viewers
-        for (Box box : this.sectors) {
+        this.sectors.stream().forEach((box) -> {
             Viewers.removeFromViewers(box);
-        }
+        });
         this.sectors.clear();
     }
 
@@ -302,15 +300,8 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
         }
         this.sectors.add(sector);
 
-        // Find a fuel model if one was not provided
         if (fuelModels == null) {
-            // Get a fuel model factory for this area
-            Coord2D center = sector.getCenter();
-            FuelModelFactory factory = FuelModelFactory.getInstance(center);
-            if (factory == null) {
-                throw new IllegalStateException("addSector() failed: FuelModelProvider is null for " + center.toString());
-            }
-            logger.log(Level.WARNING, "addSector : Using a default fuel model provider: {0}", factory.toString());
+            throw new IllegalArgumentException("add sector failed: FuelModelProvider is null.");
         }
         this.fuelModelProviders.put(sector, fuelModels);
         resetModels();
@@ -339,12 +330,20 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     }
 
     @Override
+    public FuelModelProvider getFuelModelProvider(Box sector) {
+        return this.fuelModelProviders.get(sector);
+    }
+
+    @Override
     public Collection<FlatField> getFuelModels() {
         // Return our FuelModel collection as a FlatField collection
         ArrayList<FlatField> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelTypeModels.get(box).getFuelData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelTypeModel ftm = this.fuelTypeModels.get(box);
+            if (ftm != null) {
+                list.add(ftm.getFuelData());
+            }
+        });
         return list;
     }
 
@@ -352,9 +351,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFuelMoistureDead1hr() {
         // Return our FuelMoisture collection as a FlatField collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelMoistureModels.get(box).getDead1HrFuelMoistureData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelMoistureModel fmm = this.fuelMoistureModels.get(box);
+            if (fmm != null) {
+                list.add(fmm.getDead1HrFuelMoistureData());
+            }
+        });
         return list;
     }
 
@@ -362,9 +364,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFuelMoistureDead10hr() {
         // Return our FuelMoisture collection as a FlatField collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelMoistureModels.get(box).getDead10HrFuelMoistureData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelMoistureModel fmm = this.fuelMoistureModels.get(box);
+            if (fmm != null) {
+                list.add(fmm.getDead10HrFuelMoistureData());
+            }
+        });
         return list;
     }
 
@@ -372,9 +377,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFuelMoistureDead100hr() {
         // Return our FuelMoisture collection as a FlatField collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelMoistureModels.get(box).getDead100HrFuelMoistureData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelMoistureModel fmm = this.fuelMoistureModels.get(box);
+            if (fmm != null) {
+                list.add(fmm.getDead100HrFuelMoistureData());
+            }
+        });
         return list;
     }
 
@@ -382,9 +390,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFuelMoistureLiveHerb() {
         // Return our FuelMoisture collection as a FlatField collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelMoistureModels.get(box).getLiveHerbFuelMoistureData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelMoistureModel fmm = this.fuelMoistureModels.get(box);
+            if (fmm != null) {
+                list.add(fmm.getLiveHerbFuelMoistureData());
+            }
+        });
         return list;
     }
 
@@ -392,9 +403,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFuelMoistureLiveWoody() {
         // Return our FuelMoisture collection as a FlatField collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelMoistureModels.get(box).getLiveWoodyFuelMoistureData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelMoistureModel fmm = this.fuelMoistureModels.get(box);
+            if (fmm != null) {
+                list.add(fmm.getLiveWoodyFuelMoistureData());
+            }
+        });
         return list;
     }
 
@@ -406,9 +420,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFuelTemperature() {
         // Return our FuelModel collection as a FlatField collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.fuelTempModels.get(box).getFuelTemperatureData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            FuelTemperatureModel fmm = this.fuelTempModels.get(box);
+            if (fmm != null) {
+                list.add(fmm.getFuelTemperatureData());
+            }
+        });
         return list;
     }
 
@@ -426,9 +443,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FlatField> getTerrain() {
         // Return our TerrainModel collection as a FlatField collection
         ArrayList<FlatField> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            list.add(this.terrainModels.get(box).getTerrainData());
-        }
+        this.sectors.stream().forEach((box) -> {
+            TerrainModel model = this.terrainModels.get(box);
+            if (model != null) {
+                list.add(this.terrainModels.get(box).getTerrainData());
+            }
+        });
         return list;
     }
 
@@ -448,11 +468,9 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFireWeather() {
         // Return our WeatherModel collection as a FieldImpl collection
         ArrayList<FieldImpl> list = new ArrayList<>();
-        for (Box box : this.sectors) {
-            if (this.wxModels.containsKey(box)) {
-                list.add(this.wxModels.get(box).getWeatherData());
-            }
-        }
+        this.sectors.stream().filter((box) -> (this.wxModels.containsKey(box))).forEach((box) -> {
+            list.add(this.wxModels.get(box).getWeatherData());
+        });
         return list;
     }
 
@@ -474,11 +492,13 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
         long startTimeMillis = System.currentTimeMillis();
         this.domains.clear();
 
-        for (Box sector : sectors) {
+        sectors.stream().map((sector) -> {
             SpatioTemporalDomain domain = new SpatioTemporalDomain(sector, this.timeset);
             this.domains.put(sector, domain);
+            return domain;
+        }).forEach((domain) -> {
             logger.log(Level.FINE, "initSpatioTemporalDomain created {0}", domain.toString());
-        }
+        });
         logger.log(Level.INFO, "initSpatioTemporalDomain elapsed time: {0} secs", ((System.currentTimeMillis() - startTimeMillis) / 1000));
 
     }
@@ -586,7 +606,7 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     }
 
     private FuelModelProvider selectFuelModelProviderForSector(Box sector) {
-        SelectFuelModelProvider selectAction = new SelectFuelModelProvider(sector);
+        SelectFuelModelProviderAction selectAction = new SelectFuelModelProviderAction(sector);
         selectAction.actionPerformed(null);
         return selectAction.getFuelModelProvider();
     }
@@ -596,7 +616,7 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
      */
     private class FuelTempWindowLauncher implements Runnable {
 
-        private FuelTemperatureModel temps;
+        private final FuelTemperatureModel temps;
 
         FuelTempWindowLauncher(FuelTemperatureModel temps) {
             this.temps = temps;
@@ -681,7 +701,7 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
      */
     private class FireBehaviorWindowLauncher implements Runnable {
 
-        private FireBehaviorModel behaviors;
+        private final FireBehaviorModel behaviors;
 
         FireBehaviorWindowLauncher(FireBehaviorModel behaviors) {
             this.behaviors = behaviors;
@@ -789,9 +809,9 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFireBehaviorMax() {
         List<FieldImpl> list = new ArrayList<>();
         Collection<FireBehaviorModel> values = this.fireBehaviorModels.values();
-        for (FireBehaviorModel fireBehaviorModel : values) {
+        values.stream().forEach((fireBehaviorModel) -> {
             list.add(fireBehaviorModel.getMaxFireBehavorData());
-        }
+        });
         return list;
     }
 
@@ -799,15 +819,15 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public Collection<FieldImpl> getFireBehaviorMin() {
         List<FieldImpl> list = new ArrayList<>();
         Collection<FireBehaviorModel> values = this.fireBehaviorModels.values();
-        for (FireBehaviorModel fireBehaviorModel : values) {
+        values.stream().forEach((fireBehaviorModel) -> {
             list.add(fireBehaviorModel.getMinFireBehavorData());
-        }
+        });
         return list;
     }
 
     private class AnalysisThread extends Thread implements Cancellable {
 
-        private WildlandFireground fireground;
+        private final WildlandFireground fireground;
 
         AnalysisThread(WildlandFireground fireground) {
             super("Fireground Analysis Thread");

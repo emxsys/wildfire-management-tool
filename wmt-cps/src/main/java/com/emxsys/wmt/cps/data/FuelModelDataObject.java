@@ -45,91 +45,66 @@ import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 
-
 /**
  * The FuelModelDataObject is a specialized NetCdfDataObject that overrides the icon.
  *
  * @author Bruce Schubert
  */
-@Messages(
-    {
-    "LBL_FuelModel_LOADER=Files of Fuel Model"
-})
+@Messages({"LBL_FuelModel_LOADER=Files of Fuel Model"})
+
 // Using a complex MIME resolver which overrides default NetCDF .nc extention mimeResolver.
 @MIMEResolver.Registration(
-    displayName = "#LBL_FuelModel_LOADER",
-    resource = "FiregroundResolver.xml",
-    position = 1300)
+        displayName = "#LBL_FuelModel_LOADER",
+        resource = "FiregroundResolver.xml",
+        position = 1300)
 @DataObject.Registration(
-    mimeType = "application/x-fuel_model",
-    iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
-    displayName = "#LBL_FuelModel_LOADER",
-    position = 1300)
-@ActionReferences(
-    {
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-        position = 100,
-        separatorAfter = 200),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-        position = 300),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-        position = 400,
-        separatorAfter = 500),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-        position = 600),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-        position = 700,
-        separatorAfter = 800),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
-        position = 900,
-        separatorAfter = 1000),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
-        position = 1100,
-        separatorAfter = 1200),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
-        position = 1300),
-    @ActionReference(
-        path = "Loaders/application/x-fuel_model/Actions",
-        id =
-        @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-        position = 1400)
+        mimeType = "application/x-fuel_model",
+        iconBase = "com/emxsys/wmt/cps/images/Fire_Location.png",
+        displayName = "#LBL_FuelModel_LOADER",
+        position = 1300)
+@ActionReferences({
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
+            position = 900,
+            separatorAfter = 1000),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
+            position = 1100,
+            separatorAfter = 1200),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+            position = 1300),
+    @ActionReference(path = "Loaders/application/x-fuel_model/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
 })
-public class FuelModelDataObject extends NetCdfDataObject
-{
+public class FuelModelDataObject extends NetCdfDataObject {
+
     private static final long serialVersionUID = 20130506L;
     private static final Logger logger = Logger.getLogger(FuelModelDataObject.class.getName());
     private static final RequestProcessor EXECUTOR = new RequestProcessor(FuelModelDataObject.class);
 
-
-    static
-    {
+    static {
         logger.setLevel(Level.ALL);
     }
-
 
     /**
      * Constructor that proxies the cookieSet lookup with a dynamic lookup containing the FlatField.
@@ -142,16 +117,13 @@ public class FuelModelDataObject extends NetCdfDataObject
      * @throws IOException
      */
     public FuelModelDataObject(FileObject primaryFile, MultiFileLoader loader) throws
-        DataObjectExistsException, IOException
-    {
+            DataObjectExistsException, IOException {
         super(primaryFile, loader);
         registerEditor("application/x-fuel_model", false);
     }
 
-
     @Override
-    protected Node createNodeDelegate()
-    {
+    protected Node createNodeDelegate() {
         return new FuelModelDataNode(this, super.lookup); // Don't call super.getLookup() else recursion
     }
 }

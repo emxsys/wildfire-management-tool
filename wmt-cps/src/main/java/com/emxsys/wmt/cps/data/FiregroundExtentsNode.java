@@ -29,11 +29,12 @@
  */
 package com.emxsys.wmt.cps.data;
 
-import com.emxsys.wmt.cps.actions.DeleteSectorFromFireground;
+import com.emxsys.wmt.cps.actions.DeleteSectorFromFiregroundAction;
 import com.emxsys.wmt.cps.fireground.WildlandFireground;
 import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.wildfire.api.Fireground;
+import com.emxsys.wmt.wildfire.api.FuelModelProvider;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -92,7 +93,8 @@ public class FiregroundExtentsNode extends AbstractNode {
         @Override
         protected Node[] createNodesForKey(Box key) {
             return new Node[]{
-                new SectorNode(key)
+                new SectorNode(key),
+                new FuelModelProviderNode((fireground.getFuelModelProvider(key)))
             };
         }
 
@@ -107,7 +109,7 @@ public class FiregroundExtentsNode extends AbstractNode {
     }
 
     /**
-     * Node representing a sector.
+     * Child Node representing a sector.
      */
     public static class SectorNode extends AbstractNode {
 
@@ -138,7 +140,7 @@ public class FiregroundExtentsNode extends AbstractNode {
         @Override
         public Action[] getActions(boolean context) {
             return new Action[]{
-                new DeleteSectorFromFireground(getSector())
+                new DeleteSectorFromFiregroundAction(getSector())
             };
         }
 
@@ -227,5 +229,36 @@ public class FiregroundExtentsNode extends AbstractNode {
                 return this.sector.getWidth().getValue();
             }
         }
+    }
+
+    /**
+     * Child Node representing the FuelModelProvider.
+     */
+    public static class FuelModelProviderNode extends AbstractNode {
+
+        public FuelModelProviderNode(FuelModelProvider provider) {
+            super(Children.LEAF, provider == null ? null : Lookups.singleton(provider));
+            setName(provider == null ? "Fuels Undefined" : provider.toString());
+        }
+
+        public Box getSector() {
+            return getLookup().lookup(Box.class);
+        }
+
+        @Override
+        public String getDisplayName() {
+            return getName();
+        }
+
+        @Override
+        public Image getOpenedIcon(int i) {
+            return getIcon(i);
+        }
+
+        @Override
+        public Image getIcon(int type) {
+            return ImageUtilities.loadImage("com/emxsys/wmt/cps/images/Fire_Location.png");
+        }
+
     }
 }

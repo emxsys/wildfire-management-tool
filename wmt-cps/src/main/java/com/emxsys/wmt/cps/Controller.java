@@ -54,7 +54,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -118,7 +117,7 @@ public class Controller {
     }
 
     /**
-     * Constructs the Controller singleton.
+     * Constructs the Controller singleton; attaches listeners.
      */
     private Controller() {
         // Event handlers used to update charts
@@ -206,7 +205,9 @@ public class Controller {
             ZonedDateTime time = controller.timeRef.get();
             Real azimuth = controller.azimuthRef.get();
             Real zenith = controller.zenithRef.get();
-            boolean isShaded = (controller.computeTerrestrialShading)
+
+            boolean isShaded = 
+                    controller.computeTerrestrialShading && !(azimuth.isMissing() || zenith.isMissing())
                     ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith)
                     : false;
 
@@ -265,7 +266,8 @@ public class Controller {
                 Real zenith = (Real) sunPosition.getComponent(ZENITH_INDEX);
                 controller.azimuthRef.set(azimuth);
                 controller.zenithRef.set(zenith);
-                boolean isShaded = (controller.computeTerrestrialShading)
+                boolean isShaded = 
+                        controller.computeTerrestrialShading
                         ? controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith)
                         : false;
 

@@ -32,6 +32,7 @@ package com.emxsys.wmt.cps.data;
 import com.emxsys.wmt.wildfire.api.Fireground;
 import java.awt.Image;
 import java.util.List;
+import javax.swing.Action;
 import org.openide.loaders.DataNode;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
@@ -40,74 +41,70 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * This class provides a DataNode for the FiregroundDataObject
+ * This class provides a DataNode for the FiregroundDataObject (fireground.xml file).
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class FiregroundDataNode extends DataNode
-{
+@Messages("firegroundNodeDisplayName=Definition")
+public class FiregroundDataNode extends DataNode {
 
-    @Messages("nodeDisplayName=Fireground")
-    public FiregroundDataNode(FiregroundDataObject fdo, Lookup lookup)
-    {
+    public FiregroundDataNode(FiregroundDataObject fdo, Lookup lookup) {
         super(fdo, Children.create(
                 new FiregroundChildren(fdo.getLookup().lookup(Fireground.class)), true),
                 lookup);
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         //return super.getDisplayName();
-        return Bundle.nodeDisplayName();
+        return Bundle.firegroundNodeDisplayName();
 
     }
 
     @Override
-    public String getHtmlDisplayName()
-    {
+    public String getHtmlDisplayName() {
         return super.getHtmlDisplayName();
     }
 
     @Override
-    public Image getIcon(int type)
-    {
+    public Image getIcon(int type) {
         return super.getIcon(type);
     }
 
+    @Override
+    public Action[] getActions(boolean context) {
+        return super.getDataObject().getLoader ().getActions ();
+    }
+
+    
     /**
      * ChildFactory
      */
-    private static class FiregroundChildren extends ChildFactory<Fireground>
-    {
+    private static class FiregroundChildren extends ChildFactory<Fireground> {
 
         private final Fireground fireground;
 
-        public FiregroundChildren(Fireground fireground)
-        {
+        public FiregroundChildren(Fireground fireground) {
             this.fireground = fireground;
         }
 
         @Override
-        protected boolean createKeys(List<Fireground> toPopulate)
-        {
+        protected boolean createKeys(List<Fireground> toPopulate) {
             toPopulate.add(fireground);
             return true;
         }
 
         @Override
-        protected Node[] createNodesForKey(Fireground key)
-        {
-            return new Node[]
-                    {
-                        new FiregroundExtentsNode(key),
-//                    new FlatFieldNode(key.getFuelModel()),
-//                    new FlatFieldNode(key.getFirePredictions()),
-//                    new FlatFieldNode(key.getFireSignatures()),
-//                    new FlatFieldNode(key.getFuelMoisture()),
-//                    new FlatFieldNode(key.getFuelTemperature()),
-//                    new FlatFieldNode(key.getWxForecasts()),
-//                    new FlatFieldNode(key.getWxObservations())
-                    };
+        protected Node[] createNodesForKey(Fireground key) {
+            return new Node[]{
+                new FiregroundExtentsNode(key), //                    new FlatFieldNode(key.getFuelModel()),
+            //                    new FlatFieldNode(key.getFirePredictions()),
+            //                    new FlatFieldNode(key.getFireSignatures()),
+            //                    new FlatFieldNode(key.getFuelMoisture()),
+            //                    new FlatFieldNode(key.getFuelTemperature()),
+            //                    new FlatFieldNode(key.getWxForecasts()),
+            //                    new FlatFieldNode(key.getWxObservations())
+            };
             //new FlatFieldNode(key.getTerrain());
         }
     }

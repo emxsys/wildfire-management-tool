@@ -55,12 +55,12 @@ import org.openide.util.NbBundle.Messages;
     "CTL_DeleteSectorFromFireground=Delete Fireground Sector ",
     "titleCannotRemoveSector=Cannot Remove Sector from Fireground"
 })
-public final class DeleteSectorFromFireground extends AbstractAction {
+public final class DeleteSectorFromFiregroundAction extends AbstractAction {
 
     private final Box context;
-    private static final Logger LOG = Logger.getLogger(DeleteSectorFromFireground.class.getName());
+    private static final Logger LOG = Logger.getLogger(DeleteSectorFromFiregroundAction.class.getName());
 
-    public DeleteSectorFromFireground(Box context) {
+    public DeleteSectorFromFiregroundAction(Box context) {
         this.context = context;
         putValue(NAME, Bundle.CTL_DeleteSectorFromFireground());
     }

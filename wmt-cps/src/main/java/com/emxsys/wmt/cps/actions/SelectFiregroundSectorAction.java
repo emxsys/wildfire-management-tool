@@ -55,11 +55,11 @@ import org.openide.util.NbBundle.Messages;
 @Messages({
     "CTL_SelectSector=Select a Sector"
 })
-public class SelectFiregroundSector extends AbstractAction {
+public class SelectFiregroundSectorAction extends AbstractAction {
 
     private SectorEditor context;
 
-    public SelectFiregroundSector(SectorEditor context) {
+    public SelectFiregroundSectorAction(SectorEditor context) {
         this.context = context;
     }
 
