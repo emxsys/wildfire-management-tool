@@ -31,12 +31,11 @@ package com.emxsys.wmt.wildfire.spi;
 
 import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.GeoSector;
 import com.emxsys.wmt.wildfire.api.FuelModelProvider;
 import com.emxsys.wmt.wildfire.api.SingleFuelModelProvider;
-import com.emxsys.wmt.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wmt.wildfire.api.StdFuelModelParams40;
+import com.emxsys.wmt.wildfire.api.StdFuelModelProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -73,20 +72,12 @@ public class DefaultFuelModelProvider {
 
             // Add the Standard 13 FuelModels
             for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
-                FuelModelProvider provider = new SingleFuelModelProvider(
-                        GeoSector.WORLD,
-                        StdFuelModel.getFuelModel(fbfm.getModelNo()),
-                        "System: Std 13");
-                instances.add(provider);
+                instances.add(new StdFuelModelProvider(fbfm.getModelNo()));
             }
             logger.log(Level.CONFIG, "Providing Std 13 {0} instances.", SingleFuelModelProvider.class.getSimpleName());
             // Add the Standard 40 FuelModels
             for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
-                FuelModelProvider provider = new SingleFuelModelProvider(
-                        GeoSector.WORLD,
-                        StdFuelModel.getFuelModel(fbfm.getModelNo()),
-                        "System: Std 40");
-                instances.add(provider);
+                instances.add(new StdFuelModelProvider(fbfm.getModelNo()));
             }
             logger.log(Level.CONFIG, "Providing Std 40 {0} instances.", SingleFuelModelProvider.class.getSimpleName());
         }

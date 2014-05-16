@@ -74,6 +74,10 @@ public class SingleFuelModelProvider implements FuelModelProvider {
         this.source = source;
     }
 
+    public FuelModel getFuelModel() {
+        return fuelModel;
+    }
+
     @Override
     public FuelModel getFuelModel(Coord2D location) {
         return box.contains(location) ? fuelModel : null;
@@ -98,4 +102,6 @@ public class SingleFuelModelProvider implements FuelModelProvider {
     public String toString() {
         return "Single Fuel Model [" + getSource() + "]: " + fuelModel;
     }
+
+
 }
