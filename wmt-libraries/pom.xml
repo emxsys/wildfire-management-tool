@@ -80,13 +80,13 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${project.basedir}/src/main/repository/jfreechart/jfreechart-1.0.14.jar</file>
+                            <file>${project.basedir}/src/main/repository/jfreechart/jfreechart-1.0.17.jar</file>
                             <sources>${project.basedir}/src/main/repository/jfreechart/jfreechart-src.zip</sources>
                             <javadoc>${project.basedir}/src/main/repository/jfreechart/jfreechart-doc.zip</javadoc>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>org.jfree</groupId>
                             <artifactId>jfreechart</artifactId>
-                            <version>1.0.14</version>
+                            <version>1.0.17</version>
                             <packaging>jar</packaging>
                             <generatePom>true</generatePom>
                         </configuration>
@@ -98,29 +98,12 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${project.basedir}/src/main/repository/jcommon/jcommon-1.0.17.jar</file>
+                            <file>${project.basedir}/src/main/repository/jcommon/jcommon-1.0.22.jar</file>
+                            <sources>${project.basedir}/src/main/repository/jcommon/jcommon-src.zip</sources>
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>org.jfree</groupId>
                             <artifactId>jcommon</artifactId>
-                            <version>1.0.17</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-visad-library</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>${project.basedir}/src/main/repository/visad-2.0/visad.jar</file>
-                            <sources>${project.basedir}/src/main/repository/visad-2.0/visad_src.jar</sources>
-                            <javadoc>${project.basedir}/src/main/repository/visad-2.0/visad_doc.jar</javadoc>
-                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
-                            <groupId>visad</groupId>
-                            <artifactId>visad</artifactId>
-                            <version>${visad.version}</version>
+                            <version>1.0.22</version>
                             <packaging>jar</packaging>
                             <generatePom>true</generatePom>
                         </configuration>
@@ -138,38 +121,6 @@
                             <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
                             <groupId>no.geosoft.cc</groupId>
                             <artifactId>G</artifactId>
-                            <version>1.0</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-jogl-library</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>${project.basedir}/src/main/repository/worldwind-1.5.1/jogl.jar</file>
-                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
-                            <groupId>com.sun</groupId>
-                            <artifactId>jogl</artifactId>
-                            <version>1.1.2</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-gluegen-library</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>${project.basedir}/src/main/repository/worldwind-1.5.1/gluegen-rt.jar</file>
-                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
-                            <groupId>com.sun</groupId>
-                            <artifactId>gluegen-rt</artifactId>
                             <version>1.0</version>
                             <packaging>jar</packaging>
                             <generatePom>true</generatePom>
