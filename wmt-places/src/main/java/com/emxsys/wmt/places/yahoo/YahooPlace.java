@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.places.yahoo;
 
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.GeoSector;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoSector;
 import com.emxsys.wmt.places.api.Place;
 import java.rmi.RemoteException;
 import java.util.Objects;

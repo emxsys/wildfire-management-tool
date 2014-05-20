@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.places.yahoo;
 
-import com.emxsys.wmt.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord2D;
 import com.emxsys.wmt.places.api.Place;
 import com.emxsys.wmt.places.api.PlaceProvider;
-import com.emxsys.wmt.util.HttpUtil;
+import com.emxsys.util.HttpUtil;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

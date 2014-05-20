@@ -30,8 +30,8 @@ package com.emxsys.wmt.places.api;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Named;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Named;
 
 /**
  * A Place is a named coordinate typically returned by a gazetteer.

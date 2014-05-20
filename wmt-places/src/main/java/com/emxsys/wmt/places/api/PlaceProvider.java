@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.places.api;
 
+import com.emxsys.gis.api.Coord2D;
 import java.util.List;
-import com.emxsys.wmt.gis.api.*;
 
 
 /**
