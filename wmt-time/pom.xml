@@ -66,8 +66,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>com.emxsys.wmt.time.api</publicPackage>
-                        <publicPackage>com.emxsys.wmt.time.spi</publicPackage>
+                        <publicPackage>com.emxsys.time.api</publicPackage>
+                        <publicPackage>com.emxsys.time.spi</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

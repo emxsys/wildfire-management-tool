@@ -27,11 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.time.spi;
+package com.emxsys.time.spi;
 
-import com.emxsys.wmt.time.api.TimeEvent;
-import com.emxsys.wmt.time.api.TimeListener;
-import com.emxsys.wmt.time.api.TimeProvider;
+import com.emxsys.time.api.TimeEvent;
+import com.emxsys.time.api.TimeListener;
+import com.emxsys.time.api.TimeProvider;
 import com.terramenta.time.DateProvider;
 import com.terramenta.time.options.TimeOptions;
 import java.time.ZoneId;

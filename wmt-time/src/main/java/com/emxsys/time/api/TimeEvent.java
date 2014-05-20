@@ -27,18 +27,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.time.api;
+package com.emxsys.time.api;
 
-import java.util.EventListener;
+import java.time.ZonedDateTime;
+import java.util.EventObject;
 
 /**
- * A TimeListener receives a TimeEvent message when
- the coordinate under the reticule changes.
- * 
+ * A TimeEvent instance provides the geographical coordinate of the reticule.
+ *
  * @author Bruce Schubert (bruce@emxsys.com)
- * @see TimeEvent
  */
-public interface TimeListener extends EventListener {
+public class TimeEvent extends EventObject {
 
-    public void updateTime(TimeEvent evt);
+    private final ZonedDateTime oldTime;
+    private final ZonedDateTime newTime;
+
+    public TimeEvent(Object source, ZonedDateTime oldTime, ZonedDateTime newTime) {
+        super(source);
+        this.oldTime = oldTime;
+        this.newTime = newTime;
+    }
+
+    public ZonedDateTime getNewTime() {
+        return newTime;
+    }
+
+    ;
+    public ZonedDateTime getOldTime() {
+        return oldTime;
+    }
+
+    ;
+    
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " "
+                + (getNewTime() != null ? getNewTime() : "null");
+    }
 }
