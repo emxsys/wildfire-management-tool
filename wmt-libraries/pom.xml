@@ -73,7 +73,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <version>2.5.1</version>
                 <executions>
-                    <execution>
+<!--                    <execution>
                         <id>install-jfreechart-library</id>
                         <phase>install</phase>
                         <goals>
@@ -83,7 +83,7 @@
                             <file>${project.basedir}/src/main/repository/jfreechart/jfreechart-1.0.17.jar</file>
                             <sources>${project.basedir}/src/main/repository/jfreechart/jfreechart-src.zip</sources>
                             <javadoc>${project.basedir}/src/main/repository/jfreechart/jfreechart-doc.zip</javadoc>
-                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>
                             <groupId>org.jfree</groupId>
                             <artifactId>jfreechart</artifactId>
                             <version>1.0.17</version>
@@ -100,14 +100,14 @@
                         <configuration>
                             <file>${project.basedir}/src/main/repository/jcommon/jcommon-1.0.22.jar</file>
                             <sources>${project.basedir}/src/main/repository/jcommon/jcommon-src.zip</sources>
-                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>
                             <groupId>org.jfree</groupId>
                             <artifactId>jcommon</artifactId>
                             <version>1.0.22</version>
                             <packaging>jar</packaging>
                             <generatePom>true</generatePom>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <execution>
                         <id>install-geosoft-library</id>
                         <phase>install</phase>
