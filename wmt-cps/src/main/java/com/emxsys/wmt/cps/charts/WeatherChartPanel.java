@@ -29,11 +29,11 @@
  */
 package com.emxsys.wmt.cps.charts;
 
-import com.emxsys.wmt.solar.api.SolarType;
-import com.emxsys.wmt.visad.GeneralUnit;
-import com.emxsys.wmt.visad.Times;
-import com.emxsys.wmt.visad.Tuples;
-import com.emxsys.wmt.weather.api.WeatherType;
+import com.emxsys.solar.api.SolarType;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Times;
+import com.emxsys.visad.Tuples;
+import com.emxsys.weather.api.WeatherType;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;

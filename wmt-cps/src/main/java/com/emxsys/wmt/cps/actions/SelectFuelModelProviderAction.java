@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.cps.actions;
 
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.wildfire.api.FuelModelProvider;
-import com.emxsys.wmt.wildfire.spi.DefaultFuelModelProvider;
+import com.emxsys.gis.api.Box;
+import com.emxsys.wildfire.api.FuelModelProvider;
+import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.logging.Logger;

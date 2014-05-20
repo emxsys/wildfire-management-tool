@@ -30,12 +30,12 @@
 package com.emxsys.wmt.cps.data;
 
 import com.emxsys.wmt.cps.fireground.WildlandFireground;
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.gml.GmlBuilder;
-import com.emxsys.wmt.gis.gml.GmlParser;
-import com.emxsys.wmt.wildfire.api.FuelModelProvider;
-import com.emxsys.wmt.wildfire.api.StdFuelModelProvider;
+import com.emxsys.gis.api.Box;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.gml.GmlBuilder;
+import com.emxsys.gis.gml.GmlParser;
+import com.emxsys.wildfire.api.FuelModelProvider;
+import com.emxsys.wildfire.api.StdFuelModelProvider;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;

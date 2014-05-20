@@ -30,8 +30,8 @@
 package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.jfree.ChartUtil;
-import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.util.AngleUtil;
+import com.emxsys.gis.api.Terrain;
+import com.emxsys.util.AngleUtil;
 import java.awt.Color;
 import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;

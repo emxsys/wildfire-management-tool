@@ -30,9 +30,9 @@
 package com.emxsys.wmt.cps.data;
 
 import com.emxsys.wmt.cps.fireground.WildlandFireground;
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.visad.filetype.NetCdfDataObject;
-import com.emxsys.wmt.wildfire.api.FuelModelProvider;
+import com.emxsys.gis.api.Box;
+import com.emxsys.visad.filetype.NetCdfDataObject;
+import com.emxsys.wildfire.api.FuelModelProvider;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;

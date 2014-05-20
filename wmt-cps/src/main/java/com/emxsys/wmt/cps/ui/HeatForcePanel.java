@@ -33,7 +33,7 @@ import com.emxsys.jfree.ChartCanvas;
 import com.emxsys.jfree.ClockCompassPlot;
 import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
-import com.emxsys.wmt.util.AngleUtil;
+import com.emxsys.util.AngleUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.time.ZonedDateTime;

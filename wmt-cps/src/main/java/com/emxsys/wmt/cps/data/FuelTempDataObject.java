@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.data;
 
-import com.emxsys.wmt.visad.filetype.NetCdfDataObject;
+import com.emxsys.visad.filetype.NetCdfDataObject;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

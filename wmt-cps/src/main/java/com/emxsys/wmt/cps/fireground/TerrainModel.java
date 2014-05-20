@@ -29,14 +29,14 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
-import com.emxsys.wmt.gis.api.TerrainTuple;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.viewer.GisViewer;
-import com.emxsys.wmt.gis.spi.DefaultShadedTerrainProvider;
-import com.emxsys.wmt.wildfire.api.WildfireType;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.ShadedTerrainProvider;
+import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.viewer.GisViewer;
+import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
+import com.emxsys.wildfire.api.WildfireType;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.logging.Level;

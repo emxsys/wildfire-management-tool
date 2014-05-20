@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.wmt.wildfire.api.WildfireType;
+import com.emxsys.wildfire.api.WildfireType;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 import visad.FlatField;

@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.visad.Times;
+import com.emxsys.gis.api.Box;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.visad.Times;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;

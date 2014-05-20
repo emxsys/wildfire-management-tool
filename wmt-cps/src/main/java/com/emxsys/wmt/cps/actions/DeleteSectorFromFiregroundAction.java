@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.cps.actions;
 
-import com.emxsys.wmt.wildfire.api.Fireground;
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.util.ProjectUtil;
+import com.emxsys.wildfire.api.Fireground;
+import com.emxsys.gis.api.Box;
+import com.emxsys.util.ProjectUtil;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;

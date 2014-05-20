@@ -31,12 +31,12 @@ package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.wmt.cps.PropNames;
 import com.emxsys.wmt.cps.charts.FuelModelChart;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.viewer.GisViewer;
-import com.emxsys.wmt.wildfire.api.FuelModel;
-import com.emxsys.wmt.wildfire.api.StdFuelModel;
-import com.emxsys.wmt.wildfire.api.StdFuelModelParams13;
-import com.emxsys.wmt.wildfire.api.StdFuelModelParams40;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.viewer.GisViewer;
+import com.emxsys.wildfire.api.FuelModel;
+import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.StdFuelModelParams13;
+import com.emxsys.wildfire.api.StdFuelModelParams40;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ItemEvent;

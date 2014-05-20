@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.data;
 
-import com.emxsys.wmt.visad.filetype.NetCdfDataNode;
+import com.emxsys.visad.filetype.NetCdfDataNode;
 import javax.swing.Action;
 import org.openide.util.Lookup;
 

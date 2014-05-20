@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.cps.actions;
 
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.viewer.SelectedSector;
-import com.emxsys.wmt.util.ProjectUtil;
-import com.emxsys.wmt.wildfire.api.Fireground;
+import com.emxsys.gis.api.Box;
+import com.emxsys.gis.api.viewer.SelectedSector;
+import com.emxsys.util.ProjectUtil;
+import com.emxsys.wildfire.api.Fireground;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.util.List;

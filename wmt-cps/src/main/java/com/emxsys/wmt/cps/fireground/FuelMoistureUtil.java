@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.wmt.wildfire.behave.BehaveUtil;
-import com.emxsys.wmt.visad.GeneralUnit;
-import static com.emxsys.wmt.wildfire.api.WildfireType.*;
+import com.emxsys.wildfire.behave.BehaveUtil;
+import com.emxsys.visad.GeneralUnit;
+import static com.emxsys.wildfire.api.WildfireType.*;
 
 import org.openide.util.Exceptions;
 

@@ -30,8 +30,8 @@
 package com.emxsys.wmt.cps.data;
 
 import com.emxsys.wmt.cps.analytics.BehaveAnalyticsPrototype;
-import com.emxsys.wmt.visad.filetype.NetCdfDataNode;
-import com.emxsys.wmt.wildfire.api.WildfireType;
+import com.emxsys.visad.filetype.NetCdfDataNode;
+import com.emxsys.wildfire.api.WildfireType;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.LinkedList;

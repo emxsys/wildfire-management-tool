@@ -31,10 +31,10 @@ package com.emxsys.wmt.cps.data;
 
 import com.emxsys.wmt.cps.actions.DeleteSectorFromFiregroundAction;
 import com.emxsys.wmt.cps.fireground.WildlandFireground;
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.wildfire.api.Fireground;
-import com.emxsys.wmt.wildfire.api.FuelModelProvider;
+import com.emxsys.gis.api.Box;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.wildfire.api.Fireground;
+import com.emxsys.wildfire.api.FuelModelProvider;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

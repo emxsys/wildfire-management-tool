@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.cps.ui;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.Terrain;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.Terrain;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
 import java.time.ZonedDateTime;

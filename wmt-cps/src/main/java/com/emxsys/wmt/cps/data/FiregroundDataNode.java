@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.data;
 
-import com.emxsys.wmt.wildfire.api.Fireground;
+import com.emxsys.wildfire.api.Fireground;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.Action;

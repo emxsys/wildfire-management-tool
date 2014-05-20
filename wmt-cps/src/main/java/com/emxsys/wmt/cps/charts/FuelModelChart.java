@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.cps.charts;
 
-import com.emxsys.wmt.visad.FireUnit;
-import com.emxsys.wmt.wildfire.api.FuelModel;
+import com.emxsys.visad.FireUnit;
+import com.emxsys.wildfire.api.FuelModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
