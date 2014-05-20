@@ -79,7 +79,7 @@ public interface Constants {
     static final Font CONTENT_HEADER_FONT = new Font( FONT_NAME, Font.BOLD, FONT_SIZE+13 ) ; //NOI18N
 
     static final String PCF_LOGO_IMAGE = "com/emxsys/wmt/core/welcome/content/pau_costa_logo.png"; // NOI18N
-    static final String CPS_LOGO_IMAGE = "com/emxsys/wmt/core/welcome/content/cps_logo.png"; // NOI18N
+    static final String CPS_LOGO_IMAGE = "com/emxsys/wmt/core/welcome/content/cps-curves.png"; // NOI18N
     static final String EMXSYS_LOGO_IMAGE = "com/emxsys/wmt/core/welcome/content/emxsys_logo.png"; // NOI18N
 
     static final String IMAGE_CONTENT_BANNER = "com/emxsys/wmt/core/welcome/content/content_banner.png"; // NOI18N
