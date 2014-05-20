@@ -1,29 +1,32 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
+## Wildfire Management Tool (WMT)  version 4. ##
 ### What is this repository for? ###
+#### Quick summary ####
+This is a NetBeans 8.0 mavenized module suite. The NASA WorldWind virtual globe is provided by the Terramenta project dependency, which is another NetBeans maven project.  This project is licensed under the BSD 3-Clause license. 
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+#### Version ####
+4.0
 
 ### How do I get set up? ###
+#### Summary of set up 
+TODO
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+#### Configuration
+TODO
 
-### Contribution guidelines ###
+#### Dependencies
+* NetBeans 8.0
+* JDK 8
+* [Emxsys - Terramenta Project](https://bitbucket.org/emxsys/emxsys-terramenta)
+#### Database configuration 
+#### How to run tests 
+#### Deployment instructions 
 
-* Writing tests
-* Code review
-* Other guidelines
+### Contribution guidelines 
+#### Writing tests 
+#### Code review 
+#### Other guidelines 
 
-### Who do I talk to? ###
-
+### Who do I talk to? 
 * Repo owner or admin
-* Other community or team contact
