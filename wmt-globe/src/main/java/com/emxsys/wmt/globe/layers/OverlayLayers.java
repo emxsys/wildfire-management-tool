@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.MapLayerRegistration;
+import com.emxsys.gis.api.layer.MapLayerRegistrations;
 import gov.nasa.worldwind.layers.Layer;
 import java.util.ArrayList;
 import java.util.Collection;

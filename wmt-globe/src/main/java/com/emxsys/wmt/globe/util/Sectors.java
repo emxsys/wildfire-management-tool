@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.globe.util;
 
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.GeoSector;
+import com.emxsys.gis.api.Box;
+import com.emxsys.gis.api.GeoSector;
 import gov.nasa.worldwind.geom.Sector;
 
 /**

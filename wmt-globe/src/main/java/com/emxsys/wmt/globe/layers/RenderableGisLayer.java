@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.LayerCategory;
-import com.emxsys.wmt.gis.api.layer.LayerGroup;
-import com.emxsys.wmt.gis.api.layer.LayerType;
+import com.emxsys.gis.api.layer.LayerCategory;
+import com.emxsys.gis.api.layer.LayerGroup;
+import com.emxsys.gis.api.layer.LayerType;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 import java.util.Collection;

@@ -29,15 +29,15 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.layer.Layers;
-import com.emxsys.wmt.gis.api.viewer.Viewers;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.LayerActiveAltitudeRange;
-import com.emxsys.wmt.gis.api.layer.LayerOpacity;
+import com.emxsys.gis.api.layer.Layers;
+import com.emxsys.gis.api.viewer.Viewers;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.LayerActiveAltitudeRange;
+import com.emxsys.gis.api.layer.LayerOpacity;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.visad.Reals;
+import com.emxsys.visad.Reals;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;

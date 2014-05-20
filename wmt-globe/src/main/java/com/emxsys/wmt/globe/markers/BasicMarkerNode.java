@@ -31,10 +31,10 @@ package com.emxsys.wmt.globe.markers;
 
 import com.emxsys.wmt.core.capabilities.DeleteCapability;
 import com.emxsys.wmt.core.capabilities.LockCapability;
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.Globe;
-import com.emxsys.wmt.util.FilenameUtils;
-import com.emxsys.wmt.util.ModuleUtil;
+import com.emxsys.util.FilenameUtils;
+import com.emxsys.util.ModuleUtil;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;

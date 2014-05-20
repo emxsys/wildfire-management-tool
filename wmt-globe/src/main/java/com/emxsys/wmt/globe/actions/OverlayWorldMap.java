@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.layer.LayerOpacity;
+import com.emxsys.gis.api.layer.LayerOpacity;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;

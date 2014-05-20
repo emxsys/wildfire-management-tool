@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.marker.Marker;
-import com.emxsys.wmt.gis.gml.GmlConstants;
-import com.emxsys.wmt.gis.gml.GmlParser;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.marker.Marker;
+import com.emxsys.gis.gml.GmlConstants;
+import com.emxsys.gis.gml.GmlParser;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.*;
-import com.emxsys.wmt.util.FilenameUtils;
+import com.emxsys.util.FilenameUtils;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PointPlacemark;

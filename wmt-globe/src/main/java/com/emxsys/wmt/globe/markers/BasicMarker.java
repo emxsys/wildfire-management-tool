@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.marker.AbstractMarker;
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.marker.AbstractMarker;
+import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.GlobeTopComponent;

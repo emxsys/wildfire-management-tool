@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.markers.MarkerPositioner;
 import com.emxsys.wmt.globe.markers.MarkerSupport;

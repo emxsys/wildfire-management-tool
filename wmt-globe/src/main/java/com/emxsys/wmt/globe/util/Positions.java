@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.globe.util;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord2D;
 import gov.nasa.worldwind.geom.Position;
 import org.openide.util.Exceptions;
 

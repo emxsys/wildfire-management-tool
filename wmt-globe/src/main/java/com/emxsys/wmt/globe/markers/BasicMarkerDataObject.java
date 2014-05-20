@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.marker.MarkerManager;
-import com.emxsys.wmt.util.FilenameUtils;
+import com.emxsys.gis.api.marker.MarkerManager;
+import com.emxsys.util.FilenameUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;

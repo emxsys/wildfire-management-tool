@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.marker.Marker;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilderFactory;

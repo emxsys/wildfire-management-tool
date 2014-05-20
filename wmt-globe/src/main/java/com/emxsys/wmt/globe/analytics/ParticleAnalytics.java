@@ -29,16 +29,16 @@
  */
 package com.emxsys.wmt.globe.analytics;
 
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.layer.BasicLayerCategory;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
-import com.emxsys.wmt.time.api.TimeEvent;
-import com.emxsys.wmt.time.api.TimeListener;
-import com.emxsys.wmt.time.api.TimeProvider;
-import com.emxsys.wmt.time.spi.DefaultTimeProvider;
+import com.emxsys.time.api.TimeEvent;
+import com.emxsys.time.api.TimeListener;
+import com.emxsys.time.api.TimeProvider;
+import com.emxsys.time.spi.DefaultTimeProvider;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;

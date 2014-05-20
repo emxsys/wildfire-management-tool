@@ -29,7 +29,7 @@
  */
 package com.emxsys.markers.pushpins;
 
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.marker.Marker;
 import org.w3c.dom.Document;
 
 /**

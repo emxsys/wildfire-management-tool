@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.GisLayer;
 import gov.nasa.worldwind.globes.ElevationModel;
 import java.beans.PropertyChangeListener;
 import org.openide.util.Lookup;

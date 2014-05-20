@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.viewer.SelectedSector;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.viewer.SelectedSector;
 import com.emxsys.wmt.globe.cache.BulkDownloader;
 import com.emxsys.wmt.globe.cache.LayerSelectionPanel;
 import com.terramenta.ribbon.RibbonActionReference;

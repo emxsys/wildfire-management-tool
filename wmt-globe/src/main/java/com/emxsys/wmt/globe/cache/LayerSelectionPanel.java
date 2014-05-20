@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.cache;
 
-import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.GisLayer;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;

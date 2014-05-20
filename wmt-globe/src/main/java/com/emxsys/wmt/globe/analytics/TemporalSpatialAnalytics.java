@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.globe.analytics;
 
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import gov.nasa.worldwind.WorldWind;

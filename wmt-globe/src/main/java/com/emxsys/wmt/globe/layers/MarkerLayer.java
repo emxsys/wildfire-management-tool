@@ -29,14 +29,14 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.LayerCategory;
-import com.emxsys.wmt.gis.api.layer.LayerGroup;
-import com.emxsys.wmt.gis.api.layer.LayerType;
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.layer.BasicLayerCategory;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.layer.BasicLayerType;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.LayerCategory;
+import com.emxsys.gis.api.layer.LayerGroup;
+import com.emxsys.gis.api.layer.LayerType;
+import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.RenderableLayer;

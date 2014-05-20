@@ -30,8 +30,8 @@
 package com.emxsys.wmt.globe.util;
 
 import com.emxsys.wmt.globe.layers.WmsLayerInfo;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.util.ModuleUtil;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.util.ModuleUtil;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;

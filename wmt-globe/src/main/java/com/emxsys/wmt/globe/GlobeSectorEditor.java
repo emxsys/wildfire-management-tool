@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.globe;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.api.viewer.SectorEditor;
-import com.emxsys.wmt.gis.api.viewer.SelectedSector;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.api.viewer.SectorEditor;
+import com.emxsys.gis.api.viewer.SelectedSector;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Sectors;
 import gov.nasa.worldwind.geom.Sector;

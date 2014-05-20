@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.LayerActiveAltitudeRange;
-import com.emxsys.wmt.visad.Reals;
+import com.emxsys.gis.api.layer.LayerActiveAltitudeRange;
+import com.emxsys.visad.Reals;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import visad.CommonUnit;

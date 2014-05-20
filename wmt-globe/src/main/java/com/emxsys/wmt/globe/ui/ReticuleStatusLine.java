@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.globe.ui;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.gis.api.TerrainProvider;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateEvent;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateListener;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.Terrain;
+import com.emxsys.gis.api.TerrainProvider;
+import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
+import com.emxsys.gis.api.event.ReticuleCoordinateListener;
+import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.geom.Angle;
 import java.awt.BorderLayout;

@@ -30,8 +30,8 @@
 package com.emxsys.wmt.globe.markers.weather;
 
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.weather.api.PointForecastPresenter;
-import com.emxsys.wmt.weather.api.WeatherProvider;
+import com.emxsys.weather.api.PointForecastPresenter;
+import com.emxsys.weather.api.WeatherProvider;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.BalloonAttributes;

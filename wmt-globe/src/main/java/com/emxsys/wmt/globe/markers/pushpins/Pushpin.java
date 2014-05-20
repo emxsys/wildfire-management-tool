@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.globe.markers.pushpins;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.BasicMarker;
 import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
 import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;

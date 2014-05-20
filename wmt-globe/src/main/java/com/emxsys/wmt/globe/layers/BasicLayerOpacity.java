@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.LayerOpacity;
+import com.emxsys.gis.api.layer.LayerOpacity;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import java.util.logging.Level;

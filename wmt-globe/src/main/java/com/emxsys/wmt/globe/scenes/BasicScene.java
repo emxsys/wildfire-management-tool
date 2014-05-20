@@ -29,15 +29,15 @@
  */
 package com.emxsys.wmt.globe.scenes;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.scene.AbstractScene;
-import com.emxsys.wmt.gis.api.scene.BasicSceneCatalog;
-import com.emxsys.wmt.gis.api.scene.Scene;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.scene.AbstractScene;
+import com.emxsys.gis.api.scene.BasicSceneCatalog;
+import com.emxsys.gis.api.scene.Scene;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.util.DateUtil;
-import com.emxsys.wmt.util.FilenameUtils;
+import com.emxsys.util.DateUtil;
+import com.emxsys.util.FilenameUtils;
 import com.terramenta.globe.WorldWindManager;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.LayerList;

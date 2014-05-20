@@ -29,14 +29,14 @@
  */
 package com.emxsys.wmt.globe;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.event.CursorCoordinateProvider;
-import com.emxsys.wmt.gis.api.event.CursorCoordinateEvent;
-import com.emxsys.wmt.gis.api.event.CursorCoordinateListener;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateEvent;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateListener;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.event.CursorCoordinateProvider;
+import com.emxsys.gis.api.event.CursorCoordinateEvent;
+import com.emxsys.gis.api.event.CursorCoordinateListener;
+import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
+import com.emxsys.gis.api.event.ReticuleCoordinateListener;
+import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;

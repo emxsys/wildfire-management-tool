@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.globe.cache;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.GisLayerList;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.GisLayerList;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import com.emxsys.wmt.globe.layers.WorldWindElevationModelAdaptor;

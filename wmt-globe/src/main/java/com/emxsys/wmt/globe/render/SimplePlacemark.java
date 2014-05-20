@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.render;
 
-import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.gis.api.Coord3D;
 import com.emxsys.wmt.globe.util.Positions;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;

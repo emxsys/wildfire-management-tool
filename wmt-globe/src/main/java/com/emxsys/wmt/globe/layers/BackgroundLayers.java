@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.MapLayerRegistration;
+import com.emxsys.gis.api.layer.MapLayerRegistrations;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.layer.GisLayer;
 import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;

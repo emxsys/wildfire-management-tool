@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.GisLayer;
 import com.emxsys.wmt.globe.Globe;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;

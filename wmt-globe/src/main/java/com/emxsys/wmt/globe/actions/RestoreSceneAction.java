@@ -29,11 +29,11 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.scene.Scene;
-import com.emxsys.wmt.gis.api.scene.SceneCatalog;
+import com.emxsys.gis.api.scene.Scene;
+import com.emxsys.gis.api.scene.SceneCatalog;
 import com.emxsys.wmt.globe.scenes.BasicScene;
 import com.emxsys.wmt.globe.scenes.BasicSceneNode;
-import com.emxsys.wmt.util.ProjectUtil;
+import com.emxsys.util.ProjectUtil;
 import com.terramenta.ribbon.RibbonActionReference;
 import com.terramenta.ribbon.RibbonActionReferences;
 import java.awt.event.ActionEvent;

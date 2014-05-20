@@ -29,21 +29,21 @@
  */
 package com.emxsys.wmt.globe.markers.weather;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.marker.Marker;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
 import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
 import com.emxsys.wmt.globe.markers.BasicMarker;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.wmt.time.api.TimeEvent;
-import com.emxsys.wmt.time.api.TimeListener;
-import com.emxsys.wmt.time.api.TimeProvider;
-import com.emxsys.wmt.time.spi.DefaultTimeProvider;
-import com.emxsys.wmt.weather.api.PointForecaster;
-import com.emxsys.wmt.weather.api.WeatherProvider;
+import com.emxsys.time.api.TimeEvent;
+import com.emxsys.time.api.TimeListener;
+import com.emxsys.time.api.TimeProvider;
+import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.weather.api.PointForecaster;
+import com.emxsys.weather.api.WeatherProvider;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.DrawContext;

@@ -29,10 +29,10 @@
  */
 package com.emxsys.wmt.globe.markers.weather;
 
-import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.gis.api.Coord3D;
 import com.emxsys.wmt.globe.markers.weather.*;
-import com.emxsys.wmt.weather.api.WeatherProvider;
-import com.emxsys.wmt.weather.spi.DefaultWeatherProvider;
+import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.spi.DefaultWeatherProvider;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import java.awt.Component;
 import java.awt.Font;

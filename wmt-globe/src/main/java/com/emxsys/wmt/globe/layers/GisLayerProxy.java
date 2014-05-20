@@ -29,16 +29,16 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.viewer.Viewers;
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
-import com.emxsys.wmt.gis.api.layer.BasicLayerLegend;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
-import com.emxsys.wmt.gis.api.layer.GisLayer;
-import com.emxsys.wmt.gis.api.layer.LayerCategory;
-import com.emxsys.wmt.gis.api.layer.LayerLegend;
-import com.emxsys.wmt.gis.api.layer.LayerGroup;
-import com.emxsys.wmt.gis.api.layer.LayerType;
+import com.emxsys.gis.api.viewer.Viewers;
+import com.emxsys.gis.api.layer.BasicLayerCategory;
+import com.emxsys.gis.api.layer.BasicLayerLegend;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.layer.BasicLayerType;
+import com.emxsys.gis.api.layer.GisLayer;
+import com.emxsys.gis.api.layer.LayerCategory;
+import com.emxsys.gis.api.layer.LayerLegend;
+import com.emxsys.gis.api.layer.LayerGroup;
+import com.emxsys.gis.api.layer.LayerType;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import java.beans.PropertyChangeListener;

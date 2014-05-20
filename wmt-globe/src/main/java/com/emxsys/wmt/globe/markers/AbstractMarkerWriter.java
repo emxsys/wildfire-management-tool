@@ -29,11 +29,11 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.api.marker.Marker;
-import com.emxsys.wmt.gis.gml.GmlBuilder;
-import com.emxsys.wmt.gis.gml.GmlConstants;
-import com.emxsys.wmt.util.FilenameUtils;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.api.marker.Marker;
+import com.emxsys.gis.gml.GmlBuilder;
+import com.emxsys.gis.gml.GmlConstants;
+import com.emxsys.util.FilenameUtils;
 import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import java.io.IOException;

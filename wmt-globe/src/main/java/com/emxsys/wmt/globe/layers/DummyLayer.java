@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.layers;
 
-import com.emxsys.wmt.gis.api.layer.LayerGroup;
+import com.emxsys.gis.api.layer.LayerGroup;
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.DrawContext;

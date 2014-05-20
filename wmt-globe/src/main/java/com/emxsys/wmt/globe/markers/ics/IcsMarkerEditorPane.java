@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.markers.ics;
 
-import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.gis.api.Coord3D;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import java.awt.Component;
 import java.awt.Font;

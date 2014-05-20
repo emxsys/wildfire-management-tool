@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.globe.scenes;
 
-import com.emxsys.wmt.gis.api.scene.Scene;
-import com.emxsys.wmt.util.FilenameUtils;
+import com.emxsys.gis.api.scene.Scene;
+import com.emxsys.util.FilenameUtils;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

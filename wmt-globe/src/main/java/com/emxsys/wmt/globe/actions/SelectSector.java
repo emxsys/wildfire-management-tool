@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.globe.actions;
 
-import com.emxsys.wmt.gis.api.viewer.SectorEditor;
+import com.emxsys.gis.api.viewer.SectorEditor;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;

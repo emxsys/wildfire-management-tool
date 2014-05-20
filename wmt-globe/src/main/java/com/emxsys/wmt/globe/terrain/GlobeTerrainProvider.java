@@ -29,11 +29,11 @@
  */
 package com.emxsys.wmt.globe.terrain;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.ShadedTerrainProvider;
-import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.gis.api.TerrainTuple;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.ShadedTerrainProvider;
+import com.emxsys.gis.api.Terrain;
+import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.wmt.globe.Globe;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Angle;

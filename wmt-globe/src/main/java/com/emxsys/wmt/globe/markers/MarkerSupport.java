@@ -29,13 +29,13 @@
  */
 package com.emxsys.wmt.globe.markers;
 
-import com.emxsys.wmt.gis.api.marker.Marker;
-import com.emxsys.wmt.gis.api.marker.MarkerManager;
-import com.emxsys.wmt.gis.gml.GmlConstants;
+import com.emxsys.gis.api.marker.Marker;
+import com.emxsys.gis.api.marker.MarkerManager;
+import com.emxsys.gis.gml.GmlConstants;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.BASIC_MARKER_NS_URI;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.BASIC_MARKER_SCHEMA_FILE;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
-import com.emxsys.wmt.util.TimeUtil;
+import com.emxsys.util.TimeUtil;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.logging.Level;
