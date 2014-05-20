@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.weather.nws;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.util.HttpUtil;
-import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
-import com.emxsys.wmt.weather.api.PointForecaster;
-import com.emxsys.wmt.weather.api.PointForecastPresenter;
-import com.emxsys.wmt.weather.api.WeatherProvider;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.util.HttpUtil;
+import com.emxsys.weather.api.AbstractWeatherProvider;
+import com.emxsys.weather.api.PointForecaster;
+import com.emxsys.weather.api.PointForecastPresenter;
+import com.emxsys.weather.api.WeatherProvider;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;

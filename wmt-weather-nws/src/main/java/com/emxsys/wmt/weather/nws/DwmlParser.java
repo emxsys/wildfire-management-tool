@@ -29,11 +29,11 @@
  */
 package com.emxsys.wmt.weather.nws;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.util.KeyValue;
-import com.emxsys.wmt.util.XmlUtil;
-import com.emxsys.wmt.weather.api.WeatherType;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.util.KeyValue;
+import com.emxsys.util.XmlUtil;
+import com.emxsys.weather.api.WeatherType;
 import static com.emxsys.wmt.weather.nws.NwsTypes.*;
 import java.rmi.RemoteException;
 import java.time.OffsetDateTime;

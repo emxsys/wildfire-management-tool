@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.weather.nws;
 
-import com.emxsys.wmt.visad.Reals;
-import static com.emxsys.wmt.weather.api.WeatherType.AIR_TEMP_F;
-import static com.emxsys.wmt.weather.api.WeatherType.CLOUD_COVER;
-import static com.emxsys.wmt.weather.api.WeatherType.REL_HUMIDITY;
-import static com.emxsys.wmt.weather.api.WeatherType.WIND_DIR;
-import static com.emxsys.wmt.weather.api.WeatherType.WIND_SPEED_KTS;
+import com.emxsys.visad.Reals;
+import static com.emxsys.weather.api.WeatherType.AIR_TEMP_F;
+import static com.emxsys.weather.api.WeatherType.CLOUD_COVER;
+import static com.emxsys.weather.api.WeatherType.REL_HUMIDITY;
+import static com.emxsys.weather.api.WeatherType.WIND_DIR;
+import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KTS;
 import visad.RealTupleType;
 import visad.RealType;
 
