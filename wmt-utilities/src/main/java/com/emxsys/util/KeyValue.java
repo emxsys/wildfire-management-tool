@@ -27,27 +27,60 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
+package com.emxsys.util;
 
 /**
+ * A Key/Value pair.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
+ * @version $Id: KeyValue.java 362 2012-11-30 19:25:53Z bdschubert $
  */
-public class TimeUtil {
+public class KeyValue<K, V> {
 
-    /**
-     * Convert a long ("time_t") to seconds and thousandths. From the Java Cookbook by Ian Darwin.
-     *
-     * Example that outputs elapsed time for a task:
-     * <pre>
-     * long startTimeMillis = System.currentTimeMillis();
-     * // Do something ...
-     * System.out.println("Elapsed: " + TimeUtil.msToSecs(System.currentTimeMillis() - startTimeMillis));
-     * </pre>
-     *
-     * Source: Java Cookbook by Ian Darwin
-     */
-    public static String msToSecs(long t) {
-        return Double.toString(t / 1000D) + " s";
+    private K key;
+    private V value;
+
+    public KeyValue(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return value;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.key != null ? this.key.hashCode() : 0);
+        hash = 37 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final KeyValue<K, V> other = (KeyValue<K, V>) obj;
+        if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
+            return false;
+        }
+        if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Entry{" + "key=" + key + ", value=" + value + '}';
     }
 }

@@ -27,56 +27,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
+package com.emxsys.util;
 
-import java.awt.event.ActionEvent;
-import java.lang.reflect.Method;
-import java.util.logging.Logger;
-import javax.swing.ButtonModel;
+import java.lang.reflect.ParameterizedType;
+import java.net.URL;
+import org.openide.util.Lookup;
 
 /**
- * A utility class used to handle Event based tasks.
+ * A utility class for working with Java classes.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
+ * @version $Id: ClassUtil.java 524 2013-04-10 00:11:48Z bdschubert $
  */
-public class EventUtil {
+public class ClassUtil {
 
-    private static final Logger logger = Logger.getLogger(EventUtil.class.getName());
-
-    private EventUtil() {
+    private ClassUtil() {
     }
 
     /**
-     * Retrieves the ButtonModel from the event. Gets the ActionModel derivative from Flamingo
-     * components.
+     * Gets the parameterized type from a parameterized class.
      *
-     * @param event typically, an event passed into Action.actionPerformed method.
-     * @return the ButtonModel from the event source, which may be null
+     * @param clazz
+     * @return the type T from the param Class<T>
      */
-    @SuppressWarnings("unchecked")
-    static public ButtonModel getButtonModel(ActionEvent event) {
-        if (event.getSource() instanceof ButtonModel) {
-            // Native buttons
-            return (ButtonModel) event.getSource();
-        }
-        else {
-            try {
-                // Use reflection to look for a Flamingo ActionModel, a ButtonModel derivative, 
-                // like that embedded in a JCommandToggleButton
-                Class<?> clazz = event.getSource().getClass();
-                Class<?>[] args
-                        = {};
-                Method method = clazz.getMethod("getActionModel", args);
+    public static Class<?> getParameterizedType(Class<?> clazz) {
+        Class<?> type = ((Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0]);
+        return type;
+    }
 
-                Object[] params
-                        = {};
-                return (ButtonModel) method.invoke(event.getSource(), params);
-            }
-            catch (Exception exception) {
-                // handle NoSuchMethod and Security excetions
-                logger.severe(exception.getMessage());
-            }
+    /**
+     * Gets the local resource path from the URL if its found on the local machine's classpath.
+     * I.e., it strips the "jar:file:...!/" from the URL and then searches the classpath.
+     *
+     * @param resourceUrl image address url, possibly referring to different PC or Mac, (e.g.,
+     * "jar:file:/Applications/cps.app/Contents/.../com-emxsys-markers-ics.jar!/com/emxsys/markers/ics/resources/Fire_Location24.png"
+     * @return a URL string referring to the local resource if found on the local classpath;
+     * otherwise, the original address is returned.
+     */
+    public static URL findLocalResource(String resourceUrl) {
+        if (resourceUrl == null) {
             return null;
         }
+        int indexOfSep = resourceUrl.indexOf("!/");
+        ClassLoader classLoader = Lookup.getDefault().lookup(ClassLoader.class);
+        return classLoader.getResource(indexOfSep == -1 ? resourceUrl : resourceUrl.substring(indexOfSep + 1));
     }
 }

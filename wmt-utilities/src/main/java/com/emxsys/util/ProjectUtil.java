@@ -27,9 +27,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
+package com.emxsys.util;
 
-import com.emxsys.wmt.util.Bundle;
 import java.awt.FlowLayout;
 import java.beans.PropertyVetoException;
 import java.io.File;

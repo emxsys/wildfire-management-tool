@@ -27,31 +27,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
+package com.emxsys.util;
+
+import java.awt.event.ActionEvent;
+import java.lang.reflect.Method;
+import java.util.logging.Logger;
+import javax.swing.ButtonModel;
 
 /**
- * The zoom factor is directly proportional to the magnification of the scene being viewed.
- * The relationship between zoom and FOV is slightly more complex, and is given by the following:
+ * A utility class used to handle Event based tasks.
  *
- * fov = 2 * arctan(1 / zoom)
- * zoom = 1 / tan(fov / 2)  *
- * where fov is the horizontal or width-wise Field Of View (ie. in the camera's horizontal plane
- * and the image's x-direction). It must be in radians if the trigonometric functions use radians
- * instead of degrees. (Degree-radian conversions here.)
- * Note that a zoom value of exactly 1 gives a 90 degree horizontal FOV, but a zoom of 2 does not
- * give a horizontal FOV of 45 degrees.
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class OpticsUtil {
+public class EventUtil {
+
+    private static final Logger logger = Logger.getLogger(EventUtil.class.getName());
+
+    private EventUtil() {
+    }
 
     /**
+     * Retrieves the ButtonModel from the event. Gets the ActionModel derivative from Flamingo
+     * components.
      *
-     * @param fovDeg field of view in degrees
-     * @return zoom level where a 90 degree FOV equals 1x zoom
+     * @param event typically, an event passed into Action.actionPerformed method.
+     * @return the ButtonModel from the event source, which may be null
      */
-    public static double fovToZoom(double fovDeg) {
-        // zoom = 1 / tan(fov / 2)
-        double zoom = 1 / (Math.tan(Math.toRadians(fovDeg) / 2));
-        return zoom;
+    @SuppressWarnings("unchecked")
+    static public ButtonModel getButtonModel(ActionEvent event) {
+        if (event.getSource() instanceof ButtonModel) {
+            // Native buttons
+            return (ButtonModel) event.getSource();
+        }
+        else {
+            try {
+                // Use reflection to look for a Flamingo ActionModel, a ButtonModel derivative, 
+                // like that embedded in a JCommandToggleButton
+                Class<?> clazz = event.getSource().getClass();
+                Class<?>[] args
+                        = {};
+                Method method = clazz.getMethod("getActionModel", args);
+
+                Object[] params
+                        = {};
+                return (ButtonModel) method.invoke(event.getSource(), params);
+            }
+            catch (Exception exception) {
+                // handle NoSuchMethod and Security excetions
+                logger.severe(exception.getMessage());
+            }
+            return null;
+        }
     }
 }

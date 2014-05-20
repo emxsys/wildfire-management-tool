@@ -27,60 +27,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
+package com.emxsys.util;
 
 /**
- * A Key/Value pair.
+ * The zoom factor is directly proportional to the magnification of the scene being viewed.
+ * The relationship between zoom and FOV is slightly more complex, and is given by the following:
  *
+ * fov = 2 * arctan(1 / zoom)
+ * zoom = 1 / tan(fov / 2)  *
+ * where fov is the horizontal or width-wise Field Of View (ie. in the camera's horizontal plane
+ * and the image's x-direction). It must be in radians if the trigonometric functions use radians
+ * instead of degrees. (Degree-radian conversions here.)
+ * Note that a zoom value of exactly 1 gives a 90 degree horizontal FOV, but a zoom of 2 does not
+ * give a horizontal FOV of 45 degrees.
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: KeyValue.java 362 2012-11-30 19:25:53Z bdschubert $
  */
-public class KeyValue<K, V> {
+public class OpticsUtil {
 
-    private K key;
-    private V value;
-
-    public KeyValue(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    public K getKey() {
-        return key;
-    }
-
-    public V getValue() {
-        return value;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (this.key != null ? this.key.hashCode() : 0);
-        hash = 37 * hash + (this.value != null ? this.value.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final KeyValue<K, V> other = (KeyValue<K, V>) obj;
-        if (this.key != other.key && (this.key == null || !this.key.equals(other.key))) {
-            return false;
-        }
-        if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Entry{" + "key=" + key + ", value=" + value + '}';
+    /**
+     *
+     * @param fovDeg field of view in degrees
+     * @return zoom level where a 90 degree FOV equals 1x zoom
+     */
+    public static double fovToZoom(double fovDeg) {
+        // zoom = 1 / tan(fov / 2)
+        double zoom = 1 / (Math.tan(Math.toRadians(fovDeg) / 2));
+        return zoom;
     }
 }

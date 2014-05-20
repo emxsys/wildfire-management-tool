@@ -27,40 +27,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
+package com.emxsys.util;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
+import java.util.logging.Logger;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
 
 /**
  *
  * @author Bruce Schubert
- * @version $Id: DragDropUtil.java 457 2012-12-18 02:06:21Z bdschubert $
+ * @version $Id: DataObjectUtil.java 470 2013-01-01 15:15:07Z bdschubert $
  */
-public class DragDropUtil {
+public class DataObjectUtil {
+
+    private static final Logger logger = Logger.getLogger(DataObjectUtil.class.getName());
 
     /**
-     * Looks for a DataObject in a drag-n-drop Transferable object.
+     * Locates the DataObject for the supplied file, and if the file is not found, creates the file
+     * using the supplied template.
      *
-     * @param trnsfr containing a DataFlavor matching
-     * {@code application/x-java-openide-dataobjectdnd}
-     * @return the DataObject if found, else null
+     * @param parent folder containing the filename
+     * @param filename file to load via DataObject
+     * @param templatePath configFile path to template, e.g.,
+     * "Templates/Symbology/SymbologyTemplate.xml"
+     * @return the DataObject for the file
      */
-    public static DataObject findDataObject(Transferable trnsfr) {
-        // The following MIME type and representation class was hard to figure out.
-        // I had to set a breakpoint here and examine the Transferable's contents 
-        // to discover it. Note the representation class and the MIME type has to be 
-        // supplied to the DataFlavor else it won't match the Transfereable's DataFlavor.
-        DataFlavor DATA_OBJECT = new DataFlavor("application/x-java-openide-dataobjectdnd;"
-                + "class=org.openide.loaders.DataObject", null);
-        if (trnsfr.isDataFlavorSupported(DATA_OBJECT)) {
-            try {
-                return (DataObject) trnsfr.getTransferData(DATA_OBJECT);
+    public static DataObject findDataObject(FileObject parent, String filename, String templatePath) {
+        DataObject dob = null;
+        try {
+            FileObject fo = parent.getFileObject(filename);
+            if (fo == null) {
+                DataFolder folder = DataFolder.findFolder(parent);
+                FileObject template = FileUtil.getConfigFile(templatePath);
+                DataObject dTemplate = DataObject.find(template);
+                String filenameWithoutExt = filename.replace(".xml", "");
+                dob = dTemplate.createFromTemplate(folder, filenameWithoutExt);
             }
-            catch (Exception ex) {
+            else {
+                dob = DataObject.find(fo);
             }
         }
-        return null;
+        catch (Exception ex) {
+            logger.severe(ex.getMessage());
+        }
+        return dob;
     }
 }

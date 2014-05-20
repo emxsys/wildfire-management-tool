@@ -101,7 +101,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>com.emxsys.wmt.util</publicPackage>
+                        <publicPackage>com.emxsys.util</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

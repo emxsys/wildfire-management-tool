@@ -27,49 +27,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.util;
-
-import java.lang.reflect.ParameterizedType;
-import java.net.URL;
-import org.openide.util.Lookup;
+package com.emxsys.util;
 
 /**
- * A utility class for working with Java classes.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: ClassUtil.java 524 2013-04-10 00:11:48Z bdschubert $
  */
-public class ClassUtil {
-
-    private ClassUtil() {
-    }
+public class TimeUtil {
 
     /**
-     * Gets the parameterized type from a parameterized class.
+     * Convert a long ("time_t") to seconds and thousandths. From the Java Cookbook by Ian Darwin.
      *
-     * @param clazz
-     * @return the type T from the param Class<T>
-     */
-    public static Class<?> getParameterizedType(Class<?> clazz) {
-        Class<?> type = ((Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0]);
-        return type;
-    }
-
-    /**
-     * Gets the local resource path from the URL if its found on the local machine's classpath.
-     * I.e., it strips the "jar:file:...!/" from the URL and then searches the classpath.
+     * Example that outputs elapsed time for a task:
+     * <pre>
+     * long startTimeMillis = System.currentTimeMillis();
+     * // Do something ...
+     * System.out.println("Elapsed: " + TimeUtil.msToSecs(System.currentTimeMillis() - startTimeMillis));
+     * </pre>
      *
-     * @param resourceUrl image address url, possibly referring to different PC or Mac, (e.g.,
-     * "jar:file:/Applications/cps.app/Contents/.../com-emxsys-markers-ics.jar!/com/emxsys/markers/ics/resources/Fire_Location24.png"
-     * @return a URL string referring to the local resource if found on the local classpath;
-     * otherwise, the original address is returned.
+     * Source: Java Cookbook by Ian Darwin
      */
-    public static URL findLocalResource(String resourceUrl) {
-        if (resourceUrl == null) {
-            return null;
-        }
-        int indexOfSep = resourceUrl.indexOf("!/");
-        ClassLoader classLoader = Lookup.getDefault().lookup(ClassLoader.class);
-        return classLoader.getResource(indexOfSep == -1 ? resourceUrl : resourceUrl.substring(indexOfSep + 1));
+    public static String msToSecs(long t) {
+        return Double.toString(t / 1000D) + " s";
     }
 }
