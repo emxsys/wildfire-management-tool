@@ -29,78 +29,116 @@
  */
 package com.emxsys.wmt.weather.spi;
 
+import com.emxsys.wmt.gis.api.Box;
 import com.emxsys.wmt.gis.api.Coord2D;
 import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
+import com.emxsys.wmt.weather.api.ConditionsObserver;
+import com.emxsys.wmt.weather.api.PointForecaster;
 import com.emxsys.wmt.weather.api.Weather;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import com.emxsys.wmt.weather.api.WeatherTuple;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
-import visad.Field;
-import visad.FlatField;
-import visad.Gridded1DSet;
 
 /**
+ * The DefaultWeatherProvider supplies a list of registered WeatherProvider service providers.
  *
- * @author Bruce Schubert <bruce@emxsys.com>
+ * @author Bruce Schubert
  */
-public class DefaultWeatherProvider extends AbstractWeatherProvider {
+public class DefaultWeatherProvider {
 
-    private static WeatherProvider instance = null;
+    private static ArrayList<WeatherProvider> instances;
+    private static final Logger logger = Logger.getLogger(DefaultWeatherProvider.class.getName());
 
     /**
-     * Returns the singleton instance of a WeatherProvider. If a class has been registered as a
-     * WeatherProvider service provider, then an instance of that class will be returned. Otherwise,
-     * an instance of the DefaultWeatherProvider will be returned.
+     * Gets the registered WeatherProviders service providers from the global lookup (if any) plus a
+     * SingleWeatherProvider for each of the StdWeatherParams13 and StdWeatherParams40.
      *
-     * @return A singleton instance of a WeatherProvider.
+     * @return A collection of WeatherProvider instances.
      */
-    public static WeatherProvider getInstance() {
-        if (instance == null) {
-            // Check the general Lookup for a service provider
-            instance = Lookup.getDefault().lookup(WeatherProvider.class);
+    public static List<WeatherProvider> getInstances() {
+        if (instances == null) {
 
-            // Use our default factory if no registered provider.
-            if (instance == null) {
-                instance = new DefaultWeatherProvider();
-            }
+            // Get all the registered service provider instances
+            Collection<? extends WeatherProvider> serviceProviders = Lookup.getDefault().lookupAll(WeatherProvider.class);
+            instances = new ArrayList<>(serviceProviders);
+            serviceProviders.stream().forEach((serviceProvider) -> {
+                logger.log(Level.CONFIG, "Providing a {0} instance.", serviceProvider.getClass().getName());
+            });
         }
-        return instance;
+        return instances;
     }
 
-//    @Override
-//    public FlatField generateTemperatures(Gridded1DSet timeDomain) {
-//        throw new UnsupportedOperationException("generateTemperatures");
-//    }
-//
-//    @Override
-//    public FlatField generateHumidities(Gridded1DSet timeDomain) {
-//        throw new UnsupportedOperationException("generateHumidities");
-//    }
-//
-//    @Override
-//    public FlatField generateWinds(Gridded1DSet timeDomain) {
-//        throw new UnsupportedOperationException("generateWinds");
-//    }
-//
-    public Weather getWeather(Date utcTime, Coord2D coord) {
-        // TODO: lookup the weather, if not found use general weather
-        return new WeatherTuple();
+    /**
+     * Gets the WeatherProvider instances that contain the given coordinate.
+     *
+     * @return A collection of WeatherProvider instances that have the PointForecaster capability.
+     */
+    public static List<WeatherProvider> getPointForecasters() {
+        ArrayList<WeatherProvider> providers = new ArrayList<>();
+
+        getInstances().stream()
+                .filter((provider) -> (provider.getLookup().lookup(PointForecaster.class)) != null)
+                .forEach((provider) -> {
+                    providers.add(provider);
+                });
+        return providers;
+    }
+    /**
+     * Gets the WeatherProvider instances that contain the given coordinate.
+     *
+     * @return A collection of WeatherProvider instances that have the ConditionsObserver capability.
+     */
+    public static List<WeatherProvider> getStationObservers() {
+        ArrayList<WeatherProvider> providers = new ArrayList<>();
+
+        getInstances().stream()
+                .filter((provider) -> (provider.getLookup().lookup(ConditionsObserver.class)) != null)
+                .forEach((provider) -> {
+                    providers.add(provider);
+                });
+        return providers;
     }
 
-//    @Override
-//    public void addForecast() {
-//        throw new UnsupportedOperationException("addForecast");
-//    }
-//
-//    @Override
-//    public void addObservation() {
-//        throw new UnsupportedOperationException("addObservation");
-//    }
+    /**
+     * Gets the WeatherProvider instances that intersect the given extents.
+     *
+     * @param extents The box that will be tested for intersection with the provider's extents.
+     * @return A collection of WeatherProvider instances that are valid for the box.
+     */
+    public static List<WeatherProvider> getInstances(Box extents) {
+        return getInstances();
+//        ArrayList<WeatherProvider> providers = new ArrayList<>();
+//        
+//        getInstances().stream()
+//                .filter((provider) -> (provider.getExtents().intersects(extents)))
+//                .forEach((provider) -> {
+//                    providers.add(provider);
+//                });
+//        return providers;        
+    }
 
-    @Override
-    public ImageIcon getImageIcon() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     *
+     * @author Bruce Schubert <bruce@emxsys.com>
+     */
+    public class DummyWeatherProvider extends AbstractWeatherProvider {
+
+//
+        public Weather getWeather(Date utcTime, Coord2D coord) {
+            // TODO: lookup the weather, if not found use general weather
+            return new WeatherTuple();
+        }
+
+        @Override
+        public ImageIcon getImageIcon() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 }

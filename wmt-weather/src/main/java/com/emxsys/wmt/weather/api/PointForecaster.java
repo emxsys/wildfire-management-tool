@@ -36,6 +36,7 @@ import visad.Field;
  * A functional interface that provides a point weather forecast.
  * @author Bruce Schubert
  */
+@FunctionalInterface
 public interface PointForecaster {
 
     /**

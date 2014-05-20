@@ -29,38 +29,28 @@
  */
 package com.emxsys.wmt.weather.api;
 
-import org.openide.util.Lookup;
-import org.openide.util.lookup.AbstractLookup;
-import org.openide.util.lookup.InstanceContent;
+import com.emxsys.wmt.gis.api.Coord2D;
+import java.time.Duration;
+import visad.Field;
+import visad.Real;
 
 /**
- * Derived classes must implement getImage()
+ * A functional interface that provides the latest weather conditions within a geographical
+ * distance.
+ *
  * @author Bruce Schubert
  */
-public abstract class AbstractWeatherProvider implements WeatherProvider {
-
-    private final InstanceContent content = new InstanceContent();
-    private AbstractLookup lookup;
-
-    @Override
-    public Lookup getLookup() {
-        if (lookup == null) {
-            lookup = new AbstractLookup(content);
-        }
-        return lookup;
-    }
-    
-    @Override
-    public <T> T getCapability(Class<T> clazz) {
-        return getLookup().lookup(clazz);
-    }
+@FunctionalInterface
+public interface ConditionsObserver {
 
     /**
-     * Gets the content of lookup so derived classes can add and remove content.
-     * @return The lookup content.
+     * Gets the latest weather observations within the age and inside the area of interest.
+     *
+     * @param coord The center of the area of interest.
+     * @param radius The radius of the area of interest.
+     * @param age The acceptable age of the weather observations; Can use null for any age.
+     * @return A {@code FlatField}: ( (lat, lon ) -> ( air_temp, RH, wind_spd, wind_dir ) )
      */
-    protected InstanceContent getContent() {
-        return content;
-    }
+    Field getLatestWeather(Coord2D coord, Real radius, Duration age);
 
 }

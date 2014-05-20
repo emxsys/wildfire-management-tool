@@ -27,40 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.emxsys.wmt.weather.api;
 
-import org.openide.util.Lookup;
-import org.openide.util.lookup.AbstractLookup;
-import org.openide.util.lookup.InstanceContent;
+import com.emxsys.wmt.gis.api.Coord2D;
+import java.util.List;
+import visad.Real;
 
 /**
- * Derived classes must implement getImage()
+ *
  * @author Bruce Schubert
  */
-public abstract class AbstractWeatherProvider implements WeatherProvider {
+@FunctionalInterface
+public interface StationFinder {
 
-    private final InstanceContent content = new InstanceContent();
-    private AbstractLookup lookup;
-
-    @Override
-    public Lookup getLookup() {
-        if (lookup == null) {
-            lookup = new AbstractLookup(content);
-        }
-        return lookup;
-    }
-    
-    @Override
-    public <T> T getCapability(Class<T> clazz) {
-        return getLookup().lookup(clazz);
-    }
-
-    /**
-     * Gets the content of lookup so derived classes can add and remove content.
-     * @return The lookup content.
-     */
-    protected InstanceContent getContent() {
-        return content;
-    }
-
+    List<String> getNearbyWeatherStations(Coord2D coord, Real distance);
 }

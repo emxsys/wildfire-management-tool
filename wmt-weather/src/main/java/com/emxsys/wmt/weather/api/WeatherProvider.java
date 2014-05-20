@@ -39,34 +39,15 @@ import org.openide.util.Lookup;
 public interface WeatherProvider extends Lookup.Provider {
 
     /**
+     * Gets the capability object from the lookup.  A shortcut for getLookup.lookup().
+     * @return The capability object in the lookup, or null if not found.
+     */
+    <T> T getCapability(Class<T> clazz);
+    
+    /**
      * Gets an icon representative of this provider, e.g., Yahoo, NWS, WeatherUnderground.
      * @return An ImageIcon; may be null
      */
     ImageIcon getImageIcon();
-
-//    /**
-//     * Gets a point forecast for the given position.
-//     * @param coord The position for the forecast
-//     * @return A VisAD field in the form ( Time -> ( Weather ) )
-//     */
-//    public Field getPointForecast(Coord2D coord);
-//    
-//    /**
-//     * Gets a point forecast HTML presentation for the given position.
-//     * @param coord The position for the forecast.
-//     * @return An HTML web page containing the forecast information.
-//     */
-//    public String getPointForecastPage(Coord2D coord);
-//    
-//
-//    Weather getWeather(Date utcTime, Coord2D coord);
-
-//    void addForecast();
-//    void addObservation();
-//    
-//    FlatField generateTemperatures(Gridded1DSet timeDomain);
-//
-//    FlatField generateHumidities(Gridded1DSet timeDomain);
-//
-//    FlatField generateWinds(Gridded1DSet timeDomain);
+    
 }
