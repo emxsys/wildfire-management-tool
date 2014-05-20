@@ -31,18 +31,16 @@ package com.emxsys.wmt.globe.markers.weather;
 
 import com.emxsys.wmt.gis.api.Coord3D;
 import com.emxsys.wmt.globe.markers.weather.*;
-import com.emxsys.wmt.weather.api.PointForecaster;
 import com.emxsys.wmt.weather.api.WeatherProvider;
+import com.emxsys.wmt.weather.spi.DefaultWeatherProvider;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import java.awt.Component;
 import java.awt.Font;
-import java.io.File;
-import java.util.Collection;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
 @Messages({
@@ -73,19 +71,14 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
         initComponents();
 
         // Find all the Weather service providers that support point forecasts
-        Collection<? extends WeatherProvider> allProviders = Lookup.getDefault().lookupAll(WeatherProvider.class);
-        Integer[] intArray = new Integer[allProviders.size()];
-        providers = new WeatherProvider[allProviders.size()];
+        List<WeatherProvider> pointForecasters = DefaultWeatherProvider.getPointForecasters();
+        Integer[] intArray = new Integer[pointForecasters.size()];
+        providers = new WeatherProvider[pointForecasters.size()];
         int i = 0;
-        for (WeatherProvider p : allProviders) {
-            // TODO: Load only providers that support a PointForecaster
-            PointForecaster forecast = p.getLookup().lookup(PointForecaster.class);
-            //if (forecast != null) 
-            {
-                intArray[i] = i;
-                providers[i] = p;
-                ++i;
-            }
+        for (WeatherProvider p : pointForecasters) {
+            intArray[i] = i;
+            providers[i] = p;
+            ++i;
         }
 
         // Create the name field -- autoselect the text to ease the editing of default names
