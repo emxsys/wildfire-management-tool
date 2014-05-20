@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.maps.usa.layers;
 
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistration;
-import com.emxsys.wmt.gis.api.layer.MapLayerRegistrations;
+import com.emxsys.gis.api.layer.MapLayerRegistration;
+import com.emxsys.gis.api.layer.MapLayerRegistrations;
 
 import org.openide.util.NbBundle.Messages;
 
