@@ -29,11 +29,11 @@
  */
 package com.emxsys.wmt.weather.mesowest;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.GisType;
-import com.emxsys.wmt.visad.GeneralUnit;
-import com.emxsys.wmt.visad.Reals;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GisType;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.time.Duration;

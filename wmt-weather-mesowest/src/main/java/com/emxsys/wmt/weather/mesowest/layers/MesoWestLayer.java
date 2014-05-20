@@ -29,18 +29,18 @@
  */
 package com.emxsys.wmt.weather.mesowest.layers;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateEvent;
-import com.emxsys.wmt.gis.api.event.ReticuleCoordinateProvider;
-import com.emxsys.wmt.gis.api.layer.BasicLayerCategory;
-import com.emxsys.wmt.gis.api.layer.BasicLayerGroup;
-import com.emxsys.wmt.gis.api.layer.BasicLayerType;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
+import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
+import com.emxsys.gis.api.layer.BasicLayerCategory;
+import com.emxsys.gis.api.layer.BasicLayerGroup;
+import com.emxsys.gis.api.layer.BasicLayerType;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.SimplePlacemark;
-import com.emxsys.wmt.visad.GeneralUnit;
-import com.emxsys.wmt.visad.Reals;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
 import java.rmi.RemoteException;
 import java.time.Duration;
