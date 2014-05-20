@@ -30,7 +30,7 @@
 package com.emxsys.wmt.core.actions;
 
 import com.terramenta.ribbon.RibbonActionReference;
-import com.emxsys.wmt.util.ScreenCaptureUtil;
+import com.emxsys.util.ScreenCaptureUtil;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
