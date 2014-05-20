@@ -101,7 +101,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>com.emxsys.wmt.gis.*</publicPackage>
+                        <publicPackage>com.emxsys.gis.actions</publicPackage>
+                        <publicPackage>com.emxsys.gis.api.*</publicPackage>
+                        <publicPackage>com.emxsys.gis.gml</publicPackage>
+                        <publicPackage>com.emxsys.gis.spi</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
