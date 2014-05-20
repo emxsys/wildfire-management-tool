@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.ui;
 
-import com.emxsys.wmt.cps.charts.ChartUtil;
+import com.emxsys.jfree.ChartUtil;
 import com.emxsys.wmt.gis.api.Terrain;
 import com.emxsys.wmt.util.AngleUtil;
 import java.awt.Color;
@@ -114,27 +114,13 @@ public class SlopeForcePanel extends javax.swing.JPanel {
         slopePanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(SlopeForcePanel.class, "SlopeForcePanel.border.title"))); // NOI18N
+        setLayout(new java.awt.GridLayout(1, 2));
 
         aspectPanel.setLayout(new javax.swing.BoxLayout(aspectPanel, javax.swing.BoxLayout.LINE_AXIS));
+        add(aspectPanel);
 
         slopePanel.setLayout(new javax.swing.BoxLayout(slopePanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(aspectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(slopePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(aspectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(slopePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        add(slopePanel);
     }// </editor-fold>//GEN-END:initComponents
 
 

@@ -29,14 +29,19 @@
  */
 package com.emxsys.wmt.cps.ui;
 
-import static com.emxsys.wmt.cps.charts.CompassClockPlot.CLOCK_HAND_NEEDLE;
-import static com.emxsys.wmt.cps.charts.CompassClockPlot.WIND_NEEDLE;
-import com.emxsys.wmt.cps.charts.CompassClockPlot;
+import com.emxsys.jfree.ChartCanvas;
+import com.emxsys.jfree.ClockCompassPlot;
+import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
+import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.wmt.util.AngleUtil;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
-import org.jfree.chart.ChartPanel;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.general.ValueDataset;
@@ -48,7 +53,7 @@ import visad.VisADException;
 
 /**
  * The HeatForcePanel depicts the direction of the sun's rays onto the terrain and shows the surface
- temperature of the fuels. The panel listens to the application time and the reticule coordinate.
+ * temperature of the fuels. The panel listens to the application time and the reticule coordinate.
  *
  * @author Bruce Schubert
  */
@@ -56,16 +61,76 @@ import visad.VisADException;
     "CTL_PreheatChartTitle=Solar Heating",})
 public class HeatForcePanel extends javax.swing.JPanel {
 
+    private static final int AZIMUTH_SERIES = 0;
+    private static final int HOUR_SERIES = 1;
     private JFreeChart solarChart;
-    private final int AZIMUTH_SERIES = 0;
-    private final int HOUR_SERIES = 1;
+    private ChartCanvas canvas;
+
+    private class SolarPlot extends ClockCompassPlot {
+
+        SolarPlot() {
+            setRosePaint(Color.orange);
+            setRoseHighlightPaint(Color.gray);
+            setRoseCenterPaint(Color.white);
+            setDrawBorder(false);
+
+            // The first (default) dataset is the direction of Solar Radiation
+            //ValueDataset dataset2 = new DefaultValueDataset(new Double(0.0));
+            //plot.addDataset(dataset2, null);
+            setSeriesNeedle(AZIMUTH_SERIES, WIND_NEEDLE);
+            setSeriesPaint(AZIMUTH_SERIES, Color.red);        // arrow heads
+            setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
+
+            // The second  dataset is the Time / Clock
+            ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
+            addDataset(dataset, null);
+            setSeriesNeedle(HOUR_SERIES, CLOCK_HAND_NEEDLE);
+            setSeriesPaint(HOUR_SERIES, Color.black);        // arrow heads
+            setSeriesOutlinePaint(HOUR_SERIES, Color.black); // arrow shafts and arrow head outline        
+        }
+    }
+
+    private class SolarChart extends JFreeChart {
+
+        SolarChart() {
+            super(new SolarPlot());
+            // Set the chart title ...
+            setTitle(Bundle.CTL_PreheatChartTitle());
+        // ... and subtitle(s)
+            //addSubtitle(new TextTitle(subTitle));
+        }
+
+    }
 
     /**
      * Creates new form PreheatPanel
      */
     public HeatForcePanel() {
         initComponents();
-        createCharts();
+
+        solarChart = new SolarChart();
+        JFXPanel jfxPanel1 = new JFXPanel();
+        // Add the panel to the Grid layout
+        add(jfxPanel1);
+        add( new JFXPanel());   // Dummy panel for 2nd column
+
+        // Must create the JavaFX scene (ChartCanvas) on an FX thread
+        Platform.setImplicitExit(false);
+        Platform.runLater(() -> {
+            jfxPanel1.setScene(createScene());
+        });
+    }
+
+
+    private Scene createScene() {
+        canvas = new ChartCanvas(solarChart);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(canvas);
+        // Bind canvas size to stack pane size. 
+        canvas.widthProperty().bind(stackPane.widthProperty());
+        canvas.heightProperty().bind(stackPane.heightProperty());
+
+        return new Scene(stackPane);
     }
 
     /**
@@ -77,18 +142,18 @@ public class HeatForcePanel extends javax.swing.JPanel {
 
         try {
             // Update the Azimuth Plot
-            CompassClockPlot compassPlot = (CompassClockPlot) solarChart.getPlot();
+            ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
             double A = azimuth.getValue(CommonUnit.degree);
             DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[AZIMUTH_SERIES];
             compassData.setValue(A);
-            
+
             // Update the Hour plot
             DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
             final double DEG_PER_HOUR12 = 360 / 12.0;
             double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
             double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
             hourData.setValue(hourDegrees);
-            
+
             // Color the background based on the Zenith angle (above or below the horizon)
             double Z = Math.abs(zenith.getValue(CommonUnit.degree));
             if (Z < 90) {
@@ -106,49 +171,12 @@ public class HeatForcePanel extends javax.swing.JPanel {
                 String title = "Nighttime";
                 solarChart.setTitle(title);
             }
+            canvas.draw();
 
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
 
-    }
-
-    /**
-     * Creates the JFreeCharts.
-     */
-    private void createCharts() {
-        //solarChart = ChartUtil.createCommonCompassChart(Bundle.CTL_PreheatChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.ORANGE);
-        CompassClockPlot plot = new CompassClockPlot();
-
-        plot.setRosePaint(Color.orange);
-        plot.setRoseHighlightPaint(Color.gray);
-        plot.setRoseCenterPaint(Color.white);
-        plot.setDrawBorder(false);
-        
-        // The first (default) dataset is the direction of Solar Radiation
-        //ValueDataset dataset2 = new DefaultValueDataset(new Double(0.0));
-        //plot.addDataset(dataset2, null);
-        plot.setSeriesNeedle(AZIMUTH_SERIES, WIND_NEEDLE);
-        plot.setSeriesPaint(AZIMUTH_SERIES, Color.red);        // arrow heads
-        plot.setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
-        
-        // The second  dataset is the Time / Clock
-        ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
-        plot.addDataset(dataset, null);
-        plot.setSeriesNeedle(HOUR_SERIES, CLOCK_HAND_NEEDLE);
-        plot.setSeriesPaint(HOUR_SERIES, Color.black);        // arrow heads
-        plot.setSeriesOutlinePaint(HOUR_SERIES, Color.black); // arrow shafts and arrow head outline
-
-
-        // Create the chart
-        solarChart = new JFreeChart(plot);
-        
-        // Set the chart title ...
-        solarChart.setTitle(Bundle.CTL_PreheatChartTitle());
-        // ... and subtitle(s)
-        //chart.addSubtitle(new TextTitle(subTitle));
-        
-        solarPanel.add(new ChartPanel(solarChart));
     }
 
     /**
@@ -161,31 +189,11 @@ public class HeatForcePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        solarPanel = new javax.swing.JPanel();
-
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(HeatForcePanel.class, "HeatForcePanel.border.title"))); // NOI18N
-
-        solarPanel.setLayout(new javax.swing.BoxLayout(solarPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(solarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(solarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        setLayout(new java.awt.GridLayout(1, 2));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel solarPanel;
     // End of variables declaration//GEN-END:variables
-
 }

@@ -29,8 +29,13 @@
  */
 package com.emxsys.wmt.cps.ui;
 
-import com.emxsys.wmt.cps.charts.ChartUtil;
+import com.emxsys.jfree.ChartCanvas;
+import com.emxsys.jfree.ChartUtil;
 import java.awt.Color;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.openide.util.NbBundle;
@@ -46,21 +51,60 @@ public class WindForcePanel extends javax.swing.JPanel {
 
     private JFreeChart dirChart;
     private JFreeChart spdChart;
+    private ChartCanvas dirCanvas;
+    private ChartCanvas spdCanvas;
 
     /**
      * Creates new form WindPanel
      */
     public WindForcePanel() {
         initComponents();
-        initChartPanel();
+        //initChartPanel();
+
+        JFXPanel jfxPanelDir = new JFXPanel();
+        JFXPanel jfxPanelSpd = new JFXPanel();
+        // Add the panel to the Grid layout
+        add(jfxPanelDir);
+        add(jfxPanelSpd);
+
+        // Must create the JavaFX scene (ChartCanvas) on an FX thread
+        Platform.setImplicitExit(false);
+        Platform.runLater(() -> {
+            jfxPanelDir.setScene(createDirScene());
+            jfxPanelSpd.setScene(createSpdScene());
+        });
+    }
+
+    private Scene createDirScene() {
+        dirChart = ChartUtil.createCommonCompassChart(Bundle.CTL_WindDirChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.BLUE);
+        dirCanvas = new ChartCanvas(dirChart);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(dirCanvas);
+        // Bind canvas size to stack pane size. 
+        dirCanvas.widthProperty().bind(stackPane.widthProperty());
+        dirCanvas.heightProperty().bind(stackPane.heightProperty());
+
+        return new Scene(stackPane);
+    }
+
+    private Scene createSpdScene() {
+        spdChart = ChartUtil.createCommonDialChart(Bundle.CTL_WindSpdChartTitle(), null, 0, 50);
+        spdCanvas = new ChartCanvas(spdChart);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(spdCanvas);
+        // Bind canvas size to stack pane size. 
+        spdCanvas.widthProperty().bind(stackPane.widthProperty());
+        spdCanvas.heightProperty().bind(stackPane.heightProperty());
+
+        return new Scene(stackPane);
     }
 
     private void initChartPanel() {
         // Create a compass chart to depict wind direction
         dirChart = ChartUtil.createCommonCompassChart(Bundle.CTL_WindDirChartTitle(), null, ChartUtil.WIND_NEEDLE, Color.BLUE);
         spdChart = ChartUtil.createCommonDialChart(Bundle.CTL_WindSpdChartTitle(), null, 0, 50);
-        dirPanel.add(new ChartPanel(dirChart));
-        spdPanel.add(new ChartPanel(spdChart));
+        add(new ChartPanel(dirChart));
+        add(new ChartPanel(spdChart));
     }
 
     /**
@@ -73,36 +117,11 @@ public class WindForcePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        dirPanel = new javax.swing.JPanel();
-        spdPanel = new javax.swing.JPanel();
-
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title"))); // NOI18N
-
-        dirPanel.setLayout(new javax.swing.BoxLayout(dirPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        spdPanel.setLayout(new java.awt.BorderLayout());
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(dirPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(dirPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-            .addComponent(spdPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.GridLayout(1, 2));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel dirPanel;
-    private javax.swing.JPanel spdPanel;
     // End of variables declaration//GEN-END:variables
-
 }
