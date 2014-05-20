@@ -16,7 +16,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>org.jfree.*</publicPackage>
+                        <publicPackage>com.emxsys.jfree</publicPackage>
+                        <publicPackage>org.jfree.fx</publicPackage>
+                        <publicPackage>org.jfree.fx.demo</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
