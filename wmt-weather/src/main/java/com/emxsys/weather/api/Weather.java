@@ -27,27 +27,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.weather.api;
 
-import javax.swing.ImageIcon;
-import org.openide.util.Lookup;
+import visad.Data;
+import visad.Real;
 
 /**
+ * Interface for fire weather data.
  *
- * @author Bruce Schubert <bruce@emxsys.com>
+ * @author Bruce Schubert
  */
-public interface WeatherProvider extends Lookup.Provider {
+public interface Weather extends Data {
 
     /**
-     * Gets the capability object from the lookup.  A shortcut for getLookup.lookup().
-     * @return The capability object in the lookup, or null if not found.
+     * The wind velocity.
+     * @return [m/s]
      */
-    <T> T getCapability(Class<T> clazz);
-    
+    Real getWindSpeed();
+
     /**
-     * Gets an icon representative of this provider, e.g., Yahoo, NWS, WeatherUnderground.
-     * @return An ImageIcon; may be null
+     * The direction the wind is from.
+     * @return [degrees]
      */
-    ImageIcon getImageIcon();
-    
+    Real getWindDirection();
+
+    /**
+     * The air temperature.
+     * @return [celcius]
+     */
+    Real getAirTemperature();
+
+    /**
+     * The relative humidity.
+     * @return [percent]
+     */
+    Real getRelativeHumidity();
+
+    /**
+     * The amount of cloud/sky cover.
+     * @return [percent]
+     */
+    Real getCloudCover();
 }

@@ -27,12 +27,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api.yahoo;
+package com.emxsys.weather.api.yahoo;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.util.ImageUtil;
-import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
-import com.emxsys.wmt.weather.api.Weather;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.util.ImageUtil;
+import com.emxsys.weather.api.AbstractWeatherProvider;
+import com.emxsys.weather.api.Weather;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;

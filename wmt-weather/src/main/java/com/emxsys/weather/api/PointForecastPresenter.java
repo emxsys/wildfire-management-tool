@@ -27,19 +27,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.emxsys.weather.api;
 
-package com.emxsys.wmt.weather.api;
-
-import com.emxsys.wmt.gis.api.Coord2D;
-import java.util.List;
-import visad.Real;
+import com.emxsys.gis.api.Coord2D;
 
 /**
- *
+ * A capability interface that provides a point weather forecast.
  * @author Bruce Schubert
  */
-@FunctionalInterface
-public interface StationFinder {
+public interface PointForecastPresenter {
 
-    List<String> getNearbyWeatherStations(Coord2D coord, Real distance);
+    /**
+     * Gets a point forecast web presentation for the given position.
+     * 
+     * @param coord The position for the forecast
+     * @return An HTML web page
+     */
+    public String getPresentation(Coord2D coord);
+
 }

@@ -27,11 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.weather.api;
 
-import com.emxsys.wmt.weather.api.Weather;
-import static com.emxsys.wmt.visad.Reals.*;
-import static com.emxsys.wmt.weather.api.WeatherType.*;
+import com.emxsys.weather.api.Weather;
+import static com.emxsys.visad.Reals.*;
+import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
 import visad.Data;
 import visad.Real;

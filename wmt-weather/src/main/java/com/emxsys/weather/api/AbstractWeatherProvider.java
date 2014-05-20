@@ -27,22 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.weather.api;
 
-import com.emxsys.wmt.gis.api.Coord2D;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 
 /**
- * A capability interface that provides a point weather forecast.
+ * Derived classes must implement getImage()
  * @author Bruce Schubert
  */
-public interface PointForecastPresenter {
+public abstract class AbstractWeatherProvider implements WeatherProvider {
+
+    private final InstanceContent content = new InstanceContent();
+    private AbstractLookup lookup;
+
+    @Override
+    public Lookup getLookup() {
+        if (lookup == null) {
+            lookup = new AbstractLookup(content);
+        }
+        return lookup;
+    }
+    
+    @Override
+    public <T> T getCapability(Class<T> clazz) {
+        return getLookup().lookup(clazz);
+    }
 
     /**
-     * Gets a point forecast web presentation for the given position.
-     * 
-     * @param coord The position for the forecast
-     * @return An HTML web page
+     * Gets the content of lookup so derived classes can add and remove content.
+     * @return The lookup content.
      */
-    public String getPresentation(Coord2D coord);
+    protected InstanceContent getContent() {
+        return content;
+    }
 
 }

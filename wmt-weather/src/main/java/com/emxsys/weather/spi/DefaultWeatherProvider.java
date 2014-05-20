@@ -27,16 +27,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.spi;
+package com.emxsys.weather.spi;
 
-import com.emxsys.wmt.gis.api.Box;
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
-import com.emxsys.wmt.weather.api.ConditionsObserver;
-import com.emxsys.wmt.weather.api.PointForecaster;
-import com.emxsys.wmt.weather.api.Weather;
-import com.emxsys.wmt.weather.api.WeatherProvider;
-import com.emxsys.wmt.weather.api.WeatherTuple;
+import com.emxsys.gis.api.Box;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.weather.api.AbstractWeatherProvider;
+import com.emxsys.weather.api.ConditionsObserver;
+import com.emxsys.weather.api.PointForecaster;
+import com.emxsys.weather.api.Weather;
+import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.api.WeatherTuple;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;

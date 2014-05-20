@@ -27,40 +27,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.weather.api;
 
-import org.openide.util.Lookup;
-import org.openide.util.lookup.AbstractLookup;
-import org.openide.util.lookup.InstanceContent;
+import com.emxsys.gis.api.Coord2D;
+import visad.Field;
 
 /**
- * Derived classes must implement getImage()
+ * A functional interface that provides a point weather forecast.
  * @author Bruce Schubert
  */
-public abstract class AbstractWeatherProvider implements WeatherProvider {
-
-    private final InstanceContent content = new InstanceContent();
-    private AbstractLookup lookup;
-
-    @Override
-    public Lookup getLookup() {
-        if (lookup == null) {
-            lookup = new AbstractLookup(content);
-        }
-        return lookup;
-    }
-    
-    @Override
-    public <T> T getCapability(Class<T> clazz) {
-        return getLookup().lookup(clazz);
-    }
+@FunctionalInterface
+public interface PointForecaster {
 
     /**
-     * Gets the content of lookup so derived classes can add and remove content.
-     * @return The lookup content.
+     * Gets a point forecast for the given position.
+     * 
+     * @param coord The position for the forecast
+     * @return A VisAD field in the form ( Time -> ( Weather ) )
      */
-    protected InstanceContent getContent() {
-        return content;
-    }
+    public Field getForecast(Coord2D coord);
 
 }

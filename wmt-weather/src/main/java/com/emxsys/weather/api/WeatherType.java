@@ -27,10 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.weather.api;
 
-import com.emxsys.wmt.visad.GeneralUnit;
-import com.emxsys.wmt.visad.Reals;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;

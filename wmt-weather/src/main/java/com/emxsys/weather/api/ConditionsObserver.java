@@ -27,24 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.weather.api;
+package com.emxsys.weather.api;
 
-import com.emxsys.wmt.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord2D;
+import java.time.Duration;
 import visad.Field;
+import visad.Real;
 
 /**
- * A functional interface that provides a point weather forecast.
+ * A functional interface that provides the latest weather conditions within a geographical
+ * distance.
+ *
  * @author Bruce Schubert
  */
 @FunctionalInterface
-public interface PointForecaster {
+public interface ConditionsObserver {
 
     /**
-     * Gets a point forecast for the given position.
-     * 
-     * @param coord The position for the forecast
-     * @return A VisAD field in the form ( Time -> ( Weather ) )
+     * Gets the latest weather observations within the age and inside the area of interest.
+     *
+     * @param coord The center of the area of interest.
+     * @param radius The radius of the area of interest.
+     * @param age The acceptable age of the weather observations; Can use null for any age.
+     * @return A {@code FlatField}: ( (lat, lon ) -> ( air_temp, RH, wind_spd, wind_dir ) )
      */
-    public Field getForecast(Coord2D coord);
+    Field getLatestWeather(Coord2D coord, Real radius, Duration age);
 
 }

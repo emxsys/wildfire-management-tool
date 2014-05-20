@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: false
 OpenIDE-Module-Display-Category: Weather
-OpenIDE-Module-Localizing-Bundle: com/emxsys/wmt/weather/Bundle.properties
+OpenIDE-Module-Localizing-Bundle: com/emxsys/weather/Bundle.properties

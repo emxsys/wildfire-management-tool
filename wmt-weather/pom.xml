@@ -80,8 +80,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>com.emxsys.wmt.weather.api</publicPackage>
-                        <publicPackage>com.emxsys.wmt.weather.spi</publicPackage>
+                        <publicPackage>com.emxsys.weather.api</publicPackage>
+                        <publicPackage>com.emxsys.weather.spi</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
