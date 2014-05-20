@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2013, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,40 +27,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.visad;
-
-import java.util.logging.Logger;
-import visad.FunctionType;
-import visad.MathType;
-import visad.VisADException;
+package com.emxsys.visad.filetype;
 
 /**
- * Utility class for FunctionTypes.
- * 
+ * This enum represents the state of a DataObject.
+ *
  * @author Bruce Schubert
+ * @version $Id$
  */
-public class Functions {
+public enum DataState {
 
-    private static final Logger logger = Logger.getLogger(Functions.class.getName());
-
-    /**
-     * Convenience metho to create a new FunctionType. Catches and logs VisADException on error, and
-     * then throws an IllegalStateException.
-     * @param domain
-     * @param range
-     * @return The new FunctionType; throws on error.
-     */
-    public static FunctionType newFunctionType(MathType domain, MathType range) {
-        try {
-            return new FunctionType(domain, range);
-        }
-        catch (VisADException ex) {
-            logger.severe(ex.getMessage());
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    private Functions() {
-    }
-    
+    NEW,
+    INITIALIZING,
+    INITIALIZED,
+    DELETING,
+    DELETED,
+    INVALID
 }

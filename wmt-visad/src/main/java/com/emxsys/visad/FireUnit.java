@@ -27,10 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.visad;
+package com.emxsys.visad;
 
 import visad.Unit;
-import static com.emxsys.wmt.visad.Units.*;
+import static com.emxsys.visad.Units.*;
 
 /**
  * Units of measure for fire behavior.

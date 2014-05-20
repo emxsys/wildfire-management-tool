@@ -106,11 +106,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>edu.wisc.ssec.*</publicPackage>
-                        <publicPackage>ucar.*</publicPackage>
                         <publicPackage>visad.*</publicPackage>
-                        <publicPackage>com.emxsys.wmt.visad</publicPackage>
-                        <publicPackage>com.emxsys.wmt.visad.filetype</publicPackage>
+                        <publicPackage>edu.wisc.ssec.*</publicPackage>
+                        <publicPackage>com.emxsys.visad</publicPackage>
+                        <publicPackage>com.emxsys.visad.filetype</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

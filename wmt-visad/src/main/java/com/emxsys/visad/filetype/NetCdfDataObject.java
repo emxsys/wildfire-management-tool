@@ -27,9 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.visad.filetype;
+package com.emxsys.visad.filetype;
 
-import com.emxsys.wmt.util.TimeUtil;
+import com.emxsys.util.TimeUtil;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -56,77 +56,63 @@ import visad.DataImpl;
 import visad.VisADException;
 import visad.data.netcdf.Plain;
 
-@Messages(
-        {
-            "LBL_NetCdf_LOADER=Files of NetCDF"
-        })
+@Messages({
+    "LBL_NetCdf_LOADER=Files of NetCDF"
+})
 // Register the position late in the sequence so specialized .nc loaders can take presedence.
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_NetCdf_LOADER",
         mimeType = "application/x-netcdf",
-        extension
-        = {
-            "nc"
-        },
+        extension = {"nc"},
         position = 10000)
 @DataObject.Registration(
         mimeType = "application/x-netcdf",
-        iconBase = "com/emxsys/wmt/visad/images/database.png",
+        iconBase = "com/emxsys/visad/images/database.png",
         displayName = "#LBL_NetCdf_LOADER",
         position = 300)
-@ActionReferences(
-        {
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-                    position = 100,
-                    separatorAfter = 200),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-                    position = 300),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-                    position = 400,
-                    separatorAfter = 500),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-                    position = 600),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-                    position = 700,
-                    separatorAfter = 800),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
-                    position = 900,
-                    separatorAfter = 1000),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
-                    position = 1100,
-                    separatorAfter = 1200),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
-                    position = 1300),
-            @ActionReference(
-                    path = "Loaders/application/x-netcdf/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-                    position = 1400)
-        })
+@ActionReferences({
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"),
+            position = 900,
+            separatorAfter = 1000),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
+            position = 1100,
+            separatorAfter = 1200),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
+            position = 1300),
+    @ActionReference(
+            path = "Loaders/application/x-netcdf/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
+})
 public class NetCdfDataObject extends MultiDataObject {
 
     public static final String PROP_DATA_STATE = "PROP_DATA_STATE";
