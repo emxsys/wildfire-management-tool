@@ -85,24 +85,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.14</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.17</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <artifactId>wmt-utilities</artifactId>
             <groupId>com.emxsys</groupId>
             <type>jar</type>
             <version>4.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-jfree</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
