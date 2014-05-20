@@ -104,10 +104,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>com.emxsys.wmt.wildfire.api</publicPackage>
-                        <publicPackage>com.emxsys.wmt.wildfire.behave</publicPackage>
-                        <publicPackage>com.emxsys.wmt.wildfire.spi</publicPackage>
-                        <publicPackage>com.emxsys.wmt.wildfire.surfacefire</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.api</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.behave</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.spi</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.surfacefire</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
