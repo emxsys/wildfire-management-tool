@@ -167,6 +167,11 @@
             <groupId>org.pushingpixels</groupId>
             <version>5.0</version>
         </dependency>-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-jfree</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -181,7 +186,9 @@
                     <licenseName>BSD 3-Clause</licenseName>
                     <licenseFile>LICENSE.txt</licenseFile>
                     <!--Runtime parameters-->
-                    <etcConfFile>wmt.conf</etcConfFile>
+                    <etcConfFile>src/main/java/resources/wmt.conf</etcConfFile>
+                    <!--<additionalArguments>-J-Djava.util.logging.config.file=etc/logging.properties -J-Dnetbeans.accept_license_class=com.emxsys.wmt.core.license.AcceptLicense</additionalArguments>--> 
+                    <additionalArguments>-J-Djava.util.logging.config.file=etc/logging.properties</additionalArguments> 
                     <nbmResources>
                         <nbmResource>
                               <directory>src/main/java/resources</directory>
