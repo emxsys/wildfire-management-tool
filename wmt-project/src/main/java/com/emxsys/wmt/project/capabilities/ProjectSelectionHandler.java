@@ -29,12 +29,12 @@
  */
 package com.emxsys.wmt.project.capabilities;
 
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.scene.Scene;
-import com.emxsys.wmt.gis.api.scene.Scene.Factory;
-import com.emxsys.wmt.gis.api.viewer.GisViewer;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.scene.Scene;
+import com.emxsys.gis.api.scene.Scene.Factory;
+import com.emxsys.gis.api.viewer.GisViewer;
 import com.emxsys.wmt.globe.Globe;
-import com.emxsys.wmt.util.ProjectUtil;
+import com.emxsys.util.ProjectUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;

@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.project.nodes;
 
-import com.emxsys.wmt.util.DragDropUtil;
+import com.emxsys.util.DragDropUtil;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.io.IOException;

@@ -30,9 +30,9 @@
 package com.emxsys.wmt.project.nodes;
 
 import com.emxsys.wmt.project.WmtProject;
-import com.emxsys.wmt.gis.api.symbology.Graphic;
-import com.emxsys.wmt.gis.api.symbology.Symbol;
-import com.emxsys.wmt.util.DragDropUtil;
+import com.emxsys.gis.api.symbology.Graphic;
+import com.emxsys.gis.api.symbology.Symbol;
+import com.emxsys.util.DragDropUtil;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.util.logging.Logger;

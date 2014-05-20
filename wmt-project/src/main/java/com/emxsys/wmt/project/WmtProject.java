@@ -29,19 +29,19 @@
  */
 package com.emxsys.wmt.project;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.capabilities.Disposable;
-import com.emxsys.wmt.gis.api.marker.MarkerManager;
-import com.emxsys.wmt.gis.api.scene.BasicSceneCatalog;
-import com.emxsys.wmt.gis.api.symbology.GraphicCatalog;
-import com.emxsys.wmt.gis.api.symbology.SymbolCatalog;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.capabilities.Disposable;
+import com.emxsys.gis.api.marker.MarkerManager;
+import com.emxsys.gis.api.scene.BasicSceneCatalog;
+import com.emxsys.gis.api.symbology.GraphicCatalog;
+import com.emxsys.gis.api.symbology.SymbolCatalog;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.project.capabilities.ProjectSelectionHandler;
-import com.emxsys.wmt.wildfire.api.Fireground;
-import com.emxsys.wmt.wildfire.api.FiregroundProvider;
-import com.emxsys.wmt.wildfire.spi.DefaultFiregroundProvider;
+import com.emxsys.wildfire.api.Fireground;
+import com.emxsys.wildfire.api.FiregroundProvider;
+import com.emxsys.wildfire.spi.DefaultFiregroundProvider;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;

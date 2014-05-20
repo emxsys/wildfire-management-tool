@@ -30,7 +30,7 @@
 package com.emxsys.wmt.project.nodes;
 
 import com.emxsys.wmt.project.WmtProject;
-import com.emxsys.wmt.util.ImageUtil;
+import com.emxsys.util.ImageUtil;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.logging.Logger;
