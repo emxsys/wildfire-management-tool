@@ -27,9 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.api;
+package com.emxsys.solar.api;
 
-import com.emxsys.wmt.visad.Reals;
+import com.emxsys.visad.Reals;
 import java.rmi.RemoteException;
 import visad.Data;
 import visad.Real;
@@ -37,98 +37,68 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
- * A SunlightTuple contains the position of the sun for a given date and time.
+ * A SunlightHoursTuple contains the sunrise and sunset times for given date and latitude.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class SunlightTuple extends RealTuple implements Sunlight {
+public class SunlightHoursTuple extends RealTuple implements SunlightHours {
 
-    private final Real declination;
-    private final Real longitude;
-    private final Real altitudeAngle;
-    private final Real azimuthAngle;
-    private final Real sunriseHour;
-    private final Real sunsetHour;
-
+    private final Real sunrise;
+    private final Real sunset;
     private Data[] components;
 
-    public SunlightTuple(Real declination, Real longitude, Real altitudeAngle, Real azimuthAngle, Real sunriseHour, Real sunsetHour) {
-        super(SolarType.SUNLIGHT);
-        this.declination = Reals.convertTo(SolarType.DECLINATION, declination);
-        this.longitude = Reals.convertTo(SolarType.LONGITUDE, longitude);
-        this.altitudeAngle = Reals.convertTo(SolarType.ALTITUDE_ANGLE, altitudeAngle);
-        this.azimuthAngle = Reals.convertTo(SolarType.AZIMUTH_ANGLE, azimuthAngle);
-        this.sunriseHour = Reals.convertTo(SolarType.SUNRISE_HOUR, sunriseHour);
-        this.sunsetHour = Reals.convertTo(SolarType.SUNSET_HOUR, sunsetHour);
-
+    public SunlightHoursTuple(Real sunrise, Real sunset) {
+        super(SolarType.SUNRISE_SUNSET);
+        this.sunrise = sunrise;
+        this.sunset = sunset;
     }
 
-    public SunlightTuple() {
-        super(SolarType.SUNLIGHT);
-        this.declination = new Real(SolarType.DECLINATION);
-        this.longitude = new Real(SolarType.LONGITUDE);
-        this.altitudeAngle = new Real(SolarType.ALTITUDE_ANGLE);
-        this.azimuthAngle = new Real(SolarType.AZIMUTH_ANGLE);
-        this.sunriseHour = new Real(SolarType.SUNRISE_HOUR);
-        this.sunsetHour = new Real(SolarType.SUNSET_HOUR);
+    public SunlightHoursTuple() {
+        super(SolarType.SUNRISE_SUNSET);
+        this.sunrise = new Real(SolarType.TIME);
+        this.sunset = new Real(SolarType.TIME);
     }
 
     /**
-     * Declination is the earth's tilt angle relative to the sun at a given date and time.
+     * Sunrise is the time at which daylight begins. The time is in solar hours, where at 12:00
+     * noon, the sun is at its highest point in the sky. This time is independent of timezones.
+     * @return sunrise [solar time]
+     */
+    @Override
+    public Real getSunrise() {
+        return this.sunrise;
+    }
+
+    /**
+     * Sunset is the time at which daylight ends. The time is in solar hours, where at 12:00 noon,
+     * the sun is at its highest point in the sky. This time is independent of timezones.
+     * @return sunset [solar time]
+     */
+    @Override
+    public Real getSunset() {
+        return this.sunset;
+    }
+
+    /**
+     * Sunrise is the time at which daylight begins. The time is in solar hours, where at 12:00
+     * noon, the sun is at its highest point in the sky. This time is independent of timezones.
      *
-     * @return [degrees]
+     * @return sunrise [solar hour]
      */
     @Override
-    public Real getDeclination() {
-        return this.declination;
+    public double getSunriseHour() {
+        return convertDateTimeToHour(this.sunrise);
     }
 
     /**
-     * Longitude is the earth's longitude where the sun is overhead at the given date and time.
+     * Sunset is the time at which daylight ends. The time is in solar hours, where at 12:00 noon,
+     * the sun is at its highest point in the sky. This time is independent of timezones.
      *
-     * @return [degrees]
+     * @return sunset [solar hour]
      */
     @Override
-    public Real getLongitude() {
-        return this.longitude;
-    }
-
-    /**
-     * Gets the solar altitude angle--how high is the sun from the horizon.
-     * @return The solar altitude angle (A).
-     */
-    @Override
-    public Real getSolarAltitudeAngle() {
-        return this.altitudeAngle;
-
-    }
-
-    /**
-     * Gets the solar azimuth angle--where is sun relative to North.
-     * @return The solar azimuth angle (Z).
-     */
-    @Override
-    public Real getSolarAzimuthAngle() {
-        return this.azimuthAngle;
-    }
-
-    /**
-     * Gets the time of sunrise.
-     * @return Sunrise solar hour relative to solar noon.
-     */
-    @Override
-    public Real getSunriseHour() {
-        return this.sunriseHour;
-
-    }
-
-    /**
-     * Gets the time of sunset.
-     * @return Sunset solar hour relative to solar noon.
-     */
-    @Override
-    public Real getSunsetHour() {
-        return this.sunsetHour;
+    public double getSunsetHour() {
+        return convertDateTimeToHour(this.sunset);
     }
 
     /**
@@ -138,7 +108,6 @@ public class SunlightTuple extends RealTuple implements Sunlight {
      * @return hour of day
      */
     private double convertDateTimeToHour(Real datetime) {
-        //
         double val = Reals.convertTo(SolarType.SOLAR_HOUR, datetime).getValue();
         val %= 24;
         return val;
@@ -146,17 +115,15 @@ public class SunlightTuple extends RealTuple implements Sunlight {
 
     /**
      * Is missing any data elements?
-     *
      * @return is missing
      */
     @Override
     public boolean isMissing() {
-        return longitude.isMissing() || declination.isMissing();
+        return sunrise.isMissing() || sunset.isMissing();
     }
 
     /**
      * Get the i'th component.
-     *
      * @param i Which one
      * @return The component
      * @throws RemoteException On badness
@@ -166,9 +133,9 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     public Data getComponent(int i) throws VisADException, RemoteException {
         switch (i) {
             case 0:
-                return declination;
+                return sunrise;
             case 1:
-                return longitude;
+                return sunset;
             default:
                 throw new IllegalArgumentException("Wrong component number:" + i);
         }
@@ -176,7 +143,6 @@ public class SunlightTuple extends RealTuple implements Sunlight {
 
     /**
      * Create, if needed, and return the component array.
-     *
      * @param copy ignored
      * @return components
      */
@@ -185,8 +151,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
         //Create the array and populate it if needed
         if (components == null) {
             Data[] tmp = new Data[getDimension()];
-            tmp[0] = declination;
-            tmp[1] = longitude;
+            tmp[0] = sunrise;
+            tmp[1] = sunset;
             components = tmp;
         }
         return components;
@@ -194,7 +160,6 @@ public class SunlightTuple extends RealTuple implements Sunlight {
 
     /**
      * Indicates if this Tuple is identical to an object.
-     *
      * @param obj The object.
      * @return true if and only if the object is a Tuple and both Tuple-s have identical component
      * sequences.
@@ -204,39 +169,29 @@ public class SunlightTuple extends RealTuple implements Sunlight {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof SunlightTuple)) {
+        if (!(obj instanceof SunlightHoursTuple)) {
             return false;
         }
-        SunlightTuple that = (SunlightTuple) obj;
-        return this.longitude.equals(that.longitude)
-                && this.declination.equals(that.declination);
+        SunlightHoursTuple that = (SunlightHoursTuple) obj;
+        return this.sunrise.equals(that.sunrise)
+                && this.sunset.equals(that.sunset);
     }
 
     /**
      * Returns the hash code of this object.
-     *
      * @return The hash code of this object.
      */
     @Override
     public int hashCode() {
-        return longitude.hashCode() | declination.hashCode();
+        return sunrise.hashCode() & sunset.hashCode();
     }
 
     /**
      * to string
-     *
      * @return string of me
      */
     @Override
     public String toString() {
-        try {
-        return getDeclination().longString() + ", " + getLongitude().longString()
-                + ", " + getSolarAltitudeAngle().longString()
-                + ", " + getSolarAzimuthAngle().longString()
-                + ", " + getSunriseHour().longString()
-                + ", " + getSunsetHour().longString();
-        } catch (VisADException | RemoteException e) {
-            return "";
-        }
+        return getSunrise() + " " + getSunset();
     }
 }

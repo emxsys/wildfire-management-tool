@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Localizing-Bundle: com/emxsys/wmt/solar/Bundle.properties
+OpenIDE-Module-Localizing-Bundle: com/emxsys/solar/Bundle.properties

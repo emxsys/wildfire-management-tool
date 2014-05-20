@@ -27,23 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.internal;
+package com.emxsys.solar.internal;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.gis.api.Latitude;
-import com.emxsys.wmt.solar.api.SolarType;
-import com.emxsys.wmt.solar.api.SolarUtil;
-import com.emxsys.wmt.solar.api.Sunlight;
-import com.emxsys.wmt.solar.api.SunlightHours;
-import com.emxsys.wmt.solar.api.SunlightHoursTuple;
-import com.emxsys.wmt.solar.api.SunlightTuple;
-import static com.emxsys.wmt.solar.internal.RothermelSupport.*;
-import com.emxsys.wmt.solar.spi.DefaultSunlightProvider;
-import com.emxsys.wmt.util.AngleUtil;
-import com.emxsys.wmt.visad.Reals;
-import com.emxsys.wmt.visad.Times;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.api.Latitude;
+import com.emxsys.solar.api.SolarType;
+import com.emxsys.solar.api.SolarUtil;
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.api.SunlightHours;
+import com.emxsys.solar.api.SunlightHoursTuple;
+import com.emxsys.solar.api.SunlightTuple;
+import static com.emxsys.solar.internal.RothermelSupport.*;
+import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.util.AngleUtil;
+import com.emxsys.visad.Reals;
+import com.emxsys.visad.Times;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

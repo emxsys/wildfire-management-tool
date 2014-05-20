@@ -106,8 +106,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>com.emxsys.wmt.solar.api</publicPackage>
-                        <publicPackage>com.emxsys.wmt.solar.spi</publicPackage>
+                        <publicPackage>com.emxsys.solar.api</publicPackage>
+                        <publicPackage>com.emxsys.solar.spi</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

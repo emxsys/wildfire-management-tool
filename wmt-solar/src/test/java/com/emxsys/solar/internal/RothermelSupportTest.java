@@ -27,10 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.internal;
+package com.emxsys.solar.internal;
 
-import com.emxsys.wmt.gis.api.Latitude;
-import static com.emxsys.wmt.solar.internal.RothermelSupport.*;
+import com.emxsys.solar.internal.RothermelSupport;
+import com.emxsys.gis.api.Latitude;
+import static com.emxsys.solar.internal.RothermelSupport.*;
 import java.awt.Color;
 import static java.lang.Math.*;
 import java.time.LocalDate;

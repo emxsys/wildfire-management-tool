@@ -27,12 +27,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.internal;
+package com.emxsys.solar.internal;
 
-import com.emxsys.wmt.gis.api.GeoCoord3D;
-import com.emxsys.wmt.gis.api.Terrain;
-import com.emxsys.wmt.gis.api.TerrainTuple;
-import com.emxsys.wmt.solar.internal.SolarPositionAlgorithms;
+import com.emxsys.solar.internal.SolarData;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.Terrain;
+import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.solar.internal.SolarPositionAlgorithms;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import org.junit.After;

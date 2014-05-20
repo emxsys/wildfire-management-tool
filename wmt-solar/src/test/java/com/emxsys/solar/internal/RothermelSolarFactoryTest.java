@@ -27,14 +27,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.internal;
+package com.emxsys.solar.internal;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Coord3D;
-import com.emxsys.wmt.gis.api.GeoCoord2D;
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.solar.api.Sunlight;
-import com.emxsys.wmt.solar.api.SunlightHours;
+import com.emxsys.solar.internal.RothermelSolarFactory;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.api.SunlightHours;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.swing.JFrame;

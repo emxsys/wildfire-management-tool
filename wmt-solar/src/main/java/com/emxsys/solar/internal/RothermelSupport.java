@@ -27,10 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.internal;
+package com.emxsys.solar.internal;
 
-import com.emxsys.wmt.solar.api.SolarType;
-import com.emxsys.wmt.visad.Times;
+import com.emxsys.solar.api.SolarType;
+import com.emxsys.visad.Times;
 import static java.lang.Math.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

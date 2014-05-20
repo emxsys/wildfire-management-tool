@@ -27,48 +27,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.spi;
+package com.emxsys.solar.api;
 
-import com.emxsys.wmt.gis.api.GeoSector;
-import com.emxsys.wmt.solar.api.SunlightProvider;
-import com.emxsys.wmt.solar.internal.RothermelSolarFactory;
-import com.emxsys.wmt.solar.internal.SPASolarProvider;
-import org.openide.util.Lookup;
-import visad.FlatField;
-import visad.Gridded1DSet;
+import visad.Data;
 import visad.Real;
 
 /**
- * SunlightProvider factory. The default instance can be overridden by creating SolarProvider
- * service provider.
+ * A Sunlight instance contains key solar values pertaining to a date and an earth location.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class DefaultSunlightProvider implements SunlightProvider {
-
-    private static SunlightProvider instance = null;
+public interface Sunlight extends Data {
 
     /**
-     * Returns the singleton instance of a SunlightProvider. If a class has been registered as a
-     * SunlightProvider service provider, then an instance of that class will be returned.
-     * Otherwise, an instance of the RothermelDefaultSunlightProvider will be returned.
-     *
-     * @return A singleton instance of a DefaultSunlightProvider.
+     * Declination is the earth's tilt angle relative to the sun at a given date and time. It is
+     * also the latitude where the sun is overhead.
+     * @return The declination angle [degrees].
      */
-    public static SunlightProvider getInstance() {
-        if (instance == null) {
-            // Check the general Lookup for a service provider
-            instance = Lookup.getDefault().lookup(SunlightProvider.class);
+    Real getDeclination();
 
-            // Use our default factory if no registered provider.
-            if (instance == null) {
-                instance = new SPASolarProvider();
-            }
-        }
-        return instance;
-    }
+    /**
+     * Longitude is earth longitude for where the sun is overhead at a given date and time.  This is
+     * roughly equivalent to the right ascension, but on the terrestrial sphere.
+     * @return [degrees]
+     */
+    Real getLongitude();
 
-    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector);
+    /**
+     * Gets the solar altitude angle--how high is the sun from the horizon.
+     * @return The solar altitude angle (A). [degrees]
+     */
+    Real getSolarAltitudeAngle();
 
-    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2);
+    /**
+     * Gets the solar azimuth angle--where is sun relative to North.
+     * @return The solar azimuth angle (Z). [degrees]
+     */
+    Real getSolarAzimuthAngle();
+
+    /**
+     * Gets the time of sunrise in solar hours, where 0.00 is noon, 0600 is -6.0, and 1800 is +6.0.
+     * @return Sunrise solar hour relative to solar noon. [hours]
+     */
+    Real getSunriseHour();
+
+    /**
+     * Gets the time of sunset in solar hours, where noon is 0.00, 0600 is -6.0, and 1800 is +6.0.
+     * @return Sunset solar hour relative to solar noon. [hours]
+     */
+    Real getSunsetHour();
+
 }

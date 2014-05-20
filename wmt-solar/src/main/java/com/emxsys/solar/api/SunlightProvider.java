@@ -27,10 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.solar.api;
+package com.emxsys.solar.api;
 
-import com.emxsys.wmt.gis.api.Coord2D;
-import com.emxsys.wmt.gis.api.Coord3D;
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import visad.Real;
