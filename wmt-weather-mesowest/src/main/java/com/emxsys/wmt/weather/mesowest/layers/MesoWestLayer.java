@@ -51,6 +51,7 @@ import org.openide.util.RequestProcessor;
 import org.openide.util.RequestProcessor.Task;
 import visad.Field;
 import visad.Real;
+import visad.RealTuple;
 import visad.VisADException;
 
 /**
@@ -156,7 +157,11 @@ public final class MesoWestLayer extends RenderableGisLayer {
             double[][] latLons = lastestWxField.getDomainSet().getDoubles(false); // Don't copy
             for (int i = 0; i < latLons[0].length; i++) {
                 GeoCoord3D coord = GeoCoord3D.fromDegrees(latLons[0][i], latLons[1][i]);
-                this.addRenderable(new SimplePlacemark(coord, Integer.toString(i)));
+                RealTuple wx = (RealTuple)lastestWxField.getSample(i);
+                double[] values = wx.getValues();
+                String label = wx.isMissing() ? "missing" : String.format("T: %1$.0f, RH: %2$.0f", values[0], values[1]);
+
+                this.addRenderable(new SimplePlacemark(coord, label));
             }
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);

@@ -36,6 +36,7 @@ import com.emxsys.wmt.util.ImageUtil;
 import com.emxsys.wmt.visad.GeneralUnit;
 import com.emxsys.wmt.visad.Reals;
 import com.emxsys.wmt.weather.api.AbstractWeatherProvider;
+import com.emxsys.wmt.weather.api.ConditionsObserver;
 import com.emxsys.wmt.weather.api.WeatherProvider;
 import static com.emxsys.wmt.weather.api.WeatherType.*;
 import java.net.URL;
@@ -46,7 +47,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +57,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
 import visad.FlatField;
@@ -68,7 +69,9 @@ import visad.RealType;
 import visad.VisADException;
 
 /**
- * MesoWest weather services.
+ * MesoWest weather services. 
+ * 
+ * See: http://mesowest.org/api/
  *
  * @author Bruce Schubert
  */
@@ -116,6 +119,19 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
             + "&jsonformat=2"
             + "&radius=%1$f,%2$f,%3$f"
             + "&token=%5$s";
+    /** Latest weather query for station - params: station_id, age (minutes) [and app token] */
+    protected static final String LATEST_WX_STATION_QUERY = "&status=active"
+            + "&jsonformat=2"
+            + "&latestobs=1"
+            + "&stid=%1$s"
+            + "&vars="
+            + AIR_TEMP + ","
+            + RELATIVE_HUMIDITY + ","
+            + WIND_SPEED + ","
+            + WIND_DIRECTION + ","
+            + "&obtimezone=utc"
+            + "&jsonformat=2"
+            + "&token=%2$s";
     /** MathType to represent the weather: air_temp, RH, wind_spd, wind_dir */
     protected static final RealTupleType WX_RANGE = Reals.newRealTupleType(
             new RealType[]{AIR_TEMP_F, REL_HUMIDITY, WIND_SPEED_KTS, WIND_DIR});
@@ -156,6 +172,11 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
             throw new IllegalStateException("Do not call constructor. Use getInstance() or Lookup.");
         }
         instance = this;
+        
+        // Initialize the lookup with this provider's capabilities
+        InstanceContent content = getContent();
+        content.add((ConditionsObserver) this::getLatestWeather);  // functional interface
+        
     }
 
 
@@ -165,6 +186,7 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
      * @param radius The radius of the area of interest; the value will be converted to miles.
      * @return A {@code FlatField}: ( (lat, lon ) -> ( air_temp, RH, wind_spd, wind_dir ) )
      */
+    @SuppressWarnings({"UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
     public Field getLatestWeather(Coord2D coord, Real radius) {
         try {
             // Build the query string and URL
@@ -190,25 +212,62 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
     }
 
     /**
+     * Gets the latest weather observations within the area of interest.
+     * @return A {@code FlatField}: ( (lat, lon ) -> ( air_temp, RH, wind_spd, wind_dir ) )
+     */
+    @SuppressWarnings({"UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
+    public Field getLatestWeather(String stationId, Duration age) {
+        try {
+            // Build the query string and URL
+            String query = String.format(LATEST_WX_STATION_QUERY,
+                    stationId,
+                    age != null ? age.toMinutes() : 3600,
+                    APP_TOKEN);
+            StringBuilder sb = new StringBuilder();
+            sb.append(STATIONS_URI);
+            sb.append(query);
+            
+            URL url = new URL(sb.toString());
+            logger.fine(url.toString());
+            
+            // Invoke the REST service and get the JSON results
+            String jsonResult = HttpUtil.callWebService(url);
+            
+            //System.out.println(jsonResult);
+            return parseJsonResults(jsonResult);
+        
+        } catch (Exception ex) {
+            logger.severe(ex.getMessage());
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
      * Gets the latest weather observations within the age and inside the area of interest.
      * @param coord The center of the area of interest.
      * @param radius The radius of the area of interest; the value will be converted to miles.
      * @return A {@code FlatField}: ( (lat, lon ) -> ( air_temp, RH, wind_spd, wind_dir ) )
      */
+    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
     public Field getLatestWeather(Coord2D coord, Real radius, Duration age) {
         try {
             // Build the query string and URL
             String query = String.format(LATEST_WX_RADIUS_AGE_QUERY,
-                    coord.getLatitudeDegrees(), coord.getLongitudeDegrees(),
-                    radius.getValue(GeneralUnit.mile), age.toMinutes(), APP_TOKEN);
+                    coord.getLatitudeDegrees(), 
+                    coord.getLongitudeDegrees(),
+                    radius.getValue(GeneralUnit.mile), 
+                    age != null ? age.toMinutes() : 3600, 
+                    APP_TOKEN);
             StringBuilder sb = new StringBuilder();
             sb.append(STATIONS_URI).append(query);
+            
             String urlString = sb.toString();
+            logger.fine(urlString);
 
             // Invoke the REST service and get the JSON results
-            logger.info(urlString);
-            String jsonResult = HttpUtil.callWebService(urlString);
+            String jsonResult = HttpUtil.callWebService(new URL(urlString));
             //System.out.println(jsonResult);
+
             return parseJsonResults(jsonResult);
 
         } catch (RuntimeException ex) {
@@ -297,8 +356,8 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
                         wxSamples[WIND_DIR_IDX][i] = value.doubleValue();
                         break;
                     default:
-                        logger.log(Level.INFO, "Sensor + [{0}] value [{1}] not processed.",
-                                new Object[]{sensor, value.toString()});
+                        logger.log(Level.INFO, "{0} sensor [{1}], value [{2}], not processed.",
+                                new Object[]{name, sensor, value.toString()});
                 }
             }
             ++i;
