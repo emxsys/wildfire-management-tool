@@ -193,7 +193,7 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
 
     /**
      * Get the singleton instance.
-     * @return the singleton YahooPlaceProvider found on the global lookup.
+     * @return the singleton NwsWeatherProvider found on the global lookup.
      */
     static public NwsWeatherProvider getInstance() {
         if (instance == null) {
@@ -301,7 +301,7 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
 
             // Parse the XML
             List<FlatField> fields = new DwmlParser(dwml).parse();
-            if (fields.isEmpty()) {
+            if (fields==null || fields.isEmpty()) {
                 return null;
             }
             return fields.get(0);

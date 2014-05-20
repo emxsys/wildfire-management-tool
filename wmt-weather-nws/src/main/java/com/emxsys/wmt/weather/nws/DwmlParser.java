@@ -200,6 +200,7 @@ public class DwmlParser {
      * Parses the document.
      * @return An array of FlatFields.
      */
+    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
     public List<FlatField> parse() {
         try {
             Node headNode = (Node) xpath.evaluate(TAG_HEAD, doc, XPathConstants.NODE);
@@ -289,7 +290,7 @@ public class DwmlParser {
                 fields.add(ff);
             }
             return fields;
-        } catch (XPathExpressionException | VisADException | RemoteException ex) {
+        } catch (Exception ex) {
             logger.severe(ex.getMessage());
         }
         return null;
