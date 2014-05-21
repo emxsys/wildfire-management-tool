@@ -207,6 +207,10 @@
         <folder name="Window">
             <file name="GroupsMenuAction.shadow_hidden"/>
             <folder name="Show">
+                <file name="Separator1.instance">
+                    <attr name="position" intvalue="2000"/>
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                </file>
                 <!--NetBeans Projects action is replaced by a WMT action -->
                 <file name="org-netbeans-modules-project-ui-logical-tab-action.shadow_hidden"/>
                 <!--NetBeans Files action is replaced by a WMT action -->
@@ -216,7 +220,7 @@
                     <attr name="position" intvalue="2300"/>
                     <attr name="priority" stringvalue="top"/>
                 </file>
-                <file name="Separator1.instance">
+                <file name="Separator2.instance">
                     <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
                     <attr name="position" intvalue="3000"/>
                 </file>
@@ -238,18 +242,28 @@
     <!-- XML Workspace Layout part --> 
     <folder name="Windows2">
         <folder name="Modes">
+            <file name="bottomSlidingSide.wsmode" url="bottomSlidingSideWsmode.xml"/>
+            <file name="commonpalette.wsmode" url="commonpaletteWsmode.xml"/>
             <folder name="editor">
                 <file name="Welcome.wstcref" url="Welcome.wstcref"/>
             </folder>
+            <file name="editor.wsmode" url="editorWsmode.xml"/>
+            <file name="explorer.wsmode" url="explorerWsmode.xml"/>
+            <file name="leftSlidingSide.wsmode" url="leftSlidingSideWsmode.xml"/>
+            <file name="output.wsmode" url="outputWsmode.xml"/>
+            <file name="properties.wsmode" url="propertiesWsmode.xml"/>
+            <file name="rightSide.wsmode" url="rightSideWsmode.xml"/>
+            <file name="rightSlidingSide.wsmode" url="rightSlidingSideWsmode.xml"/>
+            <file name="topSlidingSide.wsmode" url="topSlidingSideWsmode.xml"/>
         </folder>
         <folder name="Components">
             <file name="Welcome.settings" url="Welcome.settings"/>
-        </folder>
-   </folder>
+        </folder>       
+        <file name="WindowManager.wswmgr" url="WindowManager.wswmgr"/>
+    </folder>
  
     <folder name="WelcomePage">
         <folder name="GettingStartedLinks">
-
             <file name="tour.url" url="nbresloc:/com/emxsys/wmt/core/welcome/content/tour.url">
                 <attr name="SystemFileSystem.localizingBundle" stringvalue="com.emxsys.wmt.core.welcome.content.Bundle"/>
                 <attr name="position" intvalue="100"/>
