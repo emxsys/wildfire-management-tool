@@ -76,7 +76,7 @@ import visad.Real;
 public final class ForcesTopComponent extends TopComponent {
 
     public static final String PREFERRED_ID = "ForcesTopComponent";
-    private HeatForcePanel heatPanel;
+    private PreheatForcePanel heatPanel;
     private WindForcePanel windPanel;
     private SlopeForcePanel slopePanel;
 
@@ -98,7 +98,7 @@ public final class ForcesTopComponent extends TopComponent {
     }
 
     private void createPanels() {
-        heatPanel = new HeatForcePanel();
+        heatPanel = new PreheatForcePanel();
         windPanel = new WindForcePanel();
         slopePanel = new SlopeForcePanel();
         // Layout the panels to the Grid Layout

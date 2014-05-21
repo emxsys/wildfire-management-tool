@@ -31,7 +31,7 @@ package com.emxsys.wmt.cps;
 
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
-import com.emxsys.wmt.cps.ui.HeatForcePanel;
+import com.emxsys.wmt.cps.ui.PreheatForcePanel;
 import com.emxsys.wmt.cps.ui.SlopeForcePanel;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
@@ -232,7 +232,7 @@ public class Controller {
     private static class SolarUpdater implements TimeListener, Runnable {
 
         private final Controller controller;
-        private static final RequestProcessor processor = new RequestProcessor(HeatForcePanel.class);
+        private static final RequestProcessor processor = new RequestProcessor(PreheatForcePanel.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<TimeEvent> lastTimeEvent = new AtomicReference<>(new TimeEvent(this, null, null));
         // Array indicies
