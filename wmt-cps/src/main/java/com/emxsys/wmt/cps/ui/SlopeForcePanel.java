@@ -32,13 +32,31 @@ package com.emxsys.wmt.cps.ui;
 import com.emxsys.jfree.ChartUtil;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.util.AngleUtil;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CompassPlot;
+import org.jfree.chart.plot.PlotRenderingInfo;
+import org.jfree.chart.plot.PlotState;
+import org.jfree.chart.plot.dial.ArcDialFrame;
+import org.jfree.chart.plot.dial.DialBackground;
 import org.jfree.chart.plot.dial.DialPlot;
+import org.jfree.chart.plot.dial.DialPointer;
+import org.jfree.chart.plot.dial.StandardDialScale;
 import org.jfree.data.general.DefaultValueDataset;
+import org.jfree.data.general.ValueDataset;
+import org.jfree.ui.GradientPaintTransformType;
+import org.jfree.ui.RectangleInsets;
+import org.jfree.ui.StandardGradientPaintTransformer;
 import org.openide.util.NbBundle.Messages;
 
 /**
@@ -58,8 +76,80 @@ public class SlopeForcePanel extends javax.swing.JPanel {
 
     private static final Logger logger = Logger.getLogger(SlopeForcePanel.class.getName());
     private JFreeChart aspectChart;
-    private JFreeChart slopeChart;
+    private SlopeChart slopeChart = new SlopeChart(Bundle.CTL_SlopeChartTitle(0));
 
+    /**
+     * SlopePlot is a DialPlot stylized for angle of slope.
+     */
+    private class SlopePlot extends DialPlot {
+
+        SlopePlot(ValueDataset dataset) {
+            super(dataset);
+            // Set the viewport of the circular dial;
+            // Set to pper right quadrant of circle with extra left and bottom for labels
+            setView(0.4, 0.0, 0.6, 0.6);    
+            setInsets(RectangleInsets.ZERO_INSETS);
+            
+            // Frame
+            ArcDialFrame dialFrame = new ArcDialFrame(-2.0, 94.0);
+            dialFrame.setInnerRadius(0.40);
+            dialFrame.setOuterRadius(0.90);
+            dialFrame.setForegroundPaint(Color.darkGray);
+            dialFrame.setStroke(new BasicStroke(2.0f));
+            dialFrame.setVisible(true);
+            setDialFrame(dialFrame);
+            
+            // Dial Background 
+            GradientPaint gp = new GradientPaint(
+                    new Point(), new Color(180, 180, 180),
+                    new Point(), new Color(255, 255, 255));
+            DialBackground db = new DialBackground(gp);
+            db.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.CENTER_VERTICAL));
+            addLayer(db);
+            
+            // Scale
+            double MIN_SLOPE = 0;
+            double MAX_SLOPE = 90;
+            StandardDialScale scale = new StandardDialScale(MIN_SLOPE, MAX_SLOPE, 0, 90.0, 10.0, 4);
+            scale.setTickRadius(0.6);
+            scale.setTickLabelFormatter(new DecimalFormat("#0°"));
+            scale.setTickLabelOffset(-0.1);
+            scale.setMajorTickIncrement(10.0);  // Labeled increments
+            scale.setTickLabelFont(new Font("Dialog", Font.PLAIN, 14));
+            addScale(0, scale);
+            
+            // Needle
+            DialPointer needle = new DialPointer.Pin();
+            needle.setRadius(0.84);
+            addLayer(needle);
+        }
+
+        @Override
+        public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor, PlotState parentState, PlotRenderingInfo info) {
+            super.draw(g2, area, anchor, parentState, info); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+    }
+
+    /**
+     * SlopeChart is a JFreeChart integrated with a SlopePlot.
+     */
+    private class SlopeChart extends JFreeChart {
+
+        final DefaultValueDataset dataset;
+
+        SlopeChart(String title) {
+            this(title, new DefaultValueDataset(0.0));
+        }
+
+        SlopeChart(String title, DefaultValueDataset dataset) {
+            super(new SlopePlot(dataset));
+            this.dataset = dataset;
+            setTitle(title);
+            setPadding(RectangleInsets.ZERO_INSETS);
+        }
+    }
+    
     /**
      * Creates new form SlopePanel
      */
@@ -85,7 +175,7 @@ public class SlopeForcePanel extends javax.swing.JPanel {
         // Update Slope Chart
         DialPlot dialPlot = (DialPlot) slopeChart.getPlot();
         DefaultValueDataset dialData = (DefaultValueDataset) dialPlot.getDataset();
-        dialData.setValue(terrain.getSlopePercent());
+        dialData.setValue(terrain.getSlopeDegrees());
         slopeChart.setTitle(Bundle.CTL_SlopeChartTitle(Long.toString(Math.round(terrain.getSlopePercent()))));
     }
 
@@ -95,8 +185,6 @@ public class SlopeForcePanel extends javax.swing.JPanel {
     private void createCharts() {
         aspectChart = ChartUtil.createCommonCompassChart(Bundle.CTL_AspectChartTitle(""), null, ChartUtil.WIND_NEEDLE, Color.GREEN);
         aspectPanel.add(new ChartPanel(aspectChart));
-
-        slopeChart = ChartUtil.createCommonDialChart(Bundle.CTL_SlopeChartTitle(""), null, 0, 100);
         slopePanel.add(new ChartPanel(slopeChart));
     }
 
