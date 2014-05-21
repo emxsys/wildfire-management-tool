@@ -32,8 +32,12 @@ package com.emxsys.jfree;
 import java.awt.geom.Rectangle2D;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
+import javax.swing.event.ChangeEvent;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.fx.FXGraphics2D;
+
 
 /**
  *
@@ -48,11 +52,19 @@ public final class ChartCanvas extends Canvas {
     public ChartCanvas(JFreeChart chart) {
         this.chart = chart;
         this.g2 = new FXGraphics2D(this.getGraphicsContext2D());
+        //this.g2.setClippingDisabled(false);
+        
         // Redraw canvas when size changes. 
         widthProperty().addListener(evt -> draw());
         heightProperty().addListener(evt -> draw());
+
+        // Redraw canvas when chart changes
+        chart.addChangeListener((ChartChangeEvent event) -> {
+            draw();
+        });        
     }
 
+    
     public void draw() {
         double width = getWidth();
         double height = getHeight();
