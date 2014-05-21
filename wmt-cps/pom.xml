@@ -82,10 +82,6 @@
             <groupId>com.emxsys</groupId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <artifactId>visad</artifactId>
-            <groupId>visad</groupId>
-        </dependency>
         <!--Terramenta-->
         <dependency>
             <groupId>com.terramenta</groupId>
