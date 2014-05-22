@@ -29,9 +29,16 @@
  */
 package com.emxsys.weather.api;
 
+import com.emxsys.visad.Reals;
+import static com.emxsys.weather.api.WeatherType.AIR_TEMP_F;
+import static com.emxsys.weather.api.WeatherType.REL_HUMIDITY;
+import static com.emxsys.weather.api.WeatherType.WIND_DIR;
+import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KTS;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import visad.RealTupleType;
+import visad.RealType;
 
 /**
  * Derived classes must implement getImage()
@@ -41,7 +48,15 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
 
     private final InstanceContent content = new InstanceContent();
     private AbstractLookup lookup;
-
+    
+    /** MathType to represent the weather: air_temp, RH, wind_spd, wind_dir */
+    protected static final RealTupleType WX_RANGE = Reals.newRealTupleType(
+            new RealType[]{AIR_TEMP_F, REL_HUMIDITY, WIND_SPEED_KTS, WIND_DIR});
+    protected static final int AIR_TEMP_IDX = WX_RANGE.getIndex(AIR_TEMP_F);
+    protected static final int HUMIDITY_IDX = WX_RANGE.getIndex(REL_HUMIDITY);
+    protected static final int WIND_SPD_IDX = WX_RANGE.getIndex(WIND_SPEED_KTS);
+    protected static final int WIND_DIR_IDX = WX_RANGE.getIndex(WIND_DIR);
+    
     @Override
     public Lookup getLookup() {
         if (lookup == null) {
