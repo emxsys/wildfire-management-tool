@@ -32,6 +32,8 @@ package com.emxsys.wmt.cps.ui;
 import com.emxsys.jfree.ChartCanvas;
 import com.emxsys.jfree.ChartUtil;
 import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
+import com.emxsys.weather.api.WeatherType;
+import com.emxsys.wmt.cps.wx.ManualWeatherProvider;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -72,6 +74,7 @@ import org.jfree.ui.GradientPaintTransformType;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.StandardGradientPaintTransformer;
 import org.openide.util.NbBundle;
+import visad.Real;
 
 /**
  *
@@ -101,9 +104,10 @@ public class WindForcePanel extends javax.swing.JPanel {
             setMajorTickSpacing(25);
             setOrientation(SwingConstants.VERTICAL);
             addChangeListener((ChangeEvent e) -> {
-                chart.dataset.setValue(this.getValue());
+                int windDir = getValue();
+                chart.dataset.setValue(windDir);
+                ManualWeatherProvider.getInstance().setWindDirection(new Real(WeatherType.WIND_DIR, windDir));
             });
-            // TODO: Update manual weather provider
         }
     }
 
@@ -116,7 +120,9 @@ public class WindForcePanel extends javax.swing.JPanel {
             setMajorTickSpacing(25);
             setOrientation(SwingConstants.VERTICAL);
             addChangeListener((ChangeEvent e) -> {
-                chart.dataset.setValue(this.getValue());
+                int windSpd = getValue();
+                chart.dataset.setValue(windSpd);
+                ManualWeatherProvider.getInstance().setWindSpeed(new Real(WeatherType.WIND_SPEED_MPH, windSpd));
             });
         }
     }
@@ -173,7 +179,7 @@ public class WindForcePanel extends javax.swing.JPanel {
             dialFrame.setStroke(new BasicStroke(2.0f));
             dialFrame.setVisible(true);
             setDialFrame(dialFrame);
-            
+
             // Dial Background 
             GradientPaint gp = new GradientPaint(
                     new Point(), new Color(180, 180, 180),
@@ -181,7 +187,7 @@ public class WindForcePanel extends javax.swing.JPanel {
             DialBackground db = new DialBackground(gp);
             db.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.CENTER_VERTICAL));
             addLayer(db);
-            
+
             // Scale
             double MIN_SPEED = 0;
             double MAX_SPEED = 100;
@@ -191,7 +197,7 @@ public class WindForcePanel extends javax.swing.JPanel {
             scale.setMajorTickIncrement(25.0);
             scale.setTickLabelFont(new Font("Dialog", Font.PLAIN, 14));
             addScale(0, scale);
-            
+
             // Needle
             DialPointer needle = new DialPointer.Pin();
             needle.setRadius(0.84);
@@ -202,7 +208,7 @@ public class WindForcePanel extends javax.swing.JPanel {
         public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor, PlotState parentState, PlotRenderingInfo info) {
             super.draw(g2, area, anchor, parentState, info); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
     }
 
     /**
@@ -238,7 +244,7 @@ public class WindForcePanel extends javax.swing.JPanel {
         // Layout the right panel
         JPanel dialPanel = new JPanel(new BorderLayout());      // Speed dial
         JPanel sliderPanel = new JPanel(new GridLayout(1, 2));  // Slider controls
-        dialPanel.add(new ChartPanel(spdChart,DEFAULT_WIDTH,
+        dialPanel.add(new ChartPanel(spdChart, DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
                 200, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
                 DEFAULT_MINIMUM_DRAW_HEIGHT,
@@ -285,7 +291,6 @@ public class WindForcePanel extends javax.swing.JPanel {
 //
 //        return new Scene(stackPane);
 //    }
-
     /**
      * This method is called from within the constructor to
      * initialize the form.

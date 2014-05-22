@@ -34,6 +34,8 @@ import com.emxsys.jfree.ClockCompassPlot;
 import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.util.AngleUtil;
+import com.emxsys.weather.api.WeatherType;
+import com.emxsys.wmt.cps.wx.ManualWeatherProvider;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -215,7 +217,9 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         this.slider.setMajorTickSpacing(25);
         this.slider.setOrientation(SwingConstants.VERTICAL);
         this.slider.addChangeListener((ChangeEvent e) -> {
-            airTempChart.dataset.setValue(slider.getValue());
+            int airTemp = slider.getValue();
+            airTempChart.dataset.setValue(airTemp);
+            ManualWeatherProvider.getInstance().setAirTemperature(new Real(WeatherType.AIR_TEMP_F, airTemp));
         });
         rightPanel.add(this.slider, BorderLayout.EAST);
 
