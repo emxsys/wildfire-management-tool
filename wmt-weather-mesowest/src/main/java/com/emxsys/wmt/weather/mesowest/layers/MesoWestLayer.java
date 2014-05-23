@@ -70,7 +70,7 @@ public final class MesoWestLayer extends RenderableGisLayer {
     public static String LAYER_MESOWEST = Bundle.CTL_MesoWest();
     /** The coordinate event obtained by the listener */
     private final AtomicReference<ReticuleCoordinateEvent> coordEvent = new AtomicReference<>(
-            new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
+            new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_COORD));
     /** Event task processor */
     private static final RequestProcessor taskProcessor = new RequestProcessor(MesoWestLayer.class);
     /** Event task */
@@ -78,7 +78,7 @@ public final class MesoWestLayer extends RenderableGisLayer {
     /** Event provider */
     private ReticuleCoordinateProvider coordProvider = null;
     /** Last coordinate processed */
-    private Coord3D lastCoord = GeoCoord3D.ZERO_POSITION;
+    private Coord3D lastCoord = GeoCoord3D.ZERO_COORD;
     private Field lastestWxField;
 
     /**
