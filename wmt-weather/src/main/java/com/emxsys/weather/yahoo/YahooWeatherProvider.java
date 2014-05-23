@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.weather.api.yahoo;
+package com.emxsys.weather.yahoo;
 
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.util.ImageUtil;
