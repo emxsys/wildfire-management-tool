@@ -178,7 +178,7 @@ public class BasicMarker extends AbstractMarker {
      * Constructor with an invalid position.
      */
     public BasicMarker() {
-        this(GeoCoord3D.INVALID_POSITION);
+        this(GeoCoord3D.INVALID_COORD);
     }
 
     /**

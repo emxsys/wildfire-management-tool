@@ -107,7 +107,7 @@ public class Positions {
      */
     public static GeoCoord3D toGeoCoord3D(Position position) {
         if (position==null){
-            return GeoCoord3D.INVALID_POSITION;
+            return GeoCoord3D.INVALID_COORD;
         }
         return GeoCoord3D.fromDegreesAndMeters(
                 position.getLatitude().degrees,

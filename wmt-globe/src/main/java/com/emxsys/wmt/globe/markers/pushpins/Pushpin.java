@@ -54,7 +54,7 @@ public class Pushpin extends BasicMarker {
     private static final Logger logger = Logger.getLogger(Pushpin.class.getName());
 
     Pushpin() {
-        this("Pushpin", GeoCoord3D.INVALID_POSITION);
+        this("Pushpin", GeoCoord3D.INVALID_COORD);
     }
 
     public Pushpin(String name, Coord3D location) {

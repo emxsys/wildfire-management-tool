@@ -186,7 +186,7 @@ public class WeatherMarker extends BasicMarker {
     }
 
     WeatherMarker() {
-        this("Wx Marker", GeoCoord3D.INVALID_POSITION, null, null);
+        this("Wx Marker", GeoCoord3D.INVALID_COORD, null, null);
     }
 
     public WeatherMarker(String name, Coord3D location) {

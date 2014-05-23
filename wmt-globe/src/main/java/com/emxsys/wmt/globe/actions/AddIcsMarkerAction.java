@@ -97,7 +97,7 @@ public final class AddIcsMarkerAction implements ActionListener {
             logger.severe(Bundle.ERR_ICSNullPosition());
             return;
         }
-        IcsMarker marker = new IcsMarker("Marker", GeoCoord3D.INVALID_POSITION);
+        IcsMarker marker = new IcsMarker("Marker", GeoCoord3D.INVALID_COORD);
         // Position the marker on the globe
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), marker);
         positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {

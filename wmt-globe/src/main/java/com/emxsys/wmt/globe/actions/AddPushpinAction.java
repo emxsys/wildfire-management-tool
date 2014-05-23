@@ -98,7 +98,7 @@ public final class AddPushpinAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Create a pushpin in memory (not a DataObject)
-        Pushpin pushpin = new Pushpin("Pushpin", GeoCoord3D.INVALID_POSITION);
+        Pushpin pushpin = new Pushpin("Pushpin", GeoCoord3D.INVALID_COORD);
 
         // Position the marker on the globe where clicked. The positioner is released on click or ESC.
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), pushpin);

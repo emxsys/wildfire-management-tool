@@ -90,7 +90,7 @@ public final class AddWeatherMarkerAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Create a Wx marker in memory
-        WeatherMarker wxMkr = new WeatherMarker("Wx Marker", GeoCoord3D.INVALID_POSITION);
+        WeatherMarker wxMkr = new WeatherMarker("Wx Marker", GeoCoord3D.INVALID_COORD);
         // Position the marker on the globe
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), wxMkr);
         positioner.addPropertyChangeListener((PropertyChangeEvent evt) -> {

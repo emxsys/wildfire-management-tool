@@ -82,7 +82,7 @@ public class ReticuleLayer extends CrosshairLayer {
         if (!enable) {
             lastPosition = Position.ZERO; // this triggers notification if re-enabled
             if (eventProvider != null) {
-                eventProvider.fireReticuleChange(this, GeoCoord3D.INVALID_POSITION);
+                eventProvider.fireReticuleChange(this, GeoCoord3D.INVALID_COORD);
             }
         }
 

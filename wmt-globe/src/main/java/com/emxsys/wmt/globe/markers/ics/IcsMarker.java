@@ -70,7 +70,7 @@ public class IcsMarker extends BasicMarker {
     private static final Logger logger = Logger.getLogger(IcsMarker.class.getName());
 
     IcsMarker() {
-        this("Marker", GeoCoord3D.INVALID_POSITION);
+        this("Marker", GeoCoord3D.INVALID_COORD);
     }
 
     public IcsMarker(String name, Coord3D location) {

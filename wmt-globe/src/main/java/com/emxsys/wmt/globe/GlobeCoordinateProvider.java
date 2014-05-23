@@ -55,8 +55,8 @@ import javax.swing.event.EventListenerList;
 public class GlobeCoordinateProvider implements CursorCoordinateProvider, ReticuleCoordinateProvider {
 
     private final EventListenerList listenerList = new EventListenerList();
-    private Coord3D cursorCoord = GeoCoord3D.INVALID_POSITION;
-    private Coord3D reticuleCoord = GeoCoord3D.INVALID_POSITION;
+    private Coord3D cursorCoord = GeoCoord3D.INVALID_COORD;
+    private Coord3D reticuleCoord = GeoCoord3D.INVALID_COORD;
 
     GlobeCoordinateProvider() {
         WorldWindowGLJPanel wwd = (WorldWindowGLJPanel) Globe.getInstance().getWorldWindManager().getWorldWindow();

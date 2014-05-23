@@ -71,7 +71,7 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
     private static final RequestProcessor RP = new RequestProcessor(ReticuleStatusLine.class);
     private static final Logger logger = Logger.getLogger(ReticuleStatusLine.class.getName());
     private final AtomicReference<ReticuleCoordinateEvent> event = new AtomicReference<>(
-            new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
+            new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_COORD));
     private Task TASK;
 
     public static ReticuleStatusLine getInstance() {
