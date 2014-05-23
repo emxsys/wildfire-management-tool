@@ -44,6 +44,8 @@ public class SolarType {
 
     // Time
     public static final RealType TIME;
+    public static final RealType SUNRISE_TIME;
+    public static final RealType SUNSET_TIME;
     public static final RealType SOLAR_HOUR;
     public static final RealType SUNRISE_HOUR;
     public static final RealType SUNSET_HOUR;
@@ -64,6 +66,8 @@ public class SolarType {
     static {
         TIME = RealType.getRealType("local_time:sec", CommonUnit.secondsSinceTheEpoch, null);
         SOLAR_HOUR = RealType.getRealType("solar_time:hour", GeneralUnit.hour, null);
+        SUNRISE_TIME = RealType.getRealType("sunrise:utc", CommonUnit.secondsSinceTheEpoch, null);
+        SUNSET_TIME = RealType.getRealType("sunset:utc", CommonUnit.secondsSinceTheEpoch, null);
         SUNRISE_HOUR = RealType.getRealType("sunrise:hour", GeneralUnit.hour, null);
         SUNSET_HOUR = RealType.getRealType("sunset:hour", GeneralUnit.hour, null);
         SUNRISE_SUNSET = Reals.newRealTupleType(

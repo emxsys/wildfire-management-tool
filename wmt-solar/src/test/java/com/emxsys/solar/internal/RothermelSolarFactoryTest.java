@@ -85,38 +85,7 @@ public class RothermelSolarFactoryTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of getSolarTime method, of class RothermelSolarFactory.
-     */
-    @Ignore
-    @Test
-    public void testGetSolarTime() {
-        System.out.println("getSolarTime");
-        Real longitude = null;
-        Date utcTime = null;
-        RothermelSolarFactory instance = new RothermelSolarFactory();
-        Real expResult = null;
-        Real result = instance.getSolarTime(longitude, utcTime);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
-    /**
-     * Test of getSunPosition method, of class RothermelSolarFactory.
-     */
-    @Ignore
-    @Test
-    public void testGetSunPosition() {
-        System.out.println("getSunPosition");
-        ZonedDateTime time = null;
-        RothermelSolarFactory instance = new RothermelSolarFactory();
-        Coord3D expResult = null;
-        Coord3D result = instance.getSunPosition(time);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
     /**
      * Test of getSunlight method, of class RothermelSolarFactory.

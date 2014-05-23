@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, bruce 
+ * Copyright (c) 2014, Bruce Schubert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     - Neither the name of bruce,  nor the names of its 
+ *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -29,61 +29,26 @@
  */
 package com.emxsys.solar.internal;
 
-import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
-import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.gis.api.GeoSector;
 import com.emxsys.solar.api.SolarType;
-import com.emxsys.solar.api.Sunlight;
-import com.emxsys.solar.api.SunlightHours;
-import com.emxsys.solar.api.SunlightTuple;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.solar.api.SunlightProvider;
 import java.rmi.RemoteException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.logging.Logger;
 import org.openide.util.Exceptions;
-import visad.FlatField;
-import visad.Gridded1DSet;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
 
 /**
  *
- * @author bruce
+ * @author Bruce Schubert
  */
-public class SPASolarProvider extends DefaultSunlightProvider {
+public class SPASunlightProvider implements SunlightProvider {
 
-    @Override
-    public FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Coord3D getSunPosition(ZonedDateTime time) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Sunlight getSunlight(ZonedDateTime time, Coord2D coord) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public SunlightHours getSunlightHours(Real latitude, Date utcTime) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Real getSolarTime(Real longitude, Date utcTime) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     @Override
     public RealTuple getSunPosition(ZonedDateTime time, Coord3D observer) {
@@ -97,6 +62,37 @@ public class SPASolarProvider extends DefaultSunlightProvider {
                         new Real(SolarType.LONGITUDE, spa.lamda),
                         new Real(SolarType.AZIMUTH_ANGLE, spa.azimuth),
                         new Real(SolarType.ZENITH_ANGLE, spa.zenith)}, null);
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
+
+    @Override
+    public RealTuple getSunlight(ZonedDateTime time, Coord3D observer) {
+        SolarData spa = new SolarData(time, observer);
+        SolarPositionAlgorithms.spa_calculate(spa);
+
+        try {
+            //LATITUDE, LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR
+//            ZonedDateTime sunrise = ZonedDateTime.of(
+//                LocalDate.of(spa.year, spa.month, spa.day),
+//                LocalTime.ofSecondOfDay((long) (spa.sunrise * 3600)),
+//                ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds((int) (spa.timezone * 3600))));
+//            ZonedDateTime sunset = ZonedDateTime.of(
+//                LocalDate.of(spa.year, spa.month, spa.day),
+//                LocalTime.ofSecondOfDay((long) (spa.sunset * 3600)),
+//                ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds((int) (spa.timezone * 3600))));
+            
+            return new RealTuple(SolarType.SUN_POSITION,
+                    new Real[]{
+                        new Real(SolarType.LATITUDE, spa.delta_prime),
+                        new Real(SolarType.LONGITUDE, spa.lamda),
+                        new Real(SolarType.AZIMUTH_ANGLE, spa.azimuth),
+                        new Real(SolarType.ZENITH_ANGLE, spa.zenith),
+                        new Real(SolarType.SUNRISE_HOUR, spa.sunrise),  // sunrise local time (same offset as input time)
+                        new Real(SolarType.SUNSET_HOUR, spa.sunset)
+                    }, null);
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
             return null;

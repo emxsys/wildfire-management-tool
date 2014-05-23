@@ -34,7 +34,11 @@ import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.solar.internal.SolarPositionAlgorithms;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -96,8 +100,8 @@ public class SolarPositionTest {
         //    spa.atmos_refract = 0.5667;
         ZonedDateTime date = ZonedDateTime.of(2003, 10, 17, 12, 30, 30, 1, ZoneId.of("-7"));
         GeoCoord3D observer = GeoCoord3D.fromDegreesAndMeters(39.742476, -105.1786, 0/*1830.14*/);
-        
-        SolarData spa = new SolarData(date, observer, new TerrainTuple(-10,30,0), new Real(11), new Real(820));
+
+        SolarData spa = new SolarData(date, observer, new TerrainTuple(-10, 30, 0), new Real(11), new Real(820));
         SolarPositionAlgorithms.spa_calculate(spa);
 
         /////////////////////////////////////////////
@@ -134,6 +138,10 @@ public class SolarPositionTest {
         double min = 60.0 * (spa.sunrise - (int) (spa.sunrise));
         double sec = 60.0 * (min - (int) min);
         System.out.print(String.format("Sunrise:       %02d:%02d:%02d Local Time\n", (int) (spa.sunrise), (int) min, (int) sec));
+        System.out.println(ZonedDateTime.of(
+                LocalDate.of(spa.year, spa.month, spa.day),
+                LocalTime.ofSecondOfDay((long) (spa.sunrise * 3600)),
+                ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds((int) (spa.timezone * 3600)))));
 
         min = 60.0 * (spa.sunset - (int) (spa.sunset));
         sec = 60.0 * (min - (int) min);
@@ -151,6 +159,5 @@ public class SolarPositionTest {
         assertEquals("Azimuth", 194.340241, spa.getAzimuth(), .000001);
         assertEquals("Incidence", 25.187000, spa.getIncidence(), .000001);
     }
-
 
 }

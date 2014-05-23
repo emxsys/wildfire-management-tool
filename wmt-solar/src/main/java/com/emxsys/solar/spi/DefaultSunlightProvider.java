@@ -29,14 +29,9 @@
  */
 package com.emxsys.solar.spi;
 
-import com.emxsys.gis.api.GeoSector;
 import com.emxsys.solar.api.SunlightProvider;
-import com.emxsys.solar.internal.RothermelSolarFactory;
-import com.emxsys.solar.internal.SPASolarProvider;
+import com.emxsys.solar.internal.SPASunlightProvider;
 import org.openide.util.Lookup;
-import visad.FlatField;
-import visad.Gridded1DSet;
-import visad.Real;
 
 /**
  * SunlightProvider factory. The default instance can be overridden by creating SolarProvider
@@ -44,7 +39,7 @@ import visad.Real;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class DefaultSunlightProvider implements SunlightProvider {
+public abstract class DefaultSunlightProvider  {
 
     private static SunlightProvider instance = null;
 
@@ -62,13 +57,10 @@ public abstract class DefaultSunlightProvider implements SunlightProvider {
 
             // Use our default factory if no registered provider.
             if (instance == null) {
-                instance = new SPASolarProvider();
+                instance = new SPASunlightProvider();
             }
         }
         return instance;
     }
 
-    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector);
-
-    public abstract FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2);
 }

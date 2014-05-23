@@ -40,7 +40,6 @@ import com.emxsys.solar.api.SunlightHours;
 import com.emxsys.solar.api.SunlightHoursTuple;
 import com.emxsys.solar.api.SunlightTuple;
 import static com.emxsys.solar.internal.RothermelSupport.*;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.Times;
@@ -61,22 +60,13 @@ import visad.*;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: RothermelSunlightFactory.java 675 2013-05-24 20:05:05Z bdschubert $
  */
-public class RothermelSolarFactory extends DefaultSunlightProvider {
+public class RothermelSolarFactory  {
 
     private static final Logger logger = Logger.getLogger(RothermelSolarFactory.class.getName());
 
     public RothermelSolarFactory() {
     }
 
-    @Override
-    public Real getSolarTime(Real longitude, Date utcTime) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Coord3D getSunPosition(ZonedDateTime time) {
-        return SolarUtil.getSunPosition(time);
-    }
 
     /**
      * Creates a new Sunlight instance for the given date and location.
@@ -85,7 +75,6 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
      * @param coord The location for the sunlight calculation.
      * @return A new SunlightTuple for the given date and location.
      */
-    @Override
     public Sunlight getSunlight(ZonedDateTime time, Coord2D coord) {
 
         try {
@@ -144,7 +133,6 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
      * @param date determines declination angle, and sunrise/sunset times.
      * @return SunlightTuple
      */
-    @Override
     public SunlightHours getSunlightHours(Real latitude, Date date) {
         int julianDay = LocalDateTime.ofInstant(date.toInstant(), ZoneId.of("Z")).getDayOfYear();
         Real declination = calcSolarDeclinationAngle(julianDay);
@@ -171,7 +159,6 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
      * @param latitude2
      * @return A 2x2 FlatField containing
      */
-    @Override
     public FlatField makeSolarData(Gridded1DSet timeDomain, Real latitude1, Real latitude2) {
  
         try {
@@ -236,13 +223,11 @@ public class RothermelSolarFactory extends DefaultSunlightProvider {
      * @param sector
      * @return A 2x2 FlatField containing
      */
-    @Override
     public FlatField makeSolarData(Gridded1DSet timeDomain, GeoSector sector) {
         return makeSolarData(
                 timeDomain, sector.getSouthwest().getLatitude(), sector.getNortheast().getLatitude());
     }
 
-    @Override
     public RealTuple getSunPosition(ZonedDateTime time, Coord3D observer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
