@@ -32,8 +32,9 @@ package com.emxsys.wmt.cps.ui;
 import com.emxsys.jfree.ChartCanvas;
 import com.emxsys.jfree.ChartUtil;
 import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
+import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.wmt.cps.wx.ManualWeatherProvider;
+import com.emxsys.wmt.cps.Controller;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -93,7 +94,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     private JSlider spdSlider = new SpeedSlider(spdChart);
 
     /**
-     * The DirectionSlider updates the WindDirChart and the ManualWeatherProvider.
+     * The DirectionSlider updates the WindDirChart and the SimpleWeatherProvider.
      */
     private class DirectionSlider extends JSlider {
 
@@ -106,7 +107,7 @@ public class WindForcePanel extends javax.swing.JPanel {
             addChangeListener((ChangeEvent e) -> {
                 int windDir = getValue();
                 chart.dataset.setValue(windDir);
-                ManualWeatherProvider.getInstance().setWindDirection(new Real(WeatherType.WIND_DIR, windDir));
+                Controller.getInstance().getSimpleWeather().setWindDirection(new Real(WeatherType.WIND_DIR, windDir));
             });
         }
     }
@@ -122,7 +123,7 @@ public class WindForcePanel extends javax.swing.JPanel {
             addChangeListener((ChangeEvent e) -> {
                 int windSpd = getValue();
                 chart.dataset.setValue(windSpd);
-                ManualWeatherProvider.getInstance().setWindSpeed(new Real(WeatherType.WIND_SPEED_MPH, windSpd));
+                Controller.getInstance().getSimpleWeather().setWindSpeed(new Real(WeatherType.WIND_SPEED_MPH, windSpd));
             });
         }
     }

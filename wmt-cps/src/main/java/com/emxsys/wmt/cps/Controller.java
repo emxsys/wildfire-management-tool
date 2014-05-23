@@ -29,10 +29,6 @@
  */
 package com.emxsys.wmt.cps;
 
-import com.emxsys.wmt.cps.options.CpsOptions;
-import com.emxsys.wmt.cps.ui.ForcesTopComponent;
-import com.emxsys.wmt.cps.ui.PreheatForcePanel;
-import com.emxsys.wmt.cps.ui.SlopeForcePanel;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.ShadedTerrainProvider;
@@ -41,7 +37,6 @@ import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
 import com.emxsys.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
-import com.emxsys.wmt.globe.Globe;
 import com.emxsys.solar.api.SolarType;
 import com.emxsys.solar.api.SunlightProvider;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
@@ -49,6 +44,12 @@ import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.wmt.cps.options.CpsOptions;
+import com.emxsys.wmt.cps.ui.ForcesTopComponent;
+import com.emxsys.wmt.cps.ui.PreheatForcePanel;
+import com.emxsys.wmt.cps.ui.SlopeForcePanel;
+import com.emxsys.wmt.globe.Globe;
 import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
@@ -84,9 +85,9 @@ public class Controller {
     private final SunlightProvider sun;
     private final TimeProvider clock;
     private ReticuleCoordinateProvider reticule;
-
+    private final SimpleWeatherProvider manualWx = new SimpleWeatherProvider();
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
-    private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_POSITION);
+    private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
     private final AtomicReference<Real> azimuthRef = new AtomicReference<>(new Real(SolarType.AZIMUTH_ANGLE));
     private final AtomicReference<Real> zenithRef = new AtomicReference<>(new Real(SolarType.ZENITH_ANGLE));
 
@@ -156,6 +157,10 @@ public class Controller {
         });
 
     }
+    
+    public SimpleWeatherProvider getSimpleWeather() {
+        return this.manualWx;
+    }
 
     /**
      * Convenience method.
@@ -179,7 +184,7 @@ public class Controller {
         private final Controller controller;
         private static final RequestProcessor processor = new RequestProcessor(SlopeForcePanel.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
-        private final AtomicReference<ReticuleCoordinateEvent> lastEvent = new AtomicReference<>(new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_POSITION));
+        private final AtomicReference<ReticuleCoordinateEvent> lastEvent = new AtomicReference<>(new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_COORD));
         private final int UPDATE_INTERVAL_MS = 100;
 
         TerrainUpdater(Controller controller) {
