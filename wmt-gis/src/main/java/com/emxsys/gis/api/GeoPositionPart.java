@@ -46,7 +46,7 @@ public class GeoPositionPart implements Part {
     private GeoCoord3D position;
 
     public GeoPositionPart() {
-        position = GeoCoord3D.INVALID_POSITION;
+        position = GeoCoord3D.INVALID_COORD;
     }
 
     public GeoPositionPart(GeoCoord3D position) {

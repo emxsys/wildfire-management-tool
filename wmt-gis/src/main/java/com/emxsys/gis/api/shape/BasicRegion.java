@@ -74,7 +74,7 @@ public class BasicRegion extends AbstractShape implements Region {
             super.pcs.firePropertyChange(PROP_REGION_SECTOR, oldSector, this.sector);
 
             Coord2D center = sector.getCenter();
-            Real altitude = getPosition() == null ? GeoCoord3D.ZERO_POSITION.getAltitude() : getPosition().getAltitude();
+            Real altitude = getPosition() == null ? GeoCoord3D.ZERO_COORD.getAltitude() : getPosition().getAltitude();
             GeoCoord3D newPos = new GeoCoord3D(center.getLatitude(), center.getLongitude(), altitude);
             super.setPosition(newPos);  // fires a position changed event
         }

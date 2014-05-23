@@ -109,7 +109,7 @@ public abstract class AbstractGraphic implements Graphic {
             this.referencePosition = new GeoCoord3D(location);
         }
         catch (Exception ex) {
-            this.referencePosition = GeoCoord3D.INVALID_POSITION;
+            this.referencePosition = GeoCoord3D.INVALID_COORD;
         }
         pcs.firePropertyChange(PROP_GRAPHIC_POSITION, oldLocation, this.referencePosition);
     }

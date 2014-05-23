@@ -103,7 +103,7 @@ public class GmlParser {
             }
         }
         // TODO: parse gml:coord elements
-        return GeoCoord3D.INVALID_POSITION;
+        return GeoCoord3D.INVALID_COORD;
     }
 
     /**

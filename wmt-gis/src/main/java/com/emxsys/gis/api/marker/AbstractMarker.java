@@ -85,7 +85,7 @@ public abstract class AbstractMarker extends AbstractFeature implements Marker {
             newPos = new GeoCoord3D(position);
         }
         catch (VisADException | RemoteException ex) {
-            newPos = GeoCoord3D.INVALID_POSITION;
+            newPos = GeoCoord3D.INVALID_COORD;
         }
         this.geometry.setPosition(newPos);
         pcs.firePropertyChange(PROP_MARKER_POSITION, oldPos, newPos);

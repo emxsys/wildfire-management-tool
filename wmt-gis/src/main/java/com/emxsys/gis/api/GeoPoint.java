@@ -48,7 +48,7 @@ public class GeoPoint extends AbstractGeometry implements Point {
     private GeoPositionPart part;
 
     public GeoPoint() {
-        this(GeoCoord3D.INVALID_POSITION);
+        this(GeoCoord3D.INVALID_COORD);
     }
 
     public GeoPoint(GeoCoord3D position) {

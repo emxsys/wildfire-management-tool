@@ -54,8 +54,8 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
 
     public static CoordinateSystem DEFAULT_COORD_SYS;
     public static RealTupleType DEFAULT_TUPLE_TYPE;
-    public static GeoCoord3D INVALID_POSITION;
-    public static GeoCoord3D ZERO_POSITION;
+    public static GeoCoord3D INVALID_COORD;
+    public static GeoCoord3D ZERO_COORD;
     public static final String XML_ATTR_ANGLE = "Angle";
     public static final String XML_ATTR_LENGTH = "Length";
     public static final int LAT_TUPLE_INDEX = 0;
@@ -76,8 +76,8 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
             DEFAULT_TUPLE_TYPE = new RealTupleType(
                     RealType.Latitude, RealType.Longitude, RealType.Altitude,
                     DEFAULT_COORD_SYS, null);
-            INVALID_POSITION = new GeoCoord3D();
-            ZERO_POSITION = fromDegreesAndMeters(ZERO, ZERO, ZERO);
+            INVALID_COORD = new GeoCoord3D();
+            ZERO_COORD = fromDegreesAndMeters(ZERO, ZERO, ZERO);
         }
         catch (VisADException ex) {
             logger.severe(ex.toString());
@@ -91,6 +91,22 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
                 CommonUnit.degree, CommonUnit.degree, CommonUnit.meter
             };
 
+    /**
+     * Factory method to create a GeoCoord3D from a Coord2D.
+     *
+     * @param coord latitude and longitude.
+     * @return a new GeoCoord3D with a zero altitude.
+     */
+    
+    public static GeoCoord3D fromCoord(Coord2D coord) {
+        try {
+            return new GeoCoord3D(coord);
+        }
+        catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return INVALID_COORD;
+    }
     /**
      * Factory method to create a GeoCoord3D from a lat, lon with a zero altitude.
      *
@@ -128,7 +144,7 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
         catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
         }
-        return INVALID_POSITION;
+        return INVALID_COORD;
     }
 
     /**
@@ -147,7 +163,7 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
      * Factory method to create a GeoCoord3D from an XML element.
      *
      * @param element an Element formatted by the toXmlElement method.
-     * @return a new position object, or an INVALID_POSITION if incorrectly formatted.
+     * @return a new position object, or an INVALID_COORD if incorrectly formatted.
      */
     public static GeoCoord3D fromXmlElement(Element element) {
         try {
@@ -185,7 +201,7 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
         catch (IllegalArgumentException | VisADException | RemoteException ex) {
             logger.log(Level.WARNING, "fromXmlElement() failed: {0}", ex.toString());
         }
-        return INVALID_POSITION;
+        return INVALID_COORD;
     }
 
     public static Element toXmlElement(Document doc, String tagName, Coord3D position) {
@@ -199,7 +215,7 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
             }
             catch (VisADException | RemoteException ex) {
                 Exceptions.printStackTrace(ex);
-                tuple = INVALID_POSITION;
+                tuple = INVALID_COORD;
             }
         }
         return tuple.toXmlElement(doc, tagName);

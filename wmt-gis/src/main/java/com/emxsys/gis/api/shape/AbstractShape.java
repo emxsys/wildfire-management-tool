@@ -73,7 +73,7 @@ public abstract class AbstractShape implements Shape {
             this.position = new GeoCoord3D(location);
         }
         catch (Exception ex) {
-            this.position = GeoCoord3D.INVALID_POSITION;
+            this.position = GeoCoord3D.INVALID_COORD;
         }
         pcs.firePropertyChange(PROP_SHAPE_POSITION, oldLocation, this.position);
     }

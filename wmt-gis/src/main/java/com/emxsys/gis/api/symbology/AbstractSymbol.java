@@ -106,7 +106,7 @@ public abstract class AbstractSymbol implements Symbol {
             this.position = new GeoCoord3D(location);
         }
         catch (Exception ex) {
-            this.position = GeoCoord3D.INVALID_POSITION;
+            this.position = GeoCoord3D.INVALID_COORD;
         }
         pcs.firePropertyChange(PROP_SYMBOL_POSITION, oldLocation, this.position);
     }
