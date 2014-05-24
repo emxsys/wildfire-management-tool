@@ -12,7 +12,7 @@
     <version>4.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
-    <name>WMT Weather : MesoWest</name>
+    <name>WMT Weather - MesoWest</name>
     <description>API web services are intended for researchers and software developers needing access to large volumes 
         of current or retrospective data. The University of Utah (http://mesowest.utah.edu) MesoWest web site provides 
         access to weather information in graphical, tabular, and downloadable formats for individual needs.

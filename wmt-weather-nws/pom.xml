@@ -95,6 +95,6 @@
             <version>2.6.2</version>
         </dependency>
     </dependencies>
-    <name>WMT Weather : NWS</name>
+    <name>WMT Weather - NWS</name>
     <description>The National Weather Service weather provider</description>
 </project>
