@@ -33,13 +33,12 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.GisType;
 import com.emxsys.solar.api.SolarType;
-import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Tuples;
 import com.emxsys.weather.api.AbstractWeatherProvider;
 import com.emxsys.weather.api.ConditionsObserver;
-import com.emxsys.weather.api.WeatherProvider;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -48,12 +47,9 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalField;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
 import visad.FlatField;
 import visad.FunctionType;
@@ -66,7 +62,6 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-@ServiceProvider(service = WeatherProvider.class)
 public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
     private Real tempAtSunrise;
@@ -88,7 +83,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         content.add((ConditionsObserver) this::getCurrentWeather);  // functional interface 
     }
 
-    public void initializeAirTempuratures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
+    public void initializeAirTemperatures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
         this.tempAtSunrise = tempAtSunrise;
         this.tempAtNoon = tempAtNoon;
         this.tempAt1400 = tempAt1400;
@@ -161,7 +156,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         if (t < t_sr || t > t_ss) {
             val = calcValueNighttime(t, t_ss, t_sr, tempAtSunset.getValue(), tempAtSunrise.getValue());
         } else if (t < 12.) {
-            val = calcAirTempMorning(t, t_sr, tempAtSunrise.getValue(), tempAtNoon.getValue());
+            val = calcValueMorning(t, t_sr, tempAtSunrise.getValue(), tempAtNoon.getValue());
         } else if (t > 14.) {
             val = calcValueLateAfternoon(t, t_ss, tempAt1400.getValue(), tempAtSunset.getValue());
         } else {
@@ -181,7 +176,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         if (t < t_sr || t > t_ss) {
             val = calcValueNighttime(t, t_ss, t_sr, rhAtSunset.getValue(), rhAtSunrise.getValue());
         } else if (t < 12.) {
-            val = calcAirTempMorning(t, t_sr, rhAtSunrise.getValue(), rhAtNoon.getValue());
+            val = calcValueMorning(t, t_sr, rhAtSunrise.getValue(), rhAtNoon.getValue());
         } else if (t > 14.) {
             val = calcValueLateAfternoon(t, t_ss, rhAt1400.getValue(), rhAtSunset.getValue());
         } else {
@@ -261,79 +256,14 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @param valueAtNoon
      * @return
      */
-    static private double calcAirTempMorning(double time, double timeAtSunrise,
-                                             double valueAtSunrise, double valueAtNoon) {
+    static private double calcValueMorning(double time, double timeAtSunrise,
+                                           double valueAtSunrise, double valueAtNoon) {
         assert (time <= 12.0);
         return valueAtNoon + (valueAtSunrise - valueAtNoon) * cos(toRadians(90 * (time - timeAtSunrise) / (12.0 - timeAtSunrise)));
     }
 
-    /**
-     * Sinusoidal curve linking 1400 humidity to humidity at sunset - used to calculate humidity for
-     * each hour between 1400 and sunset.
-     *
-     * Rothermel, et al, "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE
-     * fire prediction system." Research Paper INT-359. 1986. Equation #39 located on page 22.
-     *
-     *
-     * @param timeProjection
-     * @param timeSunset
-     * @param rh1400
-     * @param rhSunset
-     * @return
-     */
-    static private double calcHumidityLateAfternoon(double timeProjection, double timeSunset,
-                                                    double rh1400, double rhSunset) {
-        assert (timeProjection >= 14);
-        assert (timeProjection <= timeSunset);
-
-        return rh1400 + (rh1400 - rhSunset) * (cos(toRadians(90 * (timeProjection - 14) / (timeSunset - 14))) - 1);
-    }
-
-    /**
-     * Sinusoidal curve linking sunset humidity to humidity at sunrise - used to calculate relative
-     * humidity for each hour between sunset and sunrise
-     *
-     * Rothermel, et al, "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE
-     * fire prediction system." Research Paper INT-359. 1986. Equations #41 located on page 23.
-     *
-     * @param timeProjection
-     * @param timeSunset
-     * @param timeSunrise
-     * @param rhSunset
-     * @param rtSunrise
-     * @return
-     */
-    static private double calcHumidityNighttime(double timeProjection, double timeSunset,
-                                                double timeSunrise, double rhSunset, double rhSunrise) {
-        timeSunrise += 24;
-        if (timeProjection < timeSunset) {
-            timeProjection += 24;
-        }
-        return rhSunset + (rhSunrise - rhSunset) * sin(toRadians(90 * (timeProjection - timeSunset) / (timeSunrise - timeSunset)));
-    }
-
-    /**
-     * Sinusoidal curve linking sunrise humidty to humidty at noon - used to calculate humidty for
-     * each hour between sunrise and 1200 hrs.
-     *
-     * Rothermel, et al, "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE
-     * fire prediction system." Research Paper INT-359. 1986. Equations #43 located on page 24.
-     *
-     * @param timeProjection
-     * @param timeSunrise
-     * @param rhSunrise
-     * @param rh1200
-     * @return
-     */
-    static private double calcHumidityMorning(double timeProjection, double timeSunrise,
-                                              double rhSunrise, double rh1200) {
-        assert (timeProjection <= 12.0);
-        return rh1200 + (rhSunrise - rh1200) * cos(toRadians(90 * (timeProjection - timeSunrise) / (12.0 - timeSunrise)));
-    }
-
     @Override
     public ImageIcon getImageIcon() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | rhlates.
+        return ImageUtil.createImageIconFromResource("images/sun_clouds.png", getClass());
     }
-
 }
