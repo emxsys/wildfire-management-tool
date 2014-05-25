@@ -59,12 +59,12 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
 
     private boolean formInitialized = false;
     private boolean manualMode = false;
-    private FuelModelChart chart;
+    private final FuelModelChart chart;
     private FuelModel fuelModel;
     private int combo13Selection = 0;
     private int combo40Selection = 0;
     private String selectedGroup = "";
-    private GisViewer gisViewer;
+    private final GisViewer gisViewer;
     /**
      * listen for changes in the fuel model
      */
@@ -92,15 +92,8 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
             logger.severe("A GIS Viewer was not found.  Automatic Fuel Model lookup is disabled.");
         } else {
             lookupResultDataProvider = gisViewer.getLookup().lookupResult(GisLayer.class);
-            lookupResultDataProvider.addLookupListener(new LookupListener() {
-
-                /**
-                 * Monitor the data providers -- looking for a FuelModel in a provider's lookup.
-                 */
-                @Override
-                public void resultChanged(LookupEvent ev) {
-                    checkForFuelModelProvider();
-                }
+            lookupResultDataProvider.addLookupListener((LookupEvent ev) -> {
+                checkForFuelModelProvider();
             });
 
         }
@@ -121,8 +114,7 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
             Collection<? extends GisLayer> providers = gisViewer.getLookup().lookupAll(GisLayer.class);
             for (GisLayer provider : providers) {
                 if (provider.getLookup().lookup(StdFuelModelParams40.class) != null) {
-                    // Add a lookup listener that tracks changes in the
-                    // fuel model selected in the GIS
+                    // Add a lookup listener that tracks changes in the fuel model selected in the GIS
                     lookupResultFuelModel = provider.getLookup().lookupResult(FuelModel.class);
                     lookupResultFuelModel.addLookupListener(this);
                     logger.log(Level.FINE, "Found fuel model provider for FBFM40: {0}", provider.toString());
@@ -149,22 +141,17 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
         if (!fuelModels.isEmpty()) {
             // Get the fuel model from the GIS
             for (FuelModel fm : fuelModels) {
-
                 // TODO: Fix the fuel model group logic - it will break under localization
-                // Ensure the fuel model group/classification matches the user's
-                // selection.
+                
+                // Ensure the fuel model group/classification matches the user's selection.
                 if (fm.getModelGroup().equalsIgnoreCase(selectedGroup)
                         || fm.getModelGroup().equalsIgnoreCase(StdFuelModel.FUEL_MODEL_GROUP_UNBURNABLE)) {
                     // Update the property
                     if (setFuelModel(fm)) {
                         // Update the Swing GUI on the AWT thread,
                         // i.e., select the model in the combobox.
-                        EventQueue.invokeLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                syncGuiToModel();
-                            }
+                        EventQueue.invokeLater(() -> {
+                            syncGuiToModel();
                         });
                     }
                     break;
@@ -240,7 +227,7 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
 
     private void showHelp(String id) {
         Help help = Lookup.getDefault().lookup(Help.class);
-        if (help != null && help.isValidID(id, true).booleanValue()) {
+        if (help != null && help.isValidID(id, true)) {
             help.showHelp(new HelpCtx(id));
         } else {
             Toolkit.getDefaultToolkit().beep();
@@ -353,6 +340,7 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
         add(chartPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    @SuppressWarnings("unchecked")
     private void radioBtn13ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioBtn13ItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             comboFuel.removeAllItems();
@@ -367,6 +355,7 @@ public class FuelModelPanel extends javax.swing.JPanel implements LookupListener
         }
 }//GEN-LAST:event_radioBtn13ItemStateChanged
 
+    @SuppressWarnings("unchecked")
     private void radioBtn40ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioBtn40ItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             comboFuel.removeAllItems();

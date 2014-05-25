@@ -44,7 +44,12 @@ import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.WeatherType;
+import com.emxsys.wildfire.api.FuelModel;
+import com.emxsys.wildfire.api.FuelModelProvider;
+import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.cps.ui.PreheatForcePanel;
@@ -58,6 +63,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -69,6 +75,7 @@ import org.openide.util.WeakListeners;
 import org.openide.windows.WindowManager;
 import visad.Real;
 import visad.RealTuple;
+import visad.RealType;
 import visad.VisADException;
 
 /**
@@ -81,13 +88,19 @@ public class Controller {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
     private static ForcesTopComponent tc;
+    // Data providers - Event generators
     private final ShadedTerrainProvider earth;
     private final SunlightProvider sun;
     private final TimeProvider clock;
+    private FuelModelProvider fuels;
     private ReticuleCoordinateProvider reticule;
-    private final SimpleWeatherProvider manualWx = new SimpleWeatherProvider();
+    
+    private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
+    private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
+
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
+    private final AtomicReference<FuelModel> fuelModelRef = new AtomicReference<>(StdFuelModel.INVALID);
     private final AtomicReference<Real> azimuthRef = new AtomicReference<>(new Real(SolarType.AZIMUTH_ANGLE));
     private final AtomicReference<Real> zenithRef = new AtomicReference<>(new Real(SolarType.ZENITH_ANGLE));
 
@@ -97,7 +110,9 @@ public class Controller {
     private Lookup.Result<ReticuleCoordinateProvider> reticuleResult;
 
     private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
-    private boolean computeTerrestrialShading = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
+    private final PreferenceChangeListener prefsChangeListener;
+    
+    private boolean computeTerrestrialShading;
 
     static {
         logger.setLevel(Level.FINE);
@@ -151,17 +166,39 @@ public class Controller {
         reticuleResult.addLookupListener(reticuleLookupListener);
         reticuleLookupListener.resultChanged(null);
 
-        // Listen for changes in the CPS Options...
-        prefs.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+        // Listen for changes in the CPS Options/preferences...
+        prefsChangeListener = (PreferenceChangeEvent ignored) -> {
+            RealType uom = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US).matches(CpsOptions.UOM_US)
+                    ? WeatherType.AIR_TEMP_F : WeatherType.AIR_TEMP_C;
+            Real tempSunrise = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNRISE_KEY, CpsOptions.DEFAULT_TEMP_SUNRISE));
+            Real tempNoon = new Real(uom, prefs.getInt(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200));
+            Real temp1400 = new Real(uom, prefs.getInt(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400));
+            Real tempSunset = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNSET_KEY, CpsOptions.DEFAULT_TEMP_SUNSET));
+            
+            Real rhSunrise = new Real(uom, prefs.getInt(CpsOptions.RH_SUNRISE_KEY, CpsOptions.DEFAULT_RH_SUNRISE));
+            Real rhNoon = new Real(uom, prefs.getInt(CpsOptions.RH_1200_KEY, CpsOptions.DEFAULT_RH_1200));
+            Real rh1400 = new Real(uom, prefs.getInt(CpsOptions.RH_1400_KEY, CpsOptions.DEFAULT_RH_1400));
+            Real rhSunset = new Real(uom, prefs.getInt(CpsOptions.RH_SUNSET_KEY, CpsOptions.DEFAULT_RH_SUNSET));
+            
+            diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
+            diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
+            
             computeTerrestrialShading = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
-        });
+        };
+        prefs.addPreferenceChangeListener(prefsChangeListener);
+        // Fire a change event to load the preferences
+        prefsChangeListener.preferenceChange(null); 
 
+    }
+
+    public SimpleWeatherProvider getSimpleWeather() {
+        return this.simpleWx;
+    }
+
+    public void setFuelModelProvider(FuelModelProvider fuels) {
+        this.fuels = fuels;
     }
     
-    public SimpleWeatherProvider getSimpleWeather() {
-        return this.manualWx;
-    }
-
     /**
      * Convenience method.
      */
@@ -214,8 +251,8 @@ public class Controller {
             Real azimuth = controller.azimuthRef.get();
             Real zenith = controller.zenithRef.get();
 
-            boolean isShaded = 
-                    controller.computeTerrestrialShading && !(azimuth.isMissing() || zenith.isMissing())
+            boolean isShaded
+                    = controller.computeTerrestrialShading && !(azimuth.isMissing() || zenith.isMissing())
                     ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith)
                     : false;
 
@@ -274,8 +311,8 @@ public class Controller {
                 Real zenith = (Real) sunPosition.getComponent(ZENITH_INDEX);
                 controller.azimuthRef.set(azimuth);
                 controller.zenithRef.set(zenith);
-                boolean isShaded = 
-                        controller.computeTerrestrialShading
+                boolean isShaded
+                        = controller.computeTerrestrialShading
                         ? controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith)
                         : false;
 
