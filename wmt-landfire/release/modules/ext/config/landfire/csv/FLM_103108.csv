@@ -1,0 +1,52 @@
+value,flm_desc,flm_grp, flm_grpdesc,flm_code,r,g,b,RED,GREEN,BLUE
+-9999,NoData,N/A,N/A,N/A,0,0,0,0,0,0
+11,"Light FWD, light to no duff",Effects Group 1,Wispy_Cool_Sparse,FLM011,255,235,176,1,0.92,0.69
+12,"Moderate FWD, light litter",Effects Group 1,Wispy_Cool_Sparse,FLM012,235,217,140,0.92,0.85,0.55
+13,"Moderate FWD, light to moderate litter, light duff",Effects Group 1,Wispy_Cool_Sparse,FLM013,212,201,105,0.83,0.79,0.41
+14,Shrub_Sagebrush with low total load,Effects Group 1,Wispy_Cool_Sparse,FLM014,156,194,161,0.61,0.76,0.63
+15,Shrub_Non-sagebrush with low total load,Effects Group 1,Wispy_Cool_Sparse,FLM015,194,217,138,0.76,0.85,0.54
+21,"Light logs, light duff",Effects Group 2,Wispy_Warm_Light,FLM021,201,199,171,0.79,0.78,0.67
+31,"Moderate litter, light duff, light logs",Effects Group 3,Wispy_Hot_Moderate,FLM031,201,171,115,0.79,0.67,0.45
+41,"Moderate FWD, light to moderate litter",Effects Group 4,Wispy_Very Hot_Light,FLM041,133,153,31,0.52,0.6,0.12
+51,"Moderate duff, light logs",Effects Group 5,Wispy_Cool_Moderate,FLM051,102,133,13,0.4,0.52,0.05
+53,Shrub_Sagebrush with medium total load,Effects Group 5,Wispy_Cool_Moderate,FLM053,255,250,77,1,0.98,0.3
+54,Shrub_Non-sagebrush with medium total load,Effects Group 5,Wispy_Cool_Moderate,FLM054,255,199,77,1,0.78,0.3
+61,"Moderate to very heavy logs, light duff",Effects Group 6,Hazy_Warm_Moderate to Heavy,FLM061,59,125,23,0.23,0.49,0.09
+62,"Moderate duff, light logs, light litter",Effects Group 6,Hazy_Warm_Moderate to Heavy,FLM062,38,138,36,0.15,0.54,0.14
+63,"Moderate duff, light to heavy logs, light litter",Effects Group 6,Hazy_Warm_Moderate to Heavy,FLM063,51,148,77,0.2,0.58,0.3
+64,"Moderate to heavy duff, light to heavy logs",Effects Group 6,Hazy_Warm_Moderate to Heavy,FLM064,138,156,115,0.54,0.61,0.45
+65,Shrub_Sagebrush with high total load,Effects Group 6,Hazy_Warm_Moderate to Heavy,FLM065,227,156,255,0.89,0.61,1
+66,Shrub_Non-sagebrush with high total load,Effects Group 6,Hazy_Warm_Moderate to Heavy,FLM066,161,156,255,0.63,0.61,1
+71,"Moderate to heavy logs, light duff",Effects Group 7,Wispy to Hazy_Hot_Moderate,FLM071,82,176,166,0.32,0.69,0.65
+72,"Moderate duff, light to moderate logs, moderate litter",Effects Group 7,Wispy to Hazy_Hot_Moderate,FLM072,105,168,189,0.41,0.66,0.74
+81,"Very heavy logs, light duff",Effects Group 8,Hazy_Warm to Hot_Heavy,FLM081,125,158,204,0.49,0.62,0.8
+82,"Moderate duff, light to heavy logs, moderate litter",Effects Group 8,Hazy_Warm to Hot_Heavy,FLM082,135,120,207,0.53,0.47,0.81
+83,"Heavy to very heavy logs, moderate duff",Effects Group 8,Hazy_Warm to Hot_Heavy,FLM083,153,97,184,0.6,0.38,0.72
+91,"Heavy duff ,light to heavy logs",Effects Group 9,Smokey_Cool to Hot_Very Heavy,FLM091,166,71,150,0.65,0.28,0.59
+92,Very heavy logs,Effects Group 9,Smokey_Cool to Hot_Very Heavy,FLM092,176,46,115,0.69,0.18,0.45
+93,"Heavy duff, heavy to very heavy logs",Effects Group 9,Smokey_Cool to Hot_Very Heavy,FLM093,176,23,79,0.69,0.09,0.31
+101,Very heavy duff,Effects Group 10,Smokey_Cool_Very Heavy,FLM101,166,3,43,0.65,0.01,0.17
+102,"Heavy litter, light duff, light logs",Effects Group 10,Smokey_Cool_Very Heavy,FLM102,143,8,8,0.56,0.03,0.03
+911,Open Water,N/A,N/A,N/A,0,110,255,0,0.43,1
+912,Snow/Ice,N/A,N/A,N/A,235,255,252,0.92,1,0.99
+920,Developed-General,N/A,N/A,N/A,1,1,1,0.0031,0.0031,0.0031
+921,Developed-Open Space,N/A,N/A,N/A,176,176,176,0.69,0.69,0.69
+922,Developed-Low Intensity,N/A,N/A,N/A,176,176,176,0.69,0.69,0.69
+923,Developed-Medium Intensity,N/A,N/A,N/A,156,156,156,0.61,0.61,0.61
+924,Developed-High Intensity,N/A,N/A,N/A,128,128,128,0.5,0.5,0.5
+931,Barren/Rock/Sand/Clay,N/A,N/A,N/A,77,74,105,0.3,0.29,0.41
+932,Quarries/Strip Mines/Gravel Pits,N/A,N/A,N/A,74,89,102,0.29,0.35,0.4
+980,Agriculture-General,N/A,N/A,N/A,0,166,48,0,0.65,0.19
+981,Pasture/Hay,N/A,N/A,N/A,184,125,0,0.72,0.49,0
+982,Cultivated Crops and Irrigated Agriculture,N/A,N/A,N/A,133,227,120,0.52,0.89,0.47
+983,Small Grains,N/A,N/A,N/A,184,255,41,0.72,1,0.16
+984,Fallow,N/A,N/A,N/A,194,232,255,0.76,0.91,1
+985,Urban/Recreational Grasses,N/A,N/A,N/A,107,235,0,0.42,0.92,0
+900,Unclassified Sparsely Vegetated System,N/A,N/A,N/A,84,255,0,0.33,1,0
+901,Unclassified Forest and Woodland,N/A,N/A,N/A,255,199,255,1,0.78,1
+902,Unclassified Shrubland,N/A,N/A,N/A,23,242,255,0.09,0.95,1
+903,Unclassified Herbaceous,N/A,N/A,N/A,128,0,255,0.5,0,1
+904,Unclassified Savanna,N/A,N/A,N/A,255,135,0,1,0.53,0
+905,Unclassified Steppe,N/A,N/A,N/A,128,0,0,0.5,0,0
+906,Unclassified Grassland,N/A,N/A,N/A,255,207,0,1,0.81,0
+907,Wetland-Riparian Herbaceous,N/A,N/A,N/A,46,230,171,0.18,0.9,0.67

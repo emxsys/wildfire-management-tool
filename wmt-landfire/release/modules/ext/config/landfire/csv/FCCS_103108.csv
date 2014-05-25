@@ -1,0 +1,257 @@
+Value,FCCS_Region,FCCS_Name,r,g,b,RED,GREEN,BLUE
+-9999,NoData,NoData,255,255,255,1,1,1
+1,Pacific Northwest,Black Cottonwood - Douglas-fir - Quaking Aspen Riparian Forest,50,137,168,0.196078431,0.537254902,0.658823529
+2,Pacific Northwest,Western Hemlock - Western Redcedar - Douglas-fir Forest,0,82,0,0,0.321568627,0
+3,Pacific Northwest,Douglas-fir Forest,0,51,0,0,0.2,0
+4,Pacific Northwest,Douglas-fir / Ceanothus Forest,0,51,0,0,0.2,0
+5,Pacific Northwest,Douglas-fir - White Fir Forest,0,51,0,0,0.2,0
+6,Pacific Northwest,Oregon White Oak - Douglas-fir Forest,0,51,0,0,0.2,0
+7,Pacific Northwest,Douglas-fir - Sugar Pine - Tanoak Forest,0,51,0,0,0.2,0
+8,Pacific Northwest,Western Hemlock - Douglas-fir - Western Redcedar / Vine Maple Forest,0,82,0,0,0.321568627,0
+9,Pacific Northwest,Douglas-fir - Western Hemlock - Western Redcedar / Vine Maple Forest,0,51,0,0,0.2,0
+10,Pacific Northwest,Western Hemlock - Douglas-fir - Sitka Spruce Forest,0,82,0,0,0.321568627,0
+11,Pacific Northwest,Douglas-fir / Western Hemlock - Sitka Spruce Forest,0,51,0,0,0.2,0
+12,Sierra Nevada,Red Fir - Mountain Hemlock - Lodgepole Pine - White Pine Forest,0,158,0,0,0.619607843,0
+13,Pacific Northwest,Mountain Hemlock - Pacific Silver Fir Forest,0,92,0,0,0.360784314,0
+14,Sierra Nevada,Black Oak Woodland,0,189,0,0,0.741176471,0
+15,Sierra Nevada,Jeffrey Pine - Red Fir - White Fir / Greenleaf Manzanita - Snowbrush Forest,0,51,0,0,0.2,0
+16,Sierra Nevada,Jeffery Pine - Ponderosa Pine - Douglas-fir - Black Oak Forest,0,51,0,0,0.2,0
+17,Sierra Nevada,Red Fir Forest,0,158,0,0,0.619607843,0
+18,Pacific Northwest,Douglas-fir / Oceanspray Forest,0,51,0,0,0.2,0
+19,Sierra Nevada,White Fir - Giant Sequoia - Sugar Pine Forest,0,204,0,0,0.8,0
+20,Sierra Nevada,Western Juniper / Mountain Mahogany Woodland,25,93,145,0.098039216,0.364705882,0.568627451
+21,Rocky Mountain and Central US,Lodgepole Pine Early Seral Forest ,163,240,219,0.639215686,0.941176471,0.858823529
+22,Rocky Mountain and Central US,Lodgepole Pine Mature Forest,163,240,219,0.639215686,0.941176471,0.858823529
+23,Rocky Mountain and Central US,Lodgepole Pine Mature Forest with Beetle Kill,163,240,219,0.639215686,0.941176471,0.858823529
+24,Pacific Northwest,Pacific Ponderosa Pine - Douglas Fir Forest,55,146,173,0.215686275,0.57254902,0.678431373
+25,Southwest,Pinyon - Juniper Forest,121,255,94,0.474509804,1,0.368627451
+26,Rocky Mountain and Central US,Interior Ponderosa Pine - Limber Pine Forest,0,51,0,0,0.2,0
+27,Southwest,Ponderosa Pine - Twoneedle Pinyon - Utah Juniper Forest,55,146,173,0.215686275,0.57254902,0.678431373
+28,Rocky Mountain and Central US,Ponderosa Pine Savanna,55,146,173,0.215686275,0.57254902,0.678431373
+29,Southwest,Interior Ponderosa Pine - Engelmann Spruce - Douglas-fir Forest,0,51,0,0,0.2,0
+30,Southwest,Turbinella Oak - Mountain Mahogany Shrubland,89,59,40,0.349019608,0.231372549,0.156862745
+32,Southwest,Ponderosa Pine / Pinyon Pine - Juniper Forest,55,146,173,0.215686275,0.57254902,0.678431373
+33,Southwest,Gambel Oak / Big Sagebrush Shrubland with Old Fire,245,175,54,0.960784314,0.68627451,0.211764706
+34,Southwest,Interior Douglas-fir - Interior Ponderosa Pine / Gambel Oak Forest,0,51,0,0,0.2,0
+36,Sierra Nevada,Live Oak - Blue Oak Woodland,131,222,110,0.51372549,0.870588235,0.431372549
+37,Sierra Nevada,Ponderosa Pine - Jeffrey Pine Forest,55,146,173,0.215686275,0.57254902,0.678431373
+38,Pacific Northwest,Douglas-fir - Madrone / Tanoak Forest,0,51,0,0,0.2,0
+39,Pacific Northwest,Sugar Pine - Douglas-fir - Oak Forest,0,51,0,0,0.2,0
+40,Southwest,Tobosa - Grama Grassland,255,204,51,1,0.8,0.2
+41,Pacific Northwest,Fescue - Wheatgrass Grassland,255,198,107,1,0.776470588,0.419607843
+42,Rocky Mountain and Central US,Trembling Aspen / Engelmann Spruce Forest,192,255,138,0.752941176,1,0.541176471
+43,Southwest,Arizona White Oak - Gray Oak - Emory Oak Woodland,85,187,194,0.333333333,0.733333333,0.760784314
+44,Sierra Nevada,Scrub Oak - Chaparral Shrubland,145,255,115,0.568627451,1,0.450980392
+45,Southwest,Pine - Oak Forest,116,214,190,0.454901961,0.839215686,0.745098039
+46,Sierra Nevada,Chamise Chaparral Shrubland,255,59,20,1,0.231372549,0.078431373
+47,Sierra Nevada,Redwood - Tanoak Forest,135,255,105,0.529411765,1,0.411764706
+48,Sierra Nevada,Douglas Fir - Tanoak - Madrone - California Bay Forest,0,51,0,0,0.2,0
+49,Southwest,Creosote Bush Shrubland,161,134,96,0.631372549,0.525490196,0.376470588
+51,Sierra Nevada,Coastal Sage Shrubland,255,59,20,1,0.231372549,0.078431373
+52,Pacific Northwest,Douglas-fir - Pacific Ponderosa Pine / Oceanspray Forest,0,51,0,0,0.2,0
+53,Pacific Northwest,Pacific Ponderosa Pine Forest,55,146,173,0.215686275,0.57254902,0.678431373
+54,Pacific Northwest,Douglas-fir - White Fir - Interior Ponderosa Pine Forest,0,51,0,0,0.2,0
+55,Southwest,Western Juniper / Sagebrush Savanna,25,93,145,0.098039216,0.364705882,0.568627451
+56,Rocky Mountain and Central US,Sagebrush Shrubland - Dense,204,182,135,0.8,0.71372549,0.529411765
+57,Rocky Mountain and Central US,Wheatgrass - Cheatgrass Grassland,255,176,92,1,0.690196078,0.360784314
+58,Rocky Mountain and Central US,Western Juniper / Sagebrush Savanna with Prescribed Burn,25,93,145,0.098039216,0.364705882,0.568627451
+59,Rocky Mountain and Central US,Subalpine Fir - Engelmann Spruce - Douglas-fir - Lodgepole Pine Forest,236,252,204,0.925490196,0.988235294,0.8
+60,Rocky Mountain and Central US,Sagebrush Shrubland - Sparse,204,182,135,0.8,0.71372549,0.529411765
+61,Rocky Mountain and Central US,Whitebark Pine / Subalpine Fir Forest,191,255,233,0.749019608,1,0.91372549
+62,Pacific Northwest,Vaccinium - Heather Shrublands with Wildland Fire,255,59,20,1,0.231372549,0.078431373
+63,Pacific Northwest,Showy Sedge - Alpine Black Sedge Grassland,255,211,119,1,0.82745098,0.466666667
+65,Sierra Nevada,Purple tussockgrass - California Oatgrass Grassland,255,105,46,1,0.411764706,0.180392157
+66,Rocky Mountain and Central US,Bluebunch Wheatgrass - Bluegrass Grassland,255,226,130,1,0.88627451,0.509803922
+67,Rocky Mountain and Central US,Interior Ponderosa Pine - Douglas-fir Forest,0,51,0,0,0.2,0
+69,Rocky Mountain and Central US,Western Juniper / Sagebrush - Bitterbrush Shrubland,25,93,145,0.098039216,0.364705882,0.568627451
+70,Rocky Mountain and Central US,Subalpine Fir - Lodgepole Pine - Whitebark Pine - Engelmann Spruce Forest,236,252,204,0.925490196,0.988235294,0.8
+71,Hawaii,Ohia / Florida Hopbush - Kupaoa Forest,60,113,126,0.235294118,0.443137255,0.494117647
+72,Hawaii,Ohia / Uluhe Forest,60,113,126,0.235294118,0.443137255,0.494117647
+73,Hawaii,Koa / Pukiawe Forest,255,171,87,1,0.670588235,0.341176471
+74,Hawaii,Mamane - Naio Savanna,82,52,34,0.321568627,0.203921569,0.133333333
+75,Hawaii,Slash Pine / New Caledonia Pine Forest,116,214,204,0.454901961,0.839215686,0.8
+76,Hawaii,Slash Pine / Molasses Grass Forest,116,214,204,0.454901961,0.839215686,0.8
+77,Hawaii,Eucalyptus Plantation Forest,158,67,14,0.619607843,0.262745098,0.054901961
+78,Hawaii,Florida Hopbush - Mauna Loa Beggarticks Shrubland,255,59,20,1,0.231372549,0.078431373
+79,Hawaii,Pili Grass - Broomsedge Bluestem Grassland,255,137,64,1,0.537254902,0.250980392
+80,Hawaii,Fountain Grass Grassland,255,137,64,1,0.537254902,0.250980392
+81,Hawaii,Columbia Bluestem / Pukiawe Grassland,255,137,64,1,0.537254902,0.250980392
+82,Hawaii,White Leadtree / Guinea Grass Shrubland,255,59,20,1,0.231372549,0.078431373
+83,Hawaii,Molasses Grass Grassland,255,176,92,1,0.690196078,0.360784314
+84,Hawaii,Ohia / Broomsedge Bluestem Savanna,255,137,64,1,0.537254902,0.250980392
+85,Alaska,Black Spruce / Lichen Forest,186,163,119,0.729411765,0.639215686,0.466666667
+86,Alaska,Black Spruce / Feathermoss Open Forest,186,163,119,0.729411765,0.639215686,0.466666667
+87,Alaska,Black Spruce / Feathermoss Closed Forest,186,163,119,0.729411765,0.639215686,0.466666667
+88,Alaska,Black Spruce / Sphagnum Moss Forest,186,163,119,0.729411765,0.639215686,0.466666667
+89,Alaska,Black Spruce / Sheathed Cottonsedge Woodland,186,163,119,0.729411765,0.639215686,0.466666667
+90,Rocky Mountain and Central US,White Oak - Northern Red Oak Forest,85,187,194,0.333333333,0.733333333,0.760784314
+91,Alaska,White Spruce / Prickly Rose Forest,182,250,227,0.71372549,0.980392157,0.890196078
+92,Alaska,Aspen - Paper Birch - White Spruce - Black Spruce Forest,192,255,138,0.752941176,1,0.541176471
+93,Alaska,Paper birch - Trembling Aspen Forest,192,255,138,0.752941176,1,0.541176471
+94,Alaska,Balsam Poplar - Trembling Aspen Forest,182,250,227,0.71372549,0.980392157,0.890196078
+95,Alaska,Willow - Alder Shrubland,73,171,186,0.28627451,0.670588235,0.729411765
+97,Alaska,Cottongrass Grassland,255,121,54,1,0.474509804,0.211764706
+98,Alaska,Marsh Labrador Tea - Lingonberry Tundra Shrubland,255,211,119,1,0.82745098,0.466666667
+99,Alaska,Bluejoint Reedgrass Grassland,255,121,54,1,0.474509804,0.211764706
+100,Alaska,Altai Fescue Grassland,255,198,107,1,0.776470588,0.419607843
+101,Alaska,White Spruce Forest,182,250,227,0.71372549,0.980392157,0.890196078
+102,Alaska,White Spruce Forest with Beetle Attack,182,250,227,0.71372549,0.980392157,0.890196078
+103,Alaska,White Spruce - Paper Birch Forest,182,250,227,0.71372549,0.980392157,0.890196078
+104,Alaska,White Spruce - Paper Birch Forest with Beetle Attack,182,250,227,0.71372549,0.980392157,0.890196078
+105,Alaska,Paper Birch - Trembling Aspen - White Spruce Forest,192,255,138,0.752941176,1,0.541176471
+106,Northeast,Red Spruce - Balsam Fir Forest following Budworm Infestation,186,54,14,0.729411765,0.211764706,0.054901961
+107,Northeast,Pitch Pine / Scrub Oak Forest,116,214,204,0.454901961,0.839215686,0.8
+109,Northeast,Eastern White Pine - Northern Red Oak - Red Maple Forest,13,69,133,0.050980392,0.270588235,0.521568627
+110,Northeast,American Beech - Yellow Birch - Sugar Maple,0,92,0,0,0.360784314,0
+114,Southeast,Virginia Pine - Pitch Pine - Shortleaf Pine Forest,116,214,204,0.454901961,0.839215686,0.8
+115,Southeast,Rhododendron - Blueberry - Mountain Laurel Shrubland,117,87,61,0.458823529,0.341176471,0.239215686
+120,Southeast,Oak - Pine / Mountain Laurel Forest,174,245,224,0.682352941,0.960784314,0.878431373
+121,Southeast,Oak - Pine / Mountain Laurel Forest with Beetle Damage,174,245,224,0.682352941,0.960784314,0.878431373
+123,Southeast,White Oak - Northern Red Oak - Black Oak - Hickory Forest,85,187,194,0.333333333,0.733333333,0.760784314
+124,Northeast,Pitch Pine - Oak Forest,116,214,204,0.454901961,0.839215686,0.8
+125,Northeast,Oak - Hickory - Pine - Eastern Hemlock Forest,174,245,224,0.682352941,0.960784314,0.878431373
+129,Southeast,Green Ash - American Elm Forest,50,137,168,0.196078431,0.537254902,0.658823529
+131,Southeast,Bluestem - Indian Grass - Switchgrass Grassland,255,137,64,1,0.537254902,0.250980392
+133,Southeast,Tall Fescue - Foxtail - Purple Bluestem Grassland,255,137,64,1,0.537254902,0.250980392
+134,Southeast,White Oak - Northern Red Oak - Hickory Forest,85,187,194,0.333333333,0.733333333,0.760784314
+135,Southeast,Eastern Redcedar - Oak / Bluestem Savanna,255,137,64,1,0.537254902,0.250980392
+138,Northeast,Red Pine - White Pine Forest,174,245,224,0.682352941,0.960784314,0.878431373
+140,Northeast,Jack Pine / Black Spruce Forest,174,245,224,0.682352941,0.960784314,0.878431373
+142,Northeast,Trembling Aspen - Paper birch Forest,192,255,138,0.752941176,1,0.541176471
+143,Rocky Mountain and Central US,Trembling Aspen - Paper birch - White Spruce - Balsam Fir Forest,192,255,138,0.752941176,1,0.541176471
+146,Northeast,Jack Pine Mature Forest,174,245,224,0.682352941,0.960784314,0.878431373
+147,Northeast,Jack Pine Savanna,174,245,224,0.682352941,0.960784314,0.878431373
+148,Northeast,Jack Pine Young Forest,174,245,224,0.682352941,0.960784314,0.878431373
+152,Northeast,Red Pine - White Pine Forest following Severe Windthrow,174,245,224,0.682352941,0.960784314,0.878431373
+154,Rocky Mountain and Central US,Bur Oak Savanna,6,53,122,0.023529412,0.207843137,0.478431373
+155,Northeast,Red Spruce - Balsam Fir Forest,186,54,14,0.729411765,0.211764706,0.054901961
+156,Southeast,Slash Pine Plantation Forest,116,214,204,0.454901961,0.839215686,0.8
+157,Southeast,Loblolly Pine - Shortleaf Pine - Mixed Hardwoods Forest,145,255,115,0.568627451,1,0.450980392
+158,Southeast,Loblolly Pine - Shortleaf Pine - Mixed Hardwoods Forest post Beetle Infestation,145,255,115,0.568627451,1,0.450980392
+161,Southeast,Loblolly Pine - Slash Pine Forest,145,255,115,0.568627451,1,0.450980392
+162,Southeast,Loblolly Pine - Slash Pine Forest with Commercial Thin,145,255,115,0.568627451,1,0.450980392
+164,Southeast,Sand Pine Forest,116,214,190,0.454901961,0.839215686,0.745098039
+165,Southeast,Longleaf Pine / Three-awned Grass - Pitcher Plant Savanna with Prescribed Fire,116,214,204,0.454901961,0.839215686,0.8
+166,Southeast,Longleaf Pine / Three-awned Grass - Pitcher Plant Savanna,116,214,204,0.454901961,0.839215686,0.8
+168,Southeast,Little Gallberry - Fetterbush Shrubland,255,59,20,1,0.231372549,0.078431373
+170,Southeast,Pond Pine / Little Gallberry - Fetterbush Shrubland,116,214,204,0.454901961,0.839215686,0.8
+173,Southeast,Live Oak / Sea Oats Savanna,131,222,110,0.51372549,0.870588235,0.431372549
+174,Southeast,Live Oak - Sabal Palm Forest,131,222,110,0.51372549,0.870588235,0.431372549
+175,Southeast,Smooth Cordgrass - Black Needlerush Grassland,255,171,87,1,0.670588235,0.341176471
+176,Southeast,Smooth Cordgrass - Black Needlerush Grassland with Common Reed Invasion,255,171,87,1,0.670588235,0.341176471
+178,Southeast,Loblolly Pine - Shortleaf Pine Forest,145,255,115,0.568627451,1,0.450980392
+180,Southeast,Red Maple - Oak - Hickory - Sweetgum Forest,50,137,168,0.196078431,0.537254902,0.658823529
+181,Southeast,Pond Pine Forest,116,214,204,0.454901961,0.839215686,0.8
+182,Southeast,Longleaf Pine - Slash Pine / Saw Palmetto - Gallberry Forest,116,214,204,0.454901961,0.839215686,0.8
+183,Southeast,Loblolly Pine - Shortleaf Pine Forest with Commercial Thin,145,255,115,0.568627451,1,0.450980392
+184,Southeast,Longleaf Pine / Turkey Oak Forest,116,214,204,0.454901961,0.839215686,0.8
+185,Southeast,Longleaf Pine / Turkey Oak Forest with Prescribed Fire,116,214,204,0.454901961,0.839215686,0.8
+186,Southeast,Turkey Oak - Bluejack Oak Forest,85,187,194,0.333333333,0.733333333,0.760784314
+187,Southeast,Longleaf Pine / Yaupon Forest,116,214,204,0.454901961,0.839215686,0.8
+188,Southeast,Sand Pine - Oak Forest,116,214,190,0.454901961,0.839215686,0.745098039
+189,Southeast,Sand Pine - Oak Forest with Overstory Pine Mortality,116,214,190,0.454901961,0.839215686,0.745098039
+190,Southeast,Slash Pine - Longleaf Pine / Gallberry Forest,116,214,204,0.454901961,0.839215686,0.8
+191,Southeast,Longleaf Pine - Slash Pine / Gallberry Forest,116,214,204,0.454901961,0.839215686,0.8
+196,Southeast,Loblolly Pine / Bluestem Forest,145,255,115,0.568627451,1,0.450980392
+203,Southeast,Sawgrass - Muhlenbergia Grassland,255,153,0,1,0.6,0
+208,Pacific Northwest,Grand Fir - Douglas-fir Forest,0,51,0,0,0.2,0
+210,Rocky Mountain and Central US,Pinyon - Juniper Woodland,121,255,94,0.474509804,1,0.368627451
+211,Southwest,Interior Ponderosa Pine Forest,0,51,0,0,0.2,0
+212,Pacific Northwest,Pacific Ponderosa Pine Forest with Thinning,55,146,173,0.215686275,0.57254902,0.678431373
+213,Rocky Mountain and Central US,Wheatgrass - Cheatgrass Grassland with Prescribed Burn,255,176,92,1,0.690196078,0.360784314
+214,Sierra Nevada,Giant Sequoia - White Fir - Sugar Pine Forest,0,222,0,0,0.870588235,0
+215,Pacific Northwest,Douglas-fir - Madrone / Tanoak Forest,0,51,0,0,0.2,0
+216,Southwest,Gambel Oak - Bigtooth Maple Forest,245,175,54,0.960784314,0.68627451,0.211764706
+217,Southwest,Gambel Oak - Bigtooth Maple Forest with Prescribed Burn,245,175,54,0.960784314,0.68627451,0.211764706
+218,Southwest,Gambel Oak / Big Sagebrush Shrubland,245,175,54,0.960784314,0.68627451,0.211764706
+219,Southwest,Ponderosa Pine - White Fir / Trembling Aspen Forest,55,146,173,0.215686275,0.57254902,0.678431373
+220,Southwest,Ponderosa Pine - White Fir / Trembling Aspen Forest with Prescribed Burn,55,146,173,0.215686275,0.57254902,0.678431373
+221,Pacific Northwest,Wheatgrass - Ryegrass Grassland,255,176,92,1,0.690196078,0.360784314
+222,Southwest,Interior Ponderosa Pine Forest with Prescribed Burn,0,51,0,0,0.2,0
+223,Southwest,Douglas-fir - White Fir - Interior Ponderosa Pine Forest with Wildland Fire,0,51,0,0,0.2,0
+224,Rocky Mountain and Central US,Trembling Aspen Forest,192,255,138,0.752941176,1,0.541176471
+225,Rocky Mountain and Central US,Trembling Aspen Forest with Prescribed Burn,192,255,138,0.752941176,1,0.541176471
+226,Southwest,White Fir - Gambel Oak Forest,0,204,0,0,0.8,0
+227,Southwest,White Fir Forest,0,204,0,0,0.8,0
+228,Rocky Mountain and Central US,Interior Ponderosa Pine - Limber Pine Forest with Prescribed Burn,0,51,0,0,0.2,0
+229,Southwest,Ponderosa Pine / Juniper Forest,55,146,173,0.215686275,0.57254902,0.678431373
+230,Southwest,Pinyon - Juniper Forest with Prescribed Fire,121,255,94,0.474509804,1,0.368627451
+231,Southwest,Gambel Oak - Juniper - Ponderosa Pine Forest,245,175,54,0.960784314,0.68627451,0.211764706
+232,Southwest,Mesquite Savanna,150,123,89,0.588235294,0.482352941,0.349019608
+233,Southwest,Sagebrush Shrubland,204,182,135,0.8,0.71372549,0.529411765
+234,Southwest,Sagebrush Shrubland with Prescribed Burn,204,182,135,0.8,0.71372549,0.529411765
+235,Pacific Northwest,Idaho fescue - Bluebunch Wheatgrass Grassland,255,198,107,1,0.776470588,0.419607843
+236,Southwest,Tobosa - Grama Grassland,255,204,51,1,0.8,0.2
+237,Pacific Northwest,Vaccinium - Heather Shrublands,255,59,20,1,0.231372549,0.078431373
+238,Pacific Northwest,Pacific Silver Fir - Mountain Hemlock Forest,0,71,0,0,0.278431373,0
+239,Pacific Northwest,Douglas-fir - Sugar Pine - Tanoak Forest,0,51,0,0,0.2,0
+240,Southeast,Saw Palmetto / Three-awned Grass Shrubland,107,209,206,0.419607843,0.819607843,0.807843137
+241,Southeast,Longleaf Pine - Loblolly Pine Forest,116,214,204,0.454901961,0.839215686,0.8
+242,Southeast,Longleaf Pine - Loblolly Pine Forest with Prescribed Fire,116,214,204,0.454901961,0.839215686,0.8
+243,Northeast,Pitch Pine / Scrub Oak Shrubland,116,214,204,0.454901961,0.839215686,0.8
+260,Hawaii,Ohia / Uluhe Forest with Wildfire,60,113,126,0.235294118,0.443137255,0.494117647
+261,Hawaii,Pili Grass - Broomsedge Bluestem Grassland with Recent Fire,255,137,64,1,0.537254902,0.250980392
+262,Hawaii,Molasses Grass Grassland with Recent Fire,255,105,46,1,0.411764706,0.180392157
+263,Hawaii,Ohia / Broomsedge bluestem Savanna,255,137,64,1,0.537254902,0.250980392
+264,Southeast,Post Oak - Blackjack Oak Forest,85,187,194,0.333333333,0.733333333,0.760784314
+265,Rocky Mountain and Central US,Balsam Fir - White Spruce - Mixed Hardwoods Forest,182,250,227,0.71372549,0.980392157,0.890196078
+266,Rocky Mountain and Central US,Sugar maple - Basswood Forest,171,255,138,0.670588235,1,0.541176471
+267,Northeast,American Beech - Yellow Birch - Sugar Maple - Red Spruce Forest,0,92,0,0,0.360784314,0
+268,Rocky Mountain and Central US,American Beech - Yellow Birch - Sugar Maple - Eastern Hemlock Forest,0,92,0,0,0.360784314,0
+269,Southeast,Sugar Maple - Yellow Poplar - American Beech - Oak Forest,171,255,138,0.670588235,1,0.541176471
+270,Southeast,Red Spruce - Fraser Fir / Rhododendron Forest,186,54,14,0.729411765,0.211764706,0.054901961
+272,Southeast,Red Mangrove - Black Mangrove Forest,91,195,199,0.356862745,0.764705882,0.780392157
+273,Southwest,Engelmann Spruce - Douglas-fir - White Fir - Interior Ponderosa Pine Forest,236,252,204,0.925490196,0.988235294,0.8
+274,Northeast,American Beech - Sugar Maple Forest,0,92,0,0,0.360784314,0
+275,Southeast,Chestnut Oak - White Oak - Red Oak Forest,13,69,133,0.050980392,0.270588235,0.521568627
+276,Southeast,Oak - Pine - Magnolia Forest,174,245,224,0.682352941,0.960784314,0.878431373
+279,Northeast,Black Spruce - Northern White Cedar - Larch Forest,186,163,119,0.729411765,0.639215686,0.466666667
+280,Southeast,Bluestem - Gulf Cordgrass Grassland,255,137,64,1,0.537254902,0.250980392
+281,Southeast,Shortleaf Pine - Post Oak - Black Oak Forest,116,214,190,0.454901961,0.839215686,0.745098039
+282,Southeast,Loblolly Pine Forest,145,255,115,0.568627451,1,0.450980392
+283,Southeast,Willow Oak - Laurel Oak - Water Oak Forest,73,171,186,0.28627451,0.670588235,0.729411765
+284,Rocky Mountain and Central US,Green Ash - American Elm - Silver Maple - Cottonwood Forest,50,137,168,0.196078431,0.537254902,0.658823529
+286,Rocky Mountain and Central US,Limber Pine - Interior Ponderosa Pine Forest,63,255,46,0.247058824,1,0.180392157
+287,Northeast,Eastern White Pine - Eastern Hemlock Forest,13,69,133,0.050980392,0.270588235,0.521568627
+288,Southeast,Bald-Cypress - Water Tupelo Forest,91,195,199,0.356862745,0.764705882,0.780392157
+289,Southeast,Pond-cypress / Muhlenbergia - Sawgrass Savanna,91,195,199,0.356862745,0.764705882,0.780392157
+291,Southeast,Longleaf Pine - Slash Pine / Saw Palmetto Forest,116,214,204,0.454901961,0.839215686,0.8
+301,Sierra Nevada,California Central Valley Riparian,81,180,141,0.317647059,0.705882353,0.552941176
+302,Rocky Mountain and Central US,Intermountain Montane Subalpine Riparian,184,96,24,0.721568627,0.376470588,0.094117647
+303,Southwest,Warm Desert Riparian,81,180,141,0.317647059,0.705882353,0.552941176
+304,Rocky Mountain and Central US,Conifer Swamp Forest,216,216,191,0.847058824,0.847058824,0.749019608
+305,Pacific Northwest,Red Alder Forest,146,232,215,0.57254902,0.909803922,0.843137255
+306,Sierra Nevada,Knobcone Pine Forest,224,252,192,0.878431373,0.988235294,0.752941176
+307,Southwest,Palo Verde Shrubland,242,168,48,0.949019608,0.658823529,0.188235294
+308,Southwest,Low Sagebrush Steppe,204,182,135,0.8,0.71372549,0.529411765
+309,Southwest,Blackbrush Shrubland,140,112,80,0.549019608,0.439215686,0.31372549
+310,Southwest,Greasewood Shrubland,194,170,126,0.760784314,0.666666667,0.494117647
+311,Southwest,Salt-Desert Shrubland,156,128,92,0.611764706,0.501960784,0.360784314
+312,Southwest,Gambel Oak Shrubland,245,175,54,0.960784314,0.68627451,0.211764706
+313,Southwest,Mountain Mahogany Shrubland,155,235,216,0.607843137,0.921568627,0.847058824
+314,Rocky Mountain and Central US,Limber - Bristlecone Pine Forest,63,255,46,0.247058824,1,0.180392157
+315,Rocky Mountain and Central US,Interior Alpine Forb-Grassland,255,211,119,1,0.82745098,0.466666667
+316,Sierra Nevada,Northern California Coastal Shrubland,201,116,30,0.788235294,0.454901961,0.117647059
+317,Rocky Mountain and Central US,Rocky Mountain Maple Forest,171,255,138,0.670588235,1,0.541176471
+318,All,Herbaceous Wetlands,255,105,46,1,0.411764706,0.180392157
+319,Pacific Northwest,North Pacific Avalanche Chute Shrubland,128,97,69,0.501960784,0.380392157,0.270588235
+320,Rocky Mountain and Central US,Western Larch Forest,180,255,148,0.705882353,1,0.580392157
+911,All,Open Water,0,0,255,0,0,1
+912,All,Snow/Ice,159,161,240,0.623529412,0.631372549,0.941176471
+920,All,Developed-General,52,52,52,0.203921569,0.203921569,0.203921569
+921,All,Developed-Open Space,52,52,52,0.203921569,0.203921569,0.203921569
+922,All,Developed-Low Intensity,52,52,52,0.203921569,0.203921569,0.203921569
+923,All,Developed-Medium Intensity,52,52,52,0.203921569,0.203921569,0.203921569
+924,All,Developed-High Intensity,52,52,52,0.203921569,0.203921569,0.203921569
+931,All,Barren,191,191,191,0.749019608,0.749019608,0.749019608
+932,All,Quarries/Strip Mines/Gravel Pits,191,191,191,0.749019608,0.749019608,0.749019608
+933,All,Sparsely Vegetated,255,255,119,1,1,0.466666667
+952,All,Introduced Upland Vegetation-Shrub,255,105,46,1,0.411764706,0.180392157
+954,All,Introduced Upland Vegetation-Annual and Perennial Grassland and Forbland,255,105,46,1,0.411764706,0.180392157
+958,All,Introduced Riparian Vegetation,255,105,46,1,0.411764706,0.180392157
+980,All,Agriculture-General,255,255,119,1,1,0.466666667
+981,All,Agriculture-Pasture/Hay,255,255,119,1,1,0.466666667
+982,All,Agriculture-Cultivated Crops and Irrigated Agriculture,255,255,119,1,1,0.466666667
+983,All,Agriculture-Small Grains,255,255,119,1,1,0.466666667
+984,All,Agriculture-Fallow,255,255,119,1,1,0.466666667
+985,All,Agriculture-Recreational Grasses,255,255,119,1,1,0.466666667

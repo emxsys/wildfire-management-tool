@@ -1,0 +1,11 @@
+Value,LABEL,DESCRIPTION,R,G,B,RED,GREEN,BLUE
+-9999,NODATA,NODATA,0,0,0,0,0,0
+1,Fire Regime Condition Class I,Low Vegetation Departure,56,168,0,0.219607,0.658823,0
+2,Fire Regime Condition Class II,Moderate Vegetation Departure,255,255,0,1,1,0
+3,Fire Regime Condition Class III,High Vegetation Departure,255,0,0,1,0,0
+111,Water,Water,0,0,255,0,0,1
+112,Snow / Ice,Snow / Ice,200,255,255,0.784313,1,1
+120,Urban,Urban,132,0,168,0.517647,0,0.658823
+131,Barren,Barren,78,78,78,0.305882,0.305882,0.305882
+132,Sparsely Vegetated,Sparsely Vegetated,178,178,178,0.698039,0.698039,0.698039
+180,Agriculture,Agriculture,223,115,255,0.874509,0.45098,1
