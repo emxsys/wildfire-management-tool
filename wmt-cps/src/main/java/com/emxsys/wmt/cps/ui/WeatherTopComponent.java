@@ -30,11 +30,14 @@
 package com.emxsys.wmt.cps.ui;
 
 import com.terramenta.ribbon.RibbonActionReference;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import javax.swing.JPanel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays something.
@@ -76,28 +79,28 @@ import org.openide.util.NbBundle.Messages;
 public final class WeatherTopComponent extends TopComponent {
 
     public static final String PREFERRED_ID = "WeatherTopComponent";
+    private JPanel layoutPanel;
     private AirTemperaturePanel airTemperaturePanel;
     private RelativeHumidityPanel relativeHumidityPanel;
     private WindPanel windPanel;
 
     public WeatherTopComponent() {
         initComponents();
-        createPanels();
+        createChartPanels();
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
     }
 
-    private void createPanels() {
+    private void createChartPanels() {
         airTemperaturePanel = new AirTemperaturePanel();
         relativeHumidityPanel = new RelativeHumidityPanel();
         windPanel = new WindPanel();
 
-        // Assign panels to the Grid Layout
-        add(airTemperaturePanel);
-        add(relativeHumidityPanel);
-        add(windPanel);
+        centerPanel.add(airTemperaturePanel);
+        centerPanel.add(relativeHumidityPanel);
+        centerPanel.add(windPanel);
     }
 
     /** This method is called from within the constructor to
@@ -108,10 +111,37 @@ public final class WeatherTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new java.awt.GridLayout(3, 1));
+        upperPanel = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox();
+        centerPanel = new javax.swing.JPanel();
+
+        setLayout(new java.awt.BorderLayout());
+
+        upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.upperPanel.border.title"))); // NOI18N
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        javax.swing.GroupLayout upperPanelLayout = new javax.swing.GroupLayout(upperPanel);
+        upperPanel.setLayout(upperPanelLayout);
+        upperPanelLayout.setHorizontalGroup(
+            upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jComboBox1, 0, 325, Short.MAX_VALUE)
+        );
+        upperPanelLayout.setVerticalGroup(
+            upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jComboBox1)
+        );
+
+        add(upperPanel, java.awt.BorderLayout.NORTH);
+
+        centerPanel.setLayout(new java.awt.GridLayout(3, 1));
+        add(centerPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel centerPanel;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
