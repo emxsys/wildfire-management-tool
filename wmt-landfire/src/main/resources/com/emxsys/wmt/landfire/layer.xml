@@ -23,155 +23,159 @@
             </file>
         </folder>
         <folder name="Layers">
-            <file name="FBFM40.instance">
-                <attr name="category" stringvalue="Fuels"/>
-                <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
-                <attr name="active" boolvalue="true"/>
-                <attr name="actuate" stringvalue="onLoad"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.FBFM40.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_FBFM40_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.FBFM40Layer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110FBFM40.csv"/>
-                <attr name="name" stringvalue="FBFM40 Fuels"/>
-                <attr name="opacity" doublevalue="0.65"/>
-                <attr name="position" intvalue="1200"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
+            <folder name="Overlay">
+                
+                <file name="FBFM40.instance">
+                    <attr name="role" stringvalue="Data"/>
+                    <attr name="category" stringvalue="Fuels"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="true"/>
+                    <attr name="actuate" stringvalue="onLoad"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.FBFM40.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_FBFM40_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.FBFM40Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110FBFM40.csv"/>
+                    <attr name="name" stringvalue="FBFM40 Fuels"/>
+                    <attr name="opacity" doublevalue="0.65"/>
+                    <attr name="position" intvalue="1200"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
 
-            <file name="FBFM13.instance">
-                <attr name="category" stringvalue="Fuels"/>
-                <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.FBFM13.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_FBFM13_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.FBFM13Layer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110FBFM13.csv"/>
-                <attr name="name" stringvalue="FBFM13 Fuels"/>
-                <attr name="opacity" doublevalue="0.6"/>
-                <attr name="position" intvalue="1201"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
+                <file name="FBFM13.instance">
+                    <attr name="role" stringvalue="Data"/>
+                    <attr name="category" stringvalue="Fuels"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.FBFM13.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_FBFM13_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.FBFM13Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110FBFM13.csv"/>
+                    <attr name="name" stringvalue="FBFM13 Fuels"/>
+                    <attr name="opacity" doublevalue="0.6"/>
+                    <attr name="position" intvalue="1201"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
 
-            <file name="EVH.instance">
-                <attr name="category" stringvalue="Vegetation"/>
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.EVH.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_EVH_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.EVHLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110EVH_061511.csv"/>
-                <attr name="name" stringvalue="Vegetation Height"/>
-                <attr name="opacity" doublevalue="0.5"/>
-                <attr name="position" intvalue="1202"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
+                <file name="EVH.instance">
+                    <attr name="category" stringvalue="Vegetation"/>
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.EVH.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_EVH_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.EVHLayer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110EVH_061511.csv"/>
+                    <attr name="name" stringvalue="Vegetation Height"/>
+                    <attr name="opacity" doublevalue="0.5"/>
+                    <attr name="position" intvalue="1202"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
 
-            <file name="EVC.instance">
-                <attr name="category" stringvalue="Vegetation"/>
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.EVC.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_EVC_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.EVCLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110EVC_061511.csv"/>
-                <attr name="name" stringvalue="Vegetation Cover"/>
-                <attr name="opacity" doublevalue="0.5"/>
-                <attr name="position" intvalue="1203"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
+                <file name="EVC.instance">
+                    <attr name="category" stringvalue="Vegetation"/>
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.EVC.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_EVC_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.EVCLayer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110EVC_061511.csv"/>
+                    <attr name="name" stringvalue="Vegetation Cover"/>
+                    <attr name="opacity" doublevalue="0.5"/>
+                    <attr name="position" intvalue="1203"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
             
-<!--            <file name="EVT.instance">
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.EVT.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_EVT_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.EVTLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110EVT_09072011.csv"/>
-                <attr name="name" stringvalue="Vegetation Type"/>
-                <attr name="opacity" doublevalue="0.5"/>
-                <attr name="position" intvalue="1204"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
-            -->
-            <file name="DEM.instance">
-                <attr name="category" stringvalue="Terrain"/>
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.US_DEM.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_DEM_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.DEMLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-<!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/DEM_021109.csv"/>-->
-                <attr name="name" stringvalue="Elevations"/>
-                <attr name="opacity" doublevalue="0.5"/>
-                <attr name="position" intvalue="1204"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
-            <file name="ASP.instance">
-                <attr name="category" stringvalue="Terrain"/>
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.US_ASP.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_ASP_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.ASPLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-<!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/ASP_021109.csv"/>-->
-                <attr name="name" stringvalue="Aspect"/>
-                <attr name="opacity" doublevalue="0.5"/>
-                <attr name="position" intvalue="1205"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
-            <file name="SLP.instance">
-                <attr name="category" stringvalue="Terrain"/>
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.US_SLP.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_SLP_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.SLPLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-<!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/SLP_021109.csv"/>-->
-                <attr name="name" stringvalue="Slope"/>
-                <attr name="opacity" doublevalue="0.5"/>
-                <attr name="position" intvalue="1206"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
-<!-- Not as useful as vegetation height, at least not until we have a crown fire module
-            <file name="CH.instance">
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/igskmncngs137.cr.usgs.gov_80/LANDFIRE.US_102CH.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_CH_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.CHLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/CH_061009.csv"/>
-                <attr name="name" stringvalue="Canopy Height (cm)"/>
-                <attr name="opacity" doublevalue="0.65"/>
-                <attr name="position" intvalue="854"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
--->
-<!-- Not as useful as vegetation cover... for now
-            <file name="CC.instance">
-                <attr name="active" boolvalue="false"/>
-                <attr name="actuate" stringvalue="onRequest"/>
-                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/igskmncngs137.cr.usgs.gov_80/LANDFIRE.US_102CC.xml"/>
-                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_CC_Name"/>
-                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.CCLayer"/>
-                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/CC_061009.csv"/>
-                <attr name="name" stringvalue="Canopy Cover (pct)"/>
-                <attr name="opacity" doublevalue="0.65"/>
-                <attr name="position" intvalue="855"/>
-                <attr name="source" stringvalue="LANDFIRE"/>
-            </file>
--->
-
+                <!--            <file name="EVT.instance">
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.EVT.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_EVT_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.EVTLayer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/LF_110EVT_09072011.csv"/>
+                    <attr name="name" stringvalue="Vegetation Type"/>
+                    <attr name="opacity" doublevalue="0.5"/>
+                    <attr name="position" intvalue="1204"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
+                -->
+                <file name="DEM.instance">
+                    <attr name="category" stringvalue="Terrain"/>
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.US_DEM.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_DEM_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.DEMLayer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/DEM_021109.csv"/>-->
+                    <attr name="name" stringvalue="Elevations"/>
+                    <attr name="opacity" doublevalue="0.5"/>
+                    <attr name="position" intvalue="1204"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
+                <file name="ASP.instance">
+                    <attr name="category" stringvalue="Terrain"/>
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.US_ASP.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_ASP_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.ASPLayer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/ASP_021109.csv"/>-->
+                    <attr name="name" stringvalue="Aspect"/>
+                    <attr name="opacity" doublevalue="0.5"/>
+                    <attr name="position" intvalue="1205"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
+                <file name="SLP.instance">
+                    <attr name="category" stringvalue="Terrain"/>
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.US_SLP.xml"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_SLP_Name"/>
+                    <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.SLPLayer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                    <!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/SLP_021109.csv"/>-->
+                    <attr name="name" stringvalue="Slope"/>
+                    <attr name="opacity" doublevalue="0.5"/>
+                    <attr name="position" intvalue="1206"/>
+                    <attr name="source" stringvalue="LANDFIRE"/>
+                </file>
+                <!-- Not as useful as vegetation height, at least not until we have a crown fire module
+                            <file name="CH.instance">
+                                <attr name="active" boolvalue="false"/>
+                                <attr name="actuate" stringvalue="onRequest"/>
+                                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/igskmncngs137.cr.usgs.gov_80/LANDFIRE.US_102CH.xml"/>
+                                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_CH_Name"/>
+                                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.CHLayer"/>
+                                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/CH_061009.csv"/>
+                                <attr name="name" stringvalue="Canopy Height (cm)"/>
+                                <attr name="opacity" doublevalue="0.65"/>
+                                <attr name="position" intvalue="854"/>
+                                <attr name="source" stringvalue="LANDFIRE"/>
+                            </file>
+                -->
+                <!-- Not as useful as vegetation cover... for now
+                            <file name="CC.instance">
+                                <attr name="active" boolvalue="false"/>
+                                <attr name="actuate" stringvalue="onRequest"/>
+                                <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/igskmncngs137.cr.usgs.gov_80/LANDFIRE.US_102CC.xml"/>
+                                <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_CC_Name"/>
+                                <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.CCLayer"/>
+                                <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
+                                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/CC_061009.csv"/>
+                                <attr name="name" stringvalue="Canopy Cover (pct)"/>
+                                <attr name="opacity" doublevalue="0.65"/>
+                                <attr name="position" intvalue="855"/>
+                                <attr name="source" stringvalue="LANDFIRE"/>
+                            </file>
+                -->
+            </folder>
         </folder>
     </folder>
 </filesystem>

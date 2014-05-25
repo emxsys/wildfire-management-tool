@@ -41,37 +41,14 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-api-annotations-common</artifactId>
-            <version>${netbeans.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-globe</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wmt-gis</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wmt-wildfire</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>worldwind</artifactId>
-            <groupId>gov.nasa</groupId>
-            <type>jar</type>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <artifactId>org-openide-filesystems</artifactId>
-            <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE80</version>
-        </dependency>
-        <dependency>
-            <artifactId>org-openide-util-lookup</artifactId>
-            <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE80</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -84,35 +61,57 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.csvreader</groupId>
-            <artifactId>csvreader</artifactId>
-            <version>1.0</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-wildfire</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>jogl-all-main</artifactId>
-            <groupId>org.jogamp.jogl</groupId>
-            <type>jar</type>
-            <version>2.1.5-01</version>
-        </dependency>
-        <dependency>
-            <artifactId>gluegen-rt-main</artifactId>
-            <groupId>org.jogamp.gluegen</groupId>
-            <type>jar</type>
-            <version>2.1.5-01</version>
-        </dependency>
-        <dependency>
-            <artifactId>org-openide-util</artifactId>
-            <groupId>org.netbeans.api</groupId>
-            <type>jar</type>
-            <version>RELEASE80</version>
+            <groupId>com.terramenta</groupId>
+            <artifactId>terramenta-globe</artifactId>
+            <version>${terramenta.version}</version>
         </dependency>
         <dependency>
             <artifactId>terramenta-ribbon</artifactId>
             <groupId>com.terramenta</groupId>
-            <type>jar</type>
-            <version>2.0.0-EMXSYS-SNAPSHOT</version>
+            <version>${terramenta.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-annotations-common</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-filesystems</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-util-lookup</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-util</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org-openide-loaders</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-nodes</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.csvreader</groupId>
+            <artifactId>csvreader</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     <description>LANDFIRE maps and data layers. A Fuel Model provider for the US.</description>
     <name>WMT LANDFIRE</name>
 </project>
+        
