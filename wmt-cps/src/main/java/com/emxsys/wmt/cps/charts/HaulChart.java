@@ -32,7 +32,7 @@ package com.emxsys.wmt.cps.charts;
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.wildfire.api.FireEnvironment;
-import com.emxsys.wmt.cps.options.GeneralSettingsPanel;
+import com.emxsys.wmt.cps.options.CpsOptions;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -89,7 +89,6 @@ import visad.VisADException;
 public class HaulChart extends javax.swing.JPanel {
 
     // Chart colors for fire behavior adjectives
-
     final int ALPHA = 200;
     final Color COLOR_LOW = new Color(128, 127, 255, ALPHA);         // blue
     final Color COLOR_MODERATE = new Color(127, 193, 151, ALPHA);    // green
@@ -112,7 +111,7 @@ public class HaulChart extends javax.swing.JPanel {
     private LogAxis xAxis;
     private LogAxis yAxis;
     private TextTitle subTitle;
-    private Preferences pref;
+    private final Preferences pref;
     private final boolean useSI;
     private final Unit heatUOM;
     private final Unit rosUOM;
@@ -127,7 +126,7 @@ public class HaulChart extends javax.swing.JPanel {
     private final String flnStr;
     private final String fliStr;
 
-    private class MyLogAxis extends LogAxis {
+    private final class MyLogAxis extends LogAxis {
 
         MyLogAxis(String label) {
             super(label);
@@ -160,18 +159,9 @@ public class HaulChart extends javax.swing.JPanel {
      */
     private class CircleDrawer implements Drawable {
 
-        /**
-         * The outline paint.
-         */
-        private Paint outlinePaint;
-        /**
-         * The outline stroke.
-         */
-        private Stroke outlineStroke;
-        /**
-         * The fill paint.
-         */
-        private Paint fillPaint;
+        private final Paint outlinePaint;
+        private final Stroke outlineStroke;
+        private final Paint fillPaint;
 
         /**
          * Creates a new instance.
@@ -180,9 +170,9 @@ public class HaulChart extends javax.swing.JPanel {
          * @param outlineStroke the outline stroke.
          * @param fillPaint the fill paint.
          */
-        public CircleDrawer(Paint outlinePaint,
-                            Stroke outlineStroke,
-                            Paint fillPaint) {
+        CircleDrawer(Paint outlinePaint,
+                     Stroke outlineStroke,
+                     Paint fillPaint) {
             this.outlinePaint = outlinePaint;
             this.outlineStroke = outlineStroke;
             this.fillPaint = fillPaint;
@@ -223,13 +213,10 @@ public class HaulChart extends javax.swing.JPanel {
      * Creates new form HaulChart
      */
     public HaulChart() {
-        pref = NbPreferences.forModule(GeneralSettingsPanel.class);
-        String uom = pref.get(GeneralSettingsPanel.UOM_KEY, GeneralSettingsPanel.UOM_US);
-        if (uom.matches(GeneralSettingsPanel.UOM_US)) {
-            useSI = false;
-        } else {
-            useSI = true;
-        }
+        pref = NbPreferences.forModule(CpsOptions.class);
+        String uom = pref.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US);
+        useSI = !uom.matches(CpsOptions.UOM_US);
+
         // Heat Release
         heatUS = FireUnit.Btu_ft2;
         heatUOM = useSI ? FireUnit.kJ_m2 : FireUnit.Btu_ft2;
