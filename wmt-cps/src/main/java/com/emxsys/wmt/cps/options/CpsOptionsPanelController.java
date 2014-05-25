@@ -34,6 +34,9 @@ import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import org.netbeans.spi.options.OptionsPanelController;
+import org.openide.DialogDisplayer;
+import org.openide.LifecycleManager;
+import org.openide.NotifyDescriptor;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
@@ -61,6 +64,17 @@ public final class CpsOptionsPanelController extends OptionsPanelController {
         SwingUtilities.invokeLater(() -> {
             getPanel().store();
             changed = false;
+            if (getPanel().getShouldRestart()) {
+                NotifyDescriptor dlg = new NotifyDescriptor.Confirmation(
+                        "Your changes required a restart to take effect.\n"
+                        + "Do you want to restart the application now?", "Restart Application?",
+                        NotifyDescriptor.YES_NO_OPTION);
+                Object result = DialogDisplayer.getDefault().notify(dlg);
+                if (result != null && result == NotifyDescriptor.YES_OPTION) {
+                    LifecycleManager.getDefault().markForRestart();
+                    LifecycleManager.getDefault().exit();
+                }
+            }
         });
     }
 

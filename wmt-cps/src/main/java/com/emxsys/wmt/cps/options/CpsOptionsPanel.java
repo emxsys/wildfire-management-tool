@@ -34,9 +34,10 @@ import org.openide.util.NbPreferences;
 
 final class CpsOptionsPanel extends javax.swing.JPanel {
 
-    private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
-
     private final CpsOptionsPanelController controller;
+    private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
+    private String initialUOM = "";
+    private boolean shouldRestart = false;
 
     CpsOptionsPanel(CpsOptionsPanelController controller) {
         this.controller = controller;
@@ -53,9 +54,118 @@ final class CpsOptionsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         performTerrestrialShadingCheckBox = new javax.swing.JCheckBox();
+        jLabelUOM = new javax.swing.JLabel();
+        jRadioBtnUS = new javax.swing.JRadioButton();
+        jRadioBtnMetric = new javax.swing.JRadioButton();
+        jRadioBtnSI = new javax.swing.JRadioButton();
+        jLabelWeatherCycle = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabelTime = new javax.swing.JLabel();
+        jLabelTemp = new javax.swing.JLabel();
+        jLabelRH = new javax.swing.JLabel();
+        jLabelSunrise = new javax.swing.JLabel();
+        tempSunrise = new javax.swing.JFormattedTextField();
+        rhSunrise = new javax.swing.JFormattedTextField();
+        jLabelNoon = new javax.swing.JLabel();
+        temp1200 = new javax.swing.JFormattedTextField();
+        rh1200 = new javax.swing.JFormattedTextField();
+        jLabel1400 = new javax.swing.JLabel();
+        temp1400 = new javax.swing.JFormattedTextField();
+        rh1400 = new javax.swing.JFormattedTextField();
+        jLabelSunset = new javax.swing.JLabel();
+        tempSunset = new javax.swing.JFormattedTextField();
+        rhSunset = new javax.swing.JFormattedTextField();
+        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
 
         org.openide.awt.Mnemonics.setLocalizedText(performTerrestrialShadingCheckBox, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.performTerrestrialShadingCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelUOM, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelUOM.text")); // NOI18N
+
+        buttonGroup1.add(jRadioBtnUS);
+        jRadioBtnUS.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(jRadioBtnUS, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jRadioBtnUS.text")); // NOI18N
+
+        buttonGroup1.add(jRadioBtnMetric);
+        org.openide.awt.Mnemonics.setLocalizedText(jRadioBtnMetric, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jRadioBtnMetric.text")); // NOI18N
+
+        buttonGroup1.add(jRadioBtnSI);
+        org.openide.awt.Mnemonics.setLocalizedText(jRadioBtnSI, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jRadioBtnSI.text")); // NOI18N
+        jRadioBtnSI.setEnabled(false);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelWeatherCycle, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelWeatherCycle.text")); // NOI18N
+
+        jPanel1.setLayout(new java.awt.GridLayout(5, 3, 5, 0));
+
+        jLabelTime.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabelTime.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelTime, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelTime.text")); // NOI18N
+        jPanel1.add(jLabelTime);
+
+        jLabelTemp.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabelTemp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelTemp, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelTemp.text")); // NOI18N
+        jPanel1.add(jLabelTemp);
+
+        jLabelRH.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabelRH.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelRH, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelRH.text")); // NOI18N
+        jPanel1.add(jLabelRH);
+
+        jLabelSunrise.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelSunrise, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelSunrise.text")); // NOI18N
+        jLabelSunrise.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jPanel1.add(jLabelSunrise);
+
+        tempSunrise.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("##0"))));
+        tempSunrise.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(tempSunrise);
+
+        rhSunrise.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        rhSunrise.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(rhSunrise);
+
+        jLabelNoon.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelNoon, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelNoon.text")); // NOI18N
+        jLabelNoon.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jPanel1.add(jLabelNoon);
+
+        temp1200.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("##0"))));
+        temp1200.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(temp1200);
+
+        rh1200.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        rh1200.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(rh1200);
+
+        jLabel1400.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1400, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabel1400.text")); // NOI18N
+        jLabel1400.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jPanel1.add(jLabel1400);
+
+        temp1400.setColumns(4);
+        temp1400.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("##0"))));
+        temp1400.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(temp1400);
+
+        rh1400.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        rh1400.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(rh1400);
+
+        jLabelSunset.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelSunset, org.openide.util.NbBundle.getMessage(CpsOptionsPanel.class, "CpsOptionsPanel.jLabelSunset.text")); // NOI18N
+        jLabelSunset.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        jPanel1.add(jLabelSunset);
+
+        tempSunset.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("##0"))));
+        tempSunset.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(tempSunset);
+
+        rhSunset.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        rhSunset.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(rhSunset);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -63,24 +173,101 @@ final class CpsOptionsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(performTerrestrialShadingCheckBox)
-                .addContainerGap(148, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelUOM)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(performTerrestrialShadingCheckBox)
+                            .addComponent(jRadioBtnUS)
+                            .addComponent(jRadioBtnMetric)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioBtnSI)
+                            .addComponent(jLabelWeatherCycle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator2)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(performTerrestrialShadingCheckBox)
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelUOM)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioBtnUS)
+                .addGap(4, 4, 4)
+                .addComponent(jRadioBtnMetric)
+                .addGap(1, 1, 1)
+                .addComponent(jRadioBtnSI)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelWeatherCycle)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     void load() {
         performTerrestrialShadingCheckBox.setSelected(prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING));
+        initialUOM = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US);
+        switch (initialUOM) {
+            case CpsOptions.UOM_US:
+                this.jRadioBtnUS.setSelected(true);
+                break;
+            case CpsOptions.UOM_METRIC:
+                this.jRadioBtnMetric.setSelected(true);
+                break;
+            case CpsOptions.UOM_SI:
+                this.jRadioBtnSI.setSelected(true);
+                break;
+        }
+        this.temp1400.setText((getIntPreference(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400)));
+        this.tempSunset.setText((getIntPreference(CpsOptions.TEMP_SUNSET_KEY, CpsOptions.DEFAULT_TEMP_SUNSET)));
+        this.tempSunrise.setText((getIntPreference(CpsOptions.TEMP_SUNRISE_KEY, CpsOptions.DEFAULT_TEMP_SUNRISE)));
+        this.temp1200.setText((getIntPreference(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200)));
+
+        this.rh1400.setText((getIntPreference(CpsOptions.RH_1400_KEY, CpsOptions.DEFAULT_RH_1400)));
+        this.rhSunset.setText((getIntPreference(CpsOptions.RH_SUNSET_KEY, CpsOptions.DEFAULT_RH_SUNSET)));
+        this.rhSunrise.setText((getIntPreference(CpsOptions.RH_SUNRISE_KEY, CpsOptions.DEFAULT_RH_SUNRISE)));
+        this.rh1200.setText((getIntPreference(CpsOptions.RH_1200_KEY, CpsOptions.DEFAULT_RH_1200)));
     }
 
     void store() {
         prefs.putBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, performTerrestrialShadingCheckBox.isSelected());
+        if (this.jRadioBtnUS.isSelected()) {
+            prefs.put(CpsOptions.UOM_KEY, CpsOptions.UOM_US);
+        } else if (this.jRadioBtnMetric.isSelected()) {
+            prefs.put(CpsOptions.UOM_KEY, CpsOptions.UOM_METRIC);
+        } else if (this.jRadioBtnSI.isSelected()) {
+            prefs.put(CpsOptions.UOM_KEY, CpsOptions.UOM_SI);
+        }
+        String currentUOM = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US);
+        if (!currentUOM.equals(initialUOM)) {
+            shouldRestart = true;
+        }
+
+        prefs.putInt(CpsOptions.TEMP_1400_KEY, Integer.parseInt(this.temp1400.getText()));
+        prefs.putInt(CpsOptions.TEMP_SUNSET_KEY, Integer.parseInt(this.tempSunset.getText()));
+        prefs.putInt(CpsOptions.TEMP_SUNRISE_KEY, Integer.parseInt(this.tempSunrise.getText()));
+        prefs.putInt(CpsOptions.TEMP_1200_KEY, Integer.parseInt(this.temp1200.getText()));
+
+        prefs.putInt(CpsOptions.RH_1400_KEY, Integer.parseInt(this.rh1400.getText()));
+        prefs.putInt(CpsOptions.RH_SUNSET_KEY, Integer.parseInt(this.rhSunset.getText()));
+        prefs.putInt(CpsOptions.RH_SUNRISE_KEY, Integer.parseInt(this.rhSunrise.getText()));
+        prefs.putInt(CpsOptions.RH_1200_KEY, Integer.parseInt(this.rh1200.getText()));
     }
 
     boolean valid() {
@@ -88,7 +275,48 @@ final class CpsOptionsPanel extends javax.swing.JPanel {
         return true;
     }
 
+    public boolean getShouldRestart() {
+        return shouldRestart;
+    }
+
+    /**
+     * Retrieve a property from the preferences file; returns the default value
+     * if the property has not been established.
+     *
+     * @param wwPropertyKey
+     * @param defaultValue
+     * @return preference
+     */
+    private String getIntPreference(String propertyKey, int defaultValue) {
+        int value = prefs.getInt(propertyKey, defaultValue);
+        return Integer.toString(value);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jLabel1400;
+    private javax.swing.JLabel jLabelNoon;
+    private javax.swing.JLabel jLabelRH;
+    private javax.swing.JLabel jLabelSunrise;
+    private javax.swing.JLabel jLabelSunset;
+    private javax.swing.JLabel jLabelTemp;
+    private javax.swing.JLabel jLabelTime;
+    private javax.swing.JLabel jLabelUOM;
+    private javax.swing.JLabel jLabelWeatherCycle;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButton jRadioBtnMetric;
+    private javax.swing.JRadioButton jRadioBtnSI;
+    private javax.swing.JRadioButton jRadioBtnUS;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JCheckBox performTerrestrialShadingCheckBox;
+    private javax.swing.JFormattedTextField rh1200;
+    private javax.swing.JFormattedTextField rh1400;
+    private javax.swing.JFormattedTextField rhSunrise;
+    private javax.swing.JFormattedTextField rhSunset;
+    private javax.swing.JFormattedTextField temp1200;
+    private javax.swing.JFormattedTextField temp1400;
+    private javax.swing.JFormattedTextField tempSunrise;
+    private javax.swing.JFormattedTextField tempSunset;
     // End of variables declaration//GEN-END:variables
 }
