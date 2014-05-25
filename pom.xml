@@ -155,10 +155,13 @@
         <module>wmt-cps</module>
         <module>wmt-gis</module>
         <module>wmt-globe</module>
+        <module>wmt-jfree</module>
+        <module>wmt-landfire</module>
         <module>wmt-libraries</module>
         <module>wmt-maps-usa</module>
         <module>wmt-places</module>
         <module>wmt-photo</module>
+        <module>wmt-project</module>
         <module>wmt-solar</module>
         <module>wmt-time</module>
         <module>wmt-utilities</module>
@@ -167,8 +170,6 @@
         <module>wmt-weather-mesowest</module>
         <module>wmt-weather-nws</module>
         <module>wmt-wildfire</module>
-        <module>wmt-project</module>
-        <module>wmt-jfree</module>
     </modules>
     <reporting>
         <plugins>
