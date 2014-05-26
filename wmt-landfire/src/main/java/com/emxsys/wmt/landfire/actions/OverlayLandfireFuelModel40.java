@@ -72,7 +72,7 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class OverlayLandfireFuelModel40 extends AbstractGisLayerToggleAction {
 
-    private static final String ICON_BASE = "com/emxsys/wmt/landfire/images/map.png";
+    private static final String ICON_BASE = "com/emxsys/wmt/landfire/images/layer-rgb-add.png";
     private static final String OVERLAY_NAME
             = NbBundle.getBundle("com.emxsys.wmt.landfire.Bundle").getString("LAYER_FBFM40_Name");
 

@@ -125,7 +125,7 @@ public class FBFM40Layer extends LandfireTiledImageLayer {
                     // Add this time to the legend.
                     this.legend.add(color, fm.getModelName());
 
-                    LOG.log(Level.CONFIG, "Created Fuel Model: {0}", fm);
+                    LOG.log(Level.FINE, "Created Fuel Model: {0}", fm);
                 }
             }
             csv.close();

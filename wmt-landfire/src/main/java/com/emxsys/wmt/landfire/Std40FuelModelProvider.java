@@ -72,7 +72,6 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
             this.fuelModelLayers.addLookupListener((LookupEvent ev) -> {
                 checkForFuelModelLayer();
             });
-
         }
         checkForFuelModelLayer();
     }
@@ -86,13 +85,13 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
         Collection<? extends FBFM40Layer> allInstances = this.fuelModelLayers.allInstances();
         if (allInstances.isEmpty()) {
             this.fuelModelLayer = null;
-            logger.severe("A Std 40 Fuel Model layer is not available. Fuel Model lookup is disabled.");
+            logger.config("A Std 40 Fuel Model layer is not available. Fuel Model lookup is disabled.");
             return;
         }
 
         for (FBFM40Layer layer : allInstances) {
             this.fuelModelLayer = layer;
-            logger.log(Level.INFO, "Found a fuel model provider for FBFM40: {0}", layer.toString());
+            logger.log(Level.CONFIG, "Found a fuel model provider for FBFM40: {0}", layer.toString());
             break;
         }
     }

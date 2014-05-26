@@ -116,7 +116,7 @@ public class FBFM13Layer extends LandfireTiledImageLayer {
                     Color color = new Color(r, g, b);
                     addColorEntry(color, fm);
                     this.legend.add(color, fm.getModelName());
-                    logger.log(Level.CONFIG, "Created Fuel Model: {0}", fm);
+                    logger.log(Level.FINE, "Created Fuel Model: {0}", fm);
                 }
             }
             csv.close();
