@@ -38,6 +38,7 @@ import visad.VisADException;
 
 public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
 
+    public static FuelMoistureTuple INVALID = new FuelMoistureTuple();
     /** [percent] */
     private visad.Real dead1HrFuelMoisture;
     /** [percent] */
@@ -72,7 +73,7 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
      * @param liveWoodyFuelMoisture [percent]
      */
     public FuelMoistureTuple(double dead1HrFuelMoisture, double dead10HrFuelMoisture,
-            double dead100HrFuelMoisture, double liveHerbFuelMoisture, double liveWoodyFuelMoisture) {
+                             double dead100HrFuelMoisture, double liveHerbFuelMoisture, double liveWoodyFuelMoisture) {
         this(new Real(FUEL_MOISTURE_1H, dead1HrFuelMoisture),
                 new Real(FUEL_MOISTURE_10H, dead10HrFuelMoisture),
                 new Real(FUEL_MOISTURE_100H, dead100HrFuelMoisture),
@@ -81,10 +82,9 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
     }
 
     /**
-     * The initial dead1HrFuelMoisture values assigned in this constructor
-     * are from Rothermel et al, "Modeling moisture content of fine dead
-     * wildland fuels: input to the BEHAVE fire prediction system."
-     * Research Paper INT-359. 1986.
+     * The initial dead1HrFuelMoisture values assigned in this constructor are from Rothermel et al,
+     * "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE fire prediction
+     * system." Research Paper INT-359. 1986.
      *
      * The other values have been arbitrarily assigned for testing purposes.
      * @param previousWeeksWx - WxConditions enum
@@ -126,7 +126,7 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
      * @param liveWoodyFuelMoisture WildfireType.FUEL_MOISTURE_WOODY
      */
     public FuelMoistureTuple(Real dead1HrFuelMoisture, Real dead10HrFuelMoisture,
-            Real dead100HrFuelMoisture, Real liveHerbFuelMoisture, Real liveWoodyFuelMoisture) {
+                             Real dead100HrFuelMoisture, Real liveHerbFuelMoisture, Real liveWoodyFuelMoisture) {
         super(FUEL_MOISTURE);
         this.dead1HrFuelMoisture = dead1HrFuelMoisture;
         this.dead10HrFuelMoisture = dead10HrFuelMoisture;
@@ -222,6 +222,7 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
     /**
      * Create, if needed, and return the component array.
      *
+     * @param copy
      * @return components
      */
     @Override
@@ -242,10 +243,9 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
     /**
      * Indicates if this Tuple is identical to an object.
      *
-     * @param obj         The object.
-     * @return            <code>true</code> if and only if the object is
-     *                    a Tuple and both Tuple-s have identical component
-     *                    sequences.
+     * @param obj The object.
+     * @return            <code>true</code> if and only if the object is a Tuple and both Tuple-s have
+     * identical component sequences.
      */
     @Override
     public boolean equals(Object obj) {
@@ -268,7 +268,7 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
 
     /**
      * Returns the hash code of this object.
-     * @return            The hash code of this object.
+     * @return The hash code of this object.
      */
     @Override
     public int hashCode() {
