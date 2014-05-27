@@ -29,18 +29,36 @@
  */
 package com.emxsys.wmt.cps.ui;
 
+import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.api.WeatherType;
+import com.emxsys.weather.spi.DefaultWeatherProvider;
+import com.emxsys.wmt.cps.Controller;
+import com.emxsys.wmt.cps.options.CpsOptions;
 import com.terramenta.ribbon.RibbonActionReference;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
+import org.openide.util.Lookup;
+import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbPreferences;
 import org.openide.windows.TopComponent;
+import visad.Real;
+import visad.RealType;
 
 /**
- * Top component which displays something.
+ * The WeatherTopComponent provides the WeatherProvider selection interface and displays weather
+ * charts/graphs.
  */
 @ConvertAsProperties(
         dtd = "-//com.emxsys.wmt.cps.ui//Weather//EN",
@@ -79,21 +97,117 @@ import org.openide.windows.TopComponent;
 public final class WeatherTopComponent extends TopComponent {
 
     public static final String PREFERRED_ID = "WeatherTopComponent";
+    public static final String LAST_WEATHER_PROVIDER = "wmt.cps.lastWeatherProvider";
     private JPanel layoutPanel;
     private AirTemperaturePanel airTemperaturePanel;
     private RelativeHumidityPanel relativeHumidityPanel;
     private WindPanel windPanel;
+    private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
+    private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
+    private PreferenceChangeListener prefsChangeListener;
 
+    /** Listener for changes in the existence of data providersComboBox */
+    private Result<WeatherProvider> lookupWeatherProviders;
+    private final Preferences prefs = NbPreferences.forModule(WeatherTopComponent.class);
+    private static final Logger logger = Logger.getLogger(WeatherTopComponent.class.getName());
+
+    /**
+     * Constructor.
+     */
     public WeatherTopComponent() {
+        logger.fine(PREFERRED_ID + " initializing....");
         initComponents();
-        createChartPanels();
+        initPanels();
+        initWeatherProviders();
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-
+        logger.config(PREFERRED_ID + " initialized.");
     }
 
-    private void createChartPanels() {
+    /**
+     * Gets the WeatherProvider used for overriding / interacting with the Weather.
+     * @return The SimpleWeatherProvider.
+     */
+    public SimpleWeatherProvider getSimpleWeather() {
+        return this.simpleWx;
+    }
+
+    /**
+     * Initializes the fuel model selections.
+     */
+    private void initWeatherProviders() {
+
+        // Listen for changes in the CPS Options/preferences...
+        prefsChangeListener = (PreferenceChangeEvent ignored) -> {
+            RealType uom = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US).equals(CpsOptions.UOM_US)
+                    ? WeatherType.AIR_TEMP_F : WeatherType.AIR_TEMP_C;
+            
+            Real tempSunrise = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNRISE_KEY, CpsOptions.DEFAULT_TEMP_SUNRISE));
+            Real tempNoon = new Real(uom, prefs.getInt(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200));
+            Real temp1400 = new Real(uom, prefs.getInt(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400));
+            Real tempSunset = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNSET_KEY, CpsOptions.DEFAULT_TEMP_SUNSET));
+
+            Real rhSunrise = new Real(uom, prefs.getInt(CpsOptions.RH_SUNRISE_KEY, CpsOptions.DEFAULT_RH_SUNRISE));
+            Real rhNoon = new Real(uom, prefs.getInt(CpsOptions.RH_1200_KEY, CpsOptions.DEFAULT_RH_1200));
+            Real rh1400 = new Real(uom, prefs.getInt(CpsOptions.RH_1400_KEY, CpsOptions.DEFAULT_RH_1400));
+            Real rhSunset = new Real(uom, prefs.getInt(CpsOptions.RH_SUNSET_KEY, CpsOptions.DEFAULT_RH_SUNSET));
+
+            diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
+            diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
+        };
+        prefs.addPreferenceChangeListener(prefsChangeListener);
+        // Fire a change event to load the preferences
+        prefsChangeListener.preferenceChange(null);
+
+        // Using a LookupListener to reinitialize the combobox whenever the list of providersComboBox changes
+        lookupWeatherProviders = Lookup.getDefault().lookupResult(WeatherProvider.class);
+        lookupWeatherProviders.addLookupListener((LookupEvent ev) -> {
+            // Reinitialize 
+            initProvidersComboBox();
+        });
+        // Init the combobox ocntents for the first time
+        initProvidersComboBox();
+    }
+
+    /**
+     * Populates the combo box.
+     */
+    @SuppressWarnings("unchecked")
+    private void initProvidersComboBox() {
+        // TODO: will need to arbitrate between current project fireground provider and last used provider
+
+        // Load ALL the WeatherProviders regardless of their extents
+        DefaultComboBoxModel<WeatherProvider> comboBoxModel = new DefaultComboBoxModel<>();
+        List<WeatherProvider> instances = DefaultWeatherProvider.getInstances();
+        instances.stream().forEach((instance) -> {
+            comboBoxModel.addElement(instance);
+        });
+        // Add the Simple and Diurnal weather providers
+        comboBoxModel.addElement(simpleWx);
+        comboBoxModel.addElement(diurnalWx);
+        
+        // Preselect the last used provider, if set, otherwise, just use the first provider 
+        String lastProviderClassName = prefs.get(LAST_WEATHER_PROVIDER,
+                instances.size() > 0 ? instances.get(0).getClass().getName() : "");
+        if (!lastProviderClassName.isEmpty()) {
+            // Select the matching class in the combobox model
+            for (int i = 0; i < comboBoxModel.getSize(); i++) {
+                WeatherProvider provider = comboBoxModel.getElementAt(i);
+
+                if (provider.getClass().getName().equals(lastProviderClassName)) {
+                    comboBoxModel.setSelectedItem(provider);
+                    Controller.getInstance().setWeatherProvider(provider);
+                }
+            }
+        }
+        this.providersComboBox.setModel(comboBoxModel);
+    }
+
+    /**
+     * Initializes the chart panels.
+     */
+    private void initPanels() {
         airTemperaturePanel = new AirTemperaturePanel();
         relativeHumidityPanel = new RelativeHumidityPanel();
         windPanel = new WindPanel();
@@ -112,24 +226,28 @@ public final class WeatherTopComponent extends TopComponent {
     private void initComponents() {
 
         upperPanel = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
+        providersComboBox = new javax.swing.JComboBox();
         centerPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.upperPanel.border.title"))); // NOI18N
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        providersComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                providersComboBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout upperPanelLayout = new javax.swing.GroupLayout(upperPanel);
         upperPanel.setLayout(upperPanelLayout);
         upperPanelLayout.setHorizontalGroup(
             upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jComboBox1, 0, 325, Short.MAX_VALUE)
+            .addComponent(providersComboBox, 0, 325, Short.MAX_VALUE)
         );
         upperPanelLayout.setVerticalGroup(
             upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jComboBox1)
+            .addComponent(providersComboBox)
         );
 
         add(upperPanel, java.awt.BorderLayout.NORTH);
@@ -138,9 +256,17 @@ public final class WeatherTopComponent extends TopComponent {
         add(centerPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void providersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providersComboBoxActionPerformed
+        // Update the Controller.
+        WeatherProvider provider = (WeatherProvider) providersComboBox.getSelectedItem();
+        logger.log(Level.FINE, "Selected weather provider: {0}", provider);
+        Controller.getInstance().setWeatherProvider(provider);
+        prefs.put(LAST_WEATHER_PROVIDER, provider.getClass().getName());
+    }//GEN-LAST:event_providersComboBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel centerPanel;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox providersComboBox;
     private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
     @Override

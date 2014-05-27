@@ -30,9 +30,7 @@
 package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.jfree.ChartCanvas;
-import com.emxsys.jfree.ChartUtil;
 import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
-import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wmt.cps.Controller;
 import java.awt.BasicStroke;
@@ -105,9 +103,11 @@ public class WindForcePanel extends javax.swing.JPanel {
             setMajorTickSpacing(25);
             setOrientation(SwingConstants.VERTICAL);
             addChangeListener((ChangeEvent e) -> {
+                // Update chart
                 int windDir = getValue();
                 chart.dataset.setValue(windDir);
-                Controller.getInstance().getSimpleWeather().setWindDirection(new Real(WeatherType.WIND_DIR, windDir));
+                // Update weather top component
+                Controller.getWeatherTopComponent().getSimpleWeather().setWindDirection(new Real(WeatherType.WIND_DIR, windDir));
             });
         }
     }
@@ -121,9 +121,11 @@ public class WindForcePanel extends javax.swing.JPanel {
             setMajorTickSpacing(25);
             setOrientation(SwingConstants.VERTICAL);
             addChangeListener((ChangeEvent e) -> {
+                // Update chart
                 int windSpd = getValue();
                 chart.dataset.setValue(windSpd);
-                Controller.getInstance().getSimpleWeather().setWindSpeed(new Real(WeatherType.WIND_SPEED_MPH, windSpd));
+                // Update weather top component
+                Controller.getWeatherTopComponent().getSimpleWeather().setWindSpeed(new Real(WeatherType.WIND_SPEED_MPH, windSpd));
             });
         }
     }
@@ -232,7 +234,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     }
 
     /**
-     * Creates new form WindPanel
+     * Constructor creates new form WindPanel.
      */
     public WindForcePanel() {
         initComponents();

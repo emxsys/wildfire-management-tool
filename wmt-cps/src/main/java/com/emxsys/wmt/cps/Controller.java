@@ -46,6 +46,7 @@ import com.emxsys.time.api.TimeProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
@@ -98,10 +99,8 @@ public class Controller {
     private final SunlightProvider sun;
     private final TimeProvider clock;
     private FuelModelProvider fuels;
+    private WeatherProvider weather;
     private ReticuleCoordinateProvider reticule;
-
-    private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
-    private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
 
     // Current data values
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
@@ -135,9 +134,6 @@ public class Controller {
         return ControllerHolder.INSTANCE;
     }
 
-    public SimpleWeatherProvider getSimpleWeather() {
-        return this.simpleWx;
-    }
 
     /**
      * Sets the FuelMoisure used by the Controller to determine the Fire Behavior at the current
@@ -169,6 +165,25 @@ public class Controller {
         // Fire a coordinate based update to update the FuelModel and charts
         EventQueue.invokeLater(() -> {
             terrainUpdater.update();
+        });
+    }
+
+    /**
+     * Sets the WeatherProvider used by the Controller to determine the weather at the current
+     * coordinate and time. Invoked by the WeatherTopComponent.
+     *
+     * @param fuels The new WeatherProvider.
+     */
+    public void setWeatherProvider(WeatherProvider weather) {
+        if (weather == null) {
+            throw new IllegalArgumentException("WeatherProvider is null.");
+        }
+        logger.log(Level.CONFIG, "WeatherProvider set to: {0}", weather.toString());
+        this.weather = weather;
+
+        // Fire a coordinate based update to update the FuelModel and charts
+        EventQueue.invokeLater(() -> {
+            //terrainUpdater.update();
         });
     }
 
@@ -205,25 +220,9 @@ public class Controller {
 
         // Listen for changes in the CPS Options/preferences...
         prefsChangeListener = (PreferenceChangeEvent ignored) -> {
-            RealType uom = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US).matches(CpsOptions.UOM_US)
-                    ? WeatherType.AIR_TEMP_F : WeatherType.AIR_TEMP_C;
-            Real tempSunrise = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNRISE_KEY, CpsOptions.DEFAULT_TEMP_SUNRISE));
-            Real tempNoon = new Real(uom, prefs.getInt(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200));
-            Real temp1400 = new Real(uom, prefs.getInt(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400));
-            Real tempSunset = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNSET_KEY, CpsOptions.DEFAULT_TEMP_SUNSET));
-
-            Real rhSunrise = new Real(uom, prefs.getInt(CpsOptions.RH_SUNRISE_KEY, CpsOptions.DEFAULT_RH_SUNRISE));
-            Real rhNoon = new Real(uom, prefs.getInt(CpsOptions.RH_1200_KEY, CpsOptions.DEFAULT_RH_1200));
-            Real rh1400 = new Real(uom, prefs.getInt(CpsOptions.RH_1400_KEY, CpsOptions.DEFAULT_RH_1400));
-            Real rhSunset = new Real(uom, prefs.getInt(CpsOptions.RH_SUNSET_KEY, CpsOptions.DEFAULT_RH_SUNSET));
-
-            diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
-            diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
-
             terrainShadingEnabled = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
         };
         prefs.addPreferenceChangeListener(prefsChangeListener);
-        // Fire a change event to load the preferences
         prefsChangeListener.preferenceChange(null);
 
         logger.config("Controller initialized.");
@@ -232,7 +231,7 @@ public class Controller {
     /**
      * Helper.
      */
-    private static ForcesTopComponent getForcesTopComponent() {
+    public static ForcesTopComponent getForcesTopComponent() {
         if (forcesWindow == null) {
             forcesWindow = (ForcesTopComponent) WindowManager.getDefault().findTopComponent(ForcesTopComponent.PREFERRED_ID);
             if (forcesWindow == null) {
@@ -245,7 +244,7 @@ public class Controller {
     /**
      * Helper.
      */
-    private static FuelTopComponent getFuelTopComponent() {
+    public static FuelTopComponent getFuelTopComponent() {
         if (fuelWindow == null) {
             fuelWindow = (FuelTopComponent) WindowManager.getDefault().findTopComponent(FuelTopComponent.PREFERRED_ID);
             if (fuelWindow == null) {
@@ -253,6 +252,18 @@ public class Controller {
             }
         }
         return fuelWindow;
+    }
+    /**
+     * Helper.
+     */
+    public static WeatherTopComponent getWeatherTopComponent() {
+        if (weatherWindow == null) {
+            weatherWindow = (WeatherTopComponent) WindowManager.getDefault().findTopComponent(WeatherTopComponent.PREFERRED_ID);
+            if (weatherWindow == null) {
+                throw new IllegalStateException("Cannot find tc: " + WeatherTopComponent.PREFERRED_ID);
+            }
+        }
+        return weatherWindow;
     }
 
     /**

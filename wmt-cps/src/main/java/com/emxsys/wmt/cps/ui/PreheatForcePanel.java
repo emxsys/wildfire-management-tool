@@ -220,7 +220,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         this.slider.addChangeListener((ChangeEvent e) -> {
             int airTemp = slider.getValue();
             airTempChart.dataset.setValue(airTemp);
-            Controller.getInstance().getSimpleWeather().setAirTemperature(new Real(WeatherType.AIR_TEMP_F, airTemp));
+            Controller.getWeatherTopComponent().getSimpleWeather().setAirTemperature(new Real(WeatherType.AIR_TEMP_F, airTemp));
         });
         rightPanel.add(this.slider, BorderLayout.EAST);
 

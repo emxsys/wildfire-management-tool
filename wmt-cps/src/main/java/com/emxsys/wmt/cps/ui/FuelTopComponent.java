@@ -154,6 +154,7 @@ public final class FuelTopComponent extends TopComponent {
     /**
      * Populates the combo box.
      */
+    @SuppressWarnings("unchecked")
     private void initProvidersComboBox() {
         // TODO: will need to arbitrate between current project fireground provider and last used provider
 
@@ -262,10 +263,8 @@ public final class FuelTopComponent extends TopComponent {
     private void providersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providersComboBoxActionPerformed
         // Update the Controller with the user's FuelModelProvider selection
         FuelModelProvider provider = (FuelModelProvider) providersComboBox.getSelectedItem();
-        
-        logger.log(Level.FINE, "Setting the the fuel model provider: {0}", provider);
+        logger.log(Level.FINE, "Selected fuel model provider: {0}", provider);
         Controller.getInstance().setFuelModelProvider(provider);
-        
         prefs.put(LAST_FUEL_MODEL_PROVIDER, provider.getClass().getName());
     }//GEN-LAST:event_providersComboBoxActionPerformed
 
