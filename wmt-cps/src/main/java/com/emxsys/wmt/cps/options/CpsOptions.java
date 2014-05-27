@@ -37,30 +37,31 @@ package com.emxsys.wmt.cps.options;
 public class CpsOptions {
 
     public static final String TERRESTRAL_SHADING_ENABLED = "wmt.cps.terrestrial.shading.enabled";
-
     public static final boolean DEFAULT_TERRESTRAL_SHADING = true;
-    public static final int DEFAULT_RH_1200 = 7;
-    public static final int DEFAULT_TEMP_1200 = 80;
-    public static final int DEFAULT_RH_SUNRISE = 20;
+    // Unit of Measure property key and values
+    public static final String UOM_KEY = "wmt.cps.uom";
     public static final String UOM_SI = "si";
-    public static final String UOM_KEY = "uom";
-    public static final String TEMP_SUNSET_KEY = "tempAtSunset";
-    public static final int DEFAULT_TEMP_SUNRISE = 65;
-    public static final String TEMP_1200_KEY = "tempAtNoon";
-    public static final int DEFAULT_TEMP_SUNSET = 75;
-    public static final String RH_SUNSET_KEY = "rhAtSunset";
-    // Humidity Preferences property keys
-    public static final String RH_1400_KEY = "rhAt1400";
-    // Defaults for rh controls
-    public static final int DEFAULT_RH_1400 = 6;
-    // Air Temp Preferences property keys
-    public static final String TEMP_1400_KEY = "tempAt1400";
-    public static final String RH_1200_KEY = "rhAtNoon";
     public static final String UOM_METRIC = "metric";
-    public static final String TEMP_SUNRISE_KEY = "tempAtSunrise";
-    // Defaults for temp controls (F)
-    public static final int DEFAULT_TEMP_1400 = 82;
-    public static final int DEFAULT_RH_SUNSET = 8;
-    public static final String RH_SUNRISE_KEY = "rhAtSunrise";
     public static final String UOM_US = "us";
+    public static final String DEFAULT_UOM = UOM_US;
+    // Air Temp Preferences property keys
+    public static final String TEMP_SUNRISE_KEY = "wmt.cps.tempAtSunrise";
+    public static final String TEMP_1200_KEY = "wmt.cps.tempAtNoon";
+    public static final String TEMP_1400_KEY = "wmt.cps.tempAt1400";
+    public static final String TEMP_SUNSET_KEY = "wmt.cps.tempAtSunset";
+    // Humidity Preferences property keys
+    public static final String RH_SUNRISE_KEY = "wmt.cps.rhAtSunrise";
+    public static final String RH_1200_KEY = "wmt.cps.rhAtNoon";
+    public static final String RH_1400_KEY = "wmt.cps.rhAt1400";
+    public static final String RH_SUNSET_KEY = "wmt.cps.rhAtSunset";
+    // Defaults for rh controls
+    public static final int DEFAULT_RH_SUNRISE = 20;
+    public static final int DEFAULT_RH_1200 = 7;
+    public static final int DEFAULT_RH_1400 = 6;
+    public static final int DEFAULT_RH_SUNSET = 8;
+    // Defaults for temp controls (F)
+    public static final int DEFAULT_TEMP_SUNRISE = 65;
+    public static final int DEFAULT_TEMP_1200 = 80;
+    public static final int DEFAULT_TEMP_1400 = 82;
+    public static final int DEFAULT_TEMP_SUNSET = 75;
 }
