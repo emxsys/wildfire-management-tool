@@ -83,6 +83,7 @@ public final class ForcesTopComponent extends TopComponent {
     public ForcesTopComponent() {
         initComponents();
         createPanels();
+        
         setName(Bundle.CTL_ForcesTopComponent());
         setToolTipText(Bundle.CTL_ForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
