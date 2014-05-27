@@ -34,6 +34,7 @@ import com.emxsys.gis.api.Terrain;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
 import java.time.ZonedDateTime;
+import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
@@ -75,19 +76,23 @@ import visad.Real;
 })
 public final class ForcesTopComponent extends TopComponent {
 
+    private static final Logger logger = Logger.getLogger(ForcesTopComponent.class.getName());
     public static final String PREFERRED_ID = "ForcesTopComponent";
     private PreheatForcePanel heatPanel;
     private WindForcePanel windPanel;
     private SlopeForcePanel slopePanel;
 
     public ForcesTopComponent() {
+        logger.fine(PREFERRED_ID + " initializing....");
+        
         initComponents();
         createPanels();
         
         setName(Bundle.CTL_ForcesTopComponent());
         setToolTipText(Bundle.CTL_ForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-
+        
+        logger.config(PREFERRED_ID + " initialized.");
     }
 
     public void updateCharts(Coord3D coord, Terrain terrain) {

@@ -49,12 +49,12 @@ import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
+import com.emxsys.wildfire.api.FuelMoisture;
+import com.emxsys.wildfire.api.FuelMoistureTuple;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.cps.ui.FuelTopComponent;
-import com.emxsys.wmt.cps.ui.PreheatForcePanel;
-import com.emxsys.wmt.cps.ui.SlopeForcePanel;
 import com.emxsys.wmt.cps.ui.WeatherTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import java.awt.EventQueue;
@@ -103,12 +103,15 @@ public class Controller {
     private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
 
+    // Current data values
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
     private final AtomicReference<FuelModel> fuelModelRef = new AtomicReference<>(StdFuelModel.INVALID);
+    private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(FuelMoistureTuple.INVALID);
     private final AtomicReference<Real> azimuthRef = new AtomicReference<>(new Real(SolarType.AZIMUTH_ANGLE));
     private final AtomicReference<Real> zenithRef = new AtomicReference<>(new Real(SolarType.ZENITH_ANGLE));
 
+    // Event handlers
     private final TerrainUpdater terrainUpdater;
     private final SolarUpdater solarUpdater;
     private final LookupListener reticuleLookupListener;
@@ -117,7 +120,7 @@ public class Controller {
     private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
     private final PreferenceChangeListener prefsChangeListener;
 
-    private boolean computeTerrestrialShading;
+    private boolean terrainShadingEnabled;
 
     static {
         logger.setLevel(Level.FINE);
@@ -132,12 +135,41 @@ public class Controller {
         return ControllerHolder.INSTANCE;
     }
 
-    /**
-     * Singleton implementation.
-     */
-    private static class ControllerHolder {
+    public SimpleWeatherProvider getSimpleWeather() {
+        return this.simpleWx;
+    }
 
-        private static final Controller INSTANCE = new Controller();
+    /**
+     * Sets the FuelMoisure used by the Controller to determine the Fire Behavior at the current
+     * coordinate. Set by the FuelTopComponent.
+     *
+     * @param fuelMoisture The new FuelMoisture.
+     */
+    public void setFuelMoisture(FuelMoisture fuelMoisture) {
+        if (fuelMoisture == null) {
+            throw new IllegalArgumentException("FuelMoisture is null");
+        }
+        logger.log(Level.CONFIG, "FuelMoisture set to: {0}", fuelMoisture.toString());
+        this.fuelMoistureRef.set(fuelMoisture);
+    }
+
+    /**
+     * Sets the FuelModelProvider used by the Controller to determine the FuelModel at the current
+     * coordinate. Called by the FuelTopComponent.
+     *
+     * @param fuels The new FuelModelProvider.
+     */
+    public void setFuelModelProvider(FuelModelProvider fuels) {
+        if (fuels == null) {
+            throw new IllegalArgumentException("FuelModelProvider is null.");
+        }
+        logger.log(Level.CONFIG, "FuelModelProvider set to: {0}", fuels.toString());
+        this.fuels = fuels;
+
+        // Fire a coordinate based update to update the FuelModel and charts
+        EventQueue.invokeLater(() -> {
+            terrainUpdater.update();
+        });
     }
 
     /**
@@ -188,34 +220,17 @@ public class Controller {
             diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
             diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
 
-            computeTerrestrialShading = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
+            terrainShadingEnabled = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
         };
         prefs.addPreferenceChangeListener(prefsChangeListener);
         // Fire a change event to load the preferences
         prefsChangeListener.preferenceChange(null);
 
-    }
-
-    public SimpleWeatherProvider getSimpleWeather() {
-        return this.simpleWx;
+        logger.config("Controller initialized.");
     }
 
     /**
-     * Sets the FuelModelProvider used by the Controller to determine the FuelModel at the current
-     * coordinate. Called by the FuelTopComponent.
-     *
-     * @param fuels The new FuelModelProvider.
-     */
-    public void setFuelModelProvider(FuelModelProvider fuels) {
-        if (fuels==null) {
-            throw new IllegalArgumentException("FuelModelProvider is null.");
-        }
-        logger.log(Level.CONFIG, "New FuelModelProvider: {0}", fuels.toString());
-        this.fuels = fuels;
-    }
-
-    /**
-     * Convenience method.
+     * Helper.
      */
     private static ForcesTopComponent getForcesTopComponent() {
         if (forcesWindow == null) {
@@ -228,7 +243,7 @@ public class Controller {
     }
 
     /**
-     * Convenience method.
+     * Helper.
      */
     private static FuelTopComponent getFuelTopComponent() {
         if (fuelWindow == null) {
@@ -247,7 +262,7 @@ public class Controller {
     private static class TerrainUpdater implements ReticuleCoordinateListener, Runnable {
 
         private final Controller controller;
-        private static final RequestProcessor processor = new RequestProcessor(SlopeForcePanel.class);
+        private static final RequestProcessor processor = new RequestProcessor(TerrainUpdater.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<ReticuleCoordinateEvent> lastEvent = new AtomicReference<>(new ReticuleCoordinateEvent(this, GeoCoord3D.INVALID_COORD));
         private final int UPDATE_INTERVAL_MS = 100;
@@ -256,49 +271,57 @@ public class Controller {
             this.controller = controller;
         }
 
-        @Override
-        public void updateCoordinate(ReticuleCoordinateEvent evt) {
+        public void update() {
             // Sliding task: coallese the update events into fixed intervals
-            this.lastEvent.set(evt);
             if (this.updatingTask.isFinished()) {
                 this.updatingTask.schedule(UPDATE_INTERVAL_MS);
             }
         }
 
         @Override
+        public void updateCoordinate(ReticuleCoordinateEvent evt) {
+            this.lastEvent.set(evt);
+            update();
+        }
+
+        @Override
         public void run() {
-            ReticuleCoordinateEvent event = this.lastEvent.get();
-            if (event == null || controller.earth == null) {
-                return;
-            }
-            Coord3D coordinate = event.getCoordinate();
-            controller.coordRef.set(coordinate);
 
-            // Get the terrain related data
-            Terrain terrain = controller.earth.getTerrain(coordinate);
-            ZonedDateTime time = controller.timeRef.get();
-            Real azimuth = controller.azimuthRef.get();
-            Real zenith = controller.zenithRef.get();
-            boolean isShaded
-                    = controller.computeTerrestrialShading && !(azimuth.isMissing() || zenith.isMissing())
-                    ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith) : false;
-
-            // Get the fuel model data at the coordinate
-            FuelModel fuelModel = controller.fuels != null 
-                    ? controller.fuels.getFuelModel(coordinate) : StdFuelModel.INVALID;
-            controller.fuelModelRef.set(fuelModel);
-
-            // Update the CPS UI components (in the Event thread)
-            EventQueue.invokeLater(() -> {
-                // Update Fuels
-                getFuelTopComponent().updateCharts(fuelModel);
-                
-                // Update Forces
-                getForcesTopComponent().updateCharts(coordinate, terrain);
-                if (controller.computeTerrestrialShading) {
-                    getForcesTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+            try {
+                ReticuleCoordinateEvent event = this.lastEvent.get();
+                if (event == null || controller.earth == null) {
+                    return;
                 }
-            });
+                Coord3D coordinate = event.getCoordinate();
+                controller.coordRef.set(coordinate);
+
+                // Get the terrain related data
+                Terrain terrain = controller.earth.getTerrain(coordinate);
+                ZonedDateTime time = controller.timeRef.get();
+                Real azimuth = controller.azimuthRef.get();
+                Real zenith = controller.zenithRef.get();
+                boolean isShaded
+                        = controller.terrainShadingEnabled && !(azimuth.isMissing() || zenith.isMissing())
+                        ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith) : false;
+
+                // Get the fuel model data at the coordinate
+                FuelModel fuelModel = controller.fuels != null ? controller.fuels.getFuelModel(coordinate) : StdFuelModel.INVALID;
+                controller.fuelModelRef.set(fuelModel);
+
+                // Update the CPS UI components (in the Event thread)
+                EventQueue.invokeLater(() -> {
+                    // Update Fuels
+                    getFuelTopComponent().updateCharts(fuelModel);
+
+                    // Update Forces
+                    getForcesTopComponent().updateCharts(coordinate, terrain);
+                    if (controller.terrainShadingEnabled) {
+                        getForcesTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                    }
+                });
+            } catch (Exception e) {
+                Exceptions.printStackTrace(e);
+            }
         }
     }
 
@@ -309,7 +332,7 @@ public class Controller {
     private static class SolarUpdater implements TimeListener, Runnable {
 
         private final Controller controller;
-        private static final RequestProcessor processor = new RequestProcessor(PreheatForcePanel.class);
+        private static final RequestProcessor processor = new RequestProcessor(SolarUpdater.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<TimeEvent> lastTimeEvent = new AtomicReference<>(new TimeEvent(this, null, null));
         // Array indicies
@@ -347,7 +370,7 @@ public class Controller {
                 controller.azimuthRef.set(azimuth);
                 controller.zenithRef.set(zenith);
                 boolean isShaded
-                        = controller.computeTerrestrialShading
+                        = controller.terrainShadingEnabled
                         ? controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith)
                         : false;
 
@@ -362,4 +385,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Singleton implementation.
+     */
+    private static class ControllerHolder {
+
+        private static final Controller INSTANCE = new Controller();
+    }
 }

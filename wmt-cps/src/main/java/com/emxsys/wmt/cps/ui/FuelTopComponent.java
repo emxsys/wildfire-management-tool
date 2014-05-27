@@ -112,6 +112,7 @@ public final class FuelTopComponent extends TopComponent {
      * Constructor.
      */
     public FuelTopComponent() {
+        logger.fine(PREFERRED_ID + " initializing....");
         initComponents();
         initPanels();
         initFuelModelProviders();
@@ -119,6 +120,8 @@ public final class FuelTopComponent extends TopComponent {
         setName(Bundle.CTL_FuelTopComponent());
         setToolTipText(Bundle.CTL_FuelTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
+
+        logger.config(PREFERRED_ID + " initialized.");
     }
 
     /**
