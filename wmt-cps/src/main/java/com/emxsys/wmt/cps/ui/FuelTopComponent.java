@@ -29,14 +29,33 @@
  */
 package com.emxsys.wmt.cps.ui;
 
+import com.emxsys.wildfire.api.FuelModel;
+import com.emxsys.wildfire.api.FuelModelProvider;
+import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
+import com.emxsys.wmt.cps.Controller;
 import com.terramenta.ribbon.RibbonActionReference;
+import java.awt.Toolkit;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+import javax.swing.DefaultComboBoxModel;
+import org.netbeans.api.javahelp.Help;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.windows.TopComponent;
+import org.openide.util.HelpCtx;
+import org.openide.util.Lookup;
+import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbPreferences;
+import org.openide.windows.TopComponent;
 
 /**
- * Top component which displays something.
+ * The FuelTopComponent provides the FuelModelProvider selection interface and displays the
+ * current Fuel Model and Fuel Conditions.
+ *
+ * @author Bruce Schubert
  */
 @ConvertAsProperties(
         dtd = "-//com.emxsys.wmt.cps.ui//Fuel//EN",
@@ -75,42 +94,181 @@ import org.openide.util.NbBundle.Messages;
 public final class FuelTopComponent extends TopComponent {
 
     public static final String PREFERRED_ID = "FuelTopComponent";
+    public static final String LAST_FUEL_MODEL_PROVIDER = "wmt.cps.lastFuelModelProvider";
+
     private FuelModelPanel fuelModelPanel;
     private FuelMoisturePanel fuelMoisturePanel;
     private FuelMoistureScenarioPanel fuelMoistureScenarioPanel;
 
+    /** Listener for changes in the existence of data providersComboBox */
+    private Result<FuelModelProvider> lookupFuelModelProviders;
+
+    private final Preferences prefs = NbPreferences.forModule(FuelTopComponent.class);
+    private static final Logger logger = Logger.getLogger(FuelTopComponent.class.getName());
+    private FuelModel currentFuelModel;
+
+    /**
+     * Constructor.
+     */
     public FuelTopComponent() {
         initComponents();
-        createPanels();
+        initPanels();
+        initFuelModelProviders();
+
         setName(Bundle.CTL_FuelTopComponent());
         setToolTipText(Bundle.CTL_FuelTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-
     }
 
-    private void createPanels() {
+    /**
+     * Initializes the chart panels.
+     */
+    private void initPanels() {
         fuelModelPanel = new FuelModelPanel();
         fuelMoisturePanel = new FuelMoisturePanel();
         fuelMoistureScenarioPanel = new FuelMoistureScenarioPanel();
 
         // Assign panels to the Grid Layout
-        add(fuelModelPanel);
-        add(fuelMoisturePanel);
-        add(fuelMoistureScenarioPanel);
+        centerPanel.add(fuelModelPanel);
+        centerPanel.add(fuelMoisturePanel);
+        centerPanel.add(fuelMoistureScenarioPanel);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
+    /**
+     * Initializes the fuel model selections.
+     */
+    private void initFuelModelProviders() {
+        // Using a LookupListener to reinitialize the combobox whenever the list of providersComboBox changes
+        lookupFuelModelProviders = Lookup.getDefault().lookupResult(FuelModelProvider.class);
+        lookupFuelModelProviders.addLookupListener((LookupEvent ev) -> {
+            initProvidersComboBox();
+        });
+        // Init the combobox ocntents for the first time
+        initProvidersComboBox();
+    }
+
+    /**
+     * Populates the combo box.
+     */
+    private void initProvidersComboBox() {
+        // TODO: will need to arbitrate between current project fireground provider and last used provider
+
+        // Load ALL the FuelModelProviders regardless of their extents
+        DefaultComboBoxModel<FuelModelProvider> comboBoxModel = new DefaultComboBoxModel<>();
+        List<FuelModelProvider> instances = DefaultFuelModelProvider.getInstances();
+        instances.stream().forEach((instance) -> {
+            comboBoxModel.addElement(instance);
+        });
+        // Preselect the last used provider, if set, otherwise, use the first provider 
+        String lastProviderClassName = prefs.get(LAST_FUEL_MODEL_PROVIDER,
+                instances.size() > 0 ? instances.get(0).getClass().getName() : "");
+        if (!lastProviderClassName.isEmpty()) {
+            // Select the matching class in the combobox model
+            for (int i = 0; i < comboBoxModel.getSize(); i++) {
+                FuelModelProvider provider = comboBoxModel.getElementAt(i);
+
+                if (provider.getClass().getName().equals(lastProviderClassName)) {
+                    comboBoxModel.setSelectedItem(provider);
+                    Controller.getInstance().setFuelModelProvider(provider);
+                }
+            }
+        }
+        this.providersComboBox.setModel(comboBoxModel);
+    }
+
+    /**
+     * Update JFreeCharts with the current fuel model.
+     *
+     * @param fuelModel The current fuel model.
+     */
+    public void updateCharts(FuelModel fuelModel) {
+        currentFuelModel = fuelModel;
+        fuelModelPanel.updateChart(fuelModel);
+    }
+
+    private void showHelp(String id) {
+        Help help = Lookup.getDefault().lookup(Help.class);
+        if (help != null && help.isValidID(id, true)) {
+            help.showHelp(new HelpCtx(id));
+        } else {
+            Toolkit.getDefaultToolkit().beep();
+        }
+    }
+
+    /** This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setLayout(new java.awt.GridLayout(3, 1));
+        upperPanel = new javax.swing.JPanel();
+        providersComboBox = new javax.swing.JComboBox();
+        infoBtn = new javax.swing.JButton();
+        centerPanel = new javax.swing.JPanel();
+
+        setLayout(new java.awt.BorderLayout());
+
+        upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelTopComponent.class, "FuelTopComponent.upperPanel.border.title"))); // NOI18N
+        upperPanel.setLayout(new java.awt.BorderLayout());
+
+        providersComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                providersComboBoxActionPerformed(evt);
+            }
+        });
+        upperPanel.add(providersComboBox, java.awt.BorderLayout.CENTER);
+
+        infoBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/ui/help.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(infoBtn, org.openide.util.NbBundle.getMessage(FuelTopComponent.class, "FuelTopComponent.infoBtn.text")); // NOI18N
+        infoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoBtnActionPerformed(evt);
+            }
+        });
+        upperPanel.add(infoBtn, java.awt.BorderLayout.EAST);
+
+        add(upperPanel, java.awt.BorderLayout.PAGE_START);
+
+        centerPanel.setLayout(new java.awt.GridLayout(3, 1));
+        add(centerPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void providersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providersComboBoxActionPerformed
+        // Update the Controller with the user's FuelModelProvider selection
+        FuelModelProvider provider = (FuelModelProvider) providersComboBox.getSelectedItem();
+        Controller.getInstance().setFuelModelProvider(provider);
+        prefs.put(LAST_FUEL_MODEL_PROVIDER, provider.getClass().getName());
+    }//GEN-LAST:event_providersComboBoxActionPerformed
+
+    private void infoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoBtnActionPerformed
+
+        // Build a help string ID that matches an entry in cps-map.xml file ...
+        if (currentFuelModel != null) {
+            String id;
+            switch (currentFuelModel.getModelGroup()) {
+                case StdFuelModel.FUEL_MODEL_GROUP_ORIGINAL_13:
+                    id = "com.emxsys.wmt.cps.fuelmodel-13";
+                    id += currentFuelModel.getModelCode();
+                    break;
+                case StdFuelModel.FUEL_MODEL_GROUP_STANDARD_40:
+                    id = "com.emxsys.wmt.cps.fuelmodel-40";
+                    id += currentFuelModel.getModelCode();
+                    break;
+                default:
+                    return;
+            }
+            // ... and then show the javahelp
+            showHelp(id);
+        }
+    }//GEN-LAST:event_infoBtnActionPerformed
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel centerPanel;
+    private javax.swing.JButton infoBtn;
+    private javax.swing.JComboBox providersComboBox;
+    private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -133,4 +291,5 @@ public final class FuelTopComponent extends TopComponent {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
+
 }
