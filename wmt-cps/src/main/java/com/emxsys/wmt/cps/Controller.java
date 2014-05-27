@@ -52,8 +52,10 @@ import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
+import com.emxsys.wmt.cps.ui.FuelTopComponent;
 import com.emxsys.wmt.cps.ui.PreheatForcePanel;
 import com.emxsys.wmt.cps.ui.SlopeForcePanel;
+import com.emxsys.wmt.cps.ui.WeatherTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import java.awt.EventQueue;
 import java.rmi.RemoteException;
@@ -87,14 +89,17 @@ import visad.VisADException;
 public class Controller {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
-    private static ForcesTopComponent tc;
+    // Top components that interact with this Controllelr
+    private static ForcesTopComponent forcesWindow;
+    private static FuelTopComponent fuelWindow;
+    private static WeatherTopComponent weatherWindow;
     // Data providers - Event generators
     private final ShadedTerrainProvider earth;
     private final SunlightProvider sun;
     private final TimeProvider clock;
     private FuelModelProvider fuels;
     private ReticuleCoordinateProvider reticule;
-    
+
     private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
 
@@ -111,7 +116,7 @@ public class Controller {
 
     private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
     private final PreferenceChangeListener prefsChangeListener;
-    
+
     private boolean computeTerrestrialShading;
 
     static {
@@ -174,20 +179,20 @@ public class Controller {
             Real tempNoon = new Real(uom, prefs.getInt(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200));
             Real temp1400 = new Real(uom, prefs.getInt(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400));
             Real tempSunset = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNSET_KEY, CpsOptions.DEFAULT_TEMP_SUNSET));
-            
+
             Real rhSunrise = new Real(uom, prefs.getInt(CpsOptions.RH_SUNRISE_KEY, CpsOptions.DEFAULT_RH_SUNRISE));
             Real rhNoon = new Real(uom, prefs.getInt(CpsOptions.RH_1200_KEY, CpsOptions.DEFAULT_RH_1200));
             Real rh1400 = new Real(uom, prefs.getInt(CpsOptions.RH_1400_KEY, CpsOptions.DEFAULT_RH_1400));
             Real rhSunset = new Real(uom, prefs.getInt(CpsOptions.RH_SUNSET_KEY, CpsOptions.DEFAULT_RH_SUNSET));
-            
+
             diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
             diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
-            
+
             computeTerrestrialShading = prefs.getBoolean(CpsOptions.TERRESTRAL_SHADING_ENABLED, CpsOptions.DEFAULT_TERRESTRAL_SHADING);
         };
         prefs.addPreferenceChangeListener(prefsChangeListener);
         // Fire a change event to load the preferences
-        prefsChangeListener.preferenceChange(null); 
+        prefsChangeListener.preferenceChange(null);
 
     }
 
@@ -195,21 +200,44 @@ public class Controller {
         return this.simpleWx;
     }
 
+    /**
+     * Sets the FuelModelProvider used by the Controller to determine the FuelModel at the current
+     * coordinate. Called by the FuelTopComponent.
+     *
+     * @param fuels The new FuelModelProvider.
+     */
     public void setFuelModelProvider(FuelModelProvider fuels) {
+        if (fuels==null) {
+            throw new IllegalArgumentException("FuelModelProvider is null.");
+        }
+        logger.log(Level.CONFIG, "New FuelModelProvider: {0}", fuels.toString());
         this.fuels = fuels;
     }
-    
+
     /**
      * Convenience method.
      */
-    private static ForcesTopComponent getTopComponent() {
-        if (tc == null) {
-            tc = (ForcesTopComponent) WindowManager.getDefault().findTopComponent(ForcesTopComponent.PREFERRED_ID);
-            if (tc == null) {
+    private static ForcesTopComponent getForcesTopComponent() {
+        if (forcesWindow == null) {
+            forcesWindow = (ForcesTopComponent) WindowManager.getDefault().findTopComponent(ForcesTopComponent.PREFERRED_ID);
+            if (forcesWindow == null) {
                 throw new IllegalStateException("Cannot find tc: " + ForcesTopComponent.PREFERRED_ID);
             }
         }
-        return tc;
+        return forcesWindow;
+    }
+
+    /**
+     * Convenience method.
+     */
+    private static FuelTopComponent getFuelTopComponent() {
+        if (fuelWindow == null) {
+            fuelWindow = (FuelTopComponent) WindowManager.getDefault().findTopComponent(FuelTopComponent.PREFERRED_ID);
+            if (fuelWindow == null) {
+                throw new IllegalStateException("Cannot find tc: " + FuelTopComponent.PREFERRED_ID);
+            }
+        }
+        return fuelWindow;
     }
 
     /**
@@ -246,23 +274,30 @@ public class Controller {
             Coord3D coordinate = event.getCoordinate();
             controller.coordRef.set(coordinate);
 
+            // Get the terrain related data
             Terrain terrain = controller.earth.getTerrain(coordinate);
             ZonedDateTime time = controller.timeRef.get();
             Real azimuth = controller.azimuthRef.get();
             Real zenith = controller.zenithRef.get();
-
             boolean isShaded
                     = controller.computeTerrestrialShading && !(azimuth.isMissing() || zenith.isMissing())
-                    ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith)
-                    : false;
+                    ? controller.earth.isCoordinateTerrestialShaded(coordinate, azimuth, zenith) : false;
+
+            // Get the fuel model data at the coordinate
+            FuelModel fuelModel = controller.fuels != null 
+                    ? controller.fuels.getFuelModel(coordinate) : StdFuelModel.INVALID;
+            controller.fuelModelRef.set(fuelModel);
 
             // Update the CPS UI components (in the Event thread)
             EventQueue.invokeLater(() -> {
-                getTopComponent().updateCharts(coordinate, terrain);
+                // Update Fuels
+                getFuelTopComponent().updateCharts(fuelModel);
+                
+                // Update Forces
+                getForcesTopComponent().updateCharts(coordinate, terrain);
                 if (controller.computeTerrestrialShading) {
-                    getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                    getForcesTopComponent().updateCharts(time, azimuth, zenith, isShaded);
                 }
-
             });
         }
     }
@@ -317,7 +352,7 @@ public class Controller {
                         : false;
 
                 EventQueue.invokeLater(() -> {
-                    getTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                    getForcesTopComponent().updateCharts(time, azimuth, zenith, isShaded);
                 });
 
             } catch (VisADException | RemoteException ex) {
