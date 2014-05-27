@@ -48,4 +48,10 @@ public abstract class AbstractFuelModelProvider implements FuelModelProvider {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
+
+    @Override
+    public String toString() {
+        return getName() + " [" + getSource() + "]";
+    }
+
 }
