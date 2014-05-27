@@ -57,7 +57,7 @@ public enum StdFuelMoistureScenario {
      */
     @Override
     public String toString() {
-        return scenarioName + " - " + fuelMoisture.toString();
+        return scenarioName;
     }
 
     public FuelMoisture getFuelMoisture() {
