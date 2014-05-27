@@ -47,15 +47,15 @@ import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.lookup.ServiceProvider;
 
-
 /**
- * The Std13FuelModelProvider decodes the colors in a raster layer from LANDFIRE to determine the
- * fuel model at a given lat/lon.
+ * The Std13FuelModelProvider decodes the colors in a raster layer from LANDFIRE
+ * to determine the fuel model at a given lat/lon.
  *
  * @author Bruce Schubert
  */
 @ServiceProvider(service = FuelModelProvider.class, position = 2000)
 public class Std13FuelModelProvider extends AbstractFuelModelProvider {
+
     private Lookup.Result<FBFM13Layer> fuelModelLayers;
     private FBFM13Layer fuelModelLayer;
     private final GeoSector extents = new GeoSector(22.6952681387, -128.0067177405, 51.6768794844, -65.2077897436);
@@ -79,14 +79,15 @@ public class Std13FuelModelProvider extends AbstractFuelModelProvider {
     }
 
     /**
-     * Examines the currently loaded data providers looking for a FuelModel capability. If one is
-     * found, then a lookup result listener is established on that provider.
+     * Examines the currently loaded data providers looking for a FuelModel
+     * capability. If one is found, then a lookup result listener is established
+     * on that provider.
      */
     private void checkForFuelModelLayer() {
         Collection<? extends FBFM13Layer> allInstances = this.fuelModelLayers.allInstances();
         if (allInstances.isEmpty()) {
             this.fuelModelLayer = null;
-            logger.config("A Std 13 Fuel Model layer is not available. Fuel Model lookup is disabled.");
+            logger.config("A Std 13 Fuel Model layer is not yet available. Fuel Model lookup is disabled.");
             return;
         }
 
@@ -104,22 +105,29 @@ public class Std13FuelModelProvider extends AbstractFuelModelProvider {
 
     /**
      * Gets the FuelModel at the given location.
+     *
      * @param location The location where the fuel model is sampled.
-     * @return The fuel model at the location, or StdFuelModel.INVALID if not found.
+     * @return The fuel model at the location, or StdFuelModel.INVALID if not
+     * found.
      */
     @Override
     public FuelModel getFuelModel(Coord2D location) {
+        if (this.fuelModelLayer == null) {
+            return StdFuelModel.INVALID;
+        }
         // Get the query capability object
         QueryableByPoint query = this.fuelModelLayer.getLookup().lookup(QueryableByPoint.class);
         if (query == null) {
             throw new IllegalStateException("FuelModel layer doesn't support QueryableByPoint");
         }
         // Find the fuel model at this location
-        Iterator<?> results = query.getObjectsAtLatLon(location).getResults().iterator();
-        if (results.hasNext()) {
-            Object objectAtLatLon = results.next();
-            if (objectAtLatLon != null && objectAtLatLon instanceof StdFuelModel) {
-                return (StdFuelModel) objectAtLatLon;
+        if (!location.isMissing() && getExtents().contains(location)) {
+            Iterator<?> results = query.getObjectsAtLatLon(location).getResults().iterator();
+            if (results.hasNext()) {
+                Object objectAtLatLon = results.next();
+                if (objectAtLatLon != null && objectAtLatLon instanceof StdFuelModel) {
+                    return (StdFuelModel) objectAtLatLon;
+                }
             }
         }
         logger.log(Level.FINE, "No FuelModel found for {0}", location);

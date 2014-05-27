@@ -48,8 +48,9 @@ import org.openide.util.LookupEvent;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * The Std40FuelModelProvider provides StdFuelModel instances from the FBFM40Layer.
- * 
+ * The Std40FuelModelProvider provides StdFuelModel instances from the
+ * FBFM40Layer.
+ *
  * @author Bruce Schubert
  */
 @ServiceProvider(service = FuelModelProvider.class, position = 1000)
@@ -86,7 +87,7 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
         Collection<? extends FBFM40Layer> allInstances = this.fuelModelLayers.allInstances();
         if (allInstances.isEmpty()) {
             this.fuelModelLayer = null;
-            logger.config("A Std 40 Fuel Model layer is not available. Fuel Model lookup is disabled.");
+            logger.config("A Std 40 Fuel Model layer is not yet available. Fuel Model lookup is disabled.");
             return;
         }
 
@@ -104,25 +105,32 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
 
     /**
      * Gets the FuelModel at the given location.
+     *
      * @param location The location where the fuel model is sampled.
-     * @return The fuel model at the location, or StdFuelModel.INVALID if not found.
-     */    
+     * @return The fuel model at the location, or StdFuelModel.INVALID if not
+     * found.
+     */
     @Override
     public FuelModel getFuelModel(Coord2D location) {
+        if (this.fuelModelLayer == null) {
+            return StdFuelModel.INVALID;
+        }
         // Get the query capability object
         QueryableByPoint query = this.fuelModelLayer.getLookup().lookup(QueryableByPoint.class);
         if (query == null) {
             throw new IllegalStateException("FuelModel layer doesn't support QueryableByPoint");
         }
         // Find the fuel model at this location
-        Iterator<?> results = query.getObjectsAtLatLon(location).getResults().iterator();
-        if (results.hasNext()) {
-            Object objectAtLatLon = results.next();
-            if (objectAtLatLon != null && objectAtLatLon instanceof StdFuelModel) {
-                return (StdFuelModel) objectAtLatLon;
+        if (!location.isMissing() && getExtents().contains(location)) {
+            Iterator<?> results = query.getObjectsAtLatLon(location).getResults().iterator();
+            if (results.hasNext()) {
+                Object objectAtLatLon = results.next();
+                if (objectAtLatLon != null && objectAtLatLon instanceof StdFuelModel) {
+                    return (StdFuelModel) objectAtLatLon;
+                }
             }
         }
-        logger.log(Level.FINE, "No FuelModel found for {0}", location);        
+        logger.log(Level.FINE, "No FuelModel found for {0}", location);
         return StdFuelModel.INVALID;
     }
 
