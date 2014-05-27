@@ -70,7 +70,7 @@ public class Std13FuelModelProvider extends AbstractFuelModelProvider {
         } else {
             // Listen for the existance of fuel model layers
             // TODO: this seems kinda clunky...we 'should' be able to interrogate fuels w/o a viewer
-            this.fuelModelLayers = viewer.getLookup().lookupResult(FBFM13Layer.class);
+            this.fuelModelLayers = viewer.getGisLayerList().getLookup().lookupResult(FBFM13Layer.class);
             this.fuelModelLayers.addLookupListener((LookupEvent ev) -> {
                 checkForFuelModelLayer();
             });
@@ -102,6 +102,11 @@ public class Std13FuelModelProvider extends AbstractFuelModelProvider {
         return this.extents;
     }
 
+    /**
+     * Gets the FuelModel at the given location.
+     * @param location The location where the fuel model is sampled.
+     * @return The fuel model at the location, or StdFuelModel.INVALID if not found.
+     */
     @Override
     public FuelModel getFuelModel(Coord2D location) {
         // Get the query capability object
@@ -117,7 +122,8 @@ public class Std13FuelModelProvider extends AbstractFuelModelProvider {
                 return (StdFuelModel) objectAtLatLon;
             }
         }
-        return null;
+        logger.log(Level.FINE, "No FuelModel found for {0}", location);
+        return StdFuelModel.INVALID;
     }
 
     @Override

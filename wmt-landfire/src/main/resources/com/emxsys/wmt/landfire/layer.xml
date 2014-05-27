@@ -30,7 +30,7 @@
                     <attr name="category" stringvalue="Fuels"/>
                     <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
                     <attr name="active" boolvalue="true"/>
-                    <attr name="actuate" stringvalue="onLoad"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
                     <attr name="config" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/LANDFIRE.FBFM40.xml"/>
                     <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_FBFM40_Name"/>
                     <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.FBFM40Layer"/>

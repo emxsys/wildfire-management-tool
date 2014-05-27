@@ -48,7 +48,8 @@ import org.openide.util.LookupEvent;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- *
+ * The Std40FuelModelProvider provides StdFuelModel instances from the FBFM40Layer.
+ * 
  * @author Bruce Schubert
  */
 @ServiceProvider(service = FuelModelProvider.class, position = 1000)
@@ -68,7 +69,7 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
         } else {
             // Listen for the existance of fuel model layers
             // TODO: this seems kinda clunky...we 'should' be able to interrogate fuels w/o a viewer
-            this.fuelModelLayers = viewer.getLookup().lookupResult(FBFM40Layer.class);
+            this.fuelModelLayers = viewer.getGisLayerList().getLookup().lookupResult(FBFM40Layer.class);
             this.fuelModelLayers.addLookupListener((LookupEvent ev) -> {
                 checkForFuelModelLayer();
             });
@@ -101,6 +102,11 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
         return this.extents;
     }
 
+    /**
+     * Gets the FuelModel at the given location.
+     * @param location The location where the fuel model is sampled.
+     * @return The fuel model at the location, or StdFuelModel.INVALID if not found.
+     */    
     @Override
     public FuelModel getFuelModel(Coord2D location) {
         // Get the query capability object
@@ -116,7 +122,8 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
                 return (StdFuelModel) objectAtLatLon;
             }
         }
-        return null;
+        logger.log(Level.FINE, "No FuelModel found for {0}", location);        
+        return StdFuelModel.INVALID;
     }
 
     @Override
