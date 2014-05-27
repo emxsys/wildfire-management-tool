@@ -200,7 +200,7 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
             // Calls default constructor
             Lookup.Result<WeatherProvider> result = Lookup.getDefault().lookupResult(WeatherProvider.class);
             for (Lookup.Item<WeatherProvider> item : result.allItems()) {
-                if (item.getType().equals(NwsWeatherProvider.class)){
+                if (item.getType().equals(NwsWeatherProvider.class)) {
                     return (NwsWeatherProvider) item.getInstance();
                 }
             }
@@ -225,6 +225,11 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
         InstanceContent content = getContent();
         content.add((PointForecaster) this::getPointForecast);
         content.add((PointForecastPresenter) this::getPointForecastPage);
+    }
+
+    @Override
+    public String getName() {
+        return "NWS Weather";
     }
 
     @Override
@@ -301,7 +306,7 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
 
             // Parse the XML
             List<FlatField> fields = new DwmlParser(dwml).parse();
-            if (fields==null || fields.isEmpty()) {
+            if (fields == null || fields.isEmpty()) {
                 return null;
             }
             return fields.get(0);

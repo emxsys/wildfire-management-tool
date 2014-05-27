@@ -78,4 +78,9 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
         return content;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
 }

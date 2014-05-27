@@ -179,6 +179,11 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
         
     }
 
+    @Override
+    public String getName() {
+        return "MesoWest Weather";
+    }
+
 
     /**
      * Gets the latest weather observations within the area of interest.

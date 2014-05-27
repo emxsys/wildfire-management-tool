@@ -73,6 +73,11 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
         InstanceContent content = getContent();
         content.add((ConditionsObserver) this::getCurrentWeather);  // functional interface 
     }
+    
+    @Override
+    public String getName() {
+        return "Simple Weather";
+    }
 
     public void setWindSpeed(Real windSpd) {
         this.windSpd = Reals.convertTo(WeatherType.WIND_SPEED_KTS, windSpd);

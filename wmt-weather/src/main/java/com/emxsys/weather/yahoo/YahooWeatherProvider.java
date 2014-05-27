@@ -237,6 +237,11 @@ public class YahooWeatherProvider extends AbstractWeatherProvider {
     public Weather getWeather(Date utcTime, Coord2D coord) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    @Override
+    public String getName() {
+        return "Yahoo Weather";
+    }
+
 
     public ImageIcon getImageIcon() {
         return ImageUtil.createImageIconFromResource("yql.png", getClass());

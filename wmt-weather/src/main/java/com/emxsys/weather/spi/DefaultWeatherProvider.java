@@ -135,6 +135,12 @@ public class DefaultWeatherProvider {
             // TODO: lookup the weather, if not found use general weather
             return new WeatherTuple();
         }
+        
+        @Override
+        public String getName() {
+            return "Dummy Weather";
+        }
+
 
         @Override
         public ImageIcon getImageIcon() {

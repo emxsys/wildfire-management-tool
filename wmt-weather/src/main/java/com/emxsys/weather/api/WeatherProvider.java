@@ -44,6 +44,13 @@ public interface WeatherProvider extends Lookup.Provider {
      */
     <T> T getCapability(Class<T> clazz);
     
+    
+    /**
+     * Gets the name of this provider.
+     * @return A name for this provider.
+     */
+    String getName();
+    
     /**
      * Gets an icon representative of this provider, e.g., Yahoo, NWS, WeatherUnderground.
      * @return An ImageIcon; may be null

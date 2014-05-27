@@ -82,6 +82,11 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         InstanceContent content = getContent();
         content.add((ConditionsObserver) this::getCurrentWeather);  // functional interface 
     }
+    
+    @Override
+    public String getName() {
+        return "Diurnal Weather";
+    }
 
     public void initializeAirTemperatures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
         this.tempAtSunrise = tempAtSunrise;
