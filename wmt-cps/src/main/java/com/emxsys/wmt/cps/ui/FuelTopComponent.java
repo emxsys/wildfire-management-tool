@@ -37,6 +37,7 @@ import com.emxsys.wmt.cps.Controller;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Toolkit;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultComboBoxModel;
@@ -186,12 +187,18 @@ public final class FuelTopComponent extends TopComponent {
         fuelModelPanel.updateChart(fuelModel);
     }
 
+    /**
+     * Shows the Java Help for the current fuel model.
+     * @param id Help ID (see cps-map.xml)
+     */
     private void showHelp(String id) {
         Help help = Lookup.getDefault().lookup(Help.class);
         if (help != null && help.isValidID(id, true)) {
             help.showHelp(new HelpCtx(id));
         } else {
+            // Give the user a "Beep" if no help available.
             Toolkit.getDefaultToolkit().beep();
+            logger.log(Level.WARNING, "No help available for ID: {0}", id);
         }
     }
 
@@ -210,14 +217,12 @@ public final class FuelTopComponent extends TopComponent {
         setLayout(new java.awt.BorderLayout());
 
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelTopComponent.class, "FuelTopComponent.upperPanel.border.title"))); // NOI18N
-        upperPanel.setLayout(new java.awt.BorderLayout());
 
         providersComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 providersComboBoxActionPerformed(evt);
             }
         });
-        upperPanel.add(providersComboBox, java.awt.BorderLayout.CENTER);
 
         infoBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/ui/help.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(infoBtn, org.openide.util.NbBundle.getMessage(FuelTopComponent.class, "FuelTopComponent.infoBtn.text")); // NOI18N
@@ -226,7 +231,24 @@ public final class FuelTopComponent extends TopComponent {
                 infoBtnActionPerformed(evt);
             }
         });
-        upperPanel.add(infoBtn, java.awt.BorderLayout.EAST);
+
+        javax.swing.GroupLayout upperPanelLayout = new javax.swing.GroupLayout(upperPanel);
+        upperPanel.setLayout(upperPanelLayout);
+        upperPanelLayout.setHorizontalGroup(
+            upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(upperPanelLayout.createSequentialGroup()
+                .addComponent(providersComboBox, 0, 171, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(infoBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        upperPanelLayout.setVerticalGroup(
+            upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(upperPanelLayout.createSequentialGroup()
+                .addGroup(upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(infoBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(providersComboBox))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
 
         add(upperPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -237,7 +259,10 @@ public final class FuelTopComponent extends TopComponent {
     private void providersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providersComboBoxActionPerformed
         // Update the Controller with the user's FuelModelProvider selection
         FuelModelProvider provider = (FuelModelProvider) providersComboBox.getSelectedItem();
+        
+        logger.log(Level.FINE, "Setting the the fuel model provider: {0}", provider);
         Controller.getInstance().setFuelModelProvider(provider);
+        
         prefs.put(LAST_FUEL_MODEL_PROVIDER, provider.getClass().getName());
     }//GEN-LAST:event_providersComboBoxActionPerformed
 
@@ -252,13 +277,15 @@ public final class FuelTopComponent extends TopComponent {
                     id += currentFuelModel.getModelCode();
                     break;
                 case StdFuelModel.FUEL_MODEL_GROUP_STANDARD_40:
-                    id = "com.emxsys.wmt.cps.fuelmodel-40";
+                    id = "com.emxsys.wmt.cps.fuelmodel-40-";
                     id += currentFuelModel.getModelCode();
                     break;
                 default:
+                    logger.log(Level.INFO, "No help for Fuel Model Group: {0}", currentFuelModel.getModelGroup());
                     return;
             }
             // ... and then show the javahelp
+            logger.log(Level.FINE, "Invoking help ID: {0}", id);
             showHelp(id);
         }
     }//GEN-LAST:event_infoBtnActionPerformed
