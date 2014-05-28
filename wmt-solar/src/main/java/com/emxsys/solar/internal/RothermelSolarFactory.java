@@ -37,8 +37,6 @@ import com.emxsys.solar.api.SolarType;
 import com.emxsys.solar.api.SolarUtil;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.api.SunlightHours;
-import com.emxsys.solar.api.SunlightHoursTuple;
-import com.emxsys.solar.api.SunlightTuple;
 import static com.emxsys.solar.internal.RothermelSupport.*;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.Reals;
@@ -112,14 +110,15 @@ public class RothermelSolarFactory  {
             
             double t_r = calcSunriseSolarHour(coord.getLatitude(), sunPosition.getLatitude());
             double t_s = 24 - t_r;
-            
-            return new SunlightTuple(
-                    declination, 
-                    sunPosition.getLongitude(), 
-                    new Real(SolarType.ALTITUDE_ANGLE, Math.toDegrees(A)), 
-                    new Real(SolarType.AZIMUTH_ANGLE, Math.toDegrees(Z) + 90), // adjust for 0600 reference
-                    new Real(SolarType.SUNRISE_HOUR, t_r), 
-                    new Real(SolarType.SUNSET_HOUR, t_s));
+  
+            throw new UnsupportedOperationException("SunlightTuple is obsolete");
+//            return new SunlightTuple(
+//                    declination, 
+//                    sunPosition.getLongitude(), 
+//                    new Real(SolarType.ALTITUDE_ANGLE, Math.toDegrees(A)), 
+//                    new Real(SolarType.AZIMUTH_ANGLE, Math.toDegrees(Z) + 90), // adjust for 0600 reference
+//                    new Real(SolarType.SUNRISE_HOUR, t_r), 
+//                    new Real(SolarType.SUNSET_HOUR, t_s));
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -144,11 +143,12 @@ public class RothermelSolarFactory  {
             sunrise = Reals.convertTo(RealType.Time, times[0]);
             sunset = Reals.convertTo(RealType.Time, times[1]);
         } catch (Exception ex) {
-            Logger.getLogger(SunlightHoursTuple.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             sunrise = new Real(SolarType.TIME); // missing value
             sunset = new Real(SolarType.TIME);  // missing value
         }
-        return new SunlightHoursTuple(sunrise, sunset);
+        throw new UnsupportedOperationException("SunlightTuple is obsolete");
+        //return new SunlightHoursTuple(sunrise, sunset);
     }
 
     /**

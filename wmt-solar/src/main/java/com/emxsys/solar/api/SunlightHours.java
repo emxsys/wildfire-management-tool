@@ -29,7 +29,6 @@
  */
 package com.emxsys.solar.api;
 
-import java.util.Date;
 import visad.Data;
 import visad.Real;
 
