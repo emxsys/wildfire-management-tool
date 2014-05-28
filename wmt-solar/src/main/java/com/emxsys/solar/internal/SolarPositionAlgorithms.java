@@ -36,14 +36,60 @@ import static java.lang.Math.*;
  * <pre>
  * Reda, Ibrahim and Afshin Andreas, 2008: Solar Position Algorithm for Solar Radiation
  * Applications. National Renewable Energy Laboratory. Revised 2008.
- * http://www.nrel.gov/docs/fy08osti/34302.pdf
  * </pre>
+ * {@link  http://www.nrel.gov/docs/fy08osti/34302.pdf}
  *
  * @author Bruce Schubert
  */
 public class SolarPositionAlgorithms  {
 
-
+    // Orginal header extracted from source code in PDF:
+                        //////////////////////////////////////////////
+                        // Solar Position Algorithm (SPA)           //
+                        // for                                      //
+                        // Solar Radiation Application              //
+                        //                                          //
+                        // May 12, 2003                             //
+                        //                                          //
+                        // Filename: SPA.C                          //
+                        //                                          //
+                        // Afshin Michael Andreas                   //
+                        // afshin_andreas@nrel.gov (303)384-6383    //
+                        //                                          //
+                        // Measurement & Instrumentation Team       //
+                        // Solar Radiation Research Laboratory      //
+                        // National Renewable Energy Laboratory     //
+                        // 1617 Cole Blvd, Golden, CO 80401         //
+                        //////////////////////////////////////////////
+                        //////////////////////////////////////////////
+                        // See the SPA.H header file for usage      //
+                        //                                          //
+                        // This code is based on the NREL           //
+                        // technical report "Solar Position         //
+                        // Algorithm for Solar Radiation            //
+                        // Application" by I. Reda & A. Andreas     //
+                        //////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // NOTICE
+    //
+    //This solar position algorithm for solar radiation applications (the "data") was produced by
+    //the National Renewable Energy Laboratory ("NREL"), which is operated by the Midwest Research
+    //Institute ("MRI") under Contract No. DE-AC36-99-GO10337 with the U.S. Department of Energy
+    //(the "Government").
+    //
+    //Reference herein, directly or indirectly to any specific commercial product, process, or
+    //service by trade name, trademark, manufacturer, or otherwise, does not constitute or imply
+    //its endorsement, recommendation, or favoring by the Government, MRI or NREL.
+    //
+    //THESE DATA ARE PROVIDED "AS IS" AND NEITHER THE GOVERNMENT, MRI, NREL NOR ANY OF THEIR
+    //EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, INCLUDING THE WARRANTIES OF MERCHANTABILITY
+    //AND FITNESS FOR A PARTICULAR PURPOSE, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE
+    //ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY SUCH INFORMATION DISCLOSED IN THE ALGORITHM, OR
+    //OF ANY APPARATUS, PRODUCT, OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE
+    //PRIVATELY OWNED RIGHTS.
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     final static int L_COUNT = 6;
     final static int B_COUNT = 2;
     final static int R_COUNT = 5;
@@ -625,6 +671,7 @@ public class SolarPositionAlgorithms  {
         return -20.4898 / (3600.0 * r);
     }
 
+    /** Calculate the apparent sun longitude, lamda (in degrees): */
     public static double apparent_sun_longitude(double theta, double delta_psi, double delta_tau) {
         return theta + delta_psi + delta_tau;
     }

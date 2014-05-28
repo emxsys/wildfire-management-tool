@@ -32,11 +32,8 @@ package com.emxsys.solar.internal;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.solar.api.SolarType;
 import com.emxsys.solar.api.SunlightProvider;
+import static com.emxsys.solar.internal.SolarPositionAlgorithms.*;
 import java.rmi.RemoteException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import org.openide.util.Exceptions;
 import visad.Real;
@@ -53,13 +50,13 @@ public class SPASunlightProvider implements SunlightProvider {
     @Override
     public RealTuple getSunPosition(ZonedDateTime time, Coord3D observer) {
         SolarData spa = new SolarData(time, observer);
-        SolarPositionAlgorithms.spa_calculate(spa);
+        spa_calculate(spa);
 
         try {
             return new RealTuple(SolarType.SUN_POSITION,
                     new Real[]{
                         new Real(SolarType.LATITUDE, spa.delta_prime),
-                        new Real(SolarType.LONGITUDE, spa.lamda),
+                        new Real(SolarType.LONGITUDE, limit_degrees180pm(observer.getLongitudeDegrees() + spa.h_prime)),
                         new Real(SolarType.AZIMUTH_ANGLE, spa.azimuth),
                         new Real(SolarType.ZENITH_ANGLE, spa.zenith)}, null);
         } catch (VisADException | RemoteException ex) {
@@ -74,7 +71,7 @@ public class SPASunlightProvider implements SunlightProvider {
         SolarPositionAlgorithms.spa_calculate(spa);
 
         try {
-            //LATITUDE, LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR
+            //LATITUDE, LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE
 //            ZonedDateTime sunrise = ZonedDateTime.of(
 //                LocalDate.of(spa.year, spa.month, spa.day),
 //                LocalTime.ofSecondOfDay((long) (spa.sunrise * 3600)),
@@ -84,15 +81,18 @@ public class SPASunlightProvider implements SunlightProvider {
 //                LocalTime.ofSecondOfDay((long) (spa.sunset * 3600)),
 //                ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds((int) (spa.timezone * 3600))));
             
-            return new RealTuple(SolarType.SUN_POSITION,
+            return new RealTuple(SolarType.SUNLIGHT,
                     new Real[]{
                         new Real(SolarType.LATITUDE, spa.delta_prime),
-                        new Real(SolarType.LONGITUDE, spa.lamda),
+                        new Real(SolarType.LONGITUDE, limit_degrees180pm(observer.getLongitudeDegrees() + spa.h_prime)),
                         new Real(SolarType.AZIMUTH_ANGLE, spa.azimuth),
                         new Real(SolarType.ZENITH_ANGLE, spa.zenith),
                         new Real(SolarType.SUNRISE_HOUR, spa.sunrise),  // sunrise local time (same offset as input time)
-                        new Real(SolarType.SUNSET_HOUR, spa.sunset)
+                        new Real(SolarType.SUNSET_HOUR, spa.sunset),    // sunset local time
+                        new Real(SolarType.SUNRISE_HOUR_ANGLE, spa.srha),   // angular offset from solar noon
+                        new Real(SolarType.SUNSET_HOUR_ANGLE, spa.ssha)     // angular offset from solar noon
                     }, null);
+            
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
             return null;

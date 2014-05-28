@@ -375,7 +375,9 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the earth heliocentric longitude [degrees].
+     * Gets the earth heliocentric longitude [degrees]. “Heliocentric” means that the Earth position
+     * is calculated with respect to the center of the sun.
+     *
      * @return l
      */
     public double getEarthHeliocentricLongitude() {
@@ -383,7 +385,9 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the earth heliocentric latitude [degrees].
+     * Gets the earth heliocentric latitude [degrees]. “Heliocentric” means that the Earth position
+     * is calculated with respect to the center of the sun.
+     *
      * @return b
      */
     public double getEarthHeliocentricLatitude() {
@@ -392,20 +396,27 @@ public class SolarData implements Cloneable {
 
     /**
      * Gets the earth radius vector [Astronomical Units, AU].
+     *
      * @return r
      */
     public double getEarthRadiusVector() {
         return r;
     }
 
-    /** Gets the geocentric longitude [degrees].
-     @return theta
+    /**
+     * Gets the geocentric longitude [degrees]. “Geocentric” means that the sun position is
+     * calculated with respect to the Earth center.
+     *
+     * @return theta
      */
     public double getGeocentricLongitude() {
         return theta;
     }
 
-    /** Gets the geocentric latitude [degrees].
+    /**
+     * Gets the geocentric latitude [degrees]. “Geocentric” means that the sun position is
+     * calculated with respect to the Earth center.
+     *
      * @return beta
      */
     public double getGeocentricLatitude() {
@@ -480,7 +491,9 @@ public class SolarData implements Cloneable {
         return delta;
     }
 
-    /** Observer hour angle [degrees] */
+    /** 
+     * Gets the observer hour angle [degrees] 
+     */
     public double getObserverHourAngle() {
         return h;
     }
@@ -494,22 +507,34 @@ public class SolarData implements Cloneable {
         return del_alpha;
     }
 
-    /** Topocentric sun declination [degrees] */
+    /** 
+     * Gets the topocentric sun declination [degrees]. “Topocentric” means that the sun position is
+     * calculated with respect to the observer local position at the Earth surface.
+     */
     public double getTopocentricSunDeclination() {
         return delta_prime;
     }
 
-    /** topocentric sun right ascension [degrees] */
+    /** 
+     * Gets the topocentric sun right ascension [degrees]. “Topocentric” means that the sun position is
+     * calculated with respect to the observer local position at the Earth surface.
+     */
     public double getTopocentricSunRightAscension() {
         return alpha_prime;
     }
 
-    /** topocentric local hour angle [degrees] */
+    /** 
+     * Gets the topocentric local hour angle [degrees]. “Topocentric” means that the sun position is
+     * calculated with respect to the observer local position at the Earth surface.
+     */
     public double getTopocentricLocalHourAngle() {
         return h_prime;
     }
 
-    /** topocentric elevation angle (uncorrected) [degrees] */
+    /** 
+     * Gets the topocentric elevation angle (uncorrected) [degrees]. “Topocentric” means that the sun
+     * position is calculated with respect to the observer local position at the Earth surface.
+     */
     public double getTopocentricElevationAngle() {
         return e0;
     }
@@ -519,7 +544,8 @@ public class SolarData implements Cloneable {
         return del_e;
     }
 
-    /** topocentric elevation angle (corrected) [degrees] */
+    /** topocentric elevation angle (corrected) [degrees]. “Topocentric” means that the sun position
+     * is calculated with respect to the observer local position at the Earth surface. */
     public double getTopocentricElevationAngleCorrected() {
         return e;
     }
@@ -529,12 +555,16 @@ public class SolarData implements Cloneable {
         return eot;
     }
 
-    /** sunrise hour angle [degrees] */
+    /** 
+     * Gets the sunrise hour angle [degrees].
+     */
     public double getSunriseHourAngle() {
         return srha;
     }
 
-    /** sunset hour angle [degrees] */
+    /** 
+     * Gets the sunset hour angle [degrees].
+     */
     public double getSunsetHourAngle() {
         return ssha;
     }
@@ -544,17 +574,34 @@ public class SolarData implements Cloneable {
         return sta;
     }
 
-    /** topocentric zenith angle [degrees] */
+    /**
+     * Gets the topocentric zenith angle [degrees]. “Topocentric” means that the sun position is
+     * calculated with respect to the observer local position at the Earth surface.
+     *
+     * @return zenith
+     */
     public double getZenith() {
         return zenith;
     }
 
-    /** topocentric azimuth angle (westward from south) [-180 to 180 degrees] */
+    /**
+     * Gets the topocentric azimuth angle (westward from south) [-180 to 180 degrees]. “Topocentric”
+     * means that the sun position is calculated with respect to the observer local position at the
+     * Earth surface.
+     *
+     * @return azimuth180
+     */
     public double getAzimuth180() {
         return azimuth180;
     }
 
-    /** topocentric azimuth angle (eastward from north) [ 0 to 360 degrees] */
+    /**
+     * Gets the topocentric azimuth angle (eastward from north) [ 0 to 360 degrees]. “Topocentric”
+     * means that the sun position is calculated with respect to the observer local position at the
+     * Earth surface.
+     *
+     * @return azimuth
+     */
     public double getAzimuth() {
         return azimuth;
     }
