@@ -33,7 +33,6 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.solar.internal.SolarPositionAlgorithms;
 import static com.emxsys.util.AngleUtil.*;
 import static java.lang.Math.*;
 import java.rmi.RemoteException;
@@ -86,6 +85,8 @@ public class SolarUtil {
      * @author Bruce Schubert
      * @param time UTC time
      * @return latitude and longitude of sun on the celestial sphere
+     * @throws visad.VisADException
+     * @throws java.rmi.RemoteException
      */
     static public RealTuple getRightAscentionDeclination(ZonedDateTime time) throws VisADException, RemoteException {
 
@@ -126,31 +127,31 @@ public class SolarUtil {
      * Gets the solar azimuth and altitude angles from the observer's position to the sun.
      *
      * @param observer The observer's coordinates.
-     * @param sun The sun's sub-solar point coordinates
+     * @param time
      * @return The horizon coordinates (azimuth and altitude) to the sun.
      */
     public static RealTuple getAzimuthAltitude(Coord2D observer, ZonedDateTime time) {
-
-        try {
-            if (observer.isMissing()) {
-                throw new IllegalArgumentException("getAzimuthAltitude(" + observer + ")");
-            }
-            RealTuple rightAscentionDeclination = getRightAscentionDeclination(time);
-            double phi = observer.getLatitude().getValue(radian);
-            double sigma = rightAscentionDeclination.getRealComponents()[1].getValue(radian);
-            double H = calcHourAngle(time).getValue(radian);
-            double a = calcAltitudeAngle(phi, sigma, H);
-            double A = calcAzimuthAngle(phi, sigma, a, H);
-
-            Real azimuth = new Real(SolarType.AZIMUTH_ANGLE, toDegrees(A));
-            Real altitude = new Real(SolarType.ALTITUDE_ANGLE, toDegrees(a));
-
-            return new RealTuple(SolarType.HORIZON_COORDINATES, new Real[]{azimuth, altitude}, null);
-
-        } catch (VisADException | RemoteException | IllegalArgumentException ex) {
-            logger.log(Level.SEVERE, ex.toString());
-        }
-        return new RealTuple(SolarType.HORIZON_COORDINATES);
+        throw new UnsupportedOperationException("Not working correctly!!");
+//        try {
+//            if (observer.isMissing()) {
+//                throw new IllegalArgumentException("getAzimuthAltitude(" + observer + ")");
+//            }
+//            RealTuple rightAscentionDeclination = getRightAscentionDeclination(time);
+//            double phi = observer.getLatitude().getValue(radian);
+//            double sigma = rightAscentionDeclination.getRealComponents()[1].getValue(radian);
+//            double H = calcHourAngle(time).getValue(radian);
+//            double a = calcAltitudeAngle(phi, sigma, H);
+//            double A = calcAzimuthAngle(phi, sigma, a, H);
+//
+//            Real azimuth = new Real(SolarType.AZIMUTH_ANGLE, toDegrees(A));
+//            Real altitude = new Real(SolarType.ALTITUDE_ANGLE, toDegrees(a));
+//
+//            return new RealTuple(SolarType.HORIZON_COORDINATES, new Real[]{azimuth, altitude}, null);
+//
+//        } catch (VisADException | RemoteException | IllegalArgumentException ex) {
+//            logger.log(Level.SEVERE, ex.toString());
+//        }
+//        return new RealTuple(SolarType.HORIZON_COORDINATES);
     }
 
     /**
@@ -264,6 +265,7 @@ public class SolarUtil {
      * @param latitude Observer's geographic latitude.
      * @param declination Earth's declination angle.
      * @param altitude Sun's altitude angle.
+     * @param solarHour
      * @return The computed Azimuth angle (A).
      */
     public static Real calcAzimuthAngle(Real latitude, Real declination, Real altitude, Real solarHour) {
@@ -543,8 +545,8 @@ public class SolarUtil {
     /**
      * The declination angle throughout the year can be well approximated by a sine function.
      *
-     * @returns the sun's declination angle (in radians)
      * @param dayOfYear Day of the year (1-365).
+     * @return the sun's declination angle (in radians)
      */
     public static double DeclinationDegrees(int dayOfYear) {
         // Source: University of Minissota - Department of Mechanical Engineering

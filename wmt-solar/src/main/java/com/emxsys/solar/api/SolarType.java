@@ -69,6 +69,7 @@ public class SolarType {
     public static final RealType ZENITH_ANGLE;
     public static final RealTupleType HORIZON_COORDINATES;
     public static final RealTupleType EQUATORIAL_COORDINATES;
+    public static final RealTupleType SUBSOLAR_POINT;
     public static final RealTupleType SUN_POSITION;
     public final static RealTupleType SUNLIGHT;
 
@@ -98,13 +99,17 @@ public class SolarType {
                 new RealType[]{
                     RIGHT_ASCENSION, DECLINATION
                 });
-        SUNLIGHT = Reals.newRealTupleType(
+        SUBSOLAR_POINT = Reals.newRealTupleType(
                 new RealType[]{
-                    LATITUDE, LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE, 
+                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE
                 });
         SUN_POSITION = Reals.newRealTupleType(
                 new RealType[]{
-                    LATITUDE, LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,
+                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,
+                });
+        SUNLIGHT = Reals.newRealTupleType(
+                new RealType[]{
+                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE, 
                 });
 
     }

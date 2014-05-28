@@ -284,6 +284,10 @@ public class SolarData implements Cloneable {
         this.latitude = latitude;
     }
 
+    /**
+     * Gets the observer elevation.
+     * @return elevation
+     */
     public double getElevation() {
         return elevation;
     }
@@ -602,8 +606,9 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the topocentric zenith angle [degrees]. “Topocentric” means that the sun position is
-     * calculated with respect to the observer local position at the Earth surface.
+     * Gets the topocentric zenith angle [degrees]. This is the angle between the observer's zenith
+     * and the sun. “Topocentric” means that the sun position is calculated with respect to the
+     * observer local position at the Earth surface.
      *
      * @return zenith
      */

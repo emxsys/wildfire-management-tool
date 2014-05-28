@@ -29,10 +29,12 @@
  */
 package com.emxsys.solar.api;
 
-import com.emxsys.solar.api.SolarUtil;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.solar.api.SolarUtil;
+import com.emxsys.solar.internal.SPASunlightProvider;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -132,18 +134,23 @@ public class SolarUtilTest {
     /**
      * Test of getAzimuthAltitude method, of class SolarUtil.
      */
+    @Ignore
     @Test
     public void testGetAzimuthAltitude() throws VisADException, RemoteException {
         System.out.println("getAzimuthAltitude");
-        Coord2D observer = GeoCoord2D.fromDegrees(0, 0);
+        SPASunlightProvider spa = new SPASunlightProvider();
+
+        Coord3D observer = GeoCoord3D.fromDegrees(0, 0);
         ZonedDateTime time = vernalEquinoxUTC;
         RealTuple horizonCoords = SolarUtil.getAzimuthAltitude(observer, time);
         System.out.println(" Horizon Coordinates @ " + time + ": " + horizonCoords.longString());
+        System.out.println(spa.getHorizonCoordinates(time, observer));
 
-        observer = GeoCoord2D.fromDegrees(34.25, -119.2);
+        observer = GeoCoord3D.fromDegrees(34.25, -119.2);
         time = ZonedDateTime.now();
         horizonCoords = SolarUtil.getAzimuthAltitude(observer, time);
         System.out.println(" Horizon Coordinates from " + observer + " @ " + time + ": " + horizonCoords.longString());
+        System.out.println(spa.getHorizonCoordinates(time, observer));
 
     }
 
@@ -254,12 +261,14 @@ public class SolarUtilTest {
     public void testSubsolarPoint() throws VisADException, RemoteException {
         System.out.println("calcSunPosition");
         ZonedDateTime time = ZonedDateTime.of(1980, 07, 27, 0, 0, 0, 0, ZoneId.of("Z"));
+        SPASunlightProvider spa = new SPASunlightProvider();
         for (int i = 0; i < 24; i++) {
             ZonedDateTime t = time.plusHours(i);
             double[] latLon = SolarUtil.calcSubsolarPoint(SolarUtil.calcJulianDate(t));
             System.out.println("calcSubsolarPoint(" + t + ") :" + Math.toDegrees(latLon[0]) + "," + Math.toDegrees(latLon[1]));
 //            RealTuple tuple = SolarUtil.getRightAscentionDeclination(t);
 //            System.out.println(" getRightAscentionDeclination(" + t + ") = "+tuple);
+            System.out.println(spa.getSubsolarPoint(t));
         }
     }
 
