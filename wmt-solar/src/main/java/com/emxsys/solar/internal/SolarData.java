@@ -375,8 +375,8 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the earth heliocentric longitude [degrees]. “Heliocentric” means that the Earth position
-     * is calculated with respect to the center of the sun.
+     * Gets the earth heliocentric longitude on the celestial sphere [degrees]. “Heliocentric” means
+     * that the Earth position is calculated with respect to the center of the sun.
      *
      * @return l
      */
@@ -385,8 +385,8 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the earth heliocentric latitude [degrees]. “Heliocentric” means that the Earth position
-     * is calculated with respect to the center of the sun.
+     * Gets the earth heliocentric latitude on the celestial sphere [degrees]. “Heliocentric” means
+     * that the Earth position is calculated with respect to the center of the sun.
      *
      * @return b
      */
@@ -404,8 +404,8 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the geocentric longitude [degrees]. “Geocentric” means that the sun position is
-     * calculated with respect to the Earth center.
+     * Gets the geocentric longitude on the celestial sphere [degrees]. “Geocentric” means that the
+     * sun position is calculated with respect to the Earth center.
      *
      * @return theta
      */
@@ -414,8 +414,8 @@ public class SolarData implements Cloneable {
     }
 
     /**
-     * Gets the geocentric latitude [degrees]. “Geocentric” means that the sun position is
-     * calculated with respect to the Earth center.
+     * Gets the geocentric latitude on the celestial sphere [degrees]. “Geocentric” means that the
+     * sun position is calculated with respect to the Earth center.
      *
      * @return beta
      */
@@ -466,7 +466,7 @@ public class SolarData implements Cloneable {
         return del_tau;
     }
 
-    /** apparent sun longitude [degrees] */
+    /** apparent sun longitude on the celestial sphere [degrees]. */
     public double getApparentSunLongitude() {
         return lamda;
     }
@@ -481,18 +481,26 @@ public class SolarData implements Cloneable {
         return nu;
     }
 
-    /** Geocentric sun right ascension [degrees] */
+    /**
+     * Geocentric sun right ascension on the celestial sphere [degrees]. “Geocentric” means that the
+     * sun position is calculated with respect to the Earth center.
+     */
     public double getGeocentricSunRightAscension() {
         return alpha;
     }
 
-    /** Geocentric sun declination [degrees] */
+    /**
+     * Geocentric sun declination on the celestial sphere [degrees]. “Geocentric” means that the sun
+     * position is calculated with respect to the Earth center.
+     */
     public double getGeocentricSunDeclination() {
         return delta;
     }
 
-    /** 
-     * Gets the observer hour angle [degrees] 
+    /**
+     * Gets the observer hour angle [degrees]
+     *
+     * @return h
      */
     public double getObserverHourAngle() {
         return h;
@@ -507,33 +515,41 @@ public class SolarData implements Cloneable {
         return del_alpha;
     }
 
-    /** 
+    /**
      * Gets the topocentric sun declination [degrees]. “Topocentric” means that the sun position is
      * calculated with respect to the observer local position at the Earth surface.
+     *
+     * @return delta_prime
      */
     public double getTopocentricSunDeclination() {
         return delta_prime;
     }
 
-    /** 
-     * Gets the topocentric sun right ascension [degrees]. “Topocentric” means that the sun position is
-     * calculated with respect to the observer local position at the Earth surface.
+    /**
+     * Gets the topocentric sun right ascension [degrees]. “Topocentric” means that the sun position
+     * is calculated with respect to the observer local position at the Earth surface.
+     *
+     * @return alpha_prime
      */
     public double getTopocentricSunRightAscension() {
         return alpha_prime;
     }
 
-    /** 
+    /**
      * Gets the topocentric local hour angle [degrees]. “Topocentric” means that the sun position is
      * calculated with respect to the observer local position at the Earth surface.
+     *
+     * @return h_prime
      */
     public double getTopocentricLocalHourAngle() {
         return h_prime;
     }
 
-    /** 
-     * Gets the topocentric elevation angle (uncorrected) [degrees]. “Topocentric” means that the sun
-     * position is calculated with respect to the observer local position at the Earth surface.
+    /**
+     * Gets the topocentric elevation angle (uncorrected) [degrees]. “Topocentric” means that the
+     * sun position is calculated with respect to the observer local position at the Earth surface.
+     *
+     * @return e0
      */
     public double getTopocentricElevationAngle() {
         return e0;
@@ -544,8 +560,13 @@ public class SolarData implements Cloneable {
         return del_e;
     }
 
-    /** topocentric elevation angle (corrected) [degrees]. “Topocentric” means that the sun position
-     * is calculated with respect to the observer local position at the Earth surface. */
+    /**
+     * Gets the topocentric elevation angle (corrected for atmospheric refraction) [degrees].
+     * “Topocentric” means that the sun position is calculated with respect to the observer local
+     * position at the Earth surface.
+     *
+     * @return e
+     */
     public double getTopocentricElevationAngleCorrected() {
         return e;
     }
@@ -555,21 +576,27 @@ public class SolarData implements Cloneable {
         return eot;
     }
 
-    /** 
+    /**
      * Gets the sunrise hour angle [degrees].
+     *
+     * @return srha
      */
     public double getSunriseHourAngle() {
         return srha;
     }
 
-    /** 
+    /**
      * Gets the sunset hour angle [degrees].
+     *
+     * @return ssha
      */
     public double getSunsetHourAngle() {
         return ssha;
     }
 
-    /** sun transit altitude [degrees] */
+    /**
+     * Gets the sun transit altitude [degrees] .
+     */
     public double getSunTransitAltitude() {
         return sta;
     }
@@ -611,17 +638,29 @@ public class SolarData implements Cloneable {
         return incidence;
     }
 
-    /** local sun transit time (or solar noon) [fractional hour] */
-    public double getSuntransit() {
+    /**
+     * Gets the local sun transit time (or solar noon) [fractional hour].
+     *
+     * @return suntransit
+     */
+    public double getSunTransit() {
         return suntransit;
     }
 
-    /** local sunrise time (+/- 30 seconds) [fractional hour] */
+    /**
+     * Gets the local sunrise time (+/- 30 seconds) [fractional hour].
+     *
+     * @return sunrise
+     */
     public double getSunrise() {
         return sunrise;
     }
 
-    /** local sunset time (+/- 30 seconds) [fractional hour] */
+    /**
+     * Gets the local sunset time (+/- 30 seconds) [fractional hour].
+     *
+     * return sunset
+     */
     public double getSunset() {
         return sunset;
     }
