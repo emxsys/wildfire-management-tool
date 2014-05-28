@@ -29,11 +29,6 @@
  */
 package com.emxsys.gis.api;
 
-import com.emxsys.gis.api.Box;
-import com.emxsys.gis.api.Coord2D;
-import com.emxsys.gis.api.LineString;
-import com.emxsys.gis.api.Part;
-import com.emxsys.gis.api.Polygon;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -43,7 +38,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import visad.Data;
+import visad.Linear2DSet;
+import visad.LinearLatLonSet;
 import visad.Real;
+import visad.RealTupleType;
 import visad.RealType;
 import visad.VisADException;
 
@@ -66,6 +64,7 @@ public class GeoSector extends AbstractGeometry implements Box {
     public static GeoSector SOUTHERN_HEMISPHERE = new GeoSector(-90, -180, 0, 180);
     public static GeoSector WESTERN_HEMISPHERE = new GeoSector(-90, -180, 90, 0);
     public static GeoSector EASTERN_HEMISPHERE = new GeoSector(-90, 0, 90, 180);
+    private static final Logger logger = Logger.getLogger(GeoSector.class.getName());
 
     /**
      * Create a sector with "missing" values.
@@ -363,4 +362,40 @@ public class GeoSector extends AbstractGeometry implements Box {
                 box.getWidth().getValue(),
                 box.getHeight().getValue());
     }
+
+    public Linear2DSet toLinear2DSet(int nrows, int ncols) {
+        if (isMissing()) {
+            String msg = "Cannot initialize spatial domain.  The sector has missing values.";
+            logger.severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (nrows < 1 || ncols < 1) {
+            String msg = "nrows and ncols each must be greater than zero.";
+            logger.severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        double minLat = nrows == 1 ? this.getCenter().getLatitude().getValue() : getSouthwest().getLatitude().getValue();
+        double minLon = ncols == 1 ? this.getCenter().getLongitude().getValue() : getSouthwest().getLongitude().getValue();
+        double maxLat = nrows == 1 ? this.getCenter().getLatitude().getValue() : getNortheast().getLatitude().getValue();
+        double maxLon = ncols == 1 ? this.getCenter().getLongitude().getValue() :getNortheast().getLongitude().getValue();
+        try {
+            // XXX  I don't understand the interaction between the 
+            //      Type's coord system and the Set's coord system! 
+            //      Maybe the two must be compatible (or both null)
+            //  
+            // Create the domainType input Set: 
+            return new LinearLatLonSet(RealTupleType.LatitudeLongitudeTuple, // includes a coord system defn!!!!
+                    minLat, maxLat, nrows,
+                    minLon, maxLon, ncols,
+                    //RealTupleType.LatitudeLongitudeTuple.getCoordinateSystem(), //doesn't work with evaluate from dynamic data
+                    //GeoCoord2D.DEFAULT_COORD_SYS, // doesn't work with ParticleAnalytics evaluate() loaded from file
+                    null, // another Coordinate system 
+                    null, null, true); // true == cache samples
+        }
+        catch (VisADException ex) {
+            logger.severe(ex.toString());
+            throw new RuntimeException("Cannot initialize spatial domain.", ex);
+        }
+    }
+
 }
