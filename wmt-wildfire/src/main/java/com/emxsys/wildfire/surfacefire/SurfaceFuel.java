@@ -58,8 +58,8 @@ import visad.VisADException;
  */
 public class SurfaceFuel implements Fuel {
 
-    private FuelModel fuelModel;
-    private List<FuelCondition> conditions;
+    private final FuelModel fuelModel;
+    private final List<FuelCondition> conditions = new ArrayList<>();
 
     /**
      * Construct fuel from a fuel model number or code.
@@ -68,7 +68,6 @@ public class SurfaceFuel implements Fuel {
      */
     public SurfaceFuel(int fuelModelNo) {
         this.fuelModel = StdFuelModel.getFuelModel(fuelModelNo);
-        this.conditions = new ArrayList<>();
     }
 
     /**
@@ -78,7 +77,6 @@ public class SurfaceFuel implements Fuel {
      */
     SurfaceFuel(FuelModel fm) {
         this.fuelModel = fm;
-        this.conditions = new ArrayList<>();
     }
 
     /**
@@ -118,7 +116,7 @@ public class SurfaceFuel implements Fuel {
     /**
      * Adjust the fuel conditions based on supplied weather.
      *
-     * @param prevWeekWxConditions
+     * @param initialFuelMoisture
      */
     @Override
     public void adjustFuelConditions(Sunlight solar, List<Real> airTemps, List<Real> humidities,
@@ -129,9 +127,10 @@ public class SurfaceFuel implements Fuel {
         try {
 
             // hour sunset [solar time]
-            double t_s = 0;//FIXME: solar.getSunsetHour();
+            // TODO: Convert local time to solar time....use hour angles?
+            double t_s = solar.getSunsetHour().getValue();
             // hour sunrise [solar time]
-            double t_r = 0;//FIXME: solar.getSunriseHour();
+            double t_r = solar.getSunriseHour().getValue();
 
             // Latitude [radians]
             double phi = 0;// FIXME: solar.getLatitude().getValue(CommonUnit.radian);

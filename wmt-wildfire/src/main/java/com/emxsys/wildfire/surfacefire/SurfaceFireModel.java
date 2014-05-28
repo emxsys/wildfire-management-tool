@@ -47,12 +47,10 @@ import visad.VisADException;
  * A Fire Behavior Modeling Service for Surface Fires.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SurfaceFireModel.java 732 2013-06-06 16:07:43Z bdschubert $
  */
-@org.openide.util.lookup.ServiceProvider(service = FireBehaviorService.class)
 public class SurfaceFireModel implements FireBehaviorService {
 
-    private Behave behave;
+    private final Behave behave;
     //private BehaveExp behave;    // experimental version
 
     public SurfaceFireModel() {
@@ -61,8 +59,9 @@ public class SurfaceFireModel implements FireBehaviorService {
     }
 
     @Override
-    public FireEnvironment computeFireBehavior(FuelModel fuelModel,
-                                               FuelCondition condition, Real windSpd, Real windDir, Terrain terrain) {
+    public FireEnvironment computeFireBehavior(FuelModel fuelModel, FuelCondition condition, 
+                                                                    Real windSpd, Real windDir, 
+                                                                    Terrain terrain) {
         try {
             // Set static fuel model vars
             behave.fuelModel = fuelModel.getModelNo();

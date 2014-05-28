@@ -39,7 +39,6 @@ import com.emxsys.wildfire.api.WeatherConditions;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-@org.openide.util.lookup.ServiceProvider(service = FuelProvider.class)
 public class SurfaceFuelProvider implements FuelProvider {
 
     /**

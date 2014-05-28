@@ -38,9 +38,12 @@ import static java.lang.Math.*;
  * Utility class that calculates solar insolation, temperature, humidity, surface wind speed, and
  * fine fuel moisture content per the 1986 Rothermel et al equations.
  *
- * <ul> <li style="bullet"><a name="bib_1000"></a>Rothermel et al, 1986, Modeling Moisture Content
- * of Fine Dead Wildland Fuels: Input to the BEHAVE Fire Prediction System, Research Paper, INT-359,
+ * <pre>
+ * <ul> <li style="bullet"><a name="bib_1000"></a>
+ * Rothermel et al, 1986, Modeling Moisture Content of Fine Dead Wildland Fuels:
+ * Input to the BEHAVE Fire Prediction System, Research Paper, INT-359,
  * USDA Forest Service, Intermountain Research Station </ul>
+ * </pre>
  *
  * @author Bruce Schubert
  */
@@ -48,10 +51,12 @@ public class BehaveUtil {
 
     /**
      * Compute the Canadian Standard Daily Fine Fuel Moisture Code (FFMC) computes the fuel moisture
-     * for early afternoon from noon-time weather conditions or forecasts. <br/> Rothermel, et al,
-     * "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE fire prediction
-     * system." Research Paper INT-359. 1986. Equations located on page 47. <br/> Note: FFMC: Low =
-     * 0 - 72; Moderate = 73 - 77; High = 78 - 82; Extreme > 82
+     * for early afternoon from noon-time weather conditions or forecasts. <br/>
+     *
+     * Rothermel, et al, "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE
+     * fire prediction system." Research Paper INT-359. 1986. Equations located on page 47. <br/>
+     *
+     * Note: FFMC: Low = 0 - 72; Moderate = 73 - 77; High = 78 - 82; Extreme > 82
      *
      * @param m_0 initial fuel moisture at noon [percent]
      * @param T_f air temp immediately adjacent to fuel [farenheit]
@@ -229,8 +234,8 @@ public class BehaveUtil {
      *
      * @param I_a irradiance at the forest floor perpendicular to the solar ray [cal/cm2*min]
      * @param r2 The earth-sun (center of mass) distance squared
-     * @param A solar elevation angle to the sun (-90 <= A <= 90) [radians] @return
-     * I - incident radiation on the forest floor [cal/cm2*min]
+     * @param A solar elevation angle to the sun [radians] 
+     * @return I - incident radiation on the forest floor [cal/cm2*min]
      */
     static public double calcSolarIrradianceOnHorzSurface(double I_a, double r2, double A) {
         // Rothermel et al, 1986, page 9
@@ -317,6 +322,9 @@ public class BehaveUtil {
      *
      * The text includes additional conditions for testing for perpetual day or perpetual night...
      * not implemented.
+     * @param phi
+     * @param delta
+     * @return
      */
     static public double calcSunrise(double phi, double delta) {
         assert (abs(phi) < toDegrees(66.5));
@@ -379,7 +387,7 @@ public class BehaveUtil {
     /**
      * Computes hour angle from local 6am
      *
-     * @param timeProjection local time in 24hr format
+     * @param t local time in 24hr format
      * @return hour angle 0600=0 deg; 1200=90 deg; 1800=180 deg; 0000=270[radians]
      */
     static public double calcLocalHourAngle(double t) {
@@ -501,7 +509,7 @@ public class BehaveUtil {
      * @param timeProjection
      * @param timeSunset
      * @param temp1400
-     * @param rhSunset
+     * @param tempSunset
      * @return
      */
     static public double calcAirTempLateAfternoon(double timeProjection, double timeSunset,
@@ -520,8 +528,8 @@ public class BehaveUtil {
      * @param timeProjection
      * @param timeSunset
      * @param timeSunrise
-     * @param rhSunset
-     * @param rhSunrise
+     * @param tempSunset
+     * @param tempSunrise
      * @return
      */
     static public double calcAirTempNighttime(double timeProjection, double timeSunset,
@@ -542,8 +550,8 @@ public class BehaveUtil {
      *
      * @param timeProjection
      * @param timeSunrise
-     * @param rhSunrise
-     * @param rh1200
+     * @param tempSunrise
+     * @param temp1200
      * @return
      */
     static public double calcAirTempMorning(double timeProjection, double timeSunrise,
@@ -585,7 +593,7 @@ public class BehaveUtil {
      * @param timeSunset
      * @param timeSunrise
      * @param rhSunset
-     * @param rtSunrise
+     * @param rhSunrise
      * @return
      */
     static public double calcHumidityNighttime(double timeProjection, double timeSunset,
