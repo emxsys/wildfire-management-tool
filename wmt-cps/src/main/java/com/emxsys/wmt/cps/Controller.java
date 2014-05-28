@@ -44,15 +44,19 @@ import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
-import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherProvider;
-import com.emxsys.weather.api.WeatherType;
+import com.emxsys.wildfire.api.FireBehaviorService;
+import com.emxsys.wildfire.api.FireEnvironment;
+import com.emxsys.wildfire.api.Fuel;
+import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.FuelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.spi.DefaultFireBehaviorService;
+import com.emxsys.wildfire.spi.DefaultFuelProvider;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.cps.ui.FuelTopComponent;
@@ -62,6 +66,8 @@ import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,7 +84,6 @@ import org.openide.util.WeakListeners;
 import org.openide.windows.WindowManager;
 import visad.Real;
 import visad.RealTuple;
-import visad.RealType;
 import visad.VisADException;
 
 /**
@@ -101,7 +106,9 @@ public class Controller {
     private FuelModelProvider fuels;
     private WeatherProvider weather;
     private ReticuleCoordinateProvider reticule;
-
+    // Fire Behavior Calculator
+    private final FuelProvider fuelProvider = DefaultFuelProvider.getInstance();
+    private final FireBehaviorService fireModel = DefaultFireBehaviorService.getInstance();
     // Current data values
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
@@ -109,7 +116,6 @@ public class Controller {
     private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(FuelMoistureTuple.INVALID);
     private final AtomicReference<Real> azimuthRef = new AtomicReference<>(new Real(SolarType.AZIMUTH_ANGLE));
     private final AtomicReference<Real> zenithRef = new AtomicReference<>(new Real(SolarType.ZENITH_ANGLE));
-
     // Event handlers
     private final TerrainUpdater terrainUpdater;
     private final SolarUpdater solarUpdater;
@@ -133,7 +139,6 @@ public class Controller {
     public static Controller getInstance() {
         return ControllerHolder.INSTANCE;
     }
-
 
     /**
      * Sets the FuelMoisure used by the Controller to determine the Fire Behavior at the current
@@ -253,6 +258,7 @@ public class Controller {
         }
         return fuelWindow;
     }
+
     /**
      * Helper.
      */
@@ -264,6 +270,58 @@ public class Controller {
             }
         }
         return weatherWindow;
+    }
+
+    /**
+     * Updates the display from recomputed fire behavior
+     *
+     * @throws VisADException
+     * @throws RemoteException
+     */
+    private void computeFireBehavior() throws VisADException, RemoteException {
+        if (!validateInputs()) {
+            return;
+        }
+        // Get the fuel model from the GUI
+        Fuel fuel = fuelProvider.newFuel(fuelModelRef.get());
+
+        // Adjust the fuel to current conditions.
+        fuel.adjustFuelConditions(solar, airTemps, humidities, windSpd, windDir, terrain, fuelMoisture);
+
+        // Compute the hourly fire behavior 
+        List<FireEnvironment> fires = new ArrayList<>();
+        for (FuelCondition cond : fuel.getConditions()) {
+            fires.add(fireModel.computeFireBehavior(fuel.getFuelModel(), cond, windSpd, windDir, terrain));
+        }
+
+        // Output the values
+        //HaulChartTopComponent.findInstance().plotFireBehavior(fires.get(0));
+    }
+
+    private boolean validateInputs() throws RemoteException, VisADException {
+        // Validate that we have the necessary inputs to compute fire behavior
+        if (date == null || date.isMissing()) {
+            return false;
+        } else if (fuelModel == null) {
+            return false;
+        } else if (fuelMoisture == null || fuelMoisture.isMissing()) {
+            return false;
+        } else if (solar == null || solar.isMissing()) {
+            return false;
+        } else if (airTemp == null || airTemp.isMissing()) {
+            return false;
+        } else if (airTemps == null || airTemps.isEmpty()) {
+            return false;
+        } else if (humidity == null || humidity.isMissing()) {
+            return false;
+        } else if (humidities == null || humidities.isEmpty()) {
+            return false;
+        } else if (location == null || location.isMissing()) {
+            return false;
+        } else if (terrain == null || terrain.isMissing()) {
+            return false;
+        }
+        return true;
     }
 
     /**
