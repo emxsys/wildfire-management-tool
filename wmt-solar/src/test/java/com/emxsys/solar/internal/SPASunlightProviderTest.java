@@ -30,9 +30,10 @@
 
 package com.emxsys.solar.internal;
 
-import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.GeoSector;
 import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.visad.Times;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -41,7 +42,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import visad.FieldImpl;
+import visad.Gridded1DDoubleSet;
+import visad.Linear2DSet;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -102,6 +105,7 @@ public class SPASunlightProviderTest {
         
         SPASunlightProvider instance = new SPASunlightProvider();
         RealTuple tuple = instance.getSunPosition(date, observer);
+        System.out.println(observer + " @ " + date);
         System.out.println(tuple.longString());
     }
 
@@ -139,11 +143,20 @@ public class SPASunlightProviderTest {
         System.out.println(observer + " @ " + date);
         System.out.println(tuple.longString());
         
+        
         date = ZonedDateTime.now();
         observer = GeoCoord3D.fromDegrees(34.25, -119.2);
         tuple = instance.getSunlight(date, observer);
         System.out.println(observer + " @ " + date);
         System.out.println(tuple.longString());
+        
+
+//        Gridded1DDoubleSet timeDomain = Times.makeHourlyTimeSet(ZonedDateTime.now(), 12);
+//        Linear2DSet spatialDomain = GeoSector.CONUS.toLinear2DSet(1, 1);
+//        FieldImpl sunlight = instance.getSunlight(timeDomain, spatialDomain);
+//        System.out.println(sunlight);
+
+        
     }
     
 }

@@ -41,16 +41,6 @@ import visad.RealTuple;
 public interface SunlightProvider {
 
     /**
-     * Gets the subsolar point coordinates of the sun at the given date and time, plus the 
-     * horizonal coordinates relative to the observer.
-     *
-     * @param time The time used to get sun's position.
-     * @param observer The coordinates of the observer.
-     * @return A SolarType.SUN_POSITION tuple.
-     */
-    RealTuple getSunPosition(ZonedDateTime time, Coord3D observer);
-
-    /**
      * Constructs a new Sunlight instance represent the sun angles for a given date/time and
      * location.
      *
@@ -58,6 +48,6 @@ public interface SunlightProvider {
      * @param observer The coordinates of the observer.
      * @return A SolarType.SUNLIGHT tuple
      */
-    RealTuple getSunlight(ZonedDateTime time, Coord3D observer);
+    SolarTuple getSunlight(ZonedDateTime time, Coord3D observer);
 
 }

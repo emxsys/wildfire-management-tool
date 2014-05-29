@@ -29,13 +29,9 @@
  */
 package com.emxsys.solar.internal;
 
-import com.emxsys.solar.internal.SolarData;
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainTuple;
-import com.emxsys.solar.internal.SolarPositionAlgorithms;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -45,18 +41,16 @@ import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import visad.Real;
-import visad.RealTuple;
 
 /**
  *
  * @author Bruce Schubert
  */
-public class SolarPositionTest {
+public class SolarPositionAlgorithmTest {
 
-    public SolarPositionTest() {
+    public SolarPositionAlgorithmTest() {
     }
 
     @BeforeClass

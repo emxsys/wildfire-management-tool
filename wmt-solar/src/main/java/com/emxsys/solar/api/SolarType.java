@@ -52,14 +52,16 @@ public class SolarType {
     public static final RealType SUNRISE_HOUR;
     /** Sunset - local time [hours] */
     public static final RealType SUNSET_HOUR;
+    /** Sun Transit (solar noon) - local time [hours] */
+    public static final RealType SUNTRANSIT_HOUR;
+    /** Hour Angle - angular offset from solar noon */
+    public static final RealType HOUR_ANGLE;
     /** Sunrise - angular offset from solar noon [degrees] */
     public static final RealType SUNRISE_HOUR_ANGLE;
     /** Sunset - angular offset from solar noon [degrees] */
     public static final RealType SUNSET_HOUR_ANGLE;
     public static final RealType RIGHT_ASCENSION;
     public static final RealType DECLINATION;
-    /** Hour Angle - angular offset from solar noon */
-    public static final RealType HOUR_ANGLE;
     public static final RealType LATITUDE;
     public static final RealType SUBSOLAR_LATITUDE;
     public static final RealType SUBSOLAR_LONGITUDE;
@@ -79,6 +81,7 @@ public class SolarType {
         SUNSET_TIME = RealType.getRealType("sunset:utc", CommonUnit.secondsSinceTheEpoch, null);
         SUNRISE_HOUR = RealType.getRealType("sunrise:hour", GeneralUnit.hour, null);
         SUNSET_HOUR = RealType.getRealType("sunset:hour", GeneralUnit.hour, null);
+        SUNTRANSIT_HOUR = RealType.getRealType("transit:hour", GeneralUnit.hour, null);
         SUNRISE_HOUR_ANGLE = RealType.getRealType("sunrise_hour:deg", CommonUnit.degree, null);
         SUNSET_HOUR_ANGLE = RealType.getRealType("sunset_hour:deg", CommonUnit.degree, null);
         RIGHT_ASCENSION = RealType.getRealType("right_ascention:deg", CommonUnit.degree, null);
@@ -105,11 +108,10 @@ public class SolarType {
                 });
         SUN_POSITION = Reals.newRealTupleType(
                 new RealType[]{
-                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,
-                });
+                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,});
         SUNLIGHT = Reals.newRealTupleType(
                 new RealType[]{
-                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE, 
+                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, ALTITUDE_ANGLE, HOUR_ANGLE, SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNTRANSIT_HOUR
                 });
 
     }
