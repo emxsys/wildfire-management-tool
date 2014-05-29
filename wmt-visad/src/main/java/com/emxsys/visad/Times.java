@@ -29,24 +29,38 @@
  */
 package com.emxsys.visad;
 
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import org.openide.util.Exceptions;
 import visad.*;
 
-
 /**
  * Utility class for converting to/from VisAD DateTime objects.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class Times
-{
-    private Times()
-    {
+public class Times {
+
+    private Times() {
     }
 
+    /**
+     * Convenient method to get a new DateTime from a Java ZonedDateTime.
+     *
+     * @param date A Java Date.
+     * @return A UTC DateTime (RealType.Time)
+     */
+    static public DateTime fromZonedDateTime(ZonedDateTime date) {
+        try {
+            return new DateTime(date.toEpochSecond());
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new IllegalArgumentException(ex);
+        }
+    }
 
     /**
      * Convenient method to get a new DateTime object from a Java Calendar Date object.
@@ -54,19 +68,16 @@ public class Times
      * @param date A Java Date.
      * @return A DateTime object (RealType.Time)
      */
-    static public DateTime fromDate(Date date)
-    {
-        try
-        {
+    @Deprecated
+    static public DateTime fromDate(Date date) {
+        try {
             return new DateTime(date);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalArgumentException(ex);
         }
     }
-
 
     /**
      * Convenient method to get a new DateTime object from a Java Calendar Date object.
@@ -75,26 +86,22 @@ public class Times
      * @param hour A decimal representing the 24 hour clock time
      * @return A DateTime object (RealType.Time) set to the Date and hour.
      */
-    static public DateTime fromDate(Date date, double hour)
-    {
-        if (hour < 0 || hour >= 24)
-        {
+    @Deprecated
+    static public DateTime fromDate(Date date, double hour) {
+        if (hour < 0 || hour >= 24) {
             throw new IllegalArgumentException("hour not within range: >= 0 and < 24");
         }
-        try
-        {
+        try {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             setCalendarToHour(cal, hour);
             return new DateTime(cal.getTime());
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Convenient method to get a new DateTime object from a double value
@@ -102,22 +109,17 @@ public class Times
      * @param seconds seconds from epoch (equivalent to DataTime.getValue().
      * @return A DateTime object (RealType.Time)
      */
-    static public DateTime fromDouble(double seconds)
-    {
-        try
-        {
+    static public DateTime fromDouble(double seconds) {
+        try {
             return new DateTime(seconds);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalArgumentException(ex);
         }
     }
 
-
-    private static Calendar setCalendarToHour(Calendar cal, double hour)
-    {
+    private static Calendar setCalendarToHour(Calendar cal, double hour) {
         int h = (int) (hour % 24);
         int m = (int) ((hour - h) * 60);
         int s = (int) Math.round(((hour - h) * 3600) % 60);
@@ -127,38 +129,30 @@ public class Times
         return cal;
     }
 
-
     /**
      * Convenient method to get a new DateTime object from the current Calendar time.
      *
      * @return A DateTime object (RealType.Time)
      */
-    static public DateTime fromCurrentTime()
-    {
+    static public DateTime fromCurrentTime() {
         return fromDate(Calendar.getInstance().getTime());
     }
 
-
-    static public DateTime getMidnightGMT(Real dateTime)
-    {
-        if (!RealType.Time.equals(dateTime.getType()))
-        {
+    static public DateTime getMidnightGMT(Real dateTime) {
+        if (!RealType.Time.equals(dateTime.getType())) {
             throw new IllegalArgumentException("Argument math type must be: "
-                + RealType.Time.toString() + ", not " + dateTime.getType().toString());
+                    + RealType.Time.toString() + ", not " + dateTime.getType().toString());
         }
-        try
-        {
+        try {
             final double SECS_PER_DAY = 86400;    // 60 * 60 * 24;
             double secsSinceMidnight = dateTime.getValue() % SECS_PER_DAY;
             return new DateTime(dateTime.getValue() - secsSinceMidnight);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Return a new Java Date object from a VisAD DateTime.
@@ -166,27 +160,23 @@ public class Times
      * @param dateTime a RealType.Time or DateTime object.
      * @return a Java Date object.
      */
-    static public Date toDate(Real dateTime)
-    {
-        if (!RealType.Time.equals(dateTime.getType()))
-        {
+    @Deprecated
+    static public Date toDate(Real dateTime) {
+        if (!RealType.Time.equals(dateTime.getType())) {
             throw new IllegalArgumentException("Argument math type must be: "
-                + RealType.Time.toString() + ", not " + dateTime.getType().toString());
+                    + RealType.Time.toString() + ", not " + dateTime.getType().toString());
         }
         // Use the Calendar to convert from DateTime in GMT to local time
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
-        try
-        {
+        try {
             cal.setTimeInMillis((long) (dateTime.getValue(CommonUnit.secondsSinceTheEpoch) * 1000));
             return cal.getTime();
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Return a new Java Date object from a VisAD DateTime.
@@ -194,32 +184,27 @@ public class Times
      * @param dateTime a RealType.Time or DateTime object.
      * @return a Java Date object.
      */
-    static public Date toDate(Real dateTime, double hour)
-    {
-        if (!RealType.Time.equals(dateTime.getType()))
-        {
+    @Deprecated
+    static public Date toDate(Real dateTime, double hour) {
+        if (!RealType.Time.equals(dateTime.getType())) {
             throw new IllegalArgumentException("Argument math type must be: "
-                + RealType.Time.toString() + ", not " + dateTime.getType().toString());
+                    + RealType.Time.toString() + ", not " + dateTime.getType().toString());
         }
-        if (hour < 0 || hour >= 24)
-        {
+        if (hour < 0 || hour >= 24) {
             throw new IllegalArgumentException("hour not within range: >= 0 and < 24");
         }
         // Use the Calendar to convert from DateTime in GMT to local time
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
-        try
-        {
+        try {
             cal.setTimeInMillis((long) (dateTime.getValue(CommonUnit.secondsSinceTheEpoch) * 1000));
             setCalendarToHour(cal, hour);
             return cal.getTime();
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Convert a DateTime in stored in GMT to a 24 clock time. E.g., 2011-12-01 14:30GMT returns
@@ -228,26 +213,21 @@ public class Times
      * @param dateTime A Real(Time) or DateTime object
      * @return A decimal representing the 24 hour clock time in the GMT.
      */
-    static public double toClockTimeGMT(Real dateTime)
-    {
-        if (!RealType.Time.equals(dateTime.getType()))
-        {
+    static public double toClockTimeGMT(Real dateTime) {
+        if (!RealType.Time.equals(dateTime.getType())) {
             throw new IllegalArgumentException("Argument math type must be: "
-                + RealType.Time.toString() + ", not " + dateTime.getType().toString());
+                    + RealType.Time.toString() + ", not " + dateTime.getType().toString());
         }
-        try
-        {
+        try {
             double val = dateTime.getValue(GeneralUnit.hour);
             val %= 24.0;
             return val;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Convert a DateTime in stored in GMT to 24 hour clock time in the local timezone. E.g., in
@@ -256,15 +236,12 @@ public class Times
      * @param dateTime A Real(Time) or DateTime object
      * @return A decimal representing 24 hour clock time in the local timezone.
      */
-    static public double toClockTime(Real dateTime)
-    {
-        if (!RealType.Time.equals(dateTime.getType()))
-        {
+    static public double toClockTime(Real dateTime) {
+        if (!RealType.Time.equals(dateTime.getType())) {
             throw new IllegalArgumentException("Argument math type must be: "
-                + RealType.Time.toString() + ", not " + dateTime.getType().toString());
+                    + RealType.Time.toString() + ", not " + dateTime.getType().toString());
         }
-        try
-        {
+        try {
             Calendar cal = Calendar.getInstance();
             TimeZone tz = cal.getTimeZone();
             double RAW_TZ_OFFSET_HOURS = tz.getRawOffset() / 3600000;
@@ -275,14 +252,12 @@ public class Times
             hours %= 24.0;
             return hours;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
 
     }
-
 
     /**
      * Convert the seconds value from a DateTime to 24 hour clock time in the local timezone. E.g.,
@@ -291,96 +266,85 @@ public class Times
      * @param dateTimeSecsGMT A typical value stored in a time domain.
      * @return A decimal representing 24 hour clock time in the local timezone.
      */
-    static public double toClockTime(double dateTimeSecsGMT)
-    {
-        try
-        {
+    static public double toClockTime(double dateTimeSecsGMT) {
+        try {
             return toClockTime(new DateTime(dateTimeSecsGMT));
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
-    public static Gridded1DDoubleSet makeDailyTimeSet(DateTime startDate, int numDays)
-    {
-        if (numDays < 1)
-        {
+    /**
+     * Creates a new daily time set starting with the given datetime for the specified number of
+     * days.
+     * @param start
+     * @param numDays
+     * @return A new time domain set.
+     */
+    public static Gridded1DDoubleSet makeDailyTimeSet(ZonedDateTime start, int numDays) {
+        if (numDays < 1) {
             throw new IllegalArgumentException("numDays must be greater than 0");
         }
-
-        final int SECS_PER_DAY = 86400; // 60*60*24
-        try
-        {
-            double[] times = new double[numDays + 1];
-            for (int i = 0; i < times.length; i++)
-            {
-                times[i] = startDate.getValue() + (i * SECS_PER_DAY);
+        try {
+            double times[] = new double[numDays];
+            for (int i = 0; i < times.length; i++) {
+                ZonedDateTime time = start.plusDays(i);
+                times[i] = time.toEpochSecond();
             }
             Gridded1DDoubleSet timeSet = DateTime.makeTimeSet(times);
             return timeSet;
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
-    public static Gridded1DDoubleSet makeHourlyTimeSet(DateTime startDate, int numHours)
-    {
-        if (numHours < 1)
-        {
+    /**
+     * Creates a new hourly time set starting with the given datetime for the specified number of
+     * hours.
+     * @param start
+     * @param numHours
+     * @return
+     */
+    public static Gridded1DDoubleSet makeHourlyTimeSet(ZonedDateTime start, int numHours) {
+        if (numHours < 1) {
             throw new IllegalArgumentException("number of hours must be greater than 0");
         }
-
-        final int SECS_PER_HOUR = 3600; // 60*60
-        try
-        {
-            double[] times = new double[numHours + 1];
-            for (int i = 0; i < times.length; i++)
-            {
-                times[i] = startDate.getValue() + (i * SECS_PER_HOUR);
+        try {
+            double times[] = new double[numHours];
+            for (int i = 0; i < times.length; i++) {
+                ZonedDateTime time = start.plusHours(i);
+                times[i] = time.toEpochSecond();
             }
             Gridded1DDoubleSet timeSet = DateTime.makeTimeSet(times);
             return timeSet;
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
-    public static DateTime getFirstDateTime(Gridded1DSet timeSet)
-    {
-        try
-        {
+    public static DateTime getFirstDateTime(Gridded1DSet timeSet) {
+        try {
             double value = timeSet.getLowX();
             return new DateTime(value);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
     }
 
-
-    public static DateTime getLastDateTime(Gridded1DSet timeSet)
-    {
-        try
-        {
+    public static DateTime getLastDateTime(Gridded1DSet timeSet) {
+        try {
             double value = timeSet.getHiX();
             return new DateTime(value);
         }
-        catch (VisADException ex)
-        {
+        catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
