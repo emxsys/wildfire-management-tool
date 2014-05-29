@@ -38,6 +38,7 @@ import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import visad.*;
+import visad.georef.LatLonPoint;
 
 /**
  *
@@ -92,12 +93,27 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
             };
 
     /**
+     * Factory method to create a GeoCoord3D from a VisAD LatLonPoint.
+     *
+     * @param point The latitude and longitude.
+     * @return A new GeoCoord3D with a zero elevation.
+     */
+    public static GeoCoord3D fromLatLonPoint(LatLonPoint point) {
+        try {
+            return new GeoCoord3D(point.getLatitude(), point.getLongitude());
+        }
+        catch (VisADException | RemoteException ex) {
+            logger.severe(ex.toString());
+        }
+        return INVALID_COORD;
+    }
+
+    /**
      * Factory method to create a GeoCoord3D from a Coord2D.
      *
      * @param coord latitude and longitude.
      * @return a new GeoCoord3D with a zero altitude.
      */
-    
     public static GeoCoord3D fromCoord(Coord2D coord) {
         try {
             return new GeoCoord3D(coord);
@@ -107,6 +123,7 @@ public class GeoCoord3D extends RealTuple implements Coord3D {
         }
         return INVALID_COORD;
     }
+
     /**
      * Factory method to create a GeoCoord3D from a lat, lon with a zero altitude.
      *
