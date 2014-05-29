@@ -62,7 +62,7 @@ public class GmlParser {
             }
         }
         // TODO: parse gml:coord elements
-        return GeoCoord2D.INVALID_POINT;
+        return GeoCoord2D.INVALID_COORD;
     }
 
     /**
@@ -81,7 +81,7 @@ public class GmlParser {
 
         }
         // TODO: parse gml:coord elements
-        return GeoCoord2D.INVALID_POINT;
+        return GeoCoord2D.INVALID_COORD;
     }
 
     /**

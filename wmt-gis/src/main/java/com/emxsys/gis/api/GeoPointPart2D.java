@@ -46,7 +46,7 @@ public class GeoPointPart2D implements Part {
     private GeoCoord2D point;
 
     public GeoPointPart2D() {
-        this.point = GeoCoord2D.INVALID_POINT;
+        this.point = GeoCoord2D.INVALID_COORD;
     }
 
     public GeoPointPart2D(GeoCoord2D point) {
