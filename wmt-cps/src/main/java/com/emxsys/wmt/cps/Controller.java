@@ -39,6 +39,7 @@ import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
 import com.emxsys.solar.api.SolarType;
 import com.emxsys.solar.api.SunlightProvider;
+import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
 import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
@@ -83,7 +84,6 @@ import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
 import org.openide.windows.WindowManager;
 import visad.Real;
-import visad.RealTuple;
 import visad.VisADException;
 
 /**
@@ -286,12 +286,11 @@ public class Controller {
         Fuel fuel = fuelProvider.newFuel(fuelModelRef.get());
 
         // Adjust the fuel to current conditions.
-        fuel.adjustFuelConditions(solar, airTemps, humidities, windSpd, windDir, terrain, fuelMoisture);
-
+        //fuel.adjustFuelConditions(solar, airTemps, humidities, windSpd, windDir, terrain, fuelMoisture);
         // Compute the hourly fire behavior 
         List<FireEnvironment> fires = new ArrayList<>();
         for (FuelCondition cond : fuel.getConditions()) {
-            fires.add(fireModel.computeFireBehavior(fuel.getFuelModel(), cond, windSpd, windDir, terrain));
+            //fires.add(fireModel.computeFireBehavior(fuel.getFuelModel(), cond, windSpd, windDir, terrain));
         }
 
         // Output the values
@@ -300,27 +299,27 @@ public class Controller {
 
     private boolean validateInputs() throws RemoteException, VisADException {
         // Validate that we have the necessary inputs to compute fire behavior
-        if (date == null || date.isMissing()) {
-            return false;
-        } else if (fuelModel == null) {
-            return false;
-        } else if (fuelMoisture == null || fuelMoisture.isMissing()) {
-            return false;
-        } else if (solar == null || solar.isMissing()) {
-            return false;
-        } else if (airTemp == null || airTemp.isMissing()) {
-            return false;
-        } else if (airTemps == null || airTemps.isEmpty()) {
-            return false;
-        } else if (humidity == null || humidity.isMissing()) {
-            return false;
-        } else if (humidities == null || humidities.isEmpty()) {
-            return false;
-        } else if (location == null || location.isMissing()) {
-            return false;
-        } else if (terrain == null || terrain.isMissing()) {
-            return false;
-        }
+//        if (date == null || date.isMissing()) {
+//            return false;
+//        } else if (fuelModel == null) {
+//            return false;
+//        } else if (fuelMoisture == null || fuelMoisture.isMissing()) {
+//            return false;
+//        } else if (solar == null || solar.isMissing()) {
+//            return false;
+//        } else if (airTemp == null || airTemp.isMissing()) {
+//            return false;
+//        } else if (airTemps == null || airTemps.isEmpty()) {
+//            return false;
+//        } else if (humidity == null || humidity.isMissing()) {
+//            return false;
+//        } else if (humidities == null || humidities.isEmpty()) {
+//            return false;
+//        } else if (location == null || location.isMissing()) {
+//            return false;
+//        } else if (terrain == null || terrain.isMissing()) {
+//            return false;
+//        }
         return true;
     }
 
@@ -404,9 +403,6 @@ public class Controller {
         private static final RequestProcessor processor = new RequestProcessor(SolarUpdater.class);
         private final RequestProcessor.Task updatingTask = processor.create(this, true); // true = initiallyFinished
         private final AtomicReference<TimeEvent> lastTimeEvent = new AtomicReference<>(new TimeEvent(this, null, null));
-        // Array indicies
-        private static final int AZIMUTH_INDEX = SolarType.SUN_POSITION.getIndex(SolarType.AZIMUTH_ANGLE);
-        private static final int ZENITH_INDEX = SolarType.SUN_POSITION.getIndex(SolarType.ZENITH_ANGLE);
 
         SolarUpdater(Controller controller) {
             this.controller = controller;
@@ -430,12 +426,12 @@ public class Controller {
             controller.timeRef.set(time);
 
             try {
-                RealTuple sunPosition = controller.sun.getSunPosition(time, controller.coordRef.get());
-                if (sunPosition.isMissing()) {
+                SunlightTuple sunlight = controller.sun.getSunlight(time, controller.coordRef.get());
+                if (sunlight.isMissing()) {
                     return;
                 }
-                Real azimuth = (Real) sunPosition.getComponent(AZIMUTH_INDEX);
-                Real zenith = (Real) sunPosition.getComponent(ZENITH_INDEX);
+                Real azimuth = sunlight.getAzimuthAngle();
+                Real zenith = sunlight.getZenithAngle();
                 controller.azimuthRef.set(azimuth);
                 controller.zenithRef.set(zenith);
                 boolean isShaded
@@ -447,7 +443,7 @@ public class Controller {
                     getForcesTopComponent().updateCharts(time, azimuth, zenith, isShaded);
                 });
 
-            } catch (VisADException | RemoteException ex) {
+            } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
 
