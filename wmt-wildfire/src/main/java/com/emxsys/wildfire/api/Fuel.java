@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2010-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,18 @@
  */
 package com.emxsys.wildfire.api;
 
+import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.Terrain;
-import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.api.SolarModel;
+import com.emxsys.weather.api.WeatherModel;
+import java.time.ZonedDateTime;
 import java.util.List;
-import visad.Real;
 
 /**
- * The Fuel interface defines the characteristics of wildland fuels used in
- * fire behavior predictions.
+ * The Fuel interface defines the characteristics of wildland fuels used in fire behavior
+ * predictions.
  *
  * @author Bruce Schubert
- * @version $Id: Fuel.java 669 2013-05-24 19:56:22Z bdschubert $
  */
 public interface Fuel {
 
@@ -55,16 +56,15 @@ public interface Fuel {
      */
     List<FuelCondition> getConditions();
 
-
     /**
      * Adjust fuel moisture and fuel temperatures.
-     * @param solar
-     * @param airTemps
-     * @param humidities
-     * @param windSpd
-     * @param windDir
+     * @param time The date/time used to determine the solar and weather conditions.
+     * @param coord The coordinated used to determine the solar and weather conditions.
+     * @param solar A spatio-temporal model containing SolarTypes.
+     * @param weather A spatio-temporal model containing the WeatherTypes.
+     * and WIND_DIR.
      * @param terrain
+     * @param fuelMoisture
      */
-    void adjustFuelConditions(Sunlight solar, List<Real> airTemps, List <Real>humidities,
-            Real windSpd, Real windDir, Terrain terrain, FuelMoisture fuelMoisture);
+    void adjustFuelConditions(ZonedDateTime time, Coord3D coord, SolarModel solar, WeatherModel weather, Terrain terrain, FuelMoisture fuelMoisture);
 }

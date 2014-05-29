@@ -74,9 +74,6 @@ public class SurfaceFuelProvider implements FuelProvider {
      */
     @Override
     public Fuel newFuel(int fuelModelCode, WeatherConditions prevWeekWxConditions) {
-
-        SurfaceFuel fuel = new SurfaceFuel(fuelModelCode);
-        fuel.adjustFuelMoistures(prevWeekWxConditions);
-        return fuel;
+        throw new UnsupportedOperationException("depreciated.");
     }
 }
