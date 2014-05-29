@@ -29,12 +29,12 @@
  */
 package com.emxsys.gis.api;
 
-import com.emxsys.gis.api.Coord2D;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import visad.*;
+import visad.georef.LatLonPoint;
 
 /**
  * RealTuple implementation of Coord2D for defining geographic coordinate points. I.e., latitude and
@@ -46,10 +46,13 @@ public class GeoCoord2D extends RealTuple implements Coord2D {
 
     public static final int LATITUDE_INDEX = 0;
     public static final int LONGITUDE_INDEX = 1;
-    public static final GeoCoord2D INVALID_POINT = new GeoCoord2D();
+    public static GeoCoord2D INVALID_COORD;
+    public static GeoCoord2D ZERO_COORD;
+
     public static CoordinateSystem DEFAULT_COORD_SYS;
     public static RealTupleType DEFAULT_TUPLE_TYPE;
     public static final String XML_ATTR_ANGLE = "Angle";
+    private static final double ZERO = 0.0;
     private Real lat;
     private Real lon;
     private Data[] components;
@@ -61,6 +64,9 @@ public class GeoCoord2D extends RealTuple implements Coord2D {
             DEFAULT_COORD_SYS = new SimpleCoordinateSystem();
             DEFAULT_TUPLE_TYPE = new RealTupleType(
                     RealType.Latitude, RealType.Longitude, DEFAULT_COORD_SYS, null);
+            INVALID_COORD = new GeoCoord2D();
+            ZERO_COORD = fromDegrees(ZERO, ZERO);
+
         }
         catch (VisADException ex) {
             LOGGER.severe(ex.toString());
@@ -73,6 +79,22 @@ public class GeoCoord2D extends RealTuple implements Coord2D {
     public static final Unit[] DEFAULT_UNITS = new Unit[]{
         CommonUnit.degree, CommonUnit.degree
     };
+
+    /**
+     * Factory method to create a GeoCoord2D a VisAD LatLonPoint.
+     *
+     * @param point The latitude and longitude.
+     * @return A new GeoCoord2D.
+     */
+    public static GeoCoord2D fromLatLonPoint(LatLonPoint point) {
+        try {
+            return new GeoCoord2D(point.getLatitude(), point.getLongitude());
+        }
+        catch (VisADException | RemoteException ex) {
+            LOGGER.severe(ex.toString());
+        }
+        return INVALID_COORD;
+    }
 
     /**
      * Factory method to create a GeoCoord2D from a lat lon point.
@@ -88,7 +110,7 @@ public class GeoCoord2D extends RealTuple implements Coord2D {
         catch (VisADException | RemoteException ex) {
             LOGGER.severe(ex.toString());
         }
-        return INVALID_POINT;
+        return INVALID_COORD;
     }
 
     /**
@@ -116,7 +138,7 @@ public class GeoCoord2D extends RealTuple implements Coord2D {
         catch (VisADException | RemoteException ex) {
             LOGGER.severe(ex.toString());
         }
-        return INVALID_POINT;
+        return INVALID_COORD;
     }
 
     /**
@@ -154,7 +176,7 @@ public class GeoCoord2D extends RealTuple implements Coord2D {
             // plus VisADExceptions and RemoteExceptions
             LOGGER.severe(ex.toString());
         }
-        return INVALID_POINT;
+        return INVALID_COORD;
     }
 
     /**
