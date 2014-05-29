@@ -100,14 +100,14 @@ public class SolarModel {
         return domain;
     }
 
-    public SolarTuple getTuple(ZonedDateTime temporal, Coord2D spatial) {
+    public SunlightTuple getSunlight(ZonedDateTime temporal, Coord2D spatial) {
         if (this.solarField == null) {
             this.solarField = createSolarField();
         }
-        return getTuple(this.solarField, temporal, spatial);
+        return getSunlight(this.solarField, temporal, spatial);
     }
 
-    private static SolarTuple getTuple(FieldImpl solarField, ZonedDateTime temporal, Coord2D spatial) {
+    private static SunlightTuple getSunlight(FieldImpl solarField, ZonedDateTime temporal, Coord2D spatial) {
         try {
             DateTime time = Times.fromZonedDateTime(temporal);
             RealTuple location = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]{
@@ -116,25 +116,25 @@ public class SolarModel {
             // Function: (time -> ((lat, lon) -> (sunlight)))
             FieldImpl field = (FieldImpl) solarField.evaluate(time, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             RealTuple tuple = (RealTuple) field.evaluate(location, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-            return SolarTuple.fromRealTuple(tuple);
+            return SunlightTuple.fromRealTuple(tuple);
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
         }
     }
 
-    public SolarTuple getTupleAt(int temporalIndex, int spatialIndex) {
+    public SunlightTuple getSunlightAt(int temporalIndex, int spatialIndex) {
         if (this.solarField == null) {
             this.solarField = createSolarField();
         }
-        return SolarTuple.fromRealTuple(getTupleAt(this.solarField, temporalIndex, spatialIndex));
+        return SunlightTuple.fromRealTuple(getSunlightAt(this.solarField, temporalIndex, spatialIndex));
     }
 
-    private static SolarTuple getTupleAt(FieldImpl solarField, int temporalIndex, int spatialIndex) {
+    private static SunlightTuple getSunlightAt(FieldImpl solarField, int temporalIndex, int spatialIndex) {
         try {
             FieldImpl field = (FieldImpl) solarField.getSample(temporalIndex);
             RealTuple tuple = (RealTuple) field.getSample(spatialIndex);
-            return SolarTuple.fromRealTuple(tuple);
+            return SunlightTuple.fromRealTuple(tuple);
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);

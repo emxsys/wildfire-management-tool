@@ -31,7 +31,6 @@ package com.emxsys.solar.api;
 
 import com.emxsys.gis.api.Coord3D;
 import java.time.ZonedDateTime;
-import visad.RealTuple;
 
 /**
  * A SunlightProvider instance provides solar angles and times.
@@ -48,6 +47,6 @@ public interface SunlightProvider {
      * @param observer The coordinates of the observer.
      * @return A SolarType.SUNLIGHT tuple
      */
-    SolarTuple getSunlight(ZonedDateTime time, Coord3D observer);
+    SunlightTuple getSunlight(ZonedDateTime time, Coord3D observer);
 
 }

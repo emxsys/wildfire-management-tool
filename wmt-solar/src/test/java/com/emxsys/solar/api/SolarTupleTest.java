@@ -50,7 +50,7 @@ import visad.RealTuple;
  */
 public class SolarTupleTest {
 
-    private SolarTuple instance;
+    private SunlightTuple instance;
     private ZonedDateTime date;
     private GeoCoord3D observer;
 
@@ -125,17 +125,17 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of fromRealTuple method, of class SolarTuple.
+     * Test of fromRealTuple method, of class SunlightTuple.
      */
     @Test
     public void testFromRealTuple() {
         System.out.println("fromRealTuple");
         RealTuple sunightTuple = new RealTuple(SolarType.SUNLIGHT);
-        SolarTuple result = SolarTuple.fromRealTuple(sunightTuple);
+        SunlightTuple result = SunlightTuple.fromRealTuple(sunightTuple);
     }
 
     /**
-     * Test of getDeclination method, of class SolarTuple.
+     * Test of getDeclination method, of class SunlightTuple.
      */
     @Test
     public void testGetDeclination() {
@@ -147,7 +147,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSubsolarLatitude method, of class SolarTuple.
+     * Test of getSubsolarLatitude method, of class SunlightTuple.
      */
     @Test
     public void testGetSubsolarLatitude() {
@@ -158,7 +158,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSubsolarLongitude method, of class SolarTuple.
+     * Test of getSubsolarLongitude method, of class SunlightTuple.
      */
     @Test
     public void testGetSubsolarLongitude() {
@@ -168,7 +168,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getAzimuthAngle method, of class SolarTuple.
+     * Test of getAzimuthAngle method, of class SunlightTuple.
      */
     @Test
     public void testGetAzimuthAngle() {
@@ -179,7 +179,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getZenithAngle method, of class SolarTuple.
+     * Test of getZenithAngle method, of class SunlightTuple.
      */
     @Test
     public void testGetZenithAngle() {
@@ -190,7 +190,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getAltitudeAngle method, of class SolarTuple.
+     * Test of getAltitudeAngle method, of class SunlightTuple.
      */
     @Test
     public void testGetAltitudeAngle() {
@@ -201,7 +201,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getLocalHourAngle method, of class SolarTuple.
+     * Test of getLocalHourAngle method, of class SunlightTuple.
      */
     @Test
     public void testGetLocalHourAngle() {
@@ -212,7 +212,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSunriseHourAngle method, of class SolarTuple.
+     * Test of getSunriseHourAngle method, of class SunlightTuple.
      */
     @Test
     public void testGetSunriseHourAngle() {
@@ -223,7 +223,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSunsetHourAngle method, of class SolarTuple.
+     * Test of getSunsetHourAngle method, of class SunlightTuple.
      */
     @Test
     public void testGetSunsetHourAngle() {
@@ -234,7 +234,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSunriseHour method, of class SolarTuple.
+     * Test of getSunriseHour method, of class SunlightTuple.
      */
     @Test
     public void testGetSunriseHour() {
@@ -245,7 +245,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSunsetHour method, of class SolarTuple.
+     * Test of getSunsetHour method, of class SunlightTuple.
      */
     @Test
     public void testGetSunsetHour() {
@@ -256,7 +256,7 @@ public class SolarTupleTest {
     }
 
     /**
-     * Test of getSunTransitHour method, of class SolarTuple.
+     * Test of getSunTransitHour method, of class SunlightTuple.
      */
     @Test
     public void testGetSunTransitHour() {

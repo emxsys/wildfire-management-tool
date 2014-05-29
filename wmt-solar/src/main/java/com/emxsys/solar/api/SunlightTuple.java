@@ -38,14 +38,14 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
- * SolarTuple is a concrete implementation of the Sunlight interface using a SUNLIGHT RealTupleType.
+ * SunlightTuple is a concrete implementation of the Sunlight interface using a SUNLIGHT RealTupleType.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class SolarTuple extends RealTuple implements Sunlight {
+public class SunlightTuple extends RealTuple implements Sunlight {
 
     /** A tuple with "missing" components */
-    public static final SolarTuple INVALID_TUPLE = new SolarTuple();
+    public static final SunlightTuple INVALID_TUPLE = new SunlightTuple();
     public static final int SUBSOLAR_LATITUDE_INDEX = Tuples.getIndex(SUBSOLAR_LATITUDE, SUNLIGHT);
     public static final int SUBSOLAR_LONGITIDUE_INDEX = Tuples.getIndex(SUBSOLAR_LONGITUDE, SUNLIGHT);
     public static final int AZIMUTH_ANGLE_INDEX = Tuples.getIndex(AZIMUTH_ANGLE, SUNLIGHT);
@@ -58,7 +58,7 @@ public class SolarTuple extends RealTuple implements Sunlight {
     public static final int SUNRISE_HOUR_INDEX = Tuples.getIndex(SUNRISE_HOUR, SUNLIGHT);
     public static final int SUNSET_HOUR_INDEX = Tuples.getIndex(SUNSET_HOUR, SUNLIGHT);
 
-    public static SolarTuple fromRealTuple(RealTuple sunightTuple) {
+    public static SunlightTuple fromRealTuple(RealTuple sunightTuple) {
         if (!sunightTuple.getType().equals(SolarType.SUNLIGHT)) {
             throw new IllegalArgumentException("Incompatible MathType: " + sunightTuple.getType());
         } else if (sunightTuple.isMissing()) {
@@ -66,7 +66,7 @@ public class SolarTuple extends RealTuple implements Sunlight {
         }
         try {
 
-            return new SolarTuple(sunightTuple);
+            return new SunlightTuple(sunightTuple);
 
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
@@ -78,14 +78,14 @@ public class SolarTuple extends RealTuple implements Sunlight {
      * Constructs and instance with missing values.
      * @param sunlight
      */
-    SolarTuple(RealTuple sunlightTuple) throws VisADException, RemoteException {
+    SunlightTuple(RealTuple sunlightTuple) throws VisADException, RemoteException {
         super(SolarType.SUNLIGHT, sunlightTuple.getRealComponents(), null);
     }
 
     /**
      * Constructs and instance with missing values.
      */
-    public SolarTuple() {
+    public SunlightTuple() {
         super(SolarType.SUNLIGHT);
     }
 

@@ -31,7 +31,7 @@ package com.emxsys.solar.internal;
 
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.solar.api.SolarTuple;
+import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.solar.api.SolarType;
 import com.emxsys.solar.api.SunlightProvider;
 import static com.emxsys.solar.internal.SolarPositionAlgorithms.*;
@@ -63,7 +63,7 @@ public class SPASunlightProvider implements SunlightProvider {
 
     @Override
     @SuppressWarnings("UseSpecificCatch")
-    public SolarTuple getSunlight(ZonedDateTime time, Coord3D observer) {
+    public SunlightTuple getSunlight(ZonedDateTime time, Coord3D observer) {
         try {
             SolarData spa = new SolarData(time, observer);
             SolarPositionAlgorithms.spa_calculate(spa);
@@ -82,11 +82,11 @@ public class SPASunlightProvider implements SunlightProvider {
                         new Real(SolarType.SUNSET_HOUR, spa.getSunset()), // sunset local time
                         new Real(SolarType.SUNTRANSIT_HOUR, spa.getSunTransit()), // solar noon local time
                     }, null);
-            return SolarTuple.fromRealTuple(tuple);
+            return SunlightTuple.fromRealTuple(tuple);
 
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
-            return SolarTuple.INVALID_TUPLE;
+            return SunlightTuple.INVALID_TUPLE;
         }
     }
 
