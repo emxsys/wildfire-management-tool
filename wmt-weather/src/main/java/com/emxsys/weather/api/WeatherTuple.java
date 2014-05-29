@@ -29,7 +29,6 @@
  */
 package com.emxsys.weather.api;
 
-import com.emxsys.weather.api.Weather;
 import static com.emxsys.visad.Reals.*;
 import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
