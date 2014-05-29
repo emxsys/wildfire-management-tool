@@ -56,7 +56,17 @@ public class Tuples {
      * @return Index of the first matching type, or -1 if not found.
      */
     public static int getIndex(MathType type, RealTuple tuple) {
-        RealTupleType tupleType = (RealTupleType) tuple.getType();
+        return getIndex(type, (RealTupleType) tuple.getType());
+    }
+
+    /**
+     * Returns the index of the first component of the specified type.
+     *
+     * @param type specification to look for.
+     * @param tupleType the RealTupleType to be searched.
+     * @return Index of the first matching type, or -1 if not found.
+     */
+    public static int getIndex(MathType type, RealTupleType tupleType) {
         return tupleType.getIndex(type);
     }
 
