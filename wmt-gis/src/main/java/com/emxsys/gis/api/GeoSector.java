@@ -66,12 +66,19 @@ public class GeoSector extends AbstractGeometry implements Box {
     public static GeoSector EASTERN_HEMISPHERE = new GeoSector(-90, 0, 90, 180);
     private static final Logger logger = Logger.getLogger(GeoSector.class.getName());
 
+    public static GeoSector fromBox(Box box) {
+        GeoSector sector = new GeoSector();
+        sector.northeast = box.getNortheast();
+        sector.southwest = box.getSouthwest();
+        return sector;
+    }
+
     /**
      * Create a sector with "missing" values.
      */
     public GeoSector() {
-        this.northeast = GeoCoord2D.INVALID_POINT;
-        this.southwest = GeoCoord2D.INVALID_POINT;
+        this.northeast = GeoCoord2D.INVALID_COORD;
+        this.southwest = GeoCoord2D.INVALID_COORD;
     }
 
     public GeoSector(double south, double west, double north, double east) {
@@ -377,7 +384,7 @@ public class GeoSector extends AbstractGeometry implements Box {
         double minLat = nrows == 1 ? this.getCenter().getLatitude().getValue() : getSouthwest().getLatitude().getValue();
         double minLon = ncols == 1 ? this.getCenter().getLongitude().getValue() : getSouthwest().getLongitude().getValue();
         double maxLat = nrows == 1 ? this.getCenter().getLatitude().getValue() : getNortheast().getLatitude().getValue();
-        double maxLon = ncols == 1 ? this.getCenter().getLongitude().getValue() :getNortheast().getLongitude().getValue();
+        double maxLon = ncols == 1 ? this.getCenter().getLongitude().getValue() : getNortheast().getLongitude().getValue();
         try {
             // XXX  I don't understand the interaction between the 
             //      Type's coord system and the Set's coord system! 
