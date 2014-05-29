@@ -66,7 +66,7 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
     /** WorldWind globe provides the elevation model */
     private static gov.nasa.worldwind.globes.Globe globe;
     /** The vertical resolution (meters) */
-    private static final Double TARGET_RESOLUTION = 20d; // meters, or null for globe's highest resolution
+    private static final Double TARGET_RESOLUTION = null; // meters, or null for globe's highest resolution
     /** The size of the Terrain's cache. */
     private static final long CACHE_SIZE = (long) 150e6;
     private static final Logger logger = Logger.getLogger(GlobeTerrainProvider.class.getName());
