@@ -92,7 +92,7 @@ public class Positions {
      */
     public static GeoCoord2D toGeoCoord2D(Position position) {
         if (position==null){
-            return GeoCoord2D.INVALID_POINT;
+            return GeoCoord2D.INVALID_COORD;
         }
         return GeoCoord2D.fromDegrees(
                 position.getLatitude().degrees,
