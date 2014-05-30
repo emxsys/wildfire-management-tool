@@ -38,6 +38,7 @@ import com.emxsys.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
 import com.emxsys.solar.api.SolarType;
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.api.SunlightProvider;
 import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
@@ -114,6 +115,7 @@ public class Controller {
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
     private final AtomicReference<FuelModel> fuelModelRef = new AtomicReference<>(StdFuelModel.INVALID);
     private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(FuelMoistureTuple.INVALID);
+    private final AtomicReference<Sunlight> sunlightRef = new AtomicReference<>(SunlightTuple.INVALID_TUPLE);
     private final AtomicReference<Real> azimuthRef = new AtomicReference<>(new Real(SolarType.AZIMUTH_ANGLE));
     private final AtomicReference<Real> zenithRef = new AtomicReference<>(new Real(SolarType.ZENITH_ANGLE));
     // Event handlers
@@ -432,15 +434,19 @@ public class Controller {
                 }
                 Real azimuth = sunlight.getAzimuthAngle();
                 Real zenith = sunlight.getZenithAngle();
+                controller.sunlightRef.set(sunlight);
                 controller.azimuthRef.set(azimuth);
                 controller.zenithRef.set(zenith);
                 boolean isShaded
                         = controller.terrainShadingEnabled
-                        ? controller.earth.isCoordinateTerrestialShaded(controller.coordRef.get(), azimuth, zenith)
+                        ? controller.earth.isCoordinateTerrestialShaded(
+                                controller.coordRef.get(), sunlight.getAzimuthAngle(), sunlight.getZenithAngle())
                         : false;
 
                 EventQueue.invokeLater(() -> {
                     getForcesTopComponent().updateCharts(time, azimuth, zenith, isShaded);
+                    getWeatherTopComponent().updateCharts(sunlight);
+                    
                 });
 
             } catch (Exception ex) {

@@ -29,6 +29,8 @@
  */
 package com.emxsys.wmt.cps.ui;
 
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherProvider;
@@ -127,10 +129,15 @@ public final class WeatherTopComponent extends TopComponent {
 
     /**
      * Gets the WeatherProvider used for overriding / interacting with the Weather.
+     *
      * @return The SimpleWeatherProvider.
      */
     public SimpleWeatherProvider getSimpleWeather() {
         return this.simpleWx;
+    }
+
+    public void updateCharts(Sunlight sunlight) {
+        diurnalWx.setSunlight(sunlight);
     }
 
     /**
@@ -142,7 +149,7 @@ public final class WeatherTopComponent extends TopComponent {
         prefsChangeListener = (PreferenceChangeEvent ignored) -> {
             RealType uom = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US).equals(CpsOptions.UOM_US)
                     ? WeatherType.AIR_TEMP_F : WeatherType.AIR_TEMP_C;
-            
+
             Real tempSunrise = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNRISE_KEY, CpsOptions.DEFAULT_TEMP_SUNRISE));
             Real tempNoon = new Real(uom, prefs.getInt(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200));
             Real temp1400 = new Real(uom, prefs.getInt(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400));
@@ -155,6 +162,7 @@ public final class WeatherTopComponent extends TopComponent {
 
             diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
             diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
+
         };
         prefs.addPreferenceChangeListener(prefsChangeListener);
         // Fire a change event to load the preferences
@@ -186,7 +194,7 @@ public final class WeatherTopComponent extends TopComponent {
         // Add the Simple and Diurnal weather providers
         comboBoxModel.addElement(simpleWx);
         comboBoxModel.addElement(diurnalWx);
-        
+
         // Preselect the last used provider, if set, otherwise, just use the first provider 
         String lastProviderClassName = prefs.get(LAST_WEATHER_PROVIDER,
                 instances.size() > 0 ? instances.get(0).getClass().getName() : "");
@@ -290,4 +298,5 @@ public final class WeatherTopComponent extends TopComponent {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
+
 }
