@@ -54,6 +54,8 @@ public class SolarType {
     public static final RealType SUNSET_HOUR;
     /** Sun Transit (solar noon) - local time [hours] */
     public static final RealType SUNTRANSIT_HOUR;
+    /** Zone offset from UTC [hours] */
+    public static final RealType ZONE_OFFSET_HOUR;
     /** Hour Angle - angular offset from solar noon */
     public static final RealType HOUR_ANGLE;
     /** Sunrise - angular offset from solar noon [degrees] */
@@ -82,6 +84,7 @@ public class SolarType {
         SUNRISE_HOUR = RealType.getRealType("sunrise:hour", GeneralUnit.hour, null);
         SUNSET_HOUR = RealType.getRealType("sunset:hour", GeneralUnit.hour, null);
         SUNTRANSIT_HOUR = RealType.getRealType("transit:hour", GeneralUnit.hour, null);
+        ZONE_OFFSET_HOUR = RealType.getRealType("offset:hour", GeneralUnit.hour, null);
         SUNRISE_HOUR_ANGLE = RealType.getRealType("sunrise_hour:deg", CommonUnit.degree, null);
         SUNSET_HOUR_ANGLE = RealType.getRealType("sunset_hour:deg", CommonUnit.degree, null);
         RIGHT_ASCENSION = RealType.getRealType("right_ascention:deg", CommonUnit.degree, null);
@@ -111,7 +114,18 @@ public class SolarType {
                     SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,});
         SUNLIGHT = Reals.newRealTupleType(
                 new RealType[]{
-                    SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, ALTITUDE_ANGLE, HOUR_ANGLE, SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNTRANSIT_HOUR
+                    SUBSOLAR_LATITUDE, 
+                    SUBSOLAR_LONGITUDE, 
+                    AZIMUTH_ANGLE, 
+                    ZENITH_ANGLE, 
+                    ALTITUDE_ANGLE, 
+                    HOUR_ANGLE, 
+                    SUNRISE_HOUR_ANGLE, 
+                    SUNSET_HOUR_ANGLE, 
+                    SUNRISE_HOUR, 
+                    SUNSET_HOUR, 
+                    SUNTRANSIT_HOUR,
+                    ZONE_OFFSET_HOUR
                 });
 
     }

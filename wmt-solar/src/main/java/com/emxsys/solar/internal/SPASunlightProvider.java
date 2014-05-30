@@ -61,6 +61,13 @@ public class SPASunlightProvider implements SunlightProvider {
 
     private static final Logger logger = Logger.getLogger(SPASunlightProvider.class.getName());
 
+    /**
+     * Gets a Sunlight instance at the given time and location.
+     * 
+     * @param time The date and time for the sunlight angles.
+     * @param observer The location for the sunlight hours and hour angles.
+     * @return A new SunlightTuple instance.
+     */
     @Override
     @SuppressWarnings("UseSpecificCatch")
     public SunlightTuple getSunlight(ZonedDateTime time, Coord3D observer) {
@@ -76,11 +83,12 @@ public class SPASunlightProvider implements SunlightProvider {
                         new Real(SolarType.ZENITH_ANGLE, spa.getZenith()),
                         new Real(SolarType.ALTITUDE_ANGLE, spa.getTopocentricElevationAngleCorrected()),
                         new Real(SolarType.HOUR_ANGLE, spa.getTopocentricLocalHourAngle()),
-                        new Real(SolarType.SUNRISE_HOUR_ANGLE, spa.getSunriseHourAngle()), // angular offset from solar noon
-                        new Real(SolarType.SUNSET_HOUR_ANGLE, spa.getSunsetHourAngle()), // angular offset from solar noon
-                        new Real(SolarType.SUNRISE_HOUR, spa.getSunrise()), // sunrise local time (same offset as input time)
-                        new Real(SolarType.SUNSET_HOUR, spa.getSunset()), // sunset local time
-                        new Real(SolarType.SUNTRANSIT_HOUR, spa.getSunTransit()), // solar noon local time
+                        new Real(SolarType.SUNRISE_HOUR_ANGLE, spa.getSunriseHourAngle()),  // angular offset from solar noon
+                        new Real(SolarType.SUNSET_HOUR_ANGLE, spa.getSunsetHourAngle()),    // angular offset from solar noon
+                        new Real(SolarType.SUNRISE_HOUR, spa.getSunrise()),         // sunrise local time (same offset as input time)
+                        new Real(SolarType.SUNSET_HOUR, spa.getSunset()),           // sunset local time
+                        new Real(SolarType.SUNTRANSIT_HOUR, spa.getSunTransit()),   // solar noon local time
+                        new Real(SolarType.ZONE_OFFSET_HOUR, spa.getTimezone()),    // local time zone offset
                     }, null);
             return SunlightTuple.fromRealTuple(tuple);
 

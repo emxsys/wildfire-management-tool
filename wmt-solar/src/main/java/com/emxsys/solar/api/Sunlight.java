@@ -114,4 +114,10 @@ public interface Sunlight extends Data {
      */
     Real getSunTransitHour();
 
+    /**
+     * Gets the time zone offset.
+     * @return The offset from UTC to local time. [hours]
+     */
+    Real getZoneOffsetHour();
+
 }

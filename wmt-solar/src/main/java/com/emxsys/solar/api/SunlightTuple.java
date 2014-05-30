@@ -38,7 +38,8 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
- * SunlightTuple is a concrete implementation of the Sunlight interface using a SUNLIGHT RealTupleType.
+ * SunlightTuple is a concrete implementation of the Sunlight interface using a SUNLIGHT
+ * RealTupleType.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -57,6 +58,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     public static final int SUNTRANSIT_HOUR_INDEX = Tuples.getIndex(SUNTRANSIT_HOUR, SUNLIGHT);
     public static final int SUNRISE_HOUR_INDEX = Tuples.getIndex(SUNRISE_HOUR, SUNLIGHT);
     public static final int SUNSET_HOUR_INDEX = Tuples.getIndex(SUNSET_HOUR, SUNLIGHT);
+    public static final int ZONE_OFFSET_HOUR_INDEX = Tuples.getIndex(ZONE_OFFSET_HOUR, SUNLIGHT);
 
     public static SunlightTuple fromRealTuple(RealTuple sunightTuple) {
         if (!sunightTuple.getType().equals(SolarType.SUNLIGHT)) {
@@ -193,6 +195,15 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     public Real getSunTransitHour() {
         try {
             return (Real) getComponent(SUNTRANSIT_HOUR_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public Real getZoneOffsetHour() {
+        try {
+            return (Real) getComponent(ZONE_OFFSET_HOUR_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
