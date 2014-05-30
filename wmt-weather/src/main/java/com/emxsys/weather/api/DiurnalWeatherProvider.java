@@ -33,16 +33,12 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.GisType;
-import com.emxsys.solar.api.SolarType;
-import com.emxsys.solar.api.SunlightTuple;
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.visad.Tuples;
-import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.ConditionsObserver;
 import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
 import static com.emxsys.weather.api.WeatherType.CLOUD_COVER;
 import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
@@ -86,7 +82,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     private Real rhAtNoon = new Real(REL_HUMIDITY);
     private Real rhAt1400 = new Real(REL_HUMIDITY);
     private Real rhAtSunset = new Real(REL_HUMIDITY);
-    private SunlightTuple sunlight;
+    private Sunlight sunlight;
     private TreeMap<LocalTime, Real> windSpds = new TreeMap<>();
     private TreeMap<LocalTime, Real> windDirs = new TreeMap<>();
     private TreeMap<LocalTime, Real> clouds = new TreeMap<>();
@@ -151,11 +147,14 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         }
         this.clouds = cloudCovers;
     }
-    
+
     public void initializeSunlight(ZonedDateTime date, Coord3D coord) {
-        sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);        
+        sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);
     }
-            
+
+    public void setSunlight(Sunlight sunlight) {
+        this.sunlight = sunlight;
+    }
 
     /**
      * Gets the diurnal weather cycles for the given temporal domain.
@@ -165,7 +164,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      */
     @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
     public Field getDailyWeather(TemporalDomain domain) {
-        if (sunlight==null) {
+        if (sunlight == null) {
             throw new IllegalStateException("Sunlight has not been initialized.");
         }
         try {
