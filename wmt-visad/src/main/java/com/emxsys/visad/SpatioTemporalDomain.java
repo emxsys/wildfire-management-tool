@@ -93,61 +93,7 @@ public class SpatioTemporalDomain {
         this.ncols = this.spatialDomainSet.getLength(1); // lons
     }
 
-//    /**
-//     * Constructor extracts temporal and spatial domains from a FieldImpl data type.
-//     * 
-//     * @param data of type FieldImpl
-//     */
-//    public SpatioTemporalDomain(DataImpl data)
-//    {
-//        try
-//        {
-//            // Validate temporal requirements
-//            FunctionType temporalFunction = (FunctionType) data.getType();
-//            if (temporalFunction == null
-//                || !(temporalFunction.getDomain().getComponent(0).equals(RealType.Time)))
-//            {
-//                throw new IllegalArgumentException("data domain type must be RealType.Time : "
-//                    + data.getType().prettyString());
-//            }
-//
-//            // Validate spatial requirements
-//            FunctionType spatialFunction = (FunctionType) temporalFunction.getRange();
-//            if (spatialFunction == null
-//                || !(spatialFunction.getDomain().equals(RealTupleType.LatitudeLongitudeTuple)
-//                || spatialFunction.getDomain().equals(GeoCoord2D.DEFAULT_TUPLE_TYPE)))
-//            {
-//                throw new IllegalArgumentException("data range's domain type must be [RealType.Latitude, RealType.Longitude] : "
-//                    + data.getType().prettyString());
-//            }
-//            FieldImpl field = (FieldImpl) data;
-//            FlatField spatialField = (FlatField) field.getSample(0);
-//
-//            this.temporalDomainSet = (Gridded1DDoubleSet) field.getDomainSet();
-//            this.spatialDomainSet = (LinearLatLonSet) spatialField.getDomainSet();
-//
-//            this.nrows = spatialDomainSet.getLength(0); // latitudes
-//            this.ncols = spatialDomainSet.getLength(1); // longitudes
-//
-//            float[] low = spatialDomainSet.getLow();
-//            float[] hi = spatialDomainSet.getHi();
-//            float south = low[0];
-//            float west = low[1];
-//            float north = hi[0];
-//            float east = hi[1];
-//            this.sector = new GeoSector(south, west, north, east);
-//        }
-//        catch (IllegalArgumentException | VisADException | RemoteException ex)
-//        {
-//            Exceptions.printStackTrace(ex);
-//            throw new IllegalArgumentException(ex.toString());
-//        }
-//    }
-//
-//
-//    private void initialize(Linear2DSet spatialSet, Gridded1DDoubleSet timeset)
-//    {
-//    }
+
     public ZonedDateTime getStartDate() {
         Instant instant = Instant.ofEpochSecond((long) this.temporalDomainSet.getDoubleLowX());
         return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"));
@@ -222,21 +168,7 @@ public class SpatioTemporalDomain {
         }
     }
 
-//    public FlatField newTemporalField(MathType range)
-//    {
-//        try
-//        {
-//            FunctionType functionType = new FunctionType(SpatioTemporalDomain.TEMPORAL_DOMAIN_TYPE, range);
-//            FlatField field = new FlatField(functionType, this.temporalDomainSet);
-//            LOG.info("newTemporalField created: " + field.getType().prettyString());
-//            return field;
-//        }
-//        catch (VisADException ex)
-//        {
-//            Exceptions.printStackTrace(ex);
-//            throw new RuntimeException(ex);
-//        }
-//    }
+
     public FieldImpl newTemporalField(MathType range) {
         try {
             FunctionType functionType = new FunctionType(TEMPORAL_DOMAIN_TYPE, range);

@@ -32,6 +32,7 @@ package com.emxsys.visad;
 import java.rmi.RemoteException;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +45,7 @@ import visad.FunctionType;
 import visad.Gridded1DDoubleSet;
 import visad.MathType;
 import visad.RealType;
+import visad.SetType;
 import visad.VisADException;
 
 /**
@@ -55,10 +57,29 @@ public class TemporalDomain {
 
     private static final RealType TEMPORAL_DOMAIN_TYPE = RealType.Time;
     private final Gridded1DDoubleSet temporalDomainSet;
+    private int timeZoneOffset = 0;
     private static final Logger LOG = Logger.getLogger(TemporalDomain.class.getName());
 
-    public TemporalDomain(Gridded1DDoubleSet timeDomainSet) {
+    /**
+     * Constructs a TemporalDomain beginning at the given start time, for the specified number of
+     * hours. The time zone offset is determined the start time ZoneId.
+     *
+     * @param start The start time for the domain
+     * @param numHours The number of hours in the domain.
+     */
+    public TemporalDomain(ZonedDateTime start, int numHours) {
+        this(Times.makeHourlyTimeSet(start, numHours), start.getOffset().getTotalSeconds());
+    }
+
+    /**
+     * Constructs a TemporalDomain from a Gridded1DDoubleSet of type RealType.Time
+     *
+     * @param timeDomainSet The time domain in UTC values.
+     * @param offsetSeconds The time zone offset (from UTC) in seconds.
+     */
+    public TemporalDomain(Gridded1DDoubleSet timeDomainSet, int offsetSeconds) {
         this.temporalDomainSet = timeDomainSet;
+        this.timeZoneOffset = offsetSeconds;
     }
 
     /**
@@ -88,7 +109,7 @@ public class TemporalDomain {
 
     public ZonedDateTime getStart() {
         Instant instant = Instant.ofEpochSecond((long) this.temporalDomainSet.getDoubleLowX());
-        return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"));
+        return ZonedDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds(timeZoneOffset)));
     }
 
     public ZonedDateTime getZonedDateTimeAt(int index) {
@@ -98,7 +119,7 @@ public class TemporalDomain {
             }
             double time = this.temporalDomainSet.getDoubles(false)[0][index];
             Instant instant = Instant.ofEpochSecond((long) time);
-            return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"));
+            return ZonedDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds(timeZoneOffset)));
         }
         catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
@@ -124,7 +145,7 @@ public class TemporalDomain {
         try {
             FunctionType functionType = new FunctionType(TEMPORAL_DOMAIN_TYPE, range);
             FieldImpl field = new FieldImpl(functionType, this.temporalDomainSet);
-            LOG.log(Level.INFO, "newTemporalField created: {0}", field.getType().prettyString());
+            LOG.log(Level.CONFIG, "newTemporalField created: {0}", field.getType().prettyString());
             return field;
         }
         catch (VisADException ex) {
