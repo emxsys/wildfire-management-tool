@@ -30,15 +30,25 @@
 package com.emxsys.weather.api;
 
 import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.GisType;
 import com.emxsys.solar.api.SolarType;
+import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.util.ImageUtil;
+import com.emxsys.visad.Reals;
+import com.emxsys.visad.TemporalDomain;
 import com.emxsys.visad.Tuples;
 import com.emxsys.weather.api.AbstractWeatherProvider;
 import com.emxsys.weather.api.ConditionsObserver;
+import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
+import static com.emxsys.weather.api.WeatherType.CLOUD_COVER;
+import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
+import static com.emxsys.weather.api.WeatherType.REL_HUMIDITY;
+import static com.emxsys.weather.api.WeatherType.WIND_DIR;
+import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -47,52 +57,68 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
 import org.openide.util.lookup.InstanceContent;
 import visad.Field;
+import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Irregular2DSet;
 import visad.Real;
-import visad.RealTuple;
 import visad.VisADException;
 
 /**
+ * The DiurnalWeatherProvider creates hourly weather for 24 hour cycle.
  *
  * @author Bruce Schubert
  */
 public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
-    private Real tempAtSunrise;
-    private Real tempAtNoon;
-    private Real tempAt1400;
-    private Real tempAtSunset;
-    private Real rhAtSunrise;
-    private Real rhAtNoon;
-    private Real rhAt1400;
-    private Real rhAtSunset;
-    private RealTuple sunlight;
+    private Real tempAtSunrise = new Real(AIR_TEMP_C);
+    private Real tempAtNoon = new Real(AIR_TEMP_C);
+    private Real tempAt1400 = new Real(AIR_TEMP_C);
+    private Real tempAtSunset = new Real(AIR_TEMP_C);
+    private Real rhAtSunrise = new Real(REL_HUMIDITY);
+    private Real rhAtNoon = new Real(REL_HUMIDITY);
+    private Real rhAt1400 = new Real(REL_HUMIDITY);
+    private Real rhAtSunset = new Real(REL_HUMIDITY);
+    private SunlightTuple sunlight;
+    private TreeMap<LocalTime, Real> windSpds = new TreeMap<>();
+    private TreeMap<LocalTime, Real> windDirs = new TreeMap<>();
+    private TreeMap<LocalTime, Real> clouds = new TreeMap<>();
 
     /**
      * Constructor.
      */
     public DiurnalWeatherProvider() {
+    }
+
+    /**
+     * Constructor.
+     * @param date The date used to obtain sunrise and sunset.
+     * @param coord The coordinate used to obtain sunrise and sunset.
+     */
+    public DiurnalWeatherProvider(ZonedDateTime date, Coord3D coord) {
         // Initialize the lookup with this provider's capabilities
         InstanceContent content = getContent();
         content.add((ConditionsObserver) this::getCurrentWeather);  // functional interface 
+        sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);
     }
-    
+
     @Override
     public String getName() {
         return "Diurnal Weather";
     }
 
     public void initializeAirTemperatures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
-        this.tempAtSunrise = tempAtSunrise;
-        this.tempAtNoon = tempAtNoon;
-        this.tempAt1400 = tempAt1400;
-        this.tempAtSunset = tempAtSunset;
+        this.tempAtSunrise = Reals.convertTo(AIR_TEMP_C, tempAtSunrise);
+        this.tempAtNoon = Reals.convertTo(AIR_TEMP_C, tempAtNoon);
+        this.tempAt1400 = Reals.convertTo(AIR_TEMP_C, tempAt1400);
+        this.tempAtSunset = Reals.convertTo(AIR_TEMP_C, tempAtSunset);
     }
 
     public void initializeRelativeHumidities(Real rhAtSunrise, Real rhAtNoon, Real rhAt1400, Real rhAtSunset) {
@@ -102,15 +128,79 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         this.rhAtSunset = rhAtSunset;
     }
 
+    public void initializeWindSpeeds(TreeMap<LocalTime, Real> windSpeeds) {
+        Collection<Real> values = windSpeeds.values();
+        for (Real real : values) {
+            if (real.getValue() < 0) {
+                throw new IllegalArgumentException("neg values not allowed");
+            }
+        }
+        this.windSpds = windSpeeds;
+    }
+
+    public void initializeWindDirections(TreeMap<LocalTime, Real> windDirections) {
+        this.windDirs = windDirections;
+    }
+
+    public void initializeCloudCovers(TreeMap<LocalTime, Real> cloudCovers) {
+        Collection<Real> values = cloudCovers.values();
+        for (Real real : values) {
+            if (real.getValue() < 0) {
+                throw new IllegalArgumentException("neg values not allowed");
+            }
+        }
+        this.clouds = cloudCovers;
+    }
+    
+    public void initializeSunlight(ZonedDateTime date, Coord3D coord) {
+        sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);        
+    }
+            
+
+    /**
+     * Gets the diurnal weather cycles for the given temporal domain.
+     *
+     * @param domain The time domain.
+     * @return A FlatField (time -> FIRE_WEATHER).
+     */
+    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
+    public Field getDailyWeather(TemporalDomain domain) {
+        if (sunlight==null) {
+            throw new IllegalStateException("Sunlight has not been initialized.");
+        }
+        try {
+            // Create a FieldImpl and the samples for the hourly weather range
+            FieldImpl wxField = domain.newTemporalField(FIRE_WEATHER); // FunctionType: time -> fire weather)
+            double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][wxField.getLength()];
+
+            // Create the wx range samples...
+            for (int i = 0; i < wxField.getLength(); i++) {
+                ZonedDateTime time = domain.getZonedDateTimeAt(i);
+                wxSamples[AIR_TEMP_IDX][i] = getAirTemperature(time.toLocalTime()).getValue();
+                wxSamples[HUMIDITY_IDX][i] = getRelativeHumidity(time.toLocalTime()).getValue();
+                wxSamples[WIND_SPD_IDX][i] = getWindSpeed(time.toLocalTime()).getValue();
+                wxSamples[WIND_DIR_IDX][i] = getWindDirection(time.toLocalTime()).getValue();
+                wxSamples[CLOUD_COVER_IDX][i] = getCloudCover(time.toLocalTime()).getValue();
+            }
+            // ...and put the weather values above into it
+            wxField.setSamples(wxSamples);
+            return wxField;
+
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+
     /**
      * Gets the current temperature and humidity values from the diurnal curves and wind patterns.
      *
-     * @param coord Ignored, but returned in the Field's domain.
-     * @param radius Ignored.
-     * @param age Ignored.
+     * @param coord Parameter is ignored, but it is returned in the Field's domain.
+     * @param radius_ignored Ignored parameter.
+     * @param age_ignored Ignored parameter.
      * @return A FlatField containing current weather values from the diurnal datasets.
      */
-    public Field getCurrentWeather(Coord2D coord, Real radius, Duration age) {
+    public Field getCurrentWeather(Coord2D coord, Real radius_ignored, Duration age_ignored) {
 
         // Get the application time
         ZonedDateTime time = DefaultTimeProvider.getInstance().getTime();
@@ -126,8 +216,9 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             double[][] wxSamples = new double[WX_RANGE.getDimension()][1];
             wxSamples[AIR_TEMP_IDX][0] = getAirTemperature(time.toLocalTime()).getValue();
             wxSamples[HUMIDITY_IDX][0] = getRelativeHumidity(time.toLocalTime()).getValue();
-            wxSamples[WIND_SPD_IDX][0] = Double.NaN;
-            wxSamples[WIND_DIR_IDX][0] = Double.NaN;
+            wxSamples[WIND_SPD_IDX][0] = 0;
+            wxSamples[WIND_DIR_IDX][0] = 0;
+            wxSamples[CLOUD_COVER_IDX][0] = 0;
 
             // Create the domain Set, with 2 columns and 1 rows, using an
             // Gridded2DDoubleSet(MathType type, double[][] samples, lengthX)
@@ -151,8 +242,8 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     }
 
     protected Real getAirTemperature(LocalTime localTime) {
-        Real sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunlight);
-        Real sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunlight);
+        Real sunrise = sunlight.getSunriseHour();
+        Real sunset = sunlight.getSunsetHour();
         double t_sr = sunrise.getValue();
         double t_ss = sunset.getValue();
         double t = localTime.get(ChronoField.SECOND_OF_DAY) / 3600.;
@@ -167,12 +258,12 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         } else {
             val = calcValueEarlyAfternoon(t, tempAtNoon.getValue(), tempAt1400.getValue());
         }
-        return new Real(WeatherType.AIR_TEMP_F, val);
+        return new Real(WeatherType.AIR_TEMP_C, val);
     }
 
     protected Real getRelativeHumidity(LocalTime localTime) {
-        Real sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunlight);
-        Real sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunlight);
+        Real sunrise = sunlight.getSunriseHour();
+        Real sunset = sunlight.getSunsetHour();
         double t_sr = sunrise.getValue();
         double t_ss = sunset.getValue();
         double t = localTime.get(ChronoField.SECOND_OF_DAY) / 3600.;
@@ -187,7 +278,22 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         } else {
             val = calcValueEarlyAfternoon(t, rhAtNoon.getValue(), rhAt1400.getValue());
         }
-        return new Real(WeatherType.AIR_TEMP_F, val);
+        return new Real(WeatherType.REL_HUMIDITY, val);
+    }
+
+    protected Real getWindSpeed(LocalTime localTime) {
+        Entry<LocalTime, Real> entry = windSpds.floorEntry(localTime);
+        return (entry == null) ? new Real(WIND_SPEED_SI, 0) : Reals.convertTo(WIND_SPEED_SI, entry.getValue());
+    }
+
+    protected Real getWindDirection(LocalTime localTime) {
+        Entry<LocalTime, Real> entry = windDirs.floorEntry(localTime);
+        return (entry == null) ? new Real(WIND_DIR, 0) : entry.getValue();
+    }
+
+    protected Real getCloudCover(LocalTime localTime) {
+        Entry<LocalTime, Real> entry = clouds.floorEntry(localTime);
+        return (entry == null) ? new Real(CLOUD_COVER, 0) : entry.getValue();
     }
 
     /**

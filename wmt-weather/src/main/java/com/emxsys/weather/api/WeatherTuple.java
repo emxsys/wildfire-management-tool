@@ -30,9 +30,11 @@
 package com.emxsys.weather.api;
 
 import static com.emxsys.visad.Reals.*;
+import com.emxsys.visad.Tuples;
 import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
-import visad.Data;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -47,72 +49,78 @@ import visad.VisADException;
  */
 public class WeatherTuple extends RealTuple implements Weather {
 
-    /** An tuple with "missing" components */
+    /** A tuple with "missing" components */
     public static final WeatherTuple INVALID_TUPLE = new WeatherTuple();
-    private Real airTemperature;
-    private Real relativeHumidity;
-    private Real windSpeed;
-    private Real windDirection;
-    private Real cloudCover;
-    private Data[] components;
+    public static final int AIR_TEMP_INDEX = Tuples.getIndex(AIR_TEMP_C, FIRE_WEATHER);
+    public static final int REL_HUMIDITY_INDEX = Tuples.getIndex(REL_HUMIDITY, FIRE_WEATHER);
+    public static final int WIND_SPEED_INDEX = Tuples.getIndex(WIND_SPEED_SI, FIRE_WEATHER);
+    public static final int WIND_DIR_INDEX = Tuples.getIndex(WIND_DIR, FIRE_WEATHER);
+    public static final int CLOUD_COVER_INDEX = Tuples.getIndex(CLOUD_COVER, FIRE_WEATHER);
+    //public static final int RAINFALL_INDEX = Tuples.getIndex(RAINFALL_INCH, FIRE_WEATHER);
+    private static final Logger logger = Logger.getLogger(WeatherTuple.class.getName());
 
     /**
-     * Constructs and instance with missing values.
+     * Creates a WeatherTuple from a RealTuple of type FIRE_WEATHER.
+     * @param fireWeather A WeatherType.FIRE_WEATHER RealTuple.
+     * @return A new WeatherTuple.
      */
-    public WeatherTuple() {
-        this(new Real(AIR_TEMP_C),
-             new Real(REL_HUMIDITY),
-             new Real(WIND_SPEED_SI),
-             new Real(WIND_DIR),
-             new Real(CLOUD_COVER));
-    }
-
-    /**
-     * Construct a WeatherTuple object from doubles.
-     *
-     * @param airTemperature [celsius]
-     * @param relativeHumidity [percent]
-     * @param windSpeed [m/s]
-     * @param windDirection [degrees]
-     * @param cloudCover [percent]
-     */
-    public WeatherTuple(double airTemperature, double relativeHumidity,
-                        double windSpeed, double windDirection,
-                        double cloudCover) throws VisADException {
-        this(
-                new Real(AIR_TEMP_C, airTemperature),
-                new Real(REL_HUMIDITY, relativeHumidity),
-                new Real(WIND_SPEED_SI, windSpeed),
-                new Real(WIND_DIR, windDirection),
-                new Real(CLOUD_COVER, cloudCover));
+    public static WeatherTuple fromRealTuple(RealTuple fireWeather) {
+        if (!fireWeather.getType().equals(WeatherType.FIRE_WEATHER)) {
+            throw new IllegalArgumentException("Incompatible MathType: " + fireWeather.getType());
+        } else if (fireWeather.isMissing()) {
+            return INVALID_TUPLE;
+        }
+        try {
+            return new WeatherTuple(fireWeather);
+        } catch (VisADException | RemoteException ex) {
+            logger.log(Level.SEVERE, "Cannot create WeatherTuple.", ex);
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
      * Construct a WeatherTuple object from Reals. Guarantees that input parameter values are
-     * converted to the member's specified RealTypes.
-     */
-    public WeatherTuple(Real[] realArray) {
-        this(realArray[0], realArray[1], realArray[2], realArray[3], realArray[4]);
-    }
-
-    /**
-     * Construct a WeatherTuple object from Reals. Guarantees that input parameter values are
-     * converted to the member's specified RealTypes.
+     * converted to the RealTupleType's specified RealTypes.
      *
      * @param airTemperature must be compatible with WildfireType.AIR_TEMP_C
      * @param relativeHumidity must be compatible with WildfireType.REL_HUMIDITY
      * @param windSpeed must be compatible with WildfireType.WIND_SPEED_SI
      * @param windDirection must be compatible with WildfireType.WIND_DIR
      * @param cloudCover must be compatible with WildfireType.CLOUD_COVER
+     * @return A new WeatherTuple.
      */
-    public WeatherTuple(Real airTemperature, Real relativeHumidity,
-                        Real windSpeed, Real windDirection, Real cloudCover) {
-        super(FIRE_WEATHER);
-        this.airTemperature = convertTo(AIR_TEMP_C, airTemperature);
-        this.relativeHumidity = convertTo(REL_HUMIDITY, relativeHumidity);
-        this.windSpeed = convertTo(WIND_SPEED_SI, windSpeed);
-        this.windDirection = convertTo(WIND_DIR, windDirection);
-        this.cloudCover = convertTo(CLOUD_COVER, cloudCover);
+    public static WeatherTuple fromReals(Real airTemperature, Real relativeHumidity,
+                                         Real windSpeed, Real windDirection, Real cloudCover) {
+        try {
+            Real[] reals = new Real[]{
+                convertTo(AIR_TEMP_C, airTemperature),
+                convertTo(REL_HUMIDITY, relativeHumidity),
+                convertTo(WIND_SPEED_SI, windSpeed),
+                convertTo(WIND_DIR, windDirection),
+                convertTo(CLOUD_COVER, cloudCover)
+            };
+            return new WeatherTuple(new RealTuple(reals));
+
+        } catch (VisADException | RemoteException ex) {
+            logger.log(Level.SEVERE, "Cannot create WeatherTuple.", ex);
+            throw new IllegalStateException(ex);
+        }
+
+    }
+
+    /**
+     * Constructs and instance with missing values.
+     * @param Weather
+     */
+    WeatherTuple(RealTuple WeatherTuple) throws VisADException, RemoteException {
+        super(WeatherType.FIRE_WEATHER, WeatherTuple.getRealComponents(), null);
+    }
+
+    /**
+     * Constructs and instance with missing values.
+     */
+    public WeatherTuple() {
+        super(WeatherType.FIRE_WEATHER);
     }
 
     /**
@@ -121,7 +129,11 @@ public class WeatherTuple extends RealTuple implements Weather {
      */
     @Override
     public visad.Real getAirTemperature() {
-        return this.airTemperature;
+        try {
+            return (Real) getComponent(AIR_TEMP_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -130,7 +142,11 @@ public class WeatherTuple extends RealTuple implements Weather {
      */
     @Override
     public Real getRelativeHumidity() {
-        return this.relativeHumidity;
+        try {
+            return (Real) getComponent(REL_HUMIDITY_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -139,7 +155,11 @@ public class WeatherTuple extends RealTuple implements Weather {
      */
     @Override
     public visad.Real getWindSpeed() {
-        return this.windSpeed;
+        try {
+            return (Real) getComponent(WIND_SPEED_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -148,7 +168,11 @@ public class WeatherTuple extends RealTuple implements Weather {
      */
     @Override
     public visad.Real getWindDirection() {
-        return this.windDirection;
+        try {
+            return (Real) getComponent(WIND_DIR_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -157,103 +181,14 @@ public class WeatherTuple extends RealTuple implements Weather {
      */
     @Override
     public Real getCloudCover() {
-        return this.cloudCover;
-    }
-
-    /**
-     * is missing any data elements
-     * @return is missing
-     */
-    @Override
-    public boolean isMissing() {
-        return airTemperature.isMissing() || relativeHumidity.isMissing()
-                || windSpeed.isMissing() || windDirection.isMissing()
-                || cloudCover.isMissing();
-    }
-
-    /**
-     * Get the i'th component.
-     *
-     * @param i Which one
-     * @return The component
-     *
-     * @throws RemoteException On badness
-     * @throws VisADException On badness
-     */
-    @Override
-    public Data getComponent(int i) throws VisADException, RemoteException {
-        switch (i) {
-            case 0:
-                return airTemperature;
-            case 1:
-                return relativeHumidity;
-            case 2:
-                return windSpeed;
-            case 3:
-                return windDirection;
-            case 4:
-                return cloudCover;
-            default:
-                throw new IllegalArgumentException("Wrong component number:" + i);
+        try {
+            return (Real) getComponent(CLOUD_COVER_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 
-    /**
-     * Create, if needed, and return the component array.
-     *
-     * @param copy Ignored.
-     * @return components
-     */
-    @Override
-    public Data[] getComponents(boolean copy) {
-        //Create the array and populate it if needed
-        if (components == null) {
-            Data[] tmp = new Data[getDimension()];
-            tmp[0] = airTemperature;
-            tmp[1] = relativeHumidity;
-            tmp[2] = windSpeed;
-            tmp[3] = windDirection;
-            tmp[4] = cloudCover;
-            components = tmp;
-        }
-        return components;
-    }
 
-    /**
-     * Indicates if this Tuple is identical to an object.
-     *
-     * @param obj The object.
-     * @return <code>true</code> if and only if the object is a Tuple and both Tuple-s have
-     * identical component sequences.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof WeatherTuple)) {
-            return false;
-        }
-        WeatherTuple that = (WeatherTuple) obj;
-
-        return this.airTemperature.equals(that.airTemperature)
-                && this.relativeHumidity.equals(that.relativeHumidity)
-                && this.windSpeed.equals(that.windSpeed)
-                && this.windDirection.equals(that.windDirection)
-                && this.cloudCover.equals(that.cloudCover);
-    }
-
-    /**
-     * Returns the hash code of this object.
-     * @return The hash code of this object.
-     */
-    @Override
-    public int hashCode() {
-        return windSpeed.hashCode()
-                & windDirection.hashCode()
-                ^ airTemperature.hashCode()
-                | (relativeHumidity.hashCode() & cloudCover.hashCode());
-    }
 
     /**
      * to string
@@ -267,45 +202,4 @@ public class WeatherTuple extends RealTuple implements Weather {
                 + ", Dir: " + getWindDirection().toValueString()
                 + ", Sky: " + getCloudCover().toValueString();
     }
-//
-    /*
-     * Computes the diurnal air temperature within the daily cycle beginning
-     * with the day's 1400 temperature and ending with n
-     * private void createDiurnalTemperatureCycleData(TimeSeries series, Hour period, CycleParams cycle) {
-     //        while (true) {
-     //            if (period.getHour() >= 14 || period.getHour() <= 12) {
-     //                double T_a = calcDiurnalValueForTimeOfDay(period.getHour(),
-     //                        cycle.timeOfSunrise, cycle.timeOfSunset,
-     //                        cycle.tempAt1400, cycle.tempAtSunset, cycle.tempAtSunrise, cycle.tempAtNoon);
-     //                series.add(period, T_a);
-     //                period = (Hour) period.next();
-     //            } else {
-     //                break;
-     //            }
-     //        }
-     //    }
-     //
-     //    private void createDiurnalHumidityCycleData(TimeSeries series, Hour period, CycleParams cycle) {
-     //        while (true) {
-     //            if (period.getHour() >= 14 || period.getHour() <= 12) {
-     //                double T_a = calcHumidityForTimeOfDay(period.getHour(),
-     //                        cycle.timeOfSunrise, cycle.timeOfSunset,
-     //                        cycle.humidityAt1400, cycle.humidityAtSunset, cycle.humidityAtSunrise, cycle.humidityAtNoon);
-     //                series.add(period, T_a);
-     //                period = (Hour) period.next();
-     //            } else {
-     //                break;
-     //            }
-     //        }
-     //    }
-     ext day's 1200 temperature
-     * @param localTime     time of day for desired temp
-     * @param localTimeOfSunrise   time of sunrise
-     * @param localTimeOfSunset   time of sunset
-     * @param H_14  temperature at 1400
-     * @param H_s   temperature at sunset
-     * @param H_r   temperature at sunrise
-     * @param H_12  temperature at noon
-     * @return      temperature at t
-     */
 }

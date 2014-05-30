@@ -60,24 +60,9 @@ import visad.VisADException;
  */
 public class WeatherModel {
 
-    /**
-     * The temporal-spatial domain for this model.
-     */
     private final SpatioTemporalDomain domain;
-    /**
-     * The wx range tuple type, <br/>
-     * {TIME, AIR_TEMP_C, REL_HUMIDITY, WIND_SPEED_SI, WIND_DIR, CLOUD_COVER}
-     */
     private static final RealTupleType wxRangeType = FIRE_WEATHER;
-    /**
-     * The hourly time type
-     */
-    private static final RealType timeType = RealType.Time;
-    /**
-     * The fire weather data
-     */
     private FieldImpl hourlyWx;
-
     private static final Logger LOG = Logger.getLogger(WeatherModel.class.getName());
 
     private List<Real> airTemps = new ArrayList<>();
@@ -156,13 +141,14 @@ public class WeatherModel {
     /**
      * Math type: ( time -> ( temperature, humidity, ... ) )
      *
+     * @param index Hourly index.
      * @return hourly weather
      */
     public final WeatherTuple getWeatherAt(int index) {
         try {
             lazyCreateHourlyWeather();
             RealTuple sample = (RealTuple) this.hourlyWx.getSample(index);
-            return new WeatherTuple(sample.getRealComponents());
+            return WeatherTuple.fromRealTuple(sample);
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
@@ -173,11 +159,11 @@ public class WeatherModel {
         if (temporal == null) {
             throw new IllegalArgumentException("datetime");
         }
-        lazyCreateHourlyWeather();
         try {
+            lazyCreateHourlyWeather();
             DateTime dateTime = Times.fromZonedDateTime(temporal);
             RealTuple tuple = (RealTuple) this.hourlyWx.evaluate(dateTime, FlatField.NEAREST_NEIGHBOR, FlatField.NO_ERRORS);
-            return tuple.isMissing() ? WeatherTuple.INVALID_TUPLE : new WeatherTuple(tuple.getRealComponents());
+            return tuple.isMissing() ? WeatherTuple.INVALID_TUPLE : WeatherTuple.fromRealTuple(tuple);
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
