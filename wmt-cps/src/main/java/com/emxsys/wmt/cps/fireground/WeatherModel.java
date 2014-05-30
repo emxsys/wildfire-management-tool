@@ -179,7 +179,7 @@ public class WeatherModel
         {
             lazyCreateHourlyWeather();
             RealTuple sample = (RealTuple) this.hourlyWx.getSample(index);
-            return new WeatherTuple(sample.getRealComponents());
+            return WeatherTuple.fromRealTuple(sample);
         }
         catch (VisADException | RemoteException ex)
         {
@@ -199,7 +199,7 @@ public class WeatherModel
         try
         {
             RealTuple tuple = (RealTuple) this.hourlyWx.evaluate(dateTime, FlatField.NEAREST_NEIGHBOR, FlatField.NO_ERRORS);
-            return tuple.isMissing() ? WeatherTuple.INVALID_TUPLE : new WeatherTuple(tuple.getRealComponents());
+            return tuple.isMissing() ? WeatherTuple.INVALID_TUPLE : WeatherTuple.fromRealTuple(tuple);
         }
         catch (VisADException | RemoteException ex)
         {
