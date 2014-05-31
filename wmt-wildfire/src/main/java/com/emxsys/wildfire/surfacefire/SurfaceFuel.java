@@ -168,7 +168,7 @@ public class SurfaceFuel implements Fuel {
         double h_v = fuelModel.getFuelBedDepth().getValue(foot);
 
         // Weather Values                                                
-        double W = wx.getWindSpeed().getValue(mph); 
+        double W = wx.getWindSpeed().getValue(mph);
         double W_k = wx.getWindSpeed().getValue(kph);
         double S_c = wx.getCloudCover().getValue();
         double T_a = wx.getAirTemperature().getValue(degF);
@@ -210,7 +210,7 @@ public class SurfaceFuel implements Fuel {
         double m_0 = initialFuelMoisture.getDead1HrFuelMoisture().getValue();
         double m = calcCanadianHourlyFineFuelMoisture(m_0, H_f, T_c, W_k);
 
-        FuelMoistureTuple adjustedFuelMoisture = new FuelMoistureTuple(
+        FuelMoistureTuple adjustedFuelMoisture = FuelMoistureTuple.fromReals(
                 new Real(FUEL_MOISTURE_1H, m),
                 initialFuelMoisture.getDead10HrFuelMoisture(),
                 initialFuelMoisture.getDead100HrFuelMoisture(),
