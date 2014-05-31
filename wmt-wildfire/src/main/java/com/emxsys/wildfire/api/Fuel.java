@@ -34,7 +34,6 @@ import com.emxsys.gis.api.Terrain;
 import com.emxsys.solar.api.SolarModel;
 import com.emxsys.weather.api.WeatherModel;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * The Fuel interface defines the characteristics of wildland fuels used in fire behavior
@@ -45,26 +44,24 @@ import java.util.List;
 public interface Fuel {
 
     /**
-     *
      * @return the fuel model representing the fuel
      */
     FuelModel getFuelModel();
 
     /**
-     *
+     * @param time
      * @return the temporal and environmental conditions of the fuel
      */
-    List<FuelCondition> getConditions();
+    FuelCondition getFuelCondition(ZonedDateTime time);
 
     /**
-     * Adjust fuel moisture and fuel temperatures.
+     * Conditions the fuel moisture based on the solar and weather.
      * @param time The date/time used to determine the solar and weather conditions.
      * @param coord The coordinated used to determine the solar and weather conditions.
      * @param solar A spatio-temporal model containing SolarTypes.
      * @param weather A spatio-temporal model containing the WeatherTypes.
-     * and WIND_DIR.
-     * @param terrain
-     * @param fuelMoisture
+     * @param terrain The aspect and slope where the fuel is located.
+     * @param fuelMoisture The initial fuel moisture.
      */
-    void adjustFuelConditions(ZonedDateTime time, Coord3D coord, SolarModel solar, WeatherModel weather, Terrain terrain, FuelMoisture fuelMoisture);
+    void condition(ZonedDateTime time, Coord3D coord, SolarModel solar, WeatherModel weather, Terrain terrain, FuelMoisture fuelMoisture);
 }
