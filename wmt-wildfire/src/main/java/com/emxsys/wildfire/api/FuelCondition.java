@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2010-2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,21 +29,25 @@
  */
 package com.emxsys.wildfire.api;
 
-import java.util.Date;
 import visad.Real;
 
-
 /**
- * POD (plain old data) structure for passing fuel conditions.
- *
+ * FuelCondition represents the fuel's temporal conditions at a moment in time.
+ * 
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: FuelCondition.java 709 2013-05-31 03:17:13Z bdschubert $
  */
-public class FuelCondition
-{
-    public FuelMoisture fuelMoisture;
-    public Real airTemp;
-    public Real fuelTemp;
-    public double solarAzimuthAngle;
-    public Date date;
+public interface FuelCondition {
+
+    Real getDead1HrFuelMoisture();
+
+    Real getDead10HrFuelMoisture();
+
+    Real getDead100HrFuelMoisture();
+
+    Real getLiveHerbFuelMoisture();
+
+    Real getLiveWoodyFuelMoisture();
+
+    Real getFuelTemperature();
+
 }

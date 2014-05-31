@@ -32,18 +32,17 @@ package com.emxsys.wildfire.api;
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.visad.Reals.*;
+import com.emxsys.weather.api.WeatherType;
 import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;
 
-
 /**
  * Wildfire VisAD types.
- * 
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class WildfireType
-{
+public class WildfireType {
 
     // Fuel model types
     /** Fuel loading: kg/m2 */
@@ -64,7 +63,7 @@ public class WildfireType
     public static final RealType FUEL_DEPTH_US;
     /** Moisture of extinction: % */
     public static final RealType MOISTURE_OF_EXTINCTION;
-    
+
     /** 1 hour fine fuel moisture content: % */
     public static final RealType FUEL_MOISTURE_1H;
     /** 10 hour fuel moisture content: % */
@@ -79,7 +78,7 @@ public class WildfireType
     public final static RealTupleType FUEL_MOISTURE;
     /** Fuel condition tuple */
     public final static RealTupleType FUEL_CONDITION;
-    
+
     // Fire behavior types
     public static final RealType FIRE_LINE_INTENSITY_SI;
     public static final RealType FIRE_LINE_INTENSITY_US;
@@ -100,10 +99,8 @@ public class WildfireType
     public static final RealType FUEL_TEMP_C;
     public static final RealType FUEL_TEMP_F;
 
-
     // Initializer
-    static
-    {
+    static {
         FUEL_TEMP_C = RealType.getRealType("fuel_temp:C", GeneralUnit.degC, null);
         FUEL_TEMP_F = RealType.getRealType("fuel_temp:F", GeneralUnit.degF, null);
         FUEL_LOAD_SI = RealType.getRealType("fuel_load:kg/m2", FireUnit.kg_m2, null);
@@ -120,24 +117,31 @@ public class WildfireType
         FUEL_MOISTURE_HERB = RealType.getRealType("fuel_moisture_herb:%", GeneralUnit.percent, null);
         FUEL_MOISTURE_WOODY = RealType.getRealType("fuel_moisture_woody:%", GeneralUnit.percent, null);
         MOISTURE_OF_EXTINCTION = RealType.getRealType("moisture_of_extinction:%", GeneralUnit.percent, null);
+        ASPECT = RealType.getRealType("aspect:deg", CommonUnit.degree, null);
+        SLOPE = RealType.getRealType("slope:deg", CommonUnit.degree, null);
+        ELEVATION = RealType.getRealType("elevation:m", CommonUnit.meter, null);
+        TERRAIN = newRealTupleType(
+                new RealType[]{
+                    ASPECT, 
+                    SLOPE, 
+                    ELEVATION
+                });
         FUEL_MOISTURE = newRealTupleType(
-                new RealType[]
-                {
-                    FUEL_MOISTURE_1H, 
-                    FUEL_MOISTURE_10H, 
-                    FUEL_MOISTURE_100H, 
-                    FUEL_MOISTURE_HERB, 
-                    FUEL_MOISTURE_WOODY
+                new RealType[]{
+                    FUEL_MOISTURE_1H,
+                    FUEL_MOISTURE_10H,
+                    FUEL_MOISTURE_100H,
+                    FUEL_MOISTURE_HERB,
+                    FUEL_MOISTURE_WOODY,
                 });
         FUEL_CONDITION = newRealTupleType(
-                new RealType[]
-                {
-                    FUEL_TEMP_F, 
-                    FUEL_MOISTURE_1H, 
-                    FUEL_MOISTURE_10H, 
-                    FUEL_MOISTURE_100H, 
-                    FUEL_MOISTURE_HERB, 
-                    FUEL_MOISTURE_WOODY
+                new RealType[]{
+                    FUEL_MOISTURE_1H,
+                    FUEL_MOISTURE_10H,
+                    FUEL_MOISTURE_100H,
+                    FUEL_MOISTURE_HERB,
+                    FUEL_MOISTURE_WOODY,
+                    FUEL_TEMP_C,
                 });
         FIRE_LINE_INTENSITY_SI = RealType.getRealType("fire_line_intensity:kW/m", FireUnit.kW_m, null);
         FIRE_LINE_INTENSITY_US = RealType.getRealType("fire_line_intensity:Btu/ft/s", FireUnit.Btu_ft_s, null);
@@ -149,21 +153,12 @@ public class WildfireType
         RATE_OF_SPREAD_US = RealType.getRealType("rate_of_spread:chain/hr", FireUnit.chain_hour, null);
         DIR_OF_SPREAD = RealType.getRealType("dir_of_spread:deg", CommonUnit.degree, null);
         FIRE_BEHAVIOR = newRealTupleType(
-                new RealType[]
-                {
-                    FIRE_LINE_INTENSITY_SI, 
-                    FLAME_LENGTH_SI, 
-                    RATE_OF_SPREAD_SI, 
-                    DIR_OF_SPREAD, 
+                new RealType[]{
+                    FIRE_LINE_INTENSITY_SI,
+                    FLAME_LENGTH_SI,
+                    RATE_OF_SPREAD_SI,
+                    DIR_OF_SPREAD,
                     HEAT_RELEASE_SI
-                });
-        ASPECT = RealType.getRealType("aspect:deg", CommonUnit.degree, null);
-        SLOPE = RealType.getRealType("slope:deg", CommonUnit.degree, null);
-        ELEVATION = RealType.getRealType("elevation:m", CommonUnit.meter, null);
-        TERRAIN = newRealTupleType(
-                new RealType[]
-                {
-                    ASPECT, SLOPE, ELEVATION
                 });
 
     }
