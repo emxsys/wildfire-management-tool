@@ -31,10 +31,6 @@ package com.emxsys.wildfire.api;
 
 import static com.emxsys.visad.Reals.*;
 import com.emxsys.visad.Tuples;
-import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
-import static com.emxsys.weather.api.WeatherType.WIND_DIR;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
-import static com.emxsys.wildfire.api.WildfireType.ASPECT;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_CONDITION;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_100H;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_10H;
@@ -42,7 +38,6 @@ import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_1H;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_HERB;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_WOODY;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_C;
-import static com.emxsys.wildfire.api.WildfireType.SLOPE;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -133,7 +128,7 @@ public class FuelConditionTuple extends RealTuple implements FuelCondition {
     }
 
     public FuelMoistureTuple getFuelMoisture() {
-        return new FuelMoistureTuple(
+        return FuelMoistureTuple.fromReals(
                 getDead1HrFuelMoisture(),
                 getDead10HrFuelMoisture(),
                 getDead100HrFuelMoisture(),

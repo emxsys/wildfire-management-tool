@@ -29,9 +29,6 @@
  */
 package com.emxsys.wildfire.api;
 
-import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
-import static com.emxsys.weather.api.WeatherType.WIND_DIR;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_100H;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_10H;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_1H;
@@ -67,7 +64,7 @@ public class FuelConditionTupleTest {
 
     @BeforeClass
     public static void setUpClass() {
-        FM = new FuelMoistureTuple(FM1, FM10, FM100, FMHERB, FMWOODY);
+        FM = FuelMoistureTuple.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
         instance = FuelConditionTuple.fromReals(FM, FUELTEMP);
     }
 
