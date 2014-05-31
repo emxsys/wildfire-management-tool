@@ -29,41 +29,40 @@
  */
 package com.emxsys.wildfire.spi;
 
-import com.emxsys.wildfire.api.FireBehaviorService;
-import com.emxsys.wildfire.api.FiregroundProvider;
-import com.emxsys.wildfire.surfacefire.SurfaceFireModel;
+import com.emxsys.wildfire.api.FireBehaviorProvider;
+import com.emxsys.wildfire.surfacefire.SurfaceFireProvider;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
 
 /**
- * The DefaultFireBehaviorService provides the registered FireBehaviorService service provider found
- * on the global lookup, or, if not found, a SurfaceFireModel instance.
+ * The DefaultFireBehaviorProvider provides the registered FireBehaviorProvider service provider found
+ on the global lookup, or, if not found, a SurfaceFireProvider instance.
  *
  * @author Bruce Schubert
  */
-public class DefaultFireBehaviorService {
+public class DefaultFireBehaviorProvider {
 
-    private static final Logger logger = Logger.getLogger(DefaultFireBehaviorService.class.getName());
-    private static FireBehaviorService instance;
+    private static final Logger logger = Logger.getLogger(DefaultFireBehaviorProvider.class.getName());
+    private static FireBehaviorProvider instance;
 
-    /**
-     * Hidden constructor.
-     */
-    private DefaultFireBehaviorService() {
+    /** Hidden constructor. */
+    private DefaultFireBehaviorProvider() {
     }
 
     /**
-     * Gets the registered FiregroundProvider from the global lookup. If a service provider has not
-     * been registered, then a SurfaceFireModel will be returned.
+     * Gets a SurfaceFireProvider instance. You can override this behavior by registering
+ FireBehaviorProvider service provider on the global lookup, in which case, the first service
+ provider instance will be returned.
      *
-     * @return The FireBehaviorService found on the global lookup, else a SurfaceFireModel.
+     * @return The FireBehaviorProvider found on the global lookup, otherwise a SurfaceFireProvider.
+     * @see SurfaceFireProvider
      */
-    public static FireBehaviorService getInstance() {
+    public static FireBehaviorProvider getInstance() {
         {
-            instance = Lookup.getDefault().lookup(FireBehaviorService.class);
+            instance = Lookup.getDefault().lookup(FireBehaviorProvider.class);
             if (instance == null) {
-                instance = new SurfaceFireModel();
+                instance = new SurfaceFireProvider();
             }
             logger.log(Level.CONFIG, "Providing a {0} instance.", instance.getClass().getName());
             return instance;

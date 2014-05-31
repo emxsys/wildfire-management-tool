@@ -30,23 +30,25 @@
 package com.emxsys.wildfire.api;
 
 import com.emxsys.gis.api.Terrain;
-import visad.Real;
+import com.emxsys.weather.api.Weather;
 
 /**
- *
+ * A service interface for computing fire behavior.
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface FireBehaviorService {
+@FunctionalInterface
+public interface FireBehaviorProvider {
 
     /**
-     * Compute the BEHAVE fire behavior.
+     * Compute the wildfire fire behavior.
      *
-     * @param fuel Fuel Model and Fuel Moisture inputs
-     * @param weather temperatures, humidities and winds
-     * @param terrain aspect and slope
-     * @return BEHAVE outputs
+     * @param fuelModel The FuelModel.
+     * @param condition The fuel conditions.
+     * @param weather The wind speed and wind direction.
+     * @param terrain The aspect and slope
+     * @return A FireEnviornment instance containing the fire behavior and burning conditions.
      */
-    public FireEnvironment computeFireBehavior(FuelModel fuelModel,
-            FuelCondition condition, Real windSpd, Real windDir, Terrain terrain);
+    public FireEnvironment computeFireBehavior(FuelModel fuelModel, FuelCondition condition,
+                                               Weather weather, Terrain terrain);
 
 }

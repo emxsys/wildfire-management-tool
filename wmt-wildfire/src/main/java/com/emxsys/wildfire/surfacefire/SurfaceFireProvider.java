@@ -31,8 +31,9 @@ package com.emxsys.wildfire.surfacefire;
 
 import com.emxsys.gis.api.Terrain;
 import static com.emxsys.visad.FireUnit.*;
+import com.emxsys.weather.api.Weather;
+import com.emxsys.wildfire.api.FireBehaviorProvider;
 import com.emxsys.wildfire.api.FireBehaviorTuple;
-import com.emxsys.wildfire.api.FireBehaviorService;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wildfire.api.FuelModel;
@@ -40,7 +41,6 @@ import com.emxsys.wildfire.behave.Behave;
 import java.util.Map;
 import org.openide.util.Exceptions;
 import visad.CommonUnit;
-import visad.Real;
 import visad.VisADException;
 
 /**
@@ -48,20 +48,30 @@ import visad.VisADException;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class SurfaceFireModel implements FireBehaviorService {
+public class SurfaceFireProvider implements FireBehaviorProvider {
 
     private final Behave behave;
     //private BehaveExp behave;    // experimental version
 
-    public SurfaceFireModel() {
+    public SurfaceFireProvider() {
         behave = new Behave();
         //behave = new BehaveExp();
     }
 
+    /**
+     * Computes the wildfire fire behavior using the Rothermel BEHAVE algorithms.
+     *
+     * @param fuelModel The FuelModel.
+     * @param condition The fuel conditions.
+     * @param weather The wind speed and wind direction.
+     * @param terrain The aspect and slope.
+     * @return A FireEnviornment instance containing the fire behavior and burning conditions.
+     */
     @Override
-    public FireEnvironment computeFireBehavior(FuelModel fuelModel, FuelCondition condition, 
-                                                                    Real windSpd, Real windDir, 
-                                                                    Terrain terrain) {
+    public FireEnvironment computeFireBehavior(FuelModel fuelModel, 
+                                               FuelCondition condition, 
+                                               Weather weather,
+                                               Terrain terrain) {
         try {
             // Set static fuel model vars
             behave.fuelModel = fuelModel.getModelNo();
@@ -81,15 +91,15 @@ public class SurfaceFireModel implements FireBehaviorService {
             behave.heat = fuelModel.getLowHeatContent().getValue();
 
             // Set moisture content variables
-            behave.m_d1 = condition.fuelMoisture.getDead1HrFuelMoisture().getValue();
-            behave.m_d2 = condition.fuelMoisture.getDead10HrFuelMoisture().getValue();
-            behave.m_d3 = condition.fuelMoisture.getDead100HrFuelMoisture().getValue();
-            behave.m_lh = condition.fuelMoisture.getLiveHerbFuelMoisture().getValue();
-            behave.m_lw = condition.fuelMoisture.getLiveWoodyFuelMoisture().getValue();
+            behave.m_d1 = condition.getDead1HrFuelMoisture().getValue();
+            behave.m_d2 = condition.getDead10HrFuelMoisture().getValue();
+            behave.m_d3 = condition.getDead100HrFuelMoisture().getValue();
+            behave.m_lh = condition.getLiveHerbFuelMoisture().getValue();
+            behave.m_lw = condition.getLiveWoodyFuelMoisture().getValue();
 
             // Add wind and slope
-            behave.wsp = windSpd.getValue(CommonUnit.meterPerSecond);
-            behave.wdr = windDir.getValue();
+            behave.wsp = weather.getWindSpeed().getValue(CommonUnit.meterPerSecond);
+            behave.wdr = weather.getWindDirection().getValue();
             behave.slp = terrain.getSlope().getValue();
             behave.asp = terrain.getAspect().getValue();
 
