@@ -29,52 +29,87 @@
  */
 package com.emxsys.wildfire.api;
 
+import com.emxsys.visad.Tuples;
 import static com.emxsys.wildfire.api.WildfireType.*;
 import visad.RealTuple;
 import visad.Real;
 import java.rmi.RemoteException;
-import visad.Data;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import visad.VisADException;
 
 public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
 
     public static FuelMoistureTuple INVALID = new FuelMoistureTuple();
-    /** [percent] */
-    private visad.Real dead1HrFuelMoisture;
-    /** [percent] */
-    private visad.Real dead10HrFuelMoisture;
-    /** [percent] */
-    private visad.Real dead100HrFuelMoisture;
-    /** [percent] */
-    private visad.Real liveHerbFuelMoisture;
-    /** [percent] */
-    private visad.Real liveWoodyFuelMoisture;
-    /** tuple array implemenation */
-    private Data[] components;
+    public static final int FUEL_MOISTURE_1H_INDEX = Tuples.getIndex(FUEL_MOISTURE_1H, FUEL_CONDITION);
+    public static final int FUEL_MOISTURE_10H_INDEX = Tuples.getIndex(FUEL_MOISTURE_10H, FUEL_CONDITION);
+    public static final int FUEL_MOISTURE_100H_INDEX = Tuples.getIndex(FUEL_MOISTURE_100H, FUEL_CONDITION);
+    public static final int FUEL_MOISTURE_HERB_INDEX = Tuples.getIndex(FUEL_MOISTURE_HERB, FUEL_CONDITION);
+    public static final int FUEL_MOISTURE_WOODY_INDEX = Tuples.getIndex(FUEL_MOISTURE_WOODY, FUEL_CONDITION);
+    private static final Logger logger = Logger.getLogger(FuelMoistureTuple.class.getName());
 
     /**
-     * Construct a new FuelMoistureTuple object with "missing" values.
+     * Creates a FuelMoistureTuple for WildfireType.FUEL_MOISTURE
+     *
+     * @param dead1HrFuelMoisture WildfireType.FUEL_MOISTURE_1H
+     * @param dead10HrFuelMoisture WildfireType.FUEL_MOISTURE_10H
+     * @param dead100HrFuelMoisture WildfireType.FUEL_MOISTURE_100H
+     * @param liveHerbFuelMoisture WildfireType.FUEL_MOISTURE_HERB
+     * @param liveWoodyFuelMoisture WildfireType.FUEL_MOISTURE_WOODY
+     * @return A new FuelMoistureTuple
      */
-    public FuelMoistureTuple() {
-        this(new Real(FUEL_MOISTURE_1H),
-                new Real(FUEL_MOISTURE_10H),
-                new Real(FUEL_MOISTURE_100H),
-                new Real(FUEL_MOISTURE_HERB),
-                new Real(FUEL_MOISTURE_WOODY));
+    public static FuelMoistureTuple fromReals(
+            Real dead1HrFuelMoisture, Real dead10HrFuelMoisture, Real dead100HrFuelMoisture,
+            Real liveHerbFuelMoisture, Real liveWoodyFuelMoisture) {
+        try {
+            Real[] reals = new Real[]{
+                dead1HrFuelMoisture,
+                dead10HrFuelMoisture,
+                dead100HrFuelMoisture,
+                liveHerbFuelMoisture,
+                liveWoodyFuelMoisture};
+            return new FuelMoistureTuple(new RealTuple(reals));
+
+        } catch (VisADException | RemoteException ex) {
+            logger.log(Level.SEVERE, Bundle.ERR_FuelConditionCannotCreate(), ex);
+            throw new IllegalStateException(ex);
+        }
+    }
+    /**
+     * Creates a FuelMoistureTuple from a RealTuple of type FUEL_MOISTURE.
+     * @param fuelMoisture A WeatherType.FIRE_WEATHER RealTuple.
+     * @return A new WeatherTuple.
+     */
+    public static FuelMoistureTuple fromRealTuple(RealTuple fuelMoisture) {
+        if (!fuelMoisture.getType().equals(FUEL_MOISTURE)) {
+            throw new IllegalArgumentException("Incompatible MathType: " + fuelMoisture.getType());
+        } else if (fuelMoisture.isMissing()) {
+            return INVALID;
+        }
+        try {
+            return new FuelMoistureTuple(fuelMoisture);
+            
+        } catch (VisADException | RemoteException ex) {
+            logger.log(Level.SEVERE, "Cannot create FuelMoistureTuple.", ex);
+            throw new IllegalStateException(ex);
+        }
     }
 
+
     /**
-     * Construct a new FuelMoistureTuple object from doubles where 100.0 equals 100%
-     *
+     * Creates a new FuelMoistureTuple object from doubles where 100.0 equals 100%
      * @param dead1HrFuelMoisture [percent]
      * @param dead10HrFuelMoisture [percent]
      * @param dead100HrFuelMoisture [percent]
      * @param liveHerbFuelMoisture [percent]
      * @param liveWoodyFuelMoisture [percent]
+     * @return A new FuelMoistureTuple.
      */
-    public FuelMoistureTuple(double dead1HrFuelMoisture, double dead10HrFuelMoisture,
-                             double dead100HrFuelMoisture, double liveHerbFuelMoisture, double liveWoodyFuelMoisture) {
-        this(new Real(FUEL_MOISTURE_1H, dead1HrFuelMoisture),
+    public static FuelMoistureTuple fromDoubles(
+            double dead1HrFuelMoisture, double dead10HrFuelMoisture, double dead100HrFuelMoisture,
+            double liveHerbFuelMoisture, double liveWoodyFuelMoisture) {
+        return fromReals(
+                new Real(FUEL_MOISTURE_1H, dead1HrFuelMoisture),
                 new Real(FUEL_MOISTURE_10H, dead10HrFuelMoisture),
                 new Real(FUEL_MOISTURE_100H, dead100HrFuelMoisture),
                 new Real(FUEL_MOISTURE_HERB, liveHerbFuelMoisture),
@@ -82,200 +117,102 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
     }
 
     /**
-     * The initial dead1HrFuelMoisture values assigned in this constructor are from Rothermel et al,
+     * The initial dead1HrFuelMoisture values assigned used in this method are from Rothermel et al,
      * "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE fire prediction
      * system." Research Paper INT-359. 1986.
      *
      * The other values have been arbitrarily assigned for testing purposes.
      * @param previousWeeksWx - WxConditions enum
+     * @return A new FuelMoistureTuple.
      */
-    public FuelMoistureTuple(WeatherConditions previousWeeksWx) {
-        super(FUEL_MOISTURE);
+    public static FuelMoistureTuple fromWeatherConditions(WeatherConditions previousWeeksWx) {
         switch (previousWeeksWx) {
             case HOT_AND_DRY:
-                dead1HrFuelMoisture = new Real(FUEL_MOISTURE_1H, 6);
-                dead10HrFuelMoisture = new Real(FUEL_MOISTURE_10H, 7);
-                dead100HrFuelMoisture = new Real(FUEL_MOISTURE_100H, 8);
-                liveHerbFuelMoisture = new Real(FUEL_MOISTURE_HERB, 70);
-                liveWoodyFuelMoisture = new Real(FUEL_MOISTURE_WOODY, 70);
-                break;
+                return fromReals(
+                        new Real(FUEL_MOISTURE_1H, 6),
+                        new Real(FUEL_MOISTURE_10H, 7),
+                        new Real(FUEL_MOISTURE_100H, 8),
+                        new Real(FUEL_MOISTURE_HERB, 70),
+                        new Real(FUEL_MOISTURE_WOODY, 70));
             case BETWEEN_HOTDRY_AND_COOLWET:
-                dead1HrFuelMoisture = new Real(FUEL_MOISTURE_1H, 16);
-                dead10HrFuelMoisture = new Real(FUEL_MOISTURE_10H, 17);
-                dead100HrFuelMoisture = new Real(FUEL_MOISTURE_100H, 18);
-                liveHerbFuelMoisture = new Real(FUEL_MOISTURE_HERB, 76);
-                liveWoodyFuelMoisture = new Real(FUEL_MOISTURE_WOODY, 76);
-                break;
+                return fromReals(
+                        new Real(FUEL_MOISTURE_1H, 16),
+                        new Real(FUEL_MOISTURE_10H, 17),
+                        new Real(FUEL_MOISTURE_100H, 18),
+                        new Real(FUEL_MOISTURE_HERB, 76),
+                        new Real(FUEL_MOISTURE_WOODY, 76));
             case COOL_AND_WET:
-                dead1HrFuelMoisture = new Real(FUEL_MOISTURE_1H, 76);
-                dead10HrFuelMoisture = new Real(FUEL_MOISTURE_10H, 77);
-                dead100HrFuelMoisture = new Real(FUEL_MOISTURE_100H, 78);
-                liveHerbFuelMoisture = new Real(FUEL_MOISTURE_HERB, 100);
-                liveWoodyFuelMoisture = new Real(FUEL_MOISTURE_WOODY, 100);
-                break;
-        }
-    }
-
-    /**
-     * Construct a WildlandFuelMoisture object from Reals.
-     *
-     * @param dead1HrFuelMoisture WildfireType.FUEL_MOISTURE_1H
-     * @param dead10HrFuelMoisture WildfireType.FUEL_MOISTURE_10H
-     * @param dead100HrFuelMoisture WildfireType.FUEL_MOISTURE_100H
-     * @param liveHerbFuelMoisture WildfireType.FUEL_MOISTURE_HERB
-     * @param liveWoodyFuelMoisture WildfireType.FUEL_MOISTURE_WOODY
-     */
-    public FuelMoistureTuple(Real dead1HrFuelMoisture, Real dead10HrFuelMoisture,
-                             Real dead100HrFuelMoisture, Real liveHerbFuelMoisture, Real liveWoodyFuelMoisture) {
-        super(FUEL_MOISTURE);
-        this.dead1HrFuelMoisture = dead1HrFuelMoisture;
-        this.dead10HrFuelMoisture = dead10HrFuelMoisture;
-        this.dead100HrFuelMoisture = dead100HrFuelMoisture;
-        this.liveHerbFuelMoisture = liveHerbFuelMoisture;
-        this.liveWoodyFuelMoisture = liveWoodyFuelMoisture;
-    }
-
-    @Override
-    public visad.Real getDead1HrFuelMoisture() {
-        return this.dead1HrFuelMoisture;
-    }
-
-    @Override
-    public visad.Real getDead10HrFuelMoisture() {
-        return this.dead10HrFuelMoisture;
-    }
-
-    @Override
-    public visad.Real getDead100HrFuelMoisture() {
-        return this.dead100HrFuelMoisture;
-    }
-
-    @Override
-    public visad.Real getLiveHerbFuelMoisture() {
-        return this.liveHerbFuelMoisture;
-    }
-
-    @Override
-    public visad.Real getLiveWoodyFuelMoisture() {
-        return this.liveWoodyFuelMoisture;
-    }
-
-    public void setDead100HrFuelMoisture(Real dead100HrFuelMoisture) {
-        this.dead100HrFuelMoisture = dead100HrFuelMoisture;
-    }
-
-    public void setDead10HrFuelMoisture(Real dead10HrFuelMoisture) {
-        this.dead10HrFuelMoisture = dead10HrFuelMoisture;
-    }
-
-    public void setDead1HrFuelMoisture(Real dead1HrFuelMoisture) {
-        this.dead1HrFuelMoisture = dead1HrFuelMoisture;
-    }
-
-    public void setLiveHerbFuelMoisture(Real liveHerbFuelMoisture) {
-        this.liveHerbFuelMoisture = liveHerbFuelMoisture;
-    }
-
-    public void setLiveWoodyFuelMoisture(Real liveWoodyFuelMoisture) {
-        this.liveWoodyFuelMoisture = liveWoodyFuelMoisture;
-    }
-
-    /**
-     * is missing any data elements
-     *
-     * @return is missing
-     */
-    @Override
-    public boolean isMissing() {
-        return dead1HrFuelMoisture.isMissing() || dead10HrFuelMoisture.isMissing()
-                || dead100HrFuelMoisture.isMissing() || liveHerbFuelMoisture.isMissing()
-                || liveWoodyFuelMoisture.isMissing();
-    }
-
-    /**
-     * Get the i'th component.
-     *
-     * @param i Which one
-     * @return The component
-     *
-     * @throws RemoteException On badness
-     * @throws VisADException On badness
-     */
-    @Override
-    public Data getComponent(int i) throws VisADException, RemoteException {
-        switch (i) {
-            case 0:
-                return dead1HrFuelMoisture;
-            case 1:
-                return dead10HrFuelMoisture;
-            case 2:
-                return dead100HrFuelMoisture;
-            case 3:
-                return liveHerbFuelMoisture;
-            case 4:
-                return liveWoodyFuelMoisture;
+                return fromReals(
+                        new Real(FUEL_MOISTURE_1H, 76),
+                        new Real(FUEL_MOISTURE_10H, 77),
+                        new Real(FUEL_MOISTURE_100H, 78),
+                        new Real(FUEL_MOISTURE_HERB, 100),
+                        new Real(FUEL_MOISTURE_WOODY, 100));
             default:
-                throw new IllegalArgumentException("Wrong component number:" + i);
+                return INVALID;
         }
     }
 
     /**
-     * Create, if needed, and return the component array.
-     *
-     * @param copy
-     * @return components
+     * Constructs an instance with from a RealTuple.
+     * @param fuelMoistureTuple Fuel moisture values.
      */
-    @Override
-    public Data[] getComponents(boolean copy) {
-        //Create the array and populate it if needed
-        if (components == null) {
-            Data[] tmp = new Data[getDimension()];
-            tmp[0] = dead1HrFuelMoisture;
-            tmp[1] = dead10HrFuelMoisture;
-            tmp[2] = dead100HrFuelMoisture;
-            tmp[3] = liveHerbFuelMoisture;
-            tmp[4] = liveWoodyFuelMoisture;
-            components = tmp;
-        }
-        return components;
+    private FuelMoistureTuple(RealTuple fuelMoistureTuple) throws VisADException, RemoteException {
+        super(WildfireType.FUEL_MOISTURE, fuelMoistureTuple.getRealComponents(), null);
     }
 
     /**
-     * Indicates if this Tuple is identical to an object.
-     *
-     * @param obj The object.
-     * @return            <code>true</code> if and only if the object is a Tuple and both Tuple-s have
-     * identical component sequences.
+     * Construct a new FuelMoistureTuple object with "missing" values.
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof FuelMoistureTuple)) {
-            return false;
-        }
-
-        FuelMoistureTuple that = (FuelMoistureTuple) obj;
-
-        return this.dead1HrFuelMoisture.equals(that.dead1HrFuelMoisture)
-                && this.dead10HrFuelMoisture.equals(that.dead10HrFuelMoisture)
-                && this.dead100HrFuelMoisture.equals(that.dead100HrFuelMoisture)
-                && this.liveHerbFuelMoisture.equals(that.liveHerbFuelMoisture)
-                && this.liveWoodyFuelMoisture.equals(that.liveWoodyFuelMoisture);
+    public FuelMoistureTuple() {
+        super(WildfireType.FUEL_MOISTURE);
     }
 
-    /**
-     * Returns the hash code of this object.
-     * @return The hash code of this object.
-     */
+
+
     @Override
-    public int hashCode() {
-        return dead1HrFuelMoisture.hashCode()
-                ^ dead10HrFuelMoisture.hashCode()
-                & dead100HrFuelMoisture.hashCode()
-                | (liveHerbFuelMoisture.hashCode() & liveWoodyFuelMoisture.hashCode());
+    public Real getDead1HrFuelMoisture() {
+        try {
+            return (Real) getComponent(FUEL_MOISTURE_1H_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public Real getDead10HrFuelMoisture() {
+        try {
+            return (Real) getComponent(FUEL_MOISTURE_10H_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public Real getDead100HrFuelMoisture() {
+        try {
+            return (Real) getComponent(FUEL_MOISTURE_100H_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public Real getLiveHerbFuelMoisture() {
+        try {
+            return (Real) getComponent(FUEL_MOISTURE_HERB_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public Real getLiveWoodyFuelMoisture() {
+        try {
+            return (Real) getComponent(FUEL_MOISTURE_WOODY_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
