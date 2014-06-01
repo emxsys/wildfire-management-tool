@@ -32,10 +32,11 @@ package com.emxsys.wmt.cps.fireground;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.weather.api.Weather;
+import com.emxsys.wildfire.api.FireBehaviorProvider;
 import com.emxsys.wildfire.api.FireBehaviorTuple;
-import com.emxsys.wildfire.api.FireBehaviorService;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.FuelCondition;
+import com.emxsys.wildfire.api.FuelConditionTuple;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
 import static com.emxsys.wildfire.api.WildfireType.*;
@@ -52,13 +53,12 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.VisADException;
 
-
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class FireBehaviorModel
-{
+public class FireBehaviorModel {
+
     /**
      * The time/space domain
      */
@@ -86,7 +86,7 @@ public class FireBehaviorModel
     /**
      * The fire behavior calculator
      */
-    private final FireBehaviorService fireBehaviorService;
+    private final FireBehaviorProvider fireBehaviorService;
     /**
      * The fire behavior range tuple type, <br/>
      * {FIRE_LINE_INTENSITY_SI, FLAME_LENGTH_SI, RATE_OF_SPREAD_SI, DIR_OF_SPREAD, HEAT_RELEASE_SI}
@@ -106,32 +106,28 @@ public class FireBehaviorModel
      */
     private static final Logger LOG = Logger.getLogger(FireBehaviorModel.class.getName());
 
-
     /**
      * Constructs the FireBehaviorModel with a deferred initialization of the hourly fire behavior
      * data.
      *
      */
     public FireBehaviorModel(SpatioTemporalDomain domain,
-        TerrainModel terrain,
-        FuelTypeModel fuel,
-        FuelTemperatureModel temperature,
-        FuelMoistureModel moisture,
-        WeatherModel weather)
-    {
+                             TerrainModel terrain,
+                             FuelTypeModel fuel,
+                             FuelTemperatureModel temperature,
+                             FuelMoistureModel moisture,
+                             WeatherModel weather) {
         // Defer initialization of Weather flatfield member
         this(domain, terrain, fuel, temperature, moisture, weather, false);
     }
 
-
     public FireBehaviorModel(SpatioTemporalDomain domain,
-        TerrainModel terrain,
-        FuelTypeModel fuel,
-        FuelTemperatureModel temperature,
-        FuelMoistureModel moisture,
-        WeatherModel weather,
-        boolean immediate)
-    {
+                             TerrainModel terrain,
+                             FuelTypeModel fuel,
+                             FuelTemperatureModel temperature,
+                             FuelMoistureModel moisture,
+                             WeatherModel weather,
+                             boolean immediate) {
         this.domain = domain;
         this.terrain = terrain;
         this.fuelTypes = fuel;
@@ -140,18 +136,15 @@ public class FireBehaviorModel
         this.weather = weather;
 
         // Find the Service Provider used to compute the behaviors
-        this.fireBehaviorService = Lookup.getDefault().lookup(FireBehaviorService.class);
+        this.fireBehaviorService = Lookup.getDefault().lookup(FireBehaviorProvider.class);
 
-        if (immediate)
-        {
+        if (immediate) {
             getMaxFireBehavorData();
         }
 
     }
 
-
-    public FireBehaviorModel(FieldImpl fireBehaviorMax, FieldImpl fireBehaviorMin)
-    {
+    public FireBehaviorModel(FieldImpl fireBehaviorMax, FieldImpl fireBehaviorMin) {
         this.terrain = null;
         this.fuelTypes = null;
         this.fuelTemps = null;
@@ -169,137 +162,100 @@ public class FireBehaviorModel
 
     }
 
-
-    public SpatioTemporalDomain getDomain()
-    {
+    public SpatioTemporalDomain getDomain() {
         return domain;
     }
 
-
-    public TerrainModel getTerrain()
-    {
+    public TerrainModel getTerrain() {
         return terrain;
     }
 
-
-    public FireBehaviorTuple getMaxFireBehavior(DateTime temporal, Coord2D spatial)
-    {
-        if (this.hourlyMaxBehavior == null)
-        {
+    public FireBehaviorTuple getMaxFireBehavior(DateTime temporal, Coord2D spatial) {
+        if (this.hourlyMaxBehavior == null) {
             this.hourlyMaxBehavior = createFireBehavior();
         }
         return getFireBehavior(this.hourlyMaxBehavior, temporal, spatial);
     }
 
-
-    public FireBehaviorTuple getMinFireBehavior(DateTime temporal, Coord2D spatial)
-    {
-        if (this.hourlyMinBehavior == null)
-        {
+    public FireBehaviorTuple getMinFireBehavior(DateTime temporal, Coord2D spatial) {
+        if (this.hourlyMinBehavior == null) {
             this.hourlyMinBehavior = createFireBehavior();
         }
         return getFireBehavior(this.hourlyMinBehavior, temporal, spatial);
     }
 
-
     private static FireBehaviorTuple getFireBehavior(FieldImpl hourlyBehavior, DateTime temporal,
-        Coord2D spatial)
-    {
-        try
-        {
-            RealTuple location = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]
-            {
+                                                     Coord2D spatial) {
+        try {
+            RealTuple location = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]{
                 spatial.getLatitudeDegrees(), spatial.getLongitudeDegrees()
             });
             FieldImpl field = (FieldImpl) hourlyBehavior.evaluate(temporal, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             RealTuple tuple = (RealTuple) field.evaluate(location, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             return tuple.isMissing() ? FireBehaviorTuple.INVALID_TUPLE : new FireBehaviorTuple(tuple.getRealComponents());
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
         }
     }
 
-
-    public FireBehaviorTuple getMaxFireBehaviorAt(int temporalIndex, int spatialIndex)
-    {
-        if (this.hourlyMaxBehavior == null)
-        {
+    public FireBehaviorTuple getMaxFireBehaviorAt(int temporalIndex, int spatialIndex) {
+        if (this.hourlyMaxBehavior == null) {
             this.hourlyMaxBehavior = createFireBehavior();
         }
         return getFireBehaviorAt(this.hourlyMaxBehavior, temporalIndex, spatialIndex);
     }
 
-
-    public FireBehaviorTuple getMinFireBehaviorAt(int temporalIndex, int spatialIndex)
-    {
-        if (this.hourlyMinBehavior == null)
-        {
+    public FireBehaviorTuple getMinFireBehaviorAt(int temporalIndex, int spatialIndex) {
+        if (this.hourlyMinBehavior == null) {
             this.hourlyMinBehavior = createFireBehavior();
         }
         return getFireBehaviorAt(this.hourlyMinBehavior, temporalIndex, spatialIndex);
     }
 
-
     private static FireBehaviorTuple getFireBehaviorAt(FieldImpl hourlyBehavior, int temporalIndex,
-        int spatialIndex)
-    {
-        try
-        {
+                                                       int spatialIndex) {
+        try {
             FieldImpl field = (FieldImpl) hourlyBehavior.getSample(temporalIndex);
             RealTuple sample = (RealTuple) field.getSample(spatialIndex);
             return new FireBehaviorTuple(sample.getRealComponents());
-        }
-        catch (VisADException | RemoteException ex)
-        {
+        } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
         }
     }
 
-
     /**
      * Math type:<br/>
      * ( time -> ( (latitude, longitude) -> ( temperature, humidity, ... ) ) )
      *
      * @return hourly weather
      */
-    public final FieldImpl getMaxFireBehavorData()
-    {
-        if (this.hourlyMaxBehavior == null)
-        {
+    public final FieldImpl getMaxFireBehavorData() {
+        if (this.hourlyMaxBehavior == null) {
             this.hourlyMaxBehavior = createFireBehavior();
         }
         return this.hourlyMaxBehavior;
     }
 
-
     /**
      * Math type:<br/>
      * ( time -> ( (latitude, longitude) -> ( temperature, humidity, ... ) ) )
      *
      * @return hourly weather
      */
-    public final FieldImpl getMinFireBehavorData()
-    {
-        if (this.hourlyMaxBehavior == null)
-        {
+    public final FieldImpl getMinFireBehavorData() {
+        if (this.hourlyMaxBehavior == null) {
             this.hourlyMaxBehavior = createFireBehavior();
         }
         return this.hourlyMinBehavior;
     }
 
-
-    private FieldImpl createFireBehavior()
-    {
-        try
-        {
-            if (this.fireBehaviorService == null)
-            {
+    private FieldImpl createFireBehavior() {
+        try {
+            if (this.fireBehaviorService == null) {
                 throw new IllegalStateException("A FireBehaviorService wasn't found.  "
-                    + "Ensure the module providing the surface fire behavior is installed.");
+                        + "Ensure the module providing the surface fire behavior is installed.");
             }
             FlatField maxBehaviorFlatField = this.domain.newSpatialField(behaviorType);
             FlatField minBehaviorFlatField = this.domain.newSpatialField(behaviorType);
@@ -314,15 +270,13 @@ public class FireBehaviorModel
             double[][] behaviorMinSamples = new double[behaviorType.getDimension()][numLatLons];
 
             // Loop through the time domain
-            for (int t = 0; t < numTimes; t++)
-            {
+            for (int t = 0; t < numTimes; t++) {
                 // Get the general wx at this time
                 Weather genWx = this.weather.getWeatherAt(t);
                 System.out.println("General Wx: " + genWx.toString());
 
                 // ... and the lat/lon domain
-                for (int xy = 0; xy < numLatLons; xy++)
-                {
+                for (int xy = 0; xy < numLatLons; xy++) {
                     // We know that all the spatial data sets ar coincident 
                     // with the spatial domain, so we can use the same index 
                     // to retrieve the value (versus calling "evaluate" with a lat/lon)
@@ -333,24 +287,16 @@ public class FireBehaviorModel
                     TerrainTuple terrainTuple = this.terrain.getTerrainSample(xy);
 
                     // Create the fire behavior input parameters
-                    FuelCondition fuelCondition = new FuelCondition();
-                    fuelCondition.fuelMoisture = fuelMoisture;
-                    fuelCondition.airTemp = genWx.getAirTemperature();
-                    fuelCondition.fuelTemp = fuelTemp.getRealComponents()[0];
-                    //fuelCondition.solarAzimuthAngle =
-                    //fuelCondition.date =
+                    FuelCondition fuelCondition = FuelConditionTuple.fromReals(
+                            fuelMoisture, fuelTemp.getRealComponents()[0]);
 
                     FireEnvironment fire = fireBehaviorService.computeFireBehavior(
-                        fuelModel,
-                        fuelCondition,
-                        genWx.getWindSpeed(),
-                        genWx.getWindDirection(),
-                        terrainTuple);
+                            fuelModel, fuelCondition,
+                            genWx, terrainTuple);
 
                     RealTuple maxFireBehaviorTuple = (RealTuple) fire.fireBehavior;
                     RealTuple minFireBehaviorTuple = (RealTuple) fire.fireBehaviorNoWnd;
-                    for (int dim = 0; dim < behaviorType.getDimension(); dim++)
-                    {
+                    for (int dim = 0; dim < behaviorType.getDimension(); dim++) {
                         Real maxComponent = (Real) maxFireBehaviorTuple.getComponent(dim);
                         Real minComponent = (Real) minFireBehaviorTuple.getComponent(dim);
                         behaviorMaxSamples[dim][xy] = maxComponent.getValue();
@@ -368,9 +314,7 @@ public class FireBehaviorModel
 
             return hourlyMaxBehaviorField;
 
-        }
-        catch (IllegalStateException | VisADException | RemoteException ex)
-        {
+        } catch (IllegalStateException | VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
         }
         return null;
