@@ -34,7 +34,7 @@ import com.emxsys.gis.api.GisType;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.ConditionsObserver;
+import com.emxsys.weather.api.StationObserver;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import java.rmi.RemoteException;
@@ -71,7 +71,7 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
     public SimpleWeatherProvider() {
         // Initialize the lookup with this provider's capabilities
         InstanceContent content = getContent();
-        content.add((ConditionsObserver) this::getCurrentWeather);  // functional interface 
+        content.add((StationObserver) this::getCurrentWeather);  // functional interface 
     }
     
     @Override
