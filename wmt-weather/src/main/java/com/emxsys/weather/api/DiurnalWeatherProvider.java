@@ -58,9 +58,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle.Messages;
 import org.openide.util.lookup.InstanceContent;
-import visad.Field;
-import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Irregular2DSet;
@@ -72,6 +71,10 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
+@Messages({
+"ERR_DiurnalSunlightNotInitialized=Sunlight has not been initialized.",
+"ERR_DiurnalNegativeValues=Negative values are not allowed."
+})
 public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
     private Real tempAtSunrise = new Real(AIR_TEMP_C);
@@ -91,6 +94,10 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * Constructor.
      */
     public DiurnalWeatherProvider() {
+        // Initialize the lookup with this provider's capabilities
+        InstanceContent content = getContent();
+        content.add((StationObserver) this::getCurrentWeather);  // functional interface 
+        content.add((SpotWeatherObserver) this::getWeather);     // functional interface 
     }
 
     /**
@@ -99,9 +106,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @param coord The coordinate used to obtain sunrise and sunset.
      */
     public DiurnalWeatherProvider(ZonedDateTime date, Coord3D coord) {
-        // Initialize the lookup with this provider's capabilities
-        InstanceContent content = getContent();
-        content.add((ConditionsObserver) this::getCurrentWeather);  // functional interface 
+        this();
         sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);
     }
 
@@ -128,7 +133,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         Collection<Real> values = windSpeeds.values();
         for (Real real : values) {
             if (real.getValue() < 0) {
-                throw new IllegalArgumentException("neg values not allowed");
+                throw new IllegalArgumentException(Bundle.ERR_DiurnalNegativeValues());
             }
         }
         this.windSpds = windSpeeds;
@@ -142,18 +147,45 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         Collection<Real> values = cloudCovers.values();
         for (Real real : values) {
             if (real.getValue() < 0) {
-                throw new IllegalArgumentException("neg values not allowed");
+                throw new IllegalArgumentException(Bundle.ERR_DiurnalNegativeValues());
             }
         }
         this.clouds = cloudCovers;
     }
 
+    /**
+     * Creates the sunlight used for the sunrise and sunset times.
+     * @param date Date used to determine sunrise and sunset.
+     * @param coord Coordinate used to determine sunrise and sunset.
+     */
     public void initializeSunlight(ZonedDateTime date, Coord3D coord) {
         sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);
     }
 
+    /**
+     * Sets the sunlight used for sunrise and sunset times.
+     * @param sunlight A Sunlight instance containing sunrise and sunset times.
+     */
     public void setSunlight(Sunlight sunlight) {
         this.sunlight = sunlight;
+    }
+
+    /**
+     * Gets the diurnal weather at the specific time, the coordinate is ignored.
+     * @param time The time for the weather.
+     * @param coord_ignored Ignored parameter.
+     * @return A {@code WeatherTuple} containing the weather at the specified time.
+     */
+    public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord_ignored) {
+        if (sunlight == null) {
+            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
+        }
+        return WeatherTuple.fromReals(
+                getAirTemperature(time.toLocalTime()),
+                getRelativeHumidity(time.toLocalTime()),
+                getWindSpeed(time.toLocalTime()),
+                getWindDirection(time.toLocalTime()),
+                getCloudCover(time.toLocalTime()));
     }
 
     /**
@@ -163,13 +195,13 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @return A FlatField (time -> FIRE_WEATHER).
      */
     @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
-    public Field getDailyWeather(TemporalDomain domain) {
+    public FlatField getHourlyWeather(TemporalDomain domain) {
         if (sunlight == null) {
-            throw new IllegalStateException("Sunlight has not been initialized.");
+            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
         try {
             // Create a FieldImpl and the samples for the hourly weather range
-            FieldImpl wxField = domain.newTemporalField(FIRE_WEATHER); // FunctionType: time -> fire weather)
+            FlatField wxField = domain.createSimpleTemporalField(FIRE_WEATHER); // FunctionType: time -> fire weather)
             double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][wxField.getLength()];
 
             // Create the wx range samples...
@@ -199,7 +231,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @param age_ignored Ignored parameter.
      * @return A FlatField containing current weather values from the diurnal datasets.
      */
-    public Field getCurrentWeather(Coord2D coord, Real radius_ignored, Duration age_ignored) {
+    public FlatField getCurrentWeather(Coord2D coord, Real radius_ignored, Duration age_ignored) {
 
         // Get the application time
         ZonedDateTime time = DefaultTimeProvider.getInstance().getTime();
@@ -215,9 +247,9 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             double[][] wxSamples = new double[WX_RANGE.getDimension()][1];
             wxSamples[AIR_TEMP_IDX][0] = getAirTemperature(time.toLocalTime()).getValue();
             wxSamples[HUMIDITY_IDX][0] = getRelativeHumidity(time.toLocalTime()).getValue();
-            wxSamples[WIND_SPD_IDX][0] = 0;
-            wxSamples[WIND_DIR_IDX][0] = 0;
-            wxSamples[CLOUD_COVER_IDX][0] = 0;
+            wxSamples[WIND_SPD_IDX][0] = getWindSpeed(time.toLocalTime()).getValue();
+            wxSamples[WIND_DIR_IDX][0] = getWindDirection(time.toLocalTime()).getValue();
+            wxSamples[CLOUD_COVER_IDX][0] = getCloudCover(time.toLocalTime()).getValue();
 
             // Create the domain Set, with 2 columns and 1 rows, using an
             // Gridded2DDoubleSet(MathType type, double[][] samples, lengthX)
