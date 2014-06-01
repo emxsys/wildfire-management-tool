@@ -27,11 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.weather.api;
 
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
+import com.emxsys.visad.TemporalDomain;
+import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
+import java.rmi.RemoteException;
+import java.time.ZonedDateTime;
+import java.util.logging.Logger;
+import visad.FieldImpl;
 import visad.FlatField;
+import visad.VisADException;
 
 /**
  *
@@ -39,8 +47,65 @@ import visad.FlatField;
  */
 public class DiurnalWeatherModel extends WeatherModel {
 
-    public DiurnalWeatherModel(SpatioTemporalDomain domain, FlatField temperatures, FlatField humidities, FlatField winds) {
-        super(domain, temperatures, humidities, winds);
+    private final TemporalDomain temporalDomain;
+    private final SpatialDomain spatialDomain;
+    private final SpotWeatherObserver spotWeatherObserver;
+    private static final Logger logger = Logger.getLogger(DiurnalWeatherModel.class.getName());
+
+    public DiurnalWeatherModel(SpatioTemporalDomain domain, WeatherProvider weatherProvider, boolean immediate) {
+        if (domain==null) {
+            throw new IllegalArgumentException("SpatioTemporalDomain is null.");
+        } else if (weatherProvider == null) {
+            throw new IllegalArgumentException("WeatherProvider is null.");
+        }
+        this.temporalDomain = domain.getTemporalDomain();
+        this.spatialDomain = domain.getSpatialDomain();
+        this.spotWeatherObserver = weatherProvider.getCapability(SpotWeatherObserver.class);
+        if (this.spotWeatherObserver==null) {
+            throw new IllegalArgumentException("WeatherProvider does not support SpotWeatherObserver.");            
+        }
+        if (immediate) {
+            initializeWeather();
+        }
+    }
+
+    @Override
+    protected FieldImpl createWeather() {
+        try {
+            // Create the function: (time -> ((lat,lon) -> (FIRE_WEATHER)))
+            FlatField spatialField = spatialDomain.createSimpleSpatialField(FIRE_WEATHER);
+            FieldImpl spatioTemporalField = temporalDomain.createTemporalField(spatialField.getType());
+
+            final int numLatLons = spatialDomain.getDomainSet().getLength();
+            final int numTimes = temporalDomain.getDomainSet().getLength();
+            double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
+
+            // Loop through the temporal domain
+            for (int i = 0; i < numTimes; i++) {
+                ZonedDateTime time = temporalDomain.getZonedDateTimeAt(i);
+
+                // Loop through the spatial domain
+                for (int xy = 0; xy < numLatLons; xy++) {
+                    // Compute weather data at the time and place
+                    GeoCoord2D coord = GeoCoord2D.fromLatLonPoint(this.spatialDomain.getLatLonPointAt(xy));
+                    WeatherTuple weather = spotWeatherObserver.getWeather(time, coord);
+
+                    // Copy weather values into the spatial function's samples
+                    double[] values = weather.getValues();
+                    for (int dim = 0; dim < FIRE_WEATHER.getDimension(); dim++) {
+                        wxSamples[dim][xy] = values[dim];
+                    }
+                }
+                // Populate the spatio-temporal function's samples with the spatial function data
+                spatialField.setSamples(wxSamples);
+                spatioTemporalField.setSample(i, spatialField);
+            }
+            return spatioTemporalField;
+
+        } catch (IllegalStateException | VisADException | RemoteException ex) {
+            logger.severe(ex.toString());
+        }
+        return null;
     }
 
 }
