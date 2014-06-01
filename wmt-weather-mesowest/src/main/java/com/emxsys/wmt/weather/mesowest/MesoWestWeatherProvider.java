@@ -36,7 +36,7 @@ import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.ConditionsObserver;
+import com.emxsys.weather.api.StationObserver;
 import com.emxsys.weather.api.WeatherProvider;
 import static com.emxsys.weather.api.WeatherType.*;
 import java.net.URL;
@@ -175,7 +175,7 @@ public class MesoWestWeatherProvider extends AbstractWeatherProvider {
         
         // Initialize the lookup with this provider's capabilities
         InstanceContent content = getContent();
-        content.add((ConditionsObserver) this::getLatestWeather);  // functional interface
+        content.add((StationObserver) this::getLatestWeather);  // functional interface
         
     }
 
