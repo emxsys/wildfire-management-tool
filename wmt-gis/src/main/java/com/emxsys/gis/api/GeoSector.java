@@ -184,8 +184,6 @@ public class GeoSector extends AbstractGeometry implements Box {
         try {
             Real lat = (Real) northeast.getLatitude().add(southwest.getLatitude()).multiply(ONE_HALF_LAT);
             Real lon = (Real) northeast.getLongitude().add(southwest.getLongitude()).multiply(ONE_HALF_LON);
-            System.out.println(lat.toValueString());
-            System.out.println(lon.toValueString());
             return new GeoCoord2D(lat.getValue(), lon.getValue());
         }
         catch (VisADException | RemoteException ex) {
