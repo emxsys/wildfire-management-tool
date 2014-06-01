@@ -35,7 +35,9 @@ import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.GeoSector;
 import static com.emxsys.solar.api.SolarType.SUNLIGHT;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
+import com.emxsys.visad.TemporalDomain;
 import com.emxsys.visad.Times;
 import java.rmi.RemoteException;
 import java.time.ZonedDateTime;
@@ -44,36 +46,35 @@ import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
 import visad.FlatField;
-import visad.Gridded1DDoubleSet;
-import visad.Linear2DSet;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.VisADException;
 import visad.georef.LatLonPoint;
 
 /**
+ * The SolarModel maintains the VisAD function (time) -> ((lat,lon)-> (Sunlight)).
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class SolarModel {
 
-    /**
-     * The time/space domain
-     */
-    private final SpatioTemporalDomain domain;
-    /**
-     * The solar data in a spatio-temporal domain
-     */
+    private TemporalDomain temporalDomain;
+    private SpatialDomain spatialDomain;
     private FieldImpl solarField;
-    /**
-     * Error logger
-     */
     private static final Logger LOG = Logger.getLogger(SolarModel.class.getName());
 
+    /**
+     * Constructs a new hourly SolarModel.
+     * @param start Start time for the temporal domain.
+     * @param numHours Number of hours in the temporal domain.
+     * @param box The extents of the spatial domain.
+     * @param numRows The number of rows (latitudes) in the spatial domain.
+     * @param numCols The number or columns (longitudes) in the spatial domain.
+     * @param immediate Directive to initialize immediately or to defer until used.
+     */
     public SolarModel(ZonedDateTime start, int numHours, Box box, int numRows, int numCols, boolean immediate) {
-        Gridded1DDoubleSet temporalSet = Times.makeHourlyTimeSet(start, numHours);
-        Linear2DSet spatialSet = GeoSector.fromBox(box).toLinear2DSet(numRows, numCols);
-        this.domain = new SpatioTemporalDomain(temporalSet, spatialSet);
+        this.temporalDomain = new TemporalDomain(start, numHours);
+        this.spatialDomain = new SpatialDomain(GeoSector.fromBox(box).toLinear2DSet(numRows, numCols));
         if (immediate) {
             createSolarField();
         }
@@ -90,14 +91,19 @@ public class SolarModel {
     }
 
     public SolarModel(SpatioTemporalDomain domain, boolean immediate) {
-        this.domain = domain;
+        this.temporalDomain = domain.getTemporalDomain();
+        this.spatialDomain = domain.getSpatialDomain();
         if (immediate) {
             createSolarField();
         }
     }
 
-    public SpatioTemporalDomain getDomain() {
-        return domain;
+    public TemporalDomain getTemporalDomain() {
+        return temporalDomain;
+    }
+
+    public SpatialDomain getSpatialDomain() {
+        return spatialDomain;
     }
 
     public SunlightTuple getSunlight(ZonedDateTime temporal, Coord2D spatial) {
@@ -157,34 +163,35 @@ public class SolarModel {
     private FieldImpl createSolarField() {
         SunlightProvider sun = DefaultSunlightProvider.getInstance();
         try {
-            FlatField spatialFlatField = this.domain.newSpatialField(SUNLIGHT);
-            FieldImpl spatioTemporalField = this.domain.newTemporalField(spatialFlatField.getType());
+            // Create the (time->((lat,lon)->(SUNLIGHT))) function
+            FlatField spatialField = this.spatialDomain.createSimpleSpatialField(SUNLIGHT);
+            FieldImpl spatioTemporalField = this.temporalDomain.createTemporalField(spatialField.getType());
 
-            final int numLatLons = this.domain.getSpatialDomainSet().getLength();
-            final int numTimes = this.domain.getTemporalDomainSet().getLength();
+            final int numLatLons = this.spatialDomain.getSpatialDomainSetLength();
+            final int numTimes = this.temporalDomain.getDomainSet().getLength();
             double[][] solarSamples = new double[SUNLIGHT.getDimension()][numLatLons];
 
             // Loop through the temporal domain
             for (int i = 0; i < numTimes; i++) {
-                ZonedDateTime time = this.domain.getZonedDateTimeAt(i);
+                ZonedDateTime time = this.temporalDomain.getZonedDateTimeAt(i);
 
                 // Loop through the spatial domain
                 for (int xy = 0; xy < numLatLons; xy++) {
-                    LatLonPoint latLon = this.domain.getLatLonPointAt(xy);
-                    GeoCoord3D coord = GeoCoord3D.fromLatLonPoint(latLon);
-
                     // Compute solar data at the time and place
-                    RealTuple sunlight = sun.getSunlight(time, coord);
+                    LatLonPoint latLon = this.spatialDomain.getLatLonPointAt(xy);
+                    RealTuple sunlight = sun.getSunlight(time, GeoCoord3D.fromLatLonPoint(latLon));
+
+                    // Copy sunlight values into the spatial function's samples
                     double[] values = sunlight.getValues();
                     for (int dim = 0; dim < SolarType.SUNLIGHT.getDimension(); dim++) {
                         solarSamples[dim][xy] = values[dim];
                     }
                 }
-                spatialFlatField.setSamples(solarSamples);
-                spatioTemporalField.setSample(i, spatialFlatField);
+                // Populate the spatio-temporal function's samples with the spatial function data
+                spatialField.setSamples(solarSamples);
+                spatioTemporalField.setSample(i, spatialField);
             }
             this.solarField = spatioTemporalField;
-
             return spatioTemporalField;
 
         } catch (IllegalStateException | VisADException | RemoteException ex) {
