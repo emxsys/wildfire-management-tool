@@ -41,7 +41,7 @@ import visad.Real;
  * @author Bruce Schubert
  */
 @FunctionalInterface
-public interface ConditionsObserver {
+public interface StationObserver {
 
     /**
      * Gets the latest weather observations within the age and inside the area of interest.
