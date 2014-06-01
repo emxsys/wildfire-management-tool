@@ -278,6 +278,8 @@ public class Behave {
 
     /**
      * Build array with nodata-values
+     * @param key
+     * @param val
      */
     static public void setNodataValue(String key, double val) {
         int i = v.indexOf(key.toLowerCase());
@@ -365,7 +367,7 @@ public class Behave {
 
     /**
      * Is there fuel?
-     * @returns true if fuel is present.
+     * @return true if fuel is present.
      */
     public boolean hasFuel() {
         checkFuel();
@@ -374,7 +376,7 @@ public class Behave {
 
     /**
      * Is there Nodata?
-     * @returns true if any input parameter has not been set.
+     * @return true if any input parameter has not been set.
      */
     public boolean hasNodata() {
         checkNodata();
@@ -473,31 +475,31 @@ public class Behave {
      * Updates the internal parameter list
      */
     void updateParameterList() {
-        varHashMap.put("w0_d1", new Double(w0_d1));
-        varHashMap.put("w0_d2", new Double(w0_d2));
-        varHashMap.put("w0_d3", new Double(w0_d3));
-        varHashMap.put("w0_lh", new Double(w0_lh));
-        varHashMap.put("w0_lw", new Double(w0_lw));
-        varHashMap.put("m_d1", new Double(m_d1));
-        varHashMap.put("m_d2", new Double(m_d2));
-        varHashMap.put("m_d3", new Double(m_d3));
-        varHashMap.put("m_lh", new Double(m_lh));
-        varHashMap.put("m_lw", new Double(m_lw));
-        varHashMap.put("sv_d1", new Double(sv_d1));
-        varHashMap.put("sv_d2", new Double(sv_d2));
-        varHashMap.put("sv_d3", new Double(sv_d3));
-        varHashMap.put("sv_lh", new Double(sv_lh));
-        varHashMap.put("sv_lw", new Double(sv_lw));
-        varHashMap.put("rho_p", new Double(rho_p));
-        varHashMap.put("heat", new Double(heat));
-        varHashMap.put("depth", new Double(depth));
-        varHashMap.put("s_e", new Double(s_e));
-        varHashMap.put("s_t", new Double(s_t));
-        varHashMap.put("mx", new Double(mx));
-        varHashMap.put("wsp", new Double(wsp));
-        varHashMap.put("wdr", new Double(wdr));
-        varHashMap.put("slp", new Double(slp));
-        varHashMap.put("asp", new Double(asp));
+        varHashMap.put("w0_d1", w0_d1);
+        varHashMap.put("w0_d2", w0_d2);
+        varHashMap.put("w0_d3", w0_d3);
+        varHashMap.put("w0_lh", w0_lh);
+        varHashMap.put("w0_lw", w0_lw);
+        varHashMap.put("m_d1", m_d1);
+        varHashMap.put("m_d2", m_d2);
+        varHashMap.put("m_d3", m_d3);
+        varHashMap.put("m_lh", m_lh);
+        varHashMap.put("m_lw", m_lw);
+        varHashMap.put("sv_d1", sv_d1);
+        varHashMap.put("sv_d2", sv_d2);
+        varHashMap.put("sv_d3", sv_d3);
+        varHashMap.put("sv_lh", sv_lh);
+        varHashMap.put("sv_lw", sv_lw);
+        varHashMap.put("rho_p", rho_p);
+        varHashMap.put("heat", heat);
+        varHashMap.put("depth", depth);
+        varHashMap.put("s_e", s_e);
+        varHashMap.put("s_t", s_t);
+        varHashMap.put("mx", mx);
+        varHashMap.put("wsp", wsp);
+        varHashMap.put("wdr", wdr);
+        varHashMap.put("slp", slp);
+        varHashMap.put("asp", asp);
     }
 
     /**
@@ -520,31 +522,31 @@ public class Behave {
      * Updates the list containing the max spread results
      */
     void updateResultList(Map<String, Double> resHashMap) {
-        resHashMap.put("I_r", new Double(I_r));
-        resHashMap.put("sdr", new Double(sdr));
-        resHashMap.put("efw", new Double(efw));
-        resHashMap.put("hsk", new Double(hsk));
-        resHashMap.put("ros", new Double(ros));
-        resHashMap.put("tau", new Double(tau));
-        resHashMap.put("hpa", new Double(hpa));
-        resHashMap.put("fzd", new Double(fzd));
-        resHashMap.put("fli", new Double(fli));
-        resHashMap.put("fln", new Double(fln));
+        resHashMap.put("I_r", I_r);
+        resHashMap.put("sdr", sdr);
+        resHashMap.put("efw", efw);
+        resHashMap.put("hsk", hsk);
+        resHashMap.put("ros", ros);
+        resHashMap.put("tau", tau);
+        resHashMap.put("hpa", hpa);
+        resHashMap.put("fzd", fzd);
+        resHashMap.put("fli", fli);
+        resHashMap.put("fln", fln);
     }
 
     /**
      * Updates the list containing the no wind, no slope results
      */
     void updateResultListNoWS() {
-        resHashMapNoWS.put("sdr", new Double(sdr));
-        resHashMapNoWS.put("efw", new Double(efw));
-        resHashMapNoWS.put("hsk", new Double(hsk));
-        resHashMapNoWS.put("ros", new Double(ros));
-        resHashMapNoWS.put("tau", new Double(tau));
-        resHashMapNoWS.put("hpa", new Double(hpa));
-        resHashMapNoWS.put("fzd", new Double(fzd));
-        resHashMapNoWS.put("fli", new Double(fli));
-        resHashMapNoWS.put("fln", new Double(fln));
+        resHashMapNoWS.put("sdr", sdr);
+        resHashMapNoWS.put("efw", efw);
+        resHashMapNoWS.put("hsk", hsk);
+        resHashMapNoWS.put("ros", ros);
+        resHashMapNoWS.put("tau", tau);
+        resHashMapNoWS.put("hpa", hpa);
+        resHashMapNoWS.put("fzd", fzd);
+        resHashMapNoWS.put("fli", fli);
+        resHashMapNoWS.put("fln", fln);
     }
 
     /**
@@ -592,7 +594,7 @@ public class Behave {
     }
 
     /** ************************************************************************
-     * The main logic of rothermel wildfire behaviour calculation.
+     * The main logic of Rothermel wildfire behavior calculation.
      *
      ************************************************************************ */
     void calcRothermel() throws Exception {
@@ -763,9 +765,10 @@ public class Behave {
      *
      * Exceptions are thrown if<br/>
      * - w0 <= 0.0 no fuel specified<br/> - sw_t <= 0.0 surface-to-voume-ratios not properly
-     * specified<br/> - depth <= 0.0 depth of fuel bed not properly specified<br/>
+     * specified<br/> - depth <= 0.0 depth of fuel bed not properly specified<br/> @throws
+     * java.lang.Exception
      */
-    protected void calcFuel() throws Exception {
+    protected void calcFuel() {
         // reset Fuel flag
         hasFuel = true;
         /* reset all values to 0. ***************************/
@@ -802,7 +805,7 @@ public class Behave {
         //
         checkFuel();
         if (!hasFuel) {
-            throw new Exception(" no fuel specified");
+            throw new IllegalStateException(" no fuel specified");
         }
 
         // auxiliary variables
@@ -834,7 +837,7 @@ public class Behave {
          * characteristic surface to volume ratio => sigma Rothermel 1972: eq. (71) and (72)
          */
         if (sw_t <= 0.0) {
-            throw new Exception("Surface-to-volume-ratio not defined!");
+            throw new IllegalStateException("Surface-to-volume-ratio not defined!");
         }
         sigma = s2w_t / sw_t;
 
@@ -845,7 +848,7 @@ public class Behave {
         // rho_b should not be bigger than 0.5 of the particle density
         //
         if (depth <= 0.) {
-            throw new Exception("invalid fuel bed depth: " + depth);
+            throw new IllegalStateException("invalid fuel bed depth: " + depth);
         }
         rho_b = w0 / depth;
 
@@ -927,7 +930,7 @@ public class Behave {
      *
      * Exceptions thrown if mx <= 0.
      */
-    protected void moistureDamping() throws Exception {
+    protected void moistureDamping() {
         // reset variables...
         hn_d1 = 0.;
         hn_d2 = 0.;
@@ -974,7 +977,7 @@ public class Behave {
 
         //
         if (mx <= 0.) {
-            throw new Exception("invalid value: Moisture of extinction (mx): " + mx);
+            throw new IllegalStateException("invalid value: Moisture of extinction (mx): " + mx);
         }
 
         /*
@@ -1065,14 +1068,14 @@ public class Behave {
      *
      * Rothermel (1972): eq. (77) + (78)
      */
-    protected void heatSink() throws Exception {
+    protected void heatSink() {
         /**
          * Effective heating number: epsilon = exp(-138 / sigma_ft) (14) = exp(-138 / (sigma_m *
          * 0.3048)) conversion! = exp( -452.76 / sigma)
          */
         // if there is no fuel, go back...
         if (sw_t <= 0.) {
-            throw new Exception("Fuel error (sw_t): " + sw_t);
+            throw new IllegalStateException("Fuel error (sw_t): " + sw_t);
         }
 
         if (sv_d1 > 0.0) {
@@ -1191,7 +1194,7 @@ public class Behave {
 
         /** *********************************************************************
          * effective windspeed actually this is only the inverse function of phi_w
-         ********************************************************************** */
+         * ********************************************************************* */
         efw = (pow(vl / (C * pow(beta_ratio, -E)), 1 / B)) / 196.85;
         // rothermel 87: sets an upper limit on
         // the wind multiplication factor

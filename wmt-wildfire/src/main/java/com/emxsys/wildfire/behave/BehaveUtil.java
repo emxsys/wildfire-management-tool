@@ -108,8 +108,8 @@ public class BehaveUtil {
         else if (m_R < E_D) {
             // fuel moisture is below the drying curve so a wetting trend is in effect
             // Equation #5
-            //m = E_W + (m_R - E_W) / 1.9953;   -- original
-            m = E_W + (E_W - m_R) / 1.9953;     // corrected based on Anderson 2009 87-10 
+            m = E_W + (m_R - E_W) / 1.9953;   //-- original
+            //m = E_W + (E_W - m_R) / 1.9953;     // corrected based on Anderson 2009 87-10 
         } // Drying
         else {
             // fuel moisture is above the drying curve so a drying trend is in effect
