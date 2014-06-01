@@ -30,124 +30,38 @@
 package com.emxsys.visad;
 
 import java.rmi.RemoteException;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import visad.DateTime;
-import visad.FieldImpl;
-import visad.FlatField;
-import visad.FunctionType;
 import visad.Gridded1DDoubleSet;
-import visad.Linear2DSet;
-import visad.MathType;
-import visad.RealTupleType;
-import visad.RealType;
+import visad.Real;
 import visad.VisADException;
 import visad.georef.LatLonPoint;
-import visad.georef.LatLonTuple;
 
 /**
- * A Spatio-Temporal domain defined by time and space.
+ * A Spatio-Temporal domain is a simple composite of a TemporalDomain and a SpatialDomain.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class SpatioTemporalDomain {
 
-    /**
-     * The spatial domain type -- a 2D domainType tuple : (latitude, longitude)
-     */
-    //private static final RealTupleType SPATIAL_DOMAIN_TYPE = GeoCoord2D.DEFAULT_TUPLE_TYPE;    // includes coord system
-    private static final RealTupleType SPATIAL_DOMAIN_TYPE = RealTupleType.LatitudeLongitudeTuple;    // null coord system
-    /**
-     * The temporal domain type
-     */
-    private static final RealType TEMPORAL_DOMAIN_TYPE = RealType.Time;
-    /**
-     * The spatial domain set
-     */
-    private final Linear2DSet spatialDomainSet;
-    /**
-     * The temporal domain set
-     */
-    private final Gridded1DDoubleSet temporalDomainSet;
-    /**
-     * The number of rows in the spatial grid
-     */
-    private final int nrows;
-    /**
-     * The number of columns in the spatial grid
-     */
-    private final int ncols;
-    /**
-     * The error logger
-     */
     private static final Logger LOG = Logger.getLogger(SpatioTemporalDomain.class.getName());
+    private TemporalDomain temporalDomain = new TemporalDomain();
+    private SpatialDomain spatialDomain = new SpatialDomain();
 
-    public SpatioTemporalDomain(Gridded1DDoubleSet timeDomainSet, Linear2DSet spatialDomainSet) {
-        this.temporalDomainSet = timeDomainSet;
-        this.spatialDomainSet = spatialDomainSet;
-        this.nrows = this.spatialDomainSet.getLength(0); // lats
-        this.ncols = this.spatialDomainSet.getLength(1); // lons
+    public SpatioTemporalDomain(LatLonPoint minLatLon, LatLonPoint maxLatLon, Gridded1DDoubleSet timeset, int timezoneSeconds) {
+        initializeSpatialDomain(maxLatLon, minLatLon);
+        temporalDomain.initialize(timeset, timezoneSeconds);
     }
 
-
-    public ZonedDateTime getStartDate() {
-        Instant instant = Instant.ofEpochSecond((long) this.temporalDomainSet.getDoubleLowX());
-        return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"));
-    }
-
-    public ZonedDateTime getZonedDateTimeAt(int index) {
+    private void initializeSpatialDomain(LatLonPoint maxLatLon, LatLonPoint minLatLon) {
         try {
-            if (index < 0 || index >= this.temporalDomainSet.getLength()) {
-                throw new IllegalArgumentException("Invalid index: " + index);
-            }
-            double time = this.temporalDomainSet.getDoubles(false)[0][index];
-            Instant instant = Instant.ofEpochSecond((long) time);
-            return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"));
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
-    }
-
-    public DateTime getDateTimeAt(int index) {
-        try {
-            if (index < 0 || index >= this.temporalDomainSet.getLength()) {
-                throw new IllegalArgumentException("Invalid index: " + index);
-            }
-            double time = this.temporalDomainSet.getDoubles(false)[0][index];
-            return Times.fromDouble(time);
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
-    }
-
-    public LatLonPoint getLatLonPointAt(int row, int col) {
-        if (row < 0 || row >= nrows) {
-            throw new IllegalArgumentException("Invalid row index: " + row);
-        }
-        if (col < 0 || col >= ncols) {
-            throw new IllegalArgumentException("Invalid column index: " + col);
-        }
-        return getLatLonPointAt((row * col) + col);
-    }
-
-    public LatLonPoint getLatLonPointAt(int index) {
-        try {
-            if (index < 0 || index >= this.spatialDomainSet.getLength()) {
-                throw new IllegalArgumentException("Invalid index: " + index);
-            }
-            double lat = this.spatialDomainSet.getDoubles(false)[0][index];
-            double lon = this.spatialDomainSet.getDoubles(false)[1][index];
-            //double lat = this.spatialDomainSet.getSamples(false)[0][index];
-            //double lon = this.spatialDomainSet.getSamples(false)[1][index];
-            return new LatLonTuple(lat, lon);
+            Real height = (Real) (maxLatLon.getLatitude().subtract(minLatLon.getLatitude()));
+            Real width = (Real) (maxLatLon.getLongitude().subtract(minLatLon.getLongitude()));
+            int nrows = (int) (height.getValue() / 0.00027); // ~30m at equator
+            int ncols = (int) (width.getValue() / 0.00027); // ~30m at equator
+            spatialDomain.initialize(minLatLon, maxLatLon, nrows, ncols);
         }
         catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
@@ -155,70 +69,52 @@ public class SpatioTemporalDomain {
         }
     }
 
-    public FlatField newSpatialField(MathType range) {
-        try {
-            FunctionType functionType = new FunctionType(SPATIAL_DOMAIN_TYPE, range);
-            FlatField field = new FlatField(functionType, this.spatialDomainSet);
-            LOG.log(Level.INFO, "newSpatialField created: {0}", field.getType().prettyString());
-            return field;
+    public SpatioTemporalDomain(LatLonPoint minLatLon, LatLonPoint maxLatLon, ZonedDateTime startDate, int numHours) {
+        temporalDomain.initialize(startDate, numHours);
+        initializeSpatialDomain(maxLatLon, minLatLon);
+    }
+
+    public SpatioTemporalDomain(TemporalDomain temporalDomain, SpatialDomain spatialDomain) {
+        if (temporalDomain==null) {
+            throw new IllegalArgumentException("TemporalDomain is null.");
+        } else if (spatialDomain==null) {
+            throw new IllegalArgumentException("SpatialDomain is null.");
         }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new RuntimeException(ex);
-        }
+        this.temporalDomain = temporalDomain;
+        this.spatialDomain = spatialDomain;
     }
 
-
-    public FieldImpl newTemporalField(MathType range) {
-        try {
-            FunctionType functionType = new FunctionType(TEMPORAL_DOMAIN_TYPE, range);
-            FieldImpl field = new FieldImpl(functionType, this.temporalDomainSet);
-            LOG.log(Level.INFO, "newTemporalField created: {0}", field.getType().prettyString());
-            return field;
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new RuntimeException(ex);
-        }
+    public ZonedDateTime getStartDate() {
+        return this.temporalDomain.getStart();
     }
 
-    public Linear2DSet getSpatialDomainSet() {
-        return spatialDomainSet;
+    public ZonedDateTime getZonedDateTimeAt(int index) {
+        return this.temporalDomain.getZonedDateTimeAt(index);
     }
 
-    public int getSpatialDomainSetLength() {
-        try {
-            return spatialDomainSet.getLength();
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new RuntimeException(ex);
-        }
+    public DateTime getDateTimeAt(int index) {
+        return this.temporalDomain.getDateTimeAt(index);
     }
 
-    public RealTupleType getSpatialDomainType() {
-        return SPATIAL_DOMAIN_TYPE;
+    public LatLonPoint getLatLonPointAt(int row, int col) {
+        return this.spatialDomain.getLatLonPointAt(row, col);
     }
 
-    public Gridded1DDoubleSet getTemporalDomainSet() {
-        return temporalDomainSet;
+    public LatLonPoint getLatLonPointAt(int index) {
+        return this.spatialDomain.getLatLonPointAt(index);
     }
 
-    public RealType getTemporalDomainType() {
-        return TEMPORAL_DOMAIN_TYPE;
+    public SpatialDomain getSpatialDomain() {
+        return spatialDomain;
     }
 
-    public int getNumColumns() {
-        return ncols;
-    }
-
-    public int getNumRows() {
-        return nrows;
+    public TemporalDomain getTemporalDomain() {
+        return temporalDomain;
     }
 
     @Override
     public String toString() {
-        return this.temporalDomainSet.toString() + ", " + this.spatialDomainSet.toString();
+        return this.temporalDomain.toString() + ", " + this.spatialDomain.toString();
     }
 
 }
