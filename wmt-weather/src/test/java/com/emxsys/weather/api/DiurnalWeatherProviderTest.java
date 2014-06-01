@@ -188,7 +188,7 @@ public class DiurnalWeatherProviderTest {
     }
 
     /**
-     * Test of getDailyWeather method, of class DiurnalWeatherProvider.
+     * Test of getHourlyWeather method, of class DiurnalWeatherProvider.
      */
     @Test
     public void testGetDailyWeather() {
@@ -226,7 +226,7 @@ public class DiurnalWeatherProviderTest {
             instance.initializeCloudCovers(cloudCovers);
 
             TemporalDomain domain = new TemporalDomain(ZonedDateTime.now(), 24);
-            Field result = instance.getDailyWeather(domain);
+            Field result = instance.getHourlyWeather(domain);
 
             assertNotNull(result);
             System.out.println(" > Daily Weather: " + result.longString());
