@@ -32,8 +32,9 @@ package com.emxsys.weather.spi;
 import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.ConditionsObserver;
 import com.emxsys.weather.api.PointForecaster;
+import com.emxsys.weather.api.SpotWeatherObserver;
+import com.emxsys.weather.api.StationObserver;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
@@ -64,8 +65,7 @@ public class DefaultWeatherProvider {
      */
     public static List<WeatherProvider> getInstances() {
         if (instances == null) {
-
-            // Get all the registered service provider instances
+            // Get all the "registered" service provider instances
             Collection<? extends WeatherProvider> serviceProviders = Lookup.getDefault().lookupAll(WeatherProvider.class);
             instances = new ArrayList<>(serviceProviders);
             serviceProviders.stream().forEach((serviceProvider) -> {
@@ -76,13 +76,13 @@ public class DefaultWeatherProvider {
     }
 
     /**
-     * Gets the WeatherProvider instances that contain the given coordinate.
+     * Gets the WeatherProvider instances can provide a weather forecast for a specific time and
+     * location.
      *
      * @return A collection of WeatherProvider instances that have the PointForecaster capability.
      */
     public static List<WeatherProvider> getPointForecasters() {
         ArrayList<WeatherProvider> providers = new ArrayList<>();
-
         getInstances().stream()
                 .filter((provider) -> (provider.getLookup().lookup(PointForecaster.class)) != null)
                 .forEach((provider) -> {
@@ -90,16 +90,32 @@ public class DefaultWeatherProvider {
                 });
         return providers;
     }
+
     /**
-     * Gets the WeatherProvider instances that contain the given coordinate.
+     * Gets the WeatherProvider instances can provide a weather observation for a specific time and
+     * location.
      *
-     * @return A collection of WeatherProvider instances that have the ConditionsObserver capability.
+     * @return A collection of WeatherProvider instances that have the SpotWeatherObserver capability.
+     */
+    public static List<WeatherProvider> getSpotWeatherObservers() {
+        ArrayList<WeatherProvider> providers = new ArrayList<>();
+        getInstances().stream()
+                .filter((provider) -> (provider.getLookup().lookup(SpotWeatherObserver.class)) != null)
+                .forEach((provider) -> {
+                    providers.add(provider);
+                });
+        return providers;
+    }
+
+    /**
+     * Gets the WeatherProvider instances that can get the current weather from a weather station.
+     *
+     * @return A collection of WeatherProvider instances that have the StationObserver capability.
      */
     public static List<WeatherProvider> getStationObservers() {
         ArrayList<WeatherProvider> providers = new ArrayList<>();
-
         getInstances().stream()
-                .filter((provider) -> (provider.getLookup().lookup(ConditionsObserver.class)) != null)
+                .filter((provider) -> (provider.getLookup().lookup(StationObserver.class)) != null)
                 .forEach((provider) -> {
                     providers.add(provider);
                 });
@@ -135,12 +151,11 @@ public class DefaultWeatherProvider {
             // TODO: lookup the weather, if not found use general weather
             return new WeatherTuple();
         }
-        
+
         @Override
         public String getName() {
             return "Dummy Weather";
         }
-
 
         @Override
         public ImageIcon getImageIcon() {
