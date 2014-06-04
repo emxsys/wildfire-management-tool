@@ -219,6 +219,8 @@ public class StdFuelModel implements FuelModel {
             this.setDead100HrFuelLoad(fbfm.getDead100HrFuelLoad());
             this.setLiveWoodyFuelLoad(fbfm.getLiveFuelLoad());
             this.setDead1HrSAVRatio(fbfm.getDead1HrSAVRatio());
+            this.setDead10HrSAVRatio(fbfm.getDead10HrFuelLoad().getValue() > 0 ? SAV_RATIO_10HR_US : SAV_RATIO_ZERO);
+            this.setDead100HrSAVRatio(fbfm.getDead100HrFuelLoad().getValue() > 0 ? SAV_RATIO_100HR_US : SAV_RATIO_ZERO);
             this.setLiveWoodySAVRatio(fbfm.getLiveFuelSAVRatio());
             this.setFuelBedDepth(fbfm.getFuelBedDepth());
             this.setMoistureOfExtinction(fbfm.getMoistureOfExtinction());
@@ -229,8 +231,6 @@ public class StdFuelModel implements FuelModel {
             this.setModelName(fbfm.getModelName());
             this.setLiveHerbFuelLoad(FUEL_LOAD_ZERO);
             this.setLiveHerbSAVRatio(SAV_RATIO_ZERO);
-            this.setDead10HrSAVRatio(SAV_RATIO_10HR_US);
-            this.setDead100HrSAVRatio(SAV_RATIO_100HR_US);
         }
 
         /**
@@ -255,8 +255,8 @@ public class StdFuelModel implements FuelModel {
             this.modelGroup = fbfm.getModelNo() > 90 && fbfm.getModelNo() < 100 ? FUEL_MODEL_GROUP_UNBURNABLE : FUEL_MODEL_GROUP_STANDARD_40;
             this.setModelCode(fbfm.getModelCode());
             this.setModelName(fbfm.getModelName());
-            this.setDead10HrSAVRatio(SAV_RATIO_10HR_US);
-            this.setDead100HrSAVRatio(SAV_RATIO_100HR_US);
+            this.setDead10HrSAVRatio(fbfm.getDead10HrFuelLoad().getValue() > 0 ? SAV_RATIO_10HR_US : SAV_RATIO_ZERO);
+            this.setDead100HrSAVRatio(fbfm.getDead100HrFuelLoad().getValue() > 0 ? SAV_RATIO_100HR_US : SAV_RATIO_ZERO);
         }
 
         /**
@@ -581,6 +581,5 @@ public class StdFuelModel implements FuelModel {
                 + "\n Low Heat Content: " + this.getLowHeatContent().toValueString();
 
     }
-
 
 }
