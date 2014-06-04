@@ -32,7 +32,6 @@ package com.emxsys.wildfire.api;
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.visad.Reals.*;
-import com.emxsys.weather.api.WeatherType;
 import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;
@@ -64,20 +63,69 @@ public class WildfireType {
     /** Moisture of extinction: % */
     public static final RealType MOISTURE_OF_EXTINCTION;
 
-    /** 1 hour fine fuel moisture content: % */
-    public static final RealType FUEL_MOISTURE_1H;
-    /** 10 hour fuel moisture content: % */
-    public static final RealType FUEL_MOISTURE_10H;
-    /** 100 hour fuel moisture content: % */
-    public static final RealType FUEL_MOISTURE_100H;
-    /** Live herb fuel moisture content: % */
-    public static final RealType FUEL_MOISTURE_HERB;
-    /** Live woody fuel moisture content: % */
-    public static final RealType FUEL_MOISTURE_WOODY;
-    /** Fuel moisture tuple */
-    public final static RealTupleType FUEL_MOISTURE;
     /** Fuel condition tuple */
     public final static RealTupleType FUEL_CONDITION;
+
+    // Fuel components
+    /** Dead 1 hour fine fuel load: [tons/acre] */
+    public static final RealType LOAD_DEAD_1H;
+    /** Dead 10 hour fuel load: [tons/acre] */
+    public static final RealType LOAD_DEAD_10H;
+    /** Dead 100 hour fuel load: [tons/acre] */
+    public static final RealType LOAD_DEAD_100H;
+    /** Live herb fuel load: [tons/acre] */
+    public static final RealType LOAD_LIVE_HERB;
+    /** Live woody fuel load: [tons/acre] */
+    public static final RealType LOAD_LIVE_WOODY;
+    /** Dead 1 hour fine fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType SAV_DEAD_1H;
+    /** Dead 10 hour fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType SAV_DEAD_10H;
+    /** Dead 100 hour fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType SAV_DEAD_100H;
+    /** Live herb fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType SAV_LIVE_HERB;
+    /** Live woody fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType SAV_LIVE_WOODY;
+    /** 1 hour fine fuel moisture content: [%] */
+    public static final RealType FUEL_MOISTURE_1H;
+    /** 10 hour fuel moisture content: [%] */
+    public static final RealType FUEL_MOISTURE_10H;
+    /** 100 hour fuel moisture content: [%] */
+    public static final RealType FUEL_MOISTURE_100H;
+    /** Live herb fuel moisture content: [%] */
+    public static final RealType FUEL_MOISTURE_HERB;
+    /** Live woody fuel moisture content: [%] */
+    public static final RealType FUEL_MOISTURE_WOODY;
+    /** Fuel bed depth: [ft] */
+    public static final RealType FUEL_BED_DEPTH;
+    /** Dead fuel moisture of extinction: mx [%] */
+    public static final RealType MX_DEAD;
+    
+    /** Fuel model tuple */
+    public final static RealTupleType FUEL_MODEL;
+    /** Fuel moisture tuple */
+    public final static RealTupleType FUEL_MOISTURE;
+    /** Fuel characteristics tuple */
+    public final static RealTupleType FUEL_CHARACTERISTICS;
+
+    // Fuel combusible properties
+    /** Characteristic surface area-to-volume ratio - sigma: [ft2/ft3] */
+    public static final RealType SIGMA;
+    /** Live Moisture of extinction - mx_live: [%] */
+    public static final RealType MX_LIVE;
+    /** Mean bulk density: fuel-bed weight per unit volume - rho_b: [lbs/ft3] */
+    public static final RealType RHO_B;
+    /** Fuel-particle weight per unit volume- rho_p: [lbs/ft3] */
+    public static final RealType RHO_P;
+    /** Mean Packing ratio - beta: [-] */
+    public static final RealType BETA;
+    /** Optimal Packing ratio - beta: [-] */
+    public static final RealType BETA_OPT;
+    /** Relative Packing ratio - beta: [-] */
+    public static final RealType BETA_RATIO;
+    /** Fuel combustible tuple */
+    public final static RealTupleType COMBUSTIBLE;
 
     // Fire behavior types
     public static final RealType FIRE_LINE_INTENSITY_SI;
@@ -105,26 +153,38 @@ public class WildfireType {
         FUEL_TEMP_F = RealType.getRealType("fuel_temp:F", GeneralUnit.degF, null);
         FUEL_LOAD_SI = RealType.getRealType("fuel_load:kg/m2", FireUnit.kg_m2, null);
         FUEL_LOAD_US = RealType.getRealType("fuel_load:tons/acre", FireUnit.tons_acre, null);
-        SAV_RATIO_SI = RealType.getRealType("surface_to_volume:m2/m3", FireUnit.m2_m3, null);
-        SAV_RATIO_US = RealType.getRealType("surface_to_volume:ft2/ft3", FireUnit.ft2_ft3, null);
-        HEAT_SI = RealType.getRealType("heat_content:kJ/kg", FireUnit.kJ_kg, null);
-        HEAT_US = RealType.getRealType("heat_content:Btu/lb", FireUnit.Btu_lb, null);
-        FUEL_DEPTH_SI = RealType.getRealType("fuel_depth:m", CommonUnit.meter, null);
-        FUEL_DEPTH_US = RealType.getRealType("fuel_depth:ft", GeneralUnit.foot, null);
+
+        LOAD_DEAD_1H = RealType.getRealType("dead_1h:tons/acre", FireUnit.tons_acre, null);
+        LOAD_DEAD_10H = RealType.getRealType("dead_10h:tons/acre", FireUnit.tons_acre, null);
+        LOAD_DEAD_100H = RealType.getRealType("dead_100h:tons/acre", FireUnit.tons_acre, null);
+        LOAD_LIVE_HERB = RealType.getRealType("live_herb:tons/acre", FireUnit.tons_acre, null);
+        LOAD_LIVE_WOODY = RealType.getRealType("live_woody:tons/acre", FireUnit.tons_acre, null);
+        SAV_DEAD_1H = RealType.getRealType("dead_1h:ft2/ft3", FireUnit.ft2_ft3, null);
+        SAV_DEAD_10H = RealType.getRealType("dead_10h:ft2/ft3", FireUnit.ft2_ft3, null);
+        SAV_DEAD_100H = RealType.getRealType("dead_100h:ft2/ft3", FireUnit.ft2_ft3, null);
+        SAV_LIVE_HERB = RealType.getRealType("live_herb:ft2/ft3", FireUnit.ft2_ft3, null);
+        SAV_LIVE_WOODY = RealType.getRealType("live_woody:ft2/ft3", FireUnit.ft2_ft3, null);
         FUEL_MOISTURE_1H = RealType.getRealType("fuel_moisture_1h:%", GeneralUnit.percent, null);
         FUEL_MOISTURE_10H = RealType.getRealType("fuel_moisture_10h:%", GeneralUnit.percent, null);
         FUEL_MOISTURE_100H = RealType.getRealType("fuel_moisture_100h:%", GeneralUnit.percent, null);
         FUEL_MOISTURE_HERB = RealType.getRealType("fuel_moisture_herb:%", GeneralUnit.percent, null);
         FUEL_MOISTURE_WOODY = RealType.getRealType("fuel_moisture_woody:%", GeneralUnit.percent, null);
-        MOISTURE_OF_EXTINCTION = RealType.getRealType("moisture_of_extinction:%", GeneralUnit.percent, null);
-        ASPECT = RealType.getRealType("aspect:deg", CommonUnit.degree, null);
-        SLOPE = RealType.getRealType("slope:deg", CommonUnit.degree, null);
-        ELEVATION = RealType.getRealType("elevation:m", CommonUnit.meter, null);
-        TERRAIN = newRealTupleType(
+        MX_DEAD = RealType.getRealType("dead_moisture_of_ext:%", GeneralUnit.percent, null);
+        FUEL_BED_DEPTH = RealType.getRealType("fuel_depth:ft", GeneralUnit.foot, null);
+        FUEL_MODEL = newRealTupleType(
                 new RealType[]{
-                    ASPECT, 
-                    SLOPE, 
-                    ELEVATION
+                    LOAD_DEAD_1H,
+                    LOAD_DEAD_10H,
+                    LOAD_DEAD_100H,
+                    LOAD_LIVE_HERB,
+                    LOAD_LIVE_WOODY,
+                    SAV_DEAD_1H,
+                    SAV_DEAD_10H,
+                    SAV_DEAD_100H,
+                    SAV_LIVE_HERB,
+                    SAV_LIVE_WOODY,
+                    FUEL_BED_DEPTH,
+                    MX_DEAD
                 });
         FUEL_MOISTURE = newRealTupleType(
                 new RealType[]{
@@ -134,6 +194,60 @@ public class WildfireType {
                     FUEL_MOISTURE_HERB,
                     FUEL_MOISTURE_WOODY,
                 });
+        FUEL_CHARACTERISTICS = newRealTupleType(
+                new RealType[]{
+                    LOAD_DEAD_1H,
+                    LOAD_DEAD_10H,
+                    LOAD_DEAD_100H,
+                    LOAD_LIVE_HERB,
+                    LOAD_LIVE_WOODY,
+                    SAV_DEAD_1H,
+                    SAV_DEAD_10H,
+                    SAV_DEAD_100H,
+                    SAV_LIVE_HERB,
+                    SAV_LIVE_WOODY,
+                    FUEL_BED_DEPTH,
+                    MX_DEAD,
+                    FUEL_MOISTURE_1H,
+                    FUEL_MOISTURE_10H,
+                    FUEL_MOISTURE_100H,
+                    FUEL_MOISTURE_HERB,
+                    FUEL_MOISTURE_WOODY,
+                });
+
+        SIGMA = RealType.getRealType("fuel_complex:ft2/ft3", FireUnit.ft2_ft3, null);
+        MX_LIVE = RealType.getRealType("live_moisture_of_ext:%", GeneralUnit.percent, null);
+        RHO_B = RealType.getRealType("bulk_density:lb/ft3", FireUnit.lb_ft3, null);
+        RHO_P = RealType.getRealType("particle_density:lb/ft3", FireUnit.lb_ft3, null);
+        BETA = RealType.getRealType("mean_packing_ratio", CommonUnit.dimensionless, null);
+        BETA_OPT = RealType.getRealType("optimal_packing_ratio", CommonUnit.dimensionless, null);
+        BETA_RATIO = RealType.getRealType("relative_packing_ratio", CommonUnit.dimensionless, null);
+        COMBUSTIBLE = newRealTupleType(
+                new RealType[]{
+                    SIGMA,
+                    MX_LIVE,
+                    RHO_B,
+                    BETA,
+                    BETA_OPT
+                });
+
+        SAV_RATIO_SI = RealType.getRealType("surface_to_volume:m2/m3", FireUnit.m2_m3, null);
+        SAV_RATIO_US = RealType.getRealType("surface_to_volume:ft2/ft3", FireUnit.ft2_ft3, null);
+        HEAT_SI = RealType.getRealType("heat_content:kJ/kg", FireUnit.kJ_kg, null);
+        HEAT_US = RealType.getRealType("heat_content:Btu/lb", FireUnit.Btu_lb, null);
+        FUEL_DEPTH_SI = RealType.getRealType("fuel_depth:m", CommonUnit.meter, null);
+        FUEL_DEPTH_US = RealType.getRealType("fuel_depth:ft", GeneralUnit.foot, null);
+        MOISTURE_OF_EXTINCTION = RealType.getRealType("moisture_of_extinction:%", GeneralUnit.percent, null);
+
+        ASPECT = RealType.getRealType("aspect:deg", CommonUnit.degree, null);
+        SLOPE = RealType.getRealType("slope:deg", CommonUnit.degree, null);
+        ELEVATION = RealType.getRealType("elevation:m", CommonUnit.meter, null);
+        TERRAIN = newRealTupleType(
+                new RealType[]{
+                    ASPECT,
+                    SLOPE,
+                    ELEVATION
+                });
         FUEL_CONDITION = newRealTupleType(
                 new RealType[]{
                     FUEL_MOISTURE_1H,
@@ -141,8 +255,7 @@ public class WildfireType {
                     FUEL_MOISTURE_100H,
                     FUEL_MOISTURE_HERB,
                     FUEL_MOISTURE_WOODY,
-                    FUEL_TEMP_C,
-                });
+                    FUEL_TEMP_C,});
         FIRE_LINE_INTENSITY_SI = RealType.getRealType("fire_line_intensity:kW/m", FireUnit.kW_m, null);
         FIRE_LINE_INTENSITY_US = RealType.getRealType("fire_line_intensity:Btu/ft/s", FireUnit.Btu_ft_s, null);
         FLAME_LENGTH_SI = RealType.getRealType("flame_length:m", CommonUnit.meter, null);
@@ -152,6 +265,7 @@ public class WildfireType {
         RATE_OF_SPREAD_SI = RealType.getRealType("rate_of_spread:m/s", CommonUnit.meterPerSecond, null);
         RATE_OF_SPREAD_US = RealType.getRealType("rate_of_spread:chain/hr", FireUnit.chain_hour, null);
         DIR_OF_SPREAD = RealType.getRealType("dir_of_spread:deg", CommonUnit.degree, null);
+
         FIRE_BEHAVIOR = newRealTupleType(
                 new RealType[]{
                     FIRE_LINE_INTENSITY_SI,
