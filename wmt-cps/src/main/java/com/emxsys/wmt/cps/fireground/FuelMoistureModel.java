@@ -155,7 +155,7 @@ public class FuelMoistureModel {
     }
 
     public FuelMoistureTuple getFuelMoisture(Real hour, Coord2D latLon) {
-        FuelMoistureTuple fuelMoisture = new FuelMoistureTuple(
+        FuelMoistureTuple fuelMoisture = FuelMoistureTuple.fromReals(
                 getDead1HrFuelMoisture(hour, latLon),
                 getDead10HrFuelMoisture(hour, latLon),
                 getDead100HrFuelMoisture(hour, latLon),
@@ -172,7 +172,7 @@ public class FuelMoistureModel {
             Real liveHerb = (Real) ((FieldImpl) getLiveHerbFuelMoistureData().getSample(timeIndex)).getSample(0);
             Real liveWoody = (Real) ((FieldImpl) getLiveWoodyFuelMoistureData().getSample(timeIndex)).getSample(0);
 
-            FuelMoistureTuple fuelMoisture = new FuelMoistureTuple(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
+            FuelMoistureTuple fuelMoisture = FuelMoistureTuple.fromReals(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
             return fuelMoisture;
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
