@@ -47,10 +47,16 @@ public class FireUnit {
     public static final Unit kg_m2 = getUnit("kg/(m2)");
     /** Common unit for fuel load - US */
     public static final Unit tons_acre = getUnit("ton/(acre)");
+    /** Common unit for fuel load - US */
+    public static final Unit lb_ft2 = getUnit("lb/(ft2)");
     /** Common unit or surface-area-to-volume - SI */
     public static final Unit m2_m3 = getUnit("m2/(m3)");
     /** Common unit for surface-area-to-volume - US */
     public static final Unit ft2_ft3 = getUnit("ft2/(ft3)");
+    /** Common unit for bulk density - SI */
+    public static final Unit kg_m3 = getUnit("kg/(m3)");
+    /** Common unit for bulk density - US */
+    public static final Unit lb_ft3 = getUnit("lb/(ft3)");
     /** Common unit for heat of combustion (low heat output) - SI */
     public static final Unit kJ_kg = getUnit("kJ/(kg)");
     /** Common unit for heat of combustion (low heat output) - US */
