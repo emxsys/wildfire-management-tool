@@ -1,0 +1,1869 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Begin Header Template -->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
+    <meta name="Author" content="BehavePlus5">
+    <title>Behave Unit Test</title>
+    <style>
+      h3.bp2 { background-color: #9999ff; }
+      p.bp2  { background-color: #ffffff; }
+      td.bp2input { background-color: #cccccc; }
+      td.bp2masked { background-color: #ccccff; }
+      td.bp2hdr { background-color: #ccccff; }
+      td.bp2row0 { background-color: #ffffff; }
+      td.bp2row1 { background-color: #cccccc; }
+      td.bp2row0in { background-color: #ffffff; color: black }
+      td.bp2row1in { background-color: #cccccc; color: black }
+      td.bp2row0out { background-color: #ffffff; color: red }
+      td.bp2row1out { background-color: #cccccc; color: red }
+      span.bp2grp { font-weight: bold; color: #0000ff }
+    </style>
+  </head>
+  <body>
+    <table width="100%">
+      <tr>
+        <td width="90" rowspan="2">
+        </td>
+        <td colspan="2" align="center" class="bp2input">
+          BehavePlus 5.0.5 (Build 307)
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center">
+          <b>Behave Unit Test</b><br />Tue, Jun 03, 2014 at 17:41:30
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+<!-- End Header Template -->
+
+<!-- Begin Input Worksheet -->
+<p class="bp2">
+  <h3 class="bp2">Input Worksheet</h3>
+  <table cellspacing="2" cellpadding="5" border="0" width="100%">
+    <tr>
+      <td align="left" colspan="4">
+        <span class="bp2grp">Inputs: SURFACE</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="left" colspan="2">Input Variables</td>
+      <td class="bp2hdr" align="right">Units</td>
+      <td class="bp2hdr" align="left">Input Value(s)</td>
+    </tr>
+  <tr>
+    <td align="left" colspan="4">
+      <span class="bp2grp">Fuel/Vegetation, Surface/Understory</span>
+    </td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">Fuel Model</td>
+    <td align="right" valign="top">&nbsp;</td>
+    <td class="bp2input" align="left">1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, gr1, gr2, gr3, gr4, gr5, gr6, gr7, gr8, gr9, gs1, gs2, gs3, gs4, sh1, sh2, sh3, sh4, sh5, sh6, sh7, sh8, sh9, tu1, tu2, tu3, tu4, tu5, tl1, tl2, tl3, tl4, tl5, tl6, tl7, tl8, tl9, sb1, sb2, sb3, sb4</td>
+  </tr>
+  <tr>
+    <td align="left" colspan="4">
+      <span class="bp2grp">Fuel Moisture</span>
+    </td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">1-h Moisture</td>
+    <td align="right" valign="top">%</td>
+    <td class="bp2input" align="left">6</td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">10-h Moisture</td>
+    <td align="right" valign="top">%</td>
+    <td class="bp2input" align="left">7</td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">100-h Moisture</td>
+    <td align="right" valign="top">%</td>
+    <td class="bp2input" align="left">8</td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">Live Herbaceous Moisture</td>
+    <td align="right" valign="top">%</td>
+    <td class="bp2input" align="left">70</td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">Live Woody Moisture</td>
+    <td align="right" valign="top">%</td>
+    <td class="bp2input" align="left">70</td>
+  </tr>
+  <tr>
+    <td align="left" colspan="4">
+      <span class="bp2grp">Weather</span>
+    </td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">Midflame Wind Speed</td>
+    <td align="right" valign="top">mi/h</td>
+    <td class="bp2input" align="left">5</td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">Direction of Wind Vector (from upslope)</td>
+    <td align="right" valign="top">deg</td>
+    <td class="bp2input" align="left">35</td>
+  </tr>
+  <tr>
+    <td align="left" colspan="4">
+      <span class="bp2grp">Terrain</span>
+    </td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" valign="top">Slope Steepness</td>
+    <td align="right" valign="top">%</td>
+    <td class="bp2input" align="left">30</td>
+  </tr>
+  <tr>
+    <td align="left" colspan="4">
+      <span class="bp2grp">Notes</span>
+    </td>
+  </tr>
+  <tr>
+    <td width="10">&nbsp;</td>
+    <td align="left" colspan="3"></td>
+  </tr>
+  </table>
+</p>
+<!-- End Input Worksheet -->
+
+<!-- Begin Run Options -->
+<h3 class="bp2">Run Option Notes</h3>
+<p class="bp2">
+  <table cellspacing="2" cellpadding="5" border="0" width="100%">
+<tr><td>Maximum reliable effective wind speed limit IS imposed [SURFACE].</td></tr><tr><td>Calculations are only for the direction of maximum spread [SURFACE].</td></tr><tr><td>Fireline intensity, flame length, and spread distance are always    for the direction of the spread calculations [SURFACE].</td></tr><tr><td>Wind and spread directions are degrees clockwise from upslope [SURFACE].</td></tr><tr><td>Direction of the wind vector is the direction the wind is pushing the fire [SURFACE].</td></tr>  </table>
+</p>
+<!-- End Input Worksheet -->
+
+<!-- Begin 1-Way Output Table -->
+<p class="bp2">
+  <h3 class="bp2">Results</h3>
+  <table cellpadding="5" cellspacing="2" border="0">
+    <tr>
+      <td class="bp2hdr" align="center">Fuel<br />Model</td>
+      <td class="bp2hdr" align="center">ROS<br />(max)</td>
+      <td class="bp2hdr" align="center">Heat per<br />Unit Area</td>
+      <td class="bp2hdr" align="center">Fireline<br />Intensity</td>
+      <td class="bp2hdr" align="center">Flame<br />Length</td>
+      <td class="bp2hdr" align="center">Reaction<br />Intensity</td>
+      <td class="bp2hdr" align="center">Direction<br />Max ROS</td>
+      <td class="bp2hdr" align="center">Effective<br />Wind</td>
+      <td class="bp2hdr" align="center">Char. Dead<br />Moisture</td>
+      <td class="bp2hdr" align="center">Char. Live<br />Moisture</td>
+      <td class="bp2hdr" align="center">Live Fuel<br />Mois Extn</td>
+      <td class="bp2hdr" align="center">Char<br />SA/V</td>
+      <td class="bp2hdr" align="center">Bulk<br />Density</td>
+      <td class="bp2hdr" align="center">Packing<br />Ratio</td>
+      <td class="bp2hdr" align="center">Relative<br />Pack Ratio</td>
+      <td class="bp2hdr" align="center">Dead Reac<br />Intensity</td>
+      <td class="bp2hdr" align="center">Live Reac<br />Intensity</td>
+      <td class="bp2hdr" align="center">Wind<br />Factor</td>
+      <td class="bp2hdr" align="center">Slope<br />Factor</td>
+      <td class="bp2hdr" align="center">Heat<br />Source</td>
+      <td class="bp2hdr" align="center">Heat<br />Sink</td>
+      <td class="bp2hdr" align="center">Residence<br />Time</td>
+      <td class="bp2hdr" align="center">Fuel Load<br />Transfered</td>
+      <td class="bp2hdr" align="center">Dead<br />Herb</td>
+      <td class="bp2hdr" align="center">Live<br />Herb</td>
+      <td class="bp2hdr" align="center">Total<br />Dead Load</td>
+      <td class="bp2hdr" align="center">Total<br />Live Load</td>
+      <td class="bp2hdr" align="center">Percent<br />Dead Fuel</td>
+      <td class="bp2hdr" align="center">Percent<br />Live Fuel</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center"></td>
+      <td class="bp2hdr" align="center">ch/h</td>
+      <td class="bp2hdr" align="center">Btu/ft2</td>
+      <td class="bp2hdr" align="center">Btu/ft/s</td>
+      <td class="bp2hdr" align="center">ft</td>
+      <td class="bp2hdr" align="center">Btu/ft2/min</td>
+      <td class="bp2hdr" align="center">deg</td>
+      <td class="bp2hdr" align="center">mi/h</td>
+      <td class="bp2hdr" align="center">%</td>
+      <td class="bp2hdr" align="center">%</td>
+      <td class="bp2hdr" align="center">%</td>
+      <td class="bp2hdr" align="center">ft2/ft3</td>
+      <td class="bp2hdr" align="center">lbs/ft3</td>
+      <td class="bp2hdr" align="center"></td>
+      <td class="bp2hdr" align="center"></td>
+      <td class="bp2hdr" align="center">Btu/ft2/min</td>
+      <td class="bp2hdr" align="center">Btu/ft2/min</td>
+      <td class="bp2hdr" align="center"></td>
+      <td class="bp2hdr" align="center"></td>
+      <td class="bp2hdr" align="center">Btu/ft2/min</td>
+      <td class="bp2hdr" align="center">Btu/ft3</td>
+      <td class="bp2hdr" align="center">min</td>
+      <td class="bp2hdr" align="center">%</td>
+      <td class="bp2hdr" align="center">ton/ac</td>
+      <td class="bp2hdr" align="center">ton/ac</td>
+      <td class="bp2hdr" align="center">ton/ac</td>
+      <td class="bp2hdr" align="center">ton/ac</td>
+      <td class="bp2hdr" align="center">%</td>
+      <td class="bp2hdr" align="center">%</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">1</td>
+      <td class="bp2row0" align="center"> 107.0</td>
+      <td class="bp2row0" align="center"> 91</td>
+      <td class="bp2row0" align="center"> 178</td>
+      <td class="bp2row0" align="center"> 4.9</td>
+      <td class="bp2row0" align="center"> 826</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.3</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 12</td>
+      <td class="bp2row0" align="center"> 3500</td>
+      <td class="bp2row0" align="center"> 0.0340</td>
+      <td class="bp2row0" align="center"> 0.0011</td>
+      <td class="bp2row0" align="center"> 0.2534</td>
+      <td class="bp2row0" align="center"> 826</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 21.4</td>
+      <td class="bp2row0" align="center"> 3.7</td>
+      <td class="bp2row0" align="center"> 1219</td>
+      <td class="bp2row0" align="center"> 10.4</td>
+      <td class="bp2row0" align="center"> 0.11</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.74</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">2</td>
+      <td class="bp2row1" align="center"> 43.9</td>
+      <td class="bp2row1" align="center"> 485</td>
+      <td class="bp2row1" align="center"> 390</td>
+      <td class="bp2row1" align="center"> 7.0</td>
+      <td class="bp2row1" align="center"> 3513</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.3</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 1029</td>
+      <td class="bp2row1" align="center"> 2784</td>
+      <td class="bp2row1" align="center"> 0.1840</td>
+      <td class="bp2row1" align="center"> 0.0057</td>
+      <td class="bp2row1" align="center"> 1.1369</td>
+      <td class="bp2row1" align="center"> 2537</td>
+      <td class="bp2row1" align="center"> 976</td>
+      <td class="bp2row1" align="center"> 14.7</td>
+      <td class="bp2row1" align="center"> 2.2</td>
+      <td class="bp2row1" align="center"> 3275</td>
+      <td class="bp2row1" align="center"> 67.8</td>
+      <td class="bp2row1" align="center"> 0.14</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.50</td>
+      <td class="bp2row1" align="center"> 3.51</td>
+      <td class="bp2row1" align="center"> 0.50</td>
+      <td class="bp2row1" align="center"> 88</td>
+      <td class="bp2row1" align="center"> 12</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">3</td>
+      <td class="bp2row0" align="center"> 129.9</td>
+      <td class="bp2row0" align="center"> 742</td>
+      <td class="bp2row0" align="center"> 1768</td>
+      <td class="bp2row0" align="center"> 14.0</td>
+      <td class="bp2row0" align="center"> 2900</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 1500</td>
+      <td class="bp2row0" align="center"> 0.0552</td>
+      <td class="bp2row0" align="center"> 0.0017</td>
+      <td class="bp2row0" align="center"> 0.2055</td>
+      <td class="bp2row0" align="center"> 2900</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25.1</td>
+      <td class="bp2row0" align="center"> 3.2</td>
+      <td class="bp2row0" align="center"> 2280</td>
+      <td class="bp2row0" align="center"> 16.0</td>
+      <td class="bp2row0" align="center"> 0.26</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 3.01</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">4</td>
+      <td class="bp2row1" align="center"> 108.5</td>
+      <td class="bp2row1" align="center"> 2744</td>
+      <td class="bp2row1" align="center"> 5459</td>
+      <td class="bp2row1" align="center"> 23.6</td>
+      <td class="bp2row1" align="center"> 12426</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 302</td>
+      <td class="bp2row1" align="center"> 1739</td>
+      <td class="bp2row1" align="center"> 0.1227</td>
+      <td class="bp2row1" align="center"> 0.0038</td>
+      <td class="bp2row1" align="center"> 0.5156</td>
+      <td class="bp2row1" align="center"> 5953</td>
+      <td class="bp2row1" align="center"> 6474</td>
+      <td class="bp2row1" align="center"> 17.3</td>
+      <td class="bp2row1" align="center"> 2.5</td>
+      <td class="bp2row1" align="center"> 8180</td>
+      <td class="bp2row1" align="center"> 68.5</td>
+      <td class="bp2row1" align="center"> 0.22</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 11.02</td>
+      <td class="bp2row1" align="center"> 5.01</td>
+      <td class="bp2row1" align="center"> 69</td>
+      <td class="bp2row1" align="center"> 31</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">5</td>
+      <td class="bp2row0" align="center"> 37.0</td>
+      <td class="bp2row0" align="center"> 697</td>
+      <td class="bp2row0" align="center"> 473</td>
+      <td class="bp2row0" align="center"> 7.7</td>
+      <td class="bp2row0" align="center"> 3056</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 128</td>
+      <td class="bp2row0" align="center"> 1683</td>
+      <td class="bp2row0" align="center"> 0.0805</td>
+      <td class="bp2row0" align="center"> 0.0025</td>
+      <td class="bp2row0" align="center"> 0.3294</td>
+      <td class="bp2row0" align="center"> 1072</td>
+      <td class="bp2row0" align="center"> 1984</td>
+      <td class="bp2row0" align="center"> 20.6</td>
+      <td class="bp2row0" align="center"> 2.9</td>
+      <td class="bp2row0" align="center"> 2216</td>
+      <td class="bp2row0" align="center"> 54.4</td>
+      <td class="bp2row0" align="center"> 0.23</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 1.50</td>
+      <td class="bp2row0" align="center"> 2.00</td>
+      <td class="bp2row0" align="center"> 43</td>
+      <td class="bp2row0" align="center"> 57</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">6</td>
+      <td class="bp2row1" align="center"> 37.6</td>
+      <td class="bp2row1" align="center"> 470</td>
+      <td class="bp2row1" align="center"> 324</td>
+      <td class="bp2row1" align="center"> 6.4</td>
+      <td class="bp2row1" align="center"> 1915</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 25</td>
+      <td class="bp2row1" align="center"> 1564</td>
+      <td class="bp2row1" align="center"> 0.1104</td>
+      <td class="bp2row1" align="center"> 0.0035</td>
+      <td class="bp2row1" align="center"> 0.4254</td>
+      <td class="bp2row1" align="center"> 1915</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 18.6</td>
+      <td class="bp2row1" align="center"> 2.6</td>
+      <td class="bp2row1" align="center"> 1227</td>
+      <td class="bp2row1" align="center"> 29.7</td>
+      <td class="bp2row1" align="center"> 0.25</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 6.01</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">7</td>
+      <td class="bp2row0" align="center"> 37.0</td>
+      <td class="bp2row0" align="center"> 534</td>
+      <td class="bp2row0" align="center"> 362</td>
+      <td class="bp2row0" align="center"> 6.8</td>
+      <td class="bp2row0" align="center"> 2160</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 1439</td>
+      <td class="bp2row0" align="center"> 1552</td>
+      <td class="bp2row0" align="center"> 0.0896</td>
+      <td class="bp2row0" align="center"> 0.0028</td>
+      <td class="bp2row0" align="center"> 0.3431</td>
+      <td class="bp2row0" align="center"> 1562</td>
+      <td class="bp2row0" align="center"> 597</td>
+      <td class="bp2row0" align="center"> 20.3</td>
+      <td class="bp2row0" align="center"> 2.8</td>
+      <td class="bp2row0" align="center"> 1467</td>
+      <td class="bp2row0" align="center"> 36.1</td>
+      <td class="bp2row0" align="center"> 0.25</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 4.51</td>
+      <td class="bp2row0" align="center"> 0.37</td>
+      <td class="bp2row0" align="center"> 92</td>
+      <td class="bp2row0" align="center"> 8</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">8</td>
+      <td class="bp2row1" align="center"> 2.3</td>
+      <td class="bp2row1" align="center"> 188</td>
+      <td class="bp2row1" align="center"> 8</td>
+      <td class="bp2row1" align="center"> 1.2</td>
+      <td class="bp2row1" align="center"> 927</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 1889</td>
+      <td class="bp2row1" align="center"> 1.1500</td>
+      <td class="bp2row1" align="center"> 0.0359</td>
+      <td class="bp2row1" align="center"> 5.1718</td>
+      <td class="bp2row1" align="center"> 927</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 7.6</td>
+      <td class="bp2row1" align="center"> 1.3</td>
+      <td class="bp2row1" align="center"> 815</td>
+      <td class="bp2row1" align="center"> 324.3</td>
+      <td class="bp2row1" align="center"> 0.20</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 5.01</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">9</td>
+      <td class="bp2row0" align="center"> 9.8</td>
+      <td class="bp2row0" align="center"> 370</td>
+      <td class="bp2row0" align="center"> 66</td>
+      <td class="bp2row0" align="center"> 3.1</td>
+      <td class="bp2row0" align="center"> 2393</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 2484</td>
+      <td class="bp2row0" align="center"> 0.8000</td>
+      <td class="bp2row0" align="center"> 0.0250</td>
+      <td class="bp2row0" align="center"> 4.5021</td>
+      <td class="bp2row0" align="center"> 2393</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 9.5</td>
+      <td class="bp2row0" align="center"> 1.4</td>
+      <td class="bp2row0" align="center"> 2564</td>
+      <td class="bp2row0" align="center"> 238.8</td>
+      <td class="bp2row0" align="center"> 0.15</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 3.48</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">10</td>
+      <td class="bp2row1" align="center"> 12.0</td>
+      <td class="bp2row1" align="center"> 1331</td>
+      <td class="bp2row1" align="center"> 292</td>
+      <td class="bp2row1" align="center"> 6.1</td>
+      <td class="bp2row1" align="center"> 6117</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 497</td>
+      <td class="bp2row1" align="center"> 1764</td>
+      <td class="bp2row1" align="center"> 0.5520</td>
+      <td class="bp2row1" align="center"> 0.0173</td>
+      <td class="bp2row1" align="center"> 2.3476</td>
+      <td class="bp2row1" align="center"> 3444</td>
+      <td class="bp2row1" align="center"> 2673</td>
+      <td class="bp2row1" align="center"> 9.8</td>
+      <td class="bp2row1" align="center"> 1.6</td>
+      <td class="bp2row1" align="center"> 3578</td>
+      <td class="bp2row1" align="center"> 272.1</td>
+      <td class="bp2row1" align="center"> 0.22</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 10.02</td>
+      <td class="bp2row1" align="center"> 2.00</td>
+      <td class="bp2row1" align="center"> 83</td>
+      <td class="bp2row1" align="center"> 17</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">11</td>
+      <td class="bp2row0" align="center"> 6.9</td>
+      <td class="bp2row0" align="center"> 760</td>
+      <td class="bp2row0" align="center"> 96</td>
+      <td class="bp2row0" align="center"> 3.7</td>
+      <td class="bp2row0" align="center"> 2339</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.6</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 15</td>
+      <td class="bp2row0" align="center"> 1182</td>
+      <td class="bp2row0" align="center"> 0.5290</td>
+      <td class="bp2row0" align="center"> 0.0165</td>
+      <td class="bp2row0" align="center"> 1.6203</td>
+      <td class="bp2row0" align="center"> 2339</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 9.8</td>
+      <td class="bp2row0" align="center"> 1.6</td>
+      <td class="bp2row0" align="center"> 962</td>
+      <td class="bp2row0" align="center"> 126.8</td>
+      <td class="bp2row0" align="center"> 0.32</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 11.52</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">12</td>
+      <td class="bp2row1" align="center"> 15.0</td>
+      <td class="bp2row1" align="center"> 2205</td>
+      <td class="bp2row1" align="center"> 608</td>
+      <td class="bp2row1" align="center"> 8.6</td>
+      <td class="bp2row1" align="center"> 6573</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.6</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 20</td>
+      <td class="bp2row1" align="center"> 1145</td>
+      <td class="bp2row1" align="center"> 0.6900</td>
+      <td class="bp2row1" align="center"> 0.0216</td>
+      <td class="bp2row1" align="center"> 2.0590</td>
+      <td class="bp2row1" align="center"> 6573</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 8.7</td>
+      <td class="bp2row1" align="center"> 1.5</td>
+      <td class="bp2row1" align="center"> 2672</td>
+      <td class="bp2row1" align="center"> 161.5</td>
+      <td class="bp2row1" align="center"> 0.34</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 34.56</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">13</td>
+      <td class="bp2row0" align="center"> 18.2</td>
+      <td class="bp2row0" align="center"> 3244</td>
+      <td class="bp2row0" align="center"> 1084</td>
+      <td class="bp2row0" align="center"> 11.2</td>
+      <td class="bp2row0" align="center"> 9792</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.7</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 1159</td>
+      <td class="bp2row0" align="center"> 0.8893</td>
+      <td class="bp2row0" align="center"> 0.0278</td>
+      <td class="bp2row0" align="center"> 2.6810</td>
+      <td class="bp2row0" align="center"> 9792</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 7.7</td>
+      <td class="bp2row0" align="center"> 1.4</td>
+      <td class="bp2row0" align="center"> 4210</td>
+      <td class="bp2row0" align="center"> 210.0</td>
+      <td class="bp2row0" align="center"> 0.33</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 58.11</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr1</td>
+      <td class="bp2row1" align="center"> 11.1</td>
+      <td class="bp2row1" align="center"> 79</td>
+      <td class="bp2row1" align="center"> 16</td>
+      <td class="bp2row1" align="center"> 1.6</td>
+      <td class="bp2row1" align="center"> 424</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 4.3</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 396</td>
+      <td class="bp2row1" align="center"> 2054</td>
+      <td class="bp2row1" align="center"> 0.0459</td>
+      <td class="bp2row1" align="center"> 0.0014</td>
+      <td class="bp2row1" align="center"> 0.2211</td>
+      <td class="bp2row1" align="center"> 263</td>
+      <td class="bp2row1" align="center"> 161</td>
+      <td class="bp2row1" align="center"> 23.5</td>
+      <td class="bp2row1" align="center"> 3.4</td>
+      <td class="bp2row1" align="center"> 288</td>
+      <td class="bp2row1" align="center"> 23.5</td>
+      <td class="bp2row1" align="center"> 0.19</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 0.17</td>
+      <td class="bp2row1" align="center"> 0.13</td>
+      <td class="bp2row1" align="center"> 0.27</td>
+      <td class="bp2row1" align="center"> 0.13</td>
+      <td class="bp2row1" align="center"> 67</td>
+      <td class="bp2row1" align="center"> 33</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr2</td>
+      <td class="bp2row0" align="center"> 30.4</td>
+      <td class="bp2row0" align="center"> 231</td>
+      <td class="bp2row0" align="center"> 129</td>
+      <td class="bp2row0" align="center"> 4.2</td>
+      <td class="bp2row0" align="center"> 1094</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 292</td>
+      <td class="bp2row0" align="center"> 1820</td>
+      <td class="bp2row0" align="center"> 0.0505</td>
+      <td class="bp2row0" align="center"> 0.0016</td>
+      <td class="bp2row0" align="center"> 0.2203</td>
+      <td class="bp2row0" align="center"> 622</td>
+      <td class="bp2row0" align="center"> 472</td>
+      <td class="bp2row0" align="center"> 23.8</td>
+      <td class="bp2row0" align="center"> 3.3</td>
+      <td class="bp2row0" align="center"> 942</td>
+      <td class="bp2row0" align="center"> 28.2</td>
+      <td class="bp2row0" align="center"> 0.21</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 0.56</td>
+      <td class="bp2row0" align="center"> 0.44</td>
+      <td class="bp2row0" align="center"> 0.66</td>
+      <td class="bp2row0" align="center"> 0.44</td>
+      <td class="bp2row0" align="center"> 60</td>
+      <td class="bp2row0" align="center"> 40</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr3</td>
+      <td class="bp2row1" align="center"> 41.3</td>
+      <td class="bp2row1" align="center"> 410</td>
+      <td class="bp2row1" align="center"> 310</td>
+      <td class="bp2row1" align="center"> 6.3</td>
+      <td class="bp2row1" align="center"> 1379</td>
+      <td class="bp2row1" align="center"> 32</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 463</td>
+      <td class="bp2row1" align="center"> 1290</td>
+      <td class="bp2row1" align="center"> 0.0459</td>
+      <td class="bp2row1" align="center"> 0.0014</td>
+      <td class="bp2row1" align="center"> 0.1511</td>
+      <td class="bp2row1" align="center"> 770</td>
+      <td class="bp2row1" align="center"> 608</td>
+      <td class="bp2row1" align="center"> 29.4</td>
+      <td class="bp2row1" align="center"> 3.4</td>
+      <td class="bp2row1" align="center"> 1127</td>
+      <td class="bp2row1" align="center"> 24.8</td>
+      <td class="bp2row1" align="center"> 0.30</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 0.83</td>
+      <td class="bp2row1" align="center"> 0.67</td>
+      <td class="bp2row1" align="center"> 1.33</td>
+      <td class="bp2row1" align="center"> 0.67</td>
+      <td class="bp2row1" align="center"> 67</td>
+      <td class="bp2row1" align="center"> 33</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr4</td>
+      <td class="bp2row0" align="center"> 62.2</td>
+      <td class="bp2row0" align="center"> 450</td>
+      <td class="bp2row0" align="center"> 513</td>
+      <td class="bp2row0" align="center"> 7.9</td>
+      <td class="bp2row0" align="center"> 2139</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 307</td>
+      <td class="bp2row0" align="center"> 1826</td>
+      <td class="bp2row0" align="center"> 0.0494</td>
+      <td class="bp2row0" align="center"> 0.0015</td>
+      <td class="bp2row0" align="center"> 0.2159</td>
+      <td class="bp2row0" align="center"> 1232</td>
+      <td class="bp2row0" align="center"> 906</td>
+      <td class="bp2row0" align="center"> 24.0</td>
+      <td class="bp2row0" align="center"> 3.3</td>
+      <td class="bp2row0" align="center"> 1858</td>
+      <td class="bp2row0" align="center"> 27.2</td>
+      <td class="bp2row0" align="center"> 0.21</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 1.06</td>
+      <td class="bp2row0" align="center"> 0.84</td>
+      <td class="bp2row0" align="center"> 1.31</td>
+      <td class="bp2row0" align="center"> 0.84</td>
+      <td class="bp2row0" align="center"> 61</td>
+      <td class="bp2row0" align="center"> 39</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr5</td>
+      <td class="bp2row1" align="center"> 51.2</td>
+      <td class="bp2row1" align="center"> 911</td>
+      <td class="bp2row1" align="center"> 855</td>
+      <td class="bp2row1" align="center"> 10.0</td>
+      <td class="bp2row1" align="center"> 3869</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 477</td>
+      <td class="bp2row1" align="center"> 1631</td>
+      <td class="bp2row1" align="center"> 0.0888</td>
+      <td class="bp2row1" align="center"> 0.0028</td>
+      <td class="bp2row1" align="center"> 0.3539</td>
+      <td class="bp2row1" align="center"> 2382</td>
+      <td class="bp2row1" align="center"> 1486</td>
+      <td class="bp2row1" align="center"> 20.0</td>
+      <td class="bp2row1" align="center"> 2.8</td>
+      <td class="bp2row1" align="center"> 2689</td>
+      <td class="bp2row1" align="center"> 47.7</td>
+      <td class="bp2row1" align="center"> 0.24</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 1.39</td>
+      <td class="bp2row1" align="center"> 1.11</td>
+      <td class="bp2row1" align="center"> 1.79</td>
+      <td class="bp2row1" align="center"> 1.11</td>
+      <td class="bp2row1" align="center"> 62</td>
+      <td class="bp2row1" align="center"> 38</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr6</td>
+      <td class="bp2row0" align="center"> 62.1</td>
+      <td class="bp2row0" align="center"> 1099</td>
+      <td class="bp2row0" align="center"> 1250</td>
+      <td class="bp2row0" align="center"> 12.0</td>
+      <td class="bp2row0" align="center"> 5740</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 367</td>
+      <td class="bp2row0" align="center"> 2006</td>
+      <td class="bp2row0" align="center"> 0.1071</td>
+      <td class="bp2row0" align="center"> 0.0033</td>
+      <td class="bp2row0" align="center"> 0.5062</td>
+      <td class="bp2row0" align="center"> 3360</td>
+      <td class="bp2row0" align="center"> 2380</td>
+      <td class="bp2row0" align="center"> 17.6</td>
+      <td class="bp2row0" align="center"> 2.6</td>
+      <td class="bp2row0" align="center"> 4261</td>
+      <td class="bp2row0" align="center"> 62.4</td>
+      <td class="bp2row0" align="center"> 0.19</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 1.89</td>
+      <td class="bp2row0" align="center"> 1.51</td>
+      <td class="bp2row0" align="center"> 1.99</td>
+      <td class="bp2row0" align="center"> 1.51</td>
+      <td class="bp2row0" align="center"> 57</td>
+      <td class="bp2row0" align="center"> 43</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr7</td>
+      <td class="bp2row1" align="center"> 93.9</td>
+      <td class="bp2row1" align="center"> 1587</td>
+      <td class="bp2row1" align="center"> 2731</td>
+      <td class="bp2row1" align="center"> 17.1</td>
+      <td class="bp2row1" align="center"> 7578</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 333</td>
+      <td class="bp2row1" align="center"> 1834</td>
+      <td class="bp2row1" align="center"> 0.0979</td>
+      <td class="bp2row1" align="center"> 0.0031</td>
+      <td class="bp2row1" align="center"> 0.4300</td>
+      <td class="bp2row1" align="center"> 4461</td>
+      <td class="bp2row1" align="center"> 3117</td>
+      <td class="bp2row1" align="center"> 18.6</td>
+      <td class="bp2row1" align="center"> 2.7</td>
+      <td class="bp2row1" align="center"> 5438</td>
+      <td class="bp2row1" align="center"> 52.7</td>
+      <td class="bp2row1" align="center"> 0.21</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 3.00</td>
+      <td class="bp2row1" align="center"> 2.40</td>
+      <td class="bp2row1" align="center"> 4.00</td>
+      <td class="bp2row1" align="center"> 2.40</td>
+      <td class="bp2row1" align="center"> 63</td>
+      <td class="bp2row1" align="center"> 37</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr8</td>
+      <td class="bp2row0" align="center"> 90.5</td>
+      <td class="bp2row0" align="center"> 2627</td>
+      <td class="bp2row0" align="center"> 4357</td>
+      <td class="bp2row0" align="center"> 21.2</td>
+      <td class="bp2row0" align="center"> 8908</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 438</td>
+      <td class="bp2row0" align="center"> 1302</td>
+      <td class="bp2row0" align="center"> 0.1010</td>
+      <td class="bp2row0" align="center"> 0.0032</td>
+      <td class="bp2row0" align="center"> 0.3349</td>
+      <td class="bp2row0" align="center"> 5034</td>
+      <td class="bp2row0" align="center"> 3874</td>
+      <td class="bp2row0" align="center"> 20.6</td>
+      <td class="bp2row0" align="center"> 2.7</td>
+      <td class="bp2row0" align="center"> 5476</td>
+      <td class="bp2row0" align="center"> 55.0</td>
+      <td class="bp2row0" align="center"> 0.29</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 4.06</td>
+      <td class="bp2row0" align="center"> 3.24</td>
+      <td class="bp2row0" align="center"> 5.56</td>
+      <td class="bp2row0" align="center"> 3.24</td>
+      <td class="bp2row0" align="center"> 63</td>
+      <td class="bp2row0" align="center"> 37</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gr9</td>
+      <td class="bp2row1" align="center"> 148.9</td>
+      <td class="bp2row1" align="center"> 3233</td>
+      <td class="bp2row1" align="center"> 8825</td>
+      <td class="bp2row1" align="center"> 29.4</td>
+      <td class="bp2row1" align="center"> 13572</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 466</td>
+      <td class="bp2row1" align="center"> 1612</td>
+      <td class="bp2row1" align="center"> 0.1010</td>
+      <td class="bp2row1" align="center"> 0.0032</td>
+      <td class="bp2row1" align="center"> 0.3990</td>
+      <td class="bp2row1" align="center"> 8119</td>
+      <td class="bp2row1" align="center"> 5453</td>
+      <td class="bp2row1" align="center"> 19.1</td>
+      <td class="bp2row1" align="center"> 2.7</td>
+      <td class="bp2row1" align="center"> 9043</td>
+      <td class="bp2row1" align="center"> 55.2</td>
+      <td class="bp2row1" align="center"> 0.24</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 5.00</td>
+      <td class="bp2row1" align="center"> 4.00</td>
+      <td class="bp2row1" align="center"> 7.00</td>
+      <td class="bp2row1" align="center"> 4.00</td>
+      <td class="bp2row1" align="center"> 64</td>
+      <td class="bp2row1" align="center"> 36</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gs1</td>
+      <td class="bp2row0" align="center"> 17.9</td>
+      <td class="bp2row0" align="center"> 257</td>
+      <td class="bp2row0" align="center"> 84</td>
+      <td class="bp2row0" align="center"> 3.5</td>
+      <td class="bp2row0" align="center"> 1226</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 94</td>
+      <td class="bp2row0" align="center"> 1832</td>
+      <td class="bp2row0" align="center"> 0.0689</td>
+      <td class="bp2row0" align="center"> 0.0022</td>
+      <td class="bp2row0" align="center"> 0.3021</td>
+      <td class="bp2row0" align="center"> 493</td>
+      <td class="bp2row0" align="center"> 733</td>
+      <td class="bp2row0" align="center"> 21.2</td>
+      <td class="bp2row0" align="center"> 3.0</td>
+      <td class="bp2row0" align="center"> 967</td>
+      <td class="bp2row0" align="center"> 49.2</td>
+      <td class="bp2row0" align="center"> 0.21</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 0.28</td>
+      <td class="bp2row0" align="center"> 0.22</td>
+      <td class="bp2row0" align="center"> 0.48</td>
+      <td class="bp2row0" align="center"> 0.87</td>
+      <td class="bp2row0" align="center"> 35</td>
+      <td class="bp2row0" align="center"> 65</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gs2</td>
+      <td class="bp2row1" align="center"> 28.1</td>
+      <td class="bp2row1" align="center"> 460</td>
+      <td class="bp2row1" align="center"> 237</td>
+      <td class="bp2row1" align="center"> 5.6</td>
+      <td class="bp2row1" align="center"> 2191</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 141</td>
+      <td class="bp2row1" align="center"> 1827</td>
+      <td class="bp2row1" align="center"> 0.0796</td>
+      <td class="bp2row1" align="center"> 0.0025</td>
+      <td class="bp2row1" align="center"> 0.3483</td>
+      <td class="bp2row1" align="center"> 875</td>
+      <td class="bp2row1" align="center"> 1316</td>
+      <td class="bp2row1" align="center"> 20.1</td>
+      <td class="bp2row1" align="center"> 2.9</td>
+      <td class="bp2row1" align="center"> 1658</td>
+      <td class="bp2row1" align="center"> 53.7</td>
+      <td class="bp2row1" align="center"> 0.21</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 0.33</td>
+      <td class="bp2row1" align="center"> 0.27</td>
+      <td class="bp2row1" align="center"> 1.33</td>
+      <td class="bp2row1" align="center"> 1.27</td>
+      <td class="bp2row1" align="center"> 51</td>
+      <td class="bp2row1" align="center"> 49</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gs3</td>
+      <td class="bp2row0" align="center"> 37.1</td>
+      <td class="bp2row0" align="center"> 793</td>
+      <td class="bp2row0" align="center"> 540</td>
+      <td class="bp2row0" align="center"> 8.1</td>
+      <td class="bp2row0" align="center"> 3335</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 171</td>
+      <td class="bp2row0" align="center"> 1614</td>
+      <td class="bp2row0" align="center"> 0.0829</td>
+      <td class="bp2row0" align="center"> 0.0026</td>
+      <td class="bp2row0" align="center"> 0.3277</td>
+      <td class="bp2row0" align="center"> 1422</td>
+      <td class="bp2row0" align="center"> 1912</td>
+      <td class="bp2row0" align="center"> 20.6</td>
+      <td class="bp2row0" align="center"> 2.8</td>
+      <td class="bp2row0" align="center"> 2355</td>
+      <td class="bp2row0" align="center"> 57.7</td>
+      <td class="bp2row0" align="center"> 0.24</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 0.81</td>
+      <td class="bp2row0" align="center"> 0.64</td>
+      <td class="bp2row0" align="center"> 1.36</td>
+      <td class="bp2row0" align="center"> 1.89</td>
+      <td class="bp2row0" align="center"> 42</td>
+      <td class="bp2row0" align="center"> 58</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">gs4</td>
+      <td class="bp2row1" align="center"> 37.2</td>
+      <td class="bp2row1" align="center"> 3672</td>
+      <td class="bp2row1" align="center"> 2503</td>
+      <td class="bp2row1" align="center"> 16.5</td>
+      <td class="bp2row1" align="center"> 15597</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 117</td>
+      <td class="bp2row1" align="center"> 1631</td>
+      <td class="bp2row1" align="center"> 0.2799</td>
+      <td class="bp2row1" align="center"> 0.0087</td>
+      <td class="bp2row1" align="center"> 1.1161</td>
+      <td class="bp2row1" align="center"> 5816</td>
+      <td class="bp2row1" align="center"> 9781</td>
+      <td class="bp2row1" align="center"> 12.7</td>
+      <td class="bp2row1" align="center"> 2.0</td>
+      <td class="bp2row1" align="center"> 8430</td>
+      <td class="bp2row1" align="center"> 206.1</td>
+      <td class="bp2row1" align="center"> 0.24</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 1.89</td>
+      <td class="bp2row1" align="center"> 1.51</td>
+      <td class="bp2row1" align="center"> 4.19</td>
+      <td class="bp2row1" align="center"> 8.61</td>
+      <td class="bp2row1" align="center"> 33</td>
+      <td class="bp2row1" align="center"> 67</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh1</td>
+      <td class="bp2row0" align="center"> 1.8</td>
+      <td class="bp2row0" align="center"> 80</td>
+      <td class="bp2row0" align="center"> 3</td>
+      <td class="bp2row0" align="center"> 0.7</td>
+      <td class="bp2row0" align="center"> 347</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 3.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 42</td>
+      <td class="bp2row0" align="center"> 1674</td>
+      <td class="bp2row0" align="center"> 0.0895</td>
+      <td class="bp2row0" align="center"> 0.0028</td>
+      <td class="bp2row0" align="center"> 0.3648</td>
+      <td class="bp2row0" align="center"> 347</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 19.8</td>
+      <td class="bp2row0" align="center"> 2.8</td>
+      <td class="bp2row0" align="center"> 140</td>
+      <td class="bp2row0" align="center"> 70.8</td>
+      <td class="bp2row0" align="center"> 0.23</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 0.08</td>
+      <td class="bp2row0" align="center"> 0.07</td>
+      <td class="bp2row0" align="center"> 0.58</td>
+      <td class="bp2row0" align="center"> 1.37</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 70</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh2</td>
+      <td class="bp2row1" align="center"> 9.2</td>
+      <td class="bp2row1" align="center"> 1196</td>
+      <td class="bp2row1" align="center"> 201</td>
+      <td class="bp2row1" align="center"> 5.2</td>
+      <td class="bp2row1" align="center"> 5208</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 93</td>
+      <td class="bp2row1" align="center"> 1672</td>
+      <td class="bp2row1" align="center"> 0.3834</td>
+      <td class="bp2row1" align="center"> 0.0120</td>
+      <td class="bp2row1" align="center"> 1.5600</td>
+      <td class="bp2row1" align="center"> 1660</td>
+      <td class="bp2row1" align="center"> 3547</td>
+      <td class="bp2row1" align="center"> 11.2</td>
+      <td class="bp2row1" align="center"> 1.8</td>
+      <td class="bp2row1" align="center"> 2814</td>
+      <td class="bp2row1" align="center"> 278.8</td>
+      <td class="bp2row1" align="center"> 0.23</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 4.50</td>
+      <td class="bp2row1" align="center"> 3.85</td>
+      <td class="bp2row1" align="center"> 54</td>
+      <td class="bp2row1" align="center"> 46</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh3</td>
+      <td class="bp2row0" align="center"> 5.3</td>
+      <td class="bp2row0" align="center"> 496</td>
+      <td class="bp2row0" align="center"> 48</td>
+      <td class="bp2row0" align="center"> 2.7</td>
+      <td class="bp2row0" align="center"> 1771</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 48</td>
+      <td class="bp2row0" align="center"> 1371</td>
+      <td class="bp2row0" align="center"> 0.1846</td>
+      <td class="bp2row0" align="center"> 0.0058</td>
+      <td class="bp2row0" align="center"> 0.6388</td>
+      <td class="bp2row0" align="center"> 1771</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 15.5</td>
+      <td class="bp2row0" align="center"> 2.2</td>
+      <td class="bp2row0" align="center"> 929</td>
+      <td class="bp2row0" align="center"> 158.5</td>
+      <td class="bp2row0" align="center"> 0.28</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 3.45</td>
+      <td class="bp2row0" align="center"> 6.20</td>
+      <td class="bp2row0" align="center"> 36</td>
+      <td class="bp2row0" align="center"> 64</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh4</td>
+      <td class="bp2row1" align="center"> 43.2</td>
+      <td class="bp2row1" align="center"> 781</td>
+      <td class="bp2row1" align="center"> 619</td>
+      <td class="bp2row1" align="center"> 8.7</td>
+      <td class="bp2row1" align="center"> 3422</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 115</td>
+      <td class="bp2row1" align="center"> 1682</td>
+      <td class="bp2row1" align="center"> 0.0727</td>
+      <td class="bp2row1" align="center"> 0.0023</td>
+      <td class="bp2row1" align="center"> 0.2973</td>
+      <td class="bp2row1" align="center"> 1024</td>
+      <td class="bp2row1" align="center"> 2397</td>
+      <td class="bp2row1" align="center"> 21.4</td>
+      <td class="bp2row1" align="center"> 2.9</td>
+      <td class="bp2row1" align="center"> 2557</td>
+      <td class="bp2row1" align="center"> 53.8</td>
+      <td class="bp2row1" align="center"> 0.23</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 2.20</td>
+      <td class="bp2row1" align="center"> 2.55</td>
+      <td class="bp2row1" align="center"> 46</td>
+      <td class="bp2row1" align="center"> 54</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh5</td>
+      <td class="bp2row0" align="center"> 76.6</td>
+      <td class="bp2row0" align="center"> 1623</td>
+      <td class="bp2row0" align="center"> 2280</td>
+      <td class="bp2row0" align="center"> 15.8</td>
+      <td class="bp2row0" align="center"> 5291</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 266</td>
+      <td class="bp2row0" align="center"> 1252</td>
+      <td class="bp2row0" align="center"> 0.0658</td>
+      <td class="bp2row0" align="center"> 0.0021</td>
+      <td class="bp2row0" align="center"> 0.2113</td>
+      <td class="bp2row0" align="center"> 2767</td>
+      <td class="bp2row0" align="center"> 2524</td>
+      <td class="bp2row0" align="center"> 25.4</td>
+      <td class="bp2row0" align="center"> 3.0</td>
+      <td class="bp2row0" align="center"> 3753</td>
+      <td class="bp2row0" align="center"> 44.5</td>
+      <td class="bp2row0" align="center"> 0.31</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 5.70</td>
+      <td class="bp2row0" align="center"> 2.90</td>
+      <td class="bp2row0" align="center"> 66</td>
+      <td class="bp2row0" align="center"> 34</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh6</td>
+      <td class="bp2row1" align="center"> 31.2</td>
+      <td class="bp2row1" align="center"> 1662</td>
+      <td class="bp2row1" align="center"> 950</td>
+      <td class="bp2row1" align="center"> 10.5</td>
+      <td class="bp2row1" align="center"> 4951</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 613</td>
+      <td class="bp2row1" align="center"> 1144</td>
+      <td class="bp2row1" align="center"> 0.1320</td>
+      <td class="bp2row1" align="center"> 0.0041</td>
+      <td class="bp2row1" align="center"> 0.3938</td>
+      <td class="bp2row1" align="center"> 3127</td>
+      <td class="bp2row1" align="center"> 1823</td>
+      <td class="bp2row1" align="center"> 19.1</td>
+      <td class="bp2row1" align="center"> 2.5</td>
+      <td class="bp2row1" align="center"> 2679</td>
+      <td class="bp2row1" align="center"> 78.1</td>
+      <td class="bp2row1" align="center"> 0.34</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 4.35</td>
+      <td class="bp2row1" align="center"> 1.40</td>
+      <td class="bp2row1" align="center"> 76</td>
+      <td class="bp2row1" align="center"> 24</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh7</td>
+      <td class="bp2row0" align="center"> 50.7</td>
+      <td class="bp2row0" align="center"> 2202</td>
+      <td class="bp2row0" align="center"> 2046</td>
+      <td class="bp2row0" align="center"> 15.0</td>
+      <td class="bp2row0" align="center"> 7071</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 275</td>
+      <td class="bp2row0" align="center"> 1233</td>
+      <td class="bp2row0" align="center"> 0.1102</td>
+      <td class="bp2row0" align="center"> 0.0034</td>
+      <td class="bp2row0" align="center"> 0.3495</td>
+      <td class="bp2row0" align="center"> 3546</td>
+      <td class="bp2row0" align="center"> 3525</td>
+      <td class="bp2row0" align="center"> 20.2</td>
+      <td class="bp2row0" align="center"> 2.6</td>
+      <td class="bp2row0" align="center"> 4155</td>
+      <td class="bp2row0" align="center"> 74.6</td>
+      <td class="bp2row0" align="center"> 0.31</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 11.00</td>
+      <td class="bp2row0" align="center"> 3.40</td>
+      <td class="bp2row0" align="center"> 76</td>
+      <td class="bp2row0" align="center"> 24</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh8</td>
+      <td class="bp2row1" align="center"> 30.9</td>
+      <td class="bp2row1" align="center"> 2226</td>
+      <td class="bp2row1" align="center"> 1262</td>
+      <td class="bp2row1" align="center"> 12.0</td>
+      <td class="bp2row1" align="center"> 8038</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 182</td>
+      <td class="bp2row1" align="center"> 1386</td>
+      <td class="bp2row1" align="center"> 0.1630</td>
+      <td class="bp2row1" align="center"> 0.0051</td>
+      <td class="bp2row1" align="center"> 0.5690</td>
+      <td class="bp2row1" align="center"> 3215</td>
+      <td class="bp2row1" align="center"> 4823</td>
+      <td class="bp2row1" align="center"> 16.3</td>
+      <td class="bp2row1" align="center"> 2.3</td>
+      <td class="bp2row1" align="center"> 4379</td>
+      <td class="bp2row1" align="center"> 128.7</td>
+      <td class="bp2row1" align="center"> 0.28</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 6.30</td>
+      <td class="bp2row1" align="center"> 4.35</td>
+      <td class="bp2row1" align="center"> 59</td>
+      <td class="bp2row1" align="center"> 41</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sh9</td>
+      <td class="bp2row0" align="center"> 55.7</td>
+      <td class="bp2row0" align="center"> 3723</td>
+      <td class="bp2row0" align="center"> 3801</td>
+      <td class="bp2row0" align="center"> 19.9</td>
+      <td class="bp2row0" align="center"> 13359</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 209</td>
+      <td class="bp2row0" align="center"> 1378</td>
+      <td class="bp2row0" align="center"> 0.1617</td>
+      <td class="bp2row0" align="center"> 0.0051</td>
+      <td class="bp2row0" align="center"> 0.5618</td>
+      <td class="bp2row0" align="center"> 4654</td>
+      <td class="bp2row0" align="center"> 8705</td>
+      <td class="bp2row0" align="center"> 16.4</td>
+      <td class="bp2row0" align="center"> 2.3</td>
+      <td class="bp2row0" align="center"> 7272</td>
+      <td class="bp2row0" align="center"> 118.7</td>
+      <td class="bp2row0" align="center"> 0.28</td>
+      <td class="bp2row0" align="center"> 56</td>
+      <td class="bp2row0" align="center"> 0.86</td>
+      <td class="bp2row0" align="center"> 0.69</td>
+      <td class="bp2row0" align="center"> 7.81</td>
+      <td class="bp2row0" align="center"> 7.69</td>
+      <td class="bp2row0" align="center"> 50</td>
+      <td class="bp2row0" align="center"> 50</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tu1</td>
+      <td class="bp2row1" align="center"> 4.1</td>
+      <td class="bp2row1" align="center"> 411</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 2.2</td>
+      <td class="bp2row1" align="center"> 1719</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 128</td>
+      <td class="bp2row1" align="center"> 1606</td>
+      <td class="bp2row1" align="center"> 0.2831</td>
+      <td class="bp2row1" align="center"> 0.0088</td>
+      <td class="bp2row1" align="center"> 1.1152</td>
+      <td class="bp2row1" align="center"> 578</td>
+      <td class="bp2row1" align="center"> 1141</td>
+      <td class="bp2row1" align="center"> 12.6</td>
+      <td class="bp2row1" align="center"> 2.0</td>
+      <td class="bp2row1" align="center"> 917</td>
+      <td class="bp2row1" align="center"> 205.6</td>
+      <td class="bp2row1" align="center"> 0.24</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 0.11</td>
+      <td class="bp2row1" align="center"> 0.09</td>
+      <td class="bp2row1" align="center"> 2.71</td>
+      <td class="bp2row1" align="center"> 0.99</td>
+      <td class="bp2row1" align="center"> 73</td>
+      <td class="bp2row1" align="center"> 27</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tu2</td>
+      <td class="bp2row0" align="center"> 14.8</td>
+      <td class="bp2row0" align="center"> 407</td>
+      <td class="bp2row0" align="center"> 111</td>
+      <td class="bp2row0" align="center"> 3.9</td>
+      <td class="bp2row0" align="center"> 1874</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 2173</td>
+      <td class="bp2row0" align="center"> 1767</td>
+      <td class="bp2row0" align="center"> 0.1928</td>
+      <td class="bp2row0" align="center"> 0.0060</td>
+      <td class="bp2row0" align="center"> 0.8210</td>
+      <td class="bp2row0" align="center"> 1472</td>
+      <td class="bp2row0" align="center"> 401</td>
+      <td class="bp2row0" align="center"> 14.5</td>
+      <td class="bp2row0" align="center"> 2.2</td>
+      <td class="bp2row0" align="center"> 1133</td>
+      <td class="bp2row0" align="center"> 69.4</td>
+      <td class="bp2row0" align="center"> 0.22</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 4.00</td>
+      <td class="bp2row0" align="center"> 0.20</td>
+      <td class="bp2row0" align="center"> 95</td>
+      <td class="bp2row0" align="center"> 5</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tu3</td>
+      <td class="bp2row1" align="center"> 32.0</td>
+      <td class="bp2row1" align="center"> 859</td>
+      <td class="bp2row1" align="center"> 504</td>
+      <td class="bp2row1" align="center"> 7.9</td>
+      <td class="bp2row1" align="center"> 3602</td>
+      <td class="bp2row1" align="center"> 31</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 307</td>
+      <td class="bp2row1" align="center"> 1611</td>
+      <td class="bp2row1" align="center"> 0.1148</td>
+      <td class="bp2row1" align="center"> 0.0036</td>
+      <td class="bp2row1" align="center"> 0.4532</td>
+      <td class="bp2row1" align="center"> 1874</td>
+      <td class="bp2row1" align="center"> 1728</td>
+      <td class="bp2row1" align="center"> 18.1</td>
+      <td class="bp2row1" align="center"> 2.6</td>
+      <td class="bp2row1" align="center"> 2316</td>
+      <td class="bp2row1" align="center"> 65.8</td>
+      <td class="bp2row1" align="center"> 0.24</td>
+      <td class="bp2row1" align="center"> 56</td>
+      <td class="bp2row1" align="center"> 0.36</td>
+      <td class="bp2row1" align="center"> 0.29</td>
+      <td class="bp2row1" align="center"> 1.86</td>
+      <td class="bp2row1" align="center"> 1.39</td>
+      <td class="bp2row1" align="center"> 57</td>
+      <td class="bp2row1" align="center"> 43</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tu4</td>
+      <td class="bp2row0" align="center"> 16.0</td>
+      <td class="bp2row0" align="center"> 1116</td>
+      <td class="bp2row0" align="center"> 327</td>
+      <td class="bp2row0" align="center"> 6.5</td>
+      <td class="bp2row0" align="center"> 6439</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 70</td>
+      <td class="bp2row0" align="center"> 372</td>
+      <td class="bp2row0" align="center"> 2216</td>
+      <td class="bp2row0" align="center"> 0.5969</td>
+      <td class="bp2row0" align="center"> 0.0187</td>
+      <td class="bp2row0" align="center"> 3.0598</td>
+      <td class="bp2row0" align="center"> 4157</td>
+      <td class="bp2row0" align="center"> 2282</td>
+      <td class="bp2row0" align="center"> 9.9</td>
+      <td class="bp2row0" align="center"> 1.6</td>
+      <td class="bp2row0" align="center"> 5076</td>
+      <td class="bp2row0" align="center"> 288.6</td>
+      <td class="bp2row0" align="center"> 0.17</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 4.50</td>
+      <td class="bp2row0" align="center"> 2.00</td>
+      <td class="bp2row0" align="center"> 69</td>
+      <td class="bp2row0" align="center"> 31</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tu5</td>
+      <td class="bp2row1" align="center"> 12.0</td>
+      <td class="bp2row1" align="center"> 2642</td>
+      <td class="bp2row1" align="center"> 581</td>
+      <td class="bp2row1" align="center"> 8.4</td>
+      <td class="bp2row1" align="center"> 8419</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.6</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 70</td>
+      <td class="bp2row1" align="center"> 656</td>
+      <td class="bp2row1" align="center"> 1224</td>
+      <td class="bp2row1" align="center"> 0.6428</td>
+      <td class="bp2row1" align="center"> 0.0201</td>
+      <td class="bp2row1" align="center"> 2.0257</td>
+      <td class="bp2row1" align="center"> 4335</td>
+      <td class="bp2row1" align="center"> 4084</td>
+      <td class="bp2row1" align="center"> 9.0</td>
+      <td class="bp2row1" align="center"> 1.5</td>
+      <td class="bp2row1" align="center"> 3578</td>
+      <td class="bp2row1" align="center"> 271.4</td>
+      <td class="bp2row1" align="center"> 0.31</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 11.00</td>
+      <td class="bp2row1" align="center"> 3.00</td>
+      <td class="bp2row1" align="center"> 79</td>
+      <td class="bp2row1" align="center"> 21</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl1</td>
+      <td class="bp2row0" align="center"> 0.9</td>
+      <td class="bp2row0" align="center"> 105</td>
+      <td class="bp2row0" align="center"> 2</td>
+      <td class="bp2row0" align="center"> 0.6</td>
+      <td class="bp2row0" align="center"> 469</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 4.8</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 1716</td>
+      <td class="bp2row0" align="center"> 1.5611</td>
+      <td class="bp2row0" align="center"> 0.0488</td>
+      <td class="bp2row0" align="center"> 6.4905</td>
+      <td class="bp2row0" align="center"> 469</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 6.5</td>
+      <td class="bp2row0" align="center"> 1.2</td>
+      <td class="bp2row0" align="center"> 392</td>
+      <td class="bp2row0" align="center"> 408.4</td>
+      <td class="bp2row0" align="center"> 0.22</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 6.80</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl2</td>
+      <td class="bp2row1" align="center"> 1.6</td>
+      <td class="bp2row1" align="center"> 145</td>
+      <td class="bp2row1" align="center"> 4</td>
+      <td class="bp2row1" align="center"> 0.9</td>
+      <td class="bp2row1" align="center"> 682</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 25</td>
+      <td class="bp2row1" align="center"> 1806</td>
+      <td class="bp2row1" align="center"> 1.3545</td>
+      <td class="bp2row1" align="center"> 0.0423</td>
+      <td class="bp2row1" align="center"> 5.8720</td>
+      <td class="bp2row1" align="center"> 682</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 7.0</td>
+      <td class="bp2row1" align="center"> 1.2</td>
+      <td class="bp2row1" align="center"> 641</td>
+      <td class="bp2row1" align="center"> 370.1</td>
+      <td class="bp2row1" align="center"> 0.21</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 5.90</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl3</td>
+      <td class="bp2row0" align="center"> 2.0</td>
+      <td class="bp2row0" align="center"> 197</td>
+      <td class="bp2row0" align="center"> 7</td>
+      <td class="bp2row0" align="center"> 1.1</td>
+      <td class="bp2row0" align="center"> 785</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 20</td>
+      <td class="bp2row0" align="center"> 1532</td>
+      <td class="bp2row0" align="center"> 0.8418</td>
+      <td class="bp2row0" align="center"> 0.0263</td>
+      <td class="bp2row0" align="center"> 3.1898</td>
+      <td class="bp2row0" align="center"> 785</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 8.1</td>
+      <td class="bp2row0" align="center"> 1.4</td>
+      <td class="bp2row0" align="center"> 439</td>
+      <td class="bp2row0" align="center"> 202.4</td>
+      <td class="bp2row0" align="center"> 0.25</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 5.50</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl4</td>
+      <td class="bp2row1" align="center"> 2.8</td>
+      <td class="bp2row1" align="center"> 239</td>
+      <td class="bp2row1" align="center"> 12</td>
+      <td class="bp2row1" align="center"> 1.4</td>
+      <td class="bp2row1" align="center"> 977</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 25</td>
+      <td class="bp2row1" align="center"> 1568</td>
+      <td class="bp2row1" align="center"> 0.7117</td>
+      <td class="bp2row1" align="center"> 0.0222</td>
+      <td class="bp2row1" align="center"> 2.7476</td>
+      <td class="bp2row1" align="center"> 977</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 8.7</td>
+      <td class="bp2row1" align="center"> 1.5</td>
+      <td class="bp2row1" align="center"> 531</td>
+      <td class="bp2row1" align="center"> 171.8</td>
+      <td class="bp2row1" align="center"> 0.24</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 6.20</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl5</td>
+      <td class="bp2row0" align="center"> 5.1</td>
+      <td class="bp2row0" align="center"> 348</td>
+      <td class="bp2row0" align="center"> 32</td>
+      <td class="bp2row0" align="center"> 2.2</td>
+      <td class="bp2row0" align="center"> 1553</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 1713</td>
+      <td class="bp2row0" align="center"> 0.6160</td>
+      <td class="bp2row0" align="center"> 0.0193</td>
+      <td class="bp2row0" align="center"> 2.5576</td>
+      <td class="bp2row0" align="center"> 1553</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 9.3</td>
+      <td class="bp2row0" align="center"> 1.6</td>
+      <td class="bp2row0" align="center"> 898</td>
+      <td class="bp2row0" align="center"> 160.8</td>
+      <td class="bp2row0" align="center"> 0.22</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 8.05</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl6</td>
+      <td class="bp2row1" align="center"> 6.7</td>
+      <td class="bp2row1" align="center"> 440</td>
+      <td class="bp2row1" align="center"> 54</td>
+      <td class="bp2row1" align="center"> 2.8</td>
+      <td class="bp2row1" align="center"> 2220</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 25</td>
+      <td class="bp2row1" align="center"> 1936</td>
+      <td class="bp2row1" align="center"> 0.7346</td>
+      <td class="bp2row1" align="center"> 0.0230</td>
+      <td class="bp2row1" align="center"> 3.3710</td>
+      <td class="bp2row1" align="center"> 2220</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 8.9</td>
+      <td class="bp2row1" align="center"> 1.5</td>
+      <td class="bp2row1" align="center"> 1569</td>
+      <td class="bp2row1" align="center"> 211.8</td>
+      <td class="bp2row1" align="center"> 0.20</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 4.80</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl7</td>
+      <td class="bp2row0" align="center"> 3.3</td>
+      <td class="bp2row0" align="center"> 496</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 2.1</td>
+      <td class="bp2row0" align="center"> 1588</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.7</td>
+      <td class="bp2row0" align="center"> 7</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 1229</td>
+      <td class="bp2row0" align="center"> 1.1249</td>
+      <td class="bp2row0" align="center"> 0.0352</td>
+      <td class="bp2row0" align="center"> 3.5588</td>
+      <td class="bp2row0" align="center"> 1588</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 6.9</td>
+      <td class="bp2row0" align="center"> 1.3</td>
+      <td class="bp2row0" align="center"> 788</td>
+      <td class="bp2row0" align="center"> 217.4</td>
+      <td class="bp2row0" align="center"> 0.31</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 9.80</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl8</td>
+      <td class="bp2row1" align="center"> 6.9</td>
+      <td class="bp2row1" align="center"> 705</td>
+      <td class="bp2row1" align="center"> 89</td>
+      <td class="bp2row1" align="center"> 3.6</td>
+      <td class="bp2row1" align="center"> 3251</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 35</td>
+      <td class="bp2row1" align="center"> 1770</td>
+      <td class="bp2row1" align="center"> 1.2703</td>
+      <td class="bp2row1" align="center"> 0.0397</td>
+      <td class="bp2row1" align="center"> 5.4172</td>
+      <td class="bp2row1" align="center"> 3251</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 7.1</td>
+      <td class="bp2row1" align="center"> 1.2</td>
+      <td class="bp2row1" align="center"> 2800</td>
+      <td class="bp2row1" align="center"> 368.1</td>
+      <td class="bp2row1" align="center"> 0.22</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 8.30</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">tl9</td>
+      <td class="bp2row0" align="center"> 10.3</td>
+      <td class="bp2row0" align="center"> 1043</td>
+      <td class="bp2row0" align="center"> 197</td>
+      <td class="bp2row0" align="center"> 5.1</td>
+      <td class="bp2row0" align="center"> 4710</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 35</td>
+      <td class="bp2row0" align="center"> 1733</td>
+      <td class="bp2row0" align="center"> 1.0790</td>
+      <td class="bp2row0" align="center"> 0.0337</td>
+      <td class="bp2row0" align="center"> 4.5230</td>
+      <td class="bp2row0" align="center"> 4710</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 7.5</td>
+      <td class="bp2row0" align="center"> 1.3</td>
+      <td class="bp2row0" align="center"> 3483</td>
+      <td class="bp2row0" align="center"> 307.4</td>
+      <td class="bp2row0" align="center"> 0.22</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 14.10</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sb1</td>
+      <td class="bp2row1" align="center"> 7.2</td>
+      <td class="bp2row1" align="center"> 569</td>
+      <td class="bp2row1" align="center"> 75</td>
+      <td class="bp2row1" align="center"> 3.3</td>
+      <td class="bp2row1" align="center"> 2447</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.5</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 25</td>
+      <td class="bp2row1" align="center"> 1653</td>
+      <td class="bp2row1" align="center"> 0.7117</td>
+      <td class="bp2row1" align="center"> 0.0222</td>
+      <td class="bp2row1" align="center"> 2.8695</td>
+      <td class="bp2row1" align="center"> 2447</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 8.8</td>
+      <td class="bp2row1" align="center"> 1.5</td>
+      <td class="bp2row1" align="center"> 1411</td>
+      <td class="bp2row1" align="center"> 178.8</td>
+      <td class="bp2row1" align="center"> 0.23</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 15.50</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sb2</td>
+      <td class="bp2row0" align="center"> 17.3</td>
+      <td class="bp2row0" align="center"> 1003</td>
+      <td class="bp2row0" align="center"> 317</td>
+      <td class="bp2row0" align="center"> 6.4</td>
+      <td class="bp2row0" align="center"> 4923</td>
+      <td class="bp2row0" align="center"> 30</td>
+      <td class="bp2row0" align="center"> 5.5</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 1884</td>
+      <td class="bp2row0" align="center"> 0.5854</td>
+      <td class="bp2row0" align="center"> 0.0183</td>
+      <td class="bp2row0" align="center"> 2.6270</td>
+      <td class="bp2row0" align="center"> 4923</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 9.6</td>
+      <td class="bp2row0" align="center"> 1.6</td>
+      <td class="bp2row0" align="center"> 3137</td>
+      <td class="bp2row0" align="center"> 165.3</td>
+      <td class="bp2row0" align="center"> 0.20</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 12.75</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sb3</td>
+      <td class="bp2row1" align="center"> 31.1</td>
+      <td class="bp2row1" align="center"> 1346</td>
+      <td class="bp2row1" align="center"> 767</td>
+      <td class="bp2row1" align="center"> 9.6</td>
+      <td class="bp2row1" align="center"> 6780</td>
+      <td class="bp2row1" align="center"> 30</td>
+      <td class="bp2row1" align="center"> 5.4</td>
+      <td class="bp2row1" align="center"> 6</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 25</td>
+      <td class="bp2row1" align="center"> 1935</td>
+      <td class="bp2row1" align="center"> 0.4304</td>
+      <td class="bp2row1" align="center"> 0.0135</td>
+      <td class="bp2row1" align="center"> 1.9741</td>
+      <td class="bp2row1" align="center"> 6780</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 10.8</td>
+      <td class="bp2row1" align="center"> 1.7</td>
+      <td class="bp2row1" align="center"> 4243</td>
+      <td class="bp2row1" align="center"> 124.0</td>
+      <td class="bp2row1" align="center"> 0.20</td>
+      <td class="bp2row1" align="center"> 0</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 11.25</td>
+      <td class="bp2row1" align="center"> 0.00</td>
+      <td class="bp2row1" align="center"> 100</td>
+      <td class="bp2row1" align="center"> 0</td>
+    </tr>
+    <tr>
+      <td class="bp2hdr" align="center">sb4</td>
+      <td class="bp2row0" align="center"> 59.8</td>
+      <td class="bp2row0" align="center"> 1440</td>
+      <td class="bp2row0" align="center"> 1578</td>
+      <td class="bp2row0" align="center"> 13.3</td>
+      <td class="bp2row0" align="center"> 7148</td>
+      <td class="bp2row0" align="center"> 31</td>
+      <td class="bp2row0" align="center"> 5.4</td>
+      <td class="bp2row0" align="center"> 6</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 25</td>
+      <td class="bp2row0" align="center"> 1907</td>
+      <td class="bp2row0" align="center"> 0.2381</td>
+      <td class="bp2row0" align="center"> 0.0074</td>
+      <td class="bp2row0" align="center"> 1.0789</td>
+      <td class="bp2row0" align="center"> 7148</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 13.4</td>
+      <td class="bp2row0" align="center"> 2.1</td>
+      <td class="bp2row0" align="center"> 4455</td>
+      <td class="bp2row0" align="center"> 67.8</td>
+      <td class="bp2row0" align="center"> 0.20</td>
+      <td class="bp2row0" align="center"> 0</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 14.00</td>
+      <td class="bp2row0" align="center"> 0.00</td>
+      <td class="bp2row0" align="center"> 100</td>
+      <td class="bp2row0" align="center"> 0</td>
+  </table>
+</p>
+<!-- End 1-Way Output Table -->
+
+<!-- Begin Footer Template -->
+        </td>
+        <td>&nbsp;</td>
+      </tr>    </table>    <h3 class="bp2">End</h3>
+  </body>
+<!-- End Footer Template -->
+</html>
