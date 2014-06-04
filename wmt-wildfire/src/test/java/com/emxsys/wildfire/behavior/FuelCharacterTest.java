@@ -195,7 +195,7 @@ public class FuelCharacterTest {
         System.out.println("getCharacteristicSAV" + " : " +fuelModelCode);
         Real result = instance.getCharacteristicSAV();
         double[] expected = expResults.get(fuelModelCode);
-        assertEquals(fuelModelCode + ": sigma [ft2/ft3]", expected[SIGMA], result.getValue(), expected[SIGMA] * 0.005);
+        assertEquals(fuelModelCode + ": sigma [ft2/ft3]", expected[SIGMA], result.getValue(), expected[SIGMA] * 0.0125);
     }
 
     @Test
