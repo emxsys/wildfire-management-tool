@@ -165,7 +165,7 @@ public class Behave {
     // -----------------------
     /** bulk density [kg/m3] */
     protected double rho_b = 0.;
-    /** packing ratio */
+    /** mean packing ratio */
     protected double beta = 0.;
     /** optimal packing ratio */
     protected double beta_opt = 0.;
@@ -209,15 +209,15 @@ public class Behave {
     private double splitRad;
     protected double cos_splitRad, sin_splitRad;
     private double alDeg, alRad;
-    /** auxilary function output: (sv * w0) */
+    /** auxiliary function output: (sv * w0) */
     protected double sw_d1, sw_d2, sw_d3, sw_lh, sw_lw, sw_d, sw_l, sw_t = 0.;
-    /** auxilary function output: (sv^2 * w0) */
+    /** auxiliary function output: (sv^2 * w0) */
     protected double s2w_d, s2w_l, s2w_t = 0.;
-    /** auxilary function output: (sv * w0^2) */
+    /** auxiliary function output: (sv * w0^2) */
     protected double sw2_d, sw2_l, sw2_t = 0.;
-    /** auxilary function output: (sv * w0 * m) */
+    /** auxiliary function output: (sv * w0 * m) */
     protected double swm_d, swm_l, swm_t = 0.;
-    /** fuel particle surface-area-to-volume ratio [1/m] */
+    /** fuel complex surface-area-to-volume ratio [1/m] */
     protected double sigma = 0.;
     /** total weight */
     private double w0 = 0.;
@@ -227,7 +227,7 @@ public class Behave {
     protected double eps_d1, eps_d2, eps_d3, eps_lh, eps_lw;
     /** heat of preignition */
     protected double q_d1, q_d2, q_d3, q_lh, q_lw;
-    /** intermediate heat sink putput */
+    /** intermediate heat sink output */
     protected double hskz;
     /** moisture damping ratio of fine fuel loadings, dead/live */
     protected double hn_d1, hn_d2, hn_d3, hn_lh, hn_lw = 0.;
@@ -752,7 +752,7 @@ public class Behave {
                     / ((sv_d1 * w0_d1) + (sv_lh * w0_dh));
             // ... and add dead herbaceous fuel to dead 1hr fuel
             w0_d1 += w0_dh;
-            w0_dh = 0;
+            //w0_dh = 0; -- save this value for reporting
         }
     }
 
@@ -782,7 +782,9 @@ public class Behave {
         sw_d2 = 0.;
         sw_d3 = 0.;
         sw_lh = 0.;
-        sw_lw = 0.;
+        sw_d = 0.;
+        sw_l = 0.;
+        sw_t = 0.;
         s2w_d = 0.;
         s2w_l = 0.;
         s2w_t = 0.;
@@ -864,6 +866,7 @@ public class Behave {
         }
 
         // optimal packing ratio
+        // in Rothermel 1972, #69, beta_opt = 3.348 * pow(sigma, -0.8189);
         beta_opt = 8.8578 * pow(sigma, -0.8189);
 
         // ratio mean / optimal packing
@@ -971,7 +974,7 @@ public class Behave {
         }
 
         // sum up...
-        sumhd = hn_d1 + hn_d2 + hn_d3;
+        sumhd = hn_d1 + hn_d2 + hn_d3; 
         sumhl = hn_lh + hn_lw;
         sumhdm = (hn_d1 * m_d1) + (hn_d2 * m_d2) + (hn_d3 * m_d3);
 
@@ -1210,8 +1213,6 @@ public class Behave {
 
     /**
      * Calculate the slope factor: phi_s <br>
-     *
-     * Rothermel 1972, eq. 80.<br/>
      * Called from calcWindAndSlopeFactor()
      */
     protected void slopeFactor() {
