@@ -74,20 +74,20 @@ public class BehaveTest {
     static final int TRF = 7;  // fuel load transfered
     static final int DHB = 8;  // dead herb
     static final int LHB = 9;  // live herb
-    static final int D_T = 10;    // total dead
-    static final int L_T = 11;    // total live
-    static final int PCT = 12;   // percent dead
+    static final int D_T = 10; // total dead
+    static final int L_T = 11; // total live
+    static final int PCT = 12; // percent dead
 
     static class WindSlope {
 
         /** [m/s] */
-        public double windSpeed = 4.;
+        public double windSpeed = 4.;   // 4
         /** from dir [deg] */
-        public double windDir = 225.;
+        public double windDir = 225.;   // 225
         /** [deg] */
-        public double slope = 30.;
+        public double slope = 30.;      // 30
         /** [deg] */
-        public double aspect = 135.;
+        public double aspect = 135.;    // 135
     };
     // Defines which fuel model is being evaluated
     private Behave instance;
@@ -277,20 +277,20 @@ public class BehaveTest {
         }
         System.out.println(BehaveReporter.report(instance));
         Map<String, Double> results = instance.getMaxSpreadResults();
-        //assertEquals(instance.fuelModelCode + ": Rate of Spread [m/s]", expected[ROS], results.get("ros"), 0.15);
-        //assertEquals(instance.fuelModelCode + ": Heat Per Unit Area [kJ/m2]", expected[HPA], results.get("hpa"), expected[HPA] * .05); 
-        //assertEquals(instance.fuelModelCode + ": Fireline Intensity [kW/m]", expected[FLI], results.get("fli"), expected[FLI] * .05);
-        //assertEquals(instance.fuelModelCode + ": Flame Length [m]", expected[FLN], results.get("fln"), 0.1);
-        //assertEquals(instance.fuelModelCode + ": Reaction Intensity [kW/m2]", expected[I_R], results.get("I_r"), 50);
-        //assertEquals(instance.fuelModelCode + ": Direction of Max Spread [deg]", expected[SDR], results.get("sdr"), 1);
-        //assertEquals(instance.fuelModelCode + ": Effective Wind [m/s]", expected[EFW], results.get("efw"), 1);
-        assumeTrue(MathUtil.nearlyEquals(expected[ROS], results.get("ros"), 0.15));
-        assumeTrue(MathUtil.nearlyEquals(expected[HPA], results.get("hpa"), expected[HPA] * .05));
-        assumeTrue(MathUtil.nearlyEquals(expected[FLI], results.get("fli"), expected[FLI] * .05));
-        assumeTrue(MathUtil.nearlyEquals(expected[FLN], results.get("fln"), 0.1));
-        assumeTrue(MathUtil.nearlyEquals(expected[I_R], results.get("I_r"), 50));
-        assumeTrue(MathUtil.nearlyEquals(expected[SDR], results.get("sdr"), 1));
-        assumeTrue(MathUtil.nearlyEquals(expected[EFW], results.get("efw"), 1));
+        assertEquals(instance.fuelModelCode + ": Rate of Spread [m/s]", expected[ROS], results.get("ros"), 0.15);
+        assertEquals(instance.fuelModelCode + ": Heat Per Unit Area [kJ/m2]", expected[HPA], results.get("hpa"), expected[HPA] * .05); 
+        assertEquals(instance.fuelModelCode + ": Fireline Intensity [kW/m]", expected[FLI], results.get("fli"), expected[FLI] * .05);
+        assertEquals(instance.fuelModelCode + ": Flame Length [m]", expected[FLN], results.get("fln"), 0.1);
+        assertEquals(instance.fuelModelCode + ": Reaction Intensity [kW/m2]", expected[I_R], results.get("I_r"), 50);
+        assertEquals(instance.fuelModelCode + ": Direction of Max Spread [deg]", expected[SDR], results.get("sdr"), 1);
+        assertEquals(instance.fuelModelCode + ": Effective Wind [m/s]", expected[EFW], results.get("efw"), 1);
+//        assumeTrue(MathUtil.nearlyEquals(expected[ROS], results.get("ros"), 0.15));
+//        assumeTrue(MathUtil.nearlyEquals(expected[HPA], results.get("hpa"), expected[HPA] * .05));
+//        assumeTrue(MathUtil.nearlyEquals(expected[FLI], results.get("fli"), expected[FLI] * .05));
+//        assumeTrue(MathUtil.nearlyEquals(expected[FLN], results.get("fln"), 0.1));
+//        assumeTrue(MathUtil.nearlyEquals(expected[I_R], results.get("I_r"), 50));
+//        assumeTrue(MathUtil.nearlyEquals(expected[SDR], results.get("sdr"), 1));
+//        assumeTrue(MathUtil.nearlyEquals(expected[EFW], results.get("efw"), 1));
 
     }
 

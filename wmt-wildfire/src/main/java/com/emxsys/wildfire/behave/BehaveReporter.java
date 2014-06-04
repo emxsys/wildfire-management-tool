@@ -32,9 +32,10 @@ package com.emxsys.wildfire.behave;
 import java.text.DecimalFormat;
 
 /**
+ * The BehaveReporter generates a pretty printout of the Behave data. This extremely nice output
+ * originated from the BehaveTest.java class by Andreas Bachmann.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: BehaveReporter.java 209 2012-09-05 23:09:19Z bdschubert $
  */
 public class BehaveReporter {
 
@@ -47,7 +48,7 @@ public class BehaveReporter {
      * @return formatted text
      */
     public static String report(Behave behave) {
-        // This extremely nice output is copied from the BehaveTest.java
+        // This extremely nice output was copied from the BehaveTest.java
         // class by Andreas Bachmann.
 
         // Build a StringBuilder(non-thread Safe) or StringBuffer for our output
@@ -74,8 +75,11 @@ public class BehaveReporter {
                 + lPad(df2.format(behave.depth), 10));
         appendLine(sb, "  Moisture of extinction       mx           [%] ="
                 + lPad(df2.format(behave.mx), 10));
+        appendLine(sb, "  Fuel load transferred        curing       [%] ="
+                + lPad(df2.format(behave.curing * 100), 10));
         appendLine(sb, " ");
-        // fuel properties
+
+        // static fuel properties
         appendLine(sb, "  Size |  Fuel Load | Surface-to-Volume- | Moisture");
         appendLine(sb, "       |    [kg/m2] | Ratio        [1/m] |      [%]");
         appendLine(sb, " ---------------------------------------------------");
@@ -99,52 +103,68 @@ public class BehaveReporter {
                 + lPad(df3.format(behave.w0_lw), 10) + "  |"
                 + lPad(df3.format(behave.sv_lw), 18) + "  |"
                 + lPad(df1.format(behave.m_lw), 8));
-        //
-        appendLine(sb, " ");
-        appendLine(sb, "  Wind                         |  Terrain");
-        appendLine(sb, " ------------------------------------------------------");
-        appendLine(sb, "   wind speed     [m/s]" + lPad(df2.format(behave.wsp), 7)
-                + " |   slope  [deg]" + lPad(df2.format(behave.slp), 7));
-        appendLine(sb, "   wind direction [deg]" + lPad(df2.format(behave.wdr), 7)
-                + " |   aspect [deg]" + lPad(df2.format(behave.asp), 7));
-        appendLine(sb, " ");
-        // results
-        appendLine(sb, "  => Characteristic sv-ratio   sigma      [1/m] ="
-                + lPad(df2.format(behave.sigma), 10));
-        appendLine(sb, "  => Mean bulk density         rho_b    [kg/m3] ="
-                + lPad(df4.format(behave.rho_b), 12));
-        appendLine(sb, "  => Packing ratio             beta         [-] ="
-                + lPad(df5.format(behave.beta), 13));
-        appendLine(sb, "  => Optimal packing ratio     beta_opt     [-] ="
-                + lPad(df5.format(behave.beta_opt), 13));
-        appendLine(sb, " ");
-        appendLine(sb, "  => Rate of spread            ros        [m/s] ="
-                + lPad(df4.format(behave.ros), 12));
-        appendLine(sb, "  => Heat sink                 hsk      [kJ/m3] ="
-                + lPad(df2.format(behave.hsk), 10));
-        appendLine(sb, "  => Reaction intensity        I_r      [kW/m2] ="
-                + lPad(df2.format(behave.I_r), 10));
-        appendLine(sb, "  => Propagating flux ratio    xi           [-] ="
-                + lPad(df4.format(behave.xi), 12));
+//        if (behave.isDynamic) {
+//            appendLine(sb, "   (dh)|"
+//                    + lPad(df3.format(behave.w0_dh), 10));
+//        }
         appendLine(sb, " ");
 
-        appendLine(sb, "  => Wind and slope factor     phi_t        [-] ="
-                + lPad(df4.format(behave.phi_t), 12));
-        appendLine(sb, "  => Direction of max. spread  sdr        [deg] ="
-                + lPad(df1.format(behave.sdr), 9));
-        appendLine(sb, "  => Effective Wind speed      efw        [m/s] ="
-                + lPad(df2.format(behave.efw), 10));
+        // wind and slope inputs
+        appendLine(sb, "  Wind                         |  Terrain");
+        appendLine(sb, " ---------------------------------------------------------");
+        appendLine(sb, "   wind speed     [m/s]" + lPad(df2.format(behave.wsp), 7)
+                + " |   slope      [deg]" + lPad(df2.format(behave.slp), 7));
+        appendLine(sb, "   wind direction [deg]" + lPad(df2.format(behave.wdr), 7)
+                + " |   aspect     [deg]" + lPad(df2.format(behave.asp), 7));
         appendLine(sb, " ");
-        appendLine(sb, "  => Flame length              fln          [m] ="
-                + lPad(df2.format(behave.fln), 10));
-        appendLine(sb, "  => Fire line intensity       fli       [kW/m] ="
-                + lPad(df2.format(behave.fli), 10));
-        appendLine(sb, "  => Heat per area             hpa      [kJ/m2] ="
+        appendLine(sb, "  => Wind factor                phi_w       [-] ="
+                + lPad(df4.format(behave.phi_w), 12));
+        appendLine(sb, "  => Slope factor               phi_s       [-] ="
+                + lPad(df4.format(behave.phi_s), 12));
+        appendLine(sb, "  => Wind and slope factor      phi_t       [-] ="
+                + lPad(df4.format(behave.phi_t), 12));
+        appendLine(sb, "  => Effective Wind speed       efw      [km/h] ="
+                + lPad(df2.format(behave.efw / 0.27778), 10)); // m/s to kph
+        appendLine(sb, "  => Direction of max. spread   sdr       [deg] ="
+                + lPad(df1.format(behave.sdr), 9));
+        appendLine(sb, " ");
+        
+        appendLine(sb, "  => Characteristic sv-ratio    sigma     [1/m] ="
+                + lPad(df2.format(behave.sigma), 10));
+        appendLine(sb, "  => Live moisture of extintion Mx_live     [%] ="
+                + lPad(df2.format(behave.Mx_live), 10));
+        appendLine(sb, "  => Ratio dead/live fine fuels W           [-] ="
+                + lPad(df4.format(behave.W), 10));
+        appendLine(sb, "  => Mean bulk density          rho_b   [kg/m3] ="
+                + lPad(df4.format(behave.rho_b), 12));
+        appendLine(sb, "  => Packing ratio              beta        [-] ="
+                + lPad(df5.format(behave.beta), 13));
+        appendLine(sb, "  => Relative packing ratio     beta_ratio  [-] ="
+                + lPad(df5.format(behave.beta_ratio), 13));
+        appendLine(sb, " ");
+
+        appendLine(sb, "  => Rate of spread             ros     [m/min] ="
+                + lPad(df4.format(behave.ros * 60), 12));
+        appendLine(sb, "  => Heat per area              hpa     [kJ/m2] ="
                 + lPad(df2.format(behave.hpa), 10));
-        appendLine(sb, "  => flame residence time      tau          [s] ="
+        appendLine(sb, "  => Fire line intensity        fli      [kW/m] ="
+                + lPad(df2.format(behave.fli), 10));
+        appendLine(sb, "  => Flame length               fln         [m] ="
+                + lPad(df2.format(behave.fln), 10));
+        appendLine(sb, "  => Reaction intensity         I_r     [kW/m2] ="
+                + lPad(df2.format(behave.I_r), 10));
+        appendLine(sb, " ");
+
+        appendLine(sb, "  => Heat sink                  hsk     [kJ/m3] ="
+                + lPad(df2.format(behave.hsk), 10));
+        appendLine(sb, "  => Propagating flux ratio     xi          [-] ="
+                + lPad(df4.format(behave.xi), 12));
+        appendLine(sb, "  => flame residence time       tau         [s] ="
                 + lPad(df2.format(behave.tau), 10));
-        appendLine(sb, "  => flame zone depth          fzd          [m] ="
+        appendLine(sb, "  => flame zone depth           fzd         [m] ="
                 + lPad(df3.format(behave.fzd), 11));
+        appendLine(sb, " ");
+
 
         return sb.toString();
     }
