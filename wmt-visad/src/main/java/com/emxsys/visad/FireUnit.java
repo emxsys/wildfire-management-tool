@@ -63,6 +63,12 @@ public class FireUnit {
     public static final Unit Btu_lb = getUnit("Btu/(lb)");
     /** Common unit for Byram's fire line intensity - SI */
     public static final Unit kW_m = getUnit("kW.m-1");
+    /** Common unit for heat sink - US */
+    public static final Unit Btu_f3 = getUnit("Btu/(ft3)");
+    /** Common unit for reaction intensity - US */
+    public static final Unit Btu_ft2_min = getUnit("Btu/(ft2)/(minute)");
+    /** Common unit for reaction intensity - SI */
+    public static final Unit kW_m2 = getUnit("kW/(m2)");
     /** Common unit for Byram's fire line intensity - US */
     public static final Unit Btu_ft_s = getUnit("Btu.ft-1.s-1");
     /** Common unit for heat release per unit area - SI */
