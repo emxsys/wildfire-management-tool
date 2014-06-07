@@ -45,6 +45,7 @@ import static com.emxsys.wildfire.api.WildfireType.FUEL_BED;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_BED_DEPTH;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_LOAD;
 import static com.emxsys.wildfire.api.WildfireType.GAMMA;
+import static com.emxsys.wildfire.api.WildfireType.HEAT_CONTENT_US;
 import static com.emxsys.wildfire.api.WildfireType.I_R;
 import static com.emxsys.wildfire.api.WildfireType.LOAD_DEAD_100H;
 import static com.emxsys.wildfire.api.WildfireType.LOAD_DEAD_10H;
@@ -497,7 +498,7 @@ public class FuelBed extends RealTuple {
      * @return 8,000 BTU/lb
      */
     public Real getLowHeatContent() {
-        return new Real(WildfireType.HEAT_CONTENT_US, 8000.0);
+        return convertTo(HEAT_CONTENT_US, this.fuelModel.getLowHeatContent());
     }
 
     /**
