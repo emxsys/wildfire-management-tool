@@ -238,7 +238,7 @@ public enum StdFuelModelParams13 {
         this.liveFuelSAVRatio = new Real(WildfireType.SAV_RATIO_US, liveFuelSAVRatio);
         this.fuelBedDepth = new Real(WildfireType.FUEL_DEPTH_US, fuelDepth);
         this.extinctionMoisture = new Real(WildfireType.MOISTURE_OF_EXTINCTION, extinctionMoisture);
-        this.lowHeatContent = new Real(WildfireType.HEAT_US, 8000.0);   // Abini (1976)
+        this.lowHeatContent = new Real(WildfireType.HEAT_CONTENT_US, 8000.0);   // Abini (1976)
         this.modelName = modelName;
     }
 }

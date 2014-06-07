@@ -408,7 +408,7 @@ public enum StdFuelModelParams40 {
         this.liveWoodySAVRatio = new Real(WildfireType.SAV_RATIO_US, liveWoodySAVRatio);
         this.fuelBedDepth = new Real(WildfireType.FUEL_DEPTH_US, fuelBedDepth);
         this.extinctionMoisture = new Real(WildfireType.MOISTURE_OF_EXTINCTION, extinctionMoisture);
-        this.heatContent = new Real(WildfireType.HEAT_US, heatContent);
+        this.heatContent = new Real(WildfireType.HEAT_CONTENT_US, heatContent);
         this.modelNo = modelNo;
         this.modelCode = modelCode;
         this.modelName = modelName;

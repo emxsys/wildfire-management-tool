@@ -161,7 +161,7 @@ public class StdFuelModel implements FuelModel {
         // Defaults and constants used by Albini (1976)
         static final Real SAV_RATIO_10HR_US = new Real(WildfireType.SAV_RATIO_US, 109.0);
         static final Real SAV_RATIO_100HR_US = new Real(WildfireType.SAV_RATIO_US, 30.0);
-        static final Real HEAT_CONTENT_US = new Real(WildfireType.HEAT_US, 8000.0);
+        static final Real HEAT_CONTENT_US = new Real(WildfireType.HEAT_CONTENT_US, 8000.0);
         static final Real SAV_RATIO_ZERO = new Real(WildfireType.SAV_RATIO_SI, 0.0);
         static final Real FUEL_LOAD_ZERO = new Real(WildfireType.FUEL_LOAD_SI, 0.0);
         static final Real FUEL_DEPTH_ZERO = new Real(WildfireType.FUEL_DEPTH_SI, 0.0);
@@ -347,7 +347,7 @@ public class StdFuelModel implements FuelModel {
          * @param heat low heat content [kJ/kg]
          */
         public void setHeatContent(Real heat) {
-            this.heatContent = Reals.convertTo(WildfireType.HEAT_SI, heat);
+            this.heatContent = Reals.convertTo(WildfireType.HEAT_CONTENT_SI, heat);
         }
 
         /**
