@@ -905,7 +905,7 @@ public class Behave {
             dead = f_d1 * wn_d1 + f_d2 * wn_d2 + f_d3 * wn_d3;
         }
         if (sw_l > 0) {
-            wn_l = (1 - s_t / 100) * sw2_l / sw_l;
+            wn_l = (1 - s_t / 100) * (w0_lh + w0_lw);   // Different algorithm for net live, matches BehavePlus outputs
             live = f_lh * wn_lh + f_lw * wn_lw;
         }
     }
