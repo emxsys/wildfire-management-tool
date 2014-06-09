@@ -85,8 +85,8 @@ public class FireBehaviorModel {
 
     }
 
-    private final HashMap<FuelScenario, FuelCharacter> fuelCharacteristics = new HashMap<>();
-    private final HashMap<FuelCharacter, RealTuple> combustibles = new HashMap<>();
+    private final HashMap<FuelScenario, FuelBed> fuelCharacteristics = new HashMap<>();
+    private final HashMap<FuelBed, RealTuple> combustibles = new HashMap<>();
 
     public FireEnvironment computeFireBehavior(FuelModel fuelModel,
                                                FuelMoisture fuelMoisture,
@@ -95,7 +95,7 @@ public class FireBehaviorModel {
 
         FuelScenario scenario = new FuelScenario(fuelModel, fuelMoisture);
 
-        FuelCharacter fuel = fuelCharacteristics.get(scenario);
+        FuelBed fuel = fuelCharacteristics.get(scenario);
         if (fuel == null) {
             fuel = Rothermel.getFuelCharacter(fuelModel, fuelMoisture);
             fuelCharacteristics.put(scenario, fuel);

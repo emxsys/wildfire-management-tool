@@ -71,7 +71,7 @@ public class FireBehaviorModelTest {
         FuelModel fuelModel = new StdFuelModel.Builder(FBFM04).build();
         FuelMoisture fuelMoisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
         
-        FuelCharacter fuelCharacter = Rothermel.getFuelCharacter(fuelModel, fuelMoisture);
+        FuelBed fuelCharacter = Rothermel.getFuelCharacter(fuelModel, fuelMoisture);
         assertNotNull(fuelCharacter);
         assertTrue(!fuelCharacter.isMissing());
         System.out.println(fuelCharacter.longString());
