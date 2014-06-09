@@ -52,6 +52,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import visad.Real;
+import visad.VisADException;
 
 /**
  * Runs FuelBed unit tests for all FuelModels.
@@ -145,7 +146,7 @@ public class FuelBedTest {
     }
 
     @Test
-    public void testReport() {
+    public void testReport() throws VisADException {
         System.out.println("testReport" + " : " +fuelModelCode);
         System.out.println(instance.report());
     }
@@ -382,7 +383,6 @@ public class FuelBedTest {
         assertNotNull(result);
         assertTrue(!result.isMissing());
         assertTrue(result.getType().equals(WildfireType.HEAT_CONTENT_US));
-        assertEquals(fuelModelCode + ": heat_content [Btu/lb]", 8000, result.getValue(), 1);
     }
 
     @Test

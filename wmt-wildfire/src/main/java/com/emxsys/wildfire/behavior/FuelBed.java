@@ -93,7 +93,6 @@ public class FuelBed extends RealTuple {
     // In all fire behavior simulation systems that use the Rothermel model, total mineral content
     // is 5.55 percent, effective (silica-free) mineral content is 1.00 percent, and oven-dry fuel
     // particle density is 513 kg/m3 (32 lb/ft3).
-    
     /** Total effective (silica-free) mineral content Rothermel 1972 eq.(63) */
     static final double s_e = 1.0;
     /** Total mineral content [%] - Albini's constant. The non-combustible mineral fraction. */
@@ -120,9 +119,11 @@ public class FuelBed extends RealTuple {
     double depth;       // [ft]
 
     // Intermediate values
-    double W_prime;             // computed for Mx_live
-    double wn_dead, wn_live;    // computed for eta_M
-    double Mf_dead, Mf_live;    // computed for eta_M
+    double W_prime;                 // computed for Mx_live
+    double wn_dead, wn_live;        // computed for eta_M
+    double Mf_dead, Mf_live;        // computed for eta_M
+    double eta_M_dead, eta_M_live;  // computed for I_r
+    double I_r_dead, I_r_live;      // computed for I_r
 
     boolean nonBurnable = false;
 
@@ -157,7 +158,14 @@ public class FuelBed extends RealTuple {
             }
             // Build a tuple with the proper UOMs
             RealTuple tuple = new RealTuple(new Real[]{
-                convertTo(LOAD_DEAD_1H,new Real(FUEL_LOAD, dead1HrLoad)),
+                // TODO: Add a DEAD_HERB_LOAD fuel class.
+                // TODO: Add a DEAD_HERB_SAV fuel class.
+                // TODO: Create a category for FUELBED and a category for FUELMODEL
+                //       FUELMODEL_DEAD_1H_LOAD_US      [tons/acre]
+                //       FUELMODEL_DEAD_1H_LOAD_SI      [kG/m2]
+                //       FUELBED_DEAD_1H_LOAD           [lb/ft2]                
+                //       FUELBED_DEAD_HERB_LOAD         [lb/ft2]                
+                convertTo(LOAD_DEAD_1H, new Real(FUEL_LOAD, dead1HrLoad)),
                 convertTo(LOAD_DEAD_10H, model.getDead10HrFuelLoad()),
                 convertTo(LOAD_DEAD_100H, model.getDead100HrFuelLoad()),
                 convertTo(LOAD_LIVE_HERB, new Real(FUEL_LOAD, liveHerbLoad)),
@@ -165,7 +173,7 @@ public class FuelBed extends RealTuple {
                 new Real(SAV_DEAD_1H, dead1HrSAV),
                 convertTo(SAV_DEAD_10H, model.getDead10HrSAVRatio()),
                 convertTo(SAV_DEAD_100H, model.getDead100HrSAVRatio()),
-                new Real(SAV_LIVE_HERB, liveHerbSAV),
+                convertTo(SAV_LIVE_HERB, model.getLiveHerbSAVRatio()),
                 convertTo(SAV_LIVE_WOODY, model.getLiveWoodySAVRatio()),
                 convertTo(FUEL_BED_DEPTH, model.getFuelBedDepth()),
                 convertTo(MX_DEAD, model.getMoistureOfExtinction())});
@@ -358,7 +366,8 @@ public class FuelBed extends RealTuple {
     public Real getCharacteristicSAV() {
         if (nonBurnable) {
             return new Real(SIGMA, 0);
-        } else if (this.characteristicSAV == null) {
+        }
+        if (this.characteristicSAV == null) {
             // Rothermel 1972: eq. (71) and (72)
             double sumSavWeight = 0.;       // sw = (sv_total * w)
             double sumSavSqWeight = 0.;     // s2w = (sv_total^2 * w)
@@ -384,7 +393,8 @@ public class FuelBed extends RealTuple {
     public Real getLiveMoistureContentOfExt() {
         if (nonBurnable) {
             return new Real(MX_LIVE, 0);
-        } else if (this.liveMx == null) {
+        }
+        if (this.liveMx == null) {
             double sumDead = 0;
             double sumLive = 0;
             double sumDeadMoisture = 0;
@@ -442,29 +452,34 @@ public class FuelBed extends RealTuple {
     public Real getMoistureDamping() {
         if (nonBurnable) {
             return new Real(0);
-        } 
+        }
         if (this.moistureDamping == null) {
-
-            // swm = (sv_total * w0_total * m)
-            double swm_dead = 0;
+            // Intermediates
+            double swm_dead = 0; // swm = (sv_total * w0_total * m)
             double swm_live = 0;
             double sw_d = 0;
             double sw_l = 0;
             double sw2_d = 0;
             double sw2_l = 0;
             for (int i = 0; i < deadWeight.length; i++) {
-                sw_d += deadSAV[i] * deadWeight[i];
-                sw2_d += deadSAV[i] * deadWeight[i] * deadWeight[i];
-                swm_dead += deadSAV[i] * deadWeight[i] * deadMoist[i];
+                double s = deadSAV[i];
+                double w = deadWeight[i];
+                double m = deadMoist[i];
+                sw_d += s * w;
+                sw2_d += s * w * w;
+                swm_dead += s * w * m;
             }
             for (int i = 0; i < liveWeight.length; i++) {
-                sw_l += liveSAV[i] * liveWeight[i];
-                sw2_l += liveSAV[i] * liveWeight[i] * liveWeight[i];
-                swm_live += liveSAV[i] * liveWeight[i] * liveMoist[i];
+                double s = liveSAV[i];
+                double w = liveWeight[i];
+                double m = liveMoist[i];
+                sw_l += s * w;
+                sw2_l += s * w * w;
+                swm_live += s * w * m;
             }
-            // The dry-weight loading of any particular fuel element, w0, 
-            // includes the noncombustible mineral fraction, s_t. 
-            // The net loading of combustible fuel is w0(l-s_t). Albini 1976: pg. (88)
+            // Net fuel loading: The dry-weight loading of any particular fuel element, w0, 
+            // includes the noncombustible mineral fraction, s_t. The loading of combustible 
+            // fuel is w0(l-s_t). Albini 1976: pg. (88)
             if (sw_d > 0) {
                 wn_dead = ((1 - s_t / 100) * sw2_d) / sw_d;
             }
@@ -476,16 +491,16 @@ public class FuelBed extends RealTuple {
             double Mf_Mx_dead = (sw_d > 0) ? (swm_dead / (sw_d * Mx_dead)) : 0;
             double Mf_Mx_live = (sw_l > 0) ? (swm_live / (sw_l * Mx_live)) : 0;
 
-            double eta_M_dead = Math.max(0,
+            eta_M_dead = wn_dead * Math.max(0,
                     1 - 2.59 * Mf_Mx_dead
                     + 5.11 * Math.pow(Mf_Mx_dead, 2)
                     - 3.52 * Math.pow(Mf_Mx_dead, 3));
-            double eta_M_live = Math.max(0,
+            eta_M_live = wn_live * Math.max(0,
                     1 - 2.59 * Mf_Mx_live
                     + 5.11 * Math.pow(Mf_Mx_live, 2)
                     - 3.52 * Math.pow(Mf_Mx_live, 3));
 
-            double eta_M = (wn_dead * eta_M_dead) + (wn_live * eta_M_live);
+            double eta_M = (eta_M_dead) + (eta_M_live);
 
             this.moistureDamping = new Real(ETA_M, eta_M);
         }
@@ -542,6 +557,8 @@ public class FuelBed extends RealTuple {
             double heat = getLowHeatContent().getValue();
             double eta_M = getMoistureDamping().getValue();
             double eta_s = getMineralDamping().getValue();
+            I_r_dead = gamma * heat * eta_M_dead * eta_s;
+            I_r_live = gamma * heat * eta_M_live * eta_s;
             double I_r = gamma * heat * eta_M * eta_s;
 
             reactionIntensity = new Real(I_R, I_r);
@@ -771,9 +788,9 @@ public class FuelBed extends RealTuple {
                 + lPad(df5.format(getRelativePackingRatio().getValue()), 13));
         appendLine(sb, " ");
 
-        appendLine(sb, "  => Mineral damping coeff.    eta_S        [-] ="
+        appendLine(sb, "  => Mineral damping coeff.     eta_S       [-] ="
                 + lPad(df5.format(getMineralDamping().getValue()), 13));
-        appendLine(sb, "  => Moisture damping coeff.   eta_M        [-] ="
+        appendLine(sb, "  => Moisture damping coeff.    eta_M       [-] ="
                 + lPad(df5.format(getMoistureDamping().getValue()), 13));
         appendLine(sb, "  => Dry net fuel loading       wn_d   [lb/ft2] ="
                 + lPad(df5.format(wn_dead), 13) + " : "
@@ -786,6 +803,10 @@ public class FuelBed extends RealTuple {
         appendLine(sb, "  => Reaction intensity         I_r [Btu/f2/mn] ="
                 + lPad(df2.format(getReactionIntensity().getValue()), 10) + "    : "
                 + lPad(df2.format(getReactionIntensity().getValue(FireUnit.kW_m2)), 7) + " [kW/m2]");
+        appendLine(sb, "  => Reaction intensity - Dead  I_r [Btu/f2/mn] ="
+                + lPad(df2.format(I_r_dead), 10));
+        appendLine(sb, "  => Reaction intensity - Live  I_r [Btu/f2/mn] ="
+                + lPad(df2.format(I_r_live), 10));
         appendLine(sb, " ");
 
         return sb.toString();
