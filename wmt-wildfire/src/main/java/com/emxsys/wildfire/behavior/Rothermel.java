@@ -50,7 +50,7 @@ public class Rothermel {
     private static final Logger logger = Logger.getLogger(Rothermel.class.getName());
 
     public static FireBehaviorTuple getFireBehavior(FuelModel model, FuelMoisture moisture) {
-        FuelCharacter fuelCharacter = getFuelCharacter(model, moisture);
+        FuelBed fuelCharacter = getFuelCharacter(model, moisture);
         RealTuple fuelCombustible = getFuelCombustible(fuelCharacter);
         RealTuple fireReaction = getFireReaction(fuelCombustible);
 
@@ -58,28 +58,28 @@ public class Rothermel {
     }
 
     /**
-     * Gets a FUEL_CHARACTERISTICS tuple derived from the supplied FuelModel and FuelMoisture
-     * objects. It transfers the cured live herbaceous into the dead 1 hour fuels.
+     * Gets a FUEL_BED tuple derived from the supplied FuelModel and FuelMoisture
+ objects. It transfers the cured live herbaceous into the dead 1 hour fuels.
      *
      * @param model The representative fuel model.
      * @param moisture The fuel moisture scenario.
-     * @return A new FUEL_CHARACTERISTICS tuple; an "isMissing" tuple will be returned on error.
+     * @return A new FUEL_BED tuple; an "isMissing" tuple will be returned on error.
      */
-    public static FuelCharacter getFuelCharacter(FuelModel model, FuelMoisture moisture) {
-        return FuelCharacter.from(model, moisture);
+    public static FuelBed getFuelCharacter(FuelModel model, FuelMoisture moisture) {
+        return FuelBed.from(model, moisture);
     }
 
     /**
-     * Gets a COMBUSTIBLE tuple derived from the supplied FuelCharacter tuple.
+     * Gets a COMBUSTIBLE tuple derived from the supplied FuelBed tuple.
      *
      * In all fire behavior simulation systems that use the Rothermel model, total mineral content
      * is 5.55 percent, effective (silica-free) mineral content is 1.00 percent, and oven-dry fuel
      * particle density is 513 kg/m3 (32 lb/ft3).
      *
-     * @param fuel The representative FUEL_CHARACTERISTICS.
+     * @param fuel The representative FUEL_BED.
      * @return A new COMBUSTIBLE tuple; an "isMissing" tuple will be returned on error.
      */
-    public static RealTuple getFuelCombustible(FuelCharacter fuel) {
+    public static RealTuple getFuelCombustible(FuelBed fuel) {
         if (fuel.isMissing()) {
             throw new IllegalArgumentException("Missing commponent(s): " + fuel);
         }
