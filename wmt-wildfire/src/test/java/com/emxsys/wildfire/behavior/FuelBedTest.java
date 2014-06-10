@@ -73,6 +73,8 @@ public class FuelBedTest {
     static final int BETA_RATIO = 3;
     static final int MX_LIVE = 4;
     static final int I_R = 5;
+    static final int I_R_DEAD = 6;
+    static final int I_R_LIVE = 7;
 
     /*
      * Test data generator.
@@ -137,6 +139,8 @@ public class FuelBedTest {
                             Double.parseDouble(reader.get("BETA_RATIO")),
                             Double.parseDouble(reader.get("MX_LIVE")),
                             Double.parseDouble(reader.get("I_R")),
+                            Double.parseDouble(reader.get("I_R_DEAD")),
+                            Double.parseDouble(reader.get("I_R_LIVE")),
                         });
             }
             System.out.println("");
@@ -211,9 +215,9 @@ public class FuelBedTest {
     }
 
     @Test
-    public void testGetLiveMoistureContentOfExt() {
-        System.out.println("getLiveMoistureContentOfExt" + " : " +fuelModelCode);
-        Real result = instance.getLiveMoistureContentOfExt();
+    public void testGetLiveMoistureOfExt() {
+        System.out.println("getLiveMoistureOfExt" + " : " +fuelModelCode);
+        Real result = instance.getLiveMoistureOfExt();
         double[] expected = expResults.get(fuelModelCode);
         assertEquals(fuelModelCode + ": mx_live [%]", expected[MX_LIVE], result.getValue(), expected[MX_LIVE] * 0.5);
     }
@@ -232,7 +236,7 @@ public class FuelBedTest {
         Real result = instance.getDead1HrFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.LOAD_DEAD_1H));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_LOAD_DEAD_1H));
     }
 
     @Test
@@ -241,7 +245,7 @@ public class FuelBedTest {
         Real result = instance.getDead10HrFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.LOAD_DEAD_10H));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_LOAD_DEAD_10H));
     }
 
     @Test
@@ -250,7 +254,7 @@ public class FuelBedTest {
         Real result = instance.getDead100HrFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.LOAD_DEAD_100H));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_LOAD_DEAD_100H));
     }
 
     @Test
@@ -259,7 +263,7 @@ public class FuelBedTest {
         Real result = instance.getLiveHerbFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.LOAD_LIVE_HERB));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_LOAD_LIVE_HERB));
     }
 
     @Test
@@ -268,7 +272,7 @@ public class FuelBedTest {
         Real result = instance.getLiveWoodyFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.LOAD_LIVE_WOODY));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_LOAD_LIVE_WOODY));
     }
 
     @Test
@@ -277,7 +281,7 @@ public class FuelBedTest {
         Real result = instance.getDead1HrSAVRatio();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.SAV_DEAD_1H));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_SAV_DEAD_1H));
     }
 
     @Test
@@ -286,7 +290,7 @@ public class FuelBedTest {
         Real result = instance.getDead10HrSAVRatio();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.SAV_DEAD_10H));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_SAV_DEAD_10H));
     }
 
     @Test
@@ -295,7 +299,7 @@ public class FuelBedTest {
         Real result = instance.getDead100HrSAVRatio();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.SAV_DEAD_100H));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_SAV_DEAD_100H));
     }
 
     @Test
@@ -304,7 +308,7 @@ public class FuelBedTest {
         Real result = instance.getLiveHerbSAVRatio();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.SAV_LIVE_HERB));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_SAV_LIVE_HERB));
     }
 
     @Test
@@ -313,7 +317,7 @@ public class FuelBedTest {
         Real result = instance.getLiveWoodySAVRatio();
         assertNotNull(result);
         assertTrue(!result.isMissing());
-        assertTrue(result.getType().equals(WildfireType.SAV_LIVE_WOODY));
+        assertTrue(result.getType().equals(WildfireType.FUELBED_SAV_LIVE_WOODY));
     }
 
     @Test
@@ -400,7 +404,9 @@ public class FuelBedTest {
         System.out.println("getReactionIntensity");
         Real result = instance.getReactionIntensity();
         double[] expected = expResults.get(fuelModelCode);
-        assertEquals(fuelModelCode + ": I_r [Btu/ft2/min]", expected[I_R], result.getValue(), expected[I_R] * 0.02);
+        assertEquals(fuelModelCode + ": I_r_dead [Btu/ft2/min]", expected[I_R_DEAD], instance.I_r_dead, expected[I_R_DEAD] * 0.01);
+        assertEquals(fuelModelCode + ": I_r_live [Btu/ft2/min]", expected[I_R_LIVE], instance.I_r_live, expected[I_R_LIVE] * 0.01);
+        assertEquals(fuelModelCode + ": I_r [Btu/ft2/min]", expected[I_R], result.getValue(), expected[I_R] * 0.01);
     }
 
 }

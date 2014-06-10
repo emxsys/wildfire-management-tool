@@ -30,7 +30,7 @@
 package com.emxsys.wildfire.behavior;
 
 import com.emxsys.visad.FireUnit;
-import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import static com.emxsys.visad.Reals.convertTo;
 import com.emxsys.visad.Tuples;
 import com.emxsys.wildfire.api.FuelModel;
@@ -41,25 +41,27 @@ import static com.emxsys.wildfire.api.WildfireType.BETA_OPT;
 import static com.emxsys.wildfire.api.WildfireType.BETA_RATIO;
 import static com.emxsys.wildfire.api.WildfireType.ETA_M;
 import static com.emxsys.wildfire.api.WildfireType.ETA_S;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_100H;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_10H;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_1H;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_HERB;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_LIVE_HERB;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_LIVE_WOODY;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_100H;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_10H;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_1H;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_HERB;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_LIVE_HERB;
+import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_LIVE_WOODY;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_BED;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_BED_DEPTH;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_LOAD;
 import static com.emxsys.wildfire.api.WildfireType.GAMMA;
 import static com.emxsys.wildfire.api.WildfireType.HEAT_CONTENT_US;
 import static com.emxsys.wildfire.api.WildfireType.I_R;
-import static com.emxsys.wildfire.api.WildfireType.LOAD_DEAD_100H;
-import static com.emxsys.wildfire.api.WildfireType.LOAD_DEAD_10H;
-import static com.emxsys.wildfire.api.WildfireType.LOAD_DEAD_1H;
-import static com.emxsys.wildfire.api.WildfireType.LOAD_LIVE_HERB;
-import static com.emxsys.wildfire.api.WildfireType.LOAD_LIVE_WOODY;
 import static com.emxsys.wildfire.api.WildfireType.MX_DEAD;
 import static com.emxsys.wildfire.api.WildfireType.MX_LIVE;
 import static com.emxsys.wildfire.api.WildfireType.RHO_B;
-import static com.emxsys.wildfire.api.WildfireType.SAV_DEAD_100H;
-import static com.emxsys.wildfire.api.WildfireType.SAV_DEAD_10H;
-import static com.emxsys.wildfire.api.WildfireType.SAV_DEAD_1H;
-import static com.emxsys.wildfire.api.WildfireType.SAV_LIVE_HERB;
-import static com.emxsys.wildfire.api.WildfireType.SAV_LIVE_WOODY;
 import static com.emxsys.wildfire.api.WildfireType.SIGMA;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
@@ -77,44 +79,46 @@ import visad.VisADException;
 public class FuelBed extends RealTuple {
 
     private static final Logger logger = Logger.getLogger(FuelBed.class.getName());
-    public static final int LOAD_DEAD_1H_INDEX = Tuples.getIndex(LOAD_DEAD_1H, FUEL_BED);
-    public static final int LOAD_DEAD_10H_INDEX = Tuples.getIndex(LOAD_DEAD_10H, FUEL_BED);
-    public static final int LOAD_DEAD_100H_INDEX = Tuples.getIndex(LOAD_DEAD_100H, FUEL_BED);
-    public static final int LOAD_LIVE_HERB_INDEX = Tuples.getIndex(LOAD_LIVE_HERB, FUEL_BED);
-    public static final int LOAD_LIVE_WOODY_INDEX = Tuples.getIndex(LOAD_LIVE_WOODY, FUEL_BED);
-    public static final int SAV_DEAD_1H_INDEX = Tuples.getIndex(SAV_DEAD_1H, FUEL_BED);
-    public static final int SAV_DEAD_10H_INDEX = Tuples.getIndex(SAV_DEAD_10H, FUEL_BED);
-    public static final int SAV_DEAD_100H_INDEX = Tuples.getIndex(SAV_DEAD_100H, FUEL_BED);
-    public static final int SAV_LIVE_HERB_INDEX = Tuples.getIndex(SAV_LIVE_HERB, FUEL_BED);
-    public static final int SAV_LIVE_WOODY_INDEX = Tuples.getIndex(SAV_LIVE_WOODY, FUEL_BED);
+    public static final int LOAD_DEAD_1H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_1H, FUEL_BED);
+    public static final int LOAD_DEAD_10H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_10H, FUEL_BED);
+    public static final int LOAD_DEAD_100H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_100H, FUEL_BED);
+    public static final int LOAD_DEAD_HERB_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_HERB, FUEL_BED);
+    public static final int LOAD_LIVE_HERB_INDEX = Tuples.getIndex(FUELBED_LOAD_LIVE_HERB, FUEL_BED);
+    public static final int LOAD_LIVE_WOODY_INDEX = Tuples.getIndex(FUELBED_LOAD_LIVE_WOODY, FUEL_BED);
+    public static final int SAV_DEAD_1H_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_1H, FUEL_BED);
+    public static final int SAV_DEAD_10H_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_10H, FUEL_BED);
+    public static final int SAV_DEAD_100H_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_100H, FUEL_BED);
+    public static final int SAV_DEAD_HERB_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_HERB, FUEL_BED);
+    public static final int SAV_LIVE_HERB_INDEX = Tuples.getIndex(FUELBED_SAV_LIVE_HERB, FUEL_BED);
+    public static final int SAV_LIVE_WOODY_INDEX = Tuples.getIndex(FUELBED_SAV_LIVE_WOODY, FUEL_BED);
     public static final int FUEL_BED_DEPTH_INDEX = Tuples.getIndex(FUEL_BED_DEPTH, FUEL_BED);
     public static final int MX_DEAD_INDEX = Tuples.getIndex(MX_DEAD, FUEL_BED);
 
     // In all fire behavior simulation systems that use the Rothermel model, total mineral content
     // is 5.55 percent, effective (silica-free) mineral content is 1.00 percent, and oven-dry fuel
     // particle density is 513 kg/m3 (32 lb/ft3).
-    /** Total effective (silica-free) mineral content Rothermel 1972 eq.(63) */
+    /** Total effective (silica-free) mineral content: 1%. Rothermel 1972 eq.(63) */
     static final double s_e = 1.0;
-    /** Total mineral content [%] - Albini's constant. The non-combustible mineral fraction. */
+    /** Total mineral content: 5.5% - Albini's constant. The non-combustible fuel component. */
     static final double s_t = 5.5;
-    /** Ovendry fuel-particle density [lbs/ft3] - Albini's constant */
+    /** Oven-dry fuel-particle density: 32 [lbs/ft3] - Albini's constant */
     static final double rho_p = 32.0;
 
     // Input values
-    double[] sv_values_dead;       // [ft2/ft3]      
-    double[] sv_values_live;       // [ft2/ft3]
-    double[] w0_values_dead;    // [lb/ft2]
-    double[] w0_values_live;    // [lb/ft2]
-    double[] M_values_dead;
-    double[] M_values_live;
+    double[] sv_dead;    // [ft2/ft3]      
+    double[] sv_live;    // [ft2/ft3]
+    double[] w0_dead;    // [lb/ft2]
+    double[] w0_live;    // [lb/ft2]
+    double[] M_dead;
+    double[] M_live;
 
     // Precomputed values from inputs
-    double w0_total;    // total loading [lb/ft2]
-    double w0_dead;     // total dead loading [lb/ft2]
-    double w0_live;     // total live loading [lb/ft2]
-    double sv_total;    // total SAV [ft2/ft3]
-    double sv_dead;     // total dead SAV [ft2/ft3]
-    double sv_live;     // total live SAV [ft2/ft3]
+    double w0_total;            // total loading [lb/ft2]
+    double w0_total_dead;       // total dead loading [lb/ft2]
+    double w0_total_live;       // total live loading [lb/ft2]
+    double sv_total;            // total SAV [ft2/ft3]
+    double sv_total_dead;       // total dead SAV [ft2/ft3]
+    double sv_total_live;       // total live SAV [ft2/ft3]
     boolean nonBurnable = false;
 
     // Intermediate values
@@ -139,39 +143,26 @@ public class FuelBed extends RealTuple {
         try {
             // Transfer cured herbaceous fuel into the dead herbaceous fuel load
             double curing = model.isDynamic() ? calcHerbaceousCuring(moisture) : 0;
-            double dead1HrLoad = model.getDead1HrFuelLoad().getValue(FireUnit.lb_ft2);
-            double dead1HrSAV = model.getDead1HrSAVRatio().getValue(FireUnit.ft2_ft3);
-            double liveHerbSAV = model.getLiveHerbSAVRatio().getValue(FireUnit.ft2_ft3);
             double liveHerbLoad = model.getLiveHerbFuelLoad().getValue(FireUnit.lb_ft2);
-            if (dead1HrLoad > 0) {
-                double deadHerbLoad = liveHerbLoad * curing;
+            double deadHerbLoad = 0;
+            if (liveHerbLoad > 0) {
+                deadHerbLoad = liveHerbLoad * curing;
                 liveHerbLoad -= deadHerbLoad;
-                // Compute a new dead 1hr surface area-to-volume ratio
-                // with the cured live herbaceous fuel mixed in ...
-                dead1HrSAV = ((dead1HrSAV * dead1HrSAV * dead1HrLoad) + (liveHerbSAV * liveHerbSAV * deadHerbLoad))
-                        / ((dead1HrSAV * dead1HrLoad) + (liveHerbSAV * deadHerbLoad));
-                // ... and add the dead herbaceous fuel to dead 1hr fuel
-                dead1HrLoad += deadHerbLoad;
             }
             // Build a tuple with the proper UOMs
             RealTuple tuple = new RealTuple(new Real[]{
-                // TODO: Add a DEAD_HERB_LOAD fuel class.
-                // TODO: Add a DEAD_HERB_SAV fuel class.
-                // TODO: Create a category for FUELBED and a category for FUELMODEL
-                //       FUELMODEL_DEAD_1H_LOAD_US      [tons/acre]
-                //       FUELMODEL_DEAD_1H_LOAD_SI      [kG/m2]
-                //       FUELBED_DEAD_1H_LOAD           [lb/ft2]                
-                //       FUELBED_DEAD_HERB_LOAD         [lb/ft2]                
-                convertTo(LOAD_DEAD_1H, new Real(FUEL_LOAD, dead1HrLoad)),
-                convertTo(LOAD_DEAD_10H, model.getDead10HrFuelLoad()),
-                convertTo(LOAD_DEAD_100H, model.getDead100HrFuelLoad()),
-                convertTo(LOAD_LIVE_HERB, new Real(FUEL_LOAD, liveHerbLoad)),
-                convertTo(LOAD_LIVE_WOODY, model.getLiveWoodyFuelLoad()),
-                new Real(SAV_DEAD_1H, dead1HrSAV),
-                convertTo(SAV_DEAD_10H, model.getDead10HrSAVRatio()),
-                convertTo(SAV_DEAD_100H, model.getDead100HrSAVRatio()),
-                convertTo(SAV_LIVE_HERB, model.getLiveHerbSAVRatio()),
-                convertTo(SAV_LIVE_WOODY, model.getLiveWoodySAVRatio()),
+                convertTo(FUELBED_LOAD_DEAD_HERB, new Real(FUEL_LOAD, deadHerbLoad)),
+                convertTo(FUELBED_LOAD_DEAD_1H, model.getDead1HrFuelLoad()),
+                convertTo(FUELBED_LOAD_DEAD_10H, model.getDead10HrFuelLoad()),
+                convertTo(FUELBED_LOAD_DEAD_100H, model.getDead100HrFuelLoad()),
+                convertTo(FUELBED_LOAD_LIVE_HERB, new Real(FUEL_LOAD, liveHerbLoad)),
+                convertTo(FUELBED_LOAD_LIVE_WOODY, model.getLiveWoodyFuelLoad()),
+                convertTo(FUELBED_SAV_DEAD_HERB, model.getLiveHerbSAVRatio()), // dead SAV same as live SAV
+                convertTo(FUELBED_SAV_DEAD_1H, model.getDead1HrSAVRatio()),
+                convertTo(FUELBED_SAV_DEAD_10H, model.getDead10HrSAVRatio()),
+                convertTo(FUELBED_SAV_DEAD_100H, model.getDead100HrSAVRatio()),
+                convertTo(FUELBED_SAV_LIVE_HERB, model.getLiveHerbSAVRatio()),
+                convertTo(FUELBED_SAV_LIVE_WOODY, model.getLiveWoodySAVRatio()),
                 convertTo(FUEL_BED_DEPTH, model.getFuelBedDepth()),
                 convertTo(MX_DEAD, model.getMoistureOfExtinction())});
 
@@ -208,43 +199,55 @@ public class FuelBed extends RealTuple {
 
         double[] values = getValues();
 
+        // Compute adjusted fine fuels
+        double w0_d = values[LOAD_DEAD_1H_INDEX];
+        double w0_h = values[LOAD_DEAD_HERB_INDEX];
+        double sv_d = values[SAV_DEAD_1H_INDEX];
+        double sv_h = values[SAV_DEAD_HERB_INDEX];
+        double deadFineFuelLoad = w0_d + w0_h;
+        double deadFineSAV = ((sv_d * sv_d * w0_d) + (sv_h * sv_h * w0_h))
+                / (sv_d * w0_d + sv_h * w0_h);
+
         // Populate arrays used in formulas that sum fuel particle components
-        this.sv_values_dead = new double[]{
-            values[SAV_DEAD_1H_INDEX],
+        this.sv_dead = new double[]{
+            deadFineSAV,
             values[SAV_DEAD_10H_INDEX],
             values[SAV_DEAD_100H_INDEX]};
-        this.sv_values_live = new double[]{
+
+        this.sv_live = new double[]{
             values[SAV_LIVE_HERB_INDEX],
             values[SAV_LIVE_WOODY_INDEX]};
-        this.w0_values_dead = new double[]{
-            // Convert from [tons/acre] to [lb/ft2]
-            ((Real) getComponent(LOAD_DEAD_1H_INDEX)).getValue(FireUnit.lb_ft2),
-            ((Real) getComponent(LOAD_DEAD_10H_INDEX)).getValue(FireUnit.lb_ft2),
-            ((Real) getComponent(LOAD_DEAD_100H_INDEX)).getValue(FireUnit.lb_ft2)};
-        this.w0_values_live = new double[]{
-            // Convert from [tons/acre] to [lb/ft2]
-            ((Real) getComponent(LOAD_LIVE_HERB_INDEX)).getValue(FireUnit.lb_ft2),
-            ((Real) getComponent(LOAD_LIVE_WOODY_INDEX)).getValue(FireUnit.lb_ft2)};
-        this.M_values_dead = new double[]{
-            fuelMoisture.getDead1HrFuelMoisture().getValue(),
+
+        this.w0_dead = new double[]{
+            deadFineFuelLoad,
+            values[LOAD_DEAD_10H_INDEX],
+            values[LOAD_DEAD_100H_INDEX]};
+
+        this.w0_live = new double[]{
+            values[LOAD_LIVE_HERB_INDEX],
+            values[LOAD_LIVE_WOODY_INDEX]};
+
+        this.M_dead = new double[]{
+            fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
             fuelMoisture.getDead10HrFuelMoisture().getValue(),
             fuelMoisture.getDead100HrFuelMoisture().getValue()};
-        this.M_values_live = new double[]{
+
+        this.M_live = new double[]{
             fuelMoisture.getLiveHerbFuelMoisture().getValue(),
             fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
 
         // Precompute total weight [lb/ft2] and total SAV [ft2/ft3]
-        for (int i = 0; i < w0_values_dead.length; i++) {
-            w0_dead += w0_values_dead[i];
-            w0_total += w0_values_dead[i];
-            sv_dead += sv_values_dead[i];
-            sv_total += sv_values_dead[i];
+        for (int i = 0; i < w0_dead.length; i++) {
+            w0_total += w0_dead[i];
+            sv_total += sv_dead[i];
+            w0_total_dead += w0_dead[i];
+            sv_total_dead += sv_dead[i];
         }
-        for (int i = 0; i < w0_values_live.length; i++) {
-            w0_live += w0_values_live[i];
-            w0_total += w0_values_live[i];
-            sv_live += sv_values_live[i];
-            sv_total += sv_values_live[i];
+        for (int i = 0; i < w0_live.length; i++) {
+            w0_total += w0_live[i];
+            sv_total += sv_live[i];
+            w0_total_live += w0_live[i];
+            sv_total_live += sv_live[i];
         }
 
         if (w0_total == 0 || sv_total == 0) {
@@ -280,7 +283,7 @@ public class FuelBed extends RealTuple {
     public Real getMeanBulkDensity() {
         if (nonBurnable) {
             return new Real(RHO_B, 0);
-        } 
+        }
         if (this.meanBulkDensity == null) {
             double height = getFuelBedDepth().getValue();
             double rho_b = w0_total / height;
@@ -367,13 +370,13 @@ public class FuelBed extends RealTuple {
             // Rothermel 1972: eq. (71) and (72)
             double sumSavWeight = 0.;       // sw = (sv_total * w)
             double sumSavSqWeight = 0.;     // s2w = (sv_total^2 * w)
-            for (int i = 0; i < sv_values_dead.length; i++) {
-                sumSavWeight += sv_values_dead[i] * w0_values_dead[i];
-                sumSavSqWeight += sv_values_dead[i] * sv_values_dead[i] * w0_values_dead[i];
+            for (int i = 0; i < sv_dead.length; i++) {
+                sumSavWeight += sv_dead[i] * w0_dead[i];
+                sumSavSqWeight += sv_dead[i] * sv_dead[i] * w0_dead[i];
             }
-            for (int i = 0; i < sv_values_live.length; i++) {
-                sumSavWeight += sv_values_live[i] * w0_values_live[i];
-                sumSavSqWeight += sv_values_live[i] * sv_values_live[i] * w0_values_live[i];
+            for (int i = 0; i < sv_live.length; i++) {
+                sumSavWeight += sv_live[i] * w0_live[i];
+                sumSavSqWeight += sv_live[i] * sv_live[i] * w0_live[i];
             }
             double sigma = sumSavSqWeight / sumSavWeight;
 
@@ -386,7 +389,7 @@ public class FuelBed extends RealTuple {
      * Gets the live moisture of extinction [%]. Using Albini (1976): page 89
      * @return Mx_live
      */
-    public Real getLiveMoistureContentOfExt() {
+    public Real getLiveMoistureOfExt() {
         if (nonBurnable) {
             return new Real(MX_LIVE, 0);
         }
@@ -397,18 +400,18 @@ public class FuelBed extends RealTuple {
             double sumLiveMoisture = 0;
 
             // W' = SUM(w0_d*exp(-138/sv_d*)/SUM(w0_l*exp(-500/sv_l*)
-            for (int i = 0; i < sv_values_dead.length; i++) {
-                if (sv_values_dead[i] > 0) {
-                    double weighting = w0_values_dead[i] * Math.exp(-138 / sv_values_dead[i]);
+            for (int i = 0; i < sv_dead.length; i++) {
+                if (sv_dead[i] > 0) {
+                    double weighting = w0_dead[i] * Math.exp(-138 / sv_dead[i]);
                     sumDead += weighting;
-                    sumDeadMoisture += M_values_dead[i] * weighting;
+                    sumDeadMoisture += M_dead[i] * weighting;
                 }
             }
-            for (int i = 0; i < sv_values_live.length; i++) {
-                if (sv_values_live[i] > 0) {
-                    double weighting = w0_values_live[i] * Math.exp(-500 / sv_values_live[i]);
+            for (int i = 0; i < sv_live.length; i++) {
+                if (sv_live[i] > 0) {
+                    double weighting = w0_live[i] * Math.exp(-500 / sv_live[i]);
                     sumLive += weighting;
-                    sumLiveMoisture += M_values_live[i] * weighting;
+                    sumLiveMoisture += M_live[i] * weighting;
                 }
             }
             W_prime = (sumLive > 0) ? (sumDead / sumLive) : 0;
@@ -442,7 +445,9 @@ public class FuelBed extends RealTuple {
      * Calculates the moisture damping coefficients for dead and live fuel.
      *
      * The moisture damping coefficient accounts for the decrease in caused by the combustion of
-     * fuels that initially contained moisture.
+     * fuels that initially contained moisture. The greater the difference between the actual
+     * moisture content and the moisture of extinction, the smaller the moisture damping coefficient
+     * and therefore the greater the spread rate.
      *
      * @return eta_M
      */
@@ -457,47 +462,60 @@ public class FuelBed extends RealTuple {
             double sw_d = 0;
             double sw_l = 0;
             double sw2_d = 0;
-            double sw2_l = 0;
-            for (int i = 0; i < w0_values_dead.length; i++) {
-                double s = sv_values_dead[i];
-                double w = w0_values_dead[i];
-                double m = M_values_dead[i];
-                sw_d += s * w;
-                sw2_d += s * w * w;
-                swm_dead += s * w * m;
+
+            for (int i = 0; i < w0_dead.length; i++) {
+                // XXX Special case for Fuel Model SH9 net fine dead fuel loading.
+                if (fuelModel.getModelCode().equalsIgnoreCase("SH9") && i == 0) {
+                    // This dynamic fuel model uses a different algorithm for 
+                    // mixing in the dead herbaceous with the dead 1hr fuels.
+                    double w0_d = getDead1HrFuelLoad().getValue();
+                    double w0_h = getDeadHerbFuelLoad().getValue();
+                    double sv_d = getDead1HrSAVRatio().getValue();
+                    double sv_h = getDeadHerbSAVRatio().getValue();
+                    double M_d = getDead1HrFuelMoisture().getValue();
+                    sw_d += (sv_d * w0_d) + (sv_h * w0_h);
+                    sw2_d += (sv_d * w0_d * w0_d) + (sv_h * w0_h * w0_h);
+                    swm_dead += (sv_d * w0_d * M_d) + (sv_h * w0_h * M_d);
+                } else {
+                    // Using fine dead fuel loading adjustment performed in constructor
+                    double s = sv_dead[i];
+                    double w = w0_dead[i];
+                    double m = M_dead[i];
+                    sw_d += s * w;
+                    sw2_d += s * w * w;
+                    swm_dead += s * w * m;
+                }
             }
-            for (int i = 0; i < w0_values_live.length; i++) {
-                double s = sv_values_live[i];
-                double w = w0_values_live[i];
-                double m = M_values_live[i];
+            for (int i = 0; i < w0_live.length; i++) {
+                double s = sv_live[i];
+                double w = w0_live[i];
+                double m = M_live[i];
                 sw_l += s * w;
-                sw2_l += s * w * w;
                 swm_live += s * w * m;
             }
             // Net fuel loading: The dry-weight loading of any particular fuel element, w0, 
-            // includes the noncombustible mineral fraction, s_t. The loading of combustible 
+            // includes the non-combustible mineral fraction, s_t. The loading of combustible 
             // fuel is w0(l - s_t). Albini 1976: pg. (88)
-
             // XXX - Two different algorithms for live and dead are needed to match the BehavePlus outputs! 
             // XXX - Why? Could it be because Mx_live and Mx_dead are different somehow? Computed differently?
             if (sw_d > 0) {
                 wn_dead = ((1 - s_t / 100) * sw2_d) / sw_d;
+                //wn_dead = (1 - s_t / 100) * w0_total_dead;    -- doesn't work correctly
             }
             if (sw_l > 0) {
-                wn_live = (1 - s_t / 100) * w0_live;
+                wn_live = (1 - s_t / 100) * w0_total_live;
             }
-            
+
             // Moisture ratios: (Mf/Mx)
             // Rothermel 1972: eq. (29) and (65) & (66). 
-            double Mx_live = getLiveMoistureContentOfExt().getValue();
-            double Mx_dead = fuelModel.getMoistureOfExtinction().getValue();
+            double Mx_live = getLiveMoistureOfExt().getValue();
+            double Mx_dead = getDeadMoistureOfExt().getValue();
             double ratio_dead = 0;
             if (sw_d > 0) {
                 ratio_dead = swm_dead / (sw_d * Mx_dead);
             }
             double ratio_live = 0;
-            if (sw_l > 0)
-            {
+            if (sw_l > 0) {
                 ratio_live = swm_live / (sw_l * Mx_live);
             }
 
@@ -580,6 +598,17 @@ public class FuelBed extends RealTuple {
     }
 
     /**
+     * Gets the dead herbaceous fuel loading.
+     */
+    public Real getDeadHerbFuelLoad() {
+        try {
+            return (Real) getComponent(LOAD_DEAD_HERB_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * Gets the 1 hour dead fuel loading.
      */
     public Real getDead1HrFuelLoad() {
@@ -629,6 +658,17 @@ public class FuelBed extends RealTuple {
     public Real getLiveWoodyFuelLoad() {
         try {
             return (Real) getComponent(LOAD_LIVE_WOODY_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Gets the dead herbaceous fuel surface-area-to-volume ratio.
+     */
+    public Real getDeadHerbSAVRatio() {
+        try {
+            return (Real) getComponent(SAV_DEAD_HERB_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -701,14 +741,20 @@ public class FuelBed extends RealTuple {
     }
 
     /**
-     * Gets the dead moisture of extinction percent.
+     * Gets the dead moisture of extinction percent. Fuel moisture content is expressed as the mass
+     * of water as a percentage of oven-dry mass.
+     *
+     * This value is used as a way to predict the effect of moisture content on fire behavior
+     * (through the moisture damping coefficient). The greater the difference between actual
+     * moisture content and the moisture of extinction, the smaller the moisture damping coefficient
+     * and therefore the greater the spread rate.
      */
     public Real getDeadMoistureOfExt() {
-        try {
-            return (Real) getComponent(MX_DEAD_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return Reals.convertTo(MX_DEAD, fuelModel.getMoistureOfExtinction());
+    }
+
+    public Real getDeadHerbFuelMoisture() {
+        return fuelMoisture.getDead1HrFuelMoisture();   // dead herbaceous same as dead 1 hour.
     }
 
     public Real getDead1HrFuelMoisture() {
@@ -751,8 +797,8 @@ public class FuelBed extends RealTuple {
                 + lPad(df1.format(s_e), 10));
         appendLine(sb, "  Total mineral content        s_t          [%] ="
                 + lPad(df1.format(s_t), 10));
-//        appendLine(sb, "  Heat content                 heat     [kJ/kg] ="
-//                + lPad(df2.format(behave.heat), 10));
+        appendLine(sb, "  Heat content                 heat    [Btu/lb] ="
+                + lPad(df2.format(getLowHeatContent().getValue()), 10));
         appendLine(sb, "  Particle density             rho_p   [lb/ft3] ="
                 + lPad(df2.format(rho_p), 10));
         appendLine(sb, "  Fuel bed depth               depth       [ft] ="
@@ -767,30 +813,40 @@ public class FuelBed extends RealTuple {
         appendLine(sb, "  Size |  Fuel Load | Surface-to-Volume- | Moisture");
         appendLine(sb, "       |[tons/acre] | Ratio    [ft2/ft3] |      [%]");
         appendLine(sb, " ---------------------------------------------------");
+        appendLine(sb, "    dh |"
+                + lPad(df3.format(getDeadHerbFuelLoad().getValue(FireUnit.tons_acre)), 10) + "  |"
+                + lPad(df3.format(getDeadHerbSAVRatio().getValue()), 18) + "  |"
+                + lPad(df1.format(getDeadHerbFuelMoisture().getValue()), 8));
         appendLine(sb, "    d1 |"
-                + lPad(df3.format(getDead1HrFuelLoad().getValue()), 10) + "  |"
+                + lPad(df3.format(getDead1HrFuelLoad().getValue(FireUnit.tons_acre)), 10) + "  |"
                 + lPad(df3.format(getDead1HrSAVRatio().getValue()), 18) + "  |"
                 + lPad(df1.format(getDead1HrFuelMoisture().getValue()), 8));
         appendLine(sb, "    d2 |"
-                + lPad(df3.format(getDead10HrFuelLoad().getValue()), 10) + "  |"
+                + lPad(df3.format(getDead10HrFuelLoad().getValue(FireUnit.tons_acre)), 10) + "  |"
                 + lPad(df3.format(getDead10HrSAVRatio().getValue()), 18) + "  |"
                 + lPad(df1.format(getDead10HrFuelMoisture().getValue()), 8));
         appendLine(sb, "    d3 |"
-                + lPad(df3.format(getDead100HrFuelLoad().getValue()), 10) + "  |"
+                + lPad(df3.format(getDead100HrFuelLoad().getValue(FireUnit.tons_acre)), 10) + "  |"
                 + lPad(df3.format(getDead100HrSAVRatio().getValue()), 18) + "  |"
                 + lPad(df1.format(getDead100HrFuelMoisture().getValue()), 8));
         appendLine(sb, "    lh |"
-                + lPad(df3.format(getLiveHerbFuelLoad().getValue()), 10) + "  |"
+                + lPad(df3.format(getLiveHerbFuelLoad().getValue(FireUnit.tons_acre)), 10) + "  |"
                 + lPad(df3.format(getLiveHerbSAVRatio().getValue()), 18) + "  |"
                 + lPad(df1.format(getLiveHerbFuelMoisture().getValue()), 8));
         appendLine(sb, "    lw |"
-                + lPad(df3.format(getLiveWoodyFuelLoad().getValue()), 10) + "  |"
+                + lPad(df3.format(getLiveWoodyFuelLoad().getValue(FireUnit.tons_acre)), 10) + "  |"
                 + lPad(df3.format(getLiveWoodySAVRatio().getValue()), 18) + "  |"
                 + lPad(df1.format(getLiveWoodyFuelMoisture().getValue()), 8));
         appendLine(sb, " ");
 
+        appendLine(sb, "  => Percent dead fuel                      [%] ="
+                + lPad(df2.format(w0_total_dead / w0_total * 100), 10));
+        appendLine(sb, "  => Percent live fuel                      [%] ="
+                + lPad(df2.format(w0_total_live / w0_total * 100), 10));
+        appendLine(sb, " ");
+
         appendLine(sb, "  => Live moisture of extintion Mx_live     [%] ="
-                + lPad(df2.format(getLiveMoistureContentOfExt().getValue()), 10));
+                + lPad(df2.format(getLiveMoistureOfExt().getValue()), 10));
         appendLine(sb, "  => Characteristic sv-ratio    sigma [ft2/ft3] ="
                 + lPad(df2.format(getCharacteristicSAV().getValue()), 10));
         appendLine(sb, "  => Mean bulk density          rho_b  [lb/ft3] ="
@@ -805,6 +861,10 @@ public class FuelBed extends RealTuple {
                 + lPad(df5.format(getMineralDamping().getValue()), 13));
         appendLine(sb, "  => Moisture damping coeff.    eta_M       [-] ="
                 + lPad(df5.format(getMoistureDamping().getValue()), 13));
+        appendLine(sb, "  => Moisture damping - dead    eta_M_dead  [-] ="
+                + lPad(df5.format(eta_M_dead), 13));
+        appendLine(sb, "  => Moisture damping - live    eta_M_live  [-] ="
+                + lPad(df5.format(eta_M_live), 13));
         appendLine(sb, "  => Dry net fuel loading       wn_d   [lb/ft2] ="
                 + lPad(df5.format(wn_dead), 13) + " : "
                 + lPad(df5.format(new Real(FUEL_LOAD, wn_dead).getValue(FireUnit.kg_m2)), 7) + " [kg/m2]");
@@ -816,9 +876,9 @@ public class FuelBed extends RealTuple {
         appendLine(sb, "  => Reaction intensity         I_r [Btu/f2/mn] ="
                 + lPad(df2.format(getReactionIntensity().getValue()), 10) + "    : "
                 + lPad(df2.format(getReactionIntensity().getValue(FireUnit.kW_m2)), 7) + " [kW/m2]");
-        appendLine(sb, "  => Reaction intensity - Dead  I_r [Btu/f2/mn] ="
+        appendLine(sb, "  => Reaction intensity - dead  I_r [Btu/f2/mn] ="
                 + lPad(df2.format(I_r_dead), 10));
-        appendLine(sb, "  => Reaction intensity - Live  I_r [Btu/f2/mn] ="
+        appendLine(sb, "  => Reaction intensity - live  I_r [Btu/f2/mn] ="
                 + lPad(df2.format(I_r_live), 10));
         appendLine(sb, " ");
 
