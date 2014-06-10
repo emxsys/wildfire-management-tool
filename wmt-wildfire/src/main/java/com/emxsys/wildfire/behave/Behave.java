@@ -764,9 +764,11 @@ public class Behave {
      * - net fuel loadings (wn_..)<br/>
      *
      * Exceptions are thrown if<br/>
-     * - w0 <= 0.0 no fuel specified<br/> - sw_t <= 0.0 surface-to-voume-ratios not properly
-     * specified<br/> - depth <= 0.0 depth of fuel bed not properly specified<br/> @throws
-     * java.lang.Exception
+     * - w0 <= 0.0 no fuel specified<br/> 
+     * - sw_t <= 0.0 surface-to-voume-ratios not properly specified<br/> 
+     * - depth <= 0.0 depth of fuel bed not properly specified<br/> 
+     * 
+     * @throws IllegalStateException
      */
     protected void calcFuel() {
         // reset Fuel flag

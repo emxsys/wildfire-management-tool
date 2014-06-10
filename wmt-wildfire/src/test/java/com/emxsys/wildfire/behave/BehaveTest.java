@@ -277,26 +277,28 @@ public class BehaveTest {
         }
         System.out.println(BehaveReporter.report(instance));
         Map<String, Double> results = instance.getMaxSpreadResults();
-//        assertEquals(instance.fuelModelCode + ": Rate of Spread [m/s]", expected[ROS], results.get("ros"), 0.15);
-//        assertEquals(instance.fuelModelCode + ": Heat Per Unit Area [kJ/m2]", expected[HPA], results.get("hpa"), expected[HPA] * .05); 
-//        assertEquals(instance.fuelModelCode + ": Fireline Intensity [kW/m]", expected[FLI], results.get("fli"), expected[FLI] * .05);
-//        assertEquals(instance.fuelModelCode + ": Flame Length [m]", expected[FLN], results.get("fln"), 0.1);
-//        assertEquals(instance.fuelModelCode + ": Reaction Intensity [kW/m2]", expected[I_R], results.get("I_r"), 50);
-//        assertEquals(instance.fuelModelCode + ": Direction of Max Spread [deg]", expected[SDR], results.get("sdr"), 1);
-//        assertEquals(instance.fuelModelCode + ": Effective Wind [m/s]", expected[EFW], results.get("efw"), 1);
-        assumeTrue(MathUtil.nearlyEquals(expected[ROS], results.get("ros"), 0.15));
-        assumeTrue(MathUtil.nearlyEquals(expected[HPA], results.get("hpa"), expected[HPA] * .05));
-        assumeTrue(MathUtil.nearlyEquals(expected[FLI], results.get("fli"), expected[FLI] * .05));
-        assumeTrue(MathUtil.nearlyEquals(expected[FLN], results.get("fln"), 0.1));
-        assumeTrue(MathUtil.nearlyEquals(expected[I_R], results.get("I_r"), 50));
-        assumeTrue(MathUtil.nearlyEquals(expected[SDR], results.get("sdr"), 1));
-        assumeTrue(MathUtil.nearlyEquals(expected[EFW], results.get("efw"), 1));
-
+        if (fuelModel.getModelCode().equalsIgnoreCase("SH9")) {
+            assumeTrue(MathUtil.nearlyEquals(expected[I_R], results.get("I_r"), 50));
+            assumeTrue(MathUtil.nearlyEquals(expected[HPA], results.get("hpa"), expected[HPA] * .05));
+            assumeTrue(MathUtil.nearlyEquals(expected[ROS], results.get("ros"), 0.15));
+            assumeTrue(MathUtil.nearlyEquals(expected[FLI], results.get("fli"), expected[FLI] * .05));
+            assumeTrue(MathUtil.nearlyEquals(expected[FLN], results.get("fln"), 0.1));
+            assumeTrue(MathUtil.nearlyEquals(expected[SDR], results.get("sdr"), 1));
+            assumeTrue(MathUtil.nearlyEquals(expected[EFW], results.get("efw"), 1));
+        } else {
+            assertEquals(instance.fuelModelCode + ": Reaction Intensity [kW/m2]", expected[I_R], results.get("I_r"), 10);
+            assertEquals(instance.fuelModelCode + ": Fireline Intensity [kW/m]", expected[FLI], results.get("fli"), expected[FLI] * .05);
+            assertEquals(instance.fuelModelCode + ": Heat Per Unit Area [kJ/m2]", expected[HPA], results.get("hpa"), expected[HPA] * .05);
+            assertEquals(instance.fuelModelCode + ": Rate of Spread [m/s]", expected[ROS], results.get("ros"), 0.15);
+            assertEquals(instance.fuelModelCode + ": Flame Length [m]", expected[FLN], results.get("fln"), 0.1);
+            assertEquals(instance.fuelModelCode + ": Direction of Max Spread [deg]", expected[SDR], results.get("sdr"), 1);
+            assertEquals(instance.fuelModelCode + ": Effective Wind [m/s]", expected[EFW], results.get("efw"), 1);
+        }
     }
 
-    /**
-     * Test of calcWindAndSlopeFactor method, of class Behave.
-     */
+/**
+ * Test of calcWindAndSlopeFactor method, of class Behave.
+ */
 //    @Test
 //    public void testCombinedWindAndSlopeFactor() {
 //        System.out.println("combinedWindAndSlopeFactor");
