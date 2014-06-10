@@ -90,7 +90,7 @@ public class Rothermel {
             Real beta_opt = fuel.getOptimalPackingRatio();
             Real eta_s = fuel.getMineralDamping();
             Real eta_M1 = fuel.getMoistureDamping();
-            Real Mx_live = fuel.getLiveMoistureContentOfExt();
+            Real Mx_live = fuel.getLiveMoistureOfExt();
 
             RealTuple tuple = new RealTuple(COMBUSTIBLE, new Real[]{
                 sigma,
