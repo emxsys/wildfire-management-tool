@@ -79,6 +79,33 @@ public class WildfireType {
     public static final RealType LOAD_LIVE_HERB;
     /** Live woody fuel load: [tons/acre] */
     public static final RealType LOAD_LIVE_WOODY;
+
+    /** Dead 1 hour fine fuelbed load: [lb/ft2] */
+    public static final RealType FUELBED_LOAD_DEAD_1H;
+    /** Dead 10 hour fuelbed load: [lb/ft2] */
+    public static final RealType FUELBED_LOAD_DEAD_10H;
+    /** Dead 100 hour fuelbed load: [lb/ft2] */
+    public static final RealType FUELBED_LOAD_DEAD_100H;
+    /** Dead herbaceous fuelbed load: [lb/ft2] */
+    public static final RealType FUELBED_LOAD_DEAD_HERB;
+    /** Live herb fuel fuelbed load: [lb/ft2] */
+    public static final RealType FUELBED_LOAD_LIVE_HERB;
+    /** Live woody fuel fuelbed load: [lb/ft2] */
+    public static final RealType FUELBED_LOAD_LIVE_WOODY;
+
+    /** Dead 1 hour fine fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType FUELBED_SAV_DEAD_1H;
+    /** Dead 10 hour fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType FUELBED_SAV_DEAD_10H;
+    /** Dead 100 hour fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType FUELBED_SAV_DEAD_100H;
+    /** Dead herbaceous fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType FUELBED_SAV_DEAD_HERB;
+    /** Live herb fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType FUELBED_SAV_LIVE_HERB;
+    /** Live woody fuel surface to volume ratio: [ft2/ft3] */
+    public static final RealType FUELBED_SAV_LIVE_WOODY;
+
     /** Dead 1 hour fine fuel surface to volume ratio: [ft2/ft3] */
     public static final RealType SAV_DEAD_1H;
     /** Dead 10 hour fuel surface to volume ratio: [ft2/ft3] */
@@ -174,6 +201,21 @@ public class WildfireType {
         LOAD_DEAD_100H = RealType.getRealType("dead_100h:tons/acre", FireUnit.tons_acre, null);
         LOAD_LIVE_HERB = RealType.getRealType("live_herb:tons/acre", FireUnit.tons_acre, null);
         LOAD_LIVE_WOODY = RealType.getRealType("live_woody:tons/acre", FireUnit.tons_acre, null);
+        
+        FUELBED_LOAD_DEAD_1H = RealType.getRealType("dead_1h:lb/ft2", FireUnit.lb_ft2, null);
+        FUELBED_LOAD_DEAD_10H = RealType.getRealType("dead_10h:lb/ft2", FireUnit.lb_ft2, null);
+        FUELBED_LOAD_DEAD_100H = RealType.getRealType("dead_100h:lb/ft2", FireUnit.lb_ft2, null);
+        FUELBED_LOAD_DEAD_HERB = RealType.getRealType("dead_herb:lb/ft2", FireUnit.lb_ft2, null);
+        FUELBED_LOAD_LIVE_HERB = RealType.getRealType("live_herb:lb/ft2", FireUnit.lb_ft2, null);
+        FUELBED_LOAD_LIVE_WOODY = RealType.getRealType("live_woody:lb/ft2", FireUnit.lb_ft2, null);
+        
+        FUELBED_SAV_DEAD_1H = RealType.getRealType("dead_1h:ft2/ft3", FireUnit.ft2_ft3, null);
+        FUELBED_SAV_DEAD_10H = RealType.getRealType("dead_10h:ft2/ft3", FireUnit.ft2_ft3, null);
+        FUELBED_SAV_DEAD_100H = RealType.getRealType("dead_100h:ft2/ft3", FireUnit.ft2_ft3, null);
+        FUELBED_SAV_DEAD_HERB = RealType.getRealType("dead_herb:ft2/ft3", FireUnit.ft2_ft3, null);
+        FUELBED_SAV_LIVE_HERB = RealType.getRealType("live_herb:ft2/ft3", FireUnit.ft2_ft3, null);
+        FUELBED_SAV_LIVE_WOODY = RealType.getRealType("live_woody:ft2/ft3", FireUnit.ft2_ft3, null);
+        
         SAV_DEAD_1H = RealType.getRealType("dead_1h:ft2/ft3", FireUnit.ft2_ft3, null);
         SAV_DEAD_10H = RealType.getRealType("dead_10h:ft2/ft3", FireUnit.ft2_ft3, null);
         SAV_DEAD_100H = RealType.getRealType("dead_100h:ft2/ft3", FireUnit.ft2_ft3, null);
@@ -211,16 +253,18 @@ public class WildfireType {
                 });
         FUEL_BED = newRealTupleType(
                 new RealType[]{
-                    LOAD_DEAD_1H,
-                    LOAD_DEAD_10H,
-                    LOAD_DEAD_100H,
-                    LOAD_LIVE_HERB,
-                    LOAD_LIVE_WOODY,
-                    SAV_DEAD_1H,
-                    SAV_DEAD_10H,
-                    SAV_DEAD_100H,
-                    SAV_LIVE_HERB,
-                    SAV_LIVE_WOODY,
+                    FUELBED_LOAD_DEAD_HERB,
+                    FUELBED_LOAD_DEAD_1H,
+                    FUELBED_LOAD_DEAD_10H,
+                    FUELBED_LOAD_DEAD_100H,
+                    FUELBED_LOAD_LIVE_HERB,
+                    FUELBED_LOAD_LIVE_WOODY,
+                    FUELBED_SAV_DEAD_HERB,
+                    FUELBED_SAV_DEAD_1H,
+                    FUELBED_SAV_DEAD_10H,
+                    FUELBED_SAV_DEAD_100H,
+                    FUELBED_SAV_LIVE_HERB,
+                    FUELBED_SAV_LIVE_WOODY,
                     FUEL_BED_DEPTH,
                     MX_DEAD,
                 });
