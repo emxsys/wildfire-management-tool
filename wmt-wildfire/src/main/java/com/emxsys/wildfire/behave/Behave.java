@@ -1099,8 +1099,11 @@ public class Behave {
             eps_lw = exp(-452.76 / sv_lw);
         }
         /**
-         * Heat of Preignition: Q_ig, [Btu/lb] = 1.05506 kJ / 0.4535 kg = 2.3265 kJ/kg Q_ig = 250.0
-         * + 1116 * M_f ; M_f [fraction] = 581.5 + 2.3265 *(0.01 * M_f) ; M_f [%]
+         * Heat of Preignition: Q_ig, 
+         * [Btu/lb] = 1.05506 kJ / 0.4535 kg 
+         *          = 2.3265 kJ/kg Q_ig 
+         *          = 250.0 + 1116 * M_f ; 
+         * M_f [fraction] = 581.5 + 2.3265 *(0.01 * M_f) ; M_f [%]
          */
         q_d1 = 581.5 + 25.957 * m_d1;
         q_d2 = 581.5 + 25.957 * m_d2;
