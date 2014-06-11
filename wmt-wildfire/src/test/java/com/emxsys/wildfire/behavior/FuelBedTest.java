@@ -75,6 +75,8 @@ public class FuelBedTest {
     static final int I_R = 5;
     static final int I_R_DEAD = 6;
     static final int I_R_LIVE = 7;
+    static final int HPA = 8;
+    static final int HSK = 9;
 
     /*
      * Test data generator.
@@ -141,7 +143,8 @@ public class FuelBedTest {
                             Double.parseDouble(reader.get("I_R")),
                             Double.parseDouble(reader.get("I_R_DEAD")),
                             Double.parseDouble(reader.get("I_R_LIVE")),
-                        });
+                            Double.parseDouble(reader.get("HPA")),
+                            Double.parseDouble(reader.get("HSK")),});
             }
             System.out.println("");
             reader.toString();
@@ -151,13 +154,13 @@ public class FuelBedTest {
 
     @Test
     public void testReport() throws VisADException {
-        System.out.println("testReport" + " : " +fuelModelCode);
+        System.out.println("testReport" + " : " + fuelModelCode);
         System.out.println(instance.report());
     }
 
     @Test
     public void testCalcHerbaceousCuring() {
-        System.out.println("calcHerbaceousCuring" + " : " +fuelModelCode);
+        System.out.println("calcHerbaceousCuring" + " : " + fuelModelCode);
         FuelMoisture fuelMoisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
         double expResult = 0.56;
         double result = FuelBed.calcHerbaceousCuring(fuelMoisture);
@@ -166,7 +169,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetMeanBulkDensity() {
-        System.out.println("getMeanBulkDensity" + " : " +fuelModelCode);
+        System.out.println("getMeanBulkDensity" + " : " + fuelModelCode);
         Real result = instance.getMeanBulkDensity();
         double[] expected = expResults.get(fuelModelCode);
         assertEquals(fuelModelCode + ": rho_b [lb/ft3]", expected[RHO_B], result.getValue(), expected[RHO_B] * 0.01);
@@ -174,7 +177,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetMeanPackingRatio() {
-        System.out.println("getMeanPackingRatio" + " : " +fuelModelCode);
+        System.out.println("getMeanPackingRatio" + " : " + fuelModelCode);
         Real result = instance.getMeanPackingRatio();
         double[] expected = expResults.get(fuelModelCode);
         assertEquals(fuelModelCode + ": beta [-]", expected[BETA], result.getValue(), 0.001);
@@ -182,9 +185,9 @@ public class FuelBedTest {
 
     @Ignore
     public void testGetOptimalPackingRatio() {
-        System.out.println("getOptimalPackingRatio" + " : " +fuelModelCode);
+        System.out.println("getOptimalPackingRatio" + " : " + fuelModelCode);
         Real result = instance.getOptimalPackingRatio();
-        double[] expected = expResults.get(fuelModelCode);
+        //double[] expected = expResults.get(fuelModelCode);
         //assertEquals(fuelModelCode + ": beta_opt [-]", expected[BETA_OPT], result.getValue(), expected[BETA_OPT] * 0.01);
         assertNotNull(result);
         assertTrue(!result.isMissing());
@@ -192,7 +195,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetRelativePackingRatio() {
-        System.out.println("getRelativePackingRatio" + " : " +fuelModelCode);
+        System.out.println("getRelativePackingRatio" + " : " + fuelModelCode);
         Real result = instance.getRelativePackingRatio();
         double[] expected = expResults.get(fuelModelCode);
         assertEquals(fuelModelCode + ": beta_ratio [-]", expected[BETA_RATIO], result.getValue(), expected[BETA_RATIO] * 0.01);
@@ -200,7 +203,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetCharacteristicSAV() {
-        System.out.println("getCharacteristicSAV" + " : " +fuelModelCode);
+        System.out.println("getCharacteristicSAV" + " : " + fuelModelCode);
         Real result = instance.getCharacteristicSAV();
         double[] expected = expResults.get(fuelModelCode);
         assertEquals(fuelModelCode + ": sigma [ft2/ft3]", expected[SIGMA], result.getValue(), expected[SIGMA] * 0.0125);
@@ -208,7 +211,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetMineralDamping() {
-        System.out.println("getMineralDamping" + " : " +fuelModelCode);
+        System.out.println("getMineralDamping" + " : " + fuelModelCode);
         Real result = instance.getMineralDamping();
         assertNotNull(result);
         assertTrue(!result.isMissing());
@@ -216,7 +219,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetLiveMoistureOfExt() {
-        System.out.println("getLiveMoistureOfExt" + " : " +fuelModelCode);
+        System.out.println("getLiveMoistureOfExt" + " : " + fuelModelCode);
         Real result = instance.getLiveMoistureOfExt();
         double[] expected = expResults.get(fuelModelCode);
         assertEquals(fuelModelCode + ": mx_live [%]", expected[MX_LIVE], result.getValue(), expected[MX_LIVE] * 0.5);
@@ -224,15 +227,35 @@ public class FuelBedTest {
 
     @Test
     public void testGetMoistureDamping() {
-        System.out.println("getMoistureDamping" + " : " +fuelModelCode);
+        System.out.println("getMoistureDamping" + " : " + fuelModelCode);
         Real result = instance.getMoistureDamping();
         assertNotNull(result);
         assertTrue(!result.isMissing());
     }
 
     @Test
+    public void testGetHeatRelease() {
+        System.out.println("getHeatReleas" + " : " + fuelModelCode);
+        Real result = instance.getHeatRelease();
+        assertNotNull(result);
+        assertTrue(!result.isMissing());
+        double[] expected = expResults.get(fuelModelCode);
+        assertEquals(fuelModelCode + ": hpa [Btu/ft2]", expected[HPA], result.getValue(), expected[HPA] * 0.01);
+    }
+
+    @Test
+    public void testGetHeatSink() {
+        System.out.println("getHeatSink" + " : " + fuelModelCode);
+        Real result = instance.getHeatSink();
+        assertNotNull(result);
+        assertTrue(!result.isMissing());
+        double[] expected = expResults.get(fuelModelCode);
+        assertEquals(fuelModelCode + ": hsk [Btu/ft3]", expected[HSK], result.getValue(), expected[HSK] * 0.01);
+    }
+
+    @Test
     public void testGetDead1HrFuelLoad() {
-        System.out.println("getDead1HrFuelLoad" + " : " +fuelModelCode);
+        System.out.println("getDead1HrFuelLoad" + " : " + fuelModelCode);
         Real result = instance.getDead1HrFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
@@ -241,7 +264,7 @@ public class FuelBedTest {
 
     @Test
     public void testGetDead10HrFuelLoad() {
-        System.out.println("getDead10HrFuelLoad" + " : " +fuelModelCode);
+        System.out.println("getDead10HrFuelLoad" + " : " + fuelModelCode);
         Real result = instance.getDead10HrFuelLoad();
         assertNotNull(result);
         assertTrue(!result.isMissing());
@@ -378,8 +401,6 @@ public class FuelBedTest {
         assertTrue(!result.isMissing());
     }
 
-
-
     @Test
     public void testGetLowHeatContent() {
         System.out.println("getLowHeatContent");
@@ -396,7 +417,7 @@ public class FuelBedTest {
         assertNotNull(result);
         assertTrue(!result.isMissing());
         assertTrue(result.getType().equals(WildfireType.GAMMA));
-        
+
     }
 
     @Test
