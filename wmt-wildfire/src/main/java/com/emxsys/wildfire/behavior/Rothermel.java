@@ -29,19 +29,20 @@
  */
 package com.emxsys.wildfire.behavior;
 
-import com.emxsys.wildfire.api.FireBehaviorTuple;
-import com.emxsys.wildfire.api.FuelModel;
-import com.emxsys.wildfire.api.FuelMoisture;
-import static com.emxsys.wildfire.api.WildfireType.COMBUSTIBLE;
-import java.rmi.RemoteException;
-import java.util.logging.Level;
+import static java.lang.Math.*;
 import java.util.logging.Logger;
-import org.openide.util.Exceptions;
-import visad.Real;
-import visad.RealTuple;
-import visad.VisADException;
 
 /**
+ * The Rothermel fire spread model.
+ * <ul>
+ * <li style="bullet"><a name="bib_1000"></a>Albini, F.A., 1976, Estimating Wildfire Behavior and
+ * Effects, General Technical Report INT-30, USDA Forest Service, Intermountain Forest and Range
+ * Experiment Station
+ *
+ * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
+ * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
+ * and Range Experiment Station
+ * </ul>
  *
  * @author Bruce Schubert
  */
@@ -49,84 +50,134 @@ public class Rothermel {
 
     private static final Logger logger = Logger.getLogger(Rothermel.class.getName());
 
-    public static FireBehaviorTuple getFireBehavior(FuelModel model, FuelMoisture moisture) {
-        FuelBed fuelCharacter = getFuelCharacter(model, moisture);
-        RealTuple fuelCombustible = getFuelCombustible(fuelCharacter);
-        RealTuple fireReaction = getFireReaction(fuelCombustible);
-
-        return FireBehaviorTuple.INVALID_TUPLE;
+    /**
+     * Calculates the potential reaction velocity [1/min].
+     *
+     * Rothermel 1972: eq. (68),(70) and Albini 1976: pg. 88
+     *
+     * @param sigma The characteristic SAV ratio [ft2/ft3].
+     * @param beta_ratio The relative packing ratio [beta/beta_opt].
+     * @return gamma [1/min]
+     */
+    public static double reactionVelocity(double sigma, double beta_ratio) {
+        double sigma15 = Math.pow(sigma, 1.5);
+        double A = 133. / Math.pow(sigma, 0.7913);    // Albini 
+        double gamma_max = sigma15 / (495. + 0.0594 * sigma15);
+        double gamma = gamma_max * pow(beta_ratio, A) * exp(A * (1. - beta_ratio));
+        return gamma;
     }
 
     /**
-     * Gets a FUEL_BED tuple derived from the supplied FuelModel and FuelMoisture
- objects. It transfers the cured live herbaceous into the dead 1 hour fuels.
+     * Calculates the reaction intensity [BTU/ft2/min].
      *
-     * @param model The representative fuel model.
-     * @param moisture The fuel moisture scenario.
-     * @return A new FUEL_BED tuple; an "isMissing" tuple will be returned on error.
+     * The rate of heat release, per unit area of the flaming fire front, expressed as heat
+     * energy/area/time, such as Btu/square foot/minute, or Kcal/square meter/second.
+     *
+     * Rothermel 1972: eq. (58), (59) thru (60)
+     *
+     * @param gamma The potential reaction velocity.
+     * @param heat The low heat content [Btu/lb]
+     * @param eta_M The moisture damping coefficient.
+     * @param eta_s The mineral damping coefficient.
+     *
+     * @return I_r.
      */
-    public static FuelBed getFuelCharacter(FuelModel model, FuelMoisture moisture) {
-        return FuelBed.from(model, moisture);
+    public static double reactionIntensity(double gamma, double heat, double eta_M, double eta_s) {
+        double I_r = gamma * heat * eta_M * eta_s;
+        return I_r;
     }
 
     /**
-     * Gets a COMBUSTIBLE tuple derived from the supplied FuelBed tuple.
+     * Calculates the flame residence time: tau [min].
      *
-     * In all fire behavior simulation systems that use the Rothermel model, total mineral content
-     * is 5.55 percent, effective (silica-free) mineral content is 1.00 percent, and oven-dry fuel
-     * particle density is 513 kg/m3 (32 lb/ft3).
+     * Albini (1976): p.91
      *
-     * @param fuel The representative FUEL_BED.
-     * @return A new COMBUSTIBLE tuple; an "isMissing" tuple will be returned on error.
+     * @param sigma The characteristic SAV ratio [ft2/ft3].
+     * @return tau [min].
      */
-    public static RealTuple getFuelCombustible(FuelBed fuel) {
-        if (fuel.isMissing()) {
-            throw new IllegalArgumentException("Missing commponent(s): " + fuel);
-        }
-        try {
-            Real sigma = fuel.getCharacteristicSAV();
-            Real rho_b = fuel.getMeanBulkDensity();
-            Real beta = fuel.getMeanPackingRatio();
-            Real beta_opt = fuel.getOptimalPackingRatio();
-            Real eta_s = fuel.getMineralDamping();
-            Real eta_M1 = fuel.getMoistureDamping();
-            Real Mx_live = fuel.getLiveMoistureOfExt();
-
-            RealTuple tuple = new RealTuple(COMBUSTIBLE, new Real[]{
-                sigma,
-                Mx_live,
-                rho_b,
-                beta,
-                beta_opt}, null);
-
-            // Conditional logging
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine(tuple.longString());
-            }
-            return tuple;
-
-        } catch (VisADException | RemoteException ex) {
-            Exceptions.printStackTrace(ex);
-            return new RealTuple(COMBUSTIBLE);
-        }
-
+    public static double flameResidenceTime(double sigma) {
+        double tau = 384. / sigma;
+        return tau;
     }
 
-    public static RealTuple getFireReaction(RealTuple combustible) {
-        if (!combustible.getType().equals(COMBUSTIBLE)) {
-            throw new IllegalArgumentException(
-                    "Incompatible MathType: " + combustible.getType());
-        } else if (combustible.isMissing()) {
-            throw new IllegalArgumentException(
-                    "Missing commponent(s): " + combustible);
-        }
-        try {
-            return new RealTuple(COMBUSTIBLE);
-
-        } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
-            return new RealTuple(COMBUSTIBLE);
-        }
+    /**
+     * Calculates the heat release per unit area [Btu/ft2].
+     *
+     * @param I_r The reaction intensity [Btu/ft2/min].
+     * @param tau The flame residence time [min].
+     * @return hpa [Btu/ft2]
+     */
+    public static double heatRelease(double I_r, double tau) {
+        double hpa = I_r * tau;
+        return hpa;
     }
 
+    /**
+     * Gets the propagating flux ratio: xi.
+     *
+     * The no-wind propagating flux ratio is a function of the mean packing ratio (beta) and the
+     * characteristic SAV ratio (sigma).
+     *
+     * Rothermel 1972: eq. (42)(76)
+     *
+     * @param sigma The characteristic SAV ratio [ft2/ft3].
+     * @param beta The mean packing ratio [-]
+     * @return xi
+     */
+    public static double propagatingFluxRatio(double sigma, double beta) {
+        double xi = exp((0.792 + 0.681 * sqrt(sigma)) * (beta + 0.1)) / (192 + 0.2595 * sigma);
+        return xi;
+    }
+
+    /**
+     * Calculates the effective heating number: epsilon.
+     *
+     * Rothermel 1972: eq. (77).
+     *
+     * @param sv The SAV ratio for an individual particle [ft2/ft3].
+     * @return epsilon.
+     */
+    public static double effectiveHeatingNumber(double sv) {
+        double epsilon = 0;
+        if (sv > 0) {
+            epsilon = exp(-138. / sv);
+        }
+        return epsilon;
+    }
+
+    /**
+     * Calculates the heat of preignition: Q_ig.
+     *
+     * Rothermel 1972: eq. (78).
+     *
+     * @param Mf The fuel moisture for an individual fuel particle [%].
+     * @retrn Q_ig.
+     */
+    public static double heatOfPreignition(double Mf) {
+        double Q_ig = 250 + 1116 * (Mf * 0.01); // Mf = [fraction]
+        return Q_ig;
+    }
+
+    /**
+     * Calculates the heat sink term [Btu/ft3].
+     *
+     * Rothermel 1972: eq. (77).
+     *
+     * @param Q_ig An array of heat of preignition values for individual particles.
+     * @param epsilon An array of effective heating number values for individual particles.
+     * @param sw An array of (sv * w0) weighting values for individual fuel particles.
+     * @param rho_b The mean bulk density for the fuel complex.
+     *
+     * @return hsk [Btu/ft3]
+     */
+    public static double heatSink(double[] Q_ig, double[] epsilon, double[] sw, double rho_b) {
+        double Qig_t = 0;
+        double sw_t = 0;
+        for (int i = 0; i < sw.length; i++) {
+            Qig_t += Q_ig[i] * epsilon[i] * sw[i];
+            sw_t += sw[i];
+        }
+        double hsk = rho_b * (Qig_t / sw_t);
+        return hsk;
+    }
 }

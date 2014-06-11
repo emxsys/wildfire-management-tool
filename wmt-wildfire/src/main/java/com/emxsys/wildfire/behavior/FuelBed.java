@@ -63,6 +63,8 @@ import static com.emxsys.wildfire.api.WildfireType.MX_DEAD;
 import static com.emxsys.wildfire.api.WildfireType.MX_LIVE;
 import static com.emxsys.wildfire.api.WildfireType.RHO_B;
 import static com.emxsys.wildfire.api.WildfireType.SIGMA;
+import static java.lang.Math.exp;
+import static java.lang.Math.sqrt;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
@@ -105,10 +107,13 @@ public class FuelBed extends RealTuple {
     static final double rho_p = 32.0;
 
     // Input values
-    double[] sv_dead;    // [ft2/ft3]      
-    double[] sv_live;    // [ft2/ft3]
-    double[] w0_dead;    // [lb/ft2]
-    double[] w0_live;    // [lb/ft2]
+    double[] sv;        // [ft2/ft3]      
+    double[] sv_dead;   // [ft2/ft3]      
+    double[] sv_live;   // [ft2/ft3]
+    double[] w0;        // [lb/ft2]
+    double[] w0_dead;   // [lb/ft2]
+    double[] w0_live;   // [lb/ft2]
+    double[] Mf;        // [%]
     double[] M_dead;
     double[] M_live;
 
@@ -124,7 +129,7 @@ public class FuelBed extends RealTuple {
     // Intermediate values
     double W_prime;                 // computed in Mx_live
     double wn_dead, wn_live;        // computed in eta_M
-    double Mf_dead, Mf_live;        // computed in eta_M
+    double Mf_dead_t, Mf_live_t;        // computed in eta_M
     double eta_M_dead, eta_M_live;  // computed in eta_M for I_r
     double I_r_dead, I_r_live;      // computed in I_r
 
@@ -209,29 +214,44 @@ public class FuelBed extends RealTuple {
                 / (sv_d * w0_d + sv_h * w0_h);
 
         // Populate arrays used in formulas that sum fuel particle components
+        this.sv = new double[]{
+            deadFineSAV,
+            values[SAV_DEAD_10H_INDEX],
+            values[SAV_DEAD_100H_INDEX],
+            values[SAV_LIVE_HERB_INDEX],
+            values[SAV_LIVE_WOODY_INDEX]};
         this.sv_dead = new double[]{
             deadFineSAV,
             values[SAV_DEAD_10H_INDEX],
             values[SAV_DEAD_100H_INDEX]};
-
         this.sv_live = new double[]{
             values[SAV_LIVE_HERB_INDEX],
             values[SAV_LIVE_WOODY_INDEX]};
 
+        this.w0 = new double[]{
+            deadFineFuelLoad,
+            values[LOAD_DEAD_10H_INDEX],
+            values[LOAD_DEAD_100H_INDEX],
+            values[LOAD_LIVE_HERB_INDEX],
+            values[LOAD_LIVE_WOODY_INDEX]};
         this.w0_dead = new double[]{
             deadFineFuelLoad,
             values[LOAD_DEAD_10H_INDEX],
             values[LOAD_DEAD_100H_INDEX]};
-
         this.w0_live = new double[]{
             values[LOAD_LIVE_HERB_INDEX],
             values[LOAD_LIVE_WOODY_INDEX]};
 
+        this.Mf = new double[]{
+            fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
+            fuelMoisture.getDead10HrFuelMoisture().getValue(),
+            fuelMoisture.getDead100HrFuelMoisture().getValue(),
+            fuelMoisture.getLiveHerbFuelMoisture().getValue(),
+            fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
         this.M_dead = new double[]{
             fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
             fuelMoisture.getDead10HrFuelMoisture().getValue(),
             fuelMoisture.getDead100HrFuelMoisture().getValue()};
-
         this.M_live = new double[]{
             fuelMoisture.getLiveHerbFuelMoisture().getValue(),
             fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
@@ -418,11 +438,11 @@ public class FuelBed extends RealTuple {
 
             // Albini (1976): page 89:
             //  (Mx)_living = 2.9W'(1-(M'_f)_dead/(Mx)_dead) - 0.226 (min = Mx_dead)
-            Mf_dead = (sumDead > 0) ? (sumDeadMoisture / sumDead) : 0;
-            Mf_live = (sumLive > 0) ? (sumLiveMoisture / sumLive) : 0;
+            Mf_dead_t = (sumDead > 0) ? (sumDeadMoisture / sumDead) : 0;
+            Mf_live_t = (sumLive > 0) ? (sumLiveMoisture / sumLive) : 0;
             double Mx_dead = fuelModel.getMoistureOfExtinction().getValue();
             double Mx_live = Math.max(Mx_dead,
-                    (2.9 * W_prime * (1 - Mf_dead / Mx_dead) - 0.226) * 100);
+                    (2.9 * W_prime * (1 - Mf_dead_t / Mx_dead) - 0.226) * 100);
 
             this.liveMx = new Real(MX_LIVE, Mx_live);
         }
@@ -548,23 +568,16 @@ public class FuelBed extends RealTuple {
     /**
      * Gets the potential reaction velocity [1/min].
      *
-     * @return gamma
+     * @return gamma [1/min]
      */
     public Real getReactionVelocity() {
         if (nonBurnable) {
             return new Real(GAMMA, 0);
         }
         if (this.reactionVelocity == null) {
-            //  Rothermel 1972: eq. (68),(70) and Albini 1976: pg. 88
             double sigma = getCharacteristicSAV().getValue();
-            double sigma15 = Math.pow(sigma, 1.5);
             double beta_ratio = getRelativePackingRatio().getValue();
-            double A = 133. / Math.pow(sigma, 0.7913);    // Albini 
-            double gamma_max = sigma15 / (495. + 0.0594 * sigma15);
-            double gamma = gamma_max
-                    * Math.pow(beta_ratio, A)
-                    * Math.exp(A * (1. - beta_ratio));
-
+            double gamma = Rothermel.reactionVelocity(sigma, beta_ratio);
             this.reactionVelocity = new Real(GAMMA, gamma);
         }
         return reactionVelocity;
@@ -588,13 +601,96 @@ public class FuelBed extends RealTuple {
             double eta_M = getMoistureDamping().getValue();
             double eta_s = getMineralDamping().getValue();
             //double I_r = gamma * heat * eta_M * eta_s;
-            I_r_dead = gamma * heat * eta_M_dead * eta_s;
-            I_r_live = gamma * heat * eta_M_live * eta_s;
+            I_r_dead = Rothermel.reactionIntensity(gamma, heat, eta_M_dead, eta_s);
+            I_r_live = Rothermel.reactionIntensity(gamma, heat, eta_M_live, eta_s);
             double I_r = I_r_dead + I_r_live;
 
             reactionIntensity = new Real(I_R, I_r);
         }
         return reactionIntensity;
+    }
+
+    /**
+     * Gets the flame residence time [min].
+     *
+     * @return tau [min]
+     */
+    public Real getFlameResidenceTime() {
+        double sigma = getCharacteristicSAV().getValue();
+        double tau = Rothermel.flameResidenceTime(sigma);
+        return new Real(tau);
+    }
+
+    /**
+     * Gets the heat release per unit area [Btu/ft2].
+     *
+     * @return hpa [Btu/ft2]
+     */
+    public Real getHeatRelease() {
+        if (nonBurnable) {
+            return new Real(0);
+        }
+        double I_r = getReactionIntensity().getValue();
+        double tau = getFlameResidenceTime().getValue();
+        double hpa = Rothermel.heatRelease(I_r, tau);
+        return new Real(hpa);
+    }
+
+    /**
+     * Gets the propagating flux ratio.
+     *
+     * The no-wind propagating flux ratio is a function of the mean packing ratio (beta) and the
+     * characteristic SAV ratio (sigma).
+     *
+     * @return xi
+     */
+    public Real getPropagatingFluxRatio() {
+        double sigma = getCharacteristicSAV().getValue();
+        double beta = getMeanPackingRatio().getValue();
+        double xi = Rothermel.propagatingFluxRatio(sigma, beta);
+        return new Real(xi);
+    }
+
+    /**
+     * Gets the heat sink term.
+     *
+     * Rothermel (1972) atypically used the term heat sink to represent the heat per unit fuel-bed
+     * volume required for ignition.
+     *
+     * Typically, the heat required for ignition is represented by its contributing components: the
+     * effective mass (mass density of fuel to be heated to ignition) and the heat required to raise
+     * the temperature of that mass to ignition. See http://www.firewords.net
+     *
+     * Rothermel (1972): eq. (77) + (78)
+     */
+    public Real getHeatSink() {
+        if (nonBurnable) {
+            return new Real(0);
+        }
+        // Effective heating number for each particle: epsilon 
+        double[] epsilon = new double[sv.length];
+        for (int i = 0; i < epsilon.length; i++) {
+            epsilon[i] = Rothermel.effectiveHeatingNumber(sv[i]);
+        }
+
+        // Heat of Preignition for each particle: Q_ig
+        double[] Q_ig = new double[Mf.length];
+        for (int i = 0; i < Q_ig.length; i++) {
+            Q_ig[i] = Rothermel.heatOfPreignition(Mf[i]);
+        }
+
+        // sv * w0 weighting for each particle: sw
+        double[] sw = new double[sv.length];
+        for (int i = 0; i < sw.length; i++) {
+            sw[i] = sv[i] * w0[i];
+        }
+
+        double rho_b = getMeanBulkDensity().getValue();
+
+        // Heat Sink
+        double hsk = Rothermel.heatSink(Q_ig, epsilon, sw, rho_b);
+
+        return new Real(hsk);
     }
 
     /**
