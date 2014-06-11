@@ -27,13 +27,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wildfire.behavior;
+
+import com.emxsys.gis.api.Terrain;
+import com.emxsys.weather.api.Weather;
+import visad.Real;
 
 /**
  *
  * @author Bruce Schubert
  */
 public class FireReaction {
-    
+
+    private final FuelBed fuelBed;
+    private final Terrain terrain;
+    private final Real windSpd;
+    private final Real windDir;
+
+    public static FireReaction from(FuelBed fuelBed, Terrain terrain, Weather weather) {
+
+        return new FireReaction(fuelBed, terrain, weather.getWindSpeed(), weather.getWindDirection());
+    }
+
+    public FireReaction(FuelBed fuelBed, Terrain terrain, Real windSpd, Real windDir) {
+        this.fuelBed = fuelBed;
+        this.terrain = terrain;
+        this.windSpd = windSpd;
+        this.windDir = windDir;
+    }
+
+    public Real getRateOfSpread() {
+        return null;
+    }
 }
