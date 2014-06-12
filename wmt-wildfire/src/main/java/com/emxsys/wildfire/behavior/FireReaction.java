@@ -34,17 +34,14 @@ import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.weather.api.WeatherType;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
-import com.emxsys.wildfire.api.WildfireType;
 import static com.emxsys.wildfire.api.WildfireType.DIR_OF_SPREAD;
+import static com.emxsys.wildfire.api.WildfireType.FIRE_LINE_INTENSITY_US;
+import static com.emxsys.wildfire.api.WildfireType.FLAME_LENGTH_US;
 import static com.emxsys.wildfire.api.WildfireType.ROS;
 import static java.lang.Math.PI;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
-import static java.lang.Math.min;
-import static java.lang.Math.min;
-import static java.lang.Math.min;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -63,19 +60,23 @@ import visad.VisADException;
 public class FireReaction {
 
     private static final Logger logger = Logger.getLogger(FireReaction.class.getName());
+
+    // Inputs
     private final FuelBed fuelBed;
     private final Terrain terrain;
     private final Real windSpd;
     private final Real windDir;
 
+    // Outputs
     private Real rateOfSpread;
     private Real rateOfSpreadMax;
     private Real directionMaxSpread;
     private Real effectiveWindSpeed;
+    private Real firelineIntensity;
+    private Real flameLength;
 
+    // Intermediate wind and slope effects
     private double phiEw;           // Combined wind and slope factors
-    private double effectiveWnd;    // Effective wind speed [ft/min]
-    private double spreadDir;       // Spread direction [degrees]
 
     static {
         logger.setLevel(Level.ALL);
@@ -91,6 +92,16 @@ public class FireReaction {
         this.terrain = terrain;
         this.windSpd = windSpd;
         this.windDir = windDir;
+    }
+
+    public Real getRateOfSpread() {
+        if (!this.fuelBed.getIsBurnable()) {
+            return this.rateOfSpreadMax = new Real(ROS, 0);
+        }
+        if (this.rateOfSpreadMax == null) {
+            calcFireBehavior();
+        }
+        return this.rateOfSpreadMax;
     }
 
     public Real getRateOfSpreadNoWindNoSlope() {
@@ -116,45 +127,79 @@ public class FireReaction {
         return rateOfSpread;
     }
 
-    public Real getRateOfSpread() {
-        if (!this.fuelBed.getIsBurnable()) {
-            return this.rateOfSpreadMax = new Real(ROS, 0);
-        }
-        if (this.rateOfSpreadMax == null) {
-            calcWindAndSlopeEffects(windSpd, windDir,
-                    terrain.getAspect(), terrain.getSlope());
-            double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
-            double rosMax = 0;
-            if (phiEw <= 0) {
-                rosMax = ros0;  // No wind, no slope
-            } else {
-                rosMax = ros0 * (1 + phiEw);
-            }
-            this.rateOfSpreadMax = new Real(ROS, rosMax);
-            this.directionMaxSpread = new Real(DIR_OF_SPREAD, spreadDir);
-            this.effectiveWindSpeed = Reals.convertTo(WIND_SPEED_MPH, new Real(ROS, effectiveWnd));
-        }
-        return this.rateOfSpreadMax;
-    }
-
     public Real getDirectionMaxSpread() {
         if (this.directionMaxSpread == null) {
-            if (!this.fuelBed.getIsBurnable()) {
-                return this.directionMaxSpread = new Real(DIR_OF_SPREAD, 0);
+            if (this.fuelBed.getIsBurnable()) {
+                calcFireBehavior();
+            } else {
+                this.directionMaxSpread = new Real(DIR_OF_SPREAD, 0);
             }
-            getRateOfSpread();  // Sets direction of spread.
         }
         return this.directionMaxSpread;
     }
 
     public Real getEffectiveWindSpeed() {
         if (this.effectiveWindSpeed == null) {
-            if (!this.fuelBed.getIsBurnable()) {
-                return this.effectiveWindSpeed = new Real(WeatherType.WIND_SPEED_MPH, 0);
+            if (this.fuelBed.getIsBurnable()) {
+                calcFireBehavior();
+            } else {
+                this.effectiveWindSpeed = new Real(WIND_SPEED_MPH, 0);
             }
-            getRateOfSpread();  // Sets effective spread.
         }
         return this.effectiveWindSpeed;
+    }
+
+    public Real getFirelineIntensity() {
+        if (this.firelineIntensity == null) {
+            if (this.fuelBed.getIsBurnable()) {
+                calcFireBehavior();
+            } else {
+                this.firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, 0);
+            }
+        }
+        return this.firelineIntensity;
+    }
+
+    public Real getFlameLength() {
+        if (this.flameLength == null) {
+            if (this.fuelBed.getIsBurnable()) {
+                calcFireBehavior();
+            } else {
+                this.flameLength = new Real(FLAME_LENGTH_US, 0);
+            }
+        }
+        return this.flameLength;
+    }
+
+    protected void calcFireBehavior() {
+        if (this.fuelBed.getIsBurnable()) {
+            if (this.rateOfSpread == null) {
+
+                // Compute phiEw, effective wind and spread direction
+                calcWindAndSlopeEffects(windSpd, windDir,
+                        terrain.getAspect(), terrain.getSlope());
+
+                double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
+                double rosMax = 0;
+                if (phiEw <= 0) {
+                    rosMax = ros0;  // No wind, no slope
+                } else {
+                    rosMax = ros0 * (1 + phiEw);
+                }
+                this.rateOfSpread = new Real(ROS, ros0);
+                this.rateOfSpreadMax = new Real(ROS, rosMax);
+
+                double flameZoneDepth = Rothermel.flameZoneDepth(
+                        rosMax, fuelBed.getFlameResidenceTime().getValue());
+                double fli = Rothermel.firelineIntensity(
+                        flameZoneDepth, fuelBed.getReactionIntensity().getValue());
+                double fl = Rothermel.flameLength(fli);
+
+                // Outputs
+                this.firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, fli);
+                this.flameLength = new Real(FLAME_LENGTH_US, fl);
+            }
+        }
     }
 
     /**
@@ -218,18 +263,23 @@ public class FireReaction {
                 dirRad = slpRad - aRad + PI;
             }
             // Spread direction [degrees]
-            spreadDir = AngleUtil.normalize360(toDegrees(dirRad));
+            double spreadDirMax = AngleUtil.normalize360(toDegrees(dirRad));
 
             // Combined wind and slope factors
             phiEw = vl;
 
             // Effective windspeed [ft/min]
-            effectiveWnd = Rothermel.effectiveWindSpeed(phiEw, beta_ratio, sigma);
             // Rothermel eq. (87) sets an upper limit on the wind multiplication factor
+            double effectiveWnd = Rothermel.effectiveWindSpeed(phiEw, beta_ratio, sigma);
             if (effectiveWnd > 0.9 * I_r) {
                 effectiveWnd = min(effectiveWnd, 0.9 * I_r);
                 phiEw = Rothermel.windFactor(effectiveWnd, sigma, beta_ratio);
+
             }
+            // Outputs
+            this.directionMaxSpread = new Real(DIR_OF_SPREAD, spreadDirMax);
+            this.effectiveWindSpeed = Reals.convertTo(WIND_SPEED_MPH, new Real(ROS, effectiveWnd));
+
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);

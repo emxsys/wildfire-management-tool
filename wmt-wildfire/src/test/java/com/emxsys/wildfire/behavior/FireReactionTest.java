@@ -76,6 +76,8 @@ public class FireReactionTest {
     static final int ROS = 0;
     static final int SPD_DIR = 1;
     static final int EFF_WND_SPD = 2;
+    static final int FLI = 3;
+    static final int FL = 4;
 
     /*
      * Test data generator.
@@ -135,10 +137,11 @@ public class FireReactionTest {
 
             while (reader.readRecord()) {
                 expResults.put(reader.get("FM").toUpperCase(),
-                        new double[]{
-                            Double.parseDouble(reader.get("ROS")),
-                            Double.parseDouble(reader.get("SPD_DIR")),
-                            Double.parseDouble(reader.get("EFF_WND_SPD")),});
+                        new double[]{Double.parseDouble(reader.get("ROS")),
+                                     Double.parseDouble(reader.get("SPD_DIR")),
+                                     Double.parseDouble(reader.get("EFF_WND_SPD")),
+                                     Double.parseDouble(reader.get("FLI")),
+                                     Double.parseDouble(reader.get("FL")),});
             }
             System.out.println("");
             reader.toString();
@@ -146,31 +149,7 @@ public class FireReactionTest {
         }
     }
 
-    @Ignore
-    @Test
-    public void testFrom() {
-        System.out.println("from");
-        FuelBed fuelBed = null;
-        Terrain terrain = null;
-        Weather weather = null;
-        FireReaction expResult = null;
-        FireReaction result = FireReaction.from(fuelBed, terrain, weather);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
-    @Ignore
-    @Test
-    public void testGetRateOfSpreadNoWindNoSlope() {
-        System.out.println("getRateOfSpreadNoWindNoSlope");
-        FireReaction instance = null;
-        Real expResult = null;
-        Real result = instance.getRateOfSpreadNoWindNoSlope();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
     @Test
     public void testGetRateOfSpread() throws VisADException {
@@ -189,7 +168,7 @@ public class FireReactionTest {
         Real result = instance.getDirectionMaxSpread();
         double[] expected = expResults.get(fuelModelCode);
         double expResult = result.getValue();
-        double tolerance = 0.5;
+        double tolerance = 0.5; // degree
         assertEquals(fuelModelCode + ": spread dir [degrees]", expected[SPD_DIR], expResult, tolerance);
     }
 
@@ -199,8 +178,28 @@ public class FireReactionTest {
         Real result = instance.getEffectiveWindSpeed();
         double[] expected = expResults.get(fuelModelCode);
         double expResult = result.getValue();
-        double tolerance = 0.5;
+        double tolerance = 0.5; // mph
         assertEquals(fuelModelCode + ": eff wind speed [mph]", expected[EFF_WND_SPD], expResult, tolerance);
+    }
+
+    @Test
+    public void testGetFirelineIntensity() throws VisADException {
+        System.out.println("getFirelineIntensity : " + fuelModelCode);
+        Real result = instance.getFirelineIntensity();
+        double[] expected = expResults.get(fuelModelCode);
+        double expResult = Math.round(result.getValue());
+        double tolerance = expected[FLI] * 0.025; // 2.5%
+        assertEquals(fuelModelCode + ": fli [Btu/ft/s]", expected[FLI], expResult, tolerance);
+    }
+    @Test
+    public void testGetFlameLength() throws VisADException {
+        System.out.println("getFlameLength : " + fuelModelCode);
+        Real result = instance.getFlameLength();
+        double[] expected = expResults.get(fuelModelCode);
+        double expResult = result.getValue();
+        expResult = Math.round(expResult * 10) / 10.; // round to 1/10.
+        double tolerance = 0.25;    // 3"
+        assertEquals(fuelModelCode + ": fl [ft]", expected[FL], expResult, tolerance);
     }
 
 }

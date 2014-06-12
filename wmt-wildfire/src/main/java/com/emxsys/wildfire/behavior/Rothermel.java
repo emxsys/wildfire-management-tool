@@ -458,4 +458,54 @@ public class Rothermel {
         return ros;
     }
 
+    /**
+     * Calculates the flame zone depth: fzd.
+     *
+     * The depth, or front-to-back distance, of the actively flaming zone of a free spreading fire
+     * can be determined from the rate of spread and the particle-residence time. Albini 1976: pg.
+     * 86
+     *
+     * @param rateOfSpread The fire rate of spread (ros) [ft/min].
+     * @param flameResidenceTime The fuelbed's flame residence time [min].
+     *
+     * @return fzd [ft]
+     */
+    public static double flameZoneDepth(double rateOfSpread, double flameResidenceTime) {
+        double fzd = rateOfSpread * flameResidenceTime;
+        return fzd;
+    }
+
+    /**
+     * Calculates Byram's fireline intensity: I.
+     *
+     * Byram's intensity, I, is the rate of heat release per unit of fire edge. The reaction
+     * intensity, I_r, provided by Rothermel's spread model is the rate of energy release per unit
+     * area in the actively flaming zone.
+     *
+     * Albini 1976: eq. (16), pg. 86
+     *
+     * @param flameZoneDepth The depth of the actively flaming zone [ft].
+     * @param reactionIntensity The fuelbed's fire reaction intensity (I_r) [Btu/ft2/min].
+     *
+     * @return I [Btu/ft/s]
+     */
+    public static double firelineIntensity(double flameZoneDepth, double reactionIntensity) {
+        double I = reactionIntensity * flameZoneDepth / 60.;
+        return I;
+    }
+
+    /**
+     * Calculates flame length: L.
+     *
+     * Albini 1976: eq. (17) pg. 86
+     *
+     * @param firelineIntensity Byram's fireline intensity (I) [Btu/ft/s].
+     *
+     * @return L [ft]
+     */
+    public static double flameLength(double firelineIntensity) {
+        double L = 0.45 * pow(firelineIntensity, 0.46);
+        return L;
+    }
+
 }
