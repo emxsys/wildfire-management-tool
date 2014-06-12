@@ -75,6 +75,8 @@ public class FireUnit {
     public static final Unit kJ_m2 = getUnit("kJ/(m2)");
     /** Common unit for heat release per unit area - US */
     public static final Unit Btu_ft2 = getUnit("Btu/(ft2)");
+    /** Common unit for rate of spread - Rothermel */
+    public static final Unit ft_min = getUnit("ft/(minute)");
     /** Common unit for rate of spread - US */
     public static final Unit chain_hour = getUnit("chain/(hour)");
     /** Common unit for rate of spread - SI */
