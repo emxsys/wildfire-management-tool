@@ -62,9 +62,8 @@ import static com.emxsys.wildfire.api.WildfireType.I_R;
 import static com.emxsys.wildfire.api.WildfireType.MX_DEAD;
 import static com.emxsys.wildfire.api.WildfireType.MX_LIVE;
 import static com.emxsys.wildfire.api.WildfireType.RHO_B;
+import static com.emxsys.wildfire.api.WildfireType.RHO_P;
 import static com.emxsys.wildfire.api.WildfireType.SIGMA;
-import static java.lang.Math.exp;
-import static java.lang.Math.sqrt;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
@@ -204,7 +203,7 @@ public class FuelBed extends RealTuple {
 
         double[] values = getValues();
 
-        // Compute adjusted fine fuels
+        // Compute adjusted fine fuels (mix dead herbaceous with dead 1hr)
         double w0_d = values[LOAD_DEAD_1H_INDEX];
         double w0_h = values[LOAD_DEAD_HERB_INDEX];
         double sv_d = values[SAV_DEAD_1H_INDEX];
@@ -298,6 +297,7 @@ public class FuelBed extends RealTuple {
 
     /**
      * Gets the mean bulk density (fuel-bed weight per unit volume).
+     *
      * @return rho_b [lbs/ft3]
      */
     public Real getMeanBulkDensity() {
@@ -305,11 +305,20 @@ public class FuelBed extends RealTuple {
             return new Real(RHO_B, 0);
         }
         if (this.meanBulkDensity == null) {
-            double height = getFuelBedDepth().getValue();
-            double rho_b = w0_total / height;
+            double rho_b = Rothermel.meanBulkDensity(
+                    w0, getFuelBedDepth().getValue());
             this.meanBulkDensity = new Real(RHO_B, rho_b);
         }
         return this.meanBulkDensity;
+    }
+
+    /**
+     * Gets the oven-dry fuel-particle density.
+     *
+     * @return rho_p [lbs/ft3]
+     */
+    public Real getFuelParticleDensity() {
+        return new Real(RHO_P, 32); // Albini's constant.
     }
 
     /**
@@ -324,27 +333,16 @@ public class FuelBed extends RealTuple {
         if (nonBurnable) {
             return new Real(BETA, 0);
         } else if (this.meanPackingRatio == null) {
-            double rho_b = getMeanBulkDensity().getValue();
-            double beta = rho_b / rho_p;
-            // Rothermel 1972, p.18-19, values are between 0 and 0.12
-            if ((beta > 0.12) || (beta < 0)) {
-                throw new IllegalStateException(
-                        "Mean packing ration [beta] out of limits [0,0.12]: " + beta);
-            }
+            double beta = Rothermel.meanPackingRatio(
+                    getMeanBulkDensity().getValue(),
+                    getFuelParticleDensity().getValue());
             this.meanPackingRatio = new Real(BETA, beta);
         }
         return this.meanPackingRatio;
     }
 
     /**
-     * Gets the optimal packing ratio for the fuel.
-     *
-     * Optimum packing ratio is a term used in the Rothermel's (1972) surface fire spread model
-     * indicating the packing ratio that optimizes the reaction velocity term of the spread model.
-     * Optimum packing ratio is a function of the fineness of fuel particles, which is measured by
-     * the characteristic surface-area-to-volume ratio of the fuelbed. Optimum packing ratio does
-     * not optimize fire behavior (rate of spread or fireline intensity). Fire Science Glossary
-     * [electronic]. http://www.firewords.net
+     * Gets the optimal packing ratio for the fuel: beta_opt.
      *
      * @return beta_opt [dimensionless]
      */
@@ -352,8 +350,8 @@ public class FuelBed extends RealTuple {
         if (nonBurnable) {
             return new Real(BETA_OPT, 0);
         }
-        double sigma = getCharacteristicSAV().getValue();
-        double beta_opt = 3.348 * Math.pow(sigma, -0.8189);
+        double beta_opt = Rothermel.optimalPackingRatio(
+                getCharacteristicSAV().getValue());
         return new Real(BETA_OPT, beta_opt);
     }
 
@@ -375,31 +373,14 @@ public class FuelBed extends RealTuple {
     /**
      * Gets the characteristic surface-area-to-volume ratio for the fuel complex.
      *
-     * In Rothermel's (1972) surface fire spread model, characteristic surface-area-to-volume (SAV)
-     * ratio constitutes the fuelbed-average SAV weighted by particle surface area. Surface-area
-     * weighting emphasizes fine fuel because finer fuel particles have larger SAV ratios. Fire
-     * Science Glossary [electronic]. http://www.firewords.net
-     *
-     * @return sigma [surface-area/volume]
+     * @return sigma [ft2/ft3]
      */
     public Real getCharacteristicSAV() {
         if (nonBurnable) {
             return new Real(SIGMA, 0);
         }
         if (this.characteristicSAV == null) {
-            // Rothermel 1972: eq. (71) and (72)
-            double sumSavWeight = 0.;       // sw = (sv_total * w)
-            double sumSavSqWeight = 0.;     // s2w = (sv_total^2 * w)
-            for (int i = 0; i < sv_dead.length; i++) {
-                sumSavWeight += sv_dead[i] * w0_dead[i];
-                sumSavSqWeight += sv_dead[i] * sv_dead[i] * w0_dead[i];
-            }
-            for (int i = 0; i < sv_live.length; i++) {
-                sumSavWeight += sv_live[i] * w0_live[i];
-                sumSavSqWeight += sv_live[i] * sv_live[i] * w0_live[i];
-            }
-            double sigma = sumSavSqWeight / sumSavWeight;
-
+            double sigma = Rothermel.characteristicSAV(sv, w0);
             this.characteristicSAV = new Real(SIGMA, sigma);
         }
         return characteristicSAV;
@@ -575,9 +556,9 @@ public class FuelBed extends RealTuple {
             return new Real(GAMMA, 0);
         }
         if (this.reactionVelocity == null) {
-            double sigma = getCharacteristicSAV().getValue();
-            double beta_ratio = getRelativePackingRatio().getValue();
-            double gamma = Rothermel.reactionVelocity(sigma, beta_ratio);
+            double gamma = Rothermel.reactionVelocity(
+                    getCharacteristicSAV().getValue(),
+                    getRelativePackingRatio().getValue());
             this.reactionVelocity = new Real(GAMMA, gamma);
         }
         return reactionVelocity;
@@ -611,18 +592,17 @@ public class FuelBed extends RealTuple {
     }
 
     /**
-     * Gets the flame residence time [min].
+     * Gets the flame residence time.
      *
      * @return tau [min]
      */
     public Real getFlameResidenceTime() {
-        double sigma = getCharacteristicSAV().getValue();
-        double tau = Rothermel.flameResidenceTime(sigma);
+        double tau = Rothermel.flameResidenceTime(getCharacteristicSAV().getValue());
         return new Real(tau);
     }
 
     /**
-     * Gets the heat release per unit area [Btu/ft2].
+     * Gets the heat release per unit area.
      *
      * @return hpa [Btu/ft2]
      */
@@ -630,9 +610,9 @@ public class FuelBed extends RealTuple {
         if (nonBurnable) {
             return new Real(0);
         }
-        double I_r = getReactionIntensity().getValue();
-        double tau = getFlameResidenceTime().getValue();
-        double hpa = Rothermel.heatRelease(I_r, tau);
+        double hpa = Rothermel.heatRelease(
+                getReactionIntensity().getValue(),
+                getFlameResidenceTime().getValue());
         return new Real(hpa);
     }
 
@@ -645,9 +625,9 @@ public class FuelBed extends RealTuple {
      * @return xi
      */
     public Real getPropagatingFluxRatio() {
-        double sigma = getCharacteristicSAV().getValue();
-        double beta = getMeanPackingRatio().getValue();
-        double xi = Rothermel.propagatingFluxRatio(sigma, beta);
+        double xi = Rothermel.propagatingFluxRatio(
+                getCharacteristicSAV().getValue(),
+                getMeanPackingRatio().getValue());
         return new Real(xi);
     }
 
@@ -834,6 +814,13 @@ public class FuelBed extends RealTuple {
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    /**
+     * Gets the fuel bed depth.
+     */
+    public FuelModel getFuelModel() {
+        return this.fuelModel;
     }
 
     /**
