@@ -33,7 +33,7 @@ import static java.lang.Math.*;
 import java.util.logging.Logger;
 
 /**
- * The Rothermel fire spread model.
+ * The Rothermel fire spread model developed for BEHAVE.
  * <ul>
  * <li style="bullet"><a name="bib_1000"></a>Albini, F.A., 1976, Estimating Wildfire Behavior and
  * Effects, General Technical Report INT-30, USDA Forest Service, Intermountain Forest and Range
@@ -51,7 +51,98 @@ public class Rothermel {
     private static final Logger logger = Logger.getLogger(Rothermel.class.getName());
 
     /**
-     * Calculates the potential reaction velocity [1/min].
+     * Calculates the mean bulk density (fuel-bed weight per unit volume): rho_b.
+     *
+     * @param w0_total An array of fuel particle loading values [lb/ft2].
+     * @param height The fuel bed height [ft].
+     *
+     * @return rho_b [lbs/ft3]
+     */
+    public static double meanBulkDensity(double[] w0, double height) {
+        if (height <= 0) {
+            throw new IllegalArgumentException("height must be > 0.");
+        }
+        double w0_t = 0;
+        for (double w : w0) {
+            w0_t += w;
+        }
+        double rho_b = w0_t / height;
+        return rho_b;
+    }
+
+    /**
+     * Calculates the mean packing ratio for the fuel: beta.
+     *
+     * The compactness of the fuel bed is defined by the packing ratio, which is defined as the
+     * fraction of the fuel array volume that is occupied by the fuel. Rothermel 1972: eq. (74)
+     *
+     * @param rho_b The mean bulk density of the fuel bed [lbs/ft3].
+     * @param rho_p The oven-dry fuel-particle density [lbs/ft3].
+     *
+     * @return beta [dimensionless]
+     */
+    public static double meanPackingRatio(double rho_b, double rho_p) {
+        if (rho_p <= 0) {
+            throw new IllegalArgumentException("rho_p must be > 0.");
+        }
+        double beta = rho_b / rho_p;
+        if ((beta > 0.12) || (beta < 0)) {
+            throw new IllegalStateException(
+                    "Mean packing ration [beta] out of limits [0,0.12]: " + beta);
+        }
+        return beta;
+    }
+
+    /**
+     * Computes the optimal packing ratio for the fuel: beta_opt.
+     *
+     * Optimum packing ratio is a term used in the Rothermel's (1972) surface fire spread model
+     * indicating the packing ratio that optimizes the reaction velocity term of the spread model.
+     * Optimum packing ratio is a function of the fineness of fuel particles, which is measured by
+     * the characteristic surface-area-to-volume ratio of the fuelbed. Optimum packing ratio does
+     * not optimize fire behavior (rate of spread or fireline intensity). Fire Science Glossary
+     * [electronic]. http://www.firewords.net
+     *
+     * @param sigma The characteristic SAV ratio for the fuel complex [ft2/ft3].
+     *
+     * @return beta_opt [dimensionless]
+     */
+    public static double optimalPackingRatio(double sigma) {
+        double beta_opt = 3.348 * pow(sigma, -0.8189);
+        return beta_opt;
+    }
+
+    /**
+     * Computes the characteristic surface-area-to-volume ratio for the fuel complex: sigma.
+     *
+     * In Rothermel's (1972) surface fire spread model, characteristic surface-area-to-volume (SAV)
+     * ratio constitutes the fuelbed-average SAV weighted by particle surface area. Surface-area
+     * weighting emphasizes fine fuel because finer fuel particles have larger SAV ratios. Fire
+     * Science Glossary [electronic]. http://www.firewords.net
+     *
+     * Rothermel 1972: eq. (71) and (72).
+     *
+     * @param sv An array of fuel particle SAV ratio values [ft2/ft3].
+     * @param w0 An array of fuel particle loading values [lbs/ft2].
+     *
+     * @return sigma [ft2/ft3]
+     */
+    public static double characteristicSAV(double[] sv, double[] w0) {
+        double sw_t = 0.;     // sw = (sv * w)
+        double s2w_t = 0.;    // s2w = (sv^2 * w)
+        for (int i = 0; i < sv.length; i++) {
+            sw_t += sv[i] * w0[i];
+            s2w_t += sv[i] * sv[i] * w0[i];
+        }
+        if (sw_t <= 0) {
+            throw new IllegalArgumentException("w0 total loading must be > 0.");
+        }
+        double sigma = s2w_t / sw_t;
+        return sigma;
+    }
+
+    /**
+     * Calculates the potential reaction velocity: gamma.
      *
      * Rothermel 1972: eq. (68),(70) and Albini 1976: pg. 88
      *
@@ -68,7 +159,7 @@ public class Rothermel {
     }
 
     /**
-     * Calculates the reaction intensity [BTU/ft2/min].
+     * Calculates the reaction intensity: I_r.
      *
      * The rate of heat release, per unit area of the flaming fire front, expressed as heat
      * energy/area/time, such as Btu/square foot/minute, or Kcal/square meter/second.
@@ -80,7 +171,7 @@ public class Rothermel {
      * @param eta_M The moisture damping coefficient.
      * @param eta_s The mineral damping coefficient.
      *
-     * @return I_r.
+     * @return I_r [BTU/ft2/min].
      */
     public static double reactionIntensity(double gamma, double heat, double eta_M, double eta_s) {
         double I_r = gamma * heat * eta_M * eta_s;
@@ -88,7 +179,7 @@ public class Rothermel {
     }
 
     /**
-     * Calculates the flame residence time: tau [min].
+     * Calculates the flame residence time: tau.
      *
      * Albini (1976): p.91
      *
@@ -96,15 +187,19 @@ public class Rothermel {
      * @return tau [min].
      */
     public static double flameResidenceTime(double sigma) {
+        if (sigma <= 0) {
+            throw new IllegalArgumentException("sigma must be > 0.");
+        }
         double tau = 384. / sigma;
         return tau;
     }
 
     /**
-     * Calculates the heat release per unit area [Btu/ft2].
+     * Calculates the heat release per unit area: hpa.
      *
      * @param I_r The reaction intensity [Btu/ft2/min].
      * @param tau The flame residence time [min].
+     *
      * @return hpa [Btu/ft2]
      */
     public static double heatRelease(double I_r, double tau) {
@@ -122,9 +217,13 @@ public class Rothermel {
      *
      * @param sigma The characteristic SAV ratio [ft2/ft3].
      * @param beta The mean packing ratio [-]
+     *
      * @return xi
      */
     public static double propagatingFluxRatio(double sigma, double beta) {
+        if (sigma <= 0) {
+            throw new IllegalArgumentException("sigma must be > 0.");
+        }
         double xi = exp((0.792 + 0.681 * sqrt(sigma)) * (beta + 0.1)) / (192 + 0.2595 * sigma);
         return xi;
     }
@@ -132,9 +231,10 @@ public class Rothermel {
     /**
      * Calculates the effective heating number: epsilon.
      *
-     * Rothermel 1972: eq. (77).
+     * Rothermel 1972: eq. (14) and (77).
      *
-     * @param sv The SAV ratio for an individual particle [ft2/ft3].
+     * @param sv The SAV ratio value for an individual particle [ft2/ft3].
+     *
      * @return epsilon.
      */
     public static double effectiveHeatingNumber(double sv) {
@@ -148,9 +248,10 @@ public class Rothermel {
     /**
      * Calculates the heat of preignition: Q_ig.
      *
-     * Rothermel 1972: eq. (78).
+     * Rothermel 1972: eq. (12) and (78).
      *
-     * @param Mf The fuel moisture for an individual fuel particle [%].
+     * @param Mf The fuel moisture value for an individual fuel particle [%].
+     *
      * @retrn Q_ig.
      */
     public static double heatOfPreignition(double Mf) {
@@ -159,25 +260,202 @@ public class Rothermel {
     }
 
     /**
-     * Calculates the heat sink term [Btu/ft3].
+     * Calculates the heat sink term: hsk.
      *
      * Rothermel 1972: eq. (77).
      *
-     * @param Q_ig An array of heat of preignition values for individual particles.
-     * @param epsilon An array of effective heating number values for individual particles.
-     * @param sw An array of (sv * w0) weighting values for individual fuel particles.
-     * @param rho_b The mean bulk density for the fuel complex.
+     * @param preignitionHeat An array of heat of preignition values for individual particles
+     * (Q_ig).
+     * @param effectiveHeating An array of effective heating number values for individual particles
+     * (epsilon).
+     * @param sw An array of (sv * w0) weighting values for individual fuel particles (sw).
+     * @param density The mean bulk density for the fuel complex (rho_b).
      *
      * @return hsk [Btu/ft3]
      */
-    public static double heatSink(double[] Q_ig, double[] epsilon, double[] sw, double rho_b) {
-        double Qig_t = 0;
-        double sw_t = 0;
+    public static double heatSink(double[] preignitionHeat, double[] effectiveHeating, double[] sw, double density) {
+        double Qig_t = 0;   // sum[i=1,n][Qig_i]
+        double sw_t = 0;    // sum[i=1,n][sw_i]
         for (int i = 0; i < sw.length; i++) {
-            Qig_t += Q_ig[i] * epsilon[i] * sw[i];
+            Qig_t += preignitionHeat[i] * effectiveHeating[i] * sw[i];
             sw_t += sw[i];
         }
-        double hsk = rho_b * (Qig_t / sw_t);
+        double hsk = density * (Qig_t / sw_t);
         return hsk;
     }
+
+    /**
+     * Calculates the wind factor: phi_w.
+     *
+     * Rothermel 1972: eq. (47) and (79),(82),(83),(84)
+     *
+     * @param midFlameWindSpd The wind speed at mid-flame height [ft/min].
+     * @param sigma The characteristic SAV ratio for the fuelbed [ft2/ft3].
+     * @param beta_ratio The relative packing ratio [beta/beta_opt].
+     *
+     * @return phi_w
+     */
+    public static double windFactor(double midFlameWindSpd, double sigma, double beta_ratio) {
+        double C = windParameterC(sigma);
+        double B = windParameterB(sigma);
+        double E = windParameterE(sigma);
+        double phi_w = windFactor(midFlameWindSpd, C, B, E, beta_ratio);
+        return phi_w;
+    }
+
+    /**
+     * Calculates the wind multiplier for the rate of spread: phi_w.
+     *
+     * Rothermel 1972: eq. (47)
+     *
+     * @param midFlameWindSpd The wind speed at mid-flame height [ft/min].
+     * @param C Result from Rothermel 1972: eq. (48).
+     * @param B Result from Rothermel 1972: eq. (49).
+     * @param E Result from Rothermel 1972: eq. (50).
+     * @param beta_ratio The relative packing ratio [beta/beta_opt].
+     *
+     * @return phi_w
+     */
+    public static double windFactor(double midFlameWindSpd, double C, double B, double E, double beta_ratio) {
+        double phi_w = C * pow(midFlameWindSpd, B) * pow(beta_ratio, -E);
+        return phi_w;
+    }
+
+    /**
+     * Calculates the wind parameter C.
+     *
+     * Rothermel 1972: eq. (48)
+     *
+     * @param sigma The characteristic SAV ratio for the fuelbed [ft2/ft3].
+     *
+     * @return C
+     */
+    public static double windParameterC(double sigma) {
+        double C = 7.47 * exp(-0.133 * pow(sigma, 0.55));
+        return C;
+    }
+
+    /**
+     * Calculates the wind parameter B.
+     *
+     * Rothermel 1972: eq. (49)
+     *
+     * @param sigma The characteristic SAV ratio for the fuelbed [ft2/ft3].
+     *
+     * @return B
+     */
+    public static double windParameterB(double sigma) {
+        double B = 0.02526 * pow(sigma, 0.54);
+        return B;
+    }
+
+    /**
+     * Calculates the wind parameter E.
+     *
+     * Rothermel 1972: eq. (50)
+     *
+     * @param sigma The characteristic SAV ratio for the fuelbed [ft2/ft3].
+     *
+     * @return E
+     */
+    public static double windParameterE(double sigma) {
+        double E = 0.715 * exp(-0.000359 * sigma);
+        return E;
+    }
+
+    /**
+     * Calculates the slope multiplier for the rate of spread: phi_s.
+     *
+     * Rothermel 1972: eq. (51) and (78)
+     *
+     * @param slopeDegrees The steepness of the slope [degrees].
+     * @param beta The mean packing ratio.
+     *
+     * @return phi_s
+     */
+    public static double slopeFactor(double slopeDegrees, double beta) {
+        double phi = toRadians(slopeDegrees);
+        double tan_phi = tan(phi);
+        double phi_s = 5.275 * pow(beta, -0.3) * pow(tan_phi, 2);
+        return phi_s;
+    }
+
+    /**
+     * Calculates the effective wind speed from the combined wind and slope factors: efw.
+     *
+     * Rothermel 1972: eq. (87)
+     *
+     * @param phiEw The combined wind and slope factors [phiW + phiS].
+     * @param I_r
+     * @param beta_ratio
+     * @param sigma
+     * @return efw [ft/min]
+     */
+    public static double effectiveWindSpeed(double phiEw, double beta_ratio, double sigma) {
+        double C = windParameterC(sigma);
+        double B = windParameterB(sigma);
+        double E = windParameterE(sigma);
+        double efw = effectiveWindSpeed(phiEw, C, B, E, beta_ratio);
+        return efw;
+    }
+
+    /**
+     * Calculates the effective wind speed from the combined wind and slope factors: efw.
+     *
+     * Rothermel 1972: eq. (87)
+     *
+     * @param phiEw The combined wind and slope factors [phiW + phiS].
+     * @param C Result from Rothermel 1972: eq. (48).
+     * @param B Result from Rothermel 1972: eq. (49).
+     * @param E Result from Rothermel 1972: eq. (50).
+     * @param beta_ratio
+     * @return efw [ft/min]
+     */
+    public static double effectiveWindSpeed(double phiEw, double C, double B, double E, double beta_ratio) {
+        // Effective windspeed: actually this is only the inverse function of phi_w
+        double efw = (pow(phiEw / (C * pow(beta_ratio, -E)), 1 / B));
+        return efw;
+    }
+
+    /**
+     * Calculates the rate of spread with wind and/or slope: ros.
+     *
+     * Rothermel 1972: eq. (52) - heat source / heat sink
+     *
+     * @param reactionIntensity The fire reaction intensity (I_r) [BTU/ft2/min].
+     * @param propogatingFlux The fire propagating flux (xi) [fraction].
+     * @param windFactor The wind coefficient (phi_w).
+     * @param slopeFactor The slope coefficient (phi_s).
+     * @param heatSink The total heat sink (hsk) [Btu/ft3].
+     *
+     * @return ros [ft/min]
+     */
+    public static double rateOfSpread(double reactionIntensity, double propogatingFlux,
+                                      double windFactor, double slopeFactor, double heatSink) {
+        if (heatSink <= 0) {
+            throw new IllegalArgumentException("hsk must be > 0.");
+        }
+        double ros = (reactionIntensity * propogatingFlux * (1 + windFactor + slopeFactor)) / heatSink;
+        return ros;
+    }
+
+    /**
+     * Calculates the rate of spread without wind and slope: ros.
+     *
+     * Rothermel 1972: eq. (52) - heat source / heat sink
+     *
+     * @param reactionIntensity The fire reaction intensity (I_r) [BTU/ft2/min].
+     * @param propogatingFlux The fire propagating flux (xi) [fraction].
+     * @param heatSink The total heat sink (hsk) [Btu/ft3].
+     *
+     * @return ros [ft/min]
+     */
+    public static double rateOfSpreadNoWindNoSlope(double reactionIntensity, double propogatingFlux, double heatSink) {
+        if (heatSink <= 0) {
+            throw new IllegalArgumentException("hsk must be > 0.");
+        }
+        double ros = (reactionIntensity * propogatingFlux) / heatSink;
+        return ros;
+    }
+
 }
