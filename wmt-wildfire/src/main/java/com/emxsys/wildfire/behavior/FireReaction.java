@@ -32,11 +32,19 @@ package com.emxsys.wildfire.behavior;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.FireUnit;
+import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
+import com.emxsys.weather.api.WeatherType;
+import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
+import com.emxsys.wildfire.api.WildfireType;
+import static com.emxsys.wildfire.api.WildfireType.DIR_OF_SPREAD;
 import static com.emxsys.wildfire.api.WildfireType.ROS;
 import static java.lang.Math.PI;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
+import static java.lang.Math.min;
+import static java.lang.Math.min;
+import static java.lang.Math.min;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -62,7 +70,7 @@ public class FireReaction {
 
     private Real rateOfSpread;
     private Real rateOfSpreadMax;
-    private Real spreadDirectionMax;
+    private Real directionMaxSpread;
     private Real effectiveWindSpeed;
 
     private double phiEw;           // Combined wind and slope factors
@@ -97,9 +105,6 @@ public class FireReaction {
             this.rateOfSpread = new Real(ROS, ros);
 
             try {
-                System.out.println(String.format("ROS [%1$s] (Wind=0,Slope=0): {%2$s} [chn/hr]",
-                        fuelBed.getFuelModel().getModelCode(),
-                        rateOfSpread.getValue(FireUnit.chain_hour)));
                 if (logger.isLoggable(Level.FINE)) {
                     logger.log(Level.FINE, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
                             new Object[]{fuelBed.getFuelModel().getModelCode(),
@@ -116,21 +121,40 @@ public class FireReaction {
             return this.rateOfSpreadMax = new Real(ROS, 0);
         }
         if (this.rateOfSpreadMax == null) {
-
-            calcWindAndSlopeEffects(windSpd, windDir, terrain.getAspect(), terrain.getSlope());
-
+            calcWindAndSlopeEffects(windSpd, windDir,
+                    terrain.getAspect(), terrain.getSlope());
             double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
             double rosMax = 0;
-
             if (phiEw <= 0) {
                 rosMax = ros0;  // No wind, no slope
             } else {
                 rosMax = ros0 * (1 + phiEw);
             }
             this.rateOfSpreadMax = new Real(ROS, rosMax);
+            this.directionMaxSpread = new Real(DIR_OF_SPREAD, spreadDir);
+            this.effectiveWindSpeed = Reals.convertTo(WIND_SPEED_MPH, new Real(ROS, effectiveWnd));
         }
         return this.rateOfSpreadMax;
+    }
 
+    public Real getDirectionMaxSpread() {
+        if (this.directionMaxSpread == null) {
+            if (!this.fuelBed.getIsBurnable()) {
+                return this.directionMaxSpread = new Real(DIR_OF_SPREAD, 0);
+            }
+            getRateOfSpread();  // Sets direction of spread.
+        }
+        return this.directionMaxSpread;
+    }
+
+    public Real getEffectiveWindSpeed() {
+        if (this.effectiveWindSpeed == null) {
+            if (!this.fuelBed.getIsBurnable()) {
+                return this.effectiveWindSpeed = new Real(WeatherType.WIND_SPEED_MPH, 0);
+            }
+            getRateOfSpread();  // Sets effective spread.
+        }
+        return this.effectiveWindSpeed;
     }
 
     /**
@@ -157,6 +181,7 @@ public class FireReaction {
             double beta_ratio = fuelBed.getRelativePackingRatio().getValue();
             double I_r = fuelBed.getReactionIntensity().getValue();
 
+            // TODO: Convert windspeed from 20' to midflame
             // Get wind and slope cooefficients (phiW and phiS)
             double windFactor = Rothermel.windFactor(
                     windSpd.getValue(FireUnit.ft_min),
