@@ -165,6 +165,11 @@ public class WildfireType {
     public static final RealType HEAT_SINK;
     /** Reaction Intensity: [BTU/ft2/min] */
     public static final RealType I_R;
+    /** Rate of Spread: [ft/min] */
+    public static final RealType ROS;
+
+    
+    
     /** Fuel combustible tuple */
     public final static RealTupleType COMBUSTIBLE;
 
@@ -282,6 +287,7 @@ public class WildfireType {
         ETA_S =  RealType.getRealType("mineral_damping_coefficient",  CommonUnit.dimensionless, null);
         ETA_M =  RealType.getRealType("moisture_damping_coefficient",  CommonUnit.dimensionless, null);
         I_R =  RealType.getRealType("reaction_intensity:BTU/ft2/min", FireUnit.Btu_ft2_min, null);
+        ROS =  RealType.getRealType("rate_of_spread:ft/min", FireUnit.ft_min, null);
         
         
         COMBUSTIBLE = newRealTupleType(
