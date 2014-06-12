@@ -817,10 +817,14 @@ public class FuelBed extends RealTuple {
     }
 
     /**
-     * Gets the fuel bed depth.
+     * Gets the fuel model used to construct the fuel bed.
      */
     public FuelModel getFuelModel() {
         return this.fuelModel;
+    }
+    
+    public boolean getIsBurnable() {
+        return !this.nonBurnable;
     }
 
     /**
