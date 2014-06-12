@@ -8,8 +8,14 @@ Without this configuration present, some functionality in the IDE may be limited
 -->
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>Albini</word>
+        <word>eq</word>
         <word>fireground</word>
+        <word>fireline</word>
+        <word>fuelbed</word>
+        <word>Intermountain</word>
         <word>Rothermel</word>
+        <word>Rothermel's</word>
+        <word>wildland</word>
     </spellchecker-wordlist>
     <properties xmlns="http://www.netbeans.org/ns/maven-properties-data/1">
         <!--
