@@ -107,6 +107,19 @@ public class FireReactionTest {
      * Parameterized Constructor. The JUnit test runner will instantiate this class once for every
      * element in the Collection returned by the method annotated with {@code @Parameters}. See
      * generateParams().
+     * 
+     * Fuel Moisture
+     *  1-h Moisture 	% 	6
+  	 *  10-h Moisture 	% 	7
+  	 *  100-h Moisture 	% 	8
+  	 *  Live Herbaceous Moisture    % 70
+  	 *  Live Woody Moisture         % 70
+     * Weather
+  	 *  Midflame Wind Speed         mi/h 5
+     *  Direction of Wind Vector (from upslope) 	deg 35
+     * Terrain
+     *  Slope Steepness 	% 30
+     * 
      * @param model
      * @param moisture
      */
@@ -114,8 +127,9 @@ public class FireReactionTest {
     public FireReactionTest(FuelModel model, FuelMoisture moisture) {
         fuelbed = FuelBed.from(model, moisture);
         fuelModelCode = model.getModelCode();
-        Terrain terrain = new TerrainTuple(0, 17.458, 0);
-        instance = new FireReaction(fuelbed, terrain, new Real(WIND_SPEED_MPH, 5), new Real(WIND_DIR, 225));
+        Terrain terrain = new TerrainTuple(180, 16.7, 0);
+        instance = new FireReaction(fuelbed, terrain,
+                new Real(WIND_SPEED_MPH, 5), new Real(WIND_DIR, 215));
     }
 
     @BeforeClass
@@ -167,7 +181,10 @@ public class FireReactionTest {
         System.out.println("getRateOfSpread : " + fuelModelCode);
         Real result = instance.getRateOfSpread();
         double[] expected = expResults.get(fuelModelCode);
-        assertEquals(fuelModelCode + ": ros [ch/hr]", expected[ROS], result.getValue(FireUnit.chain_hour), expected[ROS] * 0.01);
+        double expResult = result.getValue(FireUnit.chain_hour);
+        expResult = Math.round(expResult * 10) / 10.;
+        double tolerance = 0.25;
+        assertEquals(fuelModelCode + ": ros [ch/hr]", expected[ROS], expResult ,tolerance);
     }
 
 }

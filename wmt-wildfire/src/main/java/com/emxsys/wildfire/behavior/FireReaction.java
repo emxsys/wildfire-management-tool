@@ -86,7 +86,9 @@ public class FireReaction {
     }
 
     public Real getRateOfSpreadNoWindNoSlope() {
-
+        if (!this.fuelBed.getIsBurnable()) {
+            return this.rateOfSpreadMax = new Real(ROS, 0);
+        }
         if (this.rateOfSpread == null) {
             double ros = Rothermel.rateOfSpreadNoWindNoSlope(
                     fuelBed.getReactionIntensity().getValue(),
@@ -110,19 +112,20 @@ public class FireReaction {
     }
 
     public Real getRateOfSpread() {
+        if (!this.fuelBed.getIsBurnable()) {
+            return this.rateOfSpreadMax = new Real(ROS, 0);
+        }
         if (this.rateOfSpreadMax == null) {
 
             calcWindAndSlopeEffects(windSpd, windDir, terrain.getAspect(), terrain.getSlope());
 
             double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
             double rosMax = 0;
-            double dirMax = 0;
+
             if (phiEw <= 0) {
-                // No wind, no slope
-                rosMax = ros0;
+                rosMax = ros0;  // No wind, no slope
             } else {
                 rosMax = ros0 * (1 + phiEw);
-                dirMax = spreadDir;
             }
             this.rateOfSpreadMax = new Real(ROS, rosMax);
         }
