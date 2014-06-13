@@ -31,12 +31,10 @@ package com.emxsys.wildfire.behavior;
 
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
 import java.util.HashMap;
 import java.util.Objects;
-import visad.RealTuple;
 
 /**
  *
@@ -44,8 +42,32 @@ import visad.RealTuple;
  */
 public class FireBehaviorModel {
 
+    private final HashMap<FuelScenario, FuelBed> fuelbeds = new HashMap<>();
+    private final HashMap<FuelBed, FireReaction> reactions = new HashMap<>();
+
+    public FireReaction computeFireBehavior(FuelModel fuelModel,
+                                            FuelMoisture fuelMoisture,
+                                            Weather weather,
+                                            Terrain terrain) {
+
+        FuelScenario scenario = new FuelScenario(fuelModel, fuelMoisture);
+        FuelBed fuelbed = fuelbeds.get(scenario);
+        if (fuelbed == null) {
+            fuelbed = FuelBed.from(fuelModel, fuelMoisture);
+            fuelbeds.put(scenario, fuelbed);
+        }
+
+        FireReaction reaction = reactions.get(fuelbed);
+        if (reaction == null) {
+            reaction = FireReaction.from(fuelbed, weather, terrain);
+            reactions.put(fuelbed, reaction);
+        }
+
+        return reaction;
+    }
+
     /**
-     * A simple POD used as a key in the characteristics HashMap.
+     * A simple POD structure used as a key in the 'fuelbeds' HashMap.
      */
     private class FuelScenario {
 
@@ -82,30 +104,5 @@ public class FireBehaviorModel {
             }
             return true;
         }
-
-    }
-
-    private final HashMap<FuelScenario, FuelBed> fuelBeds = new HashMap<>();
-    private final HashMap<FuelBed, RealTuple> combustibles = new HashMap<>();
-
-    public FireEnvironment computeFireBehavior(FuelModel fuelModel,
-                                               FuelMoisture fuelMoisture,
-                                               Weather weather,
-                                               Terrain terrain) {
-
-        FuelScenario scenario = new FuelScenario(fuelModel, fuelMoisture);
-
-        FuelBed fuel = fuelBeds.get(scenario);
-        if (fuel == null) {
-            fuel = FuelBed.from(fuelModel, fuelMoisture);
-            fuelBeds.put(scenario, fuel);
-        }
-
-        RealTuple combustible = combustibles.get(fuel);
-        if (combustible == null) {
-            //combustible = Rothermel.getFuelCombustible(fuel);
-            //combustibles.put(fuel, combustible);
-        }
-        return null;
     }
 }
