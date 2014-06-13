@@ -582,4 +582,26 @@ public class StdFuelModel implements FuelModel {
 
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 61 * hash + this.modelNo;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StdFuelModel other = (StdFuelModel) obj;
+        if (this.modelNo != other.modelNo) {
+            return false;
+        }
+        return true;
+    }
+
 }
