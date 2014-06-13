@@ -275,7 +275,7 @@ public class BehaveTest {
             }
             fail("invalid model code: " + instance.fuelModelCode);
         }
-        System.out.println(BehaveReporter.report(instance));
+        //System.out.println(BehaveReporter.report(instance));
         Map<String, Double> results = instance.getMaxSpreadResults();
         if (fuelModel.getModelCode().equalsIgnoreCase("SH9")) {
             assumeTrue(MathUtil.nearlyEquals(expected[I_R], results.get("I_r"), 50));

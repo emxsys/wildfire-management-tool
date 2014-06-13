@@ -124,8 +124,11 @@ public class FireReactionTest {
         fuelbed = FuelBed.from(model, moisture);
         fuelModelCode = model.getModelCode();
         Terrain terrain = new TerrainTuple(180, 16.7, 0);
-        instance = new FireReaction(fuelbed, terrain,
-                new Real(WIND_SPEED_MPH, 5), new Real(WIND_DIR, 215));
+        instance = new FireReaction(fuelbed,
+                new Real(WIND_SPEED_MPH, 5),
+                new Real(WIND_DIR, 215),
+                terrain.getAspect(),
+                terrain.getSlope());
     }
 
     @BeforeClass
@@ -194,7 +197,7 @@ public class FireReactionTest {
         if (fuelModelCode.equalsIgnoreCase("SH9")) {
             assumeTrue(MathUtil.nearlyEquals(expected[FLI], expResult, tolerance));
         } else {
-        assertEquals(fuelModelCode + ": fli [Btu/ft/s]", expected[FLI], expResult, tolerance);
+            assertEquals(fuelModelCode + ": fli [Btu/ft/s]", expected[FLI], expResult, tolerance);
         }
     }
 
@@ -209,7 +212,7 @@ public class FireReactionTest {
         if (fuelModelCode.equalsIgnoreCase("SH9")) {
             assumeTrue(MathUtil.nearlyEquals(expected[FL], expResult, tolerance));
         } else {
-        assertEquals(fuelModelCode + ": fl [ft]", expected[FL], expResult, tolerance);
+            assertEquals(fuelModelCode + ": fl [ft]", expected[FL], expResult, tolerance);
         }
     }
 
