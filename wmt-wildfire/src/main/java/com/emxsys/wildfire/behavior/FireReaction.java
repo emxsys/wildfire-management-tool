@@ -63,7 +63,8 @@ public class FireReaction {
 
     // Inputs
     private final FuelBed fuelBed;
-    private final Terrain terrain;
+    private final Real aspect;
+    private final Real slope;
     private final Real windSpd;
     private final Real windDir;
 
@@ -82,51 +83,73 @@ public class FireReaction {
         logger.setLevel(Level.ALL);
     }
 
-    public static FireReaction from(FuelBed fuelBed, Terrain terrain, Weather weather) {
+    public static FireReaction from(FuelBed fuelBed, Weather weather, Terrain terrain) {
 
-        return new FireReaction(fuelBed, terrain, weather.getWindSpeed(), weather.getWindDirection());
+        return new FireReaction(fuelBed, weather.getWindSpeed(), weather.getWindDirection(), terrain.getAspect(), terrain.getSlope());
     }
 
-    public FireReaction(FuelBed fuelBed, Terrain terrain, Real windSpd, Real windDir) {
+    /**
+     * Constructor.
+     * @param fuelBed
+     * @param windSpd
+     * @param windDir
+     * @param aspect
+     * @param slope
+     */
+    public FireReaction(FuelBed fuelBed, Real windSpd, Real windDir, Real aspect, Real slope) {
         this.fuelBed = fuelBed;
-        this.terrain = terrain;
         this.windSpd = windSpd;
         this.windDir = windDir;
+        this.aspect = aspect;
+        this.slope = slope;
     }
 
+    /**
+     * Gets the maximum rate of spread of the fire: ros.
+     * @return ros [ft/min]
+     */
     public Real getRateOfSpread() {
-        if (!this.fuelBed.getIsBurnable()) {
-            return this.rateOfSpreadMax = new Real(ROS, 0);
-        }
         if (this.rateOfSpreadMax == null) {
-            calcFireBehavior();
+            if (this.fuelBed.getIsBurnable()) {
+                calcFireBehavior();
+            } else {
+                this.rateOfSpreadMax = new Real(ROS, 0);
+            }
         }
         return this.rateOfSpreadMax;
     }
 
+    /**
+     * Gets the rate of spread without wind or slope.
+     * @return ros [ft/min]
+     */
     public Real getRateOfSpreadNoWindNoSlope() {
-        if (!this.fuelBed.getIsBurnable()) {
-            return this.rateOfSpreadMax = new Real(ROS, 0);
-        }
         if (this.rateOfSpread == null) {
-            double ros = Rothermel.rateOfSpreadNoWindNoSlope(
-                    fuelBed.getReactionIntensity().getValue(),
-                    fuelBed.getPropagatingFluxRatio().getValue(),
-                    fuelBed.getHeatSink().getValue());
-            this.rateOfSpread = new Real(ROS, ros);
-
-            try {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.FINE, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
-                            new Object[]{fuelBed.getFuelModel().getModelCode(),
-                                         rateOfSpread.getValue(FireUnit.chain_hour)});
+            if (this.fuelBed.getIsBurnable()) {
+                double ros = Rothermel.rateOfSpreadNoWindNoSlope(
+                        fuelBed.getReactionIntensity().getValue(),
+                        fuelBed.getPropagatingFluxRatio().getValue(),
+                        fuelBed.getHeatSink().getValue());
+                this.rateOfSpread = new Real(ROS, ros);
+                try {
+                    if (logger.isLoggable(Level.FINE)) {
+                        logger.log(Level.FINE, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
+                                new Object[]{fuelBed.getFuelModel().getModelCode(),
+                                             rateOfSpread.getValue(FireUnit.chain_hour)});
+                    }
+                } catch (VisADException ex) {
                 }
-            } catch (VisADException ex) {
+            } else {
+                this.rateOfSpreadMax = new Real(ROS, 0);
             }
         }
         return rateOfSpread;
     }
 
+    /**
+     * Gets the direction of maximum spread.
+     * @return [degrees]
+     */
     public Real getDirectionMaxSpread() {
         if (this.directionMaxSpread == null) {
             if (this.fuelBed.getIsBurnable()) {
@@ -138,6 +161,11 @@ public class FireReaction {
         return this.directionMaxSpread;
     }
 
+    /**
+     * Gets the effective wind speed of the combined wind and slope, constrained to Rothermel's
+     * maximum wind speed formula.
+     * @return [mph]
+     */
     public Real getEffectiveWindSpeed() {
         if (this.effectiveWindSpeed == null) {
             if (this.fuelBed.getIsBurnable()) {
@@ -149,6 +177,10 @@ public class FireReaction {
         return this.effectiveWindSpeed;
     }
 
+    /**
+     * Gets Byram's fireline intensity: I.
+     * @return [Btu/ft/s]
+     */
     public Real getFirelineIntensity() {
         if (this.firelineIntensity == null) {
             if (this.fuelBed.getIsBurnable()) {
@@ -160,6 +192,10 @@ public class FireReaction {
         return this.firelineIntensity;
     }
 
+    /**
+     * Gets the flame length.
+     * @return [ft]
+     */
     public Real getFlameLength() {
         if (this.flameLength == null) {
             if (this.fuelBed.getIsBurnable()) {
@@ -171,13 +207,15 @@ public class FireReaction {
         return this.flameLength;
     }
 
+    /**
+     * Computes the fire behavior elements.
+     */
     protected void calcFireBehavior() {
         if (this.fuelBed.getIsBurnable()) {
             if (this.rateOfSpread == null) {
 
                 // Compute phiEw, effective wind and spread direction
-                calcWindAndSlopeEffects(windSpd, windDir,
-                        terrain.getAspect(), terrain.getSlope());
+                calcWindAndSlopeEffects(windSpd, windDir, aspect, slope);
 
                 double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
                 double rosMax = 0;
@@ -222,6 +260,7 @@ public class FireReaction {
     protected void calcWindAndSlopeEffects(Real windSpd, Real windDir, Real aspect, Real slope) {
 
         try {
+            // Inputs
             double sigma = fuelBed.getCharacteristicSAV().getValue();
             double beta_ratio = fuelBed.getRelativePackingRatio().getValue();
             double I_r = fuelBed.getReactionIntensity().getValue();
@@ -232,7 +271,7 @@ public class FireReaction {
                     windSpd.getValue(FireUnit.ft_min),
                     sigma, beta_ratio);
             double slopeFactor = Rothermel.slopeFactor(
-                    terrain.getSlopeDegrees(),
+                    slope.getValue(),
                     fuelBed.getMeanPackingRatio().getValue());
 
             // Convert wind direction to where the is blowing TO (i.e., spread direction)
@@ -265,7 +304,7 @@ public class FireReaction {
             // Spread direction [degrees]
             double spreadDirMax = AngleUtil.normalize360(toDegrees(dirRad));
 
-            // Combined wind and slope factors
+            // Intermediate combined wind and slope factor
             phiEw = vl;
 
             // Effective windspeed [ft/min]
@@ -285,4 +324,13 @@ public class FireReaction {
             throw new IllegalStateException(ex);
         }
     }
+
+    @Override
+    public String toString() {
+        if (this.rateOfSpread == null) {
+            calcFireBehavior();
+        }
+        return "FireReaction{" + "ROS=" + rateOfSpreadMax + ", DIR=" + directionMaxSpread + ", I=" + firelineIntensity + ", L=" + flameLength + '}';
+    }
+
 }
