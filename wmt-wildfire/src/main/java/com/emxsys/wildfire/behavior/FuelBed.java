@@ -66,6 +66,7 @@ import static com.emxsys.wildfire.api.WildfireType.RHO_P;
 import static com.emxsys.wildfire.api.WildfireType.SIGMA;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
@@ -984,4 +985,34 @@ public class FuelBed extends RealTuple {
         }
         return t;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.fuelModel);
+        hash = 53 * hash + Objects.hashCode(this.fuelMoisture);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FuelBed other = (FuelBed) obj;
+        if (!Objects.equals(this.fuelModel, other.fuelModel)) {
+            return false;
+        }
+        if (!Objects.equals(this.fuelMoisture, other.fuelMoisture)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    
+    
 }
