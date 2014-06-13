@@ -125,6 +125,7 @@
                     <publicPackages>
                         <publicPackage>com.emxsys.wildfire.api</publicPackage>
                         <publicPackage>com.emxsys.wildfire.behave</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.behavior</publicPackage>
                         <publicPackage>com.emxsys.wildfire.spi</publicPackage>
                         <publicPackage>com.emxsys.wildfire.surfacefire</publicPackage>
                     </publicPackages>
