@@ -55,7 +55,6 @@ import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.wildfire.api.FireBehaviorProvider;
-import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.Fuel;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
@@ -63,6 +62,8 @@ import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.FuelMoistureTuple;
 import com.emxsys.wildfire.api.FuelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.behavior.FireReaction;
+import com.emxsys.wildfire.behavior.SurfaceFireModel;
 import com.emxsys.wildfire.spi.DefaultFireBehaviorProvider;
 import com.emxsys.wildfire.spi.DefaultFuelProvider;
 import com.emxsys.wmt.cps.options.CpsOptions;
@@ -114,6 +115,7 @@ public class Controller {
     // Fire Behavior Calculator
     private final FuelProvider fuelProvider = DefaultFuelProvider.getInstance();
     private final FireBehaviorProvider fireProvider = DefaultFireBehaviorProvider.getInstance();
+    private final SurfaceFireModel fireModel = new SurfaceFireModel();
     // Current data values
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
@@ -265,12 +267,18 @@ public class Controller {
             fuel.condition(time, coord, solarModel, weatherModel, terrain, fuelMoistureRef.get());
 
             // Compute the fire Behavior
-            FireEnvironment fire = fireProvider.computeFireBehavior(
-                    fuel.getFuelModel(),
-                    fuel.getFuelCondition(time),
-                    wx, terrain);
+//            FireEnvironment fire = fireProvider.computeFireBehavior(
+//                    fuel.getFuelModel(),
+//                    fuel.getFuelCondition(time),
+//                    wx, terrain);
+            
+            FireReaction fire = fireModel.computeFireBehavior(
+                    fuelModelRef.get(),
+                    fuelMoistureRef.get(),
+                    wx, 
+                    terrain);
 
-            System.out.println(fire.fireBehavior.longString());
+            System.out.println(fire);
             
             // Compute the hourly fire behavior 
 //            List<FireEnvironment> fires = new ArrayList<>();
@@ -341,6 +349,7 @@ public class Controller {
         }
 
         @Override
+        @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
         public void run() {
 
             try {
@@ -414,6 +423,7 @@ public class Controller {
         }
 
         @Override
+        @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
         public void run() {
             TimeEvent timeEvent = this.lastTimeEvent.get();
             if (timeEvent == null) {
