@@ -33,15 +33,25 @@ import static java.lang.Math.*;
 import java.util.logging.Logger;
 
 /**
- * The Rothermel fire spread model developed for BEHAVE.
+ * The Rothermel, et al, fire spread model developed for modeling wildland fire behavior.
+ *
+ * References:
  * <ul>
- * <li style="bullet"><a name="bib_1000"></a>Albini, F.A., 1976, Estimating Wildfire Behavior and
- * Effects, General Technical Report INT-30, USDA Forest Service, Intermountain Forest and Range
- * Experiment Station
+ * <li><a name="bib_1000"></a>Albini, F.A., 1976, Estimating Wildfire Behavior and Effects, General
+ * Technical Report INT-30, USDA Forest Service, Intermountain Forest and Range Experiment Station
+ *
+ * <li><a name="bib_1000"></a>Anderson, H.A., 1983, Predicting Wind-driven Wild Land Fire Size and
+ * Shape, Research Paper INT-305, USDA Forest Service, Intermountain Forest and Range Experiment
+ * Station
  *
  * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
  * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
  * and Range Experiment Station
+ * </ul>
+ * Other Sources:
+ * <ul>
+ * <li>BehavePlus5, xfblib.cpp, Copyright Collin D. Bevins.
+ * <li>Firelib v1.04, firelib.c, Copyright Collin D. Bevins.
  * </ul>
  *
  * @author Bruce Schubert
@@ -526,19 +536,27 @@ public class Rothermel {
     }
 
     /**
-     * Calculates the fire ellipse parameters from the effective wind speed.
+     * Calculates the fire ellipse eccentricity from the effective wind speed.
      *
-     * @param effectiveWind
+     * Anderson 1983: eq. (4)
+     * 
+     * <pre>
+     * Consider using Anderson 1983: eq. (17)
+     *      l/w = 0.936 EXP(0.1l47U) + 0.461 EXP(-0.0692U)
+     *  where U = midflame miles per hour.
+     * </pre>
+     * @param effectiveWind The effective wind speed of the combined wind and slope. [mph]
      * @return The eccentricity of the ellipse
      */
     public static double eccentricity(double effectiveWind) {
         double eccentricity = 0;
         if (effectiveWind > 0) {
             // From FireLib 1.04, firelib.c by Collin D. Bevins
-            // = 1. + 0.25 * effectiveWindSpd / 88.0);
-            double lwRatio = 1. + 0.002840909 * effectiveWind;
-            if (lwRatio > 1.00001) {
-                eccentricity = sqrt(pow(lwRatio, 2) - 1.0) / lwRatio;
+            // a1 = major axis of semiellipse at the rear of the fire,
+            //    = 1. + 0.25 * effectiveWindSpd / 88.0);
+            double lbRatio = 1. + 0.002840909 * effectiveWind;
+            if (lbRatio > 1.00001) {
+                eccentricity = sqrt(pow(lbRatio, 2) - 1.0) / lbRatio;
             }
         }
         return eccentricity;
