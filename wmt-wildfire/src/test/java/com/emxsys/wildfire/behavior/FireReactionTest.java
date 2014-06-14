@@ -45,6 +45,7 @@ import com.emxsys.wildfire.api.StdFuelModelParams40;
 import static com.emxsys.wildfire.api.WeatherConditions.HOT_AND_DRY;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -90,10 +91,8 @@ public class FireReactionTest {
     public static Collection<Object[]> generateParams() {
         // Constructor parameters
         List<Object[]> params = new ArrayList<>();
-
         // Common moisture scenario used in test
         FuelMoisture moisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
-
         // Load the original 13 fuel models
         for (StdFuelModelParams13 fbfm13 : StdFuelModelParams13.values()) {
             FuelModel model = new StdFuelModel.Builder(fbfm13).build();
@@ -153,9 +152,9 @@ public class FireReactionTest {
     }
 
     @Test
-    public void testGetRateOfSpread() throws VisADException {
-        System.out.println("getRateOfSpread : " + fuelModelCode);
-        Real result = instance.getRateOfSpread();
+    public void testGetRateOfSpreadMax() throws VisADException {
+        System.out.println("getRateOfSpreadMax : " + fuelModelCode);
+        Real result = instance.getRateOfSpreadMax();
         double[] expected = expResults.get(fuelModelCode);
         double expResult = result.getValue(FireUnit.chain_hour);
         expResult = Math.round(expResult * 10) / 10.;
@@ -164,6 +163,38 @@ public class FireReactionTest {
             assumeTrue(MathUtil.nearlyEquals(expected[ROS], expResult, tolerance));
         } else {
             assertEquals(fuelModelCode + ": ros [ch/hr]", expected[ROS], expResult, tolerance);
+        }
+    }
+
+    @Test
+    public void testGetRateOfSpreadBacking() throws VisADException {
+        System.out.println("getRateOfSpreadBacking : " + fuelModelCode);
+        Real resultMax = instance.getRateOfSpreadMax();
+        Real result = instance.getRateOfSpreadBacking();
+        assertNotNull(result);
+        if (fuelbed.isBurnable()) {
+            assertTrue(result.getValue() < resultMax.getValue());
+        }
+    }
+
+    @Test
+    public void testGetRateOfSpreadAzimuth() throws VisADException, RemoteException {
+        System.out.println("getRateOfSpreadBacking : " + fuelModelCode);
+        Real resultMax = instance.getRateOfSpreadMax();
+        Real resultDir = instance.getDirectionMaxSpread();
+        if (fuelbed.isBurnable()) {
+//            System.out.print(resultDir.longString());
+//            System.out.println(resultMax.longString());
+            for (int i = 0; i < 360; i++) {
+                Real azimuth = new Real(i);
+                Real result = instance.getRateOfSpreadAtAzimuth(azimuth);
+                assertNotNull(result);
+                assertTrue(resultMax.getValue() > result.getValue());
+//                if (i % 15 == 0) {
+//                    System.out.print(azimuth.longString());
+//                    System.out.println(result.longString());
+//                }
+            }
         }
     }
 

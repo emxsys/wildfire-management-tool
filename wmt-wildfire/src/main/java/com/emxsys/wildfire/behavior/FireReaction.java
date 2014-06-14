@@ -54,7 +54,7 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * 
+ *
  * @author Bruce Schubert
  */
 public class FireReaction {
@@ -78,6 +78,7 @@ public class FireReaction {
 
     // Intermediate wind and slope effects
     private double phiEw;           // Combined wind and slope factors
+    private double eccentricity;    // Fire ellipse from effective wind
 
     static {
         logger.setLevel(Level.ALL);
@@ -95,10 +96,10 @@ public class FireReaction {
         double wndSpd20Ft = weather.getWindSpeed().getValue();
         double fuelDepth = fuelbed.getFuelBedDepth().getValue();
         double midFlameWndSpd = wndSpd20Ft * Rothermel.windAdjustmentFactor(fuelDepth);
-        return new FireReaction(fuelbed, 
-                new Real(WIND_SPEED_MPH, midFlameWndSpd), 
-                weather.getWindDirection(), 
-                terrain.getAspect(), 
+        return new FireReaction(fuelbed,
+                new Real(WIND_SPEED_MPH, midFlameWndSpd),
+                weather.getWindDirection(),
+                terrain.getAspect(),
                 terrain.getSlope());
     }
 
@@ -119,12 +120,12 @@ public class FireReaction {
     }
 
     /**
-     * Gets the maximum rate of spread of the fire: ros.
-     * @return ros [ft/min]
+     * Gets the maximum rate of spread of the heading fire: ros.
+     * @return Heading fire rate of spread, ros [ft/min]
      */
-    public Real getRateOfSpread() {
+    public Real getRateOfSpreadMax() {
         if (this.rateOfSpreadMax == null) {
-            if (this.fuelBed.getIsBurnable()) {
+            if (this.fuelBed.isBurnable()) {
                 calcFireBehavior();
             } else {
                 this.rateOfSpreadMax = new Real(ROS, 0);
@@ -134,12 +135,46 @@ public class FireReaction {
     }
 
     /**
+     * Gets the rate of spread of the backing fire: ros.
+     * @return Backing fire rate of spread, ros [ft/min]
+     */
+    public Real getRateOfSpreadBacking() {
+        double ros = 0;
+        if (this.fuelBed.isBurnable()) {
+            ros = getRateOfSpreadMax().getValue() * (1. - eccentricity) / (1. + eccentricity);
+        }
+        return new Real(ROS, ros);
+    }
+
+    /**
+     * Gets the rate of spread of the fire along a given azimuth (true north): ros.
+     */
+    public Real getRateOfSpreadAtAzimuth(Real azimuth) {
+        double ros = 0;
+        if (this.fuelBed.isBurnable()) {
+            // Angle between maximum spread azimuth and requested azimuth.
+            double dir = AngleUtil.angularDistanceBetween(
+                    getDirectionMaxSpread().getValue(), azimuth.getValue());
+
+            // From FireLib 1.04, firelib.c by Collin D. Bevins
+            // Calculate the fire spread rate in this azimuth. 
+            double denom = 1. - eccentricity * cos(toRadians(dir));
+            if (denom > 0) {
+                ros = getRateOfSpreadMax().getValue() * (1. - eccentricity) / denom;
+            } else {
+                ros = getRateOfSpreadNoWindNoSlope().getValue();
+            }
+        }
+        return new Real(ROS, ros);
+    }
+
+    /**
      * Gets the rate of spread without wind or slope.
      * @return ros [ft/min]
      */
     public Real getRateOfSpreadNoWindNoSlope() {
         if (this.rateOfSpread == null) {
-            if (this.fuelBed.getIsBurnable()) {
+            if (this.fuelBed.isBurnable()) {
                 double ros = Rothermel.rateOfSpreadNoWindNoSlope(
                         fuelBed.getReactionIntensity().getValue(),
                         fuelBed.getPropagatingFluxRatio().getValue(),
@@ -166,7 +201,7 @@ public class FireReaction {
      */
     public Real getDirectionMaxSpread() {
         if (this.directionMaxSpread == null) {
-            if (this.fuelBed.getIsBurnable()) {
+            if (this.fuelBed.isBurnable()) {
                 calcFireBehavior();
             } else {
                 this.directionMaxSpread = new Real(DIR_OF_SPREAD, 0);
@@ -182,7 +217,7 @@ public class FireReaction {
      */
     public Real getEffectiveWindSpeed() {
         if (this.effectiveWindSpeed == null) {
-            if (this.fuelBed.getIsBurnable()) {
+            if (this.fuelBed.isBurnable()) {
                 calcFireBehavior();
             } else {
                 this.effectiveWindSpeed = new Real(WIND_SPEED_MPH, 0);
@@ -197,7 +232,7 @@ public class FireReaction {
      */
     public Real getFirelineIntensity() {
         if (this.firelineIntensity == null) {
-            if (this.fuelBed.getIsBurnable()) {
+            if (this.fuelBed.isBurnable()) {
                 calcFireBehavior();
             } else {
                 this.firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, 0);
@@ -212,7 +247,7 @@ public class FireReaction {
      */
     public Real getFlameLength() {
         if (this.flameLength == null) {
-            if (this.fuelBed.getIsBurnable()) {
+            if (this.fuelBed.isBurnable()) {
                 calcFireBehavior();
             } else {
                 this.flameLength = new Real(FLAME_LENGTH_US, 0);
@@ -225,7 +260,7 @@ public class FireReaction {
      * Computes the fire behavior elements.
      */
     protected void calcFireBehavior() {
-        if (this.fuelBed.getIsBurnable()) {
+        if (this.fuelBed.isBurnable()) {
             if (this.rateOfSpread == null) {
 
                 // Compute phiEw, effective wind and spread direction
@@ -329,6 +364,9 @@ public class FireReaction {
                 phiEw = Rothermel.windFactor(effectiveWnd, sigma, beta_ratio);
 
             }
+            // Intermediate fire ellipse eccentricity
+            eccentricity = Rothermel.eccentricity(effectiveWnd);
+
             // Outputs
             this.directionMaxSpread = new Real(DIR_OF_SPREAD, spreadDirMax);
             this.effectiveWindSpeed = Reals.convertTo(WIND_SPEED_MPH, new Real(ROS, effectiveWnd));
