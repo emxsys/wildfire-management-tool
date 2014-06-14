@@ -42,6 +42,8 @@ import visad.RealType;
  */
 public class GisType {
 
+    /** Angle in degrees - RealType: <b>angle:deg</b>. */
+    public static final RealType ANGLE;
     /** Distance in meters - RealType: <b>distance:m</b>. */
     public static final RealType DISTANCE;
     /** Area in hectares (1 ha = 10,000 m2, 100m x100m) - RealType: <b>area:ha</b>. */
@@ -69,6 +71,9 @@ public class GisType {
      * RealType initializer
      */
     static {
+        // Angle types
+        ANGLE = RealType.getRealType("angle:deg", CommonUnit.degree, null); 
+
         // Distance types
         DISTANCE = RealType.getRealType("distance:m", CommonUnit.meter, null);
 
