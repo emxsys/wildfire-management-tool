@@ -66,6 +66,7 @@ import com.emxsys.wildfire.behavior.FireReaction;
 import com.emxsys.wildfire.behavior.SurfaceFireModel;
 import com.emxsys.wildfire.spi.DefaultFireBehaviorProvider;
 import com.emxsys.wildfire.spi.DefaultFuelProvider;
+import com.emxsys.wmt.cps.layers.FireShape;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.cps.ui.FuelTopComponent;
@@ -73,6 +74,7 @@ import com.emxsys.wmt.cps.ui.WeatherTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import java.awt.EventQueue;
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicReference;
@@ -116,6 +118,8 @@ public class Controller {
     private final FuelProvider fuelProvider = DefaultFuelProvider.getInstance();
     private final FireBehaviorProvider fireProvider = DefaultFireBehaviorProvider.getInstance();
     private final SurfaceFireModel fireModel = new SurfaceFireModel();
+    private FireShape fireShape;    // Deferred initialization
+    
     // Current data values
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
@@ -277,8 +281,12 @@ public class Controller {
                     fuelMoistureRef.get(),
                     wx, 
                     terrain);
-
             System.out.println(fire);
+
+            if (fireShape==null) {
+                fireShape = new FireShape();
+            }
+            fireShape.update(coord, fire, Duration.ofMinutes(5));
             
             // Compute the hourly fire behavior 
 //            List<FireEnvironment> fires = new ArrayList<>();
