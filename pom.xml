@@ -170,6 +170,7 @@
         <module>wmt-weather-mesowest</module>
         <module>wmt-weather-nws</module>
         <module>wmt-wildfire</module>
+        <module>wmt-swarm</module>
     </modules>
     <reporting>
         <plugins>
