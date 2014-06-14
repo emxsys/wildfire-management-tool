@@ -33,6 +33,7 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.GeoSector;
+import static com.emxsys.gis.api.GisType.ANGLE;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.api.layer.BasicLayerGroup;
 import com.emxsys.gis.api.layer.GisLayer;
@@ -64,6 +65,7 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwindx.examples.util.BalloonController;
 import gov.nasa.worldwindx.examples.util.HotSpotController;
 import java.awt.Component;
+import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -77,6 +79,8 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import visad.CommonUnit;
+import static visad.CommonUnit.degree;
+import static visad.CommonUnit.meter;
 import visad.Real;
 import visad.VisADException;
 
@@ -103,7 +107,6 @@ public class Globe implements GisViewer {
     private WorldWindManager worldWindManager;
     private boolean initialized = false;
     private static Globe INSTANCE;
-
 
     /**
      * Do not call! Used by @ServiceProvider. Use getInstance() or
@@ -437,6 +440,23 @@ public class Globe implements GisViewer {
     }
 
     /**
+     * Computes the great circle angular distance (degrees).
+     * @param distance [meters]
+     * @return A Real containing the distance in degrees.
+     */
+    public static Real computeAngularDistance(Real distance) {
+        try {
+            WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
+            double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
+            double radians = distance.getValue(meter) / radius;
+            return new Real(ANGLE, toDegrees(radians));
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * Computes the great circle distance between two coordinates.
      * @param coord1
      * @param coord2
@@ -450,7 +470,7 @@ public class Globe implements GisViewer {
         WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
         double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
         double distance = angle.radians * radius;
-        return Reals.newDistance(distance, CommonUnit.meter);
+        return Reals.newDistance(distance, meter);
     }
 
     /**
@@ -476,8 +496,8 @@ public class Globe implements GisViewer {
     public static Coord2D computeGreatCircleCoordinate(Coord2D origin, Real azimuth, Real distance) {
         try {
             Position startPosition = Positions.fromCoord2D(origin);
-            Angle greatCircleAzimuth = Angle.fromDegrees(azimuth.getValue(CommonUnit.degree));
-            Angle pathLength = Angle.fromDegrees(distance.getValue(CommonUnit.degree));
+            Angle greatCircleAzimuth = Angle.fromDegrees(azimuth.getValue(degree));
+            Angle pathLength = Angle.fromDegrees(distance.getValue(degree));
 
             LatLon endPosition = LatLon.greatCircleEndPosition(startPosition, greatCircleAzimuth, pathLength);
 
