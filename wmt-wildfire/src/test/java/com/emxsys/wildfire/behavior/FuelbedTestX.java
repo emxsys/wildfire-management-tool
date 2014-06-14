@@ -58,14 +58,14 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * Runs Fuelbed unit tests for all FuelModels.
+ * Runs FuelbedX unit tests for all FuelModels.
  *
  * @author Bruce Schubert
  */
 @RunWith(Parameterized.class)
-public class FuelbedTest {
+public class FuelbedTestX {
 
-    private final Fuelbed instance;
+    private final FuelbedX instance;
     private final String fuelModelCode;
 
     static HashMap<String, double[]> expResults;
@@ -119,8 +119,8 @@ public class FuelbedTest {
      * @param model
      * @param moisture
      */
-    public FuelbedTest(FuelModel model, FuelMoisture moisture) {
-        instance = Fuelbed.from(model, moisture);
+    public FuelbedTestX(FuelModel model, FuelMoisture moisture) {
+        instance = FuelbedX.from(model, moisture);
         fuelModelCode = instance.fuelModel.getModelCode();
     }
 
@@ -169,7 +169,7 @@ public class FuelbedTest {
         System.out.println("calcHerbaceousCuring" + " : " + fuelModelCode);
         FuelMoisture fuelMoisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
         double expResult = 0.56;
-        double result = Fuelbed.calcHerbaceousCuring(fuelMoisture);
+        double result = FuelbedX.calcHerbaceousCuring(fuelMoisture);
         assertEquals(expResult, result, 1);
     }
 
