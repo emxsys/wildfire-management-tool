@@ -54,7 +54,7 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- *
+ * 
  * @author Bruce Schubert
  */
 public class FireReaction {
@@ -83,18 +83,32 @@ public class FireReaction {
         logger.setLevel(Level.ALL);
     }
 
-    public static FireReaction from(Fuelbed fuelBed, Weather weather, Terrain terrain) {
+    /**
+     * Creates a FireReaction instance.
+     * @param fuelbed The fuel complex.
+     * @param weather The weather with 20ft wind speeds.
+     * @param terrain The terrain aspect and slope at the point of interest.
+     * @return A new FireReaction instance.
+     */
+    public static FireReaction from(Fuelbed fuelbed, Weather weather, Terrain terrain) {
 
-        return new FireReaction(fuelBed, weather.getWindSpeed(), weather.getWindDirection(), terrain.getAspect(), terrain.getSlope());
+        double wndSpd20Ft = weather.getWindSpeed().getValue();
+        double fuelDepth = fuelbed.getFuelBedDepth().getValue();
+        double midFlameWndSpd = wndSpd20Ft * Rothermel.windAdjustmentFactor(fuelDepth);
+        return new FireReaction(fuelbed, 
+                new Real(WIND_SPEED_MPH, midFlameWndSpd), 
+                weather.getWindDirection(), 
+                terrain.getAspect(), 
+                terrain.getSlope());
     }
 
     /**
      * Constructor.
-     * @param fuelBed
-     * @param windSpd
-     * @param windDir
-     * @param aspect
-     * @param slope
+     * @param fuelBed The fuel complex.
+     * @param windSpd Mid-flame wind speed.
+     * @param windDir Customary wind direction (direction wind is blowing FROM).
+     * @param aspect Terrain aspect (South-facing slope is 180 degrees).
+     * @param slope Terrain slope angle (steepness) in degrees.
      */
     public FireReaction(Fuelbed fuelBed, Real windSpd, Real windDir, Real aspect, Real slope) {
         this.fuelBed = fuelBed;
