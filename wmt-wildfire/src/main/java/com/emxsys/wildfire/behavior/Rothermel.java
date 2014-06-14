@@ -53,7 +53,7 @@ public class Rothermel {
     /**
      * Calculates the mean bulk density (fuel-bed weight per unit volume): rho_b.
      *
-     * @param w0_total An array of fuel particle loading values [lb/ft2].
+     * @param w0 An array of fuel particle loading values [lb/ft2].
      * @param height The fuel bed height [ft].
      *
      * @return rho_b [lbs/ft3]
@@ -252,7 +252,7 @@ public class Rothermel {
      *
      * @param Mf The fuel moisture value for an individual fuel particle [%].
      *
-     * @retrn Q_ig.
+     * @return Q_ig.
      */
     public static double heatOfPreignition(double Mf) {
         double Q_ig = 250 + 1116 * (Mf * 0.01); // Mf = [fraction]
@@ -386,9 +386,8 @@ public class Rothermel {
      * Rothermel 1972: eq. (87)
      *
      * @param phiEw The combined wind and slope factors [phiW + phiS].
-     * @param I_r
-     * @param beta_ratio
-     * @param sigma
+     * @param beta_ratio beta/beta_opt.
+     * @param sigma The characteristic SAV ratio [ft2/ft3].
      * @return efw [ft/min]
      */
     public static double effectiveWindSpeed(double phiEw, double beta_ratio, double sigma) {
