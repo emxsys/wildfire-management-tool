@@ -519,9 +519,28 @@ public class Rothermel {
     public static double windAdjustmentFactor(double fuelDepth) {
         double waf = 1.0;
         if (fuelDepth > 0) {
-            // From BehavePlus5 xfblib.cpp by Collin D. Bevins
+            // From BehavePlus5, xfblib.cpp by Collin D. Bevins
             waf = 1.83 / log((20. + 0.36 * fuelDepth) / (0.13 * fuelDepth));
         }
         return min(max(waf, 0), 1);
+    }
+
+    /**
+     * Calculates the fire ellipse parameters from the effective wind speed.
+     *
+     * @param effectiveWind
+     * @return The eccentricity of the ellipse
+     */
+    public static double eccentricity(double effectiveWind) {
+        double eccentricity = 0;
+        if (effectiveWind > 0) {
+            // From FireLib 1.04, firelib.c by Collin D. Bevins
+            // = 1. + 0.25 * effectiveWindSpd / 88.0);
+            double lwRatio = 1. + 0.002840909 * effectiveWind;
+            if (lwRatio > 1.00001) {
+                eccentricity = sqrt(pow(lwRatio, 2) - 1.0) / lwRatio;
+            }
+        }
+        return eccentricity;
     }
 }
