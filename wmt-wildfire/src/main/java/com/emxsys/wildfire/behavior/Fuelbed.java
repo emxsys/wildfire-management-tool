@@ -78,9 +78,9 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class FuelbedX extends RealTuple {
+public class Fuelbed extends RealTuple {
 
-    private static final Logger logger = Logger.getLogger(FuelbedX.class.getName());
+    private static final Logger logger = Logger.getLogger(Fuelbed.class.getName());
     public static final int LOAD_DEAD_1H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_1H, FUEL_BED);
     public static final int LOAD_DEAD_10H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_10H, FUEL_BED);
     public static final int LOAD_DEAD_100H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_100H, FUEL_BED);
@@ -144,7 +144,7 @@ public class FuelbedX extends RealTuple {
     Real reactionVelocity;
     Real reactionIntensity;
 
-    public static FuelbedX from(FuelModel model, FuelMoisture moisture) {
+    public static Fuelbed from(FuelModel model, FuelMoisture moisture) {
         try {
             // Transfer cured herbaceous fuel into the dead herbaceous fuel load
             double curing = model.isDynamic() ? calcHerbaceousCuring(moisture) : 0;
@@ -175,12 +175,12 @@ public class FuelbedX extends RealTuple {
             if (logger.isLoggable(Level.FINE)) {
                 logger.fine(tuple.longString());
             }
-            return new FuelbedX(model, moisture, tuple);
+            return new Fuelbed(model, moisture, tuple);
 
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, "Error in fuel bed", ex);
             Exceptions.printStackTrace(ex);
-            return new FuelbedX();
+            return new Fuelbed();
         }
 
     }
@@ -188,7 +188,7 @@ public class FuelbedX extends RealTuple {
     /**
      * Construct a new FuelCharacter object with "missing" values.
      */
-    public FuelbedX() {
+    public Fuelbed() {
         super(WildfireType.FUEL_BED);
     }
 
@@ -197,7 +197,7 @@ public class FuelbedX extends RealTuple {
      *
      * @param fuelMoistureTuple Fuel moisture values.
      */
-    private FuelbedX(FuelModel model, FuelMoisture moisture, RealTuple tuple) throws VisADException, RemoteException {
+    private Fuelbed(FuelModel model, FuelMoisture moisture, RealTuple tuple) throws VisADException, RemoteException {
         super(WildfireType.FUEL_BED, tuple.getRealComponents(), null);
         this.fuelModel = model;
         this.fuelMoisture = moisture;
@@ -1002,7 +1002,7 @@ public class FuelbedX extends RealTuple {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final FuelbedX other = (FuelbedX) obj;
+        final Fuelbed other = (Fuelbed) obj;
         if (!Objects.equals(this.fuelModel, other.fuelModel)) {
             return false;
         }
