@@ -824,7 +824,7 @@ public class Fuelbed extends RealTuple {
         return this.fuelModel;
     }
     
-    public boolean getIsBurnable() {
+    public boolean isBurnable() {
         return !this.nonBurnable;
     }
 

@@ -39,7 +39,6 @@ import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
 import static com.emxsys.wildfire.api.WeatherConditions.HOT_AND_DRY;
 import com.emxsys.wildfire.api.WildfireType;
-import static com.emxsys.wildfire.behavior.FireReactionTest.FL;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -126,6 +125,7 @@ public class FuelbedTest {
 
     /**
      * Run before any test is executed.
+     * @throws java.lang.Exception
      */
     @BeforeClass
     public static void setUpClass() throws Exception {

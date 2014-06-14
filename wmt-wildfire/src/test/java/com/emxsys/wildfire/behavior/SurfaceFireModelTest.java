@@ -101,7 +101,7 @@ public class SurfaceFireModelTest {
                     FireReaction result = instance.computeFireBehavior(
                             fuelModel, fuelMoisture, weather, terrain);
                     assertNotNull(result);
-                    result.getRateOfSpread();   // force the calculations
+                    result.getRateOfSpreadMax();   // force the calculations
                     //System.out.println(fuelModel.getModelCode() + ": " + result);
                 }
             }
