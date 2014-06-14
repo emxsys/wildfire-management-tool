@@ -52,9 +52,9 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class FireBehaviorModelTest {
+public class SurfaceFireModelTest {
 
-    public FireBehaviorModelTest() {
+    public SurfaceFireModelTest() {
     }
 
     @BeforeClass
@@ -69,7 +69,7 @@ public class FireBehaviorModelTest {
     public void testComputeFireBehavior() throws VisADException, RemoteException {
         System.out.println("computeFireBehavior");
 
-        FireBehaviorModel instance = new FireBehaviorModel();
+        SurfaceFireModel instance = new SurfaceFireModel();
         ArrayList<FuelModel> models = new ArrayList<>();
         ArrayList<FuelMoisture> moistures = new ArrayList<>();
 

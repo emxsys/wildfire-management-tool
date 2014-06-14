@@ -33,17 +33,22 @@ import com.emxsys.gis.api.Terrain;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
+import static java.lang.Math.round;
 import java.util.HashMap;
 import java.util.Objects;
+import visad.Real;
 
 /**
  *
  * @author Bruce Schubert
  */
-public class FireBehaviorModel {
+public class SurfaceFireModel {
 
-    private final HashMap<FuelScenario, FuelBed> fuelbeds = new HashMap<>();
-    private final HashMap<FuelBed, FireReaction> reactions = new HashMap<>();
+    private final HashMap<FuelScenario, Fuelbed> fuelbeds = new HashMap<>();
+    private final HashMap<FireEnvironment, FireReaction> reactions = new HashMap<>();
+
+    public SurfaceFireModel() {
+    }
 
     public FireReaction computeFireBehavior(FuelModel fuelModel,
                                             FuelMoisture fuelMoisture,
@@ -51,19 +56,82 @@ public class FireBehaviorModel {
                                             Terrain terrain) {
 
         FuelScenario scenario = new FuelScenario(fuelModel, fuelMoisture);
-        FuelBed fuelbed = fuelbeds.get(scenario);
+        Fuelbed fuelbed = fuelbeds.get(scenario);
         if (fuelbed == null) {
-            fuelbed = FuelBed.from(fuelModel, fuelMoisture);
+            fuelbed = Fuelbed.from(fuelModel, fuelMoisture);
             fuelbeds.put(scenario, fuelbed);
         }
 
-        FireReaction reaction = reactions.get(fuelbed);
+        FireEnvironment env = new FireEnvironment(fuelbed, weather, terrain);
+        FireReaction reaction = reactions.get(env);
         if (reaction == null) {
             reaction = FireReaction.from(fuelbed, weather, terrain);
-            reactions.put(fuelbed, reaction);
+            reactions.put(env, reaction);
+        }
+        return reaction;
+    }
+
+    /**
+     * A simple POD structure used as a key in the 'reactions' HashMap.
+     */
+    private class FireEnvironment {
+
+        Fuelbed fuelbed;
+        double windSpd;
+        int windDir;
+        int aspect;
+        int slope;
+
+        FireEnvironment(Fuelbed fuelbed, Weather weather, Terrain terrain) {
+            this(fuelbed, weather.getWindSpeed(), weather.getWindDirection(), terrain.getAspect(), terrain.getSlope());
         }
 
-        return reaction;
+        FireEnvironment(Fuelbed fuelbed, Real windSpd, Real windDir, Real aspect, Real slope) {
+            this.fuelbed = fuelbed;
+            this.windSpd = windSpd.getValue();
+            this.windDir = (int) round(windDir.getValue());
+            this.aspect = (int) round(aspect.getValue());
+            this.slope = (int) round(slope.getValue());
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 37 * hash + Objects.hashCode(this.fuelbed);
+            hash = 37 * hash + (int) (Double.doubleToLongBits(this.windSpd) ^ (Double.doubleToLongBits(this.windSpd) >>> 32));
+            hash = 37 * hash + this.windDir;
+            hash = 37 * hash + this.slope;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final FireEnvironment other = (FireEnvironment) obj;
+            if (!Objects.equals(this.fuelbed, other.fuelbed)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.windSpd) != Double.doubleToLongBits(other.windSpd)) {
+                return false;
+            }
+            if (this.windDir != other.windDir) {
+                return false;
+            }
+            if (this.aspect != other.aspect) {
+                return false;
+            }
+            if (this.slope != other.slope) {
+                return false;
+            }
+            return true;
+        }
+
+
     }
 
     /**
