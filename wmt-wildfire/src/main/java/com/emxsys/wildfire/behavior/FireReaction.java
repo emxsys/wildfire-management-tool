@@ -29,6 +29,7 @@
  */
 package com.emxsys.wildfire.behavior;
 
+import static com.emxsys.gis.api.GisType.DISTANCE;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.FireUnit;
@@ -43,13 +44,16 @@ import static java.lang.Math.PI;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
 import static java.lang.Math.min;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
+import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
+import static visad.CommonUnit.meterPerSecond;
 import visad.Real;
 import visad.VisADException;
 
@@ -141,6 +145,7 @@ public class FireReaction {
     public Real getRateOfSpreadBacking() {
         double ros = 0;
         if (this.fuelBed.isBurnable()) {
+            // From FireLib 1.04, firelib.c by Collin D. Bevins
             ros = getRateOfSpreadMax().getValue() * (1. - eccentricity) / (1. + eccentricity);
         }
         return new Real(ROS, ros);
@@ -148,6 +153,8 @@ public class FireReaction {
 
     /**
      * Gets the rate of spread of the fire along a given azimuth (true north): ros.
+     * @param azimuth A true north azimuth [degrees].
+     * @return The rate of spread, ros, along the azimuth [ft/min].
      */
     public Real getRateOfSpreadAtAzimuth(Real azimuth) {
         double ros = 0;
@@ -156,8 +163,8 @@ public class FireReaction {
             double dir = AngleUtil.angularDistanceBetween(
                     getDirectionMaxSpread().getValue(), azimuth.getValue());
 
-            // From FireLib 1.04, firelib.c by Collin D. Bevins
             // Calculate the fire spread rate in this azimuth. 
+            // From FireLib 1.04, firelib.c by Collin D. Bevins
             double denom = 1. - eccentricity * cos(toRadians(dir));
             if (denom > 0) {
                 ros = getRateOfSpreadMax().getValue() * (1. - eccentricity) / denom;
@@ -375,6 +382,30 @@ public class FireReaction {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
+    }
+
+    public FireEllipse getFireEllipse(Duration duration) {
+        if (this.fuelBed.isBurnable()) {
+            try {
+                Real heading = getDirectionMaxSpread();
+                long seconds = duration.getSeconds();
+                double a1 = getRateOfSpreadBacking().getValue(meterPerSecond) * seconds;
+                double a2 = getRateOfSpreadMax().getValue(meterPerSecond) * seconds;
+                double majorRadius = (a1 + a2) / 2.;
+                double minorRadius = (majorRadius * sqrt(1 - pow(eccentricity, 2))) / 2.;
+                double focalOffset = majorRadius - a1;
+
+                return new FireEllipse(
+                        new Real(DISTANCE, majorRadius),
+                        new Real(DISTANCE, minorRadius),
+                        new Real(DISTANCE, focalOffset),
+                        heading);
+
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return null;
     }
 
     @Override
