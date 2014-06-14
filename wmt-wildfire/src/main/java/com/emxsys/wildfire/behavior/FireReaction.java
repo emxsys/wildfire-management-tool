@@ -62,7 +62,7 @@ public class FireReaction {
     private static final Logger logger = Logger.getLogger(FireReaction.class.getName());
 
     // Inputs
-    private final FuelBed fuelBed;
+    private final Fuelbed fuelBed;
     private final Real aspect;
     private final Real slope;
     private final Real windSpd;
@@ -83,7 +83,7 @@ public class FireReaction {
         logger.setLevel(Level.ALL);
     }
 
-    public static FireReaction from(FuelBed fuelBed, Weather weather, Terrain terrain) {
+    public static FireReaction from(Fuelbed fuelBed, Weather weather, Terrain terrain) {
 
         return new FireReaction(fuelBed, weather.getWindSpeed(), weather.getWindDirection(), terrain.getAspect(), terrain.getSlope());
     }
@@ -96,7 +96,7 @@ public class FireReaction {
      * @param aspect
      * @param slope
      */
-    public FireReaction(FuelBed fuelBed, Real windSpd, Real windDir, Real aspect, Real slope) {
+    public FireReaction(Fuelbed fuelBed, Real windSpd, Real windDir, Real aspect, Real slope) {
         this.fuelBed = fuelBed;
         this.windSpd = windSpd;
         this.windDir = windDir;

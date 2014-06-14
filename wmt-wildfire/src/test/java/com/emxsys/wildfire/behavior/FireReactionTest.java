@@ -68,7 +68,7 @@ import visad.VisADException;
 public class FireReactionTest {
 
     private final FireReaction instance;
-    private final FuelBed fuelbed;
+    private final Fuelbed fuelbed;
     private final String fuelModelCode;
 
     static HashMap<String, double[]> expResults;
@@ -121,7 +121,7 @@ public class FireReactionTest {
      */
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public FireReactionTest(FuelModel model, FuelMoisture moisture) {
-        fuelbed = FuelBed.from(model, moisture);
+        fuelbed = Fuelbed.from(model, moisture);
         fuelModelCode = model.getModelCode();
         Terrain terrain = new TerrainTuple(180, 16.7, 0);
         instance = new FireReaction(fuelbed,
