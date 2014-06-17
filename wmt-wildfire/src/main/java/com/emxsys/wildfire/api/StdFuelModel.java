@@ -29,7 +29,6 @@
  */
 package com.emxsys.wildfire.api;
 
-import com.emxsys.gis.api.GeoSector;
 import com.emxsys.visad.Reals;
 import com.emxsys.wildfire.behave.Behave;
 import java.util.*;
@@ -495,6 +494,23 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
+     * The burnable state
+     */
+    @Override
+    public boolean isBurnable() {
+        return ((this.dead1HrSAVRatio.getValue()
+                + this.dead10HrSAVRatio.getValue()
+                + this.dead100HrSAVRatio.getValue()
+                + this.liveHerbSAVRatio.getValue()
+                + this.liveWoodySAVRatio.getValue()) == 0)
+                || ((this.dead1HrFuelLoad.getValue()
+                + this.dead10HrFuelLoad.getValue()
+                + this.dead100HrFuelLoad.getValue()
+                + this.liveHerbFuelLoad.getValue()
+                + this.liveWoodyFuelLoad.getValue()) == 0);
+    }
+
+    /**
      * 1 hour dead fuel surface-area-to-volumne ratio [1/m]
      */
     @Override
@@ -598,10 +614,7 @@ public class StdFuelModel implements FuelModel {
             return false;
         }
         final StdFuelModel other = (StdFuelModel) obj;
-        if (this.modelNo != other.modelNo) {
-            return false;
-        }
-        return true;
+        return this.modelNo == other.modelNo;
     }
 
 }

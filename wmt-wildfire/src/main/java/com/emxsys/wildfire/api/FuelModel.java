@@ -99,6 +99,12 @@ public interface FuelModel {
     public boolean isDynamic();
 
     /**
+     * burnable or non burnable
+     * @return true if the fuel model is burnable
+     */
+    public boolean isBurnable();
+
+    /**
      * the dead 1Hr fuel surface-area-to-volumne ratio
      * @return [1/m]
      */
