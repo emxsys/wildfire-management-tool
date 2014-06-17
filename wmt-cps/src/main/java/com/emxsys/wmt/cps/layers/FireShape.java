@@ -75,9 +75,9 @@ public class FireShape {
 
             // Translate the center of the ellipse along the direction of spread so that the
             // ellipse's point of origin ends up located at the given coordinate.
-            Real distance = Globe.computeAngularDistance(ellipse.getOriginOffsetFromCenter());
             Coord2D ellipseCenter = Globe.computeGreatCircleCoordinate(origin,
-                    ellipse.getHeading(), distance);
+                    ellipse.getHeading(), 
+                    ellipse.getOriginOffsetFromCenter());
 
             // Draw the renderable
             renderable.update(ellipseCenter,
