@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.terrain;
 
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
+import static com.emxsys.gis.api.GisType.DISTANCE;
 import com.emxsys.gis.api.ShadedTerrainProvider;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainTuple;
@@ -146,8 +147,8 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
             }
             // Compute the position of object that would obscure the sun at fixed distance from the coord.
             // Set distance to one nautical mile, e.g., one minute of latitude.
-            final Real ANGULAR_DISTANCE = new Real(RealType.getRealType("Angle", degree), 1.0 / 60);
-            Coord2D endPos = Globe.computeGreatCircleCoordinate(coord, azimuth, ANGULAR_DISTANCE);
+            final Real distance = new Real(DISTANCE, 1852);
+            Coord2D endPos = Globe.computeGreatCircleCoordinate(coord, azimuth, distance);
 
             // Compute the height of a fake Sun object that would obscure the real Sun at the 
             // end positon--ignoring the curvature of earth (negligable over short distances).

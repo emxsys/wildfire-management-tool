@@ -489,15 +489,15 @@ public class Globe implements GisViewer {
     /**
      * Computes the coordinate at the given distance along the azimuth.
      * @param origin The start position from which to travel.
-     * @param azimuth The sun's azimuth. [degrees]
-     * @param distance The angular distance to travel along the azimuth. [degrees]
+     * @param azimuth The direction to travel. [degrees]
+     * @param distance The linear distance to travel along the azimuth. [meters]
      * @return The end position.
      */
     public static Coord2D computeGreatCircleCoordinate(Coord2D origin, Real azimuth, Real distance) {
         try {
             Position startPosition = Positions.fromCoord2D(origin);
             Angle greatCircleAzimuth = Angle.fromDegrees(azimuth.getValue(degree));
-            Angle pathLength = Angle.fromDegrees(distance.getValue(degree));
+            Angle pathLength = Angle.fromDegrees(computeAngularDistance(distance).getValue(degree));
 
             LatLon endPosition = LatLon.greatCircleEndPosition(startPosition, greatCircleAzimuth, pathLength);
 
