@@ -498,16 +498,11 @@ public class StdFuelModel implements FuelModel {
      */
     @Override
     public boolean isBurnable() {
-        return ((this.dead1HrSAVRatio.getValue()
-                + this.dead10HrSAVRatio.getValue()
-                + this.dead100HrSAVRatio.getValue()
-                + this.liveHerbSAVRatio.getValue()
-                + this.liveWoodySAVRatio.getValue()) == 0)
-                || ((this.dead1HrFuelLoad.getValue()
-                + this.dead10HrFuelLoad.getValue()
-                + this.dead100HrFuelLoad.getValue()
-                + this.liveHerbFuelLoad.getValue()
-                + this.liveWoodyFuelLoad.getValue()) == 0);
+        return (this.dead1HrSAVRatio.getValue() * this.dead1HrFuelLoad.getValue()
+                + this.dead10HrSAVRatio.getValue() * this.dead10HrFuelLoad.getValue()
+                + this.dead100HrSAVRatio.getValue() * this.dead100HrFuelLoad.getValue()
+                + this.liveHerbSAVRatio.getValue() * this.liveHerbFuelLoad.getValue()
+                + this.liveWoodySAVRatio.getValue() * this.liveWoodyFuelLoad.getValue()) > 0;
     }
 
     /**
