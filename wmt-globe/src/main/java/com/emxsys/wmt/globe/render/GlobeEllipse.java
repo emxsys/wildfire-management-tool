@@ -33,13 +33,14 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.wmt.globe.util.Positions;
 import static com.emxsys.wmt.globe.util.Positions.fromCoord2D;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.render.SurfaceEllipse;
 import visad.Real;
 
 /**
  *
  * @author Bruce Schubert
  */
-public class GlobeEllipse extends gov.nasa.worldwind.render.SurfaceEllipse {
+public class GlobeEllipse extends SurfaceEllipse {
 
     public GlobeEllipse() {
     }
