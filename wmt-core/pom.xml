@@ -139,16 +139,22 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <groupId>org.netbeans.api</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <!--Private Package References: see maven plugin dependencies below...-->
+            <artifactId>org-netbeans-core-startup</artifactId>
+            <groupId>org.netbeans.modules</groupId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <!--Other Dependencies-->
+        <dependency>
             <artifactId>org-netbeans-modules-projectui</artifactId>
             <groupId>org.netbeans.modules</groupId>
             <version>${netbeans.version}</version>
             <scope>runtime</scope>
-        </dependency>
-        <!--Other Dependencies-->
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-options-api</artifactId>
-            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 
@@ -163,8 +169,30 @@
                         <publicPackage>com.emxsys.wmt.core.*</publicPackage>
                     </publicPackages>
                     <moduleDependencies>
+                        <!--Private Package References -->
+                        <!-- <id></id> values: groupId:artifactId --> 
+                        <!-- <type></type> values: 
+                        [spec]  means specification dependency. That's the default. 
+                        [impl] means implementation dependency, only the exact version match will 
+                        satisfy the constraint. Creates a dependency based on the implementation 
+                        number. It looks like this: org.openide.execution = 1.0.1 It will require 
+                        a specific version of the dependency module. Use only when you depend on 
+                        a non-public feature or code that was changed in later versions or could 
+                        be changed. The version number to can be explicitly specified or the plugin 
+                        will try to guess it. The dependency jar is examined and if it is a netbeans 
+                        module, its implementation version and module name are used. The dependency
+                        version from the pom is used as fallback.
+                        [loose] means loose dependency, no requirement on version, the module just
+                        has to be present. Not very common option.-->
+                        <!-- <explicitValue>the entire dependency token</explicitValue>-->
                         <dependency>
+                            <!--Private Package Reference-->
                             <id>org.netbeans.api:org-openide-windows</id>
+                            <type>impl</type>
+                        </dependency>
+                        <dependency>
+                            <!--Private Package Reference-->
+                            <id>org.netbeans.modules:org-netbeans-core-startup</id>
                             <type>impl</type>
                         </dependency>
                     </moduleDependencies>

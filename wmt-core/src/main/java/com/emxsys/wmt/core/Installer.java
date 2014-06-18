@@ -29,11 +29,14 @@
  */
 package com.emxsys.wmt.core;
 
+import com.emxsys.wmt.core.logging.LogFormatter;
 import com.emxsys.wmt.core.project.CurrentProjectTracker;
+import com.emxsys.wmt.core.welcome.FeedbackSurvey;
 import com.emxsys.wmt.core.welcome.WelcomeComponent;
 import com.emxsys.wmt.core.welcome.WelcomeOptions;
-import com.emxsys.wmt.core.welcome.FeedbackSurvey;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 import org.openide.modules.ModuleInstall;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
@@ -46,6 +49,8 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
 
+        overrideLogFormatter();
+        
         WindowManager.getDefault().invokeWhenUIReady(() -> {
             // Install component that tracks the current project and updates the global lookup
             CurrentProjectTracker.getDefault();
@@ -98,6 +103,17 @@ public class Installer extends ModuleInstall {
 //            }
 //        });
 
+    }
+
+    private void overrideLogFormatter() {
+        Logger logger = Logger.getLogger (""); // NOI18N
+
+        LogFormatter formatter = new LogFormatter();
+        Handler[] handlers = logger.getHandlers();
+        for (int i = 0; i < handlers.length; i++) {
+            // Override the default formatter
+            handlers[i].setFormatter(formatter);
+        }
     }
 
 }
