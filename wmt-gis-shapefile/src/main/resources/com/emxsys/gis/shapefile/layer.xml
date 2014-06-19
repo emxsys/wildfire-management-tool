@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+<!--        <folder name="View">
+            <file name="com-emxsys-gis-shapefile-actions-ViewMapLayer.instance">
+                <attr name="injectable" stringvalue="com.emxsys.gis.shapefile.actions.ViewMapLayer"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr name="type" stringvalue="com.emxsys.gis.shapefile.filetype.ShapefileDataObject"/></file>
+        </folder>-->
+    </folder>
+    <folder name="Loaders">
+        <folder name="application">
+            <folder name="x-shapefile">
+                
+                <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/com/emxsys/gis/shapefile/filetype/layer-vector.png"/>
+                <attr name="iconBase" stringvalue="com/emxsys/gis/shapefile/filetype/layer-vector.png"/>
+                
+                <folder name="Factories">
+                    <file name="com-emxsys-gis-shapefile-filetype-ShapefileDataLoader.instance">
+                        <attr name="position" intvalue="-200"/>
+                    </file>
+                </folder>
+                
+                <folder name="Actions">
+                    <file name="com-emxsys-gis-actions-AddMapLayerAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Layer/com-emxsys-gis-actions-AddMapLayerAction.instance"/>
+                        <attr name="position" intvalue="10"/>
+                    </file>
+                    <file name="com-emxsys-gis-actions-RemoveMapLayerAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Layer/com-emxsys-gis-actions-RemoveMapLayerAction.instance"/>
+                        <attr name="position" intvalue="20"/>
+                    </file>
+                    <file name="com-emxsys-gis-actions-ViewLayerAttributesAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Layer/com-emxsys-gis-actions-ViewLayerAttributesAction.instance"/>
+                        <attr name="position" intvalue="10"/>
+                    </file>
+                    <file name="sep-1.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                    <file name="org-openide-actions-CutAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CutAction.instance"/>
+                        <attr name="position" intvalue="200"/>
+                    </file>
+                    <file name="org-openide-actions-CopyAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CopyAction.instance"/>
+                        <attr name="position" intvalue="300"/>
+                    </file>
+                    <file name="sep-2.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="400"/>
+                    </file>
+                    <file name="org-openide-actions-DeleteAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-DeleteAction.instance"/>
+                        <attr name="position" intvalue="500"/>
+                    </file>
+                    <file name="org-openide-actions-RenameAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-RenameAction.instance"/>
+                        <attr name="position" intvalue="600"/>
+                    </file>
+                    <file name="sep-3.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="700"/>
+                    </file>
+                    <file name="org-openide-actions-PropertiesAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-PropertiesAction.instance"/>
+                        <attr name="position" intvalue="1300"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Services">
+        <folder name="MIMEResolver">
+            <file name="ShapefileResolver.xml" url="filetype/ShapefileResolver.xml">
+                <attr name="displayName" bundlevalue="com.emxsys.gis.shapefile.Bundle#Services/MIMEResolver/ShapefileResolver.xml"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
