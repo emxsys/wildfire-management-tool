@@ -39,6 +39,8 @@ This project is licensed under the BSD 3-Clause license.
 * Install4J has been selected as the installer.
 
 ### Contribution guidelines 
+* Developers are welcome! Please contribute.
+* Also, please make contributions to the root [Terramenta](/teamninjaneer/terramenta) project.
 #### Beta Testing
 * Beta testers needed
 #### Internationalization
