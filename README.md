@@ -14,7 +14,7 @@ This project is licensed under the BSD 3-Clause license.
 
 ### How do I get set up? ###
 #### Summary of set up 
-1. Checkout the [Emxsys - Terramenta Project source code](https://bitbucket.org/emxsys/emxsys-terramenta/src) and build. 
+1. Checkout the [Emxsys - Terramenta source code](https://bitbucket.org/emxsys/emxsys-terramenta/src) and build. 
 1. Checkout the [Wildfire Managmement Tool source code](https://bitbucket.org/emxsys/wildfire-management-tool/src) and build. 
 
 #### Configuration
