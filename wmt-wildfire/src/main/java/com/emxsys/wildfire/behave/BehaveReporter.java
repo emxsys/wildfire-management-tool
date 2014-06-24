@@ -164,6 +164,15 @@ public class BehaveReporter {
         appendLine(sb, "  => flame zone depth           fzd         [m] ="
                 + lPad(df3.format(behave.fzd), 11));
         appendLine(sb, " ");
+        appendLine(sb, "  => Minteral damping coeff.   eta_s        [-] ="
+                + lPad(df5.format(behave.eta_s), 13));
+        appendLine(sb, "  => Moisture damping coeff.   eta_M        [-] ="
+                + lPad(df5.format(behave.eta_M), 13));
+        appendLine(sb, "  => Dry net fuel loading       wn_d        [-] ="
+                + lPad(df5.format(behave.wn_d), 13));
+        appendLine(sb, "  => Live net fuel loading      wn_l        [-] ="
+                + lPad(df5.format(behave.wn_l), 13));
+        appendLine(sb, " ");
 
 
         return sb.toString();
