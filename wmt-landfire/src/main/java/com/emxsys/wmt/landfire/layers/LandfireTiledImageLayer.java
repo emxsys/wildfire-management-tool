@@ -303,7 +303,7 @@ public abstract class LandfireTiledImageLayer extends WMSTiledImageLayer impleme
         private final LinkedList<DecoderArgs> list = new LinkedList<>();
 
         ColorDecoder() {
-            super();
+            super("Landfire:ColorDecoder");
         }
 
         Object lookupObjectAtPosition(DecoderArgs args) {
