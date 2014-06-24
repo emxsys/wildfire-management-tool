@@ -31,15 +31,12 @@ package com.emxsys.gis.shapefile.filetype;
 
 import com.emxsys.gis.api.capabilities.AddableGisLayer;
 import com.emxsys.gis.api.capabilities.RemovableGisLayer;
-import com.emxsys.gis.api.layer.BasicLayerCategory;
-import com.emxsys.gis.api.layer.BasicLayerGroup;
-import com.emxsys.gis.api.layer.BasicLayerType;
 import com.emxsys.gis.api.layer.GisLayer;
-import com.emxsys.gis.shapefile.ShapefileDataSource;
-import com.emxsys.gis.shapefile.ShapefileLayerFactory;
 import com.emxsys.gis.api.viewer.GisViewer;
+import com.emxsys.gis.shapefile.ShapefileDataSource;
+import com.emxsys.gis.shapefile.ShapefileGisLayer;
+import com.emxsys.gis.shapefile.ShapefileLayerFactory;
 import com.emxsys.util.TimeUtil;
-import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.layers.Layer;
 import java.io.IOException;
@@ -145,10 +142,10 @@ public class ShapefileDataObject extends MultiDataObject {
             Thread t = new Thread(() -> {
                 LOG.log(Level.INFO, "Loading shapefile {0} ...", dataSource.getName());
                 long startTimeMillis = System.currentTimeMillis();
-                ShapefileLayerFactory shapefileLoader = new ShapefileLayerFactory();
                 Shapefile shapefile = dataSource.getLookup().lookup(Shapefile.class);
                 LOG.log(Level.INFO, "  Type: {0}", shapefile.getShapeType());
                 LOG.log(Level.INFO, "  Num records: {0}", shapefile.getNumberOfRecords());
+                ShapefileLayerFactory shapefileLoader = new ShapefileLayerFactory();
                 List<Layer> layers1 = shapefileLoader.createLayersFromShapefile(shapefile);
                 for (int i = 0; i < layers1.size(); i++) {
                     Layer layer = layers1.get(i);
@@ -159,10 +156,10 @@ public class ShapefileDataObject extends MultiDataObject {
                     else {
                         layer.setName(LAYER_NAME);
                     }
-                    GisLayerProxy layerAdaptor = new GisLayerProxy(layer, BasicLayerType.Vector, BasicLayerGroup.Overlay, BasicLayerCategory.Unknown);
+                    ShapefileGisLayer gisLayer = new ShapefileGisLayer(layer);
                     GisViewer viewer1 = Lookup.getDefault().lookup(GisViewer.class);
-                    viewer1.addGisLayer(layerAdaptor);
-                    content.add(new RemoveGisLayerCapability(layerAdaptor));
+                    viewer1.addGisLayer(gisLayer);
+                    content.add(new RemoveGisLayerCapability(gisLayer));
                 }
                 LOG.log(Level.INFO, "  Load time: {0}", TimeUtil.msToSecs(System.currentTimeMillis() - startTimeMillis));
             }, "Shapefile GisLayer Loader");
@@ -192,65 +189,4 @@ public class ShapefileDataObject extends MultiDataObject {
             content.add(new AddGisLayerCapability());
         }
     }
-
-//    /**
-//     * Adapts a WorldWind Layer to a GIS GisLayer so that it can be added to a GIS GisViewer.
-//     */
-//    protected class WorldWindMapLayerAdaptor implements GisLayer
-//    {
-//
-//        private final Layer layer;
-//        private final Lookup lookup;
-//
-//
-//        public WorldWindMapLayerAdaptor(Layer layer)
-//        {
-//            this.layer = layer;
-//            this.lookup = Lookups.singleton(layer);
-//        }
-//
-//
-//        @Override
-//        public Lookup getLookup()
-//        {
-//            return this.lookup;
-//        }
-//
-//
-//        @Override
-//        public String getName()
-//        {
-//            return layer.getName();
-//        }
-//
-//
-//        @Override
-//        public boolean isEnabled()
-//        {
-//            return layer.isEnabled();
-//        }
-//
-//
-//        @Override
-//        public void setEnabled(boolean enabled)
-//        {
-//            layer.setEnabled(enabled);
-//            layer.firePropertyChange(AVKey.LAYER, null, layer);
-//            GisSupport.refreshViewersContaining(this);
-//        }
-//
-//
-//        @Override
-//        public void addPropertyChangeListener(PropertyChangeListener listener)
-//        {
-//            this.layer.addPropertyChangeListener(listener);
-//        }
-//
-//
-//        @Override
-//        public void removePropertyChangeListener(PropertyChangeListener listener)
-//        {
-//            this.layer.removePropertyChangeListener(listener);
-//        }
-//    }
 }
