@@ -85,7 +85,7 @@ public class FireReaction {
     private double eccentricity;    // Fire ellipse from effective wind
 
     static {
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.FINE);
     }
 
     /**
@@ -188,8 +188,8 @@ public class FireReaction {
                         fuelBed.getHeatSink().getValue());
                 this.rateOfSpread = new Real(ROS, ros);
                 try {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.log(Level.FINE, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
+                    if (logger.isLoggable(Level.FINER)) {
+                        logger.log(Level.FINER, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
                                 new Object[]{fuelBed.getFuelModel().getModelCode(),
                                              rateOfSpread.getValue(FireUnit.chain_hour)});
                     }
