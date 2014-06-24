@@ -49,7 +49,7 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
 
-        overrideLogFormatter();
+        overrideLogFormatters();
         
         WindowManager.getDefault().invokeWhenUIReady(() -> {
             // Install component that tracks the current project and updates the global lookup
@@ -105,14 +105,12 @@ public class Installer extends ModuleInstall {
 
     }
 
-    private void overrideLogFormatter() {
-        Logger logger = Logger.getLogger (""); // NOI18N
-
+    private void overrideLogFormatters() {
         LogFormatter formatter = new LogFormatter();
-        Handler[] handlers = logger.getHandlers();
-        for (int i = 0; i < handlers.length; i++) {
-            // Override the default formatter
-            handlers[i].setFormatter(formatter);
+        // Override the default formatter with our formatter
+        Logger logger = Logger.getLogger (""); // Root logger
+        for (Handler handler : logger.getHandlers()) {
+            handler.setFormatter(formatter);
         }
     }
 
