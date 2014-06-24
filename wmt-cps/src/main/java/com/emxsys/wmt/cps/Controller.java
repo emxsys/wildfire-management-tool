@@ -281,7 +281,6 @@ public class Controller {
                     fuelMoistureRef.get(),
                     wx, 
                     terrain);
-            System.out.println(fire);
 
             if (fireShape==null) {
                 fireShape = new FireShape();
@@ -303,6 +302,9 @@ public class Controller {
 
     private boolean validateInputs() throws RemoteException, VisADException {
         // Validate that we have the necessary inputs to compute fire behavior
+        if (coordRef.get().isMissing()) {
+            return false;
+        }
 //        if (date == null || date.isMissing()) {
 //            return false;
 //        } else if (fuelModel == null) {
