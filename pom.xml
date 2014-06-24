@@ -162,6 +162,7 @@
         <module>wmt-places</module>
         <module>wmt-photo</module>
         <module>wmt-project</module>
+        <module>wmt-swarm</module>
         <module>wmt-solar</module>
         <module>wmt-time</module>
         <module>wmt-utilities</module>
@@ -170,7 +171,7 @@
         <module>wmt-weather-mesowest</module>
         <module>wmt-weather-nws</module>
         <module>wmt-wildfire</module>
-        <module>wmt-swarm</module>
+        <module>wmt-gis-shapefile</module>
     </modules>
     <reporting>
         <plugins>
