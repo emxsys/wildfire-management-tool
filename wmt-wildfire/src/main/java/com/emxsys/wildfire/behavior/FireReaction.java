@@ -384,6 +384,13 @@ public class FireReaction {
         }
     }
 
+    /**
+     * Gets an elliptical data structure representing the fire's shape from a point origin after the
+     * given duration.
+     * @param duration The amount of time the fire burns.
+     * @return A FireEllipse data structure containing the major and minor radii and the offset from
+     * the center to the point of origin.
+     */
     public FireEllipse getFireEllipse(Duration duration) {
         if (this.fuelBed.isBurnable()) {
             try {
@@ -392,7 +399,7 @@ public class FireReaction {
                 double a1 = getRateOfSpreadBacking().getValue(meterPerSecond) * seconds;
                 double a2 = getRateOfSpreadMax().getValue(meterPerSecond) * seconds;
                 double majorRadius = (a1 + a2) / 2.;
-                double minorRadius = (majorRadius * sqrt(1 - pow(eccentricity, 2))) / 2.;
+                double minorRadius = majorRadius * sqrt(1 - (eccentricity * eccentricity));
                 double focalOffset = majorRadius - a1;
 
                 return new FireEllipse(
