@@ -72,11 +72,15 @@ public class FireShape {
 
             // Get the fire's shape after the elapsed duration.
             FireEllipse ellipse = fire.getFireEllipse(duration);
+            if (ellipse == null) {
+                renderable.setVisible(false);
+                return;
+            }
 
             // Translate the center of the ellipse along the direction of spread so that the
             // ellipse's point of origin ends up located at the given coordinate.
             Coord2D ellipseCenter = Globe.computeGreatCircleCoordinate(origin,
-                    ellipse.getHeading(), 
+                    ellipse.getHeading(),
                     ellipse.getOriginOffsetFromCenter());
 
             // Draw the renderable
@@ -84,6 +88,9 @@ public class FireShape {
                     ellipse.getMajorRadius(),
                     ellipse.getMinorRadius(),
                     new Real(ANGLE, AngleUtil.normalize360(ellipse.getHeading().getValue() + 90)));
+            if (!renderable.isVisible()) {
+                renderable.setVisible(true);
+            }
         });
     }
 
