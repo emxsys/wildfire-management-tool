@@ -42,6 +42,8 @@ import org.openide.util.Lookup;
  */
 public interface GisLayer extends Lookup.Provider, Named {
 
+    public static String PROP_GISLAYER_NAME = "PROP_GISLAYER_NAME";
+    public static String PROP_GISLAYER_ENABLED = "PROP_GISLAYER_ENABLED";
     /**
      * The lookup should contain the capabilities of a layer. For example it could contain objects
      * representing the types of data that would be returned by getObjectAtLatLon.
