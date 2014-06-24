@@ -74,4 +74,9 @@ public class RenderableGisLayer extends GisLayerProxy {
         RenderableLayer impl = (RenderableLayer) getLayerImpl();
         impl.removeAllRenderables();
     }
+
+    public void removeRenderable(Renderable renderable) {
+        RenderableLayer impl = (RenderableLayer) getLayerImpl();
+        impl.removeRenderable(renderable);
+    }
 }

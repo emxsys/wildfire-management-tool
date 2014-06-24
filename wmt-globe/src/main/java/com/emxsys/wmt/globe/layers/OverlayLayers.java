@@ -49,6 +49,17 @@ import org.openide.util.lookup.Lookups;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @MapLayerRegistrations({
+//    @MapLayerRegistration(
+//            position = 1,
+//            name = "Shapes",
+//            actuate = "onLoad",
+//            role = "Overlay",
+//            type = "Vector",
+//            category = "Other",
+//            displayName = "#CTL_Shapes",
+//            instanceClass = "com.emxsys.wmt.globe.layers.RenderableGisLayer",
+//            factoryClass = "com.emxsys.wmt.globe.layers.RenderableGisLayer",
+//            factoryMethod = "newInstance"),
     @MapLayerRegistration(
             position = 10,
             name = "Markers",
@@ -116,6 +127,7 @@ import org.openide.util.lookup.Lookups;
             factoryClass = "com.emxsys.wmt.globe.layers.LayerFactory",
             factoryMethod = "createLayer"),})
 @Messages({
+    "CTL_Shapes=Shapes",
     "CTL_Markers=Markers",
     "CTL_CountryBoundaries=Country Boundaries",
     "CTL_LatLonGraticule=Lat/Lon Graticule",
@@ -124,6 +136,7 @@ import org.openide.util.lookup.Lookups;
     "CTL_PlaceNames=Place Names",})
 public class OverlayLayers {
 
+    public static String LAYER_SHAPES = Bundle.CTL_Shapes();
     public static String LAYER_MARKERS = Bundle.CTL_Markers();
     public static String LAYER_COUNTRY_BOUNDARIES = Bundle.CTL_CountryBoundaries();
     public static String LAYER_LATLON_GRATICULE = Bundle.CTL_LatLonGraticule();

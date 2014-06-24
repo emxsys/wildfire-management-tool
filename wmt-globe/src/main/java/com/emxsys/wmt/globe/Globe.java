@@ -31,8 +31,12 @@ package com.emxsys.wmt.globe;
 
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.Feature;
 import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoLineString;
+import com.emxsys.gis.api.GeoPolygon;
 import com.emxsys.gis.api.GeoSector;
+import com.emxsys.gis.api.Geometry;
 import static com.emxsys.gis.api.GisType.ANGLE;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.api.layer.BasicLayerGroup;
@@ -51,7 +55,11 @@ import com.emxsys.wmt.globe.layers.BaseMapLayers;
 import com.emxsys.wmt.globe.layers.DummyLayer;
 import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import com.emxsys.wmt.globe.layers.OverlayLayers;
+import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.layers.WidgetLayers;
+import com.emxsys.wmt.globe.render.GlobeLineString;
+import com.emxsys.wmt.globe.render.GlobePolygon;
+import com.emxsys.wmt.globe.render.GlobeSector;
 import com.emxsys.wmt.globe.ribbons.MarkerTools;
 import com.emxsys.wmt.globe.ribbons.SceneTools;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
@@ -62,11 +70,13 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.render.SurfaceShape;
 import gov.nasa.worldwindx.examples.util.BalloonController;
 import gov.nasa.worldwindx.examples.util.HotSpotController;
 import java.awt.Component;
 import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,26 +110,7 @@ public class Globe implements GisViewer {
 
     public static final String GLOBE_TOP_COMPONENT_ID = "GlobeTopComponent";
     private static final Logger logger = Logger.getLogger(Globe.class.getName());
-    private final InstanceContent content = new InstanceContent();
-    private final Lookup lookup = new AbstractLookup(content);
-    private final GisLayerList gisLayers = new GisLayerList();
-    private final ArrayList<GisLayer> startupLayers = new ArrayList<>();
-    private WorldWindManager worldWindManager;
-    private boolean initialized = false;
     private static Globe INSTANCE;
-
-    /**
-     * Do not call! Used by @ServiceProvider. Use getInstance() or
-     * Lookup.getDefault().lookup(Globe.class) instead.
-     */
-    @SuppressWarnings("LeakingThisInConstructor")
-    public Globe() {
-        logger.finest("Globe() constructor called");
-        if (INSTANCE != null) {
-            throw new IllegalStateException("Do not call constructor. Use getInstance().");
-        }
-        INSTANCE = this;
-    }
 
     /**
      * Get the singleton instance.
@@ -132,6 +123,95 @@ public class Globe implements GisViewer {
         } else {
             return INSTANCE;
         }
+    }
+
+    /**
+     * Computes the great circle angular distance (degrees).
+     * @param distance [meters]
+     * @return A Real containing the distance in degrees.
+     */
+    public static Real computeAngularDistance(Real distance) {
+        try {
+            WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
+            double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
+            double radians = distance.getValue(meter) / radius;
+            return new Real(ANGLE, toDegrees(radians));
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Computes the great circle distance between two coordinates.
+     * @param coord1
+     * @param coord2
+     * @return A Real containing the distance in meters.
+     */
+    public static Real computeGreatCircleDistance(Coord2D coord1, Coord2D coord2) {
+        Position pos1 = Positions.fromCoord2D(coord1);
+        Position pos2 = Positions.fromCoord2D(coord2);
+        Angle angle = LatLon.greatCircleDistance(pos2, pos1);
+
+        WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
+        double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
+        double distance = angle.radians * radius;
+        return Reals.newDistance(distance, meter);
+    }
+
+    /**
+     * Computes the azimuth angle from coord1 to coord2.
+     * @param coord1
+     * @param coord2
+     * @return
+     */
+    public static double computeGreatCircleAzimuth(Coord2D coord1, Coord2D coord2) {
+        Position pos1 = Positions.fromCoord2D(coord1);
+        Position pos2 = Positions.fromCoord2D(coord2);
+        Angle angle = LatLon.greatCircleAzimuth(pos1, pos2);
+        return angle.degrees;
+    }
+
+    /**
+     * Computes the coordinate at the given distance along the azimuth.
+     * @param origin The start position from which to travel.
+     * @param azimuth The direction to travel. [degrees]
+     * @param distance The linear distance to travel along the azimuth. [meters]
+     * @return The end position.
+     */
+    public static Coord2D computeGreatCircleCoordinate(Coord2D origin, Real azimuth, Real distance) {
+        try {
+            Position startPosition = Positions.fromCoord2D(origin);
+            Angle greatCircleAzimuth = Angle.fromDegrees(azimuth.getValue(degree));
+            Angle pathLength = Angle.fromDegrees(computeAngularDistance(distance).getValue(degree));
+
+            LatLon endPosition = LatLon.greatCircleEndPosition(startPosition, greatCircleAzimuth, pathLength);
+
+            return GeoCoord2D.fromDegrees(endPosition.latitude.degrees, endPosition.longitude.degrees);
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
+    private final InstanceContent content = new InstanceContent();
+    private final Lookup lookup = new AbstractLookup(content);
+    private final GisLayerList gisLayers = new GisLayerList();
+    private final ArrayList<GisLayer> startupLayers = new ArrayList<>();
+    private final HashMap<Feature, SurfaceShape> featureShapes = new HashMap<>();
+    private WorldWindManager worldWindManager;
+    private boolean initialized = false;
+
+    /**
+     * Do not call! Used by @ServiceProvider. Use getInstance() or
+     * Lookup.getDefault().lookup(Globe.class) instead.
+     */
+    @SuppressWarnings("LeakingThisInConstructor")
+    public Globe() {
+        logger.finest("Globe() constructor called");
+        if (INSTANCE != null) {
+            throw new IllegalStateException("Do not call constructor. Use getInstance().");
+        }
+        INSTANCE = this;
     }
 
     /**
@@ -363,6 +443,59 @@ public class Globe implements GisViewer {
         this.gisLayers.remove(gisLayer);
     }
 
+    
+    public void addFeature(Feature feature, RenderableGisLayer layer) {
+        if (feature == null) {
+            throw new IllegalArgumentException("Feature cannot be null.");
+        }
+        Geometry geometry = feature.getGeometry();
+        if (geometry == null) {
+            throw new IllegalArgumentException("Feature geometry cannot be null.");
+        }
+        SurfaceShape shape = null;
+        switch (feature.getFeatureClass()) {
+            case POLYGON:
+                if (geometry instanceof GeoPolygon) {
+                    shape = new GlobePolygon((GeoPolygon) feature.getGeometry());
+                } else if (geometry instanceof GeoSector) {
+                    shape = new GlobeSector((GeoSector) feature.getGeometry());
+                } else {
+                    throw new IllegalArgumentException("Feature geometry must be a GeoPolygon.");
+                }
+                break;
+            case LINE:
+                if (geometry instanceof GeoLineString) {
+                    shape = new GlobeLineString((GeoLineString) feature.getGeometry());
+                } else {
+                    throw new IllegalArgumentException("Feature geometry must be a GeoLineString.");
+                }
+                break;
+            case POINT:
+                if (geometry instanceof GeoLineString) {
+                    shape = new GlobeLineString((GeoLineString) feature.getGeometry());
+                } else {
+                    throw new IllegalArgumentException("Feature geometry must be a GeoLineString.");
+                }
+                break;
+            default:
+                logger.log(Level.WARNING, "{0} not supported.", feature.getFeatureClass());
+                return;
+        }
+        featureShapes.put(feature, shape);
+        layer.addRenderable(shape);
+    }
+
+    public void removeFeature(Feature feature, RenderableGisLayer layer) {
+        if (feature == null) {
+            throw new IllegalArgumentException("Feature cannot be null.");
+        }
+        SurfaceShape shape = featureShapes.remove(feature);
+        if (shape != null) {
+            layer.removeRenderable(shape);
+        }
+
+    }
+
     @Override
     public void centerOn(Coord2D latlon) {
         getWorldWindManager().gotoPosition(Positions.fromCoord2D(latlon), true); // true = animate
@@ -374,11 +507,13 @@ public class Globe implements GisViewer {
      */
     @Override
     public Coord3D getLocationAtCenter() {
-        return getLookup().lookup(ReticuleCoordinateProvider.class).getReticuleCoordinate();
+        return getLookup().lookup(ReticuleCoordinateProvider.class
+        ).getReticuleCoordinate();
     }
 
     @Override
-    public Coord3D getLocationAtScreenPoint(double x, double y) {
+    public Coord3D
+            getLocationAtScreenPoint(double x, double y) {
         throw new UnsupportedOperationException("getLocationAtScreenPoint");
     }
 
@@ -437,75 +572,6 @@ public class Globe implements GisViewer {
         Coord2D southwest = GeoCoord2D.fromDegrees(sector.getMinLatitude().degrees, sector.getMinLongitude().degrees);
         Coord2D northeast = GeoCoord2D.fromDegrees(sector.getMaxLatitude().degrees, sector.getMaxLongitude().degrees);
         return new GeoSector(southwest, northeast);
-    }
-
-    /**
-     * Computes the great circle angular distance (degrees).
-     * @param distance [meters]
-     * @return A Real containing the distance in degrees.
-     */
-    public static Real computeAngularDistance(Real distance) {
-        try {
-            WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
-            double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
-            double radians = distance.getValue(meter) / radius;
-            return new Real(ANGLE, toDegrees(radians));
-        } catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Computes the great circle distance between two coordinates.
-     * @param coord1
-     * @param coord2
-     * @return A Real containing the distance in meters.
-     */
-    public static Real computeGreatCircleDistance(Coord2D coord1, Coord2D coord2) {
-        Position pos1 = Positions.fromCoord2D(coord1);
-        Position pos2 = Positions.fromCoord2D(coord2);
-        Angle angle = LatLon.greatCircleDistance(pos2, pos1);
-
-        WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
-        double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
-        double distance = angle.radians * radius;
-        return Reals.newDistance(distance, meter);
-    }
-
-    /**
-     * Computes the azimuth angle from coord1 to coord2.
-     * @param coord1
-     * @param coord2
-     * @return
-     */
-    public static double computeGreatCircleAzimuth(Coord2D coord1, Coord2D coord2) {
-        Position pos1 = Positions.fromCoord2D(coord1);
-        Position pos2 = Positions.fromCoord2D(coord2);
-        Angle angle = LatLon.greatCircleAzimuth(pos1, pos2);
-        return angle.degrees;
-    }
-
-    /**
-     * Computes the coordinate at the given distance along the azimuth.
-     * @param origin The start position from which to travel.
-     * @param azimuth The direction to travel. [degrees]
-     * @param distance The linear distance to travel along the azimuth. [meters]
-     * @return The end position.
-     */
-    public static Coord2D computeGreatCircleCoordinate(Coord2D origin, Real azimuth, Real distance) {
-        try {
-            Position startPosition = Positions.fromCoord2D(origin);
-            Angle greatCircleAzimuth = Angle.fromDegrees(azimuth.getValue(degree));
-            Angle pathLength = Angle.fromDegrees(computeAngularDistance(distance).getValue(degree));
-
-            LatLon endPosition = LatLon.greatCircleEndPosition(startPosition, greatCircleAzimuth, pathLength);
-
-            return GeoCoord2D.fromDegrees(endPosition.latitude.degrees, endPosition.longitude.degrees);
-        } catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            return null;
-        }
     }
 
 }
