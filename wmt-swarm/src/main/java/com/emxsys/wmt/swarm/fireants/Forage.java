@@ -86,6 +86,8 @@ public class Forage extends GoalForage {
                     azimuth,
                     distance);
 
+        } catch (UnburnableException ex) {
+            return GeoCoord2D.INVALID_COORD;
         } catch (UnitException ex) {
             throw new IllegalStateException(ex);
         }
