@@ -63,6 +63,7 @@ import com.emxsys.wildfire.api.FuelMoistureTuple;
 import com.emxsys.wildfire.api.FuelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wildfire.behavior.FireReaction;
+import com.emxsys.wildfire.behavior.Fuelbed;
 import com.emxsys.wildfire.behavior.SurfaceFireModel;
 import com.emxsys.wildfire.spi.DefaultFireBehaviorProvider;
 import com.emxsys.wildfire.spi.DefaultFuelProvider;
@@ -70,6 +71,7 @@ import com.emxsys.wmt.cps.layers.FireShape;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.cps.ui.FuelTopComponent;
+import com.emxsys.wmt.cps.ui.HaulChartTopComponent;
 import com.emxsys.wmt.cps.ui.WeatherTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import java.awt.EventQueue;
@@ -103,10 +105,12 @@ import visad.VisADException;
 public class Controller {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
-    // Top components that interact with this Controllelr
+    // Top components that interact with this Controller
     private static ForcesTopComponent forcesWindow;
     private static FuelTopComponent fuelWindow;
+    private static HaulChartTopComponent haulChartWindow;
     private static WeatherTopComponent weatherWindow;
+
     // Data providers - Event generators
     private final ShadedTerrainProvider earth;
     private final SunlightProvider sun;
@@ -114,12 +118,15 @@ public class Controller {
     private ReticuleCoordinateProvider reticule;
     private WeatherProvider weather;
     private FuelModelProvider fuels;
+
     // Fire Behavior Calculator
     private final FuelProvider fuelProvider = DefaultFuelProvider.getInstance();
     private final FireBehaviorProvider fireProvider = DefaultFireBehaviorProvider.getInstance();
     private final SurfaceFireModel fireModel = new SurfaceFireModel();
+    private Fuelbed fuel;
+    private FireReaction fire;
     private FireShape fireShape;    // Deferred initialization
-    
+
     // Current data values
     private final AtomicReference<ZonedDateTime> timeRef = new AtomicReference<>(ZonedDateTime.now(ZoneId.of("UTC")));
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
@@ -267,37 +274,35 @@ public class Controller {
             Weather wx = weatherModel.getWeather(time, coord);
 
             // Condition the fuel to the current weather and solar conditions.
-            Fuel fuel = fuelProvider.newFuel(fuelModelRef.get());
-            fuel.condition(time, coord, solarModel, weatherModel, terrain, fuelMoistureRef.get());
-
+//            Fuel fuel = fuelProvider.newFuel(fuelModelRef.get());
+//            fuel.condition(time, coord, solarModel, weatherModel, terrain, fuelMoistureRef.get());
             // Compute the fire Behavior
-//            FireEnvironment fire = fireProvider.computeFireBehavior(
+//            FireEnvironment fire = fireProvider.getFireReaction(
 //                    fuel.getFuelModel(),
 //                    fuel.getFuelCondition(time),
 //                    wx, terrain);
             
-            FireReaction fire = fireModel.computeFireBehavior(
-                    fuelModelRef.get(),
-                    fuelMoistureRef.get(),
-                    wx, 
-                    terrain);
+            fuel = fireModel.getFuelbed(fuelModelRef.get(), fuelMoistureRef.get());
+            fire = fireModel.getFireBehavior(fuel, wx, terrain);
 
-            if (fireShape==null) {
+            if (fireShape == null) {
                 fireShape = new FireShape();
             }
             fireShape.update(coord, fire, Duration.ofMinutes(5));
-            
+
             // Compute the hourly fire behavior 
 //            List<FireEnvironment> fires = new ArrayList<>();
 //            for (FuelCondition cond : fuel.getConditions()) {
-//                fires.add(fireModel.computeFireBehavior(fuel.getFuelModel(), cond, windSpd, windDir, terrain));
+//                fires.add(fireModel.getFireReaction(fuel.getFuelModel(), cond, windSpd, windDir, terrain));
 //            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "computeFireBehavior failed.", e);
             Exceptions.printStackTrace(e);
         }
         // Output the values
-        //HaulChartTopComponent.findInstance().plotFireBehavior(fires.get(0));
+        EventQueue.invokeLater(() -> {
+            getHaulChartTopComponent().updateCharts(fuel, fire);
+        });
     }
 
     private boolean validateInputs() throws RemoteException, VisADException {
@@ -495,6 +500,17 @@ public class Controller {
             }
         }
         return fuelWindow;
+    }
+
+    /** Helper. */
+    public static HaulChartTopComponent getHaulChartTopComponent() {
+        if (haulChartWindow == null) {
+            haulChartWindow = (HaulChartTopComponent) WindowManager.getDefault().findTopComponent(HaulChartTopComponent.PREFERRED_ID);
+            if (haulChartWindow == null) {
+                throw new IllegalStateException("Cannot find tc: " + HaulChartTopComponent.PREFERRED_ID);
+            }
+        }
+        return haulChartWindow;
     }
 
     /** Helper. */

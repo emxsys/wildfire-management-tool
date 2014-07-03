@@ -31,7 +31,8 @@ package com.emxsys.wmt.cps.charts;
 
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.wildfire.api.FireEnvironment;
+import com.emxsys.wildfire.behavior.FireReaction;
+import com.emxsys.wildfire.behavior.Fuelbed;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -244,7 +245,7 @@ public class HaulChart extends javax.swing.JPanel {
      * @param heatReleasePerUnitArea x value in btus per unit area
      * @param rateOfSpread y value in chains per hour
      */
-    public void plotFireBehavior(FireEnvironment fire) {
+    public void plotFireBehavior(Fuelbed fuel, FireReaction fire) {
         // Resetting the chart so we don't display stale data if we don't have a valid fire.
         seriesMax.clear();
         seriesNoWnd.clear();
@@ -254,7 +255,7 @@ public class HaulChart extends javax.swing.JPanel {
         }
 
         // Updating the subtitle with the fuel model name
-        subTitle.setText(fire.model.getModelName());
+        subTitle.setText(fuel.getFuelModel().getModelName());
         if (chart.getSubtitleCount() == 0) {
             chart.addSubtitle(subTitle);
         }
@@ -274,20 +275,18 @@ public class HaulChart extends javax.swing.JPanel {
         double fli_US = 0;
         try {
             // Use US values for placement inside the chart
-            heatMax_US = fire.fireBehavior.getHeatRelease().getValue(heatUS);
-            rosMax_US = fire.fireBehavior.getRateOfSpread().getValue(rosUS);
-            btuNoWnd_US = fire.fireBehaviorNoWnd.getHeatRelease().getValue(heatUS);
-            rosNoWnd_US = fire.fireBehaviorNoWnd.getRateOfSpread().getValue(rosUS);
-            fln_US = fire.fireBehavior.getFlameLength().getValue(flnUS);
-            fli_US = fire.fireBehavior.getFireLineIntensity().getValue(fliUS);
+            heatMax_US = fuel.getHeatRelease().getValue(heatUS);
+            rosMax_US = fire.getRateOfSpreadMax().getValue(rosUS);
+            rosNoWnd_US = fire.getRateOfSpreadNoWindNoSlope().getValue(rosUS);
+            fln_US = fire.getFlameLength().getValue(flnUS);
+            fli_US = fire.getFirelineIntensity().getValue(fliUS);
 
             // Get values used for labels
-            heatMax = fire.fireBehavior.getHeatRelease().getValue(heatUOM);
-            rosMax = fire.fireBehavior.getRateOfSpread().getValue(rosUOM);
-            btuNoWnd = fire.fireBehaviorNoWnd.getHeatRelease().getValue(heatUOM);
-            rosNoWnd = fire.fireBehaviorNoWnd.getRateOfSpread().getValue(rosUOM);
-            fln = fire.fireBehavior.getFlameLength().getValue(flnUOM);
-            fli = fire.fireBehavior.getFireLineIntensity().getValue(fliUOM);
+            heatMax = fuel.getHeatRelease().getValue(heatUOM);
+            rosMax = fire.getRateOfSpreadMax().getValue(rosUOM);
+            rosNoWnd = fire.getRateOfSpreadNoWindNoSlope().getValue(rosUOM);
+            fln = fire.getFlameLength().getValue(flnUOM);
+            fli = fire.getFirelineIntensity().getValue(fliUOM);
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
