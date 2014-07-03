@@ -277,6 +277,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Computes the cured portion of live herbaceous fuels.
+     * @param fuelMoisture Provides the live fuel moisture.
      * @return The cured percentage [%].
      */
     public static double calcHerbaceousCuring(FuelMoisture fuelMoisture) {
@@ -643,6 +644,7 @@ public class Fuelbed extends RealTuple {
      * the temperature of that mass to ignition. See http://www.firewords.net
      *
      * Rothermel (1972): eq. (77) + (78)
+     * @return [Btu/ft3]
      */
     public Real getHeatSink() {
         if (nonBurnable) {
@@ -676,6 +678,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the dead herbaceous fuel loading.
+     * @return [lb/ft2]
      */
     public Real getDeadHerbFuelLoad() {
         try {
@@ -687,6 +690,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the 1 hour dead fuel loading.
+     * @return [lb/ft2]
      */
     public Real getDead1HrFuelLoad() {
         try {
@@ -698,6 +702,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the 10 hour dead fuel loading.
+     * @return [lb/ft2]
      */
     public Real getDead10HrFuelLoad() {
         try {
@@ -709,6 +714,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the 100 hour dead fuel loading.
+     * @return [lb/ft2]
      */
     public Real getDead100HrFuelLoad() {
         try {
@@ -720,6 +726,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the adjusted live herbaceous fuel loading.
+     * @return [lb/ft2]
      */
     public Real getLiveHerbFuelLoad() {
         try {
@@ -731,6 +738,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the live woody fuel loading.
+     * @return [lb/ft2]
      */
     public Real getLiveWoodyFuelLoad() {
         try {
@@ -742,6 +750,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the dead herbaceous fuel surface-area-to-volume ratio.
+     * @return [ft2/ft3]
      */
     public Real getDeadHerbSAVRatio() {
         try {
@@ -753,6 +762,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the 1 hour dead fuel surface-area-to-volume ratio.
+     * @return [ft2/ft3]
      */
     public Real getDead1HrSAVRatio() {
         try {
@@ -764,6 +774,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the 10 hour dead fuel surface-area-to-volume ratio.
+     * @return [ft2/ft3]
      */
     public Real getDead10HrSAVRatio() {
         try {
@@ -775,6 +786,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the 100 hour dead fuel surface-area-to-volume ratio.
+     * @return [ft2/ft3]
      */
     public Real getDead100HrSAVRatio() {
         try {
@@ -786,6 +798,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the live herbaceous fuel surface-area-to-volume ratio.
+     * @return [ft2/ft3]
      */
     public Real getLiveHerbSAVRatio() {
         try {
@@ -797,6 +810,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the live woody fuel loading surface-area-to-volume ratio.
+     * @return [ft2/ft3]
      */
     public Real getLiveWoodySAVRatio() {
         try {
@@ -808,6 +822,7 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the fuel bed depth.
+     * @return [foot]
      */
     public Real getFuelBedDepth() {
         try {
@@ -819,11 +834,16 @@ public class Fuelbed extends RealTuple {
 
     /**
      * Gets the fuel model used to construct the fuel bed.
+     * @return FuelModel
      */
     public FuelModel getFuelModel() {
         return this.fuelModel;
     }
     
+    /**
+     * 
+     * @return True if the fuel model is a burnable type (e.g., not water, urban, etc.)
+     */
     public boolean isBurnable() {
         return !this.nonBurnable;
     }
@@ -836,6 +856,7 @@ public class Fuelbed extends RealTuple {
      * (through the moisture damping coefficient). The greater the difference between actual
      * moisture content and the moisture of extinction, the smaller the moisture damping coefficient
      * and therefore the greater the spread rate.
+     * @return [percent]
      */
     public Real getDeadMoistureOfExt() {
         return Reals.convertTo(MX_DEAD, fuelModel.getMoistureOfExtinction());
@@ -1006,13 +1027,7 @@ public class Fuelbed extends RealTuple {
         if (!Objects.equals(this.fuelModel, other.fuelModel)) {
             return false;
         }
-        if (!Objects.equals(this.fuelMoisture, other.fuelMoisture)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.fuelMoisture, other.fuelMoisture);
     }
-
-
-    
     
 }
