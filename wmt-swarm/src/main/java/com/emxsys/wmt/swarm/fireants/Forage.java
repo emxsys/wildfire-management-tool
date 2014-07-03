@@ -42,6 +42,7 @@ import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
 import static com.emxsys.wildfire.api.StdFuelMoistureScenario.VeryLowDead_FullyCuredHerb;
 import com.emxsys.wildfire.behavior.FireReaction;
+import com.emxsys.wildfire.behavior.Fuelbed;
 import com.emxsys.wildfire.behavior.SurfaceFireModel;
 import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
 import com.emxsys.wmt.globe.Globe;
@@ -159,7 +160,8 @@ public class Forage extends GoalForage {
         FuelMoisture fuelMoisture = VeryLowDead_FullyCuredHerb.getFuelMoisture();
         Terrain terrain = agent.getEnvironment().getTerrain(location);
         Weather weather = agent.getEnvironment().getWeather(location);
-        FireReaction fire = fireModel.computeFireBehavior(lastFuelModel, fuelMoisture, weather, terrain);
+        Fuelbed fuel = fireModel.getFuelbed(lastFuelModel, fuelMoisture);
+        FireReaction fire = fireModel.getFireBehavior(fuel, weather, terrain);
         Real ros = fire.getRateOfSpreadAtAzimuth(direction);
 
         // ros [ft/min]
