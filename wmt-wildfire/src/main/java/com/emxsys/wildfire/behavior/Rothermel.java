@@ -29,6 +29,7 @@
  */
 package com.emxsys.wildfire.behavior;
 
+import com.emxsys.util.MathUtil;
 import static java.lang.Math.*;
 import java.util.logging.Logger;
 
@@ -47,6 +48,10 @@ import java.util.logging.Logger;
  * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
  * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
  * and Range Experiment Station
+ *
+ * <li style="bullet"><a name="bib_1000"></a> Rothermel et al, 1986, Modeling Moisture Content of
+ * Fine Dead Wildland Fuels: Input to the BEHAVE Fire Prediction System, Research Paper, INT-359,
+ * USDA Forest Service, Intermountain Research Station
  * </ul>
  * Other Sources:
  * <ul>
@@ -59,6 +64,7 @@ import java.util.logging.Logger;
 public class Rothermel {
 
     private static final Logger logger = Logger.getLogger(Rothermel.class.getName());
+    private static final double HALF_PI = Math.PI / 2.;
 
     /**
      * Calculates the mean bulk density (fuel-bed weight per unit volume): rho_b.
@@ -539,7 +545,7 @@ public class Rothermel {
      * Calculates the fire ellipse eccentricity from the effective wind speed.
      *
      * Anderson 1983: eq. (4)
-     * 
+     *
      * <pre>
      * Consider using Anderson 1983: eq. (17)
      *      l/w = 0.936 EXP(0.1l47U) + 0.461 EXP(-0.0692U)
@@ -561,4 +567,356 @@ public class Rothermel {
         }
         return eccentricity;
     }
+
+    /**
+     * Compute difference between fuel temperature and the air temperature due to solar heating and
+     * wind cooling effects.
+     *
+     * Rothermel 1986: eq. (1)
+     *
+     * @param I radiation intensity [cal/c2 * min]
+     * @param T_a temperature of air [fahrenheit]
+     * @param U_h wind velocity at fuel level [mph]
+     *
+     * @return T_f temperature of fuel [fahrenheit]
+     */
+    static public double calcFuelTemp(double I, double T_a, double U_h) {
+        // Rothermel et al, 1986, page 9
+        // Equation #1
+        // The difference in temperature between the air and fuel is assumed
+        // to be directly proportional to the incident radiation intensity, I,
+        // and inversely proportional to the wind velocity, U, and two constants
+        // attributed to fuel conditions:
+        //  T_f - T_a == I / (0.015 * U_h + 0.026)
+        // where:
+        //  T_f  =   temperature of fuel [farenheit]
+        //  T_a  =   temperature of air  [farenheit]
+        //  I    =   radiation intencity [cal/c2 * min]
+        //  U_h  =   wind velocity at fuel level [mph]
+
+        double T_f = (I / (0.015 * U_h + 0.026)) + T_a;
+        return T_f;
+    }
+
+    /**
+     * Compute the relative humidity for the air immediately adjacent to the fuel.
+     *
+     * Rothermel 1986: eq. (2)
+     *
+     * @param H_a relative humidity of the air [percent]
+     * @param T_f fuel temperature [Fahrenheit]
+     * @param T_a air temperature [Fahrenheit]
+     * @return H_f - relative humidity of the air next to the fuel [percent]
+     */
+    static public double calcRelativeHumidityNearFuel(double H_a, double T_f, double T_a) {
+        // Rothermel et al, 1986, page 9
+        // Equation #2
+        // Correction for relative humidity as a function of the fuel temperature
+        // and air temperature:
+        //  H_f = H_a * exp(-0.033(T_f - T_a))
+        double H_f = H_a * exp(-0.033 * (T_f - T_a));
+        return H_f;
+    }
+
+    /**
+     * Computes the solar irradiance.
+     *
+     * Rothermel 1986: eq. (3)
+     *
+     * @param I_a irradiance at the forest floor perpendicular to the solar ray [cal/cm2*min]
+     * @param r2 The earth-sun (center of mass) distance squared
+     * @param A solar elevation angle to the sun [radians]
+     *
+     * @return I - incident radiation on the forest floor [cal/cm2*min]
+     */
+    static public double calcSolarIrradianceOnHorzSurface(double I_a, double r2, double A) {
+        // Rothermel et al, 1986, page 9
+        // Equation #3
+        // I = (I_a / r2) * sin A
+        if (A <= 0) {
+            return 0;
+        }
+        double I = (I_a / r2) * sin(A);
+        return I;
+    }
+
+    /**
+     * Computes the optical air mass, i.e., the ratio of the optical path length of radiation
+     * through the atmosphere at angle A, to the path length toward the zenith at sea level.
+     *
+     * Rothermel 1986: eq. (16)
+     *
+     * @param A the solar altitude angle [radians]
+     * @param E the elevation at angle A [feet]
+     * @return M the optical air mass ratio
+     */
+    static public double calcOpticalAirMass(double A, double E) {
+        // Equation #16
+        // M = (absolute_pressure / sea_level_pressure) 
+        // csc A = exp(-0.0000448E) csc A
+        double M = 0;
+        if (A > 0) {
+            M = exp(-0.0000448 * E) * 1.0 / sin(A);
+        }
+        return M;
+    }
+
+    /**
+     * Computes irradiance at forest floor perpendicular to solar ray (1 [cal/cm2*min] = 697.8
+     * [watts/m2])
+     *
+     * @param M is the optical air mass ratio
+     * @param S_c cloud cover [percent]
+     * @param p is the transparency coefficient
+     * @return attenuated irradiance [cal/cm2*min]
+     */
+    static public double calcAttenuatedIrradiance(double M, double S_c, double p) {
+        // I_a = I_M * tau_n
+        //  where:
+        //      tau_n is net transmittance of clouds and trees
+        //      I_M is the direct solar irradiance including atmospheric attenuation
+        // I_M = I_o * pM
+        //  where:
+        //      I_o is incident intensity or solar constant 1.98 cal/cm2*min
+        //      p is the transparency coefficient
+        //      M is the optical air mass, the ratio of the
+        //
+        if (M <= 0) {
+            return 0;
+        }
+        final double I_o = 1.98;        // solar constant [cal/cm2*min]
+        double tau_c = (1 - S_c / 100.0); // cloud shade transmittance
+        double tau_t = 1;               // tree shade transmittance (default 1 for now)
+        double tau_n = tau_t * tau_c;
+        double I_M = I_o * pow(p, M);   // incident radiation attenuated by atmosphere
+        double I_a = I_M * tau_n;       // irradiance at forest floor perpendicular to solar ray
+        return I_a;
+    }
+
+    /**
+     * Computes the irradiance on a slope (neglecting the small variation in r).
+     *
+     * Rothermel 1986, eq. (9),(10) and (11), adjusted for Z relative to North instead of East
+     *
+     * @param alpha slope angle from horizontal at slope azimuth [radians]
+     * @param beta aspect of the slope [radians]
+     * @param A solar altitude (elevation) angle [radians]
+     * @param Z solar azimuth angle (true) [radians]
+     * @param I_a attenuated irradiance [cal/cm2*min]
+     * @return incident radiation intensity [cal/cm2*min]
+     */
+    static public double calcIrradianceOnASlope(double alpha, double beta,
+                                                double A, double Z,
+                                                double I_a) {
+        // Rothermel et al, 1986, page 11
+        // Equation #9, 10 and 11
+        //  I = Ia * sin zeta
+        // where:
+        //  alpha   = slope angle from horizontal at slope azimuth
+        //  psi     = slope angle at solar azimuth Z
+        //      zeta replaces A in equation #3, the solar angle to the slope in
+        //      the plane normal to the slope
+        //  sin zeta = sin(A - psi) * cos(alpha) / cos(psi)
+        //  tan psi  = tan alpha * sin(z - beta)
+        // where:
+        //      (A - psi) is the solar angle to the slope in local vertical plane
+        //      and psi is the slope angle at the solar azimuth, z,
+        //
+
+        // Precondition: Sun above the horizon
+        if (A <= 0) {
+            return 0;
+        }
+        // Precondition: Must have sunlight (not total shade)
+        if (I_a <= 0) {
+            return 0;
+        }
+
+        // Adjusted original algorithm from East azimuth to North azimuth with 1/2 PI.
+        double tanPsi = tan(alpha) * sin(Z - beta - HALF_PI);
+        double psi = atan(tanPsi);
+        double sinZeta = sin(A - psi) * cos(alpha) / cos(psi);
+
+        // I is the incident radiation intensity
+        double I = I_a * sinZeta;
+
+        // Post condition: I >= 0
+        return (I > 0) ? I : 0;
+    }
+
+    /*
+     * Original algorithm with East Azimuth (e.g., East = 0 degrees, South = 90 degrees).
+     * @deprecated
+     */
+    @Deprecated
+    static double calcIrradianceOnASlopeWithEastAz(double alpha, double beta, double A, double Z, double I_a) {
+        // Rothermel et al, 1986, page 11
+        // Equation #9, 10 and 11
+        //  I = Ia * sin zeta
+        // where:
+        //  alpha   = slope angle from horizontal at slope azimuth
+        //  psi     = slope angle at solar azimuth Z
+        //      zeta replaces A in equation #3, the solar angle to the slope in
+        //      the plane normal to the slope
+        //  sin zeta = sin(A - psi) * cos(alpha) / cos(psi)
+        //  tan psi  = tan alpha * sin(z - beta)
+        // where:
+        //      (A - psi) is the solar angle to the slope in local vertical plane
+        //      and psi is the slope angle at the solar azimuth, z,
+        //
+
+        // Precondition: Sun above the horizon
+        if (A <= 0) {
+            return 0;
+        }
+
+        double tanPsi = tan(alpha) * sin(Z - beta);
+        double psi = atan(tanPsi);
+        double sinZeta = sin(A - psi) * cos(alpha) / cos(psi);
+
+        // I is the incident radiation intensity
+        double I = I_a * sinZeta;
+
+        // Post condition: I >= 0
+        return (I > 0) ? I : 0;
+    }
+
+    /**
+     * Computes the Canadian Standard Daily Fine Fuel Moisture Code (FFMC) and converts it to a
+     * percentage. Calculates the fuel moisture percentage for early afternoon from noon-time
+     * weather conditions or forecasts. <br/>
+     *
+     * Rothermel, et al, "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE
+     * fire prediction system." Research Paper INT-359. 1986. Equations located on page 47. <br/>
+     *
+     * Note: FFMC: Low = 0 - 72; Moderate = 73 - 77; High = 78 - 82; Extreme > 82
+     *
+     * @param m_0 initial fuel moisture at noon [percent]
+     * @param T_f air temp immediately adjacent to fuel [Fahrenheit]
+     * @param H_f relative humidity immediately adjacent to fuel [percent]
+     * @param W 20 foot wind speed [MPH]
+     * @param R rainfall amount [inches]
+     * @return Fuel moisture percent derived from computed FFMC code [percent]
+     */
+    static public double calcCanadianStandardDailyFineFuelMoisture(double m_0, double T_f,
+                                                                   double H_f, double W, double R) {
+
+        // f_0 - initial moisture converted to a FFMC
+        double f_0 = 101d - m_0;
+
+        // Equation #1 - adust the initial fuel moisture code (f0) for rain
+        double f_R;     // f_0 modified for rain
+        // if rain > 0.02"
+        if (R > 0.02) {
+            double R_A = min(R, 1.5);
+            double F;
+            if (R_A <= 0.055) { // [inches]
+                F = -56.0 - 55.6 * log(R_A + 0.04);
+            } else if (R_A <= 0.225) { // [inches]
+                F = -1.0 - 18.2 * log(R_A - 0.04);
+            } else {
+                F = 14 - 8.25 * log(R_A - 0.075);
+            }
+            f_R = max(0, (F * f_0 / 100) + 1 - 8.73 * exp(-0.1117 * f_0));
+        } else {
+            // little or no rain
+            f_R = f_0;
+        }
+
+        // Equation #2
+        // m_R - initial fuel moisture [percent] adjusted for rain
+        double m_R = 101 - f_R;
+
+        // Equation #3 - equilibrium drying curve
+        double E_D = (0.942 * pow(H_f, 0.679)) + 11 * exp((H_f / 10) - 10);
+
+        // Equation #4 - equilibrium wetting curve
+        double E_W = (0.597 * pow(H_f, 0.768)) + 14 * exp((H_f / 8) - 12.5);
+
+        // m - fine fuel moisture adjusted for humidity and wind
+        double m;
+        if (MathUtil.nearlyEquals(m_R, E_D)) {
+            m = m_R;
+        } // Wetting
+        else if (m_R < E_D) {
+            // fuel moisture is below the drying curve so a wetting trend is in effect
+            // Equation #5
+            m = E_W + (m_R - E_W) / 1.9953;   //-- original
+            //m = E_W + (E_W - m_R) / 1.9953;     // corrected based on Anderson 2009 87-10 
+        } // Drying
+        else {
+            // fuel moisture is above the drying curve so a drying trend is in effect
+
+            // Here we constrain 20' wind to between 1 and 14 mph
+            W = min(max(1.0, W), 14.0);
+            // Equations #6 and #7
+            double x = 0.424 * (1 - pow(H_f / 100, 1.7)) + 0.088 * pow(W, 0.5) * (1 - pow(H_f / 100, 8));
+            m = E_D + (m_R - E_D) / pow(10, x);
+        }
+        // compute fine fuel moisture delta for temperature
+        double delta = 0;
+        if (f_0 < 99.0) {
+            delta = max(-16.0, (T_f - 70d) * (0.63 - 0.0065 * f_R));
+        }
+        // final FFMC code constrained to between 0 and 99
+        double f = max(0, min(99d, 101d - m + delta));
+
+        // FFMC code converted to fuel moisture percentage
+        return 101d - f;
+    }
+
+    /**
+     * Computes the Canadian Hourly Fine Fuel Moisture percentage.
+     *
+     * Note: The calcCanadianStandardDailyFineFuelMoisure provides the first m_0. Subsequently, the
+     * previous hour's m becomes m_0.
+     *
+     * Rothermel, et al, "Modeling moisture content of fine dead wildland fuels: input to the BEHAVE
+     * fire prediction system." Research Paper INT-359. 1986. Equations located on page 47.
+     *
+     * @param m_0 previous hour's fuel moisture [percent]
+     * @param H relative humidity [percent]
+     * @param T_c air temperature [Celsius]
+     * @param W_k 20' wind speed [KPH]
+     *
+     * @return fuel moisture [percent]
+     */
+    static public double calcCanadianHourlyFineFuelMoisture(double m_0, double H, double T_c, double W_k) {
+        // Equation #1 [not used/applicatble] converts previous hours FFMC to fuel moisture percent
+        // m_0 = previous hour's fuel moisture;
+
+        // constrain wind to 22.5 kph
+        W_k = min(max(0, W_k), 22.5);
+
+        double m = 0;
+
+        // Equation #2a compute equilibruim moisture curve (EMC) for drying
+        double E_d = 0.942 * pow(H, 0.679) + 11 * exp((H - 100) / 10)
+                + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
+        // Equation #2b compute equilibruim moisture curve (EMC) for wetting
+        double E_w = 0.618 * pow(H, 0.753) + 10 * exp((H - 100) / 10)
+                + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
+
+        if (m_0 > E_d) {
+            // Drying...
+            // Equations #3a and #3b compute log drying rate for hourly computation, log base 10
+            double k_a = 0.424 * (1 - pow(H / 100, 1.7)) + 0.0694 * pow(W_k, 0.5) * (1 - pow(H / 100, 8));
+            double k_d = k_a * 0.0579 * exp(0.0365 * T_c);
+            // Equation #5a computes final fuel moisture percent
+            m = E_d + (m_0 - E_d) * exp(-2.303 * k_d);
+        } else if (m_0 < E_w) {
+            // Wetting...
+            // Equation #4a and #4b compute log wetting rate for hourly computation, log base 10
+            double k_b = 0.424 * (1 - (pow((100 - H) / 100, 1.7)))
+                    + 0.0694 * pow(W_k, 0.5) * (1 - (pow((100 - H) / 100, 8)));
+            double k_w = k_b * 0.0579 * exp(0.0365 * T_c);
+            // Equation #5b computes final fuel moisture percent
+            //m = E_w + (E_w - m_0) * exp(-2.303 * k_w);    // anderson 2009 (77-5b)
+            m = E_w - (E_w - m_0) * exp(-2.303 * k_w);    // rothemel pg 48
+        } else {
+            m = m_0;
+        }
+        return m;
+    }
+
 }

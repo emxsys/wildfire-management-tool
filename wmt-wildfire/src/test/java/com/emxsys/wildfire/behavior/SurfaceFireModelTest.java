@@ -95,18 +95,18 @@ public class SurfaceFireModelTest {
         TerrainTuple terrain = new TerrainTuple(180, 16.7, 0);
 
         for (int i = 0; i < 10; i++) {
-            long start = System.currentTimeMillis();            
+            long start = System.currentTimeMillis();
             for (FuelModel fuelModel : models) {
                 for (FuelMoisture fuelMoisture : moistures) {
-                    FireReaction result = instance.computeFireBehavior(
-                            fuelModel, fuelMoisture, weather, terrain);
-                    assertNotNull(result);
-                    result.getRateOfSpreadMax();   // force the calculations
+                    Fuelbed fuel = instance.getFuelbed(fuelModel, fuelMoisture);
+                    FireReaction fire = instance.getFireBehavior(fuel, weather, terrain);
+                    assertNotNull(fire);
+                    fire.getRateOfSpreadMax();   // force the calculations
                     //System.out.println(fuelModel.getModelCode() + ": " + result);
                 }
             }
-            long end = System.currentTimeMillis();          
-            System.out.printf(">>> Pass %d completed in %dms%n", i+1, end - start);
+            long end = System.currentTimeMillis();
+            System.out.printf(">>> Pass %d completed in %dms%n", i + 1, end - start);
         }
     }
 }
