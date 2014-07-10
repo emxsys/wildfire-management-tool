@@ -138,7 +138,7 @@ public class FuelTypeModel
         {
             Real sample = (Real) this.fuels.getSample(index);
             int fuelModelNo = (int) Math.round(sample.getValue());
-            return StdFuelModel.getFuelModel(fuelModelNo);
+            return StdFuelModel.from(fuelModelNo);
         }
         catch (VisADException | RemoteException ex)
         {
@@ -161,7 +161,7 @@ public class FuelTypeModel
             Real fuel = (Real) this.fuels.evaluate(latLonTuple, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             int fuelModelNo = (int) Math.round(fuel.getValue());
 
-            return StdFuelModel.getFuelModel(fuelModelNo);
+            return StdFuelModel.from(fuelModelNo);
         }
         catch (VisADException | RemoteException ex)
         {
