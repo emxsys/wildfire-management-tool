@@ -196,10 +196,10 @@ public class FireReaction {
                 } catch (VisADException ex) {
                 }
             } else {
-                this.rateOfSpreadMax = new Real(ROS, 0);
+                this.rateOfSpread = new Real(ROS, 0);
             }
         }
-        return rateOfSpread;
+        return this.rateOfSpread;
     }
 
     /**
@@ -311,7 +311,6 @@ public class FireReaction {
      * @param aspect The terrain aspect: e.g., a South aspect would have a 180 degree value
      * [degrees].
      * @param slope The terrain slope angle [degrees].
-     *
      */
     protected void calcWindAndSlopeEffects(Real windSpd, Real windDir, Real aspect, Real slope) {
 
@@ -337,7 +336,7 @@ public class FireReaction {
             double slpDir = AngleUtil.normalize360(aspect.getValue() + 180);
 
             // Get the angle between the wind vector and the upslope vector
-            double split = AngleUtil.angularDistanceBetween(wndDir, slpDir);
+            double split = wndDir - slpDir;
 
             double slpRad = toRadians(slpDir);
             double splitRad = toRadians(split);
