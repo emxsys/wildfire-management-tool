@@ -41,7 +41,7 @@ public class StdFuelModelProvider extends SingleFuelModelProvider {
 
     public StdFuelModelProvider(Integer fuelModelNo) {
         super(GeoSector.WORLD,
-                StdFuelModel.getFuelModel(fuelModelNo), (fuelModelNo <= 13 ? "Std 13" : "Std 40"));
+                StdFuelModel.from(fuelModelNo), (fuelModelNo <= 13 ? "Std 13" : "Std 40"));
         this.fuelModelNo = fuelModelNo;
     }
 

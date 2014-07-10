@@ -74,7 +74,7 @@ public class SurfaceFuel implements Fuel {
      * @param fuelModelNo An original 13 or standard 40 fuel model number.
      */
     public SurfaceFuel(int fuelModelNo) {
-        this.fuelModel = StdFuelModel.getFuelModel(fuelModelNo);
+        this.fuelModel = StdFuelModel.from(fuelModelNo);
     }
 
     /**

@@ -109,7 +109,7 @@ public class StdFuelModel implements FuelModel {
      * of the original '13' or standard '40' fuel model codes.
      * @return null if the FuelModel doesn't exist or cannot be created.
      */
-    public static FuelModel getFuelModel(int fuelModelNo) {
+    public static FuelModel from(int fuelModelNo) {
         // First, look for an existing fuel model instance...
         FuelModel fm = fuelModels.get(fuelModelNo);
         if (fm == null) {
@@ -127,6 +127,23 @@ public class StdFuelModel implements FuelModel {
             } catch (IllegalArgumentException e) {
                 // fm remains null if not a valid enum
             }
+        }
+        return fm;
+    }
+
+    public static FuelModel from(StdFuelModelParams13 params) {
+        // First, look for an existing fuel model instance...
+        FuelModel fm = fuelModels.get(params.getModelNo());
+        if (fm == null) {
+            fm = new Builder(params).build();
+        }
+        return fm;
+    }
+    public static FuelModel from(StdFuelModelParams40 params) {
+        // First, look for an existing fuel model instance...
+        FuelModel fm = fuelModels.get(params.getModelNo());
+        if (fm == null) {
+            fm = new Builder(params).build();
         }
         return fm;
     }
