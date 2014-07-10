@@ -31,8 +31,9 @@ package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.jfree.ChartCanvas;
 import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
+import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.wmt.cps.Controller;
+import com.emxsys.wmt.cps.Model;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,6 +44,8 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeSupport;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -83,6 +86,13 @@ import visad.Real;
     "CTL_WindDirChartTitle=Direction",
     "CTL_WindSpdChartTitle=Speed",})
 public class WindForcePanel extends javax.swing.JPanel {
+    
+    // Properties that are available from this panel
+    public static final String PROP_WINDDIR = "PROP_WINDDIR";
+    public static final String PROP_WINDSPEED = "PROP_WINDSPEED";
+
+    // The ForcesTopComponent will add the PropertyChangeListeners
+    final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private WindDirChart dirChart = new WindDirChart(Bundle.CTL_WindDirChartTitle());
     private WindSpdChart spdChart = new WindSpdChart(Bundle.CTL_WindSpdChartTitle());
@@ -103,11 +113,8 @@ public class WindForcePanel extends javax.swing.JPanel {
             setMajorTickSpacing(25);
             setOrientation(SwingConstants.VERTICAL);
             addChangeListener((ChangeEvent e) -> {
-                // Update chart
                 int windDir = getValue();
-                chart.dataset.setValue(windDir);
-                // Update weather top component
-                Controller.getWeatherTopComponent().getSimpleWeather().setWindDirection(new Real(WeatherType.WIND_DIR, windDir));
+                pcs.firePropertyChange(PROP_WINDDIR, null, new Real(WeatherType.WIND_DIR, windDir));
             });
         }
     }
@@ -121,11 +128,8 @@ public class WindForcePanel extends javax.swing.JPanel {
             setMajorTickSpacing(25);
             setOrientation(SwingConstants.VERTICAL);
             addChangeListener((ChangeEvent e) -> {
-                // Update chart
                 int windSpd = getValue();
-                chart.dataset.setValue(windSpd);
-                // Update weather top component
-                Controller.getWeatherTopComponent().getSimpleWeather().setWindSpeed(new Real(WeatherType.WIND_SPEED_MPH, windSpd));
+                pcs.firePropertyChange(PROP_WINDSPEED, null, new Real(WeatherType.WIND_SPEED_MPH, windSpd));
             });
         }
     }
@@ -270,6 +274,15 @@ public class WindForcePanel extends javax.swing.JPanel {
         Platform.runLater(() -> {
             leftPanel.setScene(createDirScene());
             //dialPanel.setScene(createSpdScene());
+        });
+        
+        // Update the charts from the CPS data model
+        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
+            Weather weather = (Weather) evt.getNewValue();
+            dirChart.dataset.setValue(weather.getWindDirection().getValue());
+            spdChart.dataset.setValue(weather.getWindSpeed().getValue());
+            
+            dirChart.setTitle(weather.getWindDirection().toValueString());
         });
     }
 

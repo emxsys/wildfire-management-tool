@@ -33,13 +33,17 @@ import com.emxsys.jfree.ChartCanvas;
 import com.emxsys.jfree.ClockCompassPlot;
 import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.util.AngleUtil;
-import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.wmt.cps.Controller;
+import com.emxsys.wmt.cps.Model;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeSupport;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import javafx.application.Platform;
@@ -79,6 +83,12 @@ import visad.VisADException;
     "CTL_AirTempChartTitle=Air",
     "CTL_FuelTempChartTitle=Fuel",})
 public class PreheatForcePanel extends javax.swing.JPanel {
+
+    // Properties that are available from this panel
+    public static final String PROP_AIRTEMP = "PROP_AIRTEMP";
+
+    // The ForcesTopComponent will add the PropertyChangeListeners
+    final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;
@@ -166,6 +176,19 @@ public class PreheatForcePanel extends javax.swing.JPanel {
             setTitle(title);
             getPlot().setBackgroundPaint(this.getBackgroundPaint());
         }
+
+        void setTemperature(Real temperature) {
+            if (temperature == null || temperature.isMissing()) {
+                this.dataset.setValue(null);
+                return;
+            }
+            try {
+                this.dataset.setValue(temperature.getValue(GeneralUnit.degF));
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+
     }
 
     /**
@@ -208,23 +231,24 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 true, // zoom
                 true // tooltips
         ));
-        
+
         rightPanel.add(thermometerPanel, BorderLayout.CENTER);
-        
+
         // Create the slider for the air temp
         this.slider = new JSlider(0, 200, 100);
         this.slider.setPaintLabels(false);
         this.slider.setPaintTicks(true);
         this.slider.setMajorTickSpacing(25);
         this.slider.setOrientation(SwingConstants.VERTICAL);
+
+        // Add listener to handle manual air temp input
         this.slider.addChangeListener((ChangeEvent e) -> {
-            int airTemp = slider.getValue();
-            airTempChart.dataset.setValue(airTemp);
-            Controller.getWeatherTopComponent().getSimpleWeather().setAirTemperature(new Real(WeatherType.AIR_TEMP_F, airTemp));
+            Real airTemp = new Real(WeatherType.AIR_TEMP_F, slider.getValue());
+            this.pcs.firePropertyChange(PROP_AIRTEMP, null, airTemp);
         });
-        rightPanel.add(this.slider, BorderLayout.EAST);
 
         // Add the panel to the Grid layout
+        rightPanel.add(this.slider, BorderLayout.EAST);
         add(leftPanel);
         add(rightPanel);
 
@@ -233,6 +257,22 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         Platform.runLater(() -> {
             leftPanel.setScene(createScene());
         });
+
+        // Now update the charts from values in the CPS data model
+        Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
+            updateTime((ZonedDateTime) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            updateSunlight((Sunlight) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
+            Weather weather = (Weather) evt.getNewValue();
+            airTempChart.setTemperature(weather.getAirTemperature());
+        });
+//        Model.getInstance().addPropertyChangeListener(Model.PROP_ENVIRONMENT, (PropertyChangeEvent evt) -> {
+//            FireEnvironment environment = (FireEnvironment) evt.getNewValue();
+//            fuelTempChart.setTemperature(environment.getFineFuelMoisture());
+//        });
     }
 
     private Scene createScene() {
@@ -247,33 +287,38 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the JFreeCharts.
-     *
-     * @param time UTC time.
+     * Updates the clock.
      */
-    public void updateCharts(ZonedDateTime time, Real azimuth, Real zenith, boolean isShaded) {
+    private void updateTime(ZonedDateTime time) {
+        // Update the Hour plot
+        ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
+        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
+        final double DEG_PER_HOUR12 = 360 / 12.0;
+        double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
+        double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
+        hourData.setValue(hourDegrees);
+        canvas.draw();
+
+    }
+
+    /**
+     * Updates the solar azimuth plot.
+     */
+    private void updateSunlight(Sunlight sun) {
 
         try {
             // Update the Azimuth Plot
             ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
-            double A = azimuth.getValue(CommonUnit.degree);
+            double A = sun.getAzimuthAngle().getValue(CommonUnit.degree);
             DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[AZIMUTH_SERIES];
             compassData.setValue(A);
-
-            // Update the Hour plot
-            DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
-            final double DEG_PER_HOUR12 = 360 / 12.0;
-            double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
-            double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
-            hourData.setValue(hourDegrees);
-
             // Color the background based on the Zenith angle (above or below the horizon)
-            double Z = Math.abs(zenith.getValue(CommonUnit.degree));
+            double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
             if (Z < 90) {
                 // Sun above the horizon
                 compassPlot.setSeriesPaint(AZIMUTH_SERIES, Color.red);
                 compassPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red);
-                compassPlot.setRoseCenterPaint(isShaded ? Color.lightGray : Color.white);
+                compassPlot.setRoseCenterPaint(/* isShaded ? Color.lightGray : */Color.white);
                 String title = String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
                 solarChart.setTitle(title);
             } else {
@@ -281,15 +326,13 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 compassPlot.setSeriesPaint(AZIMUTH_SERIES, Color.lightGray);
                 compassPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, Color.lightGray);
                 compassPlot.setRoseCenterPaint(Color.darkGray);
-                String title = "Nighttime";
+                String title = "Night";
                 solarChart.setTitle(title);
             }
             canvas.draw();
-
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
-
     }
 
     /**

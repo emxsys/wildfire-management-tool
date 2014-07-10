@@ -31,7 +31,6 @@ package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.wildfire.behavior.FireReaction;
 import com.emxsys.wildfire.behavior.Fuelbed;
-import com.emxsys.wmt.cps.charts.HaulChart;
 import java.awt.BorderLayout;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -60,13 +59,13 @@ import org.openide.windows.TopComponent;
 )
 @Messages({
     "CTL_HaulChartAction=HaulChart",
-    "CTL_HaulChartTopComponent=Fire Behavior",
-    "HINT_HaulChartTopComponent=This is a Fire Behavior window"
+    "CTL_HaulChartTopComponent=Haul Chart",
+    "HINT_HaulChartTopComponent=This is a Haul Chart window"
 })
 public final class HaulChartTopComponent extends TopComponent {
     
     public static final String PREFERRED_ID = "HaulChartTopComponent";
-    private HaulChart chart;
+    private HaulChartPanel chart;
 
     public HaulChartTopComponent() {
         initComponents();
@@ -77,13 +76,10 @@ public final class HaulChartTopComponent extends TopComponent {
     }
 
     private void initChart() {
-        this.chart = new HaulChart();
+        this.chart = new HaulChartPanel();
         add(this.chart, BorderLayout.CENTER);
     }
     
-    public void updateCharts(Fuelbed fuel, FireReaction fire) {
-        this.chart.plotFireBehavior(fuel, fire);
-    }
     
     /** This method is called from within the constructor to
      * initialize the form.

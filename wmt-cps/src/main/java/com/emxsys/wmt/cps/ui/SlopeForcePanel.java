@@ -32,6 +32,8 @@ package com.emxsys.wmt.cps.ui;
 import com.emxsys.jfree.ChartUtil;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.util.AngleUtil;
+import com.emxsys.weather.api.Weather;
+import com.emxsys.wmt.cps.Model;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -40,6 +42,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;
@@ -156,6 +159,11 @@ public class SlopeForcePanel extends javax.swing.JPanel {
     public SlopeForcePanel() {
         initComponents();
         createCharts();
+        
+        // Add a listener to the CPS model 
+        Model.getInstance().addPropertyChangeListener(Model.PROP_TERRAIN, (PropertyChangeEvent evt) -> {
+            updateCharts((Terrain) evt.getNewValue());
+        });
     }
 
     /**
@@ -163,7 +171,7 @@ public class SlopeForcePanel extends javax.swing.JPanel {
      *
      * @param terrain
      */
-    public void updateCharts(Terrain terrain) {
+    private void updateCharts(Terrain terrain) {
 
         // Update Aspect Chart
         double aspect = AngleUtil.normalize360(terrain.getAspectDegrees());

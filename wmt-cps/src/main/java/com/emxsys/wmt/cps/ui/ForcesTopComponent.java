@@ -31,14 +31,17 @@ package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.Terrain;
+import static com.emxsys.wmt.cps.ui.WindForcePanel.PROP_WINDSPEED;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
+import java.beans.PropertyChangeListener;
 import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 import visad.Real;
 
 /**
@@ -78,39 +81,47 @@ public final class ForcesTopComponent extends TopComponent {
 
     private static final Logger logger = Logger.getLogger(ForcesTopComponent.class.getName());
     public static final String PREFERRED_ID = "ForcesTopComponent";
-    private PreheatForcePanel heatPanel;
+    private PreheatForcePanel preheatPanel;
     private WindForcePanel windPanel;
     private SlopeForcePanel slopePanel;
 
+    public static ForcesTopComponent getInstance() {
+        return (ForcesTopComponent) WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+    }
+
     public ForcesTopComponent() {
         logger.fine(PREFERRED_ID + " initializing....");
-        
+
         initComponents();
         createPanels();
-        
+
         setName(Bundle.CTL_ForcesTopComponent());
         setToolTipText(Bundle.CTL_ForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-        
+
         logger.config(PREFERRED_ID + " initialized.");
     }
 
-    public void updateCharts(Coord3D coord, Terrain terrain) {
-        slopePanel.updateCharts(terrain);
-    }
-
-    public void updateCharts(ZonedDateTime time, Real azimuth, Real zenith, boolean isShaded) {
-        heatPanel.updateCharts(time, azimuth, zenith, isShaded);
-    }
-
     private void createPanels() {
-        heatPanel = new PreheatForcePanel();
+        preheatPanel = new PreheatForcePanel();
         windPanel = new WindForcePanel();
         slopePanel = new SlopeForcePanel();
         // Layout the panels to the Grid Layout
-        add(heatPanel);
+        add(preheatPanel);
         add(windPanel);
         add(slopePanel);
+    }
+
+    public void addAirTempPropertyChangeListener(PropertyChangeListener listener) {
+        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_AIRTEMP, listener);
+    }
+
+    public void addWindDirPropertyChangeListener(PropertyChangeListener listener) {
+        this.windPanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDDIR, listener);
+    }
+
+    public void addWindSpeedPropertyChangeListener(PropertyChangeListener listener) {
+        this.windPanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDSPEED, listener);
     }
 
     /**
