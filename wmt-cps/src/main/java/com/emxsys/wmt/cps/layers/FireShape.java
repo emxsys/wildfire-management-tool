@@ -91,6 +91,7 @@ public class FireShape {
             if (!renderable.isVisible()) {
                 renderable.setVisible(true);
             }
+            Globe.getInstance().refreshView();
         });
     }
 
