@@ -111,7 +111,7 @@ public class FBFM13Layer extends LandfireTiledImageLayer {
                 float g = Float.parseFloat(csv.get(green));
                 float b = Float.parseFloat(csv.get(blue));
                 int val = Integer.parseInt(csv.get(value));
-                FuelModel fm = StdFuelModel.getFuelModel(val);
+                FuelModel fm = StdFuelModel.from(val);
                 if (fm != null) {
                     Color color = new Color(r, g, b);
                     addColorEntry(color, fm);
