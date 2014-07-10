@@ -275,22 +275,24 @@ public class Controller {
                 if (event == null || controller.earth == null) {
                     return;
                 }
-
-                Model model = Model.getInstance();
+                
+                Coord3D coord = event.getCoordinate();
+                if (coord.isMissing()) {
+                    return;
+                }
 
                 // Update the terrain
-                Coord3D coord = event.getCoordinate();
                 Terrain terrain = controller.earth.getTerrain(coord);
-                model.setCoord(coord);
-                model.setTerrain(terrain);
+                controller.model.setCoord(coord);
+                controller.model.setTerrain(terrain);
 
                 // Update the temporal-spatial domain
                 controller.spatialDomain = new SpatialDomain(coord);
                 SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
-                model.setDomain(domain);
+                controller.model.setDomain(domain);
 
                 // Update the fire environment
-                Sunlight sunlight = model.getSunlight();
+                Sunlight sunlight = controller.model.getSunlight();
                 Real azimuth = sunlight.getAzimuthAngle();
                 Real zenith = sunlight.getZenithAngle();
                 boolean isShaded
@@ -306,13 +308,13 @@ public class Controller {
                 FuelModel fuelModel = controller.fuels != null
                         ? controller.fuels.getFuelModel(coord)
                         : StdFuelModel.INVALID;
-                model.setFuelModel(fuelModel);
+                controller.model.setFuelModel(fuelModel);
 
                 // Update the fire
-                model.computeFireBehavior();
+                controller.model.computeFireBehavior();
 
                 // Update the GUI 
-                model.updateViews();
+                controller.model.updateViews();
 
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "CooridinateUpdater failed.", e);
@@ -353,23 +355,21 @@ public class Controller {
                 return;
             }
 
-            Model model = Model.getInstance();
-
             // Update the temporal-spatial domain
             ZonedDateTime time = timeEvent.getNewTime();
             controller.temporalDomain = new TemporalDomain(time.minusHours(24), 25);
             SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
-            model.setDateTime(time);
-            model.setDomain(domain);
+            controller.model.setDateTime(time);
+            controller.model.setDomain(domain);
 
             try {
                 // Update solar angles and position
-                Coord3D coord = model.getCoord();
+                Coord3D coord = controller.model.getCoord();
                 Sunlight sunlight = controller.sun.getSunlight(time, coord);
                 if (sunlight.isMissing()) {
                     return;
                 }
-                model.setSunlight(sunlight);
+                controller.model.setSunlight(sunlight);
 
                 // Update the fire environment
                 Real azimuth = sunlight.getAzimuthAngle();
@@ -380,7 +380,7 @@ public class Controller {
                 //model.shaded = isShaded;
 
                 // Update the GUI 
-                model.updateViews();
+                controller.model.updateViews();
 
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, "TimeUpdater failed.", ex);
