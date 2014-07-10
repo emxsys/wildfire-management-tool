@@ -35,16 +35,13 @@ import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.AbstractWeatherProvider;
 import com.emxsys.weather.api.StationObserver;
-import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.ServiceProvider;
 import visad.Field;
 import visad.FlatField;
 import visad.FunctionType;
@@ -62,6 +59,7 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
     private Real windDir = new Real(WeatherType.WIND_DIR);
     private Real airTemp = new Real(WeatherType.AIR_TEMP_F);
     private Real relHumd = new Real(WeatherType.REL_HUMIDITY);
+    private Real cldCovr = new Real(WeatherType.CLOUD_COVER);
 
     private static final Logger logger = Logger.getLogger(SimpleWeatherProvider.class.getName());
 
@@ -73,7 +71,7 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
         InstanceContent content = getContent();
         content.add((StationObserver) this::getCurrentWeather);  // functional interface 
     }
-    
+
     @Override
     public String getName() {
         return "Simple Weather";
@@ -93,6 +91,23 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
 
     public void setRelativeHumdity(Real relHumd) {
         this.relHumd = Reals.convertTo(WeatherType.REL_HUMIDITY, relHumd);
+    }
+
+    public void setCloudCover(Real cldCovr) {
+        this.cldCovr = Reals.convertTo(WeatherType.CLOUD_COVER, cldCovr);
+    }
+
+    /**
+     * Gets the current weather values.
+     * @return A {@code WeatherTuple} containing the weather values.
+     */
+    public WeatherTuple getWeather() {
+        return WeatherTuple.fromReals(
+                this.airTemp,
+                this.relHumd,
+                this.windSpd,
+                this.windDir,
+                this.cldCovr);
     }
 
     /**
