@@ -166,6 +166,8 @@ public class Controller {
         prefsChangeListener.preferenceChange(null);
 
         // Listen for changes from the manual input controls
+        
+        
         ForcesTopComponent forcesWindow = ForcesTopComponent.getInstance();
         forcesWindow.addAirTempPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setAirTemperature((Real) evt.getNewValue());
@@ -218,10 +220,6 @@ public class Controller {
 
         // Fire a coordinate-based update to change the current FuelModel
         coordinateUpdater.update();
-    }
-
-    public SimpleWeatherProvider getSimpleWeatherProvider() {
-        return simpleWeather;
     }
 
     /**
@@ -301,8 +299,11 @@ public class Controller {
                         : false;
 
                 // Update the Weather
-                //WeatherModel weatherModel = new DiurnalWeatherModel(model.getDomain(), controller.weather, true);
-                //model.setWeather(weatherModel.getWeather(model.getDateTime(), coord));
+//                if (controller.weather != null) {
+//                    if (controller.weather instanceof DiurnalWeatherProvider) {
+//                        controller.model.setWeather(((DiurnalWeatherProvider)simpleWeather).getWeather(controller.model.getDateTime(), null));
+//                    }
+//                }
 
                 // Get the fuel model data at the coordinate
                 FuelModel fuelModel = controller.fuels != null
@@ -370,6 +371,13 @@ public class Controller {
                     return;
                 }
                 controller.model.setSunlight(sunlight);
+
+                // Update the Weather
+                if (controller.weather != null) {
+                    if (controller.weather instanceof DiurnalWeatherProvider) {
+                        controller.model.setWeather(((DiurnalWeatherProvider)controller.weather).getWeather(time, null));
+                    }
+                }
 
                 // Update the fire environment
                 Real azimuth = sunlight.getAzimuthAngle();

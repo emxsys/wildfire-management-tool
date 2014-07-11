@@ -33,12 +33,15 @@ import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.spi.DefaultWeatherProvider;
 import com.emxsys.wmt.cps.Controller;
+import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.terramenta.ribbon.RibbonActionReference;
+import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -124,6 +127,12 @@ public final class WeatherTopComponent extends TopComponent {
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
+        
+        // Add a listener to update the Diurnal Weather with the current sunlight
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            diurnalWx.setSunlight((Sunlight) evt.getNewValue());
+        });
+        
         logger.config(PREFERRED_ID + " initialized.");
     }
 
@@ -136,9 +145,6 @@ public final class WeatherTopComponent extends TopComponent {
         return this.simpleWx;
     }
 
-    public void updateCharts(Sunlight sunlight) {
-        diurnalWx.setSunlight(sunlight);
-    }
 
     /**
      * Initializes the fuel model selections.
