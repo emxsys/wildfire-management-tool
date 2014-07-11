@@ -30,7 +30,9 @@
 package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.wildfire.api.FuelModel;
+import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.charts.FuelModelChart;
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 
 /**
@@ -40,9 +42,10 @@ import java.util.logging.Logger;
  */
 public class FuelModelPanel extends javax.swing.JPanel {
 
-    private final FuelModelChart chart;
     private FuelModel fuelModel;
+    private final FuelModelChart chart;
     private static final Logger logger = Logger.getLogger(FuelModelPanel.class.getName());
+
 
     /**
      * Creates new form FuelModelInputPanel
@@ -51,9 +54,19 @@ public class FuelModelPanel extends javax.swing.JPanel {
         initComponents();
         chart = new FuelModelChart();
         add(chart);
+        
+        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELMODEL, (PropertyChangeEvent evt) -> {
+            updateChart((FuelModel) evt.getNewValue());
+        });
     }
     
-    public void updateChart(FuelModel fuelModel) {
+    /**
+     * @return The current FuelModel depicted in the chart.
+     */
+    public FuelModel getFuelModel() {
+        return this.fuelModel;
+    }
+    private void updateChart(FuelModel fuelModel) {
         if (this.fuelModel != null && this.fuelModel.equals(fuelModel)) {
             return;
         }

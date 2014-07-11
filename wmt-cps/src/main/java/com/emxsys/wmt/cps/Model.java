@@ -62,23 +62,33 @@ import org.openide.util.Exceptions;
 import visad.VisADException;
 
 /**
- * CPS Data Model.
+ * CPS data model for a point within a temporal-spatial domain.
  *
  * @author Bruce Schubert
  */
 public class Model {
 
-    // Property Names for PropertyChangeListeners
+    /** Coord3D property */
     public static final String PROP_COORD = "PROP_COORD";
+    /** ZonedDateTime property */
     public static final String PROP_DATETIME = "PROP_DATETIME";
+    /** SpatioTemporalDomain property */
     public static final String PROP_DOMAIN = "PROP_DOMAIN";
+    /** FireReaction property */
     public static final String PROP_FIREBEHAVIOR = "PROP_FIREBEHAVIOR";
+    /** Fuelbed property */
     public static final String PROP_FUELBED = "PROP_FUELBED";
+    /** FuelModel property */
     public static final String PROP_FUELMODEL = "PROP_FUELMODEL";
+    /** FuelMoisture property */
     public static final String PROP_FUELMOISTURE = "PROP_FUELMOISTURE";
+    /** Model property */
     public static final String PROP_MODEL = "PROP_MODEL";
+    /** Sunlight property */
     public static final String PROP_SUNLIGHT = "PROP_SUNLIGHT";
+    /** Terrain property */
     public static final String PROP_TERRAIN = "PROP_TERRAIN";
+    /** Weather property */
     public static final String PROP_WEATHER = "PROP_WEATHER";
 
     private static final Logger logger = Logger.getLogger(Model.class.getName());
@@ -113,6 +123,10 @@ public class Model {
     private Model() {
     }
 
+    /**
+     *
+     * @return A SpatioTemporalDomain representing the model's domain.
+     */
     public SpatioTemporalDomain getDomain() {
         return domainRef.get();
     }
@@ -124,6 +138,11 @@ public class Model {
         }
     }
 
+    /**
+     * The current date/time.
+     *
+     * @return A ZonedDateTime within the model's domain
+     */
     public ZonedDateTime getDateTime() {
         return timeRef.get();
     }
@@ -135,6 +154,11 @@ public class Model {
         }
     }
 
+    /**
+     * The current coordinate.
+     *
+     * @return A Coord3D within the model's domain.
+     */
     public Coord3D getCoord() {
         return coordRef.get();
     }
@@ -146,6 +170,11 @@ public class Model {
         }
     }
 
+    /**
+     * The aspect and slope at the current coordinate.
+     *
+     * @return The Terrain at the current coordinate.
+     */
     public Terrain getTerrain() {
         return terrainRef.get();
     }
@@ -157,6 +186,11 @@ public class Model {
         }
     }
 
+    /**
+     * The fuel model at the current coordinate.
+     *
+     * @return A FuelModel for the current coordinate.
+     */
     public FuelModel getFuelModel() {
         return fuelModelRef.get();
     }
@@ -168,14 +202,29 @@ public class Model {
         }
     }
 
+    /**
+     * The conditioned fuel for the current coordinate and time.
+     *
+     * @return A Fuelbed for the current coordinate and time.
+     */
     public Fuelbed getFuelbed() {
         return fuelbedRef.get();
     }
 
+    /**
+     * The fire behavior for the current coordinate and time.
+     *
+     * @return A FireReaction for the current coordinate and time.
+     */
     public FireReaction getFireBehavior() {
         return fireBehaviorRef.get();
     }
 
+    /**
+     * The fuel moisture for the current coordinate and time.
+     *
+     * @return A FuelMoisture for the current coordinate and time.
+     */
     public FuelMoisture getFuelMoisture() {
         return fuelMoistureRef.get();
     }
@@ -187,6 +236,11 @@ public class Model {
         }
     }
 
+    /**
+     * The sunlight for the current coordinate and time.
+     *
+     * @return A Sunlight for the current coordinate and time.
+     */
     public Sunlight getSunlight() {
         return sunlightRef.get();
     }
@@ -198,6 +252,11 @@ public class Model {
         }
     }
 
+    /**
+     * The weather for the current coordinate and time.
+     *
+     * @return A Weather for the current coordinate and time.
+     */
     public Weather getWeather() {
         return weatherRef.get();
     }
@@ -247,7 +306,7 @@ public class Model {
                 fireShape = new FireShape();
             }
             fireShape.update(coord, fire, Duration.ofMinutes(5));
-            
+
         } catch (Exception e) {
             logger.log(Level.SEVERE, "computeFireBehavior failed.", e);
             Exceptions.printStackTrace(e);

@@ -106,7 +106,6 @@ public final class FuelTopComponent extends TopComponent {
 
     private final Preferences prefs = NbPreferences.forModule(FuelTopComponent.class);
     private static final Logger logger = Logger.getLogger(FuelTopComponent.class.getName());
-    private FuelModel currentFuelModel;
 
     /**
      * Constructor.
@@ -181,15 +180,7 @@ public final class FuelTopComponent extends TopComponent {
         this.providersComboBox.setModel(comboBoxModel);
     }
 
-    /**
-     * Update JFreeCharts with the current fuel model.
-     *
-     * @param fuelModel The current fuel model.
-     */
-    public void updateCharts(FuelModel fuelModel) {
-        currentFuelModel = fuelModel;
-        fuelModelPanel.updateChart(fuelModel);
-    }
+
 
     /**
      * Shows the Java Help for the current fuel model.
@@ -271,19 +262,20 @@ public final class FuelTopComponent extends TopComponent {
     private void infoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoBtnActionPerformed
 
         // Build a help string ID that matches an entry in cps-map.xml file ...
-        if (currentFuelModel != null) {
+        FuelModel fuelModel = fuelModelPanel.getFuelModel();
+        if (fuelModel != null) {
             String id;
-            switch (currentFuelModel.getModelGroup()) {
+            switch (fuelModel.getModelGroup()) {
                 case StdFuelModel.FUEL_MODEL_GROUP_ORIGINAL_13:
                     id = "com.emxsys.wmt.cps.fuelmodel-13";
-                    id += currentFuelModel.getModelCode();
+                    id += fuelModel.getModelCode();
                     break;
                 case StdFuelModel.FUEL_MODEL_GROUP_STANDARD_40:
                     id = "com.emxsys.wmt.cps.fuelmodel-40-";
-                    id += currentFuelModel.getModelCode();
+                    id += fuelModel.getModelCode();
                     break;
                 default:
-                    logger.log(Level.INFO, "No help for Fuel Model Group: {0}", currentFuelModel.getModelGroup());
+                    logger.log(Level.INFO, "No help for Fuel Model Group: {0}", fuelModel.getModelGroup());
                     return;
             }
             // ... and then show the javahelp
