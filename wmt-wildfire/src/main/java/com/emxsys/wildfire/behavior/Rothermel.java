@@ -45,6 +45,9 @@ import java.util.logging.Logger;
  * Shape, Research Paper INT-305, USDA Forest Service, Intermountain Forest and Range Experiment
  * Station
  *
+ * <li><a name="bib_1000"></a>Anderson, K., 2009, A Comparison of Hourly Fire Fuel Moisture Code
+ * Calculations within Canada, Canadian Forest Service
+ *
  * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
  * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
  * and Range Experiment Station
@@ -828,20 +831,20 @@ public class Rothermel {
         double m_R = 101 - f_R;
 
         // Equation #3 - equilibrium drying curve
-        double E_D = (0.942 * pow(H_f, 0.679)) + 11 * exp((H_f / 10) - 10);
+        double E_d = (0.942 * pow(H_f, 0.679)) + 11 * exp((H_f / 10) - 10);
 
         // Equation #4 - equilibrium wetting curve
-        double E_W = (0.597 * pow(H_f, 0.768)) + 14 * exp((H_f / 8) - 12.5);
+        double E_w = (0.597 * pow(H_f, 0.768)) + 14 * exp((H_f / 8) - 12.5);
 
         // m - fine fuel moisture adjusted for humidity and wind
         double m;
-        if (MathUtil.nearlyEquals(m_R, E_D)) {
+        if (MathUtil.nearlyEquals(m_R, E_d)) {
             m = m_R;
         } // Wetting
-        else if (m_R < E_D) {
+        else if (m_R < E_d) {
             // fuel moisture is below the drying curve so a wetting trend is in effect
             // Equation #5
-            m = E_W + (m_R - E_W) / 1.9953;   //-- original
+            m = E_w + (m_R - E_w) / 1.9953;   //-- original
             //m = E_W + (E_W - m_R) / 1.9953;     // corrected based on Anderson 2009 87-10 
         } // Drying
         else {
@@ -851,7 +854,7 @@ public class Rothermel {
             W = min(max(1.0, W), 14.0);
             // Equations #6 and #7
             double x = 0.424 * (1 - pow(H_f / 100, 1.7)) + 0.088 * pow(W, 0.5) * (1 - pow(H_f / 100, 8));
-            m = E_D + (m_R - E_D) / pow(10, x);
+            m = E_d + (m_R - E_d) / pow(10, x);
         }
         // compute fine fuel moisture delta for temperature
         double delta = 0;
@@ -904,16 +907,57 @@ public class Rothermel {
             double k_d = k_a * 0.0579 * exp(0.0365 * T_c);
             // Equation #5a computes final fuel moisture percent
             m = E_d + (m_0 - E_d) * exp(-2.303 * k_d);
+
         } else if (m_0 < E_w) {
             // Wetting...
-            // Equation #4a and #4b compute log wetting rate for hourly computation, log base 10
+
+            // Rothermel (4a) and (4b) compute log wetting rate for hourly computation, log base 10
             double k_b = 0.424 * (1 - (pow((100 - H) / 100, 1.7)))
                     + 0.0694 * pow(W_k, 0.5) * (1 - (pow((100 - H) / 100, 8)));
+
             double k_w = k_b * 0.0579 * exp(0.0365 * T_c);
+
             // Equation #5b computes final fuel moisture percent
-            //m = E_w + (E_w - m_0) * exp(-2.303 * k_w);    // anderson 2009 (77-5b)
-            m = E_w - (E_w - m_0) * exp(-2.303 * k_w);    // rothemel pg 48
+            m = E_w - (E_w - m_0) * exp(-2.303 * k_w);    // Rothemel pg 48
+
         } else {
+            m = m_0;
+        }
+        return m;
+    }
+
+    /**
+     * Computes the fine dead fuel moisture using the EMC from Canadian Standard Daily Fine Fuel
+     * Moisture Code formula. The return value assumes instantaneous drying and wetting. <br/>
+     *
+     * Anderson, K., 2009, "A Comparison of Hourly Fire Fuel Moisture Code Calculations within
+     * Canada", Canadian Forest Service
+     *
+     * @param m_0 Initial fuel moisture used to determine drying or wetting phase. [percent]
+     * @param T_c Air temperature immediately adjacent to fuel [Celsius]
+     * @param H Relative humidity immediately adjacent to fuel [percent]
+     * @return Dead fine fuel moisture [percent]
+     */
+    static public double calcFineDeadFuelMoisture(double m_0, double T_c, double H) {
+
+        // Van Wagner Eq. #2a (87-8a) equilibruim moisture curve (EMC) for drying
+        double E_d = 0.942 * pow(H, 0.679) + 11 * exp((H - 100) / 10)
+                + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
+
+        // Van Wagner Eq. #2b (87-8b) equilibruim moisture curve (EMC) for wetting
+        double E_w = 0.618 * pow(H, 0.753) + 10 * exp((H - 100) / 10)
+                + 0.18 * (21.1 - T_c) * (1 - exp(-0.115 * H));
+
+        // m - fine fuel moisture 
+        double m;
+        if (m_0 > E_d) {
+            // Instantaneous Drying
+            m = E_d;
+        } else if (m_0 < E_w) {
+            // Instantaneous Wetting
+            m = E_w;
+        } else {
+            // No change
             m = m_0;
         }
         return m;
