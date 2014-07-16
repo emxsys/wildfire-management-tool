@@ -40,9 +40,18 @@ public interface WeatherProvider extends Lookup.Provider {
 
     /**
      * Gets the capability object from the lookup.  A shortcut for getLookup.lookup().
+     * @param <T> The object type.
+     * @param clazz The class to lookup.
      * @return The capability object in the lookup, or null if not found.
      */
     <T> T getCapability(Class<T> clazz);
+    
+    /**
+     * Returns true if the capability exists in the the lookup.  
+     * @param clazz The class to lookup.
+     * @return True if the capability object is in the lookup.
+     */
+    boolean hasCapability(Class<?> clazz);
     
     
     /**

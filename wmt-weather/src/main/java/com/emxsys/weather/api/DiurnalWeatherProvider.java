@@ -72,8 +72,8 @@ import visad.VisADException;
  * @author Bruce Schubert
  */
 @Messages({
-"ERR_DiurnalSunlightNotInitialized=Sunlight has not been initialized.",
-"ERR_DiurnalNegativeValues=Negative values are not allowed."
+    "ERR_DiurnalSunlightNotInitialized=Sunlight has not been initialized.",
+    "ERR_DiurnalNegativeValues=Negative values are not allowed."
 })
 public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
@@ -171,21 +171,29 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     }
 
     /**
-     * Gets the diurnal weather at the specific time, the coordinate is ignored.
+     * Gets the diurnal weather at the specific time; the coordinate parameter is ignored.
+     * Implements the SpotWeatherObserver functional interface.
+     *
      * @param time The time for the weather.
      * @param coord_ignored Ignored parameter.
      * @return A {@code WeatherTuple} containing the weather at the specified time.
+     * @see SpotWeatherObserver
      */
     public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord_ignored) {
-        if (sunlight == null) {
-            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
+        try {
+            if (sunlight == null || sunlight.isMissing()) {
+                throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
+            }
+            return WeatherTuple.fromReals(
+                    getAirTemperature(time.toLocalTime()),
+                    getRelativeHumidity(time.toLocalTime()),
+                    getWindSpeed(time.toLocalTime()),
+                    getWindDirection(time.toLocalTime()),
+                    getCloudCover(time.toLocalTime()));
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
         }
-        return WeatherTuple.fromReals(
-                getAirTemperature(time.toLocalTime()),
-                getRelativeHumidity(time.toLocalTime()),
-                getWindSpeed(time.toLocalTime()),
-                getWindDirection(time.toLocalTime()),
-                getCloudCover(time.toLocalTime()));
     }
 
     /**

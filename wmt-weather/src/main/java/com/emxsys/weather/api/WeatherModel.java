@@ -42,6 +42,7 @@ import visad.RealTupleType;
 import visad.VisADException;
 
 /**
+ * A WeatherModel represents the VisAD function: (time) -> ((lat,lon)-> (Weather)).
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -59,12 +60,14 @@ public abstract class WeatherModel {
         initializeWeather();
         return this.weather;
     }
-    
+
     public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord) {
         if (time == null) {
-            throw new IllegalArgumentException("time");
+            throw new IllegalArgumentException("time arg cannot be null.");
         } else if (coord == null || coord.isMissing()) {
-            throw new IllegalArgumentException("coord");
+            throw new IllegalArgumentException("coord arg cannot be null or 'missing'.");
+        } else if (this.weather == null) {
+            throw new IllegalStateException("weather member has not been initialized.");
         }
         try {
             initializeWeather();

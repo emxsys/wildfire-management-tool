@@ -74,6 +74,11 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
         return getLookup().lookup(clazz);
     }
 
+    @Override
+    public boolean hasCapability(Class<?> clazz) {
+        return getLookup().lookup(clazz) != null;
+    }
+
     /**
      * Gets the content of lookup so derived classes can add and remove content.
      * @return The lookup content.
