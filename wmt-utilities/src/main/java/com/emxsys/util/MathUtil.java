@@ -30,6 +30,8 @@
 package com.emxsys.util;
 
 import static java.lang.Math.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Useful mathematic functions.
@@ -40,6 +42,22 @@ import static java.lang.Math.*;
 public class MathUtil {
 
     public final static double EPSILON_TOLERANCE = 0.0000001;
+
+    /**
+     * Rounds a double to the given number of places.
+     * @param value The value to be rounded.
+     * @param places The number of decimal places
+     * @return A rounded double.
+     */
+    public static double round(double value, int places) {
+        if (places < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     /**
      * Compare two doubles with a given epsilon (tolerance)
@@ -97,7 +115,7 @@ public class MathUtil {
             throw new IllegalArgumentException("Incorrect Q format: m (" + m + ") + n (" + n + ") must be less than 64.");
         }
         // Ensure integer part is < 2^m (allowing for round up of fractional part)
-        if (round(abs(number)) > (1L << m)) {
+        if (Math.round(abs(number)) > (1L << m)) {
             throw new IllegalArgumentException("number (" + number + ") is too big for the specified m (" + m + ") component: round(" + number + ") > pow(2," + m + ")");
         }
         long fixed = doubleToFixed(n, number);
@@ -129,7 +147,7 @@ public class MathUtil {
             throw new IllegalArgumentException("Incorrect Q format: m (" + m + ") + n (" + n + ") must be less than 32.");
         }
         // Ensure integer part is < 2^m (allowing for round up of fractional part)
-        if (round(abs(number)) > (1 << m)) {
+        if (Math.round(abs(number)) > (1 << m)) {
             throw new IllegalArgumentException("number (" + number + ") is too big for the specified m (" + m + ") component: round(" + number + ") > pow(2," + m + ")");
         }
         int fixed = floatToFixed(n, number);
@@ -152,7 +170,7 @@ public class MathUtil {
         // 2. Round to the nearest integer       
 
         // TODO: consider using scalb, e.g., (long) Math.scalb(number, numScaleBits)
-        return round(number * (1L << numScaleBits));
+        return Math.round(number * (1L << numScaleBits));
     }
 
     /**
@@ -168,7 +186,7 @@ public class MathUtil {
     public static int floatToFixed(int numScaleBits, float number) {
         // 1. Multiply the floating point number by scale (2^numBits)
         // 2. Round to the nearest integer       
-        return round(number * (1 << numScaleBits));
+        return Math.round(number * (1 << numScaleBits));
     }
 
     /**
