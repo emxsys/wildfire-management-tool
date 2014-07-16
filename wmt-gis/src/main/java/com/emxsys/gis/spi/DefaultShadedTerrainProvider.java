@@ -86,5 +86,9 @@ public class DefaultShadedTerrainProvider implements ShadedTerrainProvider {
     public boolean isCoordinateTerrestialShaded(Coord3D coord, Real azimuth, Real zenith) {
         throw new UnsupportedOperationException("Not supported."); 
     }
+    @Override
+    public boolean isCoordinateTerrestialShaded(Coord3D coord, Coord2D subsolarPoint) {
+        throw new UnsupportedOperationException("Not supported."); 
+    }
 
 }

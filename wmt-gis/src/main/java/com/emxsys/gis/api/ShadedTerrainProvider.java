@@ -48,4 +48,5 @@ public interface ShadedTerrainProvider extends TerrainProvider {
      * @return true if the position is shaded by surrounding terrain.
      */
     boolean isCoordinateTerrestialShaded(Coord3D coord, Real azimuth, Real zenith);
+    boolean isCoordinateTerrestialShaded(Coord3D coord, Coord2D subSolarPoint);
 }
