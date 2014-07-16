@@ -45,14 +45,14 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class DiurnalWeatherModel extends WeatherModel {
+public class SpotWeatherModel extends WeatherModel {
 
     private final TemporalDomain temporalDomain;
     private final SpatialDomain spatialDomain;
     private final SpotWeatherObserver spotWeatherObserver;
-    private static final Logger logger = Logger.getLogger(DiurnalWeatherModel.class.getName());
+    private static final Logger logger = Logger.getLogger(SpotWeatherModel.class.getName());
 
-    public DiurnalWeatherModel(SpatioTemporalDomain domain, WeatherProvider weatherProvider, boolean immediate) {
+    public SpotWeatherModel(SpatioTemporalDomain domain, WeatherProvider weatherProvider, boolean immediate) {
         if (domain==null) {
             throw new IllegalArgumentException("SpatioTemporalDomain is null.");
         } else if (weatherProvider == null) {
