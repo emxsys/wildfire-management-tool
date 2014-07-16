@@ -38,7 +38,7 @@ import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
-import com.emxsys.wildfire.behavior.SurfaceFireModel;
+import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,7 +68,7 @@ public class Environment implements Lookup.Provider {
             // Deferred initialization
             content.add(new DiurnalWeatherProvider());
             content.add(DefaultTerrainProvider.getInstance());
-            content.add(new SurfaceFireModel());
+            content.add(new SurfaceFireProvider());
 
             lookup = new AbstractLookup(content);
         }

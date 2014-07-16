@@ -41,9 +41,10 @@ import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
 import static com.emxsys.wildfire.api.StdFuelMoistureScenario.VeryLowDead_FullyCuredHerb;
-import com.emxsys.wildfire.behavior.FireReaction;
-import com.emxsys.wildfire.behavior.Fuelbed;
-import com.emxsys.wildfire.behavior.SurfaceFireModel;
+import com.emxsys.wildfire.behavior.SurfaceFire;
+import com.emxsys.wildfire.behavior.SurfaceFireProvider;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
 import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.swarm.api.Agent;
@@ -60,7 +61,8 @@ import visad.UnitException;
  */
 public class Forage extends GoalForage {
 
-    private static final SurfaceFireModel fireModel = new SurfaceFireModel();
+    private static final SurfaceFuelProvider fuelProvider = new SurfaceFuelProvider();
+    private static final SurfaceFireProvider fireProvider = new SurfaceFireProvider();
     private static FuelModelProvider fuelModelProvider;
     private FuelModel lastFuelModel;
 
@@ -160,8 +162,8 @@ public class Forage extends GoalForage {
         FuelMoisture fuelMoisture = VeryLowDead_FullyCuredHerb.getFuelMoisture();
         Terrain terrain = agent.getEnvironment().getTerrain(location);
         Weather weather = agent.getEnvironment().getWeather(location);
-        Fuelbed fuel = fireModel.getFuelbed(lastFuelModel, fuelMoisture);
-        FireReaction fire = fireModel.getFireBehavior(fuel, weather, terrain);
+        SurfaceFuel fuel = fuelProvider.getSurfaceFuel(lastFuelModel, fuelMoisture);
+        SurfaceFire fire = fireProvider.getFireBehavior(fuel, weather, terrain);
         Real ros = fire.getRateOfSpreadAtAzimuth(direction);
 
         // ros [ft/min]
