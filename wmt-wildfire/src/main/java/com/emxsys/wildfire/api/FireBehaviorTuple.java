@@ -44,9 +44,9 @@ import visad.VisADException;
  *
  * The fire behavior data model in VisAD can be represented by a FunctionType:
  *
- * (lat,lon) -> (fli, fl, ros, dir, hpa)
+ * (time) -> ((lat,lon) -> (fli, fl, ros, dir))
  *
- * Where the domain is (lat,lon) and the range is (fli, fl, ros, dir, hpa).
+ * Where the domain is (lat,lon) and the range is (fli, fl, ros, dir).
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: FireBehaviorTuple.java 709 2013-05-31 03:17:13Z bdschubert $
@@ -59,7 +59,6 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
     private Real flameLength;
     private Real rateOfSpread;
     private Real dirOfMaxSpread;
-    private Real heatRelease;
     /**
      * Holds the components as we create them
      */
@@ -74,8 +73,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
         this(new Real(FIRE_LINE_INTENSITY_SI),
             new Real(FLAME_LENGTH_SI),
             new Real(RATE_OF_SPREAD_SI),
-            new Real(DIR_OF_SPREAD),
-            new Real(HEAT_RELEASE_SI));
+            new Real(DIR_OF_SPREAD));
     }
 
 
@@ -86,17 +84,15 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @param fl flame length [m]
      * @param ros rate of spread [m/s]
      * @param dir direction of max spread [degrees]
-     * @param hpa heat release per unit area [kJ/m2]
      * @throws VisADException
      */
-    public FireBehaviorTuple(double fli, double fl, double ros, double dir, double hpa)
+    public FireBehaviorTuple(double fli, double fl, double ros, double dir)
         throws VisADException
     {
         this(new Real(FIRE_LINE_INTENSITY_SI, fli),
             new Real(FLAME_LENGTH_SI, fl),
             new Real(RATE_OF_SPREAD_SI, ros),
-            new Real(DIR_OF_SPREAD, dir),
-            new Real(HEAT_RELEASE_SI, hpa));
+            new Real(DIR_OF_SPREAD, dir));
 
     }
 
@@ -108,17 +104,15 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @param flameLength flame length [m]
      * @param rateOfSpread rate of spread [m/s]
      * @param dirOfMaxSpread direction of max spread [degrees]
-     * @param heatRelase heat release per unit area [kJ/m2]
      */
     public FireBehaviorTuple(Real fireLineIntensity, Real flameLength,
-        Real rateOfSpread, Real dirOfMaxSpread, Real heatRelease)
+        Real rateOfSpread, Real dirOfMaxSpread)
     {
         super(FIRE_BEHAVIOR);
         this.fireLineIntensity = convertTo(FIRE_LINE_INTENSITY_SI, fireLineIntensity);
         this.flameLength = convertTo(FLAME_LENGTH_SI, flameLength);
         this.rateOfSpread = convertTo(RATE_OF_SPREAD_SI, rateOfSpread);
         this.dirOfMaxSpread = convertTo(DIR_OF_SPREAD, dirOfMaxSpread);
-        this.heatRelease = convertTo(HEAT_RELEASE_SI, heatRelease);
     }
 
         /**
@@ -133,7 +127,6 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
         this.flameLength = convertTo(FLAME_LENGTH_SI, reals[1]);
         this.rateOfSpread = convertTo(RATE_OF_SPREAD_SI, reals[2]);
         this.dirOfMaxSpread = convertTo(DIR_OF_SPREAD, reals[3]);
-        this.heatRelease = convertTo(HEAT_RELEASE_SI, reals[4]);
     }
 
 
@@ -143,7 +136,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @return [kW/m]
      */
     @Override
-    public visad.Real getFireLineIntensity()
+    public visad.Real getFirelineIntensity()
     {
         return this.fireLineIntensity;
     }
@@ -161,16 +154,6 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
     }
 
 
-    /**
-     * Heat release per unit area
-     *
-     * @return kJ/m2
-     */
-    @Override
-    public Real getHeatRelease()
-    {
-        return this.heatRelease;
-    }
 
 
     /**
@@ -179,7 +162,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @return [m/s]
      */
     @Override
-    public visad.Real getRateOfSpread()
+    public visad.Real getRateOfSpreadMax()
     {
         return this.rateOfSpread;
     }
@@ -191,7 +174,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @return [degrees]
      */
     @Override
-    public Real getDirOfMaxSpread()
+    public Real getDirectionMaxSpread()
     {
         return this.dirOfMaxSpread;
     }
@@ -206,8 +189,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
     public boolean isMissing()
     {
         return fireLineIntensity.isMissing() || flameLength.isMissing()
-            || rateOfSpread.isMissing() || dirOfMaxSpread.isMissing()
-            || heatRelease.isMissing();
+            || rateOfSpread.isMissing() || dirOfMaxSpread.isMissing();
     }
 
 
@@ -233,8 +215,6 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
                 return rateOfSpread;
             case 3:
                 return dirOfMaxSpread;
-            case 4:
-                return heatRelease;
             default:
                 throw new IllegalArgumentException("Wrong component number:" + i);
         }
@@ -257,7 +237,6 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
             tmp[1] = flameLength;
             tmp[2] = rateOfSpread;
             tmp[3] = dirOfMaxSpread;
-            tmp[4] = heatRelease;
             components = tmp;
         }
         return components;
@@ -278,19 +257,16 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
         {
             return true;
         }
-
         if (!(obj instanceof FireBehaviorTuple))
         {
             return false;
         }
-
         FireBehaviorTuple that = (FireBehaviorTuple) obj;
 
         return this.fireLineIntensity.equals(that.fireLineIntensity)
             && this.flameLength.equals(that.flameLength)
             && this.rateOfSpread.equals(that.rateOfSpread)
-            && this.dirOfMaxSpread.equals(that.dirOfMaxSpread)
-            && this.heatRelease.equals(that.heatRelease);
+            && this.dirOfMaxSpread.equals(that.dirOfMaxSpread);
     }
 
 
@@ -305,8 +281,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
         return fireLineIntensity.hashCode()
             ^ flameLength.hashCode()
             & rateOfSpread.hashCode()
-            | dirOfMaxSpread.hashCode()
-            & heatRelease.hashCode();
+            | dirOfMaxSpread.hashCode();
     }
 
 
@@ -318,10 +293,9 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
     @Override
     public String toString()
     {
-        return "fli: " + getFireLineIntensity().toValueString()
+        return "fli: " + getFirelineIntensity().toValueString()
             + ", fln: " + getFlameLength().toValueString()
-            + ", ros: " + getRateOfSpread().toValueString()
-            + ", dir: " + getDirOfMaxSpread().toValueString()
-            + ", hpa: " + getHeatRelease().toValueString();
+            + ", ros: " + getRateOfSpreadMax().toValueString()
+            + ", dir: " + getDirectionMaxSpread().toValueString();
     }
 }

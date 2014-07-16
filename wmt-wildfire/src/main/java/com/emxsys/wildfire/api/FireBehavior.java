@@ -29,45 +29,39 @@
  */
 package com.emxsys.wildfire.api;
 
-import visad.Data;
 import visad.Real;
 
 /**
- * The FireBehavior class represents the characteristics of wildland 
- * fire behavior.
+ * The FireBehavior interface represents the characteristics of wildland fire behavior.
+ *
  * @author Bruce Schubert
- * @version $Id: FireBehavior.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface FireBehavior extends Data {
+public interface FireBehavior {
 
     /**
-     * 
-     * @return kW/m/s
+     * Fireline intensity (also called Byram’s fire intensity) is the rate of heat release per unit
+     * length of the fire front (Byram 1959).
+     * @return heat/length/time
      */
-    Real getFireLineIntensity();
+    Real getFirelineIntensity();
 
     /**
-     * 
-     * @return meters
+     * Flame length is the distance from the base of the flame zone to the tip of continuous
+     * flaming.
+     * @return length
      */
     Real getFlameLength();
 
     /**
-     *
-     * @return kJ/m2
+     * Maximum rate of spread (ROS) is the linear rate of advance of a flaming front into unburned
+     * fuel in the direction perpendicular to the fire front.
+     * @return speed
      */
-    Real getHeatRelease();
-
+    Real getRateOfSpreadMax();
 
     /**
-     * 
-     * @return meters per second
-     */
-    Real getRateOfSpread();
-
-    /**
-     *
+     * The direction of a flaming front into unburned fuel perpendicular to the fire front.
      * @return degrees
      */
-    Real getDirOfMaxSpread();
+    Real getDirectionMaxSpread();
 }
