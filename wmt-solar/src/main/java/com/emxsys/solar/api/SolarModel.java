@@ -52,9 +52,11 @@ import visad.VisADException;
 import visad.georef.LatLonPoint;
 
 /**
- * The SolarModel maintains the VisAD function (time) -> ((lat,lon)-> (Sunlight)).
+ * The SolarModel represents sunlight as a function time and location. It implements the VisAD
+ * function ((time) -> ((lat,lon)-> (Sunlight))) as a FieldImpl.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
+ * @see FieldImpl
  */
 public class SolarModel {
 

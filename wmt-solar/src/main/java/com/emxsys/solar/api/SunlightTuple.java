@@ -33,6 +33,7 @@ import static com.emxsys.solar.api.SolarType.*;
 import com.emxsys.visad.Tuples;
 import java.rmi.RemoteException;
 import org.openide.util.Exceptions;
+import visad.Data;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -208,4 +209,24 @@ public class SunlightTuple extends RealTuple implements Sunlight {
             throw new IllegalStateException(ex);
         }
     }
+
+    @Override
+    public boolean isMissing() {
+        try {
+            Data[] components = getComponents(false);
+            if (components == null) {
+                return true;
+            } else {
+                for (Data data : components) {
+                    if (data == null || data.isMissing()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (VisADException | RemoteException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 }
