@@ -36,6 +36,7 @@ import visad.Real;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import visad.Data;
 import visad.VisADException;
 
 public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
@@ -75,6 +76,7 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
             throw new IllegalStateException(ex);
         }
     }
+
     /**
      * Creates a FuelMoistureTuple from a RealTuple of type FUEL_MOISTURE.
      * @param fuelMoisture A WeatherType.FIRE_WEATHER RealTuple.
@@ -88,13 +90,12 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
         }
         try {
             return new FuelMoistureTuple(fuelMoisture);
-            
+
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, "Cannot create FuelMoistureTuple.", ex);
             throw new IllegalStateException(ex);
         }
     }
-
 
     /**
      * Creates a new FuelMoistureTuple object from doubles where 100.0 equals 100%
@@ -168,8 +169,6 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
         super(WildfireType.FUEL_MOISTURE);
     }
 
-
-
     @Override
     public Real getDead1HrFuelMoisture() {
         try {
@@ -212,6 +211,25 @@ public class FuelMoistureTuple extends RealTuple implements FuelMoisture {
             return (Real) getComponent(FUEL_MOISTURE_WOODY_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    @Override
+    public boolean isMissing() {
+        try {
+            Data[] components = getComponents(false);
+            if (components == null) {
+                return true;
+            } else {
+                for (Data data : components) {
+                    if (data == null || data.isMissing()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (VisADException | RemoteException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
