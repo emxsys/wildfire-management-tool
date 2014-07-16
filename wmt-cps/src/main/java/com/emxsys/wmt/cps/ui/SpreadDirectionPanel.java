@@ -32,7 +32,7 @@ package com.emxsys.wmt.cps.ui;
 import com.emxsys.jfree.ChartUtil;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.wildfire.api.FireEnvironment;
-import com.emxsys.wildfire.behavior.FireReaction;
+import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import java.awt.Color;
@@ -70,7 +70,7 @@ public final class SpreadDirectionPanel extends javax.swing.JPanel {
 
         // Add listener to update the charts from values in the CPS data model
         Model.getInstance().addPropertyChangeListener(Model.PROP_FIREBEHAVIOR, (PropertyChangeEvent evt) -> {
-            plotFireBehavior((FireReaction) evt.getNewValue());
+            plotFireBehavior((SurfaceFire) evt.getNewValue());
         });
     }
 
@@ -80,7 +80,7 @@ public final class SpreadDirectionPanel extends javax.swing.JPanel {
      * @param heatReleasePerUnitArea x value in btus per unit area
      * @param rateOfSpread y value in chains per hour
      */
-    private void plotFireBehavior(FireReaction fire) {
+    private void plotFireBehavior(SurfaceFire fire) {
         if (fire == null) {
             return;
         }

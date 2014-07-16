@@ -36,7 +36,7 @@ import com.emxsys.gis.api.layer.BasicLayerGroup;
 import com.emxsys.gis.api.layer.BasicLayerType;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.wildfire.behavior.FireEllipse;
-import com.emxsys.wildfire.behavior.FireReaction;
+import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.GlobeEllipse;
@@ -66,12 +66,12 @@ public class FireShape {
      * @param fire The fire behavior.
      * @param duration The time duration.
      */
-    public void update(Coord2D origin, FireReaction fire, Duration duration) {
+    public void update(Coord2D origin, SurfaceFire fire, Duration duration) {
         initialize();
         WindowManager.getDefault().invokeWhenUIReady(() -> {
 
             // Get the fire's shape after the elapsed duration.
-            FireEllipse ellipse = fire.getFireEllipse(duration);
+            FireEllipse ellipse = FireEllipse.from(fire, duration);
             if (ellipse == null) {
                 renderable.setVisible(false);
                 return;

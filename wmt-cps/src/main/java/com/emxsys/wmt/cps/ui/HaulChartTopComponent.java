@@ -29,8 +29,8 @@
  */
 package com.emxsys.wmt.cps.ui;
 
-import com.emxsys.wildfire.behavior.FireReaction;
-import com.emxsys.wildfire.behavior.Fuelbed;
+import com.emxsys.wildfire.behavior.SurfaceFire;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
 import java.awt.BorderLayout;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;

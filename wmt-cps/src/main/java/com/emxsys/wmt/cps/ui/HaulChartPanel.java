@@ -31,8 +31,8 @@ package com.emxsys.wmt.cps.ui;
 
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.wildfire.behavior.FireReaction;
-import com.emxsys.wildfire.behavior.Fuelbed;
+import com.emxsys.wildfire.behavior.SurfaceFire;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import java.awt.BasicStroke;
@@ -129,8 +129,8 @@ public class HaulChartPanel extends javax.swing.JPanel {
     private final String rosStr;
     private final String flnStr;
     private final String fliStr;
-    private Fuelbed fuel;
-    private FireReaction fire;
+    private SurfaceFuel fuel;
+    private SurfaceFire fire;
     private final Object fuelLock = new Object();
     private final Object fireLock = new Object();
 
@@ -247,14 +247,14 @@ public class HaulChartPanel extends javax.swing.JPanel {
         // Now update the charts from values in the CPS data model
         Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
             synchronized (fuelLock) {
-                fuel = (Fuelbed) evt.getNewValue();
+                fuel = (SurfaceFuel) evt.getNewValue();
             }
             plotFireBehavior();
         });
         // Now update the charts from values in the CPS data model
         Model.getInstance().addPropertyChangeListener(Model.PROP_FIREBEHAVIOR, (PropertyChangeEvent evt) -> {
             synchronized (fireLock) {
-                fire = (FireReaction) evt.getNewValue();
+                fire = (SurfaceFire) evt.getNewValue();
             }
             plotFireBehavior();
         });

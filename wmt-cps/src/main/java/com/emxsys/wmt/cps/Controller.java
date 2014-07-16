@@ -30,6 +30,7 @@
 package com.emxsys.wmt.cps;
 
 import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.ShadedTerrainProvider;
 import com.emxsys.gis.api.Terrain;
@@ -47,7 +48,7 @@ import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.DiurnalWeatherModel;
+import com.emxsys.weather.api.SpotWeatherModel;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherModel;
@@ -102,7 +103,7 @@ public class Controller {
     private final SunlightProvider sun;
     private final TimeProvider earthClock;
     private ReticuleCoordinateProvider reticule;
-    private WeatherProvider weather;
+    private WeatherProvider weatherSource;
     private FuelModelProvider fuels;
     private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWeather = new DiurnalWeatherProvider();
@@ -167,25 +168,24 @@ public class Controller {
 
         // Listen for changes from the manual input controls
         
-        
         ForcesTopComponent forcesWindow = ForcesTopComponent.getInstance();
         forcesWindow.addAirTempPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setAirTemperature((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
-            model.updateViews();
             model.computeFireBehavior();
+            model.updateViews();
         });
         forcesWindow.addWindDirPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setWindDirection((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
-            model.updateViews();
             model.computeFireBehavior();
+            model.updateViews();
         });
         forcesWindow.addWindSpeedPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setWindSpeed((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
-            model.updateViews();
             model.computeFireBehavior();
+            model.updateViews();
         });
 
         logger.config("Controller initialized.");
@@ -226,14 +226,15 @@ public class Controller {
      * Sets the WeatherProvider used by the Controller to determine the weather at the current
      * coordinate and time. Invoked by the WeatherTopComponent.
      *
-     * @param weather The new WeatherProvider.
+     * @param weatherSource The new WeatherProvider.
      */
-    public void setWeatherProvider(WeatherProvider weather) {
-        if (weather == null) {
+    public void setWeatherProvider(WeatherProvider weatherSource) {
+        if (weatherSource == null) {
             throw new IllegalArgumentException("WeatherProvider is null.");
         }
-        logger.log(Level.CONFIG, "WeatherProvider set to: {0}", weather.toString());
-        this.weather = weather;
+        logger.log(Level.CONFIG, "WeatherProvider set to: {0}", weatherSource.toString());
+        this.weatherSource = weatherSource;
+        this.model.weatherProvider = weatherSource;
     }
 
     /**
@@ -293,10 +294,13 @@ public class Controller {
                 Sunlight sunlight = controller.model.getSunlight();
                 Real azimuth = sunlight.getAzimuthAngle();
                 Real zenith = sunlight.getZenithAngle();
+                GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
                 boolean isShaded
                         = controller.terrainShadingEnabled && !(azimuth.isMissing() || zenith.isMissing())
-                        ? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
+                        ? controller.earth.isCoordinateTerrestialShaded(coord, subsolarPoint)
+                        //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
                         : false;
+                controller.model.setShaded(isShaded);
 
                 // Update the Weather
 //                if (controller.weather != null) {
@@ -373,20 +377,28 @@ public class Controller {
                 controller.model.setSunlight(sunlight);
 
                 // Update the Weather
-                if (controller.weather != null) {
-                    if (controller.weather instanceof DiurnalWeatherProvider) {
-                        controller.model.setWeather(((DiurnalWeatherProvider)controller.weather).getWeather(time, null));
+                if (controller.weatherSource != null) {
+                    if (controller.weatherSource instanceof DiurnalWeatherProvider) {
+                        // Update sunrise/sunset times
+                        DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherSource;
+                        diurnalWx.setSunlight(sunlight); 
+                        controller.model.setWeather(diurnalWx.getWeather(time, null));
                     }
                 }
 
                 // Update the fire environment
                 Real azimuth = sunlight.getAzimuthAngle();
                 Real zenith = sunlight.getZenithAngle();
+                GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
                 boolean isShaded = controller.terrainShadingEnabled
-                        ? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
+                        ? controller.earth.isCoordinateTerrestialShaded(coord, subsolarPoint)
+                        //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
                         : false;
-                //model.shaded = isShaded;
+                controller.model.setShaded(isShaded);
 
+                // Update the fire
+                controller.model.computeFireBehavior();
+                
                 // Update the GUI 
                 controller.model.updateViews();
 
