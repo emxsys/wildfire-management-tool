@@ -535,13 +535,46 @@ public class Rothermel {
      * @param fuelDepth Fuel bed depth (height) [ft].
      * @return Wind adjustment factor, waf [0..1]
      */
-    public static double windAdjustmentFactor(double fuelDepth) {
+    public static double midFlameWindAdjustmentFactor(double fuelDepth) {
         double waf = 1.0;
         if (fuelDepth > 0) {
             // From BehavePlus5, xfblib.cpp by Collin D. Bevins
             waf = 1.83 / log((20. + 0.36 * fuelDepth) / (0.13 * fuelDepth));
         }
         return min(max(waf, 0), 1);
+    }
+
+    /**
+     * Computes the mid-flame wind speed from 20 foot wind speeds. Used to compute rate of spread.
+     *
+     * @param wndSpd20Ft Wind speed 20 feet above the vegetation [MPH]
+     * @param fuelDepth Vegetation height [feet]
+     * @return Wind speed at vegetation height
+     */
+    public static double calcWindSpeedMidFlame(double wndSpd20Ft, double fuelDepth) {
+        return wndSpd20Ft * midFlameWindAdjustmentFactor(fuelDepth);
+    }
+
+    /**
+     * Computes the wind speed at the fuel level from 20 foot wind speeds. Used to compute wind
+     * cooling effect on fuel temperatures.
+     *
+     * @param wndSpd20Ft Wind speed 20 feet above the vegetation [MPH]
+     * @param fuelDepth Vegetation height [feet]
+     * @return Wind speed at vegetation height
+     */
+    static public double calcWindSpeedNearFuel(double wndSpd20Ft, double fuelDepth) {
+        // Equation #36
+        // The ratio of windspeed at vegetation height to that at
+        // 20 feet above the vegitation is given by:
+        //  U_h' / U_20+h' = 1 / ln((20 + 0.36 * h') / 0.13 * h')
+        //      where:
+        //          h' = vegitation height [feet]
+        if (fuelDepth == 0) {
+            fuelDepth = 0.1;
+        }
+        double U_h = (1.0 / log((20 + 0.36 * fuelDepth) / (0.13 * fuelDepth))) * wndSpd20Ft;
+        return U_h;
     }
 
     /**
@@ -688,7 +721,7 @@ public class Rothermel {
             return 0;
         }
         final double I_o = 1.98;        // solar constant [cal/cm2*min]
-        double tau_c = (1 - S_c / 100.0); // cloud shade transmittance
+        double tau_c = 1 - (S_c / 100.0); // cloud shade transmittance
         double tau_t = 1;               // tree shade transmittance (default 1 for now)
         double tau_n = tau_t * tau_c;
         double I_M = I_o * pow(p, M);   // incident radiation attenuated by atmosphere
