@@ -124,15 +124,13 @@ public class SurfaceFireProvider implements FireBehaviorProvider {
                     maxSpreadResults.get("fli"),
                     maxSpreadResults.get("fln"),
                     maxSpreadResults.get("ros"),
-                    maxSpreadResults.get("sdr"),
-                    maxSpreadResults.get("hpa"));
+                    maxSpreadResults.get("sdr"));
 
             fireEnv.fireBehaviorNoWnd = new FireBehaviorTuple(
                     noWndNoSlpResults.get("fli"),
                     noWndNoSlpResults.get("fln"),
                     noWndNoSlpResults.get("ros"),
-                    noWndNoSlpResults.get("sdr"),
-                    noWndNoSlpResults.get("hpa"));
+                    noWndNoSlpResults.get("sdr"));
             return fireEnv;
 
         } catch (VisADException ex) {
