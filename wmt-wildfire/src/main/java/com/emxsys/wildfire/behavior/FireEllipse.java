@@ -27,21 +27,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wildfire.behavior;
 
+import static com.emxsys.gis.api.GisType.DISTANCE;
+import static java.lang.Math.sqrt;
+import java.time.Duration;
+import org.openide.util.Exceptions;
+import static visad.CommonUnit.meterPerSecond;
 import visad.Real;
+import visad.VisADException;
 
 /**
- * FireEllipse contains the geometry used represent a wind driven fire.
- * 
+ * FireEllipse contains the geometry used represent a wind and/or slope driven fire.
+ *
  * @author Bruce Schubert
  */
 public class FireEllipse {
+
     private final Real majorRadius;
     private final Real minorRadius;
     private final Real focalOffset;
     private final Real heading;
+
+    /**
+     * Gets an elliptical data structure representing a fire's shape from a point origin after the
+     * given duration.
+     * @param fire The fire behavior defining the ellipse.
+     * @param duration The amount of time the fire burns.
+     * 
+     * @return A FireEllipse data structure containing the major and minor radii and the offset from
+     * the center to the point of origin.
+     */
+    public static FireEllipse from(SurfaceFire fire, Duration duration) {
+        try {
+            Real heading = fire.getDirectionMaxSpread();
+            double eccentricity = fire.getEccentricity();
+            long seconds = duration.getSeconds();
+            double a1 = fire.getRateOfSpreadBacking().getValue(meterPerSecond) * seconds;
+            double a2 = fire.getRateOfSpreadMax().getValue(meterPerSecond) * seconds;
+            double majorRadius = (a1 + a2) / 2.;
+            double minorRadius = majorRadius * sqrt(1 - (eccentricity * eccentricity));
+            double focalOffset = majorRadius - a1;
+
+            return new FireEllipse(
+                    new Real(DISTANCE, majorRadius),
+                    new Real(DISTANCE, minorRadius),
+                    new Real(DISTANCE, focalOffset),
+                    heading);
+
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
 
     public FireEllipse(Real majorRadius, Real minorRadius, Real focalOffset, Real heading) {
         this.majorRadius = majorRadius;
