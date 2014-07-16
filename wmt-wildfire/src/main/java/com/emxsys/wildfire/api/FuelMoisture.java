@@ -29,7 +29,6 @@
  */
 package com.emxsys.wildfire.api;
 
-import visad.Data;
 import visad.Real;
 
 /**
@@ -47,9 +46,8 @@ import visad.Real;
  * @see SurfaceFireModel
  *
  * @author Bruce Schubert
- * @version $Id: FuelMoisture.java 209 2012-09-05 23:09:19Z bdschubert $
  */
-public interface FuelMoisture extends Data {
+public interface FuelMoisture {
 
     public Real getDead1HrFuelMoisture();
 
