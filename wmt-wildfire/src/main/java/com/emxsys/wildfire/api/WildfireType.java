@@ -130,7 +130,7 @@ public class WildfireType {
     public static final RealType FUEL_BED_DEPTH;
     /** Dead fuel moisture of extinction: mx [%] */
     public static final RealType MX_DEAD;
-    
+
     /** Fuel model tuple */
     public final static RealTupleType FUEL_MODEL;
     /** Fuel moisture tuple */
@@ -168,8 +168,6 @@ public class WildfireType {
     /** Rate of Spread: [ft/min] */
     public static final RealType ROS;
 
-    
-    
     /** Fuel combustible tuple */
     public final static RealTupleType COMBUSTIBLE;
 
@@ -206,21 +204,21 @@ public class WildfireType {
         LOAD_DEAD_100H = RealType.getRealType("dead_100h:tons/acre", FireUnit.tons_acre, null);
         LOAD_LIVE_HERB = RealType.getRealType("live_herb:tons/acre", FireUnit.tons_acre, null);
         LOAD_LIVE_WOODY = RealType.getRealType("live_woody:tons/acre", FireUnit.tons_acre, null);
-        
+
         FUELBED_LOAD_DEAD_1H = RealType.getRealType("dead_1h:lb/ft2", FireUnit.lb_ft2, null);
         FUELBED_LOAD_DEAD_10H = RealType.getRealType("dead_10h:lb/ft2", FireUnit.lb_ft2, null);
         FUELBED_LOAD_DEAD_100H = RealType.getRealType("dead_100h:lb/ft2", FireUnit.lb_ft2, null);
         FUELBED_LOAD_DEAD_HERB = RealType.getRealType("dead_herb:lb/ft2", FireUnit.lb_ft2, null);
         FUELBED_LOAD_LIVE_HERB = RealType.getRealType("live_herb:lb/ft2", FireUnit.lb_ft2, null);
         FUELBED_LOAD_LIVE_WOODY = RealType.getRealType("live_woody:lb/ft2", FireUnit.lb_ft2, null);
-        
+
         FUELBED_SAV_DEAD_1H = RealType.getRealType("dead_1h:ft2/ft3", FireUnit.ft2_ft3, null);
         FUELBED_SAV_DEAD_10H = RealType.getRealType("dead_10h:ft2/ft3", FireUnit.ft2_ft3, null);
         FUELBED_SAV_DEAD_100H = RealType.getRealType("dead_100h:ft2/ft3", FireUnit.ft2_ft3, null);
         FUELBED_SAV_DEAD_HERB = RealType.getRealType("dead_herb:ft2/ft3", FireUnit.ft2_ft3, null);
         FUELBED_SAV_LIVE_HERB = RealType.getRealType("live_herb:ft2/ft3", FireUnit.ft2_ft3, null);
         FUELBED_SAV_LIVE_WOODY = RealType.getRealType("live_woody:ft2/ft3", FireUnit.ft2_ft3, null);
-        
+
         SAV_DEAD_1H = RealType.getRealType("dead_1h:ft2/ft3", FireUnit.ft2_ft3, null);
         SAV_DEAD_10H = RealType.getRealType("dead_10h:ft2/ft3", FireUnit.ft2_ft3, null);
         SAV_DEAD_100H = RealType.getRealType("dead_100h:ft2/ft3", FireUnit.ft2_ft3, null);
@@ -254,8 +252,7 @@ public class WildfireType {
                     FUEL_MOISTURE_10H,
                     FUEL_MOISTURE_100H,
                     FUEL_MOISTURE_HERB,
-                    FUEL_MOISTURE_WOODY,
-                });
+                    FUEL_MOISTURE_WOODY,});
         FUEL_BED = newRealTupleType(
                 new RealType[]{
                     FUELBED_LOAD_DEAD_HERB,
@@ -271,8 +268,7 @@ public class WildfireType {
                     FUELBED_SAV_LIVE_HERB,
                     FUELBED_SAV_LIVE_WOODY,
                     FUEL_BED_DEPTH,
-                    MX_DEAD,
-                });
+                    MX_DEAD,});
 
         SIGMA = RealType.getRealType("fuel_complex:ft2/ft3", FireUnit.ft2_ft3, null);
         MX_LIVE = RealType.getRealType("live_moisture_of_ext:%", GeneralUnit.percent, null);
@@ -281,15 +277,14 @@ public class WildfireType {
         BETA = RealType.getRealType("mean_packing_ratio", CommonUnit.dimensionless, null);
         BETA_OPT = RealType.getRealType("optimal_packing_ratio", CommonUnit.dimensionless, null);
         BETA_RATIO = RealType.getRealType("relative_packing_ratio", CommonUnit.dimensionless, null);
-        GAMMA =  RealType.getRealType("reaction_velocity:1/min", CommonUnit.dimensionless, null);
-        HEAT_SOURCE =  RealType.getRealType("heat_source:BTU/ft2/min", FireUnit.Btu_ft2_min, null);
-        HEAT_SINK =  RealType.getRealType("heat_sink:BTU/f3", FireUnit.Btu_f3, null);
-        ETA_S =  RealType.getRealType("mineral_damping_coefficient",  CommonUnit.dimensionless, null);
-        ETA_M =  RealType.getRealType("moisture_damping_coefficient",  CommonUnit.dimensionless, null);
-        I_R =  RealType.getRealType("reaction_intensity:BTU/ft2/min", FireUnit.Btu_ft2_min, null);
-        ROS =  RealType.getRealType("rate_of_spread:ft/min", FireUnit.ft_min, null);
-        
-        
+        GAMMA = RealType.getRealType("reaction_velocity:1/min", CommonUnit.dimensionless, null);
+        HEAT_SOURCE = RealType.getRealType("heat_source:BTU/ft2/min", FireUnit.Btu_ft2_min, null);
+        HEAT_SINK = RealType.getRealType("heat_sink:BTU/f3", FireUnit.Btu_f3, null);
+        ETA_S = RealType.getRealType("mineral_damping_coefficient", CommonUnit.dimensionless, null);
+        ETA_M = RealType.getRealType("moisture_damping_coefficient", CommonUnit.dimensionless, null);
+        I_R = RealType.getRealType("reaction_intensity:BTU/ft2/min", FireUnit.Btu_ft2_min, null);
+        ROS = RealType.getRealType("rate_of_spread:ft/min", FireUnit.ft_min, null);
+
         COMBUSTIBLE = newRealTupleType(
                 new RealType[]{
                     SIGMA,
@@ -339,9 +334,7 @@ public class WildfireType {
                     FIRE_LINE_INTENSITY_SI,
                     FLAME_LENGTH_SI,
                     RATE_OF_SPREAD_SI,
-                    DIR_OF_SPREAD,
-                    HEAT_RELEASE_SI
-                });
+                    DIR_OF_SPREAD,});
 
     }
 }
