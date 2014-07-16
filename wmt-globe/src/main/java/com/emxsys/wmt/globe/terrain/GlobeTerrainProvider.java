@@ -35,18 +35,23 @@ import static com.emxsys.gis.api.GisType.DISTANCE;
 import com.emxsys.gis.api.ShadedTerrainProvider;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.util.Positions;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Intersection;
 import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Line;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
 import static java.lang.Math.PI;
 import static java.lang.Math.tan;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.Exceptions;
 import org.openide.util.lookup.ServiceProvider;
 import static visad.CommonUnit.degree;
 import static visad.CommonUnit.meter;
@@ -134,6 +139,36 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
     }
 
     @Override
+    public boolean isCoordinateTerrestialShaded(Coord3D coord, Coord2D subsolarPoint) {
+        if (coord == null || coord.isMissing() || subsolarPoint == null || subsolarPoint.isMissing()) {
+            logger.log(Level.WARNING, "Illegal argument(s) in isCoordinateTerrestialShaded({0}, {1})", new Object[]{coord, subsolarPoint});
+            return false;
+        }
+
+        // Create a line from the coord to the sun
+        double latitude = subsolarPoint.getLatitudeDegrees();
+        double longitude = subsolarPoint.getLongitudeDegrees();
+        double distance = 149600000000.0; // dist to sun - meters
+        Vec4 direction = getGlobe().computePointFromPosition(Position.fromDegrees(latitude, longitude, distance)).normalize3();
+        Vec4 origin = getGlobe().computePointFromPosition(Positions.fromCoord3D(coord));
+        Line line = new Line(origin, direction);
+
+        // Set elevation 1 meter AGL
+        Position startPos = Position.fromDegrees(coord.getLatitudeDegrees(), coord.getLongitudeDegrees(), 1.0);
+        // Evaluate the terrain for up to 2000 meters
+        Position sunPos = getGlobe().computePositionFromPoint(line.getPointAt(2000));
+        double sunAgl = sunPos.elevation - getBestElevation(sunPos);
+        Position endPos = Position.fromDegrees(sunPos.latitude.degrees, sunPos.longitude.degrees, sunAgl);
+
+        // Test for intersecting terrain
+        Intersection[] intersect = getHiResTerrain().intersect(startPos, endPos);
+
+        // The position is shaded if there is an intersection with the terrain between the two positions.
+        return intersect != null;
+
+    }
+
+    @Override
     public boolean isCoordinateTerrestialShaded(Coord3D coord, Real azimuth, Real zenith) {
         try {
             if (coord.isMissing() || azimuth.isMissing() || zenith.isMissing()) {
@@ -167,6 +202,7 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
             // Test for intersecting terrain
             Position positionA = new Position(latlonA, offsetA);
             Position positionB = new Position(latlonB, offsetB);
+
             Intersection[] intersect = getHiResTerrain().intersect(positionA, positionB);
 
             // The position is shaded if there is an intersection with the terrain between the two positions.
