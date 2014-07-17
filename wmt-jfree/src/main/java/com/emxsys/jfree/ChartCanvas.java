@@ -32,6 +32,7 @@ package com.emxsys.jfree;
 import java.awt.geom.Rectangle2D;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javax.swing.event.ChangeEvent;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.event.ChartChangeEvent;
@@ -69,6 +70,11 @@ public final class ChartCanvas extends Canvas {
         double width = getWidth();
         double height = getHeight();
         Platform.runLater(() -> {
+            // HACK: attempt to clear the gc's buffer to prevent giant memory leak
+            GraphicsContext gc = this.getGraphicsContext2D();
+            gc.clearRect(0, 0, width, height);
+            
+            // Redraw the chart
             chart.draw(g2, new Rectangle2D.Double(0, 0, width, height));
         });
     }
