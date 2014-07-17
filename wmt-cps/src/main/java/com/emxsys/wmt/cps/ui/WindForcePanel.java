@@ -277,13 +277,13 @@ public class WindForcePanel extends javax.swing.JPanel {
         });
         
         // Update the charts from the CPS data model
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
-//            Weather weather = (Weather) evt.getNewValue();
-//            dirChart.dataset.setValue(weather.getWindDirection().getValue());
-//            spdChart.dataset.setValue(weather.getWindSpeed().getValue());
-//            
-//            dirChart.setTitle(weather.getWindDirection().toValueString());
-//        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
+            Weather weather = (Weather) evt.getNewValue();
+            dirChart.dataset.setValue(weather.getWindDirection().getValue());
+            spdChart.dataset.setValue(weather.getWindSpeed().getValue());
+            
+            dirChart.setTitle(weather.getWindDirection().toValueString());
+        });
     }
 
     private Scene createDirScene() {

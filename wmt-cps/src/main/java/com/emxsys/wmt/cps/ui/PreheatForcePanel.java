@@ -320,23 +320,19 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
             updateTime((ZonedDateTime) evt.getNewValue());
         });
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
-//            updateSunlight((Sunlight) evt.getNewValue());
-//        });
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
-//            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-//            solarPlot.shaded = (boolean) evt.getNewValue();
-//            refresh();
-//        });
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELCONDITION, (PropertyChangeEvent evt) -> {
-//            FuelCondition condition = (FuelCondition) evt.getNewValue();
-//            fuelTempChart.setTemperature(condition.getFuelTemperature());
-//            fuelMoistureChart.setMoisture(condition.getDead1HrFuelMoisture());
-//        });
-//        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
-//            Weather weather = (Weather) evt.getNewValue();
-//            fuelMoistureChart.setTemperature(weather.getAirTemperature());
-//        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            updateSunlight((Sunlight) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
+            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+            solarPlot.shaded = (boolean) evt.getNewValue();
+            refresh();
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELCONDITION, (PropertyChangeEvent evt) -> {
+            FuelCondition condition = (FuelCondition) evt.getNewValue();
+            fuelTempChart.setTemperature(condition.getFuelTemperature());
+            fuelMoistureChart.setMoisture(condition.getDead1HrFuelMoisture());
+        });
     }
 
     private Scene createScene() {
@@ -360,9 +356,8 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         final double DEG_PER_HOUR12 = 360 / 12.0;
         double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
         double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
-        //hourData.setValue(hourDegrees);
+        hourData.setValue(hourDegrees);
         //canvas.draw();
-
     }
 
     /**
@@ -396,10 +391,13 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     private void refresh() {
 
         SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-        solarPlot.setSeriesPaint(AZIMUTH_SERIES, solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red);
-        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red);
-        solarPlot.setRoseCenterPaint(solarPlot.night ? Color.darkGray : Color.white);
-        canvas.draw();
+        
+        Color seriesColor = solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red;
+        Color centerColor = solarPlot.night ? Color.darkGray : Color.white;
+        solarPlot.setSeriesPaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setRoseCenterPaint(centerColor);
+        //canvas.draw();
 
     }
 
