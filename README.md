@@ -49,5 +49,5 @@ This project is licensed under the BSD 3-Clause license.
 * Please use the [WMT Issue Tracker](https://bitbucket.org/emxsys/wildfire-management-tool/issues) for bugs and feature requests.
 
 ### Who do I talk to? 
-* Please contact Bruce Schubert, the project manager, for contribution access to the WMT source code. 
-![OpenHub Profile](https://www.openhub.net/accounts/97968/widgets/account_tiny.gif)
+* Please contact [Bruce Schubert](https://www.openhub.net/accounts/Emxsys), the project manager, for contribution access to the WMT source code.
+![Profile](https://www.openhub.net/accounts/97968/widgets/account_tiny.gif)
