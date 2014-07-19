@@ -54,6 +54,7 @@ import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
 import com.emxsys.wmt.cps.layers.FireShape;
+import com.emxsys.wmt.cps.layers.SolarRay;
 import java.awt.EventQueue;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -118,6 +119,7 @@ public class Model {
     private final SurfaceFuelProvider fuelProvider = new SurfaceFuelProvider();
     private final SurfaceFireProvider fireProvider = new SurfaceFireProvider();
     private FireShape fireShape;    // Deferred initialization
+    private SolarRay solarRay;      // Deferred initialization
 
     // Current data values
     private final AtomicReference<SpatioTemporalDomain> domainRef = new AtomicReference<>();
@@ -337,11 +339,15 @@ public class Model {
                 dirtyFlags.set(Flag.FireBehavior.ordinal());
             }
 
-            // Update the Renderable
+            // Update the Renderable(s)
             if (fireShape == null) {
                 fireShape = new FireShape();
             }
+            if (solarRay == null) {
+                solarRay = new SolarRay();
+            }
             fireShape.update(coord, fire, Duration.ofMinutes(5));
+            solarRay.update(coord, sun);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "computeFireBehavior failed.", e);
@@ -395,7 +401,7 @@ public class Model {
     }
 
     public void updateViews() {
-        
+
         EventQueue.invokeLater(new Runnable() {
 
             @Override
