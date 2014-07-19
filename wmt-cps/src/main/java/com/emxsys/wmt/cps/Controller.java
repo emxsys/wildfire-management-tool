@@ -49,7 +49,9 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.api.PointForecaster;
 import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
@@ -59,6 +61,7 @@ import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import java.beans.PropertyChangeEvent;
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,7 +77,9 @@ import org.openide.util.LookupListener;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
+import visad.DateTime;
 import visad.Real;
+import visad.RealTuple;
 
 /**
  * The CPS Controller class monitors time and location events, specifies the domain, updates the
@@ -380,8 +385,19 @@ public class Controller {
                         // Update sunrise/sunset times
                         DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherSource;
                         diurnalWx.setSunlight(sunlight); 
-                        controller.model.setWeather(diurnalWx.getWeather(time, null));
                     }
+                    
+                    if (controller.weatherSource.hasCapability(SpotWeatherObserver.class)) {
+                        SpotWeatherObserver wxObs = controller.weatherSource.getCapability(SpotWeatherObserver.class);
+                        controller.model.setWeather(wxObs.getWeather(time, coord));                        
+                    }
+//                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
+//                        PointForecaster forecaster = controller.weatherSource.getCapability(PointForecaster.class);
+//                        Field forecast = forecaster.getForecast(coord);
+//                        RealTuple wx = (RealTuple) forecast.evaluate(new DateTime(time.toEpochSecond()));
+//
+//                    }
+                        
                 }
 
                 // Update the fire environment
