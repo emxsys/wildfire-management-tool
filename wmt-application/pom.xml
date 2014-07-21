@@ -234,7 +234,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
                 <executions>
-                    <!-- Extract JOGL natives from Terramenta repository -->
+                    <!-- Extract natives from Terramenta repository -->
                     <execution>
                         <id>unpack</id>
                         <phase>generate-resources</phase>
@@ -258,9 +258,27 @@
                     </execution>
                 </executions>
             </plugin>
+            
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
+                    <!-- Copy extracted Terramenta natives to the WMT lib folder -->
+                    <execution>
+                        <id>copy-natives</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${brandingToken}/terramenta/modules/lib</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/terramenta/terramenta/modules/lib</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                     <!-- Copy logging properties file to etc folder -->
                     <execution>
                         <id>copy-resources</id>
