@@ -147,6 +147,24 @@ public class TemporalDomain {
             throw new IllegalArgumentException(ex.toString());
         }
     }
+    
+    /**
+     * Gets the number of times in the domain.
+     * @return 
+     */
+    public int getTemporalDomainSetLength() {
+        try {
+            if (!isInitialized()) {
+                throw new IllegalStateException(Bundle.ERR_SpatialDomainNotInitialized());
+            }
+            return timeDomainSet.getLength();
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+    
 
     /**
      * Gets the earliest datetime in the domain.
