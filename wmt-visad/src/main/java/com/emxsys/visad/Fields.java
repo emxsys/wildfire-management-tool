@@ -29,14 +29,77 @@
  */
 package com.emxsys.visad;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+import org.openide.util.Exceptions;
+import org.openide.util.NbBundle.Messages;
+import visad.Field;
+import visad.FunctionType;
+import visad.MathType;
+import visad.RealTupleType;
+import visad.VisADException;
+import visad.georef.LatLonPoint;
+import visad.util.DataUtility;
+
 /**
+ * Utility class for interacting with Field objects.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: Fields.java 423 2012-12-10 21:30:24Z bdschubert $
  */
+@Messages(
+        {
+            "# {0} - Argument name",
+            "Fields_NullArgument=The {0} argument cannot be null."
+        }
+)
 public class Fields {
 
     private Fields() {
     }
 
+    /**
+     * Checks whether the field argument has a spatiotemporal (space-time) domain.
+     * @param field The Field to check.
+     * @return True if the field's domain is either: <pre>((time) -> (space))</pre> or <pre>((space) -> (time))</pre>
+     */
+    public static boolean checkSpatioTemporalDomain(Field field) {
+        if (field == null) {
+            throw new IllegalArgumentException(Bundle.Fields_NullArgument("field"));
+        }
+        try {
+            MathType domainType = DataUtility.getDomainType(field);
+            if (domainType.equals(RealTupleType.Time1DTuple)) {
+                MathType rangeType = DataUtility.getRangeType(field);
+                if (rangeType instanceof FunctionType) {
+                    if (((FunctionType) rangeType).getDomain().equals(RealTupleType.LatitudeLongitudeTuple)) {
+                        return true;
+                    }
+                }
+            }
+            else if (domainType.equals(RealTupleType.LatitudeLongitudeTuple)) {
+                MathType rangeType = DataUtility.getRangeType(field);
+                if (rangeType instanceof FunctionType) {
+                    if (((FunctionType) rangeType).getDomain().equals(RealTupleType.Time1DTuple)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    public static float[][] createLatLonSamples(Collection<? extends LatLonPoint> points) {
+        float[][] latLonSamples = new float[2][points.size()];
+        int xy = 0;
+        for (LatLonPoint latLonPoint : points) {
+            latLonSamples[0][xy] = (float) latLonPoint.getLatitude().getValue();
+            latLonSamples[1][xy] = (float) latLonPoint.getLongitude().getValue();
+            ++xy;
+        }
+        return latLonSamples;
+    }
 }
