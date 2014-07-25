@@ -31,6 +31,7 @@ package com.emxsys.weather.api;
 
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Reals;
+import com.emxsys.visad.Tuples;
 import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;
@@ -80,8 +81,13 @@ public class WeatherType {
 
         FIRE_WEATHER = Reals.newRealTupleType(
                 new RealType[]{
-                    AIR_TEMP_C, REL_HUMIDITY, WIND_SPEED_SI, WIND_DIR, CLOUD_COVER
+                    AIR_TEMP_F, REL_HUMIDITY, WIND_SPEED_KTS, WIND_DIR, CLOUD_COVER
                 });
 
     }
+    public static final int AIR_TEMP_INDEX = Tuples.getIndex(AIR_TEMP_F, FIRE_WEATHER);
+    public static final int REL_HUMIDITY_INDEX = Tuples.getIndex(REL_HUMIDITY, FIRE_WEATHER);
+    public static final int WIND_SPEED_INDEX = Tuples.getIndex(WIND_SPEED_KTS, FIRE_WEATHER);
+    public static final int WIND_DIR_INDEX = Tuples.getIndex(WIND_DIR, FIRE_WEATHER);
+    public static final int CLOUD_COVER_INDEX = Tuples.getIndex(CLOUD_COVER, FIRE_WEATHER);
 }
