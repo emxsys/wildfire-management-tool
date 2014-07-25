@@ -42,14 +42,14 @@ import visad.RealTupleType;
 import visad.VisADException;
 
 /**
- * A WeatherModel represents the VisAD function: (time) -> ((lat,lon)-> (Weather)).
+ * A WeatherModelObsolete represents the VisAD function: (time) -> ((lat,lon)-> (Weather)).
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class WeatherModel {
+public abstract class WeatherModelObsolete {
 
     private FieldImpl weather;
-    private static final Logger logger = Logger.getLogger(WeatherModel.class.getName());
+    private static final Logger logger = Logger.getLogger(WeatherModelObsolete.class.getName());
 
     /**
      * Math type: ( time -> ( (lat, lon ) -> ( temperature, humidity, ... ) ) )
