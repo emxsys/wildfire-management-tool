@@ -35,12 +35,14 @@ import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import visad.DataImpl;
+import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Linear2DSet;
 import visad.LinearLatLonSet;
 import visad.MathType;
 import visad.RealTupleType;
+import visad.Set;
 import visad.VisADException;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
@@ -56,13 +58,13 @@ import visad.georef.LatLonTuple;
 
 public class SpatialDomain {
 
-    private Linear2DSet spatialDomainSet;
+    private Set spatialDomainSet;
     /** The number of rows in the spatial grid */
     private int nrows;
     /** The number of columns in the spatial grid */
     private int ncols;
     private static final RealTupleType SPATIAL_DOMAIN_TYPE = RealTupleType.LatitudeLongitudeTuple;    // null coord system
-    private static final Logger LOG = Logger.getLogger(SpatialDomain.class.getName());
+    private static final Logger logger = Logger.getLogger(SpatialDomain.class.getName());
 
     /**
      * Constructs an uninitialized SpatialDomain; you must call initialize(...) before use.
@@ -98,8 +100,8 @@ public class SpatialDomain {
      */
     public SpatialDomain(Linear2DSet spatialDomainSet) {
         this.spatialDomainSet = spatialDomainSet;
-        this.nrows = this.spatialDomainSet.getLength(0); // lats
-        this.ncols = this.spatialDomainSet.getLength(1); // lons
+        this.nrows = spatialDomainSet.getLength(0); // lats
+        this.ncols = spatialDomainSet.getLength(1); // lons
     }
 
     /**
@@ -117,9 +119,7 @@ public class SpatialDomain {
                     + data.getType().prettyString());
         }
         FlatField spatialField = (FlatField) data;
-        this.spatialDomainSet = (LinearLatLonSet) spatialField.getDomainSet();
-        this.nrows = spatialDomainSet.getLength(0); // latitudes
-        this.ncols = spatialDomainSet.getLength(1); // longitudes
+        this.spatialDomainSet = spatialField.getDomainSet();
     }
 
     /**
@@ -134,7 +134,7 @@ public class SpatialDomain {
         try {
             if (minLatLon.isMissing() || maxLatLon.isMissing()) {
                 String msg = "Cannot initialize spatial domain.  The lat/lon argument(s) has missing values.";
-                LOG.severe(msg);
+                logger.severe(msg);
                 throw new IllegalArgumentException(msg);
             }
             double minLat = minLatLon.getLatitude().getValue();
@@ -146,9 +146,11 @@ public class SpatialDomain {
                     minLon, maxLon, ncols,
                     null, // another Coordinate system 
                     null, null, true); // true == cache samples
+            this.nrows = nrows;
+            this.ncols = ncols;
         }
         catch (VisADException | RemoteException ex) {
-            LOG.severe(ex.toString());
+            logger.severe(ex.toString());
             throw new RuntimeException("Cannot initialize spatial domain.", ex);
         }
     }
@@ -213,7 +215,7 @@ public class SpatialDomain {
             }
             FunctionType functionType = new FunctionType(SPATIAL_DOMAIN_TYPE, range);
             FlatField field = new FlatField(functionType, spatialDomainSet);
-            LOG.log(Level.FINE, "createSimpleSpatialField created: {0}", field.getType().prettyString());
+            logger.log(Level.FINE, "createSimpleSpatialField created: {0}", field.getType().prettyString());
             return field;
         }
         catch (VisADException ex) {
@@ -221,8 +223,31 @@ public class SpatialDomain {
             throw new RuntimeException(ex);
         }
     }
+    
+    /**
+     * Creates a VisAD function represented by a FieldImpl from the spatial domain using the
+     * supplied MathType for the range. The caller must set the range samples.
+     * @param range The MathType to use as the function's range.
+     * @return A FieldImpl with FunctionType (lat, lon) -> (range).
+     */
+    public FieldImpl createSpatialField(MathType range) {
+        if (!isInitialized()) {
+            throw new IllegalStateException(Bundle.ERR_TemporalDomainNotInitialized());
+        }
+        try {
+            FunctionType functionType = new FunctionType(SPATIAL_DOMAIN_TYPE, range);
+            FieldImpl field = new FieldImpl(functionType, spatialDomainSet);
+            logger.log(Level.FINE, "createSpatialField created: {0}", field.getType().prettyString());
+            return field;
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+    
 
-    public Linear2DSet getDomainSet() {
+    public Set getDomainSet() {
         return spatialDomainSet;
     }
 
@@ -243,13 +268,6 @@ public class SpatialDomain {
         return SPATIAL_DOMAIN_TYPE;
     }
 
-    public int getNumColumns() {
-        return ncols;
-    }
-
-    public int getNumRows() {
-        return nrows;
-    }
 
     @Override
     public String toString() {
