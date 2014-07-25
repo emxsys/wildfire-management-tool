@@ -63,7 +63,7 @@ public class Reals {
      */
     public static Real convertTo(RealType newType, final Real value) {
         try {
-            if (value.getType().equals(newType)) {
+            if (value.getType().equals(newType) && value.getUnit().equals(newType.getDefaultUnit())) {
                 return value;
             }
             else {
