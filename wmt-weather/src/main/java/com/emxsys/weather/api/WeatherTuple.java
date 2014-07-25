@@ -30,11 +30,11 @@
 package com.emxsys.weather.api;
 
 import static com.emxsys.visad.Reals.*;
-import com.emxsys.visad.Tuples;
 import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import visad.Data;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -51,12 +51,6 @@ public class WeatherTuple extends RealTuple implements Weather {
 
     /** A tuple with "missing" components */
     public static final WeatherTuple INVALID_TUPLE = new WeatherTuple();
-    public static final int AIR_TEMP_INDEX = Tuples.getIndex(AIR_TEMP_C, FIRE_WEATHER);
-    public static final int REL_HUMIDITY_INDEX = Tuples.getIndex(REL_HUMIDITY, FIRE_WEATHER);
-    public static final int WIND_SPEED_INDEX = Tuples.getIndex(WIND_SPEED_SI, FIRE_WEATHER);
-    public static final int WIND_DIR_INDEX = Tuples.getIndex(WIND_DIR, FIRE_WEATHER);
-    public static final int CLOUD_COVER_INDEX = Tuples.getIndex(CLOUD_COVER, FIRE_WEATHER);
-    //public static final int RAINFALL_INDEX = Tuples.getIndex(RAINFALL_INCH, FIRE_WEATHER);
     private static final Logger logger = Logger.getLogger(WeatherTuple.class.getName());
 
     /**
@@ -71,7 +65,9 @@ public class WeatherTuple extends RealTuple implements Weather {
             return INVALID_TUPLE;
         }
         try {
-            return new WeatherTuple(fireWeather);
+            // Use factory method to ensure the tuple components are converted to the expected units.
+            Real[] reals = fireWeather.getRealComponents();
+            return fromReals(reals[0], reals[1], reals[2], reals[3], reals[4]);
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, "Cannot create WeatherTuple.", ex);
             throw new IllegalStateException(ex);
@@ -93,9 +89,9 @@ public class WeatherTuple extends RealTuple implements Weather {
                                          Real windSpeed, Real windDirection, Real cloudCover) {
         try {
             Real[] reals = new Real[]{
-                convertTo(AIR_TEMP_C, airTemperature),
+                convertTo(AIR_TEMP_F, airTemperature),
                 convertTo(REL_HUMIDITY, relativeHumidity),
-                convertTo(WIND_SPEED_SI, windSpeed),
+                convertTo(WIND_SPEED_KTS, windSpeed),
                 convertTo(WIND_DIR, windDirection),
                 convertTo(CLOUD_COVER, cloudCover)
             };
@@ -109,7 +105,7 @@ public class WeatherTuple extends RealTuple implements Weather {
     }
 
     /**
-     * Constructs and instance with missing values.
+     * Constructs an instance with supplied values.
      * @param Weather
      */
     WeatherTuple(RealTuple WeatherTuple) throws VisADException, RemoteException {
@@ -117,7 +113,7 @@ public class WeatherTuple extends RealTuple implements Weather {
     }
 
     /**
-     * Constructs and instance with missing values.
+     * Constructs an instance with missing values.
      */
     public WeatherTuple() {
         super(WeatherType.FIRE_WEATHER);
@@ -188,8 +184,6 @@ public class WeatherTuple extends RealTuple implements Weather {
         }
     }
 
-
-
     /**
      * to string
      * @return string of me
@@ -202,4 +196,24 @@ public class WeatherTuple extends RealTuple implements Weather {
                 + ", Dir: " + getWindDirection().toValueString()
                 + ", Sky: " + getCloudCover().toValueString();
     }
+
+    @Override
+    public boolean isMissing() {
+        try {
+            Data[] components = getComponents(false);
+            if (components == null) {
+                return true;
+            } else {
+                for (Data data : components) {
+                    if (data == null || data.isMissing()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (VisADException | RemoteException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 }
