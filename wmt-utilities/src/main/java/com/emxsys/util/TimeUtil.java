@@ -29,6 +29,9 @@
  */
 package com.emxsys.util;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
@@ -49,5 +52,9 @@ public class TimeUtil {
      */
     public static String msToSecs(long t) {
         return Double.toString(t / 1000D) + " s";
+    }
+    
+    public static ZonedDateTime toUTC(ZonedDateTime time) {
+        return time.withZoneSameInstant(ZoneId.of("UTC"));
     }
 }
