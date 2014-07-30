@@ -29,7 +29,10 @@
  */
 package com.emxsys.visad;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -49,12 +52,14 @@ public class Times {
     /**
      * Convenient method to get a new DateTime from a Java ZonedDateTime.
      *
-     * @param date A Java Date.
+     * @param time A Java ZonedDateTime.
      * @return A UTC DateTime (RealType.Time)
      */
-    static public DateTime fromZonedDateTime(ZonedDateTime date) {
+    static public DateTime fromZonedDateTime(ZonedDateTime time) {
         try {
-            return new DateTime(date.toEpochSecond());
+            LocalDateTime localTime = time.toLocalDateTime();
+            Instant instant = localTime.toInstant(time.getOffset());            
+            return new DateTime(instant.getEpochSecond());
         }
         catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
