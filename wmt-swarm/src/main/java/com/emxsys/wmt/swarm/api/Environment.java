@@ -116,7 +116,7 @@ public class Environment implements Lookup.Provider {
             weatherProvider = getLookup().lookup(WeatherProvider.class);
             wxObserver = weatherProvider.getCapability(SpotWeatherObserver.class);
         }
-        return wxObserver.getWeather(time, coord);
+        return wxObserver.getSpotWeather(time, coord);
     }
 
     public boolean doesPointIntersectAsset(Coord2D destination) {
