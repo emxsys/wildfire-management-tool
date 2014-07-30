@@ -169,7 +169,7 @@ public class SolarModel {
             FlatField spatialField = this.spatialDomain.createSimpleSpatialField(SUNLIGHT);
             FieldImpl spatioTemporalField = this.temporalDomain.createTemporalField(spatialField.getType());
 
-            final int numLatLons = this.spatialDomain.getSpatialDomainSetLength();
+            final int numLatLons = this.spatialDomain.getDomainSetLength();
             final int numTimes = this.temporalDomain.getDomainSet().getLength();
             double[][] solarSamples = new double[SUNLIGHT.getDimension()][numLatLons];
 
