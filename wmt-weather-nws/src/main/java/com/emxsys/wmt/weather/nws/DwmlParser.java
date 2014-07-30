@@ -29,17 +29,16 @@
  */
 package com.emxsys.wmt.weather.nws;
 
-import com.emxsys.gis.api.Coord2D;
-import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.util.KeyValue;
 import com.emxsys.util.XmlUtil;
+import com.emxsys.visad.Fields;
+import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherType;
-import static com.emxsys.wmt.weather.nws.NwsTypes.*;
+import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,17 +51,34 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Gridded1DDoubleSet;
+import visad.Gridded2DSet;
+import visad.Irregular2DSet;
 import visad.Real;
+import visad.RealTupleType;
+import static visad.RealTupleType.LatitudeLongitudeTuple;
 import visad.RealType;
 import visad.Set;
 import visad.Unit;
 import visad.VisADException;
+import visad.georef.LatLonTuple;
 
 /**
- * This class is responsible for parsing DWML a Forecast. An example:
+ * Digital Weather Markup Language (DWML) parser. This class is responsible for parsing a DWML
+ * forecast from the NWS.
+ *
+ * See service description: http://products.weather.gov/PDD/Extensible_Markup_Language.pdf
+ *
+ * See NDFD elements: http://www.nws.noaa.gov/ndfd/technical.htm#elements
+ *
+ * See DWML XML schema (Note: view source): http://graphical.weather.gov/xml/DWMLgen/schema/DWML.xsd
+ *
+ *
+ *
+ * An example:
  * <pre>
  * {@code
  * <dwml xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -169,15 +185,21 @@ import visad.VisADException;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-@Messages(
-        {
-            "# {0} - reason",
-            "err.cannot.import.forecast=Cannot import forecast. {0}",})
+@Messages({
+    "# {0} - reason",
+    "err.cannot.import.forecast=Cannot import forecast. {0}"
+})
 public class DwmlParser {
 
     public static final String DWML_SCHEMA_URI = "http://www.nws.noaa.gov/forecasts/xml/DWMLgen/schema/DWML.xsd";
     public static final String TAG_HEAD = "/dwml/head";
     public static final String TAG_DATA = "/dwml/data";
+
+    public static WeatherModel parse(String dwml) {
+        DwmlParser parser = new DwmlParser(dwml);
+        return parser.parseDocument();
+    }
+
     private static final Logger logger = Logger.getLogger(DwmlParser.class.getName());
 
     private final Document doc;
@@ -191,27 +213,40 @@ public class DwmlParser {
      * Constructs a parser for the given XML document.
      * @param xmlString
      */
-    public DwmlParser(String xmlString) {
+    private DwmlParser(String xmlString) {
         doc = XmlUtil.getDoc(xmlString);
         xpath = XPathFactory.newInstance().newXPath();
     }
 
     /**
      * Parses the document.
-     * @return An array of FlatFields.
+     * @return A WeatherModel.
      */
     @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
-    public List<FlatField> parse() {
+    WeatherModel parseDocument() {
+
         try {
             Node headNode = (Node) xpath.evaluate(TAG_HEAD, doc, XPathConstants.NODE);
             Node dataNode = (Node) xpath.evaluate(TAG_DATA, doc, XPathConstants.NODE);
 
-            Map<String, Coord2D> locations = parseLocations(dataNode);
+            // Create a MathType for the function: Time -> (air_temp, RH, wind_spd, ...)
+            FunctionType wxFuncOfTime = new FunctionType(RealTupleType.Time1DTuple, FIRE_WEATHER);
+
+            // Parse the locations to determine the spatial domain size
+            Map<String, LatLonTuple> locations = parseLocations(dataNode);
+            float[][] latLonSamples = Fields.createLatLonSamples(locations.values());
+            int numLatLons = latLonSamples[0].length;
+            FieldImpl spatialField = new FieldImpl(
+                    new FunctionType(LatitudeLongitudeTuple, wxFuncOfTime),
+                    new Irregular2DSet(LatitudeLongitudeTuple, latLonSamples)
+            );
+
             Map<String, ArrayList<OffsetDateTime>> timeLayouts = parseTimeLayouts(dataNode);
 
             // Create a FlatField for each point
             ArrayList<FlatField> fields = new ArrayList<>();
             for (String location : locations.keySet()) {
+
                 // Select the parameters node that has the given location attribute
                 String paramExp = "parameters[@applicable-location='" + location + "']";
                 Node paramsNode = (Node) xpath.compile(paramExp).evaluate(dataNode, XPathConstants.NODE);
@@ -232,19 +267,19 @@ public class DwmlParser {
                     timeSamples[0][i] = times.get(i).toEpochSecond();
                 }
                 // Create the wx range samples, converting the units as necessary.
-                double[][] wxSamples = new double[WX_TUPLE_TYPE.getDimension()][times.size()];
-                for (int dim = 0; dim < WX_TUPLE_TYPE.getDimension(); dim++) {
-                    Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(dim))).getDefaultUnit();
+                double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][times.size()];
+                for (int dim = 0; dim < FIRE_WEATHER.getDimension(); dim++) {
+                    Unit defaultUnit = ((RealType) (FIRE_WEATHER.getComponent(dim))).getDefaultUnit();
                     ArrayList<Real> values;
-                    if (dim == AIR_TEMP_IDX) {
+                    if (dim == AIR_TEMP_INDEX) {
                         values = airTemps.getValue();
-                    } else if (dim == HUMIDITY_IDX) {
+                    } else if (dim == REL_HUMIDITY_INDEX) {
                         values = humidities.getValue();
-                    } else if (dim == WIND_SPD_IDX) {
+                    } else if (dim == WIND_SPEED_INDEX) {
                         values = windSpeeds.getValue();
-                    } else if (dim == WIND_DIR_IDX) {
+                    } else if (dim == WIND_DIR_INDEX) {
                         values = directions.getValue();
-                    } else if (dim == CLOUD_CVR_IDX) {
+                    } else if (dim == CLOUD_COVER_INDEX) {
                         values = cloudCover.getValue();
                     } else {
                         throw new IllegalStateException("unprocessed tuple index: " + dim);
@@ -253,43 +288,24 @@ public class DwmlParser {
                         wxSamples[dim][i] = values.get(i).getValue(defaultUnit);
                     }
                 }
-                // Create the wx range samples, converting the units as necessary.
-//                double[][] wxSamples = new double[WX_TUPLE_TYPE.getDimension()][times.size()];
-//                for (int dim = 0; dim < WX_TUPLE_TYPE.getDimension(); dim++) {
-//                    for (int i = 0; i < times.size(); i++) {
-//                        if (dim == AIR_TEMP_IDX) {
-//                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(AIR_TEMP_IDX))).getDefaultUnit();
-//                            wxSamples[dim][i] = airTemps.getValue().get(i).getValue(defaultUnit);
-//                        } else if (dim == HUMIDITY_IDX) {
-//                            wxSamples[dim][i] = humidities.getValue().get(i).getValue();
-//                        } else if (dim == WIND_SPD_IDX) {
-//                            Unit defaultUnit = ((RealType) (WX_TUPLE_TYPE.getComponent(WIND_SPD_IDX))).getDefaultUnit();
-//                            wxSamples[dim][i] = windSpeeds.getValue().get(i).getValue(defaultUnit);
-//                        } else if (dim == WIND_DIR_IDX) {
-//                            wxSamples[dim][i] = directions.getValue().get(i).getValue();
-//                        } else if (dim == CLOUD_CVR_IDX) {
-//                            wxSamples[dim][i] = cloudCover.getValue().get(i).getValue();
-//                        } else {
-//                            throw new IllegalStateException("unprocessed tuple index: " + dim );
-//                        }
-//                    }
-//                }
                 // Create the domain Set, a 1-D sequence with no regular interval.
                 // Use Gridded1DDoubleSet(MathType type, double[][] samples, lengthX)
                 Set timeSet = new Gridded1DDoubleSet(RealType.Time, timeSamples, timeSamples[0].length);
 
-                // Create a MathType for the function ( ( time ) -> ( air_temp, RH, wind_spd, ... ) )
-                FunctionType wxFuncOfTime = new FunctionType(RealType.Time, WX_TUPLE_TYPE);
-
                 // Create the FlatField.
                 // Use FlatField(FunctionType type, Set domain_set)
-                FlatField ff = new FlatField(wxFuncOfTime, timeSet);
+                FlatField temporalField = new FlatField(wxFuncOfTime, timeSet);
                 // ...and put the weather values above into it
-                ff.setSamples(wxSamples);
+                temporalField.setSamples(wxSamples);
 
-                fields.add(ff);
+                fields.add(temporalField);
             }
-            return fields;
+            FlatField[] array = new FlatField[fields.size()];
+            fields.toArray(array);
+            spatialField.setSamples(array, false);
+
+            return new WeatherModel(spatialField);
+
         } catch (Exception ex) {
             logger.severe(ex.getMessage());
         }
@@ -302,14 +318,14 @@ public class DwmlParser {
      * @return
      * @throws XPathExpressionException
      */
-    Map<String, Coord2D> parseLocations(Node dataNode) throws XPathExpressionException {
-        HashMap<String, Coord2D> map = new HashMap<>();
+    Map<String, LatLonTuple> parseLocations(Node dataNode) throws XPathExpressionException, VisADException, RemoteException {
+        HashMap<String, LatLonTuple> map = new HashMap<>();
         NodeList nodes = (NodeList) xpath.evaluate("location", dataNode, XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {
             String key = xpath.evaluate("location-key", nodes.item(i));
             String lat = xpath.evaluate("point/@latitude", nodes.item(i));
             String lon = xpath.evaluate("point/@longitude", nodes.item(i));
-            map.put(key, GeoCoord2D.fromDegrees(Double.parseDouble(lat), Double.parseDouble(lon)));
+            map.put(key, new LatLonTuple(Double.parseDouble(lat), Double.parseDouble(lon)));
         }
         return map;
     }
