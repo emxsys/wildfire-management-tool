@@ -29,27 +29,23 @@
  */
 package com.emxsys.wmt.weather.mesowest;
 
-import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord2D;
-import com.emxsys.gis.api.GisType;
-import com.emxsys.visad.GeneralUnit;
-import com.emxsys.visad.Reals;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.visad.TemporalDomain;
+import com.emxsys.weather.api.WeatherObserver;
+import com.emxsys.weather.api.WeatherModel;
+import com.emxsys.weather.api.WeatherRecorder;
 import java.rmi.RemoteException;
-import java.util.Date;
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Assume;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import visad.Data;
-import visad.Field;
-import visad.Real;
-import visad.RealTuple;
 import visad.VisADException;
 
 /**
@@ -94,85 +90,119 @@ public class MesoWestWeatherProviderTest {
         MesoWestWeatherProvider instance = new MesoWestWeatherProvider();
     }
 
+//    /**
+//     * Test of getWeather method, of class MesoWestWeatherProvider.
+//     */
+//    @Test
+//    public void testGetWeather() {
+//        System.out.println("getWeather");
+//        Date utcTime = null;
+//        Coord2D coord = null;
+//        MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
+//
+//    }
+//
+//    /**
+//     * Test of getLatestWeather method, of class MesoWestWeatherProvider.
+//     */
+//    @Test
+//    public void testGetLatestWeather() throws VisADException, RemoteException {
+//        System.out.println("getLatestWeather");
+//        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
+//        Real radius = Reals.newDistance(52800, GeneralUnit.foot);
+//        MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
+//
+//        Field result = null;
+//        try {
+//            result = instance.getLatestWeather(coord, radius);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//            Assume.assumeNoException(e);
+//        }
+//        assertNotNull(result);
+//        System.out.println(result.toString());
+//
+//        float[][] samples = result.getDomainSet().getSamples(false);
+//        double[][] values = result.getValues(false);
+//        for (int i = 0; i < samples[0].length; i++) {
+//            String text = String.format("(%1$f,%2$f) -> (%3$.1f, %4$.1f, %5$.1f, %6$.1f)",
+//                    samples[0][i], samples[1][i],
+//                    values[0][i], values[1][i], values[2][i], values[3][i]);
+//            System.out.println(text);
+//        }
+//        RealTuple domainTuple = new RealTuple(GisType.LATLON, new double[]{34.26, -119.1});
+//        Data data = result.evaluate(domainTuple);
+//        System.out.println("Sampled: " + domainTuple.toString() + " -> " + data.toString());
+//    }
+//
+//    /**
+//     * Test of getLatestWeather method, of class MesoWestWeatherProvider.
+//     */
+//    @Test
+//    public void testGetLatestAgedWeather() throws VisADException, RemoteException {
+//        System.out.println("getLatestAgedWeather");
+//        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
+//        Real radius = Reals.newDistance(52800, GeneralUnit.foot);
+//        Duration age = Duration.ofMinutes(60);
+//        MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
+//        Field result = null;
+//        try {
+//            result = instance.getLatestWeather(coord, radius, age);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//            Assume.assumeNoException(e);
+//        }
+//        assertNotNull(result);
+//        System.out.println(result.toString());
+//
+//        float[][] samples = result.getDomainSet().getSamples(false);
+//        double[][] values = result.getValues(false);
+//        for (int i = 0; i < samples[0].length; i++) {
+//            String text = String.format("(%1$f,%2$f) -> (%3$.1f, %4$.1f, %5$.1f, %6$.1f)",
+//                    samples[0][i], samples[1][i],
+//                    values[0][i], values[1][i], values[2][i], values[3][i]);
+//            System.out.println(text);
+//        }
+//
+//        // Sample the data (need at least three points to define a triangle
+//        if (result.getLength() > 2) {
+//            RealTuple domainTuple = new RealTuple(GisType.LATLON, new double[]{34.26, -119.1});
+//            Data data = result.evaluate(domainTuple);
+//            System.out.println(domainTuple.toString() + " -> " + data.toString());
+//        }
+//    }
     /**
-     * Test of getWeather method, of class MesoWestWeatherProvider.
+     * Test of getRecordedConditions method, of class MesoWestWeatherProvider.
      */
     @Test
-    public void testGetWeather() {
-        System.out.println("getWeather");
-        Date utcTime = null;
-        Coord2D coord = null;
-        MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
+    public void testGetRecordedConditions() throws VisADException, RemoteException {
+        System.out.println("getRecordedConditions");
+        SpatialDomain areaOfInterest = SpatialDomain.from(
+                GeoCoord2D.fromDegrees(34.0, -119.5),
+                GeoCoord2D.fromDegrees(35.0, -118.5));
+        TemporalDomain timeframe = TemporalDomain.from(
+                ZonedDateTime.now().minusHours(12),
+                ZonedDateTime.now());
 
+        WeatherRecorder observer = MesoWestWeatherProvider.getInstance().getCapability(WeatherRecorder.class);
+        WeatherModel conditions = observer.getRecordedConditions(areaOfInterest, timeframe);
+        assertNotNull(conditions);
+        System.out.println(conditions);
     }
 
     /**
-     * Test of getLatestWeather method, of class MesoWestWeatherProvider.
+     * Test of getCurrentConditions method, of class MesoWestWeatherProvider.
      */
     @Test
-    public void testGetLatestWeather() throws VisADException, RemoteException {
-        System.out.println("getLatestWeather");
-        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        Real radius = Reals.newDistance(52800, GeneralUnit.foot);
-        MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
-        
-        Field result = null;
-        try {
-            result = instance.getLatestWeather(coord, radius);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            Assume.assumeNoException(e);
-        }
-        assertNotNull(result);
-        System.out.println(result.toString());
+    public void testGetCurrentConditions() throws VisADException, RemoteException {
+        System.out.println("getCurrentConditions");
+        SpatialDomain areaOfInterest = SpatialDomain.from(
+                GeoCoord2D.fromDegrees(34.0, -119.5),
+                GeoCoord2D.fromDegrees(35.0, -118.5));
 
-        float[][] samples = result.getDomainSet().getSamples(false);
-        double[][] values = result.getValues(false);
-        for (int i = 0; i < samples[0].length; i++) {
-            String text = String.format("(%1$f,%2$f) -> (%3$.1f, %4$.1f, %5$.1f, %6$.1f)",
-                    samples[0][i], samples[1][i],
-                    values[0][i], values[1][i], values[2][i], values[3][i]);
-            System.out.println(text);
-        }
-        RealTuple domainTuple = new RealTuple(GisType.LATLON, new double[]{34.26, -119.1});
-        Data data = result.evaluate(domainTuple);
-        System.out.println("Sampled: "+ domainTuple.toString() + " -> " + data.toString());
-    }
-
-    /**
-     * Test of getLatestWeather method, of class MesoWestWeatherProvider.
-     */
-    @Test
-    public void testGetLatestAgedWeather() throws VisADException, RemoteException {
-        System.out.println("getLatestAgedWeather");
-        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        Real radius = Reals.newDistance(52800, GeneralUnit.foot);
-        Duration age = Duration.ofMinutes(60);
-        MesoWestWeatherProvider instance = MesoWestWeatherProvider.getInstance();
-        Field result = null;
-        try {
-            result = instance.getLatestWeather(coord, radius, age);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            Assume.assumeNoException(e);
-        }
-        assertNotNull(result);
-        System.out.println(result.toString());
-
-        float[][] samples = result.getDomainSet().getSamples(false);
-        double[][] values = result.getValues(false);
-        for (int i = 0; i < samples[0].length; i++) {
-            String text = String.format("(%1$f,%2$f) -> (%3$.1f, %4$.1f, %5$.1f, %6$.1f)",
-                    samples[0][i], samples[1][i],
-                    values[0][i], values[1][i], values[2][i], values[3][i]);
-            System.out.println(text);
-        }
-
-        // Sample the data (need at least three points to define a triangle
-        if (result.getLength() > 2) {
-            RealTuple domainTuple = new RealTuple(GisType.LATLON, new double[]{34.26, -119.1});
-            Data data = result.evaluate(domainTuple);
-            System.out.println(domainTuple.toString() + " -> " + data.toString());
-        }
+        WeatherObserver observer = MesoWestWeatherProvider.getInstance().getCapability(WeatherObserver.class);
+        WeatherModel conditions = observer.getCurrentConditions(areaOfInterest, Duration.ofHours(3));
+        assertNotNull(conditions);
+        System.out.println(conditions);
     }
 }
