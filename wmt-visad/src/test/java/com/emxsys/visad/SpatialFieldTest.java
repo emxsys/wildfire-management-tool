@@ -85,7 +85,7 @@ public class SpatialFieldTest {
         
         SpatialDomain domain = new SpatialDomain(new LatLonTuple(34.0, -119.25), new LatLonTuple(34.25, -119.0), 5, 5);
         TupleType rangeType = RealTupleType.Generic3D;
-        int numLatLons = domain.getSpatialDomainSetLength();
+        int numLatLons = domain.getDomainSetLength();
         int numDimensions = rangeType.getDimension();
         
         double[][] range = new double[numDimensions][numLatLons];

@@ -67,8 +67,8 @@ public class FieldsTest {
 
         TemporalDomain temporalDomain = new TemporalDomain(ZonedDateTime.now(), 24);
         SpatialDomain spatialDomain = new SpatialDomain(new LatLonTuple(34.0, -120.0), new LatLonTuple(35.0, -119.0), 3, 3);
-        final int numLatLons = spatialDomain.getSpatialDomainSetLength();
-        final int numTimes = temporalDomain.getTemporalDomainSetLength();
+        final int numLatLons = spatialDomain.getDomainSetLength();
+        final int numTimes = temporalDomain.getDomainSetLength();
 
         // Test (time) -> ((space) -> (range))
         {
