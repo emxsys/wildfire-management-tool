@@ -67,7 +67,7 @@ public class SpatialField {
      * (range)).
      */
     public static SpatialField from(LatLonPoint point, RealTuple tuple) {
-        SpatialDomain domain = new SpatialDomain(point);
+        SpatialDomain domain = SpatialDomain.from(point);
         TupleType rangeType = (TupleType) tuple.getType();
         double[] values = tuple.getValues();
         double[][] range = new double[tuple.getLength()][1];
@@ -132,9 +132,9 @@ public class SpatialField {
             throw new IllegalArgumentException(Bundle.SpatialField_InvalidArrayLength("from",
                     "rangeValues.length (" + rangeValues.length + ") != rangeType dimension (" + rangeType.getDimension() + ")"));
         }
-        else if (rangeValues[0].length != domain.getSpatialDomainSetLength()) {
+        else if (rangeValues[0].length != domain.getDomainSetLength()) {
             throw new IllegalArgumentException(Bundle.SpatialField_InvalidArrayLength("from",
-                    "rangeValues[0].length (" + rangeValues[0].length + ") != domain set length (" + domain.getSpatialDomainSetLength() + ")"));
+                    "rangeValues[0].length (" + rangeValues[0].length + ") != domain set length (" + domain.getDomainSetLength() + ")"));
         }
         try {
             FunctionType functionType = new FunctionType(domain.getSpatialDomainType(), rangeType);
