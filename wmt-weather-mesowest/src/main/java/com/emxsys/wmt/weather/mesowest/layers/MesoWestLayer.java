@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.weather.mesowest.layers;
 
+import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
@@ -36,11 +37,14 @@ import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.api.layer.BasicLayerCategory;
 import com.emxsys.gis.api.layer.BasicLayerGroup;
 import com.emxsys.gis.api.layer.BasicLayerType;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.weather.api.WeatherModel;
+import com.emxsys.weather.api.WeatherObserver;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.SimplePlacemark;
-import com.emxsys.visad.GeneralUnit;
-import com.emxsys.visad.Reals;
 import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
 import java.rmi.RemoteException;
 import java.time.Duration;
@@ -141,9 +145,15 @@ public final class MesoWestLayer extends RenderableGisLayer {
             if (distance.getValue(GeneralUnit.mile) < 5.0) {
                 return;
             }
-            // Get the latest weather within the last 24 hours
-            lastestWxField = MesoWestWeatherProvider.getInstance().getLatestWeather(
-                    coord, Reals.newDistance(25.0, GeneralUnit.mile), Duration.ofHours(24));           
+            Real radius =  Reals.newDistance(25.0,GeneralUnit.mile);
+            Coord2D ne = Globe.computeGreatCircleCoordinate(coord, new Real(45), radius);
+            Coord2D sw = Globe.computeGreatCircleCoordinate(coord, new Real(235), radius);
+            SpatialDomain areaOfInterest = SpatialDomain.from(sw, ne);
+            // Get the latest weather within the last 3 hours
+            WeatherObserver observer = MesoWestWeatherProvider.getInstance().getCapability(WeatherObserver.class);
+            WeatherModel model = observer.getCurrentConditions(areaOfInterest, Duration.ofHours(3));
+            
+            lastestWxField = model.getLatestWeather();         
             updateRenderables();
             lastCoord = coord;
         } catch (VisADException ex) {
