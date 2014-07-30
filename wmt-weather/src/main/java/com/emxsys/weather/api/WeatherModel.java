@@ -39,8 +39,12 @@ import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 import visad.FieldImpl;
 import visad.FlatField;
+import visad.FunctionType;
+import visad.MathType;
 import visad.RealTuple;
+import visad.RealTupleType;
 import visad.VisADException;
+import visad.util.DataUtility;
 
 /**
  * The WeatherModel class manages weather data within a spatio-temporal domain. The class provides
@@ -48,8 +52,8 @@ import visad.VisADException;
  * methods.
  *
  * The model is organized as either:
- * <pre>( time -> ( ( lat, lon ) -> ( Weather ) ) )</pre> or
- * <pre>( ( lat, lon ) -> ( time -> ( Weather ) ) )</pre>
+ * <pre>Time -> ((Lat, Lon) -> (Weather))</pre> or
+ * <pre>(Lat, Lon) -> (Time -> (Weather))</pre>
  *
  *
  *
@@ -68,7 +72,7 @@ public class WeatherModel extends SpatioTemporalModel {
     public static WeatherModel from(TemporalDomain domain, SpatialField[] ranges) {
         try {
             FieldImpl temporalSpatialWeather = domain.createTemporalField(ranges[0].getField().getType());
-            final int numTimes = domain.getTemporalDomainSetLength();
+            final int numTimes = domain.getDomainSetLength();
             for (int t = 0; t < numTimes; t++) {
                 temporalSpatialWeather.setSample(t, ranges[t].getField());
             }
@@ -81,7 +85,7 @@ public class WeatherModel extends SpatioTemporalModel {
     public static WeatherModel from(SpatialDomain domain, FlatField[] ranges) {
         try {
             FieldImpl spatioTemporalWeather = domain.createSpatialField(ranges[0].getType());
-            final int numLatLons = domain.getSpatialDomainSetLength();
+            final int numLatLons = domain.getDomainSetLength();
             for (int xy = 0; xy < numLatLons; xy++) {
                 spatioTemporalWeather.setSample(xy, ranges[xy]);
             }
@@ -98,6 +102,45 @@ public class WeatherModel extends SpatioTemporalModel {
     public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord) {
         RealTuple tuple = super.getTuple(time, coord);
         return tuple == null ? WeatherTuple.INVALID_TUPLE : WeatherTuple.fromRealTuple(tuple);
+    }
+
+    public FlatField getLatestWeather() {
+        FieldImpl field = getField();
+        try {
+            MathType domainType = DataUtility.getDomainType(field);
+            boolean isSpatialThenTemporal = domainType.equals(RealTupleType.LatitudeLongitudeTuple);
+            if (isSpatialThenTemporal) {
+                // (Lat, Lon) -> (Time -> (Weather))
+                // Merge last temporal field for each coord into a new range sample array
+                FunctionType temporalFunc = (FunctionType) DataUtility.getRangeType(field);
+                RealTupleType wxTupleType = temporalFunc.getFlatRange();
+
+                int numLatLons = field.getLength();
+                double[][] wxSamples = new double[wxTupleType.getDimension()][numLatLons];
+                for (int i = 0; i < numLatLons; i++) {
+                    FlatField temporalField = (FlatField) field.getSample(i);
+                    RealTuple wxTuple = (RealTuple) temporalField.getSample(temporalField.getLength() - 1);
+                    double[] wxValues = wxTuple.getValues();
+                    for (int j = 0; j < wxSamples.length; j++) {
+                        wxSamples[j][i] = wxValues[j];
+                    }
+                }
+                // Return a (Lat, Lon) -> (Weather) FlatField
+                FlatField spatialWeatherField = new FlatField(new FunctionType(
+                        RealTupleType.LatitudeLongitudeTuple, wxTupleType),
+                        field.getDomainSet());
+                spatialWeatherField.setSamples(wxSamples);
+                return spatialWeatherField;
+
+            } else {
+                // FieldImpl: Time -> ((Lat, Lon) -> (Weather))
+                // Simply get the last temporal sample.
+                int len = field.getLength();
+                return (FlatField) field.getSample(len - 1);
+            }
+        } catch (VisADException | RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
