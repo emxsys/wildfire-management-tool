@@ -85,7 +85,7 @@ public class SpatioTemporalDomain {
     }
 
     public ZonedDateTime getStartDate() {
-        return this.temporalDomain.getStart();
+        return this.temporalDomain.getEarliest();
     }
 
     public ZonedDateTime getZonedDateTimeAt(int index) {
