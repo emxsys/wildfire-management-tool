@@ -29,38 +29,13 @@
  */
 package com.emxsys.wildfire.behavior;
 
-import com.emxsys.gis.api.Coord2D;
-import com.emxsys.gis.api.Coord3D;
-import com.emxsys.gis.api.ShadedTerrainProvider;
 import com.emxsys.gis.api.Terrain;
-import com.emxsys.solar.api.SolarModel;
-import com.emxsys.solar.api.Sunlight;
-import com.emxsys.solar.api.SunlightTuple;
-import static com.emxsys.visad.GeneralUnit.degC;
-import static com.emxsys.visad.GeneralUnit.degF;
-import static com.emxsys.visad.GeneralUnit.foot;
-import static com.emxsys.visad.GeneralUnit.kph;
-import static com.emxsys.visad.GeneralUnit.mph;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.api.WeatherTuple;
-import com.emxsys.wildfire.api.FuelCondition;
-import com.emxsys.wildfire.api.FuelConditionTuple;
-import com.emxsys.wildfire.api.FuelModel;
-import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
-import static com.emxsys.wildfire.api.WildfireType.FUEL_MOISTURE_1H;
-import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_F;
 import static java.lang.Math.round;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openide.util.Exceptions;
-import static visad.CommonUnit.radian;
 import visad.Real;
-import visad.VisADException;
 
 /**
  *

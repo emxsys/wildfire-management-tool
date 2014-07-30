@@ -32,7 +32,7 @@ package com.emxsys.wildfire.api;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.solar.api.SolarModel;
-import com.emxsys.weather.api.WeatherModel;
+import com.emxsys.weather.api.WeatherModelObsolete;
 import java.time.ZonedDateTime;
 
 /**
@@ -63,5 +63,5 @@ public interface Fuel {
      * @param terrain The aspect and slope where the fuel is located.
      * @param fuelMoisture The initial fuel moisture.
      */
-    void condition(ZonedDateTime time, Coord3D coord, SolarModel solar, WeatherModel weather, Terrain terrain, FuelMoisture fuelMoisture);
+    void condition(ZonedDateTime time, Coord3D coord, SolarModel solar, WeatherModelObsolete weather, Terrain terrain, FuelMoisture fuelMoisture);
 }
