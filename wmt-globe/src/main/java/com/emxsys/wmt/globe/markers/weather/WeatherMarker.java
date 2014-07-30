@@ -32,18 +32,21 @@ package com.emxsys.wmt.globe.markers.weather;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.marker.Marker;
+import com.emxsys.time.api.TimeEvent;
+import com.emxsys.time.api.TimeListener;
+import com.emxsys.time.api.TimeProvider;
+import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.weather.api.WeatherForecaster;
+import com.emxsys.weather.api.WeatherModel;
+import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
 import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
 import com.emxsys.wmt.globe.markers.BasicMarker;
 import com.emxsys.wmt.globe.markers.MarkerSupport;
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.time.api.TimeEvent;
-import com.emxsys.time.api.TimeListener;
-import com.emxsys.time.api.TimeProvider;
-import com.emxsys.time.spi.DefaultTimeProvider;
-import com.emxsys.weather.api.PointForecaster;
-import com.emxsys.weather.api.WeatherProvider;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.DrawContext;
@@ -91,7 +94,7 @@ import visad.VisADException;
 public class WeatherMarker extends BasicMarker {
 
     private static final Logger logger = Logger.getLogger(WeatherMarker.class.getName());
-    private Field forecast;
+    private WeatherModel forecast;
     private Image image;
     private Placemark placemark;
     private WeatherProvider wxProvider;
@@ -113,7 +116,6 @@ public class WeatherMarker extends BasicMarker {
 //            }
         }
     };
-
 
     /**
      * An Executor for processing TimeEvents in a sliding task.
@@ -147,13 +149,9 @@ public class WeatherMarker extends BasicMarker {
             if (marker.forecast == null) {
                 return;
             }
-            try {
-                RealTuple wx = (RealTuple) marker.forecast.evaluate(new DateTime(event.getNewTime().toEpochSecond()));
-                double[] values = wx.getValues();
-                marker.placemark.setLabelText(wx.isMissing() ? "missing" : String.format("T: %1$.0f, RH: %2$.0f", values[0], values[1]));
-            } catch (VisADException | RemoteException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            WeatherTuple wx = marker.forecast.getWeather(event.getNewTime(), marker.getPosition());
+            marker.placemark.setLabelText(wx.isMissing() ? "missing" : String.format("T: %1$.0f, RH: %2$.0f", 
+                    wx.getAirTemperature().getValue(), wx.getRelativeHumidity().getValue()));
         }
     }
 
@@ -176,12 +174,12 @@ public class WeatherMarker extends BasicMarker {
 
         @Override
         public void run() {
-            PointForecaster forecaster = marker.getProvider().getLookup().lookup(PointForecaster.class);
+            WeatherForecaster forecaster = marker.getProvider().getLookup().lookup(WeatherForecaster.class);
             if (forecaster == null) {
                 logger.warning("No point forecaster available.");
                 return;
             }
-            marker.forecast = forecaster.getForecast(marker.getPosition());
+            marker.forecast = forecaster.getForecast(SpatialDomain.from(marker.getPosition()), null);
         }
     }
 
@@ -194,10 +192,10 @@ public class WeatherMarker extends BasicMarker {
 
     }
 
-    public WeatherMarker(String name, Coord3D location, Field field, URL moreInfo) {
+    public WeatherMarker(String name, Coord3D location, WeatherModel model, URL moreInfo) {
         super(location);
         setName(name);
-        this.forecast = field;
+        this.forecast = model;
         this.placemark = getLookup().lookup(Placemark.class);
 
         // Initialize renderables

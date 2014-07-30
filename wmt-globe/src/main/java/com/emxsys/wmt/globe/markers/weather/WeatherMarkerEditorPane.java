@@ -71,7 +71,7 @@ public class WeatherMarkerEditorPane extends javax.swing.JPanel {
         initComponents();
 
         // Find all the Weather service providers that support point forecasts
-        List<WeatherProvider> pointForecasters = DefaultWeatherProvider.getPointForecasters();
+        List<WeatherProvider> pointForecasters = DefaultWeatherProvider.getWeatherForecasters();
         Integer[] intArray = new Integer[pointForecasters.size()];
         providers = new WeatherProvider[pointForecasters.size()];
         int i = 0;
