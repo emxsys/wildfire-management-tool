@@ -205,12 +205,13 @@ public class WeatherTuple extends RealTuple implements Weather {
                 return true;
             } else {
                 for (Data data : components) {
-                    if (data == null || data.isMissing()) {
-                        return true;
+                    // Return "not missing" if there is least one valid value.
+                    if (data != null && !data.isMissing()) {
+                        return false;
                     }
                 }
             }
-            return false;
+            return true;
         } catch (VisADException | RemoteException ex) {
             throw new RuntimeException(ex);
         }
