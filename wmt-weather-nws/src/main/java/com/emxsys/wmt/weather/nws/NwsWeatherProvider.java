@@ -29,160 +29,25 @@
  */
 package com.emxsys.wmt.weather.nws;
 
-import com.emxsys.gis.api.Coord2D;
-import com.emxsys.util.HttpUtil;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.PointForecaster;
-import com.emxsys.weather.api.PointForecastPresenter;
 import com.emxsys.weather.api.WeatherProvider;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ServiceProvider;
-import visad.Field;
-import visad.FlatField;
 
 /**
  * National Weather Service NDFD Point Forecast weather service.
  *
- * National Digital Forecast Database XML Web Service
- * <pre>
- * Forecast Element Names
- *
- * NDFD Parameter                           Input Name
- * ==============                           ==========
- * Maximum Temperature                      maxt
- * Minimum Temperature                      mint
- * 3 Hourly Temperature                     temp
- * Dewpoint Temperature                     dew
- * Apparent Temperature                     appt
- * 12 Hour Probability of Precipitation 	pop12
- * Liquid Precipitation Amount              qpf
- * Snowfall Amount                          snow
- * Cloud Cover Amount                       sky
- * Relative Humidity                        rh
- * Maximum Relative Humidity                maxrh
- * Minimum Relative Humidity                minrh
- * Wind Speed                               wspd
- * Wind Direction                           wdir
- * Wind Gust                                wgust
- * Weather                                  wx
- * Weather Icons                            icons
- * Wave Height                              waveh
- * Ice Accumulation                         iceaccum
- * Watches, Warnings, and Advisories        wwa
- * Convective Hazard Outlook                conhazo
- * Fire Weather from Wind and Relative Humidity 	critfireo
- * Fire Weather from Dry Thunderstorms              dryfireo
- * Real-time Mesoscale Analysis Precipitation                   precipa_r
- * Real-time Mesoscale Analysis GOES Effective Cloud Amount 	sky_r
- * Real-time Mesoscale Analysis Dewpoint Temperature            td_r
- * Real-time Mesoscale Analysis Temperature                     temp_r
- * Real-time Mesoscale Analysis Wind Direction                  wdir_r
- * Real-time Mesoscale Analysis Wind Speed                      wspd_r
- * Probability of Tornadoes                                     ptornado
- * Probability of Hail                                          phail
- * Probability of Damaging Thunderstorm Winds                   ptstmwinds
- * Probability of Extreme Tornadoes                             pxtornado
- * Probability of Extreme Hail                                  pxhail
- * Probability of Extreme Thunderstorm Winds                    pxtstmwinds
- * Probability of Severe Thunderstorms                          ptotsvrtstm
- * Probability of Extreme Severe Thunderstorms                  pxtotsvrtstm
- * Probability of 8- To 14-Day Average Temperature Above Normal tmpabv14d
- * Probability of 8- To 14-Day Average Temperature Below Normal tmpblw14d
- * Probability of One-Month Average Temperature Above Normal 	tmpabv30d
- * Probability of One-Month Average Temperature Below Normal 	tmpblw30d
- * Probability of Three-Month Average Temperature Above Normal 	tmpabv90d
- * Probability of Three-Month Average Temperature Below Normal 	tmpblw90d
- * Probability of 8- To 14-Day Total Precipitation Above Median prcpabv14d
- * Probability of 8- To 14-Day Total Precipitation Below Median prcpblw14d
- * Probability of One-Month Total Precipitation Above Median 	prcpabv30d
- * Probability of One-Month Total Precipitation Below Median 	prcpblw30d
- * Probability of Three-Month Total Precipitation Above Median 	prcpabv90d
- * Probability of Three-Month Total Precipitation Below Median 	prcpblw90d
- * Probabilistic Tropical Cyclone Wind Speed >34 Knots (Incremental) 	incw34
- * Probabilistic Tropical Cyclone Wind Speed >50 Knots (Incremental) 	incw50
- * Probabilistic Tropical Cyclone Wind Speed >64 Knots (Incremental) 	incw64
- * Probabilistic Tropical Cyclone Wind Speed >34 Knots (Cumulative) 	cumw34
- * Probabilistic Tropical Cyclone Wind Speed >50 Knots (Cumulative) 	cumw50
- * Probabilistic Tropical Cyclone Wind Speed >64 Knots (Cumulative) 	cumw64
- * </pre>
  * @author Bruce Schubert
  */
 @ServiceProvider(service = WeatherProvider.class)
 public class NwsWeatherProvider extends AbstractWeatherProvider {
 
     public static final String IMAGE_ICON_NAME = "nws_logo.png";
-    /** URI for MapClick service */
-    protected static final String MAP_CLICK_URI = "http://forecast.weather.gov/MapClick.php?";
-    /** NDFD URI for Official REST service. */
-    protected static final String NDFD_REST_URI = "http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?";
-    /** NDFD Single Point query */
-    private static final String NDFD_POINT_FORECAST
-            = "lat=%1$f"
-            + "&lon=%2$f"
-            + "&product=time-series"
-            + "&begin=%3$s"
-            + "&end=%4$s"
-            + "&Unit=e" // e or m
-            + "&temp=temp"
-            + "&rh=rh"
-            + "&wspd=wspd"
-            + "&wdir=wdir"
-            + "&sky=sky"
-            + "&wgust=wgust"
-            + "&wx=wx"
-            + "&critfireo=critfireo";
-
-    private static final String HOURLY_GRAPH_PAGE = "http://forecast.weather.gov/MapClick.php"
-            + "?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
-            + "&Submit=Submit"
-            + "&FcstType=graphical"
-            + "&textField1=%1$f" // Lat
-            + "&textField2=%2$f" // Lon
-            + "&site=all"
-            + "&menu=1";
-    private static final String TABULAR_PAGE = "http://forecast.weather.gov/MapClick.php"
-            + "?w0=t&w1=td&w2=wc&w3=sfcwind&w3u=1&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
-            + "&Submit=Submit"
-            + "&FcstType=digital"
-            + "&textField1=%1$f" // Lat
-            + "&textField2=%2$f" // Lon
-            + "&site=all"
-            + "&unit=0"
-            + "&menu=1"
-            + "&dd=&bw=";
-    private static final String SVN_DAY_PRINTABLE_PAGE = "http://forecast.weather.gov/MapClick.php"
-            + "?lat=%1$f"
-            + "&lon=%2$f"
-            + "&unit=0"
-            + "&lg=english"
-            + "&FcstType=text"
-            + "&TextType=2";
-    private static final String SVN_DAY_TEXT_ONLY_PAGE = "http://forecast.weather.gov/MapClick.php"
-            + "?lat=%1$f"
-            + "&lon=%2$f"
-            + "&unit=0"
-            + "&lg=english"
-            + "&FcstType=text"
-            + "&TextType=1";
-    private static final String SVN_DAY_FORECAST_PAGE = "http://forecast.weather.gov/MapClick.php"
-            + "?lat=%1$f"
-            + "&lon=%2$f"
-            + "&smap=1"
-            + "&unit=0"
-            + "&lg=en"
-            + "&FcstType=text";
-    private static final String QUICK_FORECAST_PAGE = "http://forecast.weather.gov/afm/PointClick.php"
-            + "?lat=%1$f"
-            + "&lon=%2$f";
     /** Singleton */
     private static NwsWeatherProvider instance;
     private static final Logger logger = Logger.getLogger(NwsWeatherProvider.class.getName());
@@ -223,8 +88,8 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
 
         // Initialize the lookup with this provider's capabilities
         InstanceContent content = getContent();
-        content.add((PointForecaster) this::getPointForecast);
-        content.add((PointForecastPresenter) this::getPointForecastPage);
+        content.add(new NwsForecastService());
+        content.add(new NwsPointForecastPresenter());
     }
 
     @Override
@@ -243,80 +108,4 @@ public class NwsWeatherProvider extends AbstractWeatherProvider {
         imageIcon.setDescription(getClass().getSimpleName());
         return imageIcon;
     }
-
-    private String getPointForecastPage(Coord2D coord) {
-        URL logo = getClass().getResource("nws_logo.png");
-        URL quick = getClass().getResource("quick.jpg");
-        URL svnday = getClass().getResource("7day.jpg");
-        URL hourly = getClass().getResource("hourlygraph.jpg");
-        URL tabular = getClass().getResource("tabular.jpg");
-        String htmlTemplate = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-                + "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-                + "\n"
-                + "<head>\n"
-                + "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n"
-                + "<title>National Weather Service Point Forecast</title>\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "<table>\n"
-                + "	<tr>\n"
-                + "		<td rowspan=\"2\" style=\"width: 100px; height: 100px\">\n"
-                + "			<img alt=\"National Weather Service\" height=\"100\" src=\"" + logo + "\" width=\"100\" />\n"
-                + "		</td>\n"
-                + "		<th colspan=\"4\">Point Forecast for " + coord.toString() + "</th>\n"
-                + "	</tr>\n"
-                + "	<tr>\n"
-                + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\"" + QUICK_FORECAST_PAGE + "\"><img alt=\"Quick Forecast\" height=\"45\" src=\"" + quick + "\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\"" + QUICK_FORECAST_PAGE + "\">Quick Forecast</a></td>\n"
-                + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\"" + SVN_DAY_PRINTABLE_PAGE + "\"><img alt=\"7-Day Forecast\" height=\"45\" src=\"" + svnday + "\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\"" + SVN_DAY_PRINTABLE_PAGE + "\">7-Day</a></td>\n"
-                + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\"" + HOURLY_GRAPH_PAGE + "\"><img alt=\"Hourly Graph\" height=\"45\" src=\"" + hourly + "\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\"" + HOURLY_GRAPH_PAGE + "\">Hourly Graph</a></td>\n"
-                + "		<td style=\"width: 50px\" valign=\"top\">\n"
-                + "		<a href=\"" + TABULAR_PAGE + "\"><img alt=\"Tabular Data\" height=\"45\" src=\"" + tabular + "\" width=\"50\" /></a><br/>\n"
-                + "		<a href=\"" + TABULAR_PAGE + "\">Tabular Data</a></td>\n"
-                + "	</tr>\n"
-                + "</table>\n"
-                + "</body>"
-                + "</html>";
-
-        String html = String.format(htmlTemplate, coord.getLatitudeDegrees(), coord.getLongitudeDegrees());
-        //System.out.println(html);
-        return html;
-    }
-
-    private Field getPointForecast(Coord2D coord) {
-        try {
-            // Build the query string and URL
-            String pointForecastQuery = String.format(NDFD_POINT_FORECAST,
-                    coord.getLatitudeDegrees(),
-                    coord.getLongitudeDegrees(),
-                    "", // empty = first available time
-                    "");    // empty = last available time
-            StringBuilder sb = new StringBuilder();
-            sb.append(NDFD_REST_URI).append(pointForecastQuery);
-            URL url = new URL(sb.toString());
-            //System.out.println(url.toString());
-
-            // Invoke the REST service and get the JSON results
-            String dwml = HttpUtil.callWebService(url);
-
-            // Parse the XML
-            List<FlatField> fields = new DwmlParser(dwml).parse();
-            if (fields == null || fields.isEmpty()) {
-                return null;
-            }
-            return fields.get(0);
-
-        } catch (MalformedURLException ex) {
-            logger.log(Level.SEVERE, "getPointForecast() failed: {0}", ex.getMessage());
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, "callWebService() failed: {0}", ex.getMessage());
-        }
-        return null;
-    }
-
 }

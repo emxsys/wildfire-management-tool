@@ -31,11 +31,13 @@ package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord2D;
-import com.emxsys.weather.api.PointForecaster;
-import com.emxsys.weather.api.PointForecastPresenter;
-import com.emxsys.weather.api.Weather;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.visad.TemporalDomain;
+import com.emxsys.weather.api.WeatherForecaster;
+import com.emxsys.weather.api.PointForecastWebPresenter;
+import com.emxsys.weather.api.WeatherModel;
 import java.rmi.RemoteException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -44,9 +46,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import visad.DateTime;
-import visad.Field;
-import visad.Set;
 import visad.VisADException;
 
 /**
@@ -86,34 +85,48 @@ public class NwsWeatherProviderTest {
         // 1st instance tests lookup
         NwsWeatherProvider result = NwsWeatherProvider.getInstance();
         assertNotNull(result);
-        
+
         // 2nd call of constructor should throw exeception
         exception.expect(IllegalStateException.class);
         new NwsWeatherProvider();
     }
 
-     /**
-     * Test of getPointForecast method, of class NwsWeatherProvider.
+    /**
+     * Test of getForecast method, of class NwsWeatherProvider.
      */
     @Test
-    public void testGetPointForecast() throws VisADException, RemoteException {
+    public void testGetPointForecast(){
         System.out.println("getPointForecast");
         NwsWeatherProvider provider = NwsWeatherProvider.getInstance();
-        PointForecaster forecaster = provider.getLookup().lookup(PointForecaster.class);
+        WeatherForecaster forecaster = provider.getLookup().lookup(WeatherForecaster.class);
         assertNotNull(forecaster);
-        
-        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        Field forecast = forecaster.getForecast(coord);
-        assertNotNull(forecast);
-        
-        System.out.println(forecast.getDomainSet().getType());
-        double[][] times = forecast.getDomainSet().getDoubles();
-        for (double time : times[0]) {
-            System.out.println(new DateTime(time));
-        }
-        System.out.println(forecast.longString());
 
+        Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
+        WeatherModel forecast = forecaster.getForecast(SpatialDomain.from(coord), null);
+        assertNotNull(forecast);
+
+        System.out.println(forecast);
     }
+    
+    /**
+     * Test of getForecast method, of class NwsWeatherProvider.
+     */
+    @Test
+    public void testForecastService(){
+        System.out.println("ForecastService");
+        NwsWeatherProvider provider = NwsWeatherProvider.getInstance();
+        WeatherForecaster forecaster = provider.getLookup().lookup(WeatherForecaster.class);
+        assertNotNull(forecaster);
+
+        SpatialDomain space = SpatialDomain.from(GeoCoord2D.fromDegrees(34.25, -119.2));
+        TemporalDomain time = new TemporalDomain(ZonedDateTime.now(), 2);
+        
+        WeatherModel forecast = forecaster.getForecast(space, time);
+        assertNotNull(forecast);
+
+        System.out.println(forecast);
+    }
+
 
     /**
      * Test of getPointForecastPage method, of class NwsWeatherProvider.
@@ -122,13 +135,13 @@ public class NwsWeatherProviderTest {
     public void testGetPointForecastPage() throws VisADException, RemoteException {
         System.out.println("getPointForecastPage");
         NwsWeatherProvider provider = NwsWeatherProvider.getInstance();
-        PointForecastPresenter presentation = provider.getLookup().lookup(PointForecastPresenter.class);
+        PointForecastWebPresenter presentation = provider.getLookup().lookup(PointForecastWebPresenter.class);
         assertNotNull(presentation);
-        
+
         Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        String html = presentation.getPresentation(coord);
+        String html = presentation.getForecastHtml(coord);
         assertNotNull(html);
-        
+
         System.out.println(html);
     }
 
