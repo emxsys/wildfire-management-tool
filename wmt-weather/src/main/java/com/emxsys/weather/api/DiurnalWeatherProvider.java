@@ -39,12 +39,7 @@ import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.TemporalDomain;
-import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
-import static com.emxsys.weather.api.WeatherType.CLOUD_COVER;
-import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
-import static com.emxsys.weather.api.WeatherType.REL_HUMIDITY;
-import static com.emxsys.weather.api.WeatherType.WIND_DIR;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
+import static com.emxsys.weather.api.WeatherType.*;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -77,10 +72,10 @@ import visad.VisADException;
 })
 public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
-    private Real tempAtSunrise = new Real(AIR_TEMP_C);
-    private Real tempAtNoon = new Real(AIR_TEMP_C);
-    private Real tempAt1400 = new Real(AIR_TEMP_C);
-    private Real tempAtSunset = new Real(AIR_TEMP_C);
+    private Real tempAtSunrise = new Real(AIR_TEMP_F);
+    private Real tempAtNoon = new Real(AIR_TEMP_F);
+    private Real tempAt1400 = new Real(AIR_TEMP_F);
+    private Real tempAtSunset = new Real(AIR_TEMP_F);
     private Real rhAtSunrise = new Real(REL_HUMIDITY);
     private Real rhAtNoon = new Real(REL_HUMIDITY);
     private Real rhAt1400 = new Real(REL_HUMIDITY);
@@ -116,10 +111,10 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     }
 
     public void initializeAirTemperatures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
-        this.tempAtSunrise = Reals.convertTo(AIR_TEMP_C, tempAtSunrise);
-        this.tempAtNoon = Reals.convertTo(AIR_TEMP_C, tempAtNoon);
-        this.tempAt1400 = Reals.convertTo(AIR_TEMP_C, tempAt1400);
-        this.tempAtSunset = Reals.convertTo(AIR_TEMP_C, tempAtSunset);
+        this.tempAtSunrise = Reals.convertTo(AIR_TEMP_F, tempAtSunrise);
+        this.tempAtNoon = Reals.convertTo(AIR_TEMP_F, tempAtNoon);
+        this.tempAt1400 = Reals.convertTo(AIR_TEMP_F, tempAt1400);
+        this.tempAtSunset = Reals.convertTo(AIR_TEMP_F, tempAtSunset);
     }
 
     public void initializeRelativeHumidities(Real rhAtSunrise, Real rhAtNoon, Real rhAt1400, Real rhAtSunset) {
@@ -215,11 +210,11 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             // Create the wx range samples...
             for (int i = 0; i < wxField.getLength(); i++) {
                 ZonedDateTime time = domain.getZonedDateTimeAt(i);
-                wxSamples[AIR_TEMP_IDX][i] = getAirTemperature(time.toLocalTime()).getValue();
-                wxSamples[HUMIDITY_IDX][i] = getRelativeHumidity(time.toLocalTime()).getValue();
-                wxSamples[WIND_SPD_IDX][i] = getWindSpeed(time.toLocalTime()).getValue();
-                wxSamples[WIND_DIR_IDX][i] = getWindDirection(time.toLocalTime()).getValue();
-                wxSamples[CLOUD_COVER_IDX][i] = getCloudCover(time.toLocalTime()).getValue();
+                wxSamples[AIR_TEMP_INDEX][i] = getAirTemperature(time.toLocalTime()).getValue();
+                wxSamples[REL_HUMIDITY_INDEX][i] = getRelativeHumidity(time.toLocalTime()).getValue();
+                wxSamples[WIND_SPEED_INDEX][i] = getWindSpeed(time.toLocalTime()).getValue();
+                wxSamples[WIND_DIR_INDEX][i] = getWindDirection(time.toLocalTime()).getValue();
+                wxSamples[CLOUD_COVER_INDEX][i] = getCloudCover(time.toLocalTime()).getValue();
             }
             // ...and put the weather values above into it
             wxField.setSamples(wxSamples);
@@ -252,7 +247,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             latLonSamples[1][0] = (float) coord.getLatitudeDegrees();
 
             // Create the wx range samples, and init with "missing" values
-            double[][] wxSamples = new double[WX_RANGE.getDimension()][1];
+            double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][1];
             wxSamples[AIR_TEMP_IDX][0] = getAirTemperature(time.toLocalTime()).getValue();
             wxSamples[HUMIDITY_IDX][0] = getRelativeHumidity(time.toLocalTime()).getValue();
             wxSamples[WIND_SPD_IDX][0] = getWindSpeed(time.toLocalTime()).getValue();
@@ -264,7 +259,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             Irregular2DSet domainSet = new Irregular2DSet(GisType.LATLON, latLonSamples);
 
             // Create a MathType for the function ( (lat, lon ) -> ( air_rh, RH, wind_spd, ... ) )
-            FunctionType stationWxFunc = new FunctionType(GisType.LATLON, WX_RANGE);
+            FunctionType stationWxFunc = new FunctionType(GisType.LATLON, FIRE_WEATHER);
 
             // Create a FlatField
             // Use FlatField(FunctionType type, Set domain_set)
@@ -297,7 +292,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         } else {
             val = calcValueEarlyAfternoon(t, tempAtNoon.getValue(), tempAt1400.getValue());
         }
-        return new Real(WeatherType.AIR_TEMP_C, val);
+        return new Real(WeatherType.AIR_TEMP_F, val);
     }
 
     protected Real getRelativeHumidity(LocalTime localTime) {
@@ -322,7 +317,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
     protected Real getWindSpeed(LocalTime localTime) {
         Entry<LocalTime, Real> entry = windSpds.floorEntry(localTime);
-        return (entry == null) ? new Real(WIND_SPEED_SI, 0) : Reals.convertTo(WIND_SPEED_SI, entry.getValue());
+        return (entry == null) ? new Real(WIND_SPEED_KTS, 0) : Reals.convertTo(WIND_SPEED_KTS, entry.getValue());
     }
 
     protected Real getWindDirection(LocalTime localTime) {

@@ -45,7 +45,7 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class SpotWeatherModel extends WeatherModel {
+public class SpotWeatherModel extends WeatherModelObsolete {
 
     private final TemporalDomain temporalDomain;
     private final SpatialDomain spatialDomain;
@@ -88,7 +88,7 @@ public class SpotWeatherModel extends WeatherModel {
                 for (int xy = 0; xy < numLatLons; xy++) {
                     // Compute weather data at the time and place
                     GeoCoord2D coord = GeoCoord2D.fromLatLonPoint(this.spatialDomain.getLatLonPointAt(xy));
-                    WeatherTuple weather = spotWeatherObserver.getWeather(time, coord);
+                    WeatherTuple weather = spotWeatherObserver.getSpotWeather(time, coord);
 
                     // Copy weather values into the spatial function's samples
                     double[] values = weather.getValues();

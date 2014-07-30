@@ -194,10 +194,10 @@ public class DiurnalWeatherProviderTest {
     public void testGetDailyWeather() {
         System.out.println("getDailyWeather");
         try {
-            Real tempAtSunrise = new Real(WeatherType.AIR_TEMP_C, 0);
-            Real tempAtNoon = new Real(WeatherType.AIR_TEMP_C, 75);
-            Real tempAt1400 = new Real(WeatherType.AIR_TEMP_C, 100);
-            Real tempAtSunset = new Real(WeatherType.AIR_TEMP_C, 50);
+            Real tempAtSunrise = new Real(WeatherType.AIR_TEMP_F, 0);
+            Real tempAtNoon = new Real(WeatherType.AIR_TEMP_F, 75);
+            Real tempAt1400 = new Real(WeatherType.AIR_TEMP_F, 100);
+            Real tempAtSunset = new Real(WeatherType.AIR_TEMP_F, 50);
             instance.initializeAirTemperatures(tempAtSunrise, tempAtNoon, tempAt1400, tempAtSunset);
 
             Real rhAtSunrise = new Real(WeatherType.REL_HUMIDITY, 100);
@@ -207,10 +207,10 @@ public class DiurnalWeatherProviderTest {
             instance.initializeRelativeHumidities(rhAtSunrise, rhAtNoon, rhAt1400, rhAtSunset);
 
             TreeMap<LocalTime, Real> windSpeeds = new TreeMap<>();
-            windSpeeds.put(LocalTime.of(6, 00), new Real(WeatherType.WIND_SPEED_SI, 5));
-            windSpeeds.put(LocalTime.of(9, 45), new Real(WeatherType.WIND_SPEED_SI, 10));
-            windSpeeds.put(LocalTime.of(12, 15), new Real(WeatherType.WIND_SPEED_SI, 20));
-            windSpeeds.put(LocalTime.of(16, 30), new Real(WeatherType.WIND_SPEED_SI, 0));
+            windSpeeds.put(LocalTime.of(6, 00), new Real(WeatherType.WIND_SPEED_KTS, 5));
+            windSpeeds.put(LocalTime.of(9, 45), new Real(WeatherType.WIND_SPEED_KTS, 10));
+            windSpeeds.put(LocalTime.of(12, 15), new Real(WeatherType.WIND_SPEED_KTS, 20));
+            windSpeeds.put(LocalTime.of(16, 30), new Real(WeatherType.WIND_SPEED_KTS, 0));
             instance.initializeWindSpeeds(windSpeeds);
 
             TreeMap<LocalTime, Real> windDirections = new TreeMap<>();

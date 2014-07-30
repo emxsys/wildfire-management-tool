@@ -48,6 +48,6 @@ public interface SpotWeatherObserver {
      * @param coord The center of the area of interest.
      * @return A {@code WeatherTuple}.
      */
-    WeatherTuple getWeather(ZonedDateTime time, Coord2D coord);
+    WeatherTuple getSpotWeather(ZonedDateTime time, Coord2D coord);
 
 }

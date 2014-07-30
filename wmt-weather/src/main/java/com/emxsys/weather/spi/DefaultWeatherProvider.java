@@ -32,10 +32,10 @@ package com.emxsys.weather.spi;
 import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.PointForecaster;
 import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.StationObserver;
 import com.emxsys.weather.api.Weather;
+import com.emxsys.weather.api.WeatherForecaster;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
 import java.util.ArrayList;
@@ -81,10 +81,10 @@ public class DefaultWeatherProvider {
      *
      * @return A collection of WeatherProvider instances that have the PointForecaster capability.
      */
-    public static List<WeatherProvider> getPointForecasters() {
+    public static List<WeatherProvider> getWeatherForecasters() {
         ArrayList<WeatherProvider> providers = new ArrayList<>();
         getInstances().stream()
-                .filter((provider) -> (provider.getLookup().lookup(PointForecaster.class)) != null)
+                .filter((provider) -> (provider.getLookup().lookup(WeatherForecaster.class)) != null)
                 .forEach((provider) -> {
                     providers.add(provider);
                 });
