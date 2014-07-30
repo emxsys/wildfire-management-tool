@@ -33,13 +33,9 @@ import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainTuple;
-import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
-import com.emxsys.solar.api.SolarModel;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.visad.SpatioTemporalDomain;
-import com.emxsys.weather.api.SpotWeatherModel;
-import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
@@ -63,7 +59,6 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -479,7 +474,7 @@ public class Model {
         private static final Model INSTANCE = new Model();
     }
 
-// Note: The ordering of these flags controls the order of the property change notifications
+    // Note: The ordering of these flags controls the order of the property change notifications
     private enum Flag {
 
         Domain, Time, Coord, Terrain, Sunlight, Shaded, Weather, FuelModel, FuelMoisture, FuelCondition, Fuelbed, FireBehavior

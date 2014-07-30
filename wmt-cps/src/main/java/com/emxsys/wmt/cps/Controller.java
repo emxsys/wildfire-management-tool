@@ -49,7 +49,6 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.PointForecaster;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.WeatherProvider;
@@ -61,7 +60,6 @@ import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import java.beans.PropertyChangeEvent;
-import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicReference;
@@ -289,7 +287,7 @@ public class Controller {
                 controller.model.setTerrain(terrain);
 
                 // Update the temporal-spatial domain
-                controller.spatialDomain = new SpatialDomain(coord);
+                controller.spatialDomain = SpatialDomain.from(coord);
                 SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
                 controller.model.setDomain(domain);
 
@@ -308,7 +306,7 @@ public class Controller {
                 // Update the Weather
 //                if (controller.weather != null) {
 //                    if (controller.weather instanceof DiurnalWeatherProvider) {
-//                        controller.model.setWeather(((DiurnalWeatherProvider)simpleWeather).getWeather(controller.model.getDateTime(), null));
+//                        controller.model.setWeather(((DiurnalWeatherProvider)simpleWeather).getWeatherObservation(controller.model.getDateTime(), null));
 //                    }
 //                }
 
@@ -389,7 +387,7 @@ public class Controller {
                     
                     if (controller.weatherSource.hasCapability(SpotWeatherObserver.class)) {
                         SpotWeatherObserver wxObs = controller.weatherSource.getCapability(SpotWeatherObserver.class);
-                        controller.model.setWeather(wxObs.getWeather(time, coord));                        
+                        controller.model.setWeather(wxObs.getSpotWeather(time, coord));                        
                     }
 //                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
 //                        PointForecaster forecaster = controller.weatherSource.getCapability(PointForecaster.class);
