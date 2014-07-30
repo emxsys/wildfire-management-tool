@@ -38,15 +38,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import visad.DataImpl;
 import visad.DateTime;
 import visad.Field;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Gridded1DDoubleSet;
+import visad.Gridded1DSet;
 import visad.MathType;
 import visad.RealType;
+import visad.Set;
 import visad.VisADException;
 
 /**
@@ -59,8 +60,26 @@ import visad.VisADException;
 })
 public class TemporalDomain {
 
+    public static TemporalDomain from(ZonedDateTime dateTime) {
+        return new TemporalDomain(dateTime, 0);
+    }
+
+    public static TemporalDomain from(ZonedDateTime begin, ZonedDateTime end) {
+        try {
+            int utcOffset = begin.getOffset().getTotalSeconds();
+            Gridded1DSet set = DateTime.makeTimeSet(new DateTime[]{
+                Times.fromZonedDateTime(begin),
+                Times.fromZonedDateTime(end)});
+            return new TemporalDomain(set, utcOffset);
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
     private static final RealType TIME_DOMAIN_TYPE = RealType.Time;
-    private Gridded1DDoubleSet timeDomainSet;
+    private Set timeDomainSet;
     private int timeZoneOffset = 0;
     private static final Logger logger = Logger.getLogger(TemporalDomain.class.getName());
 
@@ -85,9 +104,9 @@ public class TemporalDomain {
      * Constructs a TemporalDomain from a Gridded1DDoubleSet of type RealType.Time
      *
      * @param timeDomainSet The time domain in UTC values.
-     * @param offsetSeconds The time zone offset (from UTC) in seconds.
+     * @param offsetSeconds The local time zone offset (from UTC) in seconds.
      */
-    public TemporalDomain(Gridded1DDoubleSet timeDomainSet, int offsetSeconds) {
+    public TemporalDomain(Set timeDomainSet, int offsetSeconds) {
         initialize(timeDomainSet, offsetSeconds);
     }
 
@@ -108,7 +127,7 @@ public class TemporalDomain {
      * @param timeDomainSet The time domain in UTC values.
      * @param offsetSeconds The time zone offset (from UTC) in seconds.
      */
-    public final void initialize(Gridded1DDoubleSet timeDomainSet, int offsetSeconds) {
+    public final void initialize(Set timeDomainSet, int offsetSeconds) {
         // TODO: validate the timeDomain parameter
         this.timeDomainSet = timeDomainSet;
         this.timeZoneOffset = offsetSeconds;
@@ -128,7 +147,7 @@ public class TemporalDomain {
      * @deprecated Untested!!
      */
     @Deprecated
-    public TemporalDomain(DataImpl data) {
+    public TemporalDomain(FieldImpl data) {
         try {
             // Validate temporal requirements
             FunctionType temporalFunction = (FunctionType) data.getType();
@@ -147,12 +166,12 @@ public class TemporalDomain {
             throw new IllegalArgumentException(ex.toString());
         }
     }
-    
+
     /**
      * Gets the number of times in the domain.
-     * @return 
+     * @return
      */
-    public int getTemporalDomainSetLength() {
+    public int getDomainSetLength() {
         try {
             if (!isInitialized()) {
                 throw new IllegalStateException(Bundle.ERR_SpatialDomainNotInitialized());
@@ -164,18 +183,43 @@ public class TemporalDomain {
             throw new RuntimeException(ex);
         }
     }
-    
 
     /**
      * Gets the earliest datetime in the domain.
      * @return A ZonedDateTime with the same time zone offset as the domain initializer.
      */
-    public ZonedDateTime getStart() {
-        if (!isInitialized()) {
-            throw new IllegalStateException(Bundle.ERR_TemporalDomainNotInitialized());
+    public ZonedDateTime getEarliest() {
+        try {
+            if (!isInitialized()) {
+                throw new IllegalStateException(Bundle.ERR_TemporalDomainNotInitialized());
+            }
+            Instant instant = Instant.ofEpochSecond((long) timeDomainSet.getDoubles(false)[0][0]);
+            return ZonedDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds(timeZoneOffset)));
         }
-        Instant instant = Instant.ofEpochSecond((long) timeDomainSet.getDoubleLowX());
-        return ZonedDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds(timeZoneOffset)));
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Gets the latest datetime in the domain.
+     * @return A ZonedDateTime with the same time zone offset as the domain initializer.
+     */
+    public ZonedDateTime getLatest() {
+        try {
+            if (!isInitialized()) {
+                throw new IllegalStateException(Bundle.ERR_TemporalDomainNotInitialized());
+            }
+            //Instant instant = Instant.ofEpochSecond((long) timeDomainSet.getDoubleHiX());
+            double[][] samples = timeDomainSet.getDoubles(false);
+            Instant instant = Instant.ofEpochSecond((long) samples[0][samples[0].length - 1]);
+            return ZonedDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds(timeZoneOffset)));
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -267,7 +311,7 @@ public class TemporalDomain {
         }
     }
 
-    public Gridded1DDoubleSet getDomainSet() {
+    public Set getDomainSet() {
         return timeDomainSet;
     }
 
