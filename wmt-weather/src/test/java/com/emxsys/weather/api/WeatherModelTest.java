@@ -45,7 +45,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import visad.FieldImpl;
 import visad.FlatField;
+import visad.FunctionType;
 import visad.RealTuple;
+import visad.RealTupleType;
 import visad.Tuple;
 import visad.VisADException;
 
@@ -55,7 +57,8 @@ import visad.VisADException;
  */
 public class WeatherModelTest {
 
-    private WeatherModel instance;
+    private WeatherModel spatialInstance;
+    private WeatherModel temporalInstance;
 
     public WeatherModelTest() {
     }
@@ -71,10 +74,11 @@ public class WeatherModelTest {
         SpatialDomain spatialDomain = new SpatialDomain(
                 GeoCoord2D.fromDegrees(34.0, -120.0),
                 GeoCoord2D.fromDegrees(35.0, -119.0), 5, 5);
-        final int numTimes = timeDomain.getTemporalDomainSetLength();
-        final int numLatLons = spatialDomain.getSpatialDomainSetLength();
+        final int numTimes = timeDomain.getDomainSetLength();
+        final int numLatLons = spatialDomain.getDomainSetLength();
 
-        SpatialField[] fields = new SpatialField[numTimes];
+        // Create a spatialField for each time
+        SpatialField[] spatialFields = new SpatialField[numTimes];
         for (int t = 0; t < numTimes; t++) {
             double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
             for (int xy = 0; xy < numLatLons; xy++) {
@@ -84,10 +88,26 @@ public class WeatherModelTest {
                 rangeSamples[3][xy] = 4. + xy + t;    // wnd dir
                 rangeSamples[4][xy] = 5. + xy + t;    // cloud cover
             }
-            fields[t] = SpatialField.from(spatialDomain, FIRE_WEATHER, rangeSamples);
+            spatialFields[t] = SpatialField.from(spatialDomain, FIRE_WEATHER, rangeSamples);
         }
-        instance = WeatherModel.from(timeDomain, fields);
+        temporalInstance = WeatherModel.from(timeDomain, spatialFields);
 
+        // Create a temporalField for each lat/lon
+        FlatField[] temporalFields = new FlatField[numLatLons];
+        for (int xy = 0; xy < numLatLons; xy++) {
+            double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numTimes];
+            for (int t = 0; t < numTimes; t++) {
+                rangeSamples[0][t] = 1. + xy + t;    // air temp
+                rangeSamples[1][t] = 2. + xy + t;    // rh
+                rangeSamples[2][t] = 3. + xy + t;    // wnd spd
+                rangeSamples[3][t] = 4. + xy + t;    // wnd dir
+                rangeSamples[4][t] = 5. + xy + t;    // cloud cover
+            }
+            FlatField field = timeDomain.createSimpleTemporalField(FIRE_WEATHER);
+            field.setSamples(rangeSamples);
+            temporalFields[xy] = field;
+        }
+        spatialInstance = WeatherModel.from(spatialDomain, temporalFields);
     }
 
     @Test
@@ -100,8 +120,8 @@ public class WeatherModelTest {
                 GeoCoord2D.fromDegrees(35.0, -119.0), 5, 5);
         FlatField spatialField = spatialDomain.createSimpleSpatialField(FIRE_WEATHER);
         FieldImpl timeSpaceField = timeDomain.createTemporalField(spatialField.getType());
-        final int numLatLons = spatialDomain.getSpatialDomainSetLength();
-        final int numTimes = timeDomain.getTemporalDomainSetLength();
+        final int numLatLons = spatialDomain.getDomainSetLength();
+        final int numTimes = timeDomain.getDomainSetLength();
         for (int t = 0; t < numTimes; t++) {
             double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
             for (int xy = 0; xy < numLatLons; xy++) {
@@ -126,8 +146,8 @@ public class WeatherModelTest {
         SpatialDomain spatialDomain = new SpatialDomain(
                 GeoCoord2D.fromDegrees(34.0, -120.0),
                 GeoCoord2D.fromDegrees(35.0, -119.0), 5, 5);
-        final int numTimes = timeDomain.getTemporalDomainSetLength();
-        final int numLatLons = spatialDomain.getSpatialDomainSetLength();
+        final int numTimes = timeDomain.getDomainSetLength();
+        final int numLatLons = spatialDomain.getDomainSetLength();
 
         SpatialField[] fields = new SpatialField[numTimes];
         for (int t = 0; t < numTimes; t++) {
@@ -169,56 +189,79 @@ public class WeatherModelTest {
     }
 
     @Test
+    public void testGetLatestWeather() throws VisADException, RemoteException {
+        System.out.println("getLatestWeather");
+        
+        FlatField temporalResult = temporalInstance.getLatestWeather();
+        assertNotNull(temporalResult);
+        
+        System.out.println(temporalResult);
+        RealTuple tuple = (RealTuple) temporalResult.getSample(temporalResult.getLength() - 1);
+        assertEquals(40, tuple.getValues()[4], .01);
+        tuple = (RealTuple) temporalResult.getSample(0);
+        assertEquals(12, tuple.getValues()[0], .01);
+
+        FlatField spatialResult = spatialInstance.getLatestWeather();
+        assertNotNull(spatialResult);
+        
+        System.out.println(spatialResult);
+        tuple = (RealTuple) temporalResult.getSample(temporalResult.getLength() - 1);
+        assertEquals(40, tuple.getValues()[4], .01);
+        tuple = (RealTuple) temporalResult.getSample(0);
+        assertEquals(12, tuple.getValues()[0], .01);
+    }
+
+    @Test
     public void testGetWeather() {
         System.out.println("getWeather");
-        System.out.println(instance);
+        System.out.println(temporalInstance);
         ZonedDateTime time = ZonedDateTime.now();
 
         // Outside temporal domain
-        WeatherTuple result = instance.getWeather(time.minusHours(1), GeoCoord2D.fromDegrees(34.0, -120.0));
+        WeatherTuple result = temporalInstance.getWeather(time.minusHours(1), GeoCoord2D.fromDegrees(34.0, -120.0));
         assertNotNull("result not null", result);
         assertTrue("result isMissing", result.isMissing());
-        
+
         // Outside temporal domain
-        result = instance.getWeather(time.plusHours(12), GeoCoord2D.fromDegrees(34.0, -120.0));
+        result = temporalInstance.getWeather(time.plusHours(12), GeoCoord2D.fromDegrees(34.0, -120.0));
         assertNotNull("result not null", result);
         assertTrue("result isMissing", result.isMissing());
-        
+
         // Outside spatial domain, but close to the edge
-        result = instance.getWeather(time, GeoCoord2D.fromDegrees(33.9, -120.1));
+        result = temporalInstance.getWeather(time, GeoCoord2D.fromDegrees(33.9, -120.1));
         assertNotNull("result not null", result);
         assertTrue("result not isMissing", !result.isMissing());
         assertEquals("air temp", 1.0, result.getAirTemperature().getValue(), .0001);
 
         // On a corner
-        result = instance.getWeather(time, GeoCoord2D.fromDegrees(34.0, -120.0));
+        result = temporalInstance.getWeather(time, GeoCoord2D.fromDegrees(34.0, -120.0));
         assertNotNull("result not null", result);
         assertTrue("result not isMissing", !result.isMissing());
         assertEquals("air temp", 1.0, result.getAirTemperature().getValue(), .0001);
-        
+
         // On opposite corner
-        result = instance.getWeather(time, GeoCoord2D.fromDegrees(35.0, -119.0));
+        result = temporalInstance.getWeather(time, GeoCoord2D.fromDegrees(35.0, -119.0));
         assertEquals("air temp", 25.0, result.getAirTemperature().getValue(), .0001);
 
         // Centered
-        result = instance.getWeather(time, GeoCoord2D.fromDegrees(34.5, -119.5));
+        result = temporalInstance.getWeather(time, GeoCoord2D.fromDegrees(34.5, -119.5));
         assertEquals("air temp", 13, result.getAirTemperature().getValue(), .0001);
 
         // On SW corner, 1 hour later
-        result = instance.getWeather(time.plusHours(1), GeoCoord2D.fromDegrees(34.0, -120.0));
+        result = temporalInstance.getWeather(time.plusHours(1), GeoCoord2D.fromDegrees(34.0, -120.0));
         assertEquals("air temp", 2.0, result.getAirTemperature().getValue(), .0001);
 
         // On SW corner, 1/2 hour later
-        result = instance.getWeather(time.plusMinutes(30), GeoCoord2D.fromDegrees(34.0, -120.));
+        result = temporalInstance.getWeather(time.plusMinutes(30), GeoCoord2D.fromDegrees(34.0, -120.));
         assertEquals("air temp", 1.5, result.getAirTemperature().getValue(), .0001);
-        
+
         // At center, 90 minutes later
-        result = instance.getWeather(time.plusMinutes(90), GeoCoord2D.fromDegrees(34.5, -119.5));
+        result = temporalInstance.getWeather(time.plusMinutes(90), GeoCoord2D.fromDegrees(34.5, -119.5));
         assertEquals("air temp", 14.5, result.getAirTemperature().getValue(), .0001);
-        
+
         // Between temporal samples and spatial samples.
-        result = instance.getWeather(time.plusMinutes(90), GeoCoord2D.fromDegrees(34.625, -119.5));
-        assertEquals("air temp", 15., result.getAirTemperature().getValue(), .0001);        
+        result = temporalInstance.getWeather(time.plusMinutes(90), GeoCoord2D.fromDegrees(34.625, -119.5));
+        assertEquals("air temp", 15., result.getAirTemperature().getValue(), .0001);
         System.out.println(result);
     }
 
