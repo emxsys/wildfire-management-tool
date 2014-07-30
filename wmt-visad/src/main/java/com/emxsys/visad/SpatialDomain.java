@@ -30,11 +30,12 @@
 package com.emxsys.visad;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.OptionalDouble;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import visad.DataImpl;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
@@ -57,6 +58,32 @@ import visad.georef.LatLonTuple;
 })
 
 public class SpatialDomain {
+
+    public static SpatialDomain from(LatLonPoint point) {
+        return new SpatialDomain(point, point, 1, 1);
+    }
+
+    /**
+     * Creates a spatial domain bounding box from two coordinates.
+     * @param point1
+     * @param point2
+     * @return
+     */
+    public static SpatialDomain from(LatLonPoint point1, LatLonPoint point2) {
+        try {
+            double minLat = Math.min(point1.getLatitude().getValue(), point2.getLatitude().getValue());
+            double maxLat = Math.max(point1.getLatitude().getValue(), point2.getLatitude().getValue());
+            double minLon = Math.min(point1.getLongitude().getValue(), point2.getLongitude().getValue());
+            double maxLon = Math.max(point1.getLongitude().getValue(), point2.getLongitude().getValue());
+            LatLonTuple sw = new LatLonTuple(minLat, minLon);
+            LatLonTuple ne = new LatLonTuple(maxLat, maxLon);
+            return new SpatialDomain(sw, ne, 2, 2);
+        }
+        catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
 
     private Set spatialDomainSet;
     /** The number of rows in the spatial grid */
@@ -83,15 +110,6 @@ public class SpatialDomain {
     public SpatialDomain(LatLonPoint minLatLon, LatLonPoint maxLatLon, int nrows, int ncols) {
         initialize(minLatLon, maxLatLon, nrows, ncols);
     }
-    
-    /**
-     * Constructs a SpatialDomain backed by a LinearLatLonSet consisting of a single point.
-     * 
-     * @param point The sole lat/lon in the domain.
-     */
-    public SpatialDomain(LatLonPoint point) {
-        initialize(point, point, 1, 1);
-    }
 
     /**
      * Constructs a SpatialDomain from the given Linear2DSet.
@@ -105,13 +123,12 @@ public class SpatialDomain {
     }
 
     /**
-     * Constructor extracts temporal and spatial domains from a FieldImpl data type.
+     * Constructor extracts spatial domains from a FieldImpl data type.
      *
      * @param data of type FieldImpl
      * @deprecated Untested!!
      */
-    @Deprecated
-    public SpatialDomain(DataImpl data) {
+    public SpatialDomain(FieldImpl data) {
         // Validate spatial requirements
         FunctionType spatialFunction = (FunctionType) data.getType();
         if (spatialFunction == null || !spatialFunction.getDomain().equals(RealTupleType.LatitudeLongitudeTuple)) {
@@ -141,7 +158,7 @@ public class SpatialDomain {
             double minLon = minLatLon.getLongitude().getValue();
             double maxLat = maxLatLon.getLatitude().getValue();
             double maxLon = maxLatLon.getLongitude().getValue();
-            this.spatialDomainSet = new LinearLatLonSet(SPATIAL_DOMAIN_TYPE, // includes a coord system defn!!!!
+            this.spatialDomainSet = new LinearLatLonSet(SPATIAL_DOMAIN_TYPE,
                     minLat, maxLat, nrows,
                     minLon, maxLon, ncols,
                     null, // another Coordinate system 
@@ -160,6 +177,56 @@ public class SpatialDomain {
      */
     public boolean isInitialized() {
         return this.spatialDomainSet != null;
+    }
+
+    /**
+     * Gets the SW bounding box coordinate of the domain.
+     * @return A LatLonTuple.
+     */
+    public LatLonPoint getMinLatLon() {
+        try {
+            if (!isInitialized()) {
+                throw new IllegalStateException(Bundle.ERR_SpatialDomainNotInitialized());
+            }
+            double[][] samples = spatialDomainSet.getDoubles(false);
+            OptionalDouble lat = Arrays.stream(samples[0]).min();
+            OptionalDouble lon = Arrays.stream(samples[1]).min();
+            if (lat.isPresent() && lon.isPresent()) {
+                return new LatLonTuple(lat.getAsDouble(), lon.getAsDouble());
+            }
+            else {
+                return new LatLonTuple();
+            }
+        }
+        catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Gets the NE bounding box coordinate of the domain.
+     * @return A LatLonTuple
+     */
+    public LatLonPoint getMaxLatLon() {
+        try {
+            if (!isInitialized()) {
+                throw new IllegalStateException(Bundle.ERR_SpatialDomainNotInitialized());
+            }
+            double[][] samples = spatialDomainSet.getDoubles(false);
+            OptionalDouble lat = Arrays.stream(samples[0]).max();
+            OptionalDouble lon = Arrays.stream(samples[1]).max();
+            if (lat.isPresent() && lon.isPresent()) {
+                return new LatLonTuple(lat.getAsDouble(), lon.getAsDouble());
+            }
+            else {
+                return new LatLonTuple();
+            }
+        }
+        catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -223,7 +290,7 @@ public class SpatialDomain {
             throw new RuntimeException(ex);
         }
     }
-    
+
     /**
      * Creates a VisAD function represented by a FieldImpl from the spatial domain using the
      * supplied MathType for the range. The caller must set the range samples.
@@ -245,13 +312,12 @@ public class SpatialDomain {
             throw new RuntimeException(ex);
         }
     }
-    
 
     public Set getDomainSet() {
         return spatialDomainSet;
     }
 
-    public int getSpatialDomainSetLength() {
+    public int getDomainSetLength() {
         try {
             if (!isInitialized()) {
                 throw new IllegalStateException(Bundle.ERR_SpatialDomainNotInitialized());
@@ -267,7 +333,6 @@ public class SpatialDomain {
     public RealTupleType getSpatialDomainType() {
         return SPATIAL_DOMAIN_TYPE;
     }
-
 
     @Override
     public String toString() {
