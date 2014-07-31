@@ -175,20 +175,16 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @see SpotWeatherObserver
      */
     public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord_ignored) {
-        try {
-            if (sunlight == null || sunlight.isMissing()) {
-                throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
-            }
-            return WeatherTuple.fromReals(
-                    getAirTemperature(time.toLocalTime()),
-                    getRelativeHumidity(time.toLocalTime()),
-                    getWindSpeed(time.toLocalTime()),
-                    getWindDirection(time.toLocalTime()),
-                    getCloudCover(time.toLocalTime()));
-        } catch (VisADException | RemoteException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new RuntimeException(ex);
+        if (sunlight == null || sunlight.isMissing()) {
+            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
+        return WeatherTuple.fromReals(
+                getAirTemperature(time.toLocalTime()),
+                getRelativeHumidity(time.toLocalTime()),
+                getWindSpeed(time.toLocalTime()),
+                getWindDirection(time.toLocalTime()),
+                getCloudCover(time.toLocalTime()));
+
     }
 
     /**
