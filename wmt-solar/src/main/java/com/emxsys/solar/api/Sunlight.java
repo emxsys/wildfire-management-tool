@@ -120,4 +120,12 @@ public interface Sunlight extends Data {
      */
     Real getZoneOffsetHour();
 
+    /**
+     * Tests whether any data elements are missing.
+     *
+     * @return true if a data element is missing.
+     */
+    @Override
+    boolean isMissing();
+
 }
