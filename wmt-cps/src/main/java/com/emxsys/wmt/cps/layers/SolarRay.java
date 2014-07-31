@@ -44,7 +44,6 @@ import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 import static visad.CommonUnit.meter;
 import visad.Real;
-import visad.RealType;
 import visad.VisADException;
 
 /**
@@ -69,12 +68,19 @@ public class SolarRay {
      * @param sunlight The sunlight data.
      */
     public void update(Coord3D coord, Sunlight sunlight) {
+        if (coord.isMissing()
+                || sunlight.getSubsolarLatitude().isMissing()
+                || sunlight.getSubsolarLongitude().isMissing()
+                || sunlight.getZenithAngle().isMissing()) {
+            return;
+        }
         initialize();
         WindowManager.getDefault().invokeWhenUIReady(() -> {
 
             try {
+                // Create a coordinate at the sun's position
                 Real au = new Real(GeneralType.Distance, 1, Units.getUnit("au"));
-                Coord3D sun = GeoCoord3D.fromDegreesAndMeters(
+                Coord3D sunCoord = GeoCoord3D.fromDegreesAndMeters(
                         sunlight.getSubsolarLatitude().getValue(),
                         sunlight.getSubsolarLongitude().getValue(),
                         au.getValue(meter));
@@ -85,8 +91,8 @@ public class SolarRay {
                     return;
                 }
 
-                // Draw the ray
-                path.update(coord, sun);
+                // Update and draw the ray
+                path.update(coord, sunCoord);
                 if (!path.isVisible()) {
                     path.setVisible(true);
                 }
@@ -98,6 +104,9 @@ public class SolarRay {
         });
     }
 
+    /**
+     * Initialize the layer.
+     */
     private void initialize() {
         if (layer == null) {
             // Add the layer the globe. But defer creating the layer until Globe 
