@@ -35,9 +35,9 @@ import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainProvider;
 import com.emxsys.gis.spi.DefaultTerrainProvider;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class Environment implements Lookup.Provider {
     private ZonedDateTime time;
     private TerrainProvider terrainProvider;
     private WeatherProvider weatherProvider;
-    private SpotWeatherObserver wxObserver;
+    private WeatherObserver wxObserver;
     private final ArrayList<Path> paths = new ArrayList<>();
 
     @Override
@@ -112,11 +112,14 @@ public class Environment implements Lookup.Provider {
     }
 
     public Weather getWeather(Coord2D coord) {
-        if (weatherProvider == null) {
-            weatherProvider = getLookup().lookup(WeatherProvider.class);
-            wxObserver = weatherProvider.getCapability(SpotWeatherObserver.class);
-        }
-        return wxObserver.getSpotWeather(time, coord);
+        throw new UnsupportedOperationException("getWeather not implemented.");
+        // TODO: get weather from WeatherModel instead of wxObserver
+        // TODO: WeatherModel should be set externally.
+//        if (weatherProvider == null) {
+//            weatherProvider = getLookup().lookup(WeatherProvider.class);
+//            wxObserver = weatherProvider.getCapability(WeatherObserver.class);
+//        }
+//        return wxObserver.getCurrentConditions(time, coord);
     }
 
     public boolean doesPointIntersectAsset(Coord2D destination) {
