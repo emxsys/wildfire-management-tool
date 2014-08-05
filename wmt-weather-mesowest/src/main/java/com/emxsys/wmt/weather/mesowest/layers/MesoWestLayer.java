@@ -41,7 +41,7 @@ import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.api.WeatherObserver;
+import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.SimplePlacemark;
