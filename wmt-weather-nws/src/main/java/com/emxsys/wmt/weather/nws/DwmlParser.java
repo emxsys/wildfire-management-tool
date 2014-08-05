@@ -32,11 +32,14 @@ package com.emxsys.wmt.weather.nws;
 import com.emxsys.util.KeyValue;
 import com.emxsys.util.XmlUtil;
 import com.emxsys.visad.Fields;
+import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherType;
 import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -241,7 +244,7 @@ public class DwmlParser {
                     new Irregular2DSet(LatitudeLongitudeTuple, latLonSamples)
             );
 
-            Map<String, ArrayList<OffsetDateTime>> timeLayouts = parseTimeLayouts(dataNode);
+            Map<String, ArrayList<ZonedDateTime>> timeLayouts = parseTimeLayouts(dataNode);
 
             // Create a FlatField for each point
             ArrayList<FlatField> fields = new ArrayList<>();
@@ -261,11 +264,12 @@ public class DwmlParser {
 
                 // Now create the Function: ( time -> ( weather ) )
                 // Create the time domain samples (using the time-layout from the temperatures)
-                ArrayList<OffsetDateTime> times = timeLayouts.get(airTemps.getKey());
+                ArrayList<ZonedDateTime> times = timeLayouts.get(airTemps.getKey());
                 double[][] timeSamples = new double[1][times.size()];
                 for (int i = 0; i < times.size(); i++) {
                     timeSamples[0][i] = times.get(i).toEpochSecond();
                 }
+ 
                 // Create the wx range samples, converting the units as necessary.
                 double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][times.size()];
                 for (int dim = 0; dim < FIRE_WEATHER.getDimension(); dim++) {
@@ -336,16 +340,16 @@ public class DwmlParser {
      * @return
      * @throws XPathExpressionException
      */
-    Map<String, ArrayList<OffsetDateTime>> parseTimeLayouts(Node dataNode) throws XPathExpressionException {
-        HashMap<String, ArrayList<OffsetDateTime>> map = new HashMap<>();
+    Map<String, ArrayList<ZonedDateTime>> parseTimeLayouts(Node dataNode) throws XPathExpressionException {
+        HashMap<String, ArrayList<ZonedDateTime>> map = new HashMap<>();
         NodeList nodes = (NodeList) xpath.evaluate("time-layout", dataNode, XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {
             String key = xpath.evaluate("layout-key", nodes.item(i));
             NodeList times = (NodeList) xpath.evaluate("start-valid-time", nodes.item(i), XPathConstants.NODESET);
-            ArrayList<OffsetDateTime> values = new ArrayList<>();
+            ArrayList<ZonedDateTime> values = new ArrayList<>();
             for (int j = 0; j < times.getLength(); j++) {
                 String time = times.item(j).getTextContent();
-                values.add(OffsetDateTime.parse(time));
+                values.add(ZonedDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME));
             }
             map.put(key, values);
         }
