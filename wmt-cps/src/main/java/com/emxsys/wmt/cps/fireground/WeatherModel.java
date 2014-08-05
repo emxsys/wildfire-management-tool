@@ -39,8 +39,8 @@ import static com.emxsys.weather.api.WeatherType.WIND_DIR;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
 import com.emxsys.weather.api.WeatherUtil;
 import java.rmi.RemoteException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
@@ -220,7 +220,7 @@ public class WeatherModel
             final int numDays = timeValues[0].length / 24;
 
             // Use the first date values in our domain
-            Date date = Times.toDate(new DateTime(timeValues[0][0]));
+            ZonedDateTime date = Times.toZonedDateTime(new DateTime(timeValues[0][0]));
             RealTuple sunriseSunset = WeatherUtil.newSunriseSunsetTuple(date,
                 6.0, // sunrise hrs local time
                 18.0);  // sunset hrs local time
