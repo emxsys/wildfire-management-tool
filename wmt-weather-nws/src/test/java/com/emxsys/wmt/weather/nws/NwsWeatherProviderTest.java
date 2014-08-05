@@ -33,8 +33,8 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.WeatherForecaster;
-import com.emxsys.weather.api.PointForecastWebPresenter;
+import com.emxsys.weather.api.services.WeatherForecaster;
+import com.emxsys.weather.api.services.WebForecastPresenter;
 import com.emxsys.weather.api.WeatherModel;
 import java.rmi.RemoteException;
 import java.time.ZonedDateTime;
@@ -135,7 +135,7 @@ public class NwsWeatherProviderTest {
     public void testGetPointForecastPage() throws VisADException, RemoteException {
         System.out.println("getPointForecastPage");
         NwsWeatherProvider provider = NwsWeatherProvider.getInstance();
-        PointForecastWebPresenter presentation = provider.getLookup().lookup(PointForecastWebPresenter.class);
+        WebForecastPresenter presentation = provider.getLookup().lookup(WebForecastPresenter.class);
         assertNotNull(presentation);
 
         Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
