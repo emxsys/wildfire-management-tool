@@ -140,6 +140,13 @@ public class TemporalDomain {
         return timeDomainSet != null;
     }
 
+    public boolean contains(ZonedDateTime time) {
+        if (this.getEarliest().isAfter(time) || this.getLatest().isBefore(time)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Constructor extracts temporal domains from a FieldImpl data type.
      *
