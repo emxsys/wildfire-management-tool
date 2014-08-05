@@ -30,6 +30,7 @@
 package com.emxsys.weather.api;
 
 import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.Coords;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatialField;
@@ -46,8 +47,10 @@ import org.junit.Test;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
+import visad.Irregular2DSet;
 import visad.RealTuple;
 import visad.RealTupleType;
+import static visad.RealTupleType.LatitudeLongitudeTuple;
 import visad.Tuple;
 import visad.VisADException;
 
@@ -58,6 +61,7 @@ import visad.VisADException;
 public class WeatherModelTest {
 
     private WeatherModel spatialInstance;
+    private WeatherModel irregularInstance;
     private WeatherModel temporalInstance;
 
     public WeatherModelTest() {
@@ -108,6 +112,12 @@ public class WeatherModelTest {
             temporalFields[xy] = field;
         }
         spatialInstance = WeatherModel.from(spatialDomain, temporalFields);
+
+        FieldImpl spatialField = new FieldImpl(
+                new FunctionType(LatitudeLongitudeTuple, new FunctionType(RealTupleType.Time1DTuple, FIRE_WEATHER)),
+                new Irregular2DSet(LatitudeLongitudeTuple, spatialDomain.getDomainSet().getSamples(true)));
+        spatialField.setSamples(temporalFields, true);
+        irregularInstance = new WeatherModel(spatialField);
     }
 
     @Test
@@ -191,11 +201,11 @@ public class WeatherModelTest {
     @Test
     public void testGetLatestWeather() throws VisADException, RemoteException {
         System.out.println("getLatestWeather");
-        
+
         FlatField temporalResult = temporalInstance.getLatestWeather();
         assertNotNull(temporalResult);
-        
-        System.out.println(temporalResult);
+
+        //System.out.println(temporalResult);
         RealTuple tuple = (RealTuple) temporalResult.getSample(temporalResult.getLength() - 1);
         assertEquals(40, tuple.getValues()[4], .01);
         tuple = (RealTuple) temporalResult.getSample(0);
@@ -203,8 +213,8 @@ public class WeatherModelTest {
 
         FlatField spatialResult = spatialInstance.getLatestWeather();
         assertNotNull(spatialResult);
-        
-        System.out.println(spatialResult);
+
+        //System.out.println(spatialResult);
         tuple = (RealTuple) temporalResult.getSample(temporalResult.getLength() - 1);
         assertEquals(40, tuple.getValues()[4], .01);
         tuple = (RealTuple) temporalResult.getSample(0);
@@ -212,9 +222,29 @@ public class WeatherModelTest {
     }
 
     @Test
+    public void testGetSpatialWeatherAt() throws VisADException, RemoteException {
+        System.out.println("getSpatialWeatherAt");
+        //System.out.println(irregularInstance);
+
+        ZonedDateTime time = ZonedDateTime.now();
+        Coord2D coord = GeoCoord2D.fromDegrees(34.5, -119.5);
+
+        // Outside temporal domain
+        FlatField result = irregularInstance.getSpatialWeatherAt(time.plusHours(1));
+        assertNotNull("result not null", result);
+        assertTrue("result !isMissing", !result.isMissing());
+        System.out.println("getSpatialWeatherAt( " + time + " ):");
+        System.out.println(result);
+
+        RealTuple tuple = (RealTuple) result.evaluate(Coords.toLatLonTuple(coord));
+        System.out.println("getSpatialWeatherAt( " + time + " ).evaluate( " + coord + " ): ");
+        System.out.println(tuple);
+    }
+
+    @Test
     public void testGetWeather() {
         System.out.println("getWeather");
-        System.out.println(temporalInstance);
+        //System.out.println(temporalInstance);
         ZonedDateTime time = ZonedDateTime.now();
 
         // Outside temporal domain
@@ -288,16 +318,11 @@ public class WeatherModelTest {
         fail("The test case is a prototype.");
     }
 
-    @Ignore
     @Test
     public void testToString() {
         System.out.println("toString");
-        WeatherModel instance = null;
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        WeatherModel instance = irregularInstance;
+        System.out.println(instance);
     }
 
 }
