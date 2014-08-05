@@ -30,7 +30,7 @@
 package com.emxsys.wmt.globe.markers.weather;
 
 import com.emxsys.wmt.globe.util.Positions;
-import com.emxsys.weather.api.PointForecastWebPresenter;
+import com.emxsys.weather.api.services.WebForecastPresenter;
 import com.emxsys.weather.api.WeatherProvider;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
@@ -110,7 +110,7 @@ public final class WeatherBalloon extends GlobeBrowserBalloon {
             setText(html = "No weather provider.");
             return;
         }
-        PointForecastWebPresenter presenter = provider.getLookup().lookup(PointForecastWebPresenter.class);
+        WebForecastPresenter presenter = provider.getLookup().lookup(WebForecastPresenter.class);
         if (presenter == null) {
             setText(html = "No point forecaster available.");
             return;

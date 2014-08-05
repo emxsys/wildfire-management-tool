@@ -37,7 +37,7 @@ import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
 import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.visad.SpatialDomain;
-import com.emxsys.weather.api.WeatherForecaster;
+import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
