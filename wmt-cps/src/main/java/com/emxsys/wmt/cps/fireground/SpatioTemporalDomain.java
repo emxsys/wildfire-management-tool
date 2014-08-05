@@ -33,6 +33,7 @@ import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.GeoSector;
 import com.emxsys.visad.Times;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
@@ -247,11 +248,11 @@ public class SpatioTemporalDomain
     }
 
 
-    public Date getStartDate()
+    public ZonedDateTime getStartDate()
     {
         try
         {
-            return Times.toDate(new DateTime(this.temporalDomainSet.getDoubleLowX()));
+            return Times.toZonedDateTime(new DateTime(this.temporalDomainSet.getDoubleLowX()));
         }
         catch (VisADException ex)
         {
