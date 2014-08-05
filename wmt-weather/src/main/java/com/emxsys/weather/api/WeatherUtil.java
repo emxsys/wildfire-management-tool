@@ -30,10 +30,10 @@
 package com.emxsys.weather.api;
 
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.weather.api.WeatherType;
+import static java.lang.Math.*;
 import java.rmi.RemoteException;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import visad.DateTime;
@@ -46,7 +46,6 @@ import visad.RealTupleType;
 import visad.RealType;
 import visad.Set;
 import visad.VisADException;
-import static java.lang.Math.*;
 
 /**
  * Utility class for working with Weather objects.
@@ -55,14 +54,13 @@ import static java.lang.Math.*;
  */
 public class WeatherUtil {
 
-    static public RealTuple newSunriseSunsetTuple(Date date,
+    static public RealTuple newSunriseSunsetTuple(ZonedDateTime date,
                                                   double timeOfSunrise,
                                                   double timeOfSunset) {
         try {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int year = cal.get(Calendar.YEAR);
-            int day = cal.get(Calendar.DAY_OF_YEAR);
+            int year = date.get(ChronoField.YEAR);
+            int day = date.get(ChronoField.DAY_OF_YEAR);
+            
             int sunrise = (int) (timeOfSunrise * 3600);
             int sunset = (int) (timeOfSunset * 3600);
 
@@ -94,9 +92,7 @@ public class WeatherUtil {
                         new Real(type, valueAtNoon)
                     });
             return values;
-        } catch (VisADException ex) {
-            Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
+        } catch (VisADException | RemoteException ex) {
             Logger.getLogger(WeatherUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
