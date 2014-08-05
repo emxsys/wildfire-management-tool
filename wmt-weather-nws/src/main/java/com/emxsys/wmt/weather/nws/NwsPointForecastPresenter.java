@@ -30,7 +30,7 @@
 package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.gis.api.Coord2D;
-import com.emxsys.weather.api.PointForecastWebPresenter;
+import com.emxsys.weather.api.services.WebForecastPresenter;
 import java.net.URL;
 
 /**
@@ -38,7 +38,7 @@ import java.net.URL;
  *
  * @author Bruce Schubert
  */
-public class NwsPointForecastPresenter implements PointForecastWebPresenter {
+public class NwsPointForecastPresenter implements WebForecastPresenter {
 
     private static final String HOURLY_GRAPH_PAGE = "http://forecast.weather.gov/MapClick.php"
             + "?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
