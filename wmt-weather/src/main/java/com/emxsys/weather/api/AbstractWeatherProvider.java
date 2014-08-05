@@ -29,15 +29,9 @@
  */
 package com.emxsys.weather.api;
 
-import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
-import static com.emxsys.weather.api.WeatherType.CLOUD_COVER;
-import static com.emxsys.weather.api.WeatherType.REL_HUMIDITY;
-import static com.emxsys.weather.api.WeatherType.WIND_DIR;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import visad.RealTupleType;
 
 /**
  * Derived classes must implement getImage()
@@ -48,19 +42,7 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
     private final InstanceContent content = new InstanceContent();
     private AbstractLookup lookup;
     
-//    protected static final RealTupleType WX_RANGE = Reals.newRealTupleType(
-//            new RealType[]{AIR_TEMP_F, REL_HUMIDITY, WIND_SPEED_KTS, WIND_DIR});
-
-    /** MathType to represent the weather: air_temp, RH, wind_spd, wind_dir */
-    protected static final RealTupleType WX_RANGE = WeatherType.FIRE_WEATHER;
-    
-
-    protected static final int AIR_TEMP_IDX = WX_RANGE.getIndex(AIR_TEMP_C);
-    protected static final int HUMIDITY_IDX = WX_RANGE.getIndex(REL_HUMIDITY);
-    protected static final int WIND_SPD_IDX = WX_RANGE.getIndex(WIND_SPEED_SI);
-    protected static final int WIND_DIR_IDX = WX_RANGE.getIndex(WIND_DIR);
-    protected static final int CLOUD_COVER_IDX = WX_RANGE.getIndex(CLOUD_COVER);
-    
+   
     @Override
     public Lookup getLookup() {
         if (lookup == null) {
@@ -75,7 +57,7 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
     }
 
     @Override
-    public boolean hasCapability(Class<?> clazz) {
+    public boolean hasCapability(Class clazz) {
         return getLookup().lookup(clazz) != null;
     }
 
