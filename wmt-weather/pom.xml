@@ -92,11 +92,12 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>3.11</version>
+                <version>3.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
                         <publicPackage>com.emxsys.weather.api</publicPackage>
+                        <publicPackage>com.emxsys.weather.api.services</publicPackage>
                         <publicPackage>com.emxsys.weather.spi</publicPackage>
                     </publicPackages>
                 </configuration>
