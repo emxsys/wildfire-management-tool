@@ -50,8 +50,10 @@ import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
-import com.emxsys.weather.api.SpotWeatherObserver;
 import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.services.WeatherForecaster;
+import com.emxsys.weather.api.services.WeatherRecorder;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
@@ -59,6 +61,8 @@ import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.ui.ForcesTopComponent;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
+import com.emxsys.wmt.weather.nws.NwsWeatherProvider;
 import java.beans.PropertyChangeEvent;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -104,8 +108,13 @@ public class Controller {
     private final SunlightProvider sun;
     private final TimeProvider earthClock;
     private ReticuleCoordinateProvider reticule;
-    private WeatherProvider weatherSource;
     private FuelModelProvider fuels;
+    
+    // The Weather
+    private WeatherProvider forecastProvider = NwsWeatherProvider.getInstance();        // TEST
+    private WeatherProvider historyProvider = MesoWestWeatherProvider.getInstance();    // TEST 
+    private WeatherManager wxManager = new WeatherManager();
+    
     private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWeather = new DiurnalWeatherProvider();
 
@@ -118,6 +127,7 @@ public class Controller {
     // The domain
     private TemporalDomain temporalDomain = new TemporalDomain();
     private SpatialDomain spatialDomain = new SpatialDomain();
+    
 
     private final PreferenceChangeListener prefsChangeListener;
     private boolean terrainShadingEnabled;
@@ -144,6 +154,10 @@ public class Controller {
         timeUpdater.updateTime(
                 new TimeEvent(this, null, ZonedDateTime.now(ZoneId.of("UTC"))));
 
+        // Update weather manager
+        wxManager.setForecaster(forecastProvider.getCapability(WeatherForecaster.class));
+        wxManager.setRecorder(historyProvider.getCapability(WeatherRecorder.class));
+        
         // LookupListener waits for arrival of  ReticuleCoordinateProvider ...
         reticuleLookupListener = (LookupEvent le) -> {
             if (reticuleResult != null && reticuleResult.allInstances().iterator().hasNext()) {
@@ -233,9 +247,9 @@ public class Controller {
         if (weatherSource == null) {
             throw new IllegalArgumentException("WeatherProvider is null.");
         }
-        logger.log(Level.CONFIG, "WeatherProvider set to: {0}", weatherSource.toString());
-        this.weatherSource = weatherSource;
-        this.model.weatherProvider = weatherSource;
+//        logger.log(Level.CONFIG, "WeatherProvider set to: {0}", weatherSource.toString());
+//        this.weatherForecaster = weatherSource;
+//        this.model.weatherProvider = weatherSource;
     }
 
     /**
@@ -304,6 +318,10 @@ public class Controller {
                 controller.model.setShaded(isShaded);
 
                 // Update the Weather
+                controller.wxManager.updateCoord(coord);
+                WeatherTuple weather = controller.wxManager.getWeatherAt(coord, controller.model.getDateTime());
+                controller.model.setWeather(weather);
+                // Update the Weather
 //                if (controller.weather != null) {
 //                    if (controller.weather instanceof DiurnalWeatherProvider) {
 //                        controller.model.setWeather(((DiurnalWeatherProvider)simpleWeather).getWeatherObservation(controller.model.getDateTime(), null));
@@ -364,6 +382,10 @@ public class Controller {
             // Update the temporal-spatial domain
             ZonedDateTime time = timeEvent.getNewTime();
             controller.temporalDomain = new TemporalDomain(time.minusHours(24), 25);
+            
+            controller.wxManager.updateTime(time);
+            
+            
             SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
             controller.model.setDateTime(time);
             controller.model.setDomain(domain);
@@ -378,25 +400,28 @@ public class Controller {
                 controller.model.setSunlight(sunlight);
 
                 // Update the Weather
-                if (controller.weatherSource != null) {
-                    if (controller.weatherSource instanceof DiurnalWeatherProvider) {
-                        // Update sunrise/sunset times
-                        DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherSource;
-                        diurnalWx.setSunlight(sunlight); 
-                    }
-                    
-                    if (controller.weatherSource.hasCapability(SpotWeatherObserver.class)) {
-                        SpotWeatherObserver wxObs = controller.weatherSource.getCapability(SpotWeatherObserver.class);
-                        controller.model.setWeather(wxObs.getSpotWeather(time, coord));                        
-                    }
-//                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
+                controller.wxManager.updateTime(time);
+                WeatherTuple weather = controller.wxManager.getWeatherAt(coord, time);
+                controller.model.setWeather(weather);
+                
+//                if (controller.forecastProvider != null) {
+//                    if (controller.forecastProvider instanceof DiurnalWeatherProvider) {
+//                        // Update sunrise/sunset times
+//                        DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherForecaster;
+//                        diurnalWx.setSunlight(sunlight); 
+//                    }
+//                    
+//                    if (controller.forecastProvider.hasCapability(WeatherForecaster.class)) {
+//                        WeatherForecaster wxObs = controller.forecastProvider.getCapability(WeatherForecaster.class);
+//                        controller.model.setWeather(wxObs.getSpotWeather(time, coord));                        
+//                    }
+////                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
 //                        PointForecaster forecaster = controller.weatherSource.getCapability(PointForecaster.class);
 //                        Field forecast = forecaster.getForecast(coord);
 //                        RealTuple wx = (RealTuple) forecast.evaluate(new DateTime(time.toEpochSecond()));
 //
 //                    }
-                        
-                }
+//                }
 
                 // Update the fire environment
                 Real azimuth = sunlight.getAzimuthAngle();
