@@ -234,22 +234,4 @@ public class DiurnalWeatherProviderTest {
             fail(e.toString());
         }
     }
-
-    /**
-     * Test of getCurrentWeather method, of class DiurnalWeatherProvider.
-     */
-    @Ignore
-    @Test
-    public void testGetCurrentWeather() {
-        System.out.println("getCurrentWeather");
-        Coord2D coord = null;
-        Real radius_ignored = null;
-        Duration age_ignored = null;
-        Field expResult = null;
-        Field result = instance.getCurrentWeather(coord, radius_ignored, age_ignored);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
 }

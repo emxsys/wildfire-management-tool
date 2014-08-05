@@ -29,25 +29,10 @@
  */
 package com.emxsys.weather.api;
 
-import com.emxsys.gis.api.Coord2D;
-import com.emxsys.gis.api.GisType;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
-import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.StationObserver;
-import com.emxsys.weather.api.WeatherType;
-import java.rmi.RemoteException;
-import java.time.Duration;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import org.openide.util.Exceptions;
-import org.openide.util.lookup.InstanceContent;
-import visad.Field;
-import visad.FlatField;
-import visad.FunctionType;
-import visad.Irregular2DSet;
 import visad.Real;
-import visad.VisADException;
 
 /**
  *
@@ -61,15 +46,14 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
     private Real relHumd = new Real(WeatherType.REL_HUMIDITY);
     private Real cldCovr = new Real(WeatherType.CLOUD_COVER);
 
-    private static final Logger logger = Logger.getLogger(SimpleWeatherProvider.class.getName());
 
     /**
      * Default Constructor.
      */
     public SimpleWeatherProvider() {
         // Initialize the lookup with this provider's capabilities
-        InstanceContent content = getContent();
-        content.add((StationObserver) this::getCurrentWeather);  // functional interface 
+        //InstanceContent content = getContent();
+        //content.add((StationObserver) this::getCurrentWeather);  // functional interface 
     }
 
     @Override
@@ -110,49 +94,6 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
                 this.cldCovr);
     }
 
-    /**
-     * Gets the current weather values set by the manual inputs.
-     *
-     * @param coord Ignored, but returned in the Field's domain.
-     * @param radius Ignored.
-     * @param age Ignored.
-     * @return A FlatField containing current weather values from the manual inputs.
-     */
-    public Field getCurrentWeather(Coord2D coord, Real radius, Duration age) {
-
-        try {
-            // Create the domain sample from the coordinate
-            float[][] latLonSamples = new float[2][1];
-            latLonSamples[0][0] = (float) coord.getLatitudeDegrees();
-            latLonSamples[1][0] = (float) coord.getLatitudeDegrees();
-
-            // Create the wx range samples, and init with "missing" values
-            double[][] wxSamples = new double[WX_RANGE.getDimension()][1];
-            wxSamples[AIR_TEMP_IDX][0] = this.airTemp.getValue();
-            wxSamples[HUMIDITY_IDX][0] = this.relHumd.getValue();
-            wxSamples[WIND_SPD_IDX][0] = this.windSpd.getValue();
-            wxSamples[WIND_DIR_IDX][0] = this.windDir.getValue();
-
-            // Create the domain Set, with 2 columns and 1 rows, using an
-            // Gridded2DDoubleSet(MathType type, double[][] samples, lengthX)
-            Irregular2DSet domainSet = new Irregular2DSet(GisType.LATLON, latLonSamples);
-
-            // Create a MathType for the function ( (lat, lon ) -> ( air_temp, RH, wind_spd, ... ) )
-            FunctionType stationWxFunc = new FunctionType(GisType.LATLON, WX_RANGE);
-
-            // Create a FlatField
-            // Use FlatField(FunctionType type, Set domain_set)
-            FlatField values_ff = new FlatField(stationWxFunc, domainSet);
-
-            // ...and put the weather values above into it
-            values_ff.setSamples(wxSamples);
-            return values_ff;
-
-        } catch (VisADException | RemoteException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
-    }
 
     @Override
     public ImageIcon getImageIcon() {

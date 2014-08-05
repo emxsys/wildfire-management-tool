@@ -32,12 +32,12 @@ package com.emxsys.weather.spi;
 import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.SpotWeatherObserver;
-import com.emxsys.weather.api.StationObserver;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.weather.api.WeatherForecaster;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.services.WeatherForecaster;
+import com.emxsys.weather.api.services.WeatherObserver;
+import com.emxsys.weather.api.services.WeatherRecorder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -76,8 +76,7 @@ public class DefaultWeatherProvider {
     }
 
     /**
-     * Gets the WeatherProvider instances can provide a weather forecast for a specific time and
-     * location.
+     * Gets the WeatherProvider instances can provide a weather forecast.
      *
      * @return A collection of WeatherProvider instances that have the PointForecaster capability.
      */
@@ -92,15 +91,14 @@ public class DefaultWeatherProvider {
     }
 
     /**
-     * Gets the WeatherProvider instances can provide a weather observation for a specific time and
-     * location.
+     * Gets the WeatherProvider instances can provide the current conditions.
      *
-     * @return A collection of WeatherProvider instances that have the SpotWeatherObserver capability.
+     * @return A collection of WeatherProvider instances that have the WeatherObserver capability.
      */
-    public static List<WeatherProvider> getSpotWeatherObservers() {
+    public static List<WeatherProvider> getWeatherObservers() {
         ArrayList<WeatherProvider> providers = new ArrayList<>();
         getInstances().stream()
-                .filter((provider) -> (provider.getLookup().lookup(SpotWeatherObserver.class)) != null)
+                .filter((provider) -> (provider.getLookup().lookup(WeatherObserver.class)) != null)
                 .forEach((provider) -> {
                     providers.add(provider);
                 });
@@ -108,14 +106,14 @@ public class DefaultWeatherProvider {
     }
 
     /**
-     * Gets the WeatherProvider instances that can get the current weather from a weather station.
+     * Gets the WeatherProvider instances that can get the past weather .
      *
-     * @return A collection of WeatherProvider instances that have the StationObserver capability.
+     * @return A collection of WeatherProvider instances that have the WeatherRecorder capability.
      */
-    public static List<WeatherProvider> getStationObservers() {
+    public static List<WeatherProvider> getWeatherRecorders() {
         ArrayList<WeatherProvider> providers = new ArrayList<>();
         getInstances().stream()
-                .filter((provider) -> (provider.getLookup().lookup(StationObserver.class)) != null)
+                .filter((provider) -> (provider.getLookup().lookup(WeatherRecorder.class)) != null)
                 .forEach((provider) -> {
                     providers.add(provider);
                 });

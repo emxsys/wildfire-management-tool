@@ -29,13 +29,9 @@
  */
 package com.emxsys.weather.api;
 
-import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
-import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.gis.api.GisType;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
-import com.emxsys.time.spi.DefaultTimeProvider;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.TemporalDomain;
@@ -43,8 +39,6 @@ import static com.emxsys.weather.api.WeatherType.*;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
-import java.rmi.RemoteException;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
@@ -54,12 +48,8 @@ import java.util.TreeMap;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.lookup.InstanceContent;
 import visad.FlatField;
-import visad.FunctionType;
-import visad.Irregular2DSet;
 import visad.Real;
-import visad.VisADException;
 
 /**
  * The DiurnalWeatherProvider creates hourly weather for 24 hour cycle.
@@ -89,10 +79,6 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * Constructor.
      */
     public DiurnalWeatherProvider() {
-        // Initialize the lookup with this provider's capabilities
-        InstanceContent content = getContent();
-        content.add((StationObserver) this::getCurrentWeather);  // functional interface 
-        content.add((SpotWeatherObserver) this::getWeather);     // functional interface 
     }
 
     /**
@@ -170,11 +156,10 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * Implements the SpotWeatherObserver functional interface.
      *
      * @param time The time for the weather.
-     * @param coord_ignored Ignored parameter.
      * @return A {@code WeatherTuple} containing the weather at the specified time.
      * @see SpotWeatherObserver
      */
-    public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord_ignored) {
+    public WeatherTuple getWeather(ZonedDateTime time) {
         if (sunlight == null || sunlight.isMissing()) {
             throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
@@ -184,7 +169,6 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
                 getWindSpeed(time.toLocalTime()),
                 getWindDirection(time.toLocalTime()),
                 getCloudCover(time.toLocalTime()));
-
     }
 
     /**
@@ -217,55 +201,6 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             return wxField;
 
         } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
-    }
-
-    /**
-     * Gets the current temperature and humidity values from the diurnal curves and wind patterns.
-     *
-     * @param coord Parameter is ignored, but it is returned in the Field's domain.
-     * @param radius_ignored Ignored parameter.
-     * @param age_ignored Ignored parameter.
-     * @return A FlatField containing current weather values from the diurnal datasets.
-     */
-    public FlatField getCurrentWeather(Coord2D coord, Real radius_ignored, Duration age_ignored) {
-
-        // Get the application time
-        ZonedDateTime time = DefaultTimeProvider.getInstance().getTime();
-        this.sunlight = DefaultSunlightProvider.getInstance().getSunlight(time, GeoCoord3D.fromCoord(coord));
-
-        try {
-            // Create the domain sample from the coordinate
-            float[][] latLonSamples = new float[2][1];
-            latLonSamples[0][0] = (float) coord.getLatitudeDegrees();
-            latLonSamples[1][0] = (float) coord.getLatitudeDegrees();
-
-            // Create the wx range samples, and init with "missing" values
-            double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][1];
-            wxSamples[AIR_TEMP_IDX][0] = getAirTemperature(time.toLocalTime()).getValue();
-            wxSamples[HUMIDITY_IDX][0] = getRelativeHumidity(time.toLocalTime()).getValue();
-            wxSamples[WIND_SPD_IDX][0] = getWindSpeed(time.toLocalTime()).getValue();
-            wxSamples[WIND_DIR_IDX][0] = getWindDirection(time.toLocalTime()).getValue();
-            wxSamples[CLOUD_COVER_IDX][0] = getCloudCover(time.toLocalTime()).getValue();
-
-            // Create the domain Set, with 2 columns and 1 rows, using an
-            // Gridded2DDoubleSet(MathType type, double[][] samples, lengthX)
-            Irregular2DSet domainSet = new Irregular2DSet(GisType.LATLON, latLonSamples);
-
-            // Create a MathType for the function ( (lat, lon ) -> ( air_rh, RH, wind_spd, ... ) )
-            FunctionType stationWxFunc = new FunctionType(GisType.LATLON, FIRE_WEATHER);
-
-            // Create a FlatField
-            // Use FlatField(FunctionType type, Set domain_set)
-            FlatField values_ff = new FlatField(stationWxFunc, domainSet);
-
-            // ...and put the weather values above into it
-            values_ff.setSamples(wxSamples);
-            return values_ff;
-
-        } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
         }
         return null;
