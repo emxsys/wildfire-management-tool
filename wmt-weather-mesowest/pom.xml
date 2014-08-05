@@ -129,6 +129,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
+                        <publicPackage>com.emxsys.wmt.weather.mesowest</publicPackage>
                         <publicPackage>com.emxsys.wmt.weather.mesowest.actions</publicPackage>
                         <publicPackage>com.emxsys.wmt.weather.mesowest.layers</publicPackage>
                     </publicPackages>
