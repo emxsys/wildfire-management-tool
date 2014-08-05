@@ -32,7 +32,7 @@ package com.emxsys.wmt.weather.nws;
 import com.emxsys.util.HttpUtil;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.WeatherForecaster;
+import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.WeatherModel;
 import java.io.IOException;
 import java.net.MalformedURLException;
