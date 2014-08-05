@@ -31,6 +31,7 @@ package com.emxsys.visad;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
@@ -58,7 +59,7 @@ public class Times {
     static public DateTime fromZonedDateTime(ZonedDateTime time) {
         try {
             LocalDateTime localTime = time.toLocalDateTime();
-            Instant instant = localTime.toInstant(time.getOffset());            
+            Instant instant = localTime.toInstant(time.getOffset());
             return new DateTime(instant.getEpochSecond());
         }
         catch (VisADException ex) {
@@ -81,30 +82,6 @@ public class Times {
         catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalArgumentException(ex);
-        }
-    }
-
-    /**
-     * Convenient method to get a new DateTime object from a Java Calendar Date object.
-     *
-     * @param date A Java Date.
-     * @param hour A decimal representing the 24 hour clock time
-     * @return A DateTime object (RealType.Time) set to the Date and hour.
-     */
-    @Deprecated
-    static public DateTime fromDate(Date date, double hour) {
-        if (hour < 0 || hour >= 24) {
-            throw new IllegalArgumentException("hour not within range: >= 0 and < 24");
-        }
-        try {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            setCalendarToHour(cal, hour);
-            return new DateTime(cal.getTime());
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new IllegalStateException(ex);
         }
     }
 
@@ -160,50 +137,19 @@ public class Times {
     }
 
     /**
-     * Return a new Java Date object from a VisAD DateTime.
+     * Return a new Java ZonedDateTime UTC object from a VisAD DateTime.
      *
-     * @param dateTime a RealType.Time or DateTime object.
-     * @return a Java Date object.
+     * @param dateTime A RealType.Time or DateTime object.
+     * @return A ZonedDateTime UTC object.
      */
-    @Deprecated
-    static public Date toDate(Real dateTime) {
+    static public ZonedDateTime toZonedDateTime(Real dateTime) {
         if (!RealType.Time.equals(dateTime.getType())) {
             throw new IllegalArgumentException("Argument math type must be: "
                     + RealType.Time.toString() + ", not " + dateTime.getType().toString());
         }
-        // Use the Calendar to convert from DateTime in GMT to local time
-        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         try {
-            cal.setTimeInMillis((long) (dateTime.getValue(CommonUnit.secondsSinceTheEpoch) * 1000));
-            return cal.getTime();
-        }
-        catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Return a new Java Date object from a VisAD DateTime.
-     *
-     * @param dateTime a RealType.Time or DateTime object.
-     * @return a Java Date object.
-     */
-    @Deprecated
-    static public Date toDate(Real dateTime, double hour) {
-        if (!RealType.Time.equals(dateTime.getType())) {
-            throw new IllegalArgumentException("Argument math type must be: "
-                    + RealType.Time.toString() + ", not " + dateTime.getType().toString());
-        }
-        if (hour < 0 || hour >= 24) {
-            throw new IllegalArgumentException("hour not within range: >= 0 and < 24");
-        }
-        // Use the Calendar to convert from DateTime in GMT to local time
-        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
-        try {
-            cal.setTimeInMillis((long) (dateTime.getValue(CommonUnit.secondsSinceTheEpoch) * 1000));
-            setCalendarToHour(cal, hour);
-            return cal.getTime();
+            Instant instant = Instant.ofEpochSecond((long) (dateTime.getValue(CommonUnit.secondsSinceTheEpoch)));
+            return ZonedDateTime.ofInstant(instant, ZoneId.of("Z"));
         }
         catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
