@@ -34,7 +34,6 @@ import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.visad.Tuples;
 import com.emxsys.weather.api.WeatherType;
-
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,6 +42,7 @@ import java.rmi.RemoteException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -70,7 +70,6 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
-
 import visad.DateTime;
 import visad.FlatField;
 import visad.FunctionType;
@@ -279,24 +278,24 @@ public class WeatherChartPanel extends javax.swing.JPanel {
                 Real days = new Real(RealType.Time, i, GeneralUnit.day);
                 Real datetime = new DateTime((Real) startDate.add(days));
 
-                Date date = Times.toDate(datetime);
+                ZonedDateTime date = Times.toZonedDateTime(datetime);
                 RealTuple sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
                 Real sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
                 Real sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
 
-                DateTime sunrise1 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-                DateTime sunset1 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
+                DateTime sunrise1 = Times.fromZonedDateTime(date.withHour((int) sunrise.getValue(GeneralUnit.hour)));
+                DateTime sunset1 = Times.fromZonedDateTime(date.withHour((int) sunset.getValue(GeneralUnit.hour)));
 
 //                Marker marker = createIntervalMarker(sunrise1, sunset1, "Day", new Color(255, 255, 255, 25));
 //                dayMarkers.add(marker);
                 // Night (need to compute next day's sunrise
                 days = new Real(RealType.Time, i + 1, GeneralUnit.day);
                 datetime = new DateTime((Real) startDate.add(days));
-                date = Times.toDate(datetime);
+                date = Times.toZonedDateTime(datetime);
                 sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
                 sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
                 sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-                DateTime sunrise2 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
+                DateTime sunrise2 = Times.fromZonedDateTime(date.withHour((int) sunrise.getValue(GeneralUnit.hour)));
                 //DateTime sunset2 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
 
                 Marker marker = createIntervalMarker(sunset1, sunrise2, "Night", new Color(0, 0, 255, 25));
