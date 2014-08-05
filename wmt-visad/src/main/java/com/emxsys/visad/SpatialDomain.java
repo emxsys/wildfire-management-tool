@@ -39,10 +39,12 @@ import org.openide.util.NbBundle.Messages;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
+import visad.Irregular2DSet;
 import visad.Linear2DSet;
 import visad.LinearLatLonSet;
 import visad.MathType;
 import visad.RealTupleType;
+import visad.SampledSet;
 import visad.Set;
 import visad.VisADException;
 import visad.georef.LatLonPoint;
@@ -137,6 +139,24 @@ public class SpatialDomain {
         }
         FlatField spatialField = (FlatField) data;
         this.spatialDomainSet = spatialField.getDomainSet();
+    }
+
+    public boolean contains(LatLonPoint latLon) {
+        if (!isInitialized()) {
+            return false;
+        }
+        Set domainSet = getDomainSet();
+        if (domainSet instanceof SampledSet) {
+            float[] low = ((SampledSet) domainSet).getLow();
+            float[] hi = ((SampledSet) domainSet).getHi();
+            double lat = latLon.getLatitude().getValue();
+            double lon = latLon.getLongitude().getValue();
+            return lat >= low[0] && lat <= hi[0]
+                    && lon >= low[1] && lon <= hi[1];
+        }
+        else {
+            throw new UnsupportedOperationException("SpatialDomain.contains() does not support " + domainSet.getClass().getSimpleName());
+        }
     }
 
     /**
