@@ -51,7 +51,7 @@ public interface WeatherProvider extends Lookup.Provider {
      * @param clazz The class to lookup.
      * @return True if the capability object is in the lookup.
      */
-    boolean hasCapability(Class<?> clazz);
+    boolean hasCapability(Class clazz);
     
     
     /**
