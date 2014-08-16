@@ -76,6 +76,56 @@
                 <version>2.5.1</version>
                 <executions>
                     <execution>
+                        <id>install-visad-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/visad-2.0/visad.jar</file>
+                            <sources>${project.basedir}/src/main/repository/visad-2.0/visad_src.jar</sources>
+                            <javadoc>${project.basedir}/src/main/repository/visad-2.0/visad_doc.jar</javadoc>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>visad</groupId>
+                            <artifactId>visad</artifactId>
+                            <version>${visad.version}</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jogl-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/visad-2.0/jogl.jar</file>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>com.sun</groupId>
+                            <artifactId>jogl</artifactId>
+                            <version>1.1.2</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-gluegen-library</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/visad-2.0/gluegen-rt.jar</file>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>com.sun</groupId>
+                            <artifactId>gluegen-rt</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-geosoft-library</id>
                         <phase>install</phase>
                         <goals>
