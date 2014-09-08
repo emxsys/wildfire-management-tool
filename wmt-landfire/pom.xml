@@ -110,6 +110,16 @@
             <artifactId>csvreader</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-dialogs</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
     </dependencies>
     <description>LANDFIRE maps and data layers. A Fuel Model provider for the US.</description>
     <name>WMT LANDFIRE</name>
