@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>LANDFIRE.US_110FBFM40</DisplayName>
-    <DatasetName>LANDFIRE.US_110FBFM40</DatasetName>
-    <DataCacheName>LANDFIRE/LANDFIRE.US_110FBFM40</DataCacheName>
+    <DisplayName>US_120FBFM40</DisplayName>
+    <DatasetName>US_120FBFM40</DatasetName>
+    <DataCacheName>LANDFIRE/US_120FBFM40</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
-        <LayerNames>US_110FBFM40</LayerNames>
-        <GetMapURL>http://landfire.gov/arcgis/services/Landfire/US_110/MapServer/WmsServer?</GetMapURL>
-        <GetCapabilitiesURL>http://landfire.gov/arcgis/services/Landfire/US_110/MapServer/WMSServer?</GetCapabilitiesURL>
+        <LayerNames>US_120FBFM40</LayerNames>
+        <GetMapURL>http://landfire.gov/arcgis/services/Landfire/US_120/MapServer/WmsServer?</GetMapURL>
+        <GetCapabilitiesURL>http://landfire.gov/arcgis/services/Landfire/US_120/MapServer/WMSServer?</GetCapabilitiesURL>
+        <!--GetCapabiliies example: 
+            http://landfire.gov/arcgis/services/Landfire/US_110/MapServer/WMSServer?request=GetCapabilities&service=WMS
+        -->
+        <!--Index to services: http://landfire.gov/arcgis/rest/services/Landfire -->
     </Service>
-<!--    <Service serviceName="OGC:WMS" version="1.1.1">
-        <LayerNames>LANDFIRE.US_110FBFM40</LayerNames>
-        <GetMapURL>http://landfire.cr.usgs.gov/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetMapURL>
-        <GetCapabilitiesURL>http://landfire.cr.usgs.gov/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetCapabilitiesURL>
-    </Service> -->
     <!-- In order to sample pixels for fuel model lookups, we store locally as PNG files so that they 
          can be readily converted to buffered images; .dds files don't work   -->
     <FormatSuffix>.png</FormatSuffix>

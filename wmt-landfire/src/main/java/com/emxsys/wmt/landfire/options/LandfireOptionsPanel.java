@@ -54,6 +54,7 @@ import org.w3c.dom.Element;
 
 final class LandfireOptionsPanel extends javax.swing.JPanel {
 
+    public static final String XML_LAYER_FOLDER = "WorldWind/Layers/Overlay";
     public static final String DATACACHENAME = "DataCacheName";
     public static final String DATASETNAME = "DatasetName";
     public static final String DISPLAYNAME = "DisplayName";
@@ -103,12 +104,13 @@ final class LandfireOptionsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     void load() {
+        // (re)load 
         if (initialized) {
             jPanel1.removeAll();
             initialized = false;
         }
         // Read settings and initialize GUI from the Layer.XML file
-        FileObject[] children = FileUtil.getConfigFile("WorldWind/Layers/Overlay").getChildren();
+        FileObject[] children = FileUtil.getConfigFile(XML_LAYER_FOLDER).getChildren();
         for (FileObject fo : children) {
             // Filter out layers that aren't from  LANDFIRE
             String source = (String) fo.getAttribute("source");
@@ -123,27 +125,29 @@ final class LandfireOptionsPanel extends javax.swing.JPanel {
 
     private final class LayerPanel extends JPanel {
 
-        Element context;
+        Element dom;
         final FileObject fo;
-        JTextField layer;
-        JTextField caps;
-        JTextField map;
+        JTextField layerTextField;
+        JTextField capsTextField;
+        JTextField mapTextField;
 
         LayerPanel(FileObject fo) {
             this.fo = fo;
-            this.context = LandfireTiledImageLayerFactory.getLayerDomElement(fo);
+            this.dom = LandfireTiledImageLayerFactory.getLayerDomElement(fo);
             String title = (String) fo.getAttribute("displayName");
             setLayout(new SpringLayout());
             setBorder(new TitledBorder(title));
 
-            layer = addControlsToPanel("Layer Name:", WWXML.getText(context, SERVICE_LAYERNAMES));
-            layer.getDocument().addDocumentListener(new ChangedTextListener());
+            layerTextField = addControlsToPanel("Layer Name:", WWXML.getText(dom, SERVICE_LAYERNAMES));
+            layerTextField.getDocument().addDocumentListener(new ChangedTextNotifier());
+            
+            //TODO: Add service version: <Service serviceName="OGC:WMS" version="1.3.0">
 
-            caps = addControlsToPanel("Capabilities URL:", WWXML.getText(context, SERVICE_GETCAPABILITIESURL));
-            caps.getDocument().addDocumentListener(new ChangedTextListener());
+            capsTextField = addControlsToPanel("Capabilities URL:", WWXML.getText(dom, SERVICE_GETCAPABILITIESURL));
+            capsTextField.getDocument().addDocumentListener(new ChangedTextNotifier());
 
-            map = addControlsToPanel("Map URL:", WWXML.getText(context, SERVICE_GETMAPURL));
-            map.getDocument().addDocumentListener(new ChangedTextListener());
+            mapTextField = addControlsToPanel("Map URL:", WWXML.getText(dom, SERVICE_GETMAPURL));
+            mapTextField.getDocument().addDocumentListener(new ChangedTextNotifier());
 
             //Lay out the panel.
             SpringUtilities.makeCompactGrid(this,
@@ -153,7 +157,7 @@ final class LandfireOptionsPanel extends javax.swing.JPanel {
         }
 
 
-        private class ChangedTextListener implements DocumentListener {
+        private class ChangedTextNotifier implements DocumentListener {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -193,38 +197,41 @@ final class LandfireOptionsPanel extends javax.swing.JPanel {
                 LayerPanel p = (LayerPanel) component;
 
                 // Update the XML elements
-                String layerName = p.layer.getText();
-                Element layers = WWXML.getElement(p.context, SERVICE_LAYERNAMES, null);
+                String layerName = p.layerTextField.getText();
+                Element layers = WWXML.getElement(p.dom, SERVICE_LAYERNAMES, null);
                 if (layers != null) {
+                    System.out.println(layerName);
                     layers.setTextContent(layerName);
                 }
-                Element displayName = WWXML.getElement(p.context, DISPLAYNAME, null);
+                Element displayName = WWXML.getElement(p.dom, DISPLAYNAME, null);
                 if (displayName != null) {
                     displayName.setTextContent(layerName);
                 }
-                Element dataName = WWXML.getElement(p.context, DATASETNAME, null);
+                Element dataName = WWXML.getElement(p.dom, DATASETNAME, null);
                 if (dataName != null) {
                     dataName.setTextContent(layerName);
                 }
-                Element cacheName = WWXML.getElement(p.context, DATACACHENAME, null);
+                Element cacheName = WWXML.getElement(p.dom, DATACACHENAME, null);
                 if (cacheName != null) {
                     cacheName.setTextContent(LANDFIRE_CACHE_ROOT + "/" + layerName);
                 }
 
-                Element caps = WWXML.getElement(p.context, SERVICE_GETCAPABILITIESURL, null);
+                Element caps = WWXML.getElement(p.dom, SERVICE_GETCAPABILITIESURL, null);
                 if (caps != null) {
-                    caps.setTextContent(p.caps.getText());
+                    System.out.println(p.capsTextField.getText());
+                    caps.setTextContent(p.capsTextField.getText());
                 }
 
-                Element map = WWXML.getElement(p.context, SERVICE_GETMAPURL, null);
+                Element map = WWXML.getElement(p.dom, SERVICE_GETMAPURL, null);
                 if (map != null) {
-                    map.setTextContent(p.map.getText());
+                    System.out.println(p.mapTextField.getText());
+                    map.setTextContent(p.mapTextField.getText());
                 }
 
-                // Save the file
+                // Save the updated DOM to the XML file specified in the "config" attribute
                 File f = ModuleUtil.createFileFromUrl((URL) p.fo.getAttribute("config"));
                 if (f != null) {
-                    WWXML.saveDocumentToFile(p.context.getOwnerDocument(), f.getPath());
+                    WWXML.saveDocumentToFile(p.dom.getOwnerDocument(), f.getPath());
                 }
             }
         }
@@ -235,11 +242,11 @@ final class LandfireOptionsPanel extends javax.swing.JPanel {
         for (Component component : components) {
             if (component instanceof LayerPanel) {
                 LayerPanel p = (LayerPanel) component;
-                if (p.layer.getText().isEmpty()) {
+                if (p.layerTextField.getText().isEmpty()) {
                     return false;
-                } else if (p.caps.getText().isEmpty()) {
+                } else if (p.capsTextField.getText().isEmpty()) {
                     return false;
-                } else if (p.map.getText().isEmpty()) {
+                } else if (p.mapTextField.getText().isEmpty()) {
                     return false;
                 }
             }

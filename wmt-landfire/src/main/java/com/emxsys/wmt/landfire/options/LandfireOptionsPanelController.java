@@ -31,8 +31,6 @@ package com.emxsys.wmt.landfire.options;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import javax.swing.JComponent;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.DialogDisplayer;
@@ -50,7 +48,8 @@ public final class LandfireOptionsPanelController extends OptionsPanelController
 
     private LandfireOptionsPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private boolean changed;
+    private boolean changed = false;
+    private boolean shouldLoadPanel = true;
 
     // TIP: You must have a public ctor to prevent java.lang.IllegalAccessError exceptions in Unit Tests
     public LandfireOptionsPanelController() {
@@ -59,13 +58,16 @@ public final class LandfireOptionsPanelController extends OptionsPanelController
 
     @Override
     public void update() {
-        getPanel().load();
-        changed = false;
+        if (shouldLoadPanel) {
+            getPanel().load();
+            changed = false;
+            shouldLoadPanel = false;
+        }
     }
 
     @Override
     public void applyChanges() {
-        // Must run on separate thread else blocks causing "Lengthy operations in progress" message box.
+        // Must run on separate thread else confirmation blocks causing "Lengthy operation in progress" message box.
         Runnable r = () -> {
             if (isChanged() && confirmSave()) {
                 getPanel().store();

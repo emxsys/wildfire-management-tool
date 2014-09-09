@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>LANDFIRE.US_DEM</DisplayName>
-    <DatasetName>LANDFIRE.US_DEM</DatasetName>
+    <DisplayName>US_DEM2010</DisplayName>
+    <DatasetName>US_DEM2010</DatasetName>
     <!-- Specific the location of cache on the local machine -->    
-    <DataCacheName>LANDFIRE/LANDFIRE.US_DEM</DataCacheName>
-    <Service serviceName="OGC:WMS" version="1.1.1">
-        <LayerNames>LANDFIRE.US_DEM</LayerNames>
-        <GetMapURL>http://landfire.cr.usgs.gov/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetMapURL>
-        <GetCapabilitiesURL>http://landfire.cr.usgs.gov/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetCapabilitiesURL>
+    <DataCacheName>LANDFIRE/US_DEM2010</DataCacheName>
+    <Service serviceName="OGC:WMS" version="1.3.0">
+        <LayerNames>US_DEM2010</LayerNames>
+        <GetMapURL>http://landfire.gov/arcgis/services/Landfire/US_other/MapServer/WmsServer?</GetMapURL>
+        <GetCapabilitiesURL>http://landfire.gov/arcgis/services/Landfire/US_other/MapServer/WMSServer?</GetCapabilitiesURL>
+        <!--GetCapabiliies example: 
+            http://landfire.gov/arcgis/services/Landfire/US_110/MapServer/WMSServer?request=GetCapabilities&service=WMS
+        -->
+        <!--Index to services: http://landfire.gov/arcgis/rest/services/Landfire -->
     </Service>
 
     <!-- In order to sample pixels for fuel model lookups, we store locally as PNG files so that they 
