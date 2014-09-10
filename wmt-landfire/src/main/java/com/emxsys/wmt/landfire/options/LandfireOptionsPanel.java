@@ -52,7 +52,7 @@ import org.openide.filesystems.FileUtil;
 import org.w3c.dom.Element;
 
 
-final class LandfireOptionsPanel extends javax.swing.JPanel {
+final public class LandfireOptionsPanel extends javax.swing.JPanel {
 
     public static final String XML_LAYER_FOLDER = "WorldWind/Layers/Overlay";
     public static final String DATACACHENAME = "DataCacheName";
