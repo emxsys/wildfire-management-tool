@@ -59,7 +59,7 @@ import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
-import com.emxsys.wmt.cps.ui.ForcesTopComponent;
+import com.emxsys.wmt.cps.views.ForcesTopComponent;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
 import com.emxsys.wmt.weather.nws.NwsWeatherProvider;

@@ -27,19 +27,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views;
 
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.solar.api.SunlightTuple;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
-import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.spi.DefaultWeatherProvider;
 import com.emxsys.wmt.cps.Controller;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.options.CpsOptions;
+import com.emxsys.wmt.cps.views.Bundle;
+import com.emxsys.wmt.cps.views.weather.AirTemperaturePanel;
+import com.emxsys.wmt.cps.views.weather.RelativeHumidityPanel;
+import com.emxsys.wmt.cps.views.weather.WindPanel;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
@@ -66,7 +68,7 @@ import visad.RealType;
  * charts/graphs.
  */
 @ConvertAsProperties(
-        dtd = "-//com.emxsys.wmt.cps.ui//Weather//EN",
+        dtd = "-//com.emxsys.wmt.cps.views//Weather//EN",
         autostore = false
 )
 @TopComponent.Description(
@@ -79,7 +81,7 @@ import visad.RealType;
         preferredID = WeatherTopComponent.PREFERRED_ID
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ui.WeatherTopComponent")
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.WeatherTopComponent")
 @RibbonActionReference(path = "Menu/Window/Show",
         position = 220,
         priority = "top",
@@ -120,6 +122,7 @@ public final class WeatherTopComponent extends TopComponent {
      * Constructor.
      */
     public WeatherTopComponent() {
+        //
         logger.fine(PREFERRED_ID + " initializing....");
         initComponents();
         initPanels();

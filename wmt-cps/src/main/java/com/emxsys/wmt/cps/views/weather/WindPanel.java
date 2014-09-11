@@ -28,17 +28,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views.weather;
 
 /**
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public class RelativeHumidityPanel extends javax.swing.JPanel {
+public class WindPanel extends javax.swing.JPanel {
 
-    /** Creates new form RelativeHumidityPanel */
-    public RelativeHumidityPanel() {
+    /** Creates new form WindPanel */
+    public WindPanel() {
         initComponents();
     }
 
@@ -51,7 +51,7 @@ public class RelativeHumidityPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(RelativeHumidityPanel.class, "RelativeHumidityPanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindPanel.class, "WindPanel.border.title_1"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

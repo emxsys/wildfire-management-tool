@@ -27,27 +27,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views;
 
-import com.emxsys.gis.api.Coord3D;
-import com.emxsys.gis.api.Terrain;
-import static com.emxsys.wmt.cps.ui.WindForcePanel.PROP_WINDSPEED;
+import com.emxsys.wmt.cps.views.Bundle;
+import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
+import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
+import com.emxsys.wmt.cps.views.forces.WindForcePanel;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
-import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
-import visad.Real;
 
 /**
  * Top component which displays the CPS Primary Forces.
  */
-@ConvertAsProperties(dtd = "-//com.emxsys.wmt.cps.ui//Forces//EN", autostore = false)
+@ConvertAsProperties(dtd = "-//com.emxsys.wmt.cps.views//Forces//EN", autostore = false)
 @TopComponent.Description(
         preferredID = ForcesTopComponent.PREFERRED_ID,
         iconBase = "com/emxsys/wmt/cps/images/cps-icon.png",
@@ -57,7 +56,7 @@ import visad.Real;
         preferredID = ForcesTopComponent.PREFERRED_ID
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ui.ForcesTopComponent")
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.ForcesTopComponent")
 @RibbonActionReference(path = "Menu/Window/Show",
         position = 200,
         priority = "top",
@@ -65,8 +64,6 @@ import visad.Real;
         tooltipTitle = "#CTL_ForcesAction_TooltipTitle",
         tooltipBody = "#CTL_ForcesAction_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/cps/images/cps-icon32.png")
-//        tooltipFooter = "#CTL_ForcesAction_TooltipFooter",
-//        tooltipFooterIcon = "com/terramenta/images/help.png")
 @Messages({
     "CTL_ForcesTopComponent=Forces",
     "CTL_ForcesTopComponent_Hint=The CPS Primary Forces window.",
@@ -90,6 +87,7 @@ public final class ForcesTopComponent extends TopComponent {
     }
 
     public ForcesTopComponent() {
+        //
         logger.fine(PREFERRED_ID + " initializing....");
 
         initComponents();
@@ -133,6 +131,7 @@ public final class ForcesTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         setLayout(new java.awt.GridLayout(3, 1));
     }// </editor-fold>//GEN-END:initComponents
 

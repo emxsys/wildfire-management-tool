@@ -27,8 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views.forces;
 
+import com.emxsys.wmt.cps.views.forces.Bundle;
 import com.emxsys.jfree.ChartCanvas;
 import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
 import com.emxsys.weather.api.Weather;
@@ -86,13 +87,13 @@ import visad.Real;
     "CTL_WindDirChartTitle=Direction",
     "CTL_WindSpdChartTitle=Speed",})
 public class WindForcePanel extends javax.swing.JPanel {
-    
+    //
     // Properties that are available from this panel
     public static final String PROP_WINDDIR = "PROP_WINDDIR";
     public static final String PROP_WINDSPEED = "PROP_WINDSPEED";
 
     // The ForcesTopComponent will add the PropertyChangeListeners
-    final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private WindDirChart dirChart = new WindDirChart(Bundle.CTL_WindDirChartTitle());
     private WindSpdChart spdChart = new WindSpdChart(Bundle.CTL_WindSpdChartTitle());
@@ -319,6 +320,7 @@ public class WindForcePanel extends javax.swing.JPanel {
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title"))); // NOI18N
         setLayout(new java.awt.GridLayout(1, 2));
+        getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
 

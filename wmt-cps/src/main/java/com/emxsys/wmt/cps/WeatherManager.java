@@ -80,7 +80,7 @@ public class WeatherManager {
     private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWeather = new DiurnalWeatherProvider();
 
-    // Update the weather when the system time advances past the top-of-the-hour
+    // Automatically update the weather when the system time advances past the top-of-the-hour
     public void updateTime(ZonedDateTime time) {
         ZonedDateTime currentHour = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS);
         if (hour == null || !(hour.equals(currentHour))) {
@@ -98,14 +98,16 @@ public class WeatherManager {
 
     // Update the weather's spatial domain when the project's sector/area-of-interest changes
     public void updateCoord(Coord2D coord) {
-        // Ensure the area of interest is meets the minumum spatial domain requirements
+        // Ensure the current area of interest is meets the minumum spatial domain requirements
         if (spatialDomain == null || !spatialDomain.contains(coord)) {
             double lat = coord.getLatitudeDegrees();
             double lon = coord.getLongitudeDegrees();
 
+            // Create a one-degree sector around the position of interest.
             GeoCoord2D sw = GeoCoord2D.fromDegrees(lat - .5, lon - .5);
             GeoCoord2D ne = GeoCoord2D.fromDegrees(lat + .5, lon + .5);
 
+            // Set the domain to the sector extents
             spatialDomain = SpatialDomain.from(sw, ne);
 
             refreshModels();
@@ -120,15 +122,66 @@ public class WeatherManager {
         // Update weather forecast
         if (forecaster != null) {
             weatherForecast = forecaster.getForecast(spatialDomain, forecastDomain);
+            // Remove any stale forecasts
             forecastCache.clear();
         }
         // Update weather history
         if (recorder != null) {
             weatherHistory = recorder.getRecordedConditions(spatialDomain, historyDomain);
-            // No need to full cache...observations do not change over time.
+            // No need to flush cache...observations do not change over time.
         }
     }
 
+    public WeatherTuple getCurrentWeatherAt(Coord2D coord) {
+        // Prerequistes
+//        WeatherModel model;
+//        Map<Long, FlatField> cache;
+//        if (historyDomain.contains(time)) {
+//            model = weatherHistory;
+//            cache = historyCache;
+//        } else if (forecastDomain.contains(time)) {
+//            // Ensure the model contains the time
+//            model = weatherForecast;
+//            cache = forecastCache;
+//        } else {
+//            return WeatherTuple.INVALID_TUPLE;
+//        }
+//        System.out.println(model);
+//
+//        if (!spatialDomain.contains(coord)) {
+//            return WeatherTuple.INVALID_TUPLE;
+//        }
+//        // Get the hourly floor and cache key for the hour-by-hour weather
+//        ZonedDateTime timeHour = time.truncatedTo(ChronoUnit.HOURS);
+//        Long key = timeHour.toEpochSecond();
+//
+//        // First, get the spatial wx field for the hour
+//        FlatField wxField = cache.get(key);
+//        if (wxField == null) {
+//            wxField = model.getSpatialWeatherAt(timeHour);
+//            if (wxField == null) {
+//                cache.put(key, wxField);
+//            }
+//        }
+//        // Now get and return the weather tuple at the coordinate
+//        if (wxField != null) {
+//            try {
+//                RealTuple tuple = (RealTuple) wxField.evaluate(
+//                        Coords.toLatLonTuple(coord),
+//                        Data.WEIGHTED_AVERAGE,
+//                        Data.NO_ERRORS);
+//                if (tuple != null) {
+//                    // Transform RealTuple to WeatherTuple (assures proper units after resample)
+//                    return WeatherTuple.fromRealTuple(tuple);
+//                }
+//            } catch (VisADException | RemoteException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+//        }
+        // Return a safe value if no weather available
+        return WeatherTuple.INVALID_TUPLE;
+        
+    }
     public WeatherTuple getWeatherAt(Coord2D coord, ZonedDateTime time) {
         // Prerequistes
         WeatherModel model;

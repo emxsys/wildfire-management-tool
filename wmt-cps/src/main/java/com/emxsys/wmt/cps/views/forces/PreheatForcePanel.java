@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views.forces;
 
 import com.emxsys.jfree.ChartCanvas;
 import com.emxsys.jfree.ClockCompassPlot;
@@ -36,10 +36,10 @@ import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wmt.cps.Model;
+import com.emxsys.wmt.cps.views.forces.Bundle;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -90,7 +90,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     public static final String PROP_AIRTEMP = "PROP_AIRTEMP";
 
     // The ForcesTopComponent will add the PropertyChangeListeners
-    final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;

@@ -28,17 +28,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views.weather;
 
 /**
  *
  * @author Bruce Schubert
  * @version $Id$
  */
-public class WindPanel extends javax.swing.JPanel {
+public class AirTemperaturePanel extends javax.swing.JPanel {
 
-    /** Creates new form WindPanel */
-    public WindPanel() {
+    /** Creates new form AirTemperaturePanel */
+    public AirTemperaturePanel() {
         initComponents();
     }
 
@@ -51,7 +51,7 @@ public class WindPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindPanel.class, "WindPanel.border.title_1"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(AirTemperaturePanel.class, "AirTemperaturePanel.border.title"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
