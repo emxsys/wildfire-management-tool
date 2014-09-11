@@ -39,7 +39,6 @@ import com.emxsys.visad.GeneralUnit;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wmt.cps.Model;
-import com.emxsys.wmt.cps.views.forces.Bundle;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;

@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.cps.views.forces;
 
-import com.emxsys.wmt.cps.views.forces.Bundle;
 import com.emxsys.jfree.ChartCanvas;
 import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
 import com.emxsys.weather.api.Weather;

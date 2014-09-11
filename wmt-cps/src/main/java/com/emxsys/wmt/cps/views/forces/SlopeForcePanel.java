@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.cps.views.forces;
 
-import com.emxsys.wmt.cps.views.forces.Bundle;
 import com.emxsys.jfree.ChartUtil;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.util.AngleUtil;

@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.cps.views;
 
-import com.emxsys.wmt.cps.views.Bundle;
 import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
 import com.emxsys.wmt.cps.views.forces.WindForcePanel;

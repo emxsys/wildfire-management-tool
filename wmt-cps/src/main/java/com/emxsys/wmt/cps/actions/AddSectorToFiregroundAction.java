@@ -52,18 +52,17 @@ import org.openide.util.NbBundle.Messages;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @ActionID(id = "com.emxsys.wmt.cps.actions.AddSectorToFireground", category = "Fire")
-@ActionRegistration(displayName = "#CTL_AddSectorToFireground",
+@ActionRegistration(displayName = "Add Sector to Fireground",
         iconBase = "com/emxsys/wmt/cps/images/layer-add.png",
         iconInMenu = true)
 @ActionReference(path = "Toolbars/Fire", position = 1200)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 200)
-@Messages({
-    "CTL_AddSectorToFireground=Add Sector to Fireground",
-    "warningNoProject=A project must be designated to perform this action.\n"
-    + "You must open or create a project.",
-    "warningNoFireground=The selected project does not support this action.\n"
-    + "You must designate a main project that supports a Fireground.",
-    "titleCannotAddSector=Cannot Add Sector to Fireground"
+@Messages({ //    "CTL_AddSectorToFireground=Add Sector to Fireground",
+//    "ERR_NoProject=A project must be designated to perform this action.\n"
+//    + "You must open or create a project.",
+//    "ERR_NoFireground=The selected project does not support this action.\n"
+//    + "You must designate a main project that supports a Fireground.",
+//    "ERR_CannotAddSector=Cannot Add Sector to Fireground"
 })
 public class AddSectorToFiregroundAction extends AbstractAction {
 
@@ -80,14 +79,16 @@ public class AddSectorToFiregroundAction extends AbstractAction {
         Project project = ProjectUtil.getCurrentProject();
         if (project == null) {
             // Inform the user that a project is required
-            displayWarningMessage(Bundle.warningNoProject());
+            displayWarningMessage("A project must be designated to perform this action.\n"
+                    + "You must open or create a project.");
             return;
         }
 
         // The project must contain a fireground (see the WmtProject class)
         Fireground fireground = project.getLookup().lookup(Fireground.class);
         if (fireground == null) {
-            displayWarningMessage(Bundle.warningNoFireground());
+            displayWarningMessage("The selected project does not support this action.\n"
+                    + "You must designate a main project that supports a Fireground.");
             return;
         }
 
@@ -117,12 +118,12 @@ public class AddSectorToFiregroundAction extends AbstractAction {
         // Notify user
         NotifyDescriptor nd = new NotifyDescriptor.Message(
                 warningMessage, NotifyDescriptor.WARNING_MESSAGE);
-        nd.setTitle(Bundle.titleCannotAddSector());
+        nd.setTitle("Cannot Add Sector to Fireground");
         DialogDisplayer.getDefault().notify(nd);
 
         // Log warning
         LOG.log(Level.WARNING, "{0}: {1}", new Object[]{
-            Bundle.titleCannotAddSector(), warningMessage
+            "Cannot Add Sector to Fireground", warningMessage
         });
     }
 

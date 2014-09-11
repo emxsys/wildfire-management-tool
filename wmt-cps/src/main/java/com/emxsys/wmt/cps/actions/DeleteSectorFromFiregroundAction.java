@@ -48,12 +48,12 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Fire", id = "com.emxsys.wmt.cps.actions.DeleteSectorFromFireground")
 @ActionRegistration(
         iconBase = "com/emxsys/wmt/cps/images/layer-delete.png",
-        displayName = "#CTL_DeleteSectorFromFireground")
+        displayName = "Delete Fireground Sector")
 @ActionReference(path = "Toolbars/Fire", position = 1300)
 @RibbonActionReference(path = "Menu/Process/Fireground", position = 300)
 @Messages({
-    "CTL_DeleteSectorFromFireground=Delete Fireground Sector ",
-    "titleCannotRemoveSector=Cannot Remove Sector from Fireground"
+    //"CTL_DeleteSectorFromFireground=Delete Fireground Sector ",
+    //"ERR_CannotRemoveSector=Cannot Remove Sector from Fireground"
 })
 public final class DeleteSectorFromFiregroundAction extends AbstractAction {
 
@@ -62,7 +62,7 @@ public final class DeleteSectorFromFiregroundAction extends AbstractAction {
 
     public DeleteSectorFromFiregroundAction(Box context) {
         this.context = context;
-        putValue(NAME, Bundle.CTL_DeleteSectorFromFireground());
+        putValue(NAME, "Delete Fireground Sector" /*Bundle.CTL_DeleteSectorFromFireground()*/);
     }
 
     @Override
@@ -71,13 +71,13 @@ public final class DeleteSectorFromFiregroundAction extends AbstractAction {
         Project project = ProjectUtil.getCurrentProject();
         if (project == null) {
             // Inform the user that a project is required
-            displayWarningMessage(Bundle.warningNoProject());
+            //displayWarningMessage(Bundle.warningNoProject());
             return;
         }
         // The project must contain a fireground (e.g., the CpsProject class)
         Fireground fireground = project.getLookup().lookup(Fireground.class);
         if (fireground == null) {
-            displayWarningMessage(Bundle.warningNoFireground());
+            //displayWarningMessage(Bundle.warningNoFireground());
             return;
         }
         fireground.removeSector(context);
@@ -87,12 +87,11 @@ public final class DeleteSectorFromFiregroundAction extends AbstractAction {
         // Notify user
         NotifyDescriptor nd = new NotifyDescriptor.Message(
                 warningMessage, NotifyDescriptor.WARNING_MESSAGE);
-        nd.setTitle(Bundle.titleCannotAddSector());
+        //nd.setTitle(Bundle.titleCannotAddSector());
         DialogDisplayer.getDefault().notify(nd);
 
         // Log warning
         LOG.log(Level.WARNING, "{0}: {1}", new Object[]{
-            Bundle.titleCannotRemoveSector(), warningMessage
-        });
+            "Cannot Remove Sector from Fireground" /*Bundle.ERR_CannotRemoveSector()*/, warningMessage});
     }
 }
