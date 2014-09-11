@@ -27,8 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views;
 
+import com.emxsys.wmt.cps.views.fuel.FuelMoistureScenarioPanel;
+import com.emxsys.wmt.cps.views.fuel.FuelMoisturePanel;
+import com.emxsys.wmt.cps.views.fuel.FuelModelPanel;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
@@ -59,7 +62,7 @@ import org.openide.windows.TopComponent;
  * @author Bruce Schubert
  */
 @ConvertAsProperties(
-        dtd = "-//com.emxsys.wmt.cps.ui//Fuel//EN",
+        dtd = "-//com.emxsys.wmt.cps.views//Fuel//EN",
         autostore = false
 )
 @TopComponent.Description(
@@ -72,7 +75,7 @@ import org.openide.windows.TopComponent;
         preferredID = FuelTopComponent.PREFERRED_ID
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ui.FuelTopComponent")
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.FuelTopComponent")
 @RibbonActionReference(path = "Menu/Window/Show",
         position = 210,
         priority = "top",
