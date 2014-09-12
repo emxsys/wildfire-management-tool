@@ -31,7 +31,6 @@ package com.emxsys.wmt.cps.views.fuel;
 
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wmt.cps.Model;
-import com.emxsys.wmt.cps.charts.FuelModelChart;
 import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 

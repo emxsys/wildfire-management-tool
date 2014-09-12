@@ -27,17 +27,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views.spread;
 
 import com.emxsys.jfree.ChartUtil;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.prefs.Preferences;
 import org.jfree.chart.JFreeChart;

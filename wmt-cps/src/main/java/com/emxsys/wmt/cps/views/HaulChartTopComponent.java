@@ -27,10 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.ui;
+package com.emxsys.wmt.cps.views;
 
-import com.emxsys.wildfire.behavior.SurfaceFire;
-import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.emxsys.wmt.cps.views.haulchart.HaulChartPanel;
 import java.awt.BorderLayout;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -42,7 +41,7 @@ import org.openide.windows.TopComponent;
  * Top component which displays something.
  */
 @ConvertAsProperties(
-        dtd = "-//com.emxsys.wmt.cps.ui//HaulChart//EN",
+        dtd = "-//com.emxsys.wmt.cps.views//HaulChart//EN",
         autostore = false
 )
 @TopComponent.Description(
@@ -51,7 +50,7 @@ import org.openide.windows.TopComponent;
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "rightSide", openAtStartup = true)
-@ActionID(category = "Window", id = "com.emxsys.wmt.cps.ui.HaulChartTopComponent")
+@ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.HaulChartTopComponent")
 @ActionReference(path = "Menu/Window/Show", position = 210)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_HaulChartAction",

@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.charts;
+package com.emxsys.wmt.cps.views.fuel;
 
 import com.emxsys.visad.FireUnit;
 import com.emxsys.wildfire.api.FuelModel;

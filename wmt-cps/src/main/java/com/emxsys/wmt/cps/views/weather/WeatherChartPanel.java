@@ -27,13 +27,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wmt.cps.charts;
+package com.emxsys.wmt.cps.views.weather;
 
 import com.emxsys.solar.api.SolarType;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.visad.Tuples;
 import com.emxsys.weather.api.WeatherType;
+import com.emxsys.wmt.cps.views.forces.WindVectorRenderer;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
