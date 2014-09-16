@@ -29,18 +29,19 @@
  */
 package com.emxsys.visad;
 
+import java.rmi.RemoteException;
 import org.openide.util.Exceptions;
 import visad.MathType;
 import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.RealType;
+import visad.VisADException;
 
 /**
  * Utility class for creating and interacting with RealTuples.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: Tuples.java 534 2013-04-18 15:26:05Z bdschubert $
  * @see RealTuple
  */
 public class Tuples {
@@ -85,7 +86,7 @@ public class Tuples {
         try {
             return (Real) tuple.getComponent(index);
         }
-        catch (Exception ex) {
+        catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
@@ -98,7 +99,7 @@ public class Tuples {
                         a, b
                     });
         }
-        catch (Exception ex) {
+        catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
@@ -111,9 +112,18 @@ public class Tuples {
                         a, b, c
                     });
         }
-        catch (Exception ex) {
+        catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
             throw new IllegalStateException(ex);
         }
+    }
+
+    public static double[][] makeSamples(RealTuple tuple) {
+        double[][] samples = new double[tuple.getDimension()][1];
+        double[] values = tuple.getValues();
+        for (int dim = 0; dim < tuple.getDimension(); dim++) {
+            samples[dim][0] = values[dim];
+        }
+        return samples;
     }
 }

@@ -57,6 +57,8 @@ public class GeneralUnit {
     public static final Unit degC = getUnit("degC");
     /** Common unit for temperature in degrees Fahrenheit */
     public static final Unit degF = getUnit("degF");
+    /** Common unit for temperature in degrees Kelvin */
+    public static final Unit degK = getUnit("degK");
     /** Common unit for speed in miles per hour */
     public static final Unit mph = getUnit("mile/(hour)");
     /** Common unit for speed in kilometers per hour */

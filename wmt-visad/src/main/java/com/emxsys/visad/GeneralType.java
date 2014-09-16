@@ -47,11 +47,14 @@ public class GeneralType {
     public static final RealType DISTANCE_NM;
     // Time
     public static final RealType TIME;
+    /** Temperature */
+    public static final RealType TEMPERATURE;
 
     static {
         Distance = RealType.getRealType("Distance", CommonUnit.meter, null);
         DISTANCE_MI = RealType.getRealType("distance:mi", GeneralUnit.mile, null);
         DISTANCE_NM = RealType.getRealType("distance:nm", GeneralUnit.nautical_mile, null);
         TIME = RealType.getRealType("local_time:sec", CommonUnit.secondsSinceTheEpoch, null);
+        TEMPERATURE = RealType.getRealType("temperature:K", GeneralUnit.degK, null);
     }
 }
