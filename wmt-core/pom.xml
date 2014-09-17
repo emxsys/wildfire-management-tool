@@ -169,7 +169,7 @@
                         <publicPackage>com.emxsys.wmt.core.*</publicPackage>
                     </publicPackages>
                     <moduleDependencies>
-                        <!--Private Package References -->
+                        <!--Private Package References (friend) -->
                         <!-- <id></id> values: groupId:artifactId --> 
                         <!-- <type></type> values: 
                         [spec]  means specification dependency. That's the default. 
@@ -191,7 +191,7 @@
                             <type>impl</type>
                         </dependency>
                         <dependency>
-                            <!--Private Package Reference-->
+                            <!--Private Package (friend) Reference-->
                             <id>org.netbeans.modules:org-netbeans-core-startup</id>
                             <type>impl</type>
                         </dependency>
