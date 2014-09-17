@@ -197,6 +197,19 @@
             <type>jar</type>
             <version>2.1.5-01</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-jfree</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -224,6 +237,18 @@
                             </includes>
                         </nbmResource> 
                     </nbmResources>               
+                    <moduleDependencies>
+                        <dependency>
+                            <!--Private Package (friend) Reference from wmt-core -->
+                            <id>org.netbeans.modules:org-netbeans-core-startup</id>
+                            <type>impl</type>
+                        </dependency>
+                        <dependency>
+                            <!--Private Package (friend) Reference startup-->
+                            <id>org.netbeans.modules:org-netbeans-bootstrap</id>
+                            <type>impl</type>
+                        </dependency>
+                    </moduleDependencies>
                 </configuration>
             </plugin>
                 
