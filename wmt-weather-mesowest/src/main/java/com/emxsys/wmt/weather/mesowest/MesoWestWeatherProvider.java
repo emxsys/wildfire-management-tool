@@ -31,14 +31,11 @@ package com.emxsys.wmt.weather.mesowest;
 
 import com.emxsys.util.ImageUtil;
 import com.emxsys.weather.api.AbstractWeatherProvider;
-import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
-import java.time.Duration;
 import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ServiceProvider;
-import visad.georef.LatLonPoint;
 
 /**
  * MesoWest weather services. 

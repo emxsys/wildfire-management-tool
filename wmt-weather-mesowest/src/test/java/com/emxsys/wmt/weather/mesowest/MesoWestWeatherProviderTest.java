@@ -34,7 +34,6 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.api.services.WeatherRecorder;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -184,14 +183,14 @@ public class MesoWestWeatherProviderTest {
                 ZonedDateTime.now().minusHours(12),
                 ZonedDateTime.now());
 
-        WeatherRecorder observer = MesoWestWeatherProvider.getInstance().getCapability(WeatherRecorder.class);
-        WeatherModel conditions = observer.getRecordedConditions(areaOfInterest, timeframe);
-        assertNotNull(conditions);
-        System.out.println(conditions);
+        WeatherObserver observer = MesoWestWeatherProvider.getInstance().getService(WeatherObserver.class);
+        WeatherModel observations = observer.getObservations(areaOfInterest, timeframe);
+        assertNotNull(observations);
+        System.out.println(observations);
     }
 
     /**
-     * Test of getCurrentConditions method, of class MesoWestWeatherProvider.
+     * Test of getLatestObservations method, of class MesoWestWeatherProvider.
      */
     @Test
     public void testGetCurrentConditions() throws VisADException, RemoteException {
@@ -200,9 +199,9 @@ public class MesoWestWeatherProviderTest {
                 GeoCoord2D.fromDegrees(34.0, -119.5),
                 GeoCoord2D.fromDegrees(35.0, -118.5));
 
-        WeatherObserver observer = MesoWestWeatherProvider.getInstance().getCapability(WeatherObserver.class);
-        WeatherModel conditions = observer.getCurrentConditions(areaOfInterest, Duration.ofHours(3));
-        assertNotNull(conditions);
-        System.out.println(conditions);
+        WeatherObserver observer = MesoWestWeatherProvider.getInstance().getService(WeatherObserver.class);
+        WeatherModel observations = observer.getLatestObservations(areaOfInterest, Duration.ofHours(3));
+        assertNotNull(observations);
+        System.out.println(observations);
     }
 }

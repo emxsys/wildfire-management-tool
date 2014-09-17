@@ -150,8 +150,8 @@ public final class MesoWestLayer extends RenderableGisLayer {
             Coord2D sw = Globe.computeGreatCircleCoordinate(coord, new Real(235), radius);
             SpatialDomain areaOfInterest = SpatialDomain.from(sw, ne);
             // Get the latest weather within the last 3 hours
-            WeatherObserver observer = MesoWestWeatherProvider.getInstance().getCapability(WeatherObserver.class);
-            WeatherModel model = observer.getCurrentConditions(areaOfInterest, Duration.ofHours(3));
+            WeatherObserver observer = MesoWestWeatherProvider.getInstance().getService(WeatherObserver.class);
+            WeatherModel model = observer.getLatestObservations(areaOfInterest, Duration.ofHours(3));
             
             lastestWxField = model.getLatestWeather();         
             updateRenderables();

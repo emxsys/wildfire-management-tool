@@ -34,7 +34,6 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.api.services.WeatherRecorder;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
@@ -168,7 +167,7 @@ import visad.georef.LatLonPoint;
  * </pre>
  * @author Bruce Schubert
  */
-public class WeatherObserverService implements WeatherRecorder, WeatherObserver {
+public class WeatherObserverService implements WeatherObserver {
 
     /** URI for MesoWest Stations. */
     protected static final String STATIONS_URI = "http://api.mesowest.net/stations?";
@@ -269,7 +268,7 @@ public class WeatherObserverService implements WeatherRecorder, WeatherObserver 
      * @return A {@code WeatherModel}: (Lat, Lon) -> (Time -> (Weather))
      */
     @Override
-    public WeatherModel getCurrentConditions(SpatialDomain areaOfInterest, Duration age) {
+    public WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age) {
         try {
             LatLonPoint minLatLon = areaOfInterest.getMinLatLon();
             LatLonPoint maxLatLon = areaOfInterest.getMaxLatLon();
@@ -307,13 +306,13 @@ public class WeatherObserverService implements WeatherRecorder, WeatherObserver 
 
     /**
      * Gets the latest weather observations within the age and inside the area of interest.
-     * @param coord The center of the area of interest.
-     * @param radius The radius of the area of interest; the value will be converted to miles.
+     * @param areaOfInterest The geographical area of interest to be queried.
+     * @param timeframe The temporal period to be queried.
      * @return A {@code WeatherModel}: (Lat, Lon) -> (Time -> (Weather))
      */
     @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
     @Override
-    public WeatherModel getRecordedConditions(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
+    public WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
         try {
             LatLonPoint minLatLon = areaOfInterest.getMinLatLon();
             LatLonPoint maxLatLon = areaOfInterest.getMaxLatLon();
