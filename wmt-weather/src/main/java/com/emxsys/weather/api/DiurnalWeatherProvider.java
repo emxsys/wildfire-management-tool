@@ -36,6 +36,8 @@ import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.TemporalDomain;
 import static com.emxsys.weather.api.WeatherType.*;
+import com.emxsys.weather.wizards.DiurnalWeatherWizard;
+import java.awt.event.ActionEvent;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -45,6 +47,8 @@ import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
@@ -132,6 +136,50 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             }
         }
         this.clouds = cloudCovers;
+    }
+
+    public Real getTempAtSunrise() {
+        return tempAtSunrise;
+    }
+
+    public Real getTempAtNoon() {
+        return tempAtNoon;
+    }
+
+    public Real getTempAt1400() {
+        return tempAt1400;
+    }
+
+    public Real getTempAtSunset() {
+        return tempAtSunset;
+    }
+
+    public Real getRelativeHumidityAtSunrise() {
+        return rhAtSunrise;
+    }
+
+    public Real getRelativeHumidityAtNoon() {
+        return rhAtNoon;
+    }
+
+    public Real getRelativeHumidityAt1400() {
+        return rhAt1400;
+    }
+
+    public Real getRelativeHumidityAtSunset() {
+        return rhAtSunset;
+    }
+
+    public TreeMap<LocalTime, Real> getWindSpeeds() {
+        return windSpds;
+    }
+
+    public TreeMap<LocalTime, Real> getWindDirs() {
+        return windDirs;
+    }
+
+    public TreeMap<LocalTime, Real> getClouds() {
+        return clouds;
     }
 
     /**
@@ -342,4 +390,18 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     public ImageIcon getImageIcon() {
         return ImageUtil.createImageIconFromResource("images/sun_clouds.png", getClass());
     }
+
+    @Override
+    public Action getConfigAction() {
+        return new AbstractAction() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DiurnalWeatherWizard wizard = new DiurnalWeatherWizard(DiurnalWeatherProvider.this);
+                wizard.show();
+            }
+        };
+    }
+   
+    
 }

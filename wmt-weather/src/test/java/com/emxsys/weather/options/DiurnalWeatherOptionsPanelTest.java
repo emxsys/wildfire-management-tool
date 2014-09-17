@@ -12,7 +12,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     - Neither the name of Bruce Schubert,  nor the names of its 
+ *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -27,14 +27,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.emxsys.weather.options;
 
-package com.emxsys.weather.api;
+import javax.swing.JOptionPane;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
- * A marker interface for a service provided by a {@code WeatherProvider}.
- * 
+ *
  * @author Bruce Schubert
  */
-public interface WeatherService {
+public class DiurnalWeatherOptionsPanelTest {
     
+    public DiurnalWeatherOptionsPanelTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    /**
+     * Interactive tests to evaluate layout and load/store behavior.
+     * Comment out @Ignore to interactively evaluate the behavior of the panel.
+     */
+    //@Ignore
+    @Test
+    public void testBehavior() {
+        System.out.println("load");
+        DiurnalWeatherOptionsPanel instance = new DiurnalWeatherOptionsPanel(new DiurnalWeatherOptionsPanelController());
+        instance.load();
+        assertTrue(JOptionPane.showConfirmDialog(
+                null,
+                instance,
+                "Validate Defaults and Edit",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null) == JOptionPane.YES_OPTION);
+        System.out.println("store");
+        instance.store();
+        instance.load();
+        assertTrue(JOptionPane.showConfirmDialog(
+                null,
+                instance,
+                "Validate Edits",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null) == JOptionPane.YES_OPTION);
+    }
 }

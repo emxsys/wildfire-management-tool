@@ -12,7 +12,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     - Neither the name of Bruce Schubert,  nor the names of its 
+ *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -27,14 +27,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.emxsys.weather.wizards;
 
-package com.emxsys.weather.api;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.options.WeatherOptions;
+import java.time.ZonedDateTime;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
- * A marker interface for a service provided by a {@code WeatherProvider}.
+ * Performs interactive tests of the DiurnalWeatherWizard
+ * 
+ * Comment out @Ignore to run the tests.
  * 
  * @author Bruce Schubert
  */
-public interface WeatherService {
-    
+//@Ignore("interative test")
+public class DiurnalWeatherWizardTest {
+
+    public DiurnalWeatherWizardTest() {
+    }
+
+    @Test
+    public void testShow() {
+        System.out.println("testShow");
+        DiurnalWeatherProvider provider = WeatherOptions.newDiurnalWeatherProvider();
+        DiurnalWeatherWizard instance = new DiurnalWeatherWizard(provider);
+        boolean result = instance.testShow();
+        assertTrue("Wizard was cancelled.", result);
+        
+        provider.initializeSunlight(ZonedDateTime.now(), GeoCoord3D.fromDegrees(34.25, -119.2));
+        System.out.println(provider.getWeather(ZonedDateTime.now()));
+    }
 }

@@ -27,28 +27,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.weather.api.services;
+// Create a "Weather" primary options panel
+@OptionsPanelController.ContainerRegistration(
+        id = "Weather",
+        categoryName = "#OptionsCategory_Name_Weather",
+        iconBase = "com/emxsys/weather/images/sun_clouds32.png",
+        keywords = "#OptionsCategory_Keywords_Weather",
+        keywordsCategory = "Weather")
+@NbBundle.Messages(value = {
+    "OptionsCategory_Name_Weather=Weather",
+    "OptionsCategory_Keywords_Weather=weather diurnal units uom"})
 
-import com.emxsys.weather.api.WeatherService;
-import com.emxsys.visad.SpatialDomain;
-import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.WeatherModel;
+package com.emxsys.weather.options;
 
-/**
- * A an interface for getting recorded weather conditions within a geographical area and time frame.
- *
- * @author Bruce Schubert
- */
-public interface WeatherRecorder extends WeatherService{
-
-    /**
-     * Gets the recorded weather observations within the given time frame and inside the area of
-     * interest.
-     *
-     * @param areaOfInterest The geographical area to be examined for weather reporting stations.
-     * @param timeframe The time range for the observations.
-     * @return A {@code WeatherModel} containing the weather observations.
-     */
-    WeatherModel getRecordedConditions(SpatialDomain areaOfInterest, TemporalDomain timeframe);
-
-}
+import org.netbeans.spi.options.OptionsPanelController;
+import org.openide.util.NbBundle;

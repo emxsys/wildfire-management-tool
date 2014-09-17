@@ -29,41 +29,49 @@
  */
 package com.emxsys.weather.api;
 
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
 
 /**
+ * A {@code WeatherProvider} maintains a collection of {@code WeatherService} instances in its
+ * Lookup.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public interface WeatherProvider extends Lookup.Provider {
 
     /**
-     * Gets the capability object from the lookup.  A shortcut for getLookup.lookup().
+     * Gets the capability object from the lookup. A shortcut for getLookup.lookup().
      * @param <T> The object type.
      * @param clazz The class to lookup.
      * @return The capability object in the lookup, or null if not found.
      */
-    <T> T getCapability(Class<T> clazz);
-    
+    <T extends WeatherService> T getService(Class<T> clazz);
+
     /**
-     * Returns true if the capability exists in the the lookup.  
+     * Returns true if the capability exists in the the lookup.
      * @param clazz The class to lookup.
      * @return True if the capability object is in the lookup.
      */
-    boolean hasCapability(Class clazz);
-    
-    
+    boolean hasService(Class<? extends WeatherService> clazz);
+
     /**
      * Gets the name of this provider.
      * @return A name for this provider.
      */
     String getName();
-    
+
     /**
      * Gets an icon representative of this provider, e.g., Yahoo, NWS, WeatherUnderground.
      * @return An ImageIcon; may be null
      */
     ImageIcon getImageIcon();
-    
+
+    /**
+     * Gets an Action used for configuring this provider.
+     * @return An Action used to configure the provider; may be null.
+     */
+    Action getConfigAction();
+
 }

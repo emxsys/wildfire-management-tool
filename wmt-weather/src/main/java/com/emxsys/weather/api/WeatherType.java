@@ -54,6 +54,8 @@ public class WeatherType {
     public static final RealType WIND_SPEED_KTS;
     /** Wind direction "to" in compass direction (degrees). */
     public static final RealType WIND_DIR;
+    /** Air temperature in Kelvin (base unit) */
+    public static final RealType AIR_TEMP;
     /** Air temperature in Celsius */
     public static final RealType AIR_TEMP_C;
     /** Air temperature in Fahrenheit */
@@ -73,6 +75,7 @@ public class WeatherType {
         WIND_SPEED_KPH = RealType.getRealType("wind_speed:kph", GeneralUnit.kph, null);
         WIND_SPEED_KTS = RealType.getRealType("wind_speed:kts", GeneralUnit.knot, null);
         WIND_DIR = RealType.getRealType("wind_dir:deg", CommonUnit.degree, null);
+        AIR_TEMP = RealType.getRealType("air_temp", GeneralUnit.degK, null);
         AIR_TEMP_C = RealType.getRealType("air_temp:C", GeneralUnit.degC, null);
         AIR_TEMP_F = RealType.getRealType("air_temp:F", GeneralUnit.degF, null);
         REL_HUMIDITY = RealType.getRealType("rel_humidity:%", GeneralUnit.percent, null);

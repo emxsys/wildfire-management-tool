@@ -31,7 +31,16 @@ package com.emxsys.weather.api;
 
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.visad.SpatialField;
+import com.emxsys.visad.TemporalDomain;
+import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
+import com.emxsys.weather.api.services.WeatherObserver;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
+import org.openide.util.lookup.InstanceContent;
 import visad.Real;
 
 /**
@@ -46,14 +55,54 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
     private Real relHumd = new Real(WeatherType.REL_HUMIDITY);
     private Real cldCovr = new Real(WeatherType.CLOUD_COVER);
 
-
     /**
-     * Default Constructor.
+     * Default Constructor.  The weather values are all "missing".
      */
     public SimpleWeatherProvider() {
         // Initialize the lookup with this provider's capabilities
-        //InstanceContent content = getContent();
-        //content.add((StationObserver) this::getCurrentWeather);  // functional interface 
+        InstanceContent content = getContent();
+        content.add(new WeatherObserver() {
+
+            /**
+             * Gets a WeatherModel from the weather values stored in this provider.
+             * @param areaOfInterest Each coordinate in the spatial domain will get the same values.
+             * @param age Ignored. The current time will be used for the temporal domain.
+             * @return a new WeatherModel.
+             */
+            @Override
+            public WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age) {
+                TemporalDomain timeDomain = TemporalDomain.from(ZonedDateTime.now());
+                return getObservations(areaOfInterest, timeDomain);
+            }
+
+            /**
+             * Gets a WeatherModel from the weather values stored in this provider.
+             * @param areaOfInterest Each coordinate in the spatial domain will get the same weather
+             * values.
+             * @param timeframe Each time in the domain will get the same weather value.
+             * @return a new WeatherModel.
+             */
+            @Override
+            public WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
+
+                final int numTimes = timeframe.getDomainSetLength();
+                final int numLatLons = areaOfInterest.getDomainSetLength();
+
+                SpatialField[] fields = new SpatialField[numTimes];
+                for (int t = 0; t < numTimes; t++) {
+                    double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
+                    for (int xy = 0; xy < numLatLons; xy++) {
+                        rangeSamples[0][xy] = airTemp.getValue();
+                        rangeSamples[1][xy] = relHumd.getValue();
+                        rangeSamples[2][xy] = windSpd.getValue();
+                        rangeSamples[3][xy] = windDir.getValue();
+                        rangeSamples[4][xy] = cldCovr.getValue();
+                    }
+                    fields[t] = SpatialField.from(areaOfInterest, FIRE_WEATHER, rangeSamples);
+                }
+                return WeatherModel.from(timeframe, fields);
+            }
+        });
     }
 
     @Override
@@ -93,7 +142,6 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
                 this.windDir,
                 this.cldCovr);
     }
-
 
     @Override
     public ImageIcon getImageIcon() {

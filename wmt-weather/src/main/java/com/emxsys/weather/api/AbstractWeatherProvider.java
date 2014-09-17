@@ -29,6 +29,7 @@
  */
 package com.emxsys.weather.api;
 
+import javax.swing.Action;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -52,12 +53,12 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
     }
     
     @Override
-    public <T> T getCapability(Class<T> clazz) {
+    public <T extends WeatherService> T getService(Class<T> clazz) {
         return getLookup().lookup(clazz);
     }
 
     @Override
-    public boolean hasCapability(Class clazz) {
+    public boolean hasService(Class<? extends WeatherService> clazz) {
         return getLookup().lookup(clazz) != null;
     }
 
@@ -74,4 +75,10 @@ public abstract class AbstractWeatherProvider implements WeatherProvider {
         return getName();
     }
 
+    @Override
+    public Action getConfigAction() {
+        return null;
+    }
+
+    
 }

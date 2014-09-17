@@ -12,7 +12,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     - Neither the name of Bruce Schubert,  nor the names of its 
+ *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -27,14 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.emxsys.weather.panels;
 
-package com.emxsys.weather.api;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.weather.api.WeatherType;
+import javax.swing.JOptionPane;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import visad.Real;
 
 /**
- * A marker interface for a service provided by a {@code WeatherProvider}.
- * 
+ * Tests the layout and behavior of the TemperaturePanel.
+ *
+ * Comment out @Ignore to display the interactive unit tests.
+ *
  * @author Bruce Schubert
  */
-public interface WeatherService {
-    
+@Ignore("interactive tests")
+public class TemperaturePanelTest {
+
+    public TemperaturePanelTest() {
+    }
+
+    @Test
+    public void testBehavior() {
+        System.out.println("testBehavior - interactive");
+        assertTrue("Form was invalidated by the user",
+                JOptionPane.showConfirmDialog(
+                        null, // frame
+                        new TemperaturePanel("Temperature", GeneralUnit.degC, new Real(WeatherType.AIR_TEMP_F, 59)),
+                        "Is Form Valid?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null) == JOptionPane.YES_OPTION);
+    }
+
 }

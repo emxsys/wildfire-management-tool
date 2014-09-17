@@ -31,24 +31,35 @@ package com.emxsys.weather.api.services;
 
 import com.emxsys.weather.api.WeatherService;
 import com.emxsys.visad.SpatialDomain;
+import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.WeatherModel;
 import java.time.Duration;
 
 /**
- * A an interface for gathering the current and/or historical weather conditions within a
- * geographical area.
+ * An interface for gathering the current and/or historical weather conditions within a geographical
+ * area.
  *
  * @author Bruce Schubert
  */
-public interface WeatherObserver extends WeatherService{
+public interface WeatherObserver extends WeatherService {
 
     /**
-     * Gets the latest weather observations within the age and inside the area of interest.
+     * Gets the latest weather observations (i.e., current conditions) within the age and inside the
+     * area of interest.
      *
      * @param areaOfInterest The geographical area to be examined for weather reporting stations.
-     * @param age The permissible age of an observation. 
+     * @param age The permissible age of an observation.
      * @return A {@code WeatherModel} containing the weather observations.
      */
-    WeatherModel getCurrentConditions(SpatialDomain areaOfInterest, Duration age);
+    WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age);
+
+    /**
+     * Gets the weather observations within the given time frame and inside the area of interest.
+     *
+     * @param areaOfInterest The geographical area to be examined for weather reporting stations.
+     * @param timeframe The time range for the observations.
+     * @return A {@code WeatherModel} containing the weather observations.
+     */
+    WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe);
 
 }

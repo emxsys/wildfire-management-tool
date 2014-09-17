@@ -85,6 +85,31 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-dialogs</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-awt</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wmt-jfree</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -98,7 +123,10 @@
                     <publicPackages>
                         <publicPackage>com.emxsys.weather.api</publicPackage>
                         <publicPackage>com.emxsys.weather.api.services</publicPackage>
+                        <publicPackage>com.emxsys.weather.options</publicPackage>
+                        <publicPackage>com.emxsys.weather.panels</publicPackage>
                         <publicPackage>com.emxsys.weather.spi</publicPackage>
+                        <publicPackage>com.emxsys.weather.wizards</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

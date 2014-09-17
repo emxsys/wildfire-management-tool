@@ -37,7 +37,6 @@ import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
-import com.emxsys.weather.api.services.WeatherRecorder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -48,14 +47,14 @@ import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
 
 /**
- * The DefaultWeatherProvider supplies a list of registered WeatherProvider service providers.
+ * The DefaultWeatherServiceProvider supplies a list of registered WeatherProvider service providers.
  *
  * @author Bruce Schubert
  */
-public class DefaultWeatherProvider {
+public class DefaultWeatherServiceProvider {
 
     private static ArrayList<WeatherProvider> instances;
-    private static final Logger logger = Logger.getLogger(DefaultWeatherProvider.class.getName());
+    private static final Logger logger = Logger.getLogger(DefaultWeatherServiceProvider.class.getName());
 
     /**
      * Gets the registered WeatherProviders service providers from the global lookup (if any) plus a
@@ -91,7 +90,7 @@ public class DefaultWeatherProvider {
     }
 
     /**
-     * Gets the WeatherProvider instances can provide the current conditions.
+     * Gets the WeatherProvider instances can provide recorded observations.
      *
      * @return A collection of WeatherProvider instances that have the WeatherObserver capability.
      */
@@ -105,20 +104,6 @@ public class DefaultWeatherProvider {
         return providers;
     }
 
-    /**
-     * Gets the WeatherProvider instances that can get the past weather .
-     *
-     * @return A collection of WeatherProvider instances that have the WeatherRecorder capability.
-     */
-    public static List<WeatherProvider> getWeatherRecorders() {
-        ArrayList<WeatherProvider> providers = new ArrayList<>();
-        getInstances().stream()
-                .filter((provider) -> (provider.getLookup().lookup(WeatherRecorder.class)) != null)
-                .forEach((provider) -> {
-                    providers.add(provider);
-                });
-        return providers;
-    }
 
     /**
      * Gets the WeatherProvider instances that intersect the given extents.
