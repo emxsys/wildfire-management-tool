@@ -34,13 +34,12 @@ import com.emxsys.gis.api.Coords;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.visad.Times;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.weather.api.services.WeatherForecaster;
-import com.emxsys.weather.api.services.WeatherRecorder;
+import com.emxsys.weather.api.services.WeatherObserver;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -49,10 +48,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.openide.util.Exceptions;
 import visad.Data;
-import visad.DateTime;
 import visad.FlatField;
 import visad.RealTuple;
-import visad.Set;
 import visad.VisADException;
 
 /**
@@ -62,8 +59,16 @@ import visad.VisADException;
  */
 public class WeatherManager {
 
+    /**
+     * Gets the WeatherManager singleton instance.
+     *
+     * @return The singleton.
+     */
+    public static WeatherManager getInstance() {
+        return WeatherManagerHolder.INSTANCE;
+    }
     private WeatherForecaster forecaster;
-    private WeatherRecorder recorder;
+    private WeatherObserver observer;
     private Map<Long, FlatField> historyCache = new HashMap<>();
     private Map<Long, FlatField> forecastCache = new HashMap<>();
 
@@ -76,9 +81,6 @@ public class WeatherManager {
     private SpatialDomain spatialDomain;
     private WeatherModel weatherForecast;
     private WeatherModel weatherHistory;
-
-    private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
-    private final DiurnalWeatherProvider diurnalWeather = new DiurnalWeatherProvider();
 
     // Automatically update the weather when the system time advances past the top-of-the-hour
     public void updateTime(ZonedDateTime time) {
@@ -126,8 +128,8 @@ public class WeatherManager {
             forecastCache.clear();
         }
         // Update weather history
-        if (recorder != null) {
-            weatherHistory = recorder.getRecordedConditions(spatialDomain, historyDomain);
+        if (observer != null) {
+            weatherHistory = observer.getObservations(spatialDomain, historyDomain);
             // No need to flush cache...observations do not change over time.
         }
     }
@@ -180,8 +182,9 @@ public class WeatherManager {
 //        }
         // Return a safe value if no weather available
         return WeatherTuple.INVALID_TUPLE;
-        
+
     }
+
     public WeatherTuple getWeatherAt(Coord2D coord, ZonedDateTime time) {
         // Prerequistes
         WeatherModel model;
@@ -236,8 +239,8 @@ public class WeatherManager {
         this.forecaster = forecaster;
     }
 
-    public void setRecorder(WeatherRecorder recorder) {
-        this.recorder = recorder;
+    public void setObserver(WeatherObserver observer) {
+        this.observer = observer;
     }
 
     public WeatherModel getWeatherForecast() {
@@ -246,5 +249,13 @@ public class WeatherManager {
 
     public WeatherModel getWeatherHistory() {
         return weatherHistory;
+    }
+
+    /**
+     * Singleton implementation.
+     */
+    private static class WeatherManagerHolder {
+
+        private static final WeatherManager INSTANCE = new WeatherManager();
     }
 }

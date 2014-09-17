@@ -34,9 +34,11 @@ import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.weather.spi.DefaultWeatherProvider;
-import com.emxsys.wmt.cps.Controller;
+import com.emxsys.weather.api.services.WeatherForecaster;
+import com.emxsys.weather.api.services.WeatherObserver;
+import com.emxsys.weather.spi.DefaultWeatherServiceProvider;
 import com.emxsys.wmt.cps.Model;
+import com.emxsys.wmt.cps.WeatherManager;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.views.weather.AirTemperaturePanel;
 import com.emxsys.wmt.cps.views.weather.RelativeHumidityPanel;
@@ -49,6 +51,7 @@ import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -103,13 +106,16 @@ import visad.RealType;
 public final class WeatherTopComponent extends TopComponent {
 
     public static final String PREFERRED_ID = "WeatherTopComponent";
-    public static final String LAST_WEATHER_PROVIDER = "wmt.cps.lastWeatherProvider";
+    public static final String PREF_LAST_WX_OBSERVER_SERVICE = "wmt.cps.lastWeatherObserver";
+    public static final String PREF_LAST_WX_FORECAST_SERVICE = "wmt.cps.lastWeatherForecaster";
     private JPanel layoutPanel;
     private AirTemperaturePanel airTemperaturePanel;
     private RelativeHumidityPanel relativeHumidityPanel;
     private WindPanel windPanel;
     private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
+    private WeatherProvider selectedObserver;
+    private WeatherProvider selectedForecaster;
     private PreferenceChangeListener prefsChangeListener;
 
     /** Listener for changes in the existence of data providersComboBox */
@@ -129,24 +135,14 @@ public final class WeatherTopComponent extends TopComponent {
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-        
+
         // Add a listener to update the Diurnal Weather with the current sunlight
         Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
             diurnalWx.setSunlight((Sunlight) evt.getNewValue());
         });
-        
+
         logger.config(PREFERRED_ID + " initialized.");
     }
-
-    /**
-     * Gets the WeatherProvider used for overriding / interacting with the Weather.
-     *
-     * @return The SimpleWeatherProvider.
-     */
-    public SimpleWeatherProvider getSimpleWeather() {
-        return this.simpleWx;
-    }
-
 
     /**
      * Initializes the fuel model selections.
@@ -189,35 +185,54 @@ public final class WeatherTopComponent extends TopComponent {
     /**
      * Populates the combo box.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     private void initProvidersComboBox() {
         // TODO: will need to arbitrate between current project fireground provider and last used provider
 
         // Load ALL the WeatherProviders regardless of their extents
-        DefaultComboBoxModel<WeatherProvider> comboBoxModel = new DefaultComboBoxModel<>();
-        List<WeatherProvider> instances = DefaultWeatherProvider.getInstances();
+        DefaultComboBoxModel<WeatherProvider> observers = new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<WeatherProvider> forecasters = new DefaultComboBoxModel<>();
+        List<WeatherProvider> instances = DefaultWeatherServiceProvider.getInstances();
         instances.stream().forEach((instance) -> {
-            comboBoxModel.addElement(instance);
+            if (instance.hasService(WeatherObserver.class)) {
+                observers.addElement(instance);
+            }
+            if (instance.hasService(WeatherForecaster.class)) {
+                forecasters.addElement(instance);
+            }
         });
-        // Add the Simple and Diurnal weather providers
-        comboBoxModel.addElement(simpleWx);
-        comboBoxModel.addElement(diurnalWx);
 
-        // Preselect the last used provider, if set, otherwise, just use the first provider 
-        String lastProviderClassName = prefs.get(LAST_WEATHER_PROVIDER,
+        // Preselect the last used services, if set, otherwise, just use the first service
+        String lastWxObsService = prefs.get(PREF_LAST_WX_OBSERVER_SERVICE,
                 instances.size() > 0 ? instances.get(0).getClass().getName() : "");
-        if (!lastProviderClassName.isEmpty()) {
+        if (!lastWxObsService.isEmpty()) {
             // Select the matching class in the combobox model
-            for (int i = 0; i < comboBoxModel.getSize(); i++) {
-                WeatherProvider provider = comboBoxModel.getElementAt(i);
-
-                if (provider.getClass().getName().equals(lastProviderClassName)) {
-                    comboBoxModel.setSelectedItem(provider);
-                    Controller.getInstance().setWeatherProvider(provider);
+            for (int i = 0; i < observers.getSize(); i++) {
+                WeatherProvider provider = observers.getElementAt(i);
+                if (provider.getClass().getName().equals(lastWxObsService)) {
+                    observers.setSelectedItem(provider);
+                    WeatherManager.getInstance().setObserver(provider.getService(WeatherObserver.class));
                 }
             }
         }
-        this.providersComboBox.setModel(comboBoxModel);
+        observers.addElement(new DiurnalWeatherProvider());
+        
+        String lastWxFcstService = prefs.get(PREF_LAST_WX_FORECAST_SERVICE,
+                instances.size() > 0 ? instances.get(0).getClass().getName() : "");
+        if (!lastWxObsService.isEmpty()) {
+            // Select the matching class in the combobox model
+            for (int i = 0; i < forecasters.getSize(); i++) {
+                WeatherProvider provider = forecasters.getElementAt(i);
+                if (provider.getClass().getName().equals(lastWxFcstService)) {
+                    forecasters.setSelectedItem(provider);
+                    WeatherManager.getInstance().setForecaster(provider.getService(WeatherForecaster.class));
+                }
+            }
+        }
+        forecasters.addElement(new DiurnalWeatherProvider());
+        
+        this.observersComboBox.setModel(observers);
+        this.forecastersComboBox.setModel(forecasters);
     }
 
     /**
@@ -244,11 +259,11 @@ public final class WeatherTopComponent extends TopComponent {
         upperPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        providersComboBox = new javax.swing.JComboBox();
-        providersComboBox1 = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        observersComboBox = new javax.swing.JComboBox();
+        forecastersComboBox = new javax.swing.JComboBox();
+        configObserverButton = new javax.swing.JButton();
+        configForecasterButton = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
         centerPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -259,34 +274,39 @@ public final class WeatherTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jLabel2.text")); // NOI18N
 
-        providersComboBox.addActionListener(new java.awt.event.ActionListener() {
+        observersComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                providersComboBoxActionPerformed(evt);
+                observersComboBoxActionPerformed(evt);
             }
         });
 
-        providersComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        forecastersComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                providersComboBox1ActionPerformed(evt);
+                forecastersComboBoxActionPerformed(evt);
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/images/process.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jButton1.text")); // NOI18N
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/views/process.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jButton2.text")); // NOI18N
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        configObserverButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/images/process.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(configObserverButton, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.configObserverButton.text")); // NOI18N
+        configObserverButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                configObserverButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/images/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(jButton3, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jButton3.text")); // NOI18N
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        configForecasterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/views/process.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(configForecasterButton, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.configForecasterButton.text")); // NOI18N
+        configForecasterButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                configForecasterButtonActionPerformed(evt);
+            }
+        });
+
+        refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wmt/cps/images/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.refreshButton.text")); // NOI18N
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
             }
         });
 
@@ -300,28 +320,28 @@ public final class WeatherTopComponent extends TopComponent {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(providersComboBox1, 0, 244, Short.MAX_VALUE)
-                    .addComponent(providersComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(forecastersComboBox, 0, 244, Short.MAX_VALUE)
+                    .addComponent(observersComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(configObserverButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(configForecasterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         upperPanelLayout.setVerticalGroup(
             upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(upperPanelLayout.createSequentialGroup()
                 .addGroup(upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(providersComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton3))
+                    .addComponent(observersComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(configObserverButton)
+                    .addComponent(refreshButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(upperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(providersComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(forecastersComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(configForecasterButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -331,35 +351,48 @@ public final class WeatherTopComponent extends TopComponent {
         add(centerPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void providersComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providersComboBox1ActionPerformed
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_providersComboBox1ActionPerformed
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
-    private void providersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_providersComboBoxActionPerformed
-        // Update the Controller.
-        WeatherProvider provider = (WeatherProvider) providersComboBox.getSelectedItem();
+    private void configForecasterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configForecasterButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_configForecasterButtonActionPerformed
+
+    private void forecastersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastersComboBoxActionPerformed
+        // Update the Weather Manager
+        WeatherProvider provider = (WeatherProvider) forecastersComboBox.getSelectedItem();
         logger.log(Level.FINE, "Selected weather provider: {0}", provider);
-        Controller.getInstance().setWeatherProvider(provider);
-        prefs.put(LAST_WEATHER_PROVIDER, provider.getClass().getName());
-    }//GEN-LAST:event_providersComboBoxActionPerformed
+        WeatherManager.getInstance().setForecaster(provider.getService(WeatherForecaster.class));
+        prefs.put(PREF_LAST_WX_OBSERVER_SERVICE, provider.getClass().getName());
+    }//GEN-LAST:event_forecastersComboBoxActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void observersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_observersComboBoxActionPerformed
+        // Update the Weather Manager
+        WeatherProvider provider = (WeatherProvider) observersComboBox.getSelectedItem();
+        logger.log(Level.FINE, "Selected weather provider: {0}", provider);
+        WeatherManager.getInstance().setObserver(provider.getService(WeatherObserver.class));
+        prefs.put(PREF_LAST_WX_OBSERVER_SERVICE, provider.getClass().getName());
+    }//GEN-LAST:event_observersComboBoxActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void configObserverButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configObserverButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        WeatherProvider provider = (WeatherProvider) observersComboBox.getSelectedItem();
+        Action action = provider.getConfigAction();
+        if (action != null) {
+            action.actionPerformed(evt);
+        }
+    }//GEN-LAST:event_configObserverButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel centerPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton configForecasterButton;
+    private javax.swing.JButton configObserverButton;
+    private javax.swing.JComboBox forecastersComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JComboBox providersComboBox;
-    private javax.swing.JComboBox providersComboBox1;
+    private javax.swing.JComboBox observersComboBox;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
     @Override

@@ -50,10 +50,7 @@ import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
-import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
-import com.emxsys.weather.api.services.WeatherForecaster;
-import com.emxsys.weather.api.services.WeatherRecorder;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
@@ -61,27 +58,26 @@ import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.views.ForcesTopComponent;
 import com.emxsys.wmt.globe.Globe;
-import com.emxsys.wmt.weather.mesowest.MesoWestWeatherProvider;
-import com.emxsys.wmt.weather.nws.NwsWeatherProvider;
 import java.beans.PropertyChangeEvent;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import org.netbeans.api.project.Project;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.NbPreferences;
 import org.openide.util.RequestProcessor;
+import org.openide.util.Utilities;
 import org.openide.util.WeakListeners;
-import visad.DateTime;
 import visad.Real;
-import visad.RealTuple;
 
 /**
  * The CPS Controller class monitors time and location events, specifies the domain, updates the
@@ -109,14 +105,8 @@ public class Controller {
     private final TimeProvider earthClock;
     private ReticuleCoordinateProvider reticule;
     private FuelModelProvider fuels;
-    
-    // The Weather
-    private WeatherProvider forecastProvider = NwsWeatherProvider.getInstance();        // TEST
-    private WeatherProvider historyProvider = MesoWestWeatherProvider.getInstance();    // TEST 
-    private WeatherManager wxManager = new WeatherManager();
-    
+
     private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
-    private final DiurnalWeatherProvider diurnalWeather = new DiurnalWeatherProvider();
 
     // Event handlers
     private final CooridinateUpdater coordinateUpdater;
@@ -127,7 +117,11 @@ public class Controller {
     // The domain
     private TemporalDomain temporalDomain = new TemporalDomain();
     private SpatialDomain spatialDomain = new SpatialDomain();
-    
+
+    // The current project
+    private Project currentProject;
+    private Lookup.Result<Project> projects;
+    private LookupListener projectListener;
 
     private final PreferenceChangeListener prefsChangeListener;
     private boolean terrainShadingEnabled;
@@ -154,10 +148,6 @@ public class Controller {
         timeUpdater.updateTime(
                 new TimeEvent(this, null, ZonedDateTime.now(ZoneId.of("UTC"))));
 
-        // Update weather manager
-        wxManager.setForecaster(forecastProvider.getCapability(WeatherForecaster.class));
-        wxManager.setRecorder(historyProvider.getCapability(WeatherRecorder.class));
-        
         // LookupListener waits for arrival of  ReticuleCoordinateProvider ...
         reticuleLookupListener = (LookupEvent le) -> {
             if (reticuleResult != null && reticuleResult.allInstances().iterator().hasNext()) {
@@ -181,8 +171,19 @@ public class Controller {
         prefs.addPreferenceChangeListener(prefsChangeListener);
         prefsChangeListener.preferenceChange(null);
 
+        // Listen for projects, to control the with/without project behavior
+        this.projects = Utilities.actionsGlobalContext().lookupResult(Project.class);
+        this.projectListener = (LookupEvent ev) -> {
+            Collection<? extends Project> allInstances = projects.allInstances();
+            if (allInstances.size() == 1) {
+                currentProject = allInstances.iterator().next();
+            }
+        };
+        this.projects.addLookupListener(this.projectListener);
+        this.projectListener.resultChanged(null);
+
+        // TODO: Move to Forces view
         // Listen for changes from the manual input controls
-        
         ForcesTopComponent forcesWindow = ForcesTopComponent.getInstance();
         forcesWindow.addAirTempPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setAirTemperature((Real) evt.getNewValue());
@@ -237,20 +238,6 @@ public class Controller {
         coordinateUpdater.update();
     }
 
-    /**
-     * Sets the WeatherProvider used by the Controller to determine the weather at the current
-     * coordinate and time. Invoked by the WeatherTopComponent.
-     *
-     * @param weatherSource The new WeatherProvider.
-     */
-    public void setWeatherProvider(WeatherProvider weatherSource) {
-        if (weatherSource == null) {
-            throw new IllegalArgumentException("WeatherProvider is null.");
-        }
-//        logger.log(Level.CONFIG, "WeatherProvider set to: {0}", weatherSource.toString());
-//        this.weatherForecaster = weatherSource;
-//        this.model.weatherProvider = weatherSource;
-    }
 
     /**
      * CooridinateUpdater monitors the globe's reticule (cross-hairs) layer and updates the domain
@@ -289,7 +276,7 @@ public class Controller {
                 if (event == null || controller.earth == null) {
                     return;
                 }
-                
+
                 Coord3D coord = event.getCoordinate();
                 if (coord.isMissing()) {
                     return;
@@ -312,14 +299,14 @@ public class Controller {
                 GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
                 boolean isShaded
                         = controller.terrainShadingEnabled && !(azimuth.isMissing() || zenith.isMissing())
-                        ? controller.earth.isCoordinateTerrestialShaded(coord, subsolarPoint)
-                        //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
-                        : false;
+                                ? controller.earth.isCoordinateTerrestialShaded(coord, subsolarPoint)
+                                //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
+                                : false;
                 controller.model.setShaded(isShaded);
 
                 // Update the Weather
-                controller.wxManager.updateCoord(coord);
-                WeatherTuple weather = controller.wxManager.getWeatherAt(coord, controller.model.getDateTime());
+                WeatherManager.getInstance().updateCoord(coord);
+                WeatherTuple weather = WeatherManager.getInstance().getWeatherAt(coord, controller.model.getDateTime());
                 controller.model.setWeather(weather);
                 // Update the Weather
 //                if (controller.weather != null) {
@@ -382,10 +369,9 @@ public class Controller {
             // Update the temporal-spatial domain
             ZonedDateTime time = timeEvent.getNewTime();
             controller.temporalDomain = new TemporalDomain(time.minusHours(24), 25);
-            
-            controller.wxManager.updateTime(time);
-            
-            
+
+            WeatherManager.getInstance().updateTime(time);
+
             SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
             controller.model.setDateTime(time);
             controller.model.setDomain(domain);
@@ -400,10 +386,10 @@ public class Controller {
                 controller.model.setSunlight(sunlight);
 
                 // Update the Weather
-                controller.wxManager.updateTime(time);
-                WeatherTuple weather = controller.wxManager.getWeatherAt(coord, time);
+                WeatherManager.getInstance().updateTime(time);
+                WeatherTuple weather = WeatherManager.getInstance().getWeatherAt(coord, time);
                 controller.model.setWeather(weather);
-                
+
 //                if (controller.forecastProvider != null) {
 //                    if (controller.forecastProvider instanceof DiurnalWeatherProvider) {
 //                        // Update sunrise/sunset times
@@ -422,7 +408,6 @@ public class Controller {
 //
 //                    }
 //                }
-
                 // Update the fire environment
                 Real azimuth = sunlight.getAzimuthAngle();
                 Real zenith = sunlight.getZenithAngle();
@@ -435,7 +420,7 @@ public class Controller {
 
                 // Update the fire
                 controller.model.computeFireBehavior();
-                
+
                 // Update the GUI 
                 controller.model.updateViews();
 
