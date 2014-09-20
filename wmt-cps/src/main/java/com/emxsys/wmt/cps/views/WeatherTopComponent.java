@@ -36,7 +36,8 @@ import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
-import com.emxsys.weather.spi.DefaultWeatherServiceProvider;
+import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.spi.WeatherProviderFactory;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.WeatherManager;
 import com.emxsys.wmt.cps.options.CpsOptions;
@@ -113,7 +114,7 @@ public final class WeatherTopComponent extends TopComponent {
     private RelativeHumidityPanel relativeHumidityPanel;
     private WindPanel windPanel;
     private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
-    private final DiurnalWeatherProvider diurnalWx = new DiurnalWeatherProvider();
+    private final DiurnalWeatherProvider diurnalWx;
     private WeatherProvider selectedObserver;
     private WeatherProvider selectedForecaster;
     private PreferenceChangeListener prefsChangeListener;
@@ -126,20 +127,23 @@ public final class WeatherTopComponent extends TopComponent {
     /**
      * Constructor.
      */
-    public WeatherTopComponent() {
-        //
+    public WeatherTopComponent() {        
         logger.fine(PREFERRED_ID + " initializing....");
+        
+        // Initialize our "manual" weather provider
+        diurnalWx = WeatherOptions.newDiurnalWeatherProvider();
+        diurnalWx.setSunlight(Model.getInstance().getSunlight());
+        // Add a listener to update the Diurnal Weather with the current sunlight
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            diurnalWx.setSunlight((Sunlight) evt.getNewValue());
+        });
+
         initComponents();
         initPanels();
         initWeatherProviders();
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-
-        // Add a listener to update the Diurnal Weather with the current sunlight
-        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
-            diurnalWx.setSunlight((Sunlight) evt.getNewValue());
-        });
 
         logger.config(PREFERRED_ID + " initialized.");
     }
@@ -149,28 +153,6 @@ public final class WeatherTopComponent extends TopComponent {
      */
     private void initWeatherProviders() {
 
-        // Listen for changes in the CPS Options/preferences...
-        prefsChangeListener = (PreferenceChangeEvent ignored) -> {
-            RealType uom = prefs.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US).equals(CpsOptions.UOM_US)
-                    ? WeatherType.AIR_TEMP_F : WeatherType.AIR_TEMP_C;
-
-            Real tempSunrise = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNRISE_KEY, CpsOptions.DEFAULT_TEMP_SUNRISE));
-            Real tempNoon = new Real(uom, prefs.getInt(CpsOptions.TEMP_1200_KEY, CpsOptions.DEFAULT_TEMP_1200));
-            Real temp1400 = new Real(uom, prefs.getInt(CpsOptions.TEMP_1400_KEY, CpsOptions.DEFAULT_TEMP_1400));
-            Real tempSunset = new Real(uom, prefs.getInt(CpsOptions.TEMP_SUNSET_KEY, CpsOptions.DEFAULT_TEMP_SUNSET));
-
-            Real rhSunrise = new Real(uom, prefs.getInt(CpsOptions.RH_SUNRISE_KEY, CpsOptions.DEFAULT_RH_SUNRISE));
-            Real rhNoon = new Real(uom, prefs.getInt(CpsOptions.RH_1200_KEY, CpsOptions.DEFAULT_RH_1200));
-            Real rh1400 = new Real(uom, prefs.getInt(CpsOptions.RH_1400_KEY, CpsOptions.DEFAULT_RH_1400));
-            Real rhSunset = new Real(uom, prefs.getInt(CpsOptions.RH_SUNSET_KEY, CpsOptions.DEFAULT_RH_SUNSET));
-
-            diurnalWx.initializeAirTemperatures(tempSunrise, tempNoon, temp1400, tempSunset);
-            diurnalWx.initializeRelativeHumidities(rhSunrise, rhNoon, rh1400, rhSunset);
-
-        };
-        prefs.addPreferenceChangeListener(prefsChangeListener);
-        // Fire a change event to load the preferences
-        prefsChangeListener.preferenceChange(null);
 
         // Using a LookupListener to reinitialize the combobox whenever the list of providersComboBox changes
         lookupWeatherProviders = Lookup.getDefault().lookupResult(WeatherProvider.class);
@@ -192,7 +174,7 @@ public final class WeatherTopComponent extends TopComponent {
         // Load ALL the WeatherProviders regardless of their extents
         DefaultComboBoxModel<WeatherProvider> observers = new DefaultComboBoxModel<>();
         DefaultComboBoxModel<WeatherProvider> forecasters = new DefaultComboBoxModel<>();
-        List<WeatherProvider> instances = DefaultWeatherServiceProvider.getInstances();
+        List<WeatherProvider> instances = WeatherProviderFactory.getInstances();
         instances.stream().forEach((instance) -> {
             if (instance.hasService(WeatherObserver.class)) {
                 observers.addElement(instance);
@@ -215,7 +197,7 @@ public final class WeatherTopComponent extends TopComponent {
                 }
             }
         }
-        observers.addElement(new DiurnalWeatherProvider());
+        observers.addElement(diurnalWx);
         
         String lastWxFcstService = prefs.get(PREF_LAST_WX_FORECAST_SERVICE,
                 instances.size() > 0 ? instances.get(0).getClass().getName() : "");
@@ -360,28 +342,35 @@ public final class WeatherTopComponent extends TopComponent {
     }//GEN-LAST:event_configForecasterButtonActionPerformed
 
     private void forecastersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastersComboBoxActionPerformed
+        
         // Update the Weather Manager
         WeatherProvider provider = (WeatherProvider) forecastersComboBox.getSelectedItem();
         logger.log(Level.FINE, "Selected weather provider: {0}", provider);
         WeatherManager.getInstance().setForecaster(provider.getService(WeatherForecaster.class));
-        prefs.put(PREF_LAST_WX_OBSERVER_SERVICE, provider.getClass().getName());
+        prefs.put(PREF_LAST_WX_FORECAST_SERVICE, provider.getClass().getName());
+        
     }//GEN-LAST:event_forecastersComboBoxActionPerformed
 
     private void observersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_observersComboBoxActionPerformed
+        
         // Update the Weather Manager
         WeatherProvider provider = (WeatherProvider) observersComboBox.getSelectedItem();
         logger.log(Level.FINE, "Selected weather provider: {0}", provider);
         WeatherManager.getInstance().setObserver(provider.getService(WeatherObserver.class));
         prefs.put(PREF_LAST_WX_OBSERVER_SERVICE, provider.getClass().getName());
+        
     }//GEN-LAST:event_observersComboBoxActionPerformed
 
     private void configObserverButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configObserverButtonActionPerformed
-        // TODO add your handling code here:
+        
+        // Configure the weather source
         WeatherProvider provider = (WeatherProvider) observersComboBox.getSelectedItem();
         Action action = provider.getConfigAction();
         if (action != null) {
             action.actionPerformed(evt);
+            WeatherManager.getInstance().refreshModels();
         }
+        
     }//GEN-LAST:event_configObserverButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
