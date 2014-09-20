@@ -387,7 +387,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @return
      */
     static private double calcValueEarlyAfternoon(double time, double valueAtNoon, double valueAt1400) {
-        double range = valueAtNoon - valueAt1400;
+        double range =  valueAt1400 - valueAtNoon;
         double x = (time - 12.) / 2.;
         return valueAtNoon + range * x;
     }
