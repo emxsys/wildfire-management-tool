@@ -34,8 +34,6 @@ import com.emxsys.gis.api.Coords;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.weather.api.services.WeatherForecaster;
@@ -69,8 +67,8 @@ public class WeatherManager {
     }
     private WeatherForecaster forecaster;
     private WeatherObserver observer;
-    private Map<Long, FlatField> historyCache = new HashMap<>();
-    private Map<Long, FlatField> forecastCache = new HashMap<>();
+    private final Map<Long, FlatField> observationCache = new HashMap<>();
+    private final Map<Long, FlatField> forecastCache = new HashMap<>();
 
     private ZonedDateTime hour;
     private Duration historyPeriod = Duration.ofHours(24);
@@ -80,7 +78,7 @@ public class WeatherManager {
     private TemporalDomain historyDomain;
     private SpatialDomain spatialDomain;
     private WeatherModel weatherForecast;
-    private WeatherModel weatherHistory;
+    private WeatherModel weatherObservations;
 
     // Automatically update the weather when the system time advances past the top-of-the-hour
     public void updateTime(ZonedDateTime time) {
@@ -116,7 +114,7 @@ public class WeatherManager {
         }
     }
 
-    private void refreshModels() {
+    public void refreshModels() {
         // Prerequisites
         if (spatialDomain == null || forecastDomain == null) {
             return;
@@ -129,8 +127,9 @@ public class WeatherManager {
         }
         // Update weather history
         if (observer != null) {
-            weatherHistory = observer.getObservations(spatialDomain, historyDomain);
+            weatherObservations = observer.getObservations(spatialDomain, historyDomain);
             // No need to flush cache...observations do not change over time.
+            observationCache.clear();
         }
     }
 
@@ -139,7 +138,7 @@ public class WeatherManager {
 //        WeatherModel model;
 //        Map<Long, FlatField> cache;
 //        if (historyDomain.contains(time)) {
-//            model = weatherHistory;
+//            model = weatherObservations;
 //            cache = historyCache;
 //        } else if (forecastDomain.contains(time)) {
 //            // Ensure the model contains the time
@@ -190,8 +189,8 @@ public class WeatherManager {
         WeatherModel model;
         Map<Long, FlatField> cache;
         if (historyDomain.contains(time)) {
-            model = weatherHistory;
-            cache = historyCache;
+            model = weatherObservations;
+            cache = observationCache;
         } else if (forecastDomain.contains(time)) {
             // Ensure the model contains the time
             model = weatherForecast;
@@ -248,7 +247,7 @@ public class WeatherManager {
     }
 
     public WeatherModel getWeatherHistory() {
-        return weatherHistory;
+        return weatherObservations;
     }
 
     /**
