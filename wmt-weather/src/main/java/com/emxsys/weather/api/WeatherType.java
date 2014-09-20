@@ -44,6 +44,8 @@ import visad.RealType;
 public class WeatherType {
 
     // Fire weather types
+    /** Wind speed (SI base UOM) */
+    public static final RealType WIND_SPEED;
     /** Wind speed in meters per second. */
     public static final RealType WIND_SPEED_SI;
     /** Wind speed in miles per hour. */
@@ -70,6 +72,7 @@ public class WeatherType {
     public final static RealTupleType FIRE_WEATHER;
 
     static {
+        WIND_SPEED = RealType.getRealType("wind_speed", CommonUnit.meterPerSecond, null);
         WIND_SPEED_SI = RealType.getRealType("wind_speed:m/s", CommonUnit.meterPerSecond, null);
         WIND_SPEED_MPH = RealType.getRealType("wind_speed:mph", GeneralUnit.mph, null);
         WIND_SPEED_KPH = RealType.getRealType("wind_speed:kph", GeneralUnit.kph, null);

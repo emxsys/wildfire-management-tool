@@ -34,13 +34,17 @@ import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.spi.DefaultSunlightProvider;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.visad.SpatialField;
 import com.emxsys.visad.TemporalDomain;
 import static com.emxsys.weather.api.WeatherType.*;
+import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.weather.wizards.DiurnalWeatherWizard;
 import java.awt.event.ActionEvent;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
@@ -79,10 +83,54 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     private TreeMap<LocalTime, Real> windDirs = new TreeMap<>();
     private TreeMap<LocalTime, Real> clouds = new TreeMap<>();
 
+    private WeatherObserver observer = new WeatherObserver() {
+
+            /**
+             * Gets a WeatherModel from the weather values stored in this provider.
+             * @param areaOfInterest Each coordinate in the spatial domain will get the same values.
+             * @param age Ignored. The current time will be used for the temporal domain.
+             * @return a new WeatherModel.
+             */
+            @Override
+            public WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age) {
+                TemporalDomain timeDomain = TemporalDomain.from(ZonedDateTime.now());
+                return getObservations(areaOfInterest, timeDomain);
+            }
+
+            /**
+             * Gets a WeatherModel from the weather values stored in this provider.
+             * @param areaOfInterest Each coordinate in the domain will get the same diurnal values.
+             * @param timeframe Each time in the domain will get an hourly diurnal value.
+             * @return a new WeatherModel.
+             */
+            @Override
+            public WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
+
+                final int numTimes = timeframe.getDomainSetLength();
+                final int numLatLons = areaOfInterest.getDomainSetLength();
+
+                SpatialField[] fields = new SpatialField[numTimes];
+                for (int t = 0; t < numTimes; t++) {
+                    WeatherTuple tuple = getWeather(timeframe.getZonedDateTimeAt(t));
+                    double[] values = tuple.getValues();
+                    double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
+                    for (int xy = 0; xy < numLatLons; xy++) {
+                        for(int dim = 0; dim < tuple.getDimension(); dim++) {
+                            rangeSamples[dim][xy] = values[dim];
+                        }
+                    }
+                    fields[t] = SpatialField.from(areaOfInterest, FIRE_WEATHER, rangeSamples);
+                }
+                return WeatherModel.from(timeframe, fields);
+            }
+    };
+
     /**
      * Constructor.
      */
     public DiurnalWeatherProvider() {
+        // Add a WeatherObserver service
+        getContent().add(this.observer);
     }
 
     /**
@@ -394,7 +442,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     @Override
     public Action getConfigAction() {
         return new AbstractAction() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 DiurnalWeatherWizard wizard = new DiurnalWeatherWizard(DiurnalWeatherProvider.this);
@@ -402,6 +450,5 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
             }
         };
     }
-   
-    
+
 }

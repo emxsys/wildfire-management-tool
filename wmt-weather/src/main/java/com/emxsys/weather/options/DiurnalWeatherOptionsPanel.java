@@ -38,7 +38,7 @@ import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_1200;
 import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_1400;
 import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_SUNRISE;
 import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_SUNSET;
-import static com.emxsys.weather.options.WeatherOptions.getAirTempUom;
+import static com.emxsys.weather.options.WeatherOptions.getAirTempUnit;
 import static java.lang.Math.round;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -221,7 +221,7 @@ final class DiurnalWeatherOptionsPanel extends javax.swing.JPanel {
 
     private void setAirTempPref(String propertyKey, String number) {
         try {
-            Real value = new Real(WeatherType.AIR_TEMP, Integer.parseInt(number), getAirTempUom());
+            Real value = new Real(WeatherType.AIR_TEMP, Integer.parseInt(number), getAirTempUnit());
             WeatherOptions.setAirTempPreference(propertyKey, value);
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);

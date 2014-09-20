@@ -29,8 +29,10 @@
  */
 package com.emxsys.weather.options;
 
+import com.emxsys.visad.GeneralUnit;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
+import visad.CommonUnit;
 
 final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
@@ -261,26 +263,21 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
     void store() {
         if (this.fahrenheitButton.isSelected()) {
-            prefs.put(WeatherOptions.PREF_AIR_TEMP_UOM, WeatherOptions.UOM_FAHRENHEIT);
+            WeatherOptions.setAirTempUnit(GeneralUnit.degF);
         } else if (this.celsiusButton.isSelected()) {
-            prefs.put(WeatherOptions.PREF_AIR_TEMP_UOM, WeatherOptions.UOM_CELSIUS);
+            WeatherOptions.setAirTempUnit(GeneralUnit.degC);
         }
 
         if (this.mphButton.isSelected()) {
-            prefs.put(WeatherOptions.PREF_WIND_SPD_UOM, WeatherOptions.UOM_MPH);
+            WeatherOptions.setWindSpeedUnit(GeneralUnit.mph);
         } else if (this.kphButton.isSelected()) {
-            prefs.put(WeatherOptions.PREF_WIND_SPD_UOM, WeatherOptions.UOM_KPH);
+            WeatherOptions.setWindSpeedUnit(GeneralUnit.kph);
         } else if (this.ktsButton.isSelected()) {
-            prefs.put(WeatherOptions.PREF_WIND_SPD_UOM, WeatherOptions.UOM_KTS);
+            WeatherOptions.setWindSpeedUnit(GeneralUnit.knot);
         } else if (this.mpsButton.isSelected()) {
-            prefs.put(WeatherOptions.PREF_WIND_SPD_UOM, WeatherOptions.UOM_MPS);
+            WeatherOptions.setWindSpeedUnit(CommonUnit.meterPerSecond);
         }
 
-        String currentAirTempUOM = prefs.get(WeatherOptions.PREF_AIR_TEMP_UOM, WeatherOptions.UOM_FAHRENHEIT);
-        String currentWindSpdUOM = prefs.get(WeatherOptions.PREF_WIND_SPD_UOM, WeatherOptions.UOM_MPH);
-        if (!(currentAirTempUOM.equals(initialAirTempUOM) && currentWindSpdUOM.equals(initialWindSpdUOM))) {
-            shouldRestart = true;
-        }
     }
 
     boolean valid() {

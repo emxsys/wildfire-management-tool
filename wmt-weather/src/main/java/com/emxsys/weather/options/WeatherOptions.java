@@ -34,7 +34,10 @@ import static com.emxsys.visad.GeneralUnit.degF;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.WeatherType;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import static java.lang.Math.round;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
 import visad.CommonUnit;
@@ -59,28 +62,43 @@ public class WeatherOptions {
     public static final String UOM_KPH = "kph";
     public static final String UOM_KTS = "kts";
     public static final String UOM_MPS = "mps";
-    public static final String DEFAULT_AIR_TEMP_UOM = UOM_FAHRENHEIT;
-    public static final String DEFAULT_WIND_SPD_UOM = UOM_MPH;
+    static final String DEFAULT_AIR_TEMP_UOM = UOM_FAHRENHEIT;
+    static final String DEFAULT_WIND_SPD_UOM = UOM_MPH;
     // Air Temp Preferences property keys
     public static final String PREF_AIR_TEMP_SUNRISE = "weather.tempAtSunrise";
     public static final String PREF_AIR_TEMP_1200 = "weather.tempAtNoon";
     public static final String PREF_AIR_TEMP_1400 = "weather.tempAt1400";
     public static final String PREF_AIR_TEMP_SUNSET = "weather.tempAtSunset";
     // Defaults for temp controls (F)
-    public static final int DEFAULT_AIR_TEMP_SUNRISE = 65;
-    public static final int DEFAULT_AIR_TEMP_1200 = 80;
-    public static final int DEFAULT_AIR_TEMP_1400 = 82;
-    public static final int DEFAULT_AIR_TEMP_SUNSET = 75;
+    static final int DEFAULT_AIR_TEMP_SUNRISE = 65;
+    static final int DEFAULT_AIR_TEMP_1200 = 80;
+    static final int DEFAULT_AIR_TEMP_1400 = 82;
+    static final int DEFAULT_AIR_TEMP_SUNSET = 75;
     // Humidity Preferences property keys
     public static final String PREF_RH_SUNRISE = "weather.rhAtSunrise";
     public static final String PREF_RH_1200 = "weather.rhAtNoon";
     public static final String PREF_RH_1400 = "weather.rhAt1400";
     public static final String PREF_RH_SUNSET = "weather.rhAtSunset";
     // Defaults for rh controls (%)
-    public static final int DEFAULT_RH_SUNRISE = 20;
-    public static final int DEFAULT_RH_1200 = 7;
-    public static final int DEFAULT_RH_1400 = 6;
-    public static final int DEFAULT_RH_SUNSET = 8;
+    static final int DEFAULT_RH_SUNRISE = 20;
+    static final int DEFAULT_RH_1200 = 7;
+    static final int DEFAULT_RH_1400 = 6;
+    static final int DEFAULT_RH_SUNSET = 8;
+
+    private static final HashMap<String, Unit> tempUnits = new HashMap<>();
+    private static final HashMap<String, Unit> windUnits = new HashMap<>();
+
+    static {
+        tempUnits.put(UOM_FAHRENHEIT, GeneralUnit.degF);
+        tempUnits.put(UOM_CELSIUS, GeneralUnit.degC);
+
+        windUnits.put(UOM_MPH, GeneralUnit.mph);
+        windUnits.put(UOM_KPH, GeneralUnit.kph);
+        windUnits.put(UOM_KTS, GeneralUnit.knot);
+        windUnits.put(UOM_MPS, CommonUnit.meterPerSecond);
+    }
+
+    private static final PropertyChangeSupport pcs = new PropertyChangeSupport(WeatherOptions.class);
 
     public static DiurnalWeatherProvider newDiurnalWeatherProvider() {
         DiurnalWeatherProvider provider = new DiurnalWeatherProvider();
@@ -89,7 +107,7 @@ public class WeatherOptions {
                 getAirTempPreference(PREF_AIR_TEMP_1200),
                 getAirTempPreference(PREF_AIR_TEMP_1400),
                 getAirTempPreference(PREF_AIR_TEMP_SUNSET));
-        
+
         provider.initializeRelativeHumidities(
                 getRelHumidityPreference(PREF_RH_SUNRISE),
                 getRelHumidityPreference(PREF_RH_1200),
@@ -98,33 +116,61 @@ public class WeatherOptions {
         return provider;
     }
 
-    public static Unit getAirTempUom() {
-        String uom = prefs.get(PREF_AIR_TEMP_UOM, DEFAULT_AIR_TEMP_UOM);
-        switch (uom) {
-            case UOM_FAHRENHEIT:
-                return GeneralUnit.degF;
-            case UOM_CELSIUS:
-                return GeneralUnit.degC;
-            default:
-                throw new IllegalStateException("Unhandled Air Temp UOM: " + uom);
-        }
+    public static void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
 
-    public static Unit getWindSpeedUom() {
-        String uom = prefs.get(PREF_WIND_SPD_UOM, DEFAULT_WIND_SPD_UOM);
-        switch (uom) {
-            case UOM_MPH:
-                return GeneralUnit.mph;
-            case UOM_KPH:
-                return GeneralUnit.kph;
-            case UOM_KTS:
-                return GeneralUnit.knot;
-            case UOM_MPS:
-                return CommonUnit.meterPerSecond;
-            default:
-                throw new IllegalStateException("Unhandled Wind Speed UOM: " + uom);
-        }
+    public static void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
     }
+
+    public static Unit getAirTempUnit() {
+        String uom = prefs.get(PREF_AIR_TEMP_UOM, DEFAULT_AIR_TEMP_UOM);
+        return tempUnits.get(uom);
+    }
+
+    public static void setAirTempUnit(Unit unit) {
+        String uom;
+        if (unit.equals(GeneralUnit.degF)) {
+            uom = UOM_FAHRENHEIT;
+        } else if (unit.equals(GeneralUnit.degC)) {
+            uom = UOM_CELSIUS;
+        } else {
+            throw new IllegalArgumentException("Invalid air temp unit: " + unit);
+        }
+
+        Unit oldUnit = getAirTempUnit();
+        prefs.put(PREF_AIR_TEMP_UOM, uom);
+        pcs.firePropertyChange(PREF_AIR_TEMP_UOM, oldUnit, getAirTempUnit());
+
+    }
+
+
+    public static Unit getWindSpeedUnit() {
+        String uom = prefs.get(PREF_WIND_SPD_UOM, DEFAULT_WIND_SPD_UOM);
+        return windUnits.get(uom);
+    }
+    
+    public static void setWindSpeedUnit(Unit unit) {
+        String uom;
+        if (unit.equals(GeneralUnit.mph)) {
+            uom = UOM_MPH;
+        } else if (unit.equals(GeneralUnit.kph)) {
+            uom = UOM_KPH;
+        } else if (unit.equals(GeneralUnit.knot)) {
+            uom = UOM_KTS;
+        } else if (unit.equals(CommonUnit.meterPerSecond)) {
+            uom = UOM_MPH;
+        } else {
+            throw new IllegalArgumentException("Invalid wind speed unit: " + unit);
+        }
+
+        Unit oldUnit = getWindSpeedUnit();
+        prefs.put(PREF_WIND_SPD_UOM, uom);
+        pcs.firePropertyChange(PREF_WIND_SPD_UOM, oldUnit, getWindSpeedUnit());
+
+    }
+
 
     public static Real getAirTempPreference(String key) {
         int defValue;
@@ -145,7 +191,7 @@ public class WeatherOptions {
                 throw new IllegalArgumentException("Illegal Air Temperature key: " + key);
         }
         Real airTempF = new Real(WeatherType.AIR_TEMP_F, prefs.getInt(key, defValue));
-        return getAirTempUom().equals(degF) ? airTempF : Reals.convertTo(WeatherType.AIR_TEMP_C, airTempF);
+        return getAirTempUnit().equals(degF) ? airTempF : Reals.convertTo(WeatherType.AIR_TEMP_C, airTempF);
     }
 
     public static void setAirTempPreference(String key, Real value) {

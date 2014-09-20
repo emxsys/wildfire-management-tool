@@ -56,7 +56,7 @@ import visad.VisADException;
  */
 public class TemperaturePanel extends javax.swing.JPanel {
 
-    private TemperatureChart airTempChart;
+    private TemperatureChart chart;
     private Unit uom;
     private double range;
     private static final Real maxAirTemp = new Real(AIR_TEMP_F, 120);
@@ -75,10 +75,10 @@ public class TemperaturePanel extends javax.swing.JPanel {
         initComponents();
 
         // Initalize the JFreeChart
-        airTempChart = new TemperatureChart(title, uom);
+        chart = new TemperatureChart(title, uom);
 
         // Add the chart to the layout panel
-        thermometerPanel.add(new ChartPanel(airTempChart,
+        chartPanel.add(new ChartPanel(chart,
                 105, //DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
                 100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
@@ -92,7 +92,7 @@ public class TemperaturePanel extends javax.swing.JPanel {
                 true, // zoom
                 true // tooltips
         ));
-
+        
         updateUom(uom);
 
         // Updating the slider should trigger event to update the thermometer
@@ -103,19 +103,19 @@ public class TemperaturePanel extends javax.swing.JPanel {
         try {
             this.uom = uom;
             this.range = maxAirTemp.getValue(uom) - minAirTemp.getValue(uom);
-            this.airTempChart.setUnits(uom);
+            this.chart.setUnits(uom);
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
     public void setTemperature(Real temperature) {
-        airTempChart.setTemperature(temperature);
+        chart.setTemperature(temperature);
         updateSlider(temperature);
     }
 
     public Real getTemperature() {
-        return airTempChart.getTemperature();
+        return chart.getTemperature();
     }
 
     // Convert air temp to a slider % value.
@@ -136,9 +136,41 @@ public class TemperaturePanel extends javax.swing.JPanel {
         try {
             // Convert slider % value to an air temp in the configured UOM
             double airTemp = minAirTemp.getValue(uom) + (sliderValue * range / 100.0);
-            airTempChart.setTemperature(new Real(GeneralType.TEMPERATURE, airTemp, uom));
+            chart.setTemperature(new Real(GeneralType.TEMPERATURE, airTemp, uom));
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private class TemperatureChartPanel extends ChartPanel {
+
+        private TemperatureChart chart;
+
+        TemperatureChartPanel() {
+            this(new TemperatureChart());
+        }
+
+        TemperatureChartPanel(TemperatureChart chart) {
+            super(chart,
+                    105, //DEFAULT_WIDTH,
+                    DEFAULT_HEIGHT,
+                    100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                    DEFAULT_MINIMUM_DRAW_HEIGHT,
+                    DEFAULT_MAXIMUM_DRAW_WIDTH,
+                    DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                    DEFAULT_BUFFER_USED,
+                    true, // properties
+                    true, // save
+                    true, // print
+                    true, // zoom
+                    true // tooltips
+
+            );
+            this.chart = chart;
+        }
+
+        TemperatureChart getTemperatureChart() {
+            return this.chart;
         }
     }
 
@@ -149,6 +181,15 @@ public class TemperaturePanel extends javax.swing.JPanel {
 
         final DefaultValueDataset dataset;
         Unit uom;
+
+        TemperatureChart() {
+            this(new DefaultValueDataset(0.0));
+        }
+
+        TemperatureChart(DefaultValueDataset dataset) {
+            super(new TemperaturePlot(dataset));
+            this.dataset = dataset;
+        }
 
         TemperatureChart(String title, Unit uom) {
             this(title, uom, new DefaultValueDataset(0.0));
@@ -236,14 +277,17 @@ public class TemperaturePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         unitsButtonGroup = new javax.swing.ButtonGroup();
-        thermometerPanel = new javax.swing.JPanel();
+        chartPanel = new javax.swing.JPanel();
         slider = new javax.swing.JSlider();
 
         setMaximumSize(new java.awt.Dimension(200, 2147483647));
 
-        thermometerPanel.setLayout(new java.awt.GridLayout(1, 0));
+        chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
+        slider.setMajorTickSpacing(10);
         slider.setOrientation(javax.swing.JSlider.VERTICAL);
+        slider.setMaximumSize(new java.awt.Dimension(30, 32767));
+        slider.setMinimumSize(new java.awt.Dimension(30, 17));
         slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderStateChanged(evt);
@@ -255,18 +299,18 @@ public class TemperaturePanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(thermometerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(slider, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(thermometerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+            .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(35, 35, 35))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -278,8 +322,8 @@ public class TemperaturePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel chartPanel;
     private javax.swing.JSlider slider;
-    private javax.swing.JPanel thermometerPanel;
     private javax.swing.ButtonGroup unitsButtonGroup;
     // End of variables declaration//GEN-END:variables
 

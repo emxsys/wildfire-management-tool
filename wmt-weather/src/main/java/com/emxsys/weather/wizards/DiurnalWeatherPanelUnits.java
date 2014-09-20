@@ -43,14 +43,14 @@ public final class DiurnalWeatherPanelUnits extends JPanel {
     public DiurnalWeatherPanelUnits() {
         initComponents();
         
-        Unit tempUom = WeatherOptions.getAirTempUom();
+        Unit tempUom = WeatherOptions.getAirTempUnit();
         if (tempUom.equals(GeneralUnit.degF)) {
             fahrenheitButton.setSelected(true);
         } else {
             celsiusButton.setSelected(true);
         }
         
-        Unit speedUom = WeatherOptions.getWindSpeedUom();
+        Unit speedUom = WeatherOptions.getWindSpeedUnit();
         if (speedUom.equals(GeneralUnit.mph)) {
             mphButton.setSelected(true);
         } else if (speedUom.equals(GeneralUnit.knot)) {
