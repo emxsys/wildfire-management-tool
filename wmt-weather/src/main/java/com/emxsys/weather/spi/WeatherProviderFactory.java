@@ -47,14 +47,14 @@ import javax.swing.ImageIcon;
 import org.openide.util.Lookup;
 
 /**
- * The DefaultWeatherServiceProvider supplies a list of registered WeatherProvider service providers.
+ * The WeatherProviderFactory supplies a list of registered WeatherProvider service providers.
  *
  * @author Bruce Schubert
  */
-public class DefaultWeatherServiceProvider {
+public class WeatherProviderFactory {
 
     private static ArrayList<WeatherProvider> instances;
-    private static final Logger logger = Logger.getLogger(DefaultWeatherServiceProvider.class.getName());
+    private static final Logger logger = Logger.getLogger(WeatherProviderFactory.class.getName());
 
     /**
      * Gets the registered WeatherProviders service providers from the global lookup (if any) plus a
@@ -90,7 +90,7 @@ public class DefaultWeatherServiceProvider {
     }
 
     /**
-     * Gets the WeatherProvider instances can provide recorded observations.
+     * Gets the WeatherProvider instances can provide weather observations.
      *
      * @return A collection of WeatherProvider instances that have the WeatherObserver capability.
      */
