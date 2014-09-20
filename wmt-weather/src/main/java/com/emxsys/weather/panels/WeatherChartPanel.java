@@ -51,6 +51,8 @@ import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.DefaultWindDataset;
@@ -208,19 +210,29 @@ public class WeatherChartPanel extends ChartPanel {
         }
 
         public final void setAirTempUnit(Unit newUnit) {
-            // Refresh the temperature series with the new Unit of measure
-            for (int i = 0; i < seriesTa.getItemCount(); i++) {
-                try {
-                    XYDataItem item = seriesTa.getDataItem(i);
-                    // convert item to new unit of measure
-                    item.setY(airTempUnit.toThat(item.getYValue(), newUnit)); 
-                    seriesTa.addOrUpdate(item);
-                } catch (UnitException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+            if (this.airTempUnit.equals(newUnit)) {
+                return;
             }
-            this.airTempUnit = newUnit;
-            this.seriesTa.fireSeriesChanged();
+            try {
+                // Refresh the temperature series with the new Unit of measure
+                XYSeries oldSeries = (XYSeries) seriesTa.clone();
+                seriesTa.clear();
+                for (int i = 0; i < oldSeries.getItemCount(); i++) {
+                    try {
+                        XYDataItem item = oldSeries.getDataItem(i);
+                        // convert item to new unit of measure
+                        item.setY(airTempUnit.toThat(item.getYValue(), newUnit));
+                        seriesTa.add(item);
+                    } catch (UnitException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+                // Now set the new air temp unit property
+                this.airTempUnit = newUnit;
+                this.seriesTa.fireSeriesChanged();
+            } catch (CloneNotSupportedException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
 
         public final void setWindSpeedUnit(Unit newUnit) {
@@ -398,7 +410,7 @@ public class WeatherChartPanel extends ChartPanel {
             super(dataset,
                     new DateTimeAxis(Bundle.CTL_WeatherChartDomain()),
                     new NumberAxis(Bundle.CTL_WeatherChartRange1()),
-                    new XYSplineRenderer());
+                    new XYLineAndShapeRenderer()); // XYSplineRenderer());
 
             // Customize the Temp / RH range
             NumberAxis rangeAxis1 = (NumberAxis) getRangeAxis();
@@ -410,11 +422,11 @@ public class WeatherChartPanel extends ChartPanel {
             rangeAxis2.setAutoRangeIncludesZero(true);
             rangeAxis2.setAutoRangeMinimumSize(20.0);
 
-            // Renderer for Temp and RH
-            XYSplineRenderer xyRenderer = new XYSplineRenderer();
+            // Customize the renderer for Temp and RH
+            XYItemRenderer xyRenderer = getRenderer();
             xyRenderer.setBaseToolTipGenerator(new DateTimeToolTipGenerator());
 
-            // Renderer for winds
+            // Create the renderer for winds
             WindVectorRenderer vecRenderer = new WindVectorRenderer();
             vecRenderer.setSeriesPaint(0, Color.magenta);
             vecRenderer.setBaseToolTipGenerator(new WindVectorToolTipGenerator());
