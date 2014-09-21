@@ -160,7 +160,7 @@ public class WeatherOptions {
         } else if (unit.equals(GeneralUnit.knot)) {
             uom = UOM_KTS;
         } else if (unit.equals(CommonUnit.meterPerSecond)) {
-            uom = UOM_MPH;
+            uom = UOM_MPS;
         } else {
             throw new IllegalArgumentException("Invalid wind speed unit: " + unit);
         }
