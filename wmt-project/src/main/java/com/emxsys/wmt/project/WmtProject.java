@@ -41,7 +41,7 @@ import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.project.capabilities.ProjectSelectionHandler;
 import com.emxsys.wildfire.api.Fireground;
 import com.emxsys.wildfire.api.FiregroundProvider;
-import com.emxsys.wildfire.spi.DefaultFiregroundProvider;
+import com.emxsys.wildfire.spi.FiregroundProviderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -344,7 +344,7 @@ public class WmtProject implements Project {
         logger.log(Level.INFO, "Loading {0} fireground...", getProjectName());
         FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
         // Use the factory to get a fireground dataobject from the disk file(s)        
-        FiregroundProvider factory = DefaultFiregroundProvider.getInstance();
+        FiregroundProvider factory = FiregroundProviderFactory.getInstance();
         // Read the fireground.xml file
         DataObject dataObject = factory.getFiregroundDataObject(subfolder, FIREGROUND_FILENAME);
         if (dataObject == null) {
