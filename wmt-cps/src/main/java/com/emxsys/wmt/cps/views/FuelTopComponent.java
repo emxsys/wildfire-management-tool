@@ -35,7 +35,7 @@ import com.emxsys.wmt.cps.views.fuel.FuelModelPanel;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
-import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
+import com.emxsys.wildfire.spi.FuelModelProviderFactory;
 import com.emxsys.wmt.cps.Controller;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Toolkit;
@@ -162,7 +162,7 @@ public final class FuelTopComponent extends TopComponent {
 
         // Load ALL the FuelModelProviders regardless of their extents
         DefaultComboBoxModel<FuelModelProvider> comboBoxModel = new DefaultComboBoxModel<>();
-        List<FuelModelProvider> instances = DefaultFuelModelProvider.getInstances();
+        List<FuelModelProvider> instances = FuelModelProviderFactory.getInstances();
         instances.stream().forEach((instance) -> {
             comboBoxModel.addElement(instance);
         });

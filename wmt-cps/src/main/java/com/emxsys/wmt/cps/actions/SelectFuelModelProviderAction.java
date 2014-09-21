@@ -31,7 +31,7 @@ package com.emxsys.wmt.cps.actions;
 
 import com.emxsys.gis.api.Box;
 import com.emxsys.wildfire.api.FuelModelProvider;
-import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
+import com.emxsys.wildfire.spi.FuelModelProviderFactory;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.logging.Logger;
@@ -116,7 +116,7 @@ public class SelectFuelModelProviderAction extends AbstractAction {
         DefaultListModel<FuelModelProvider> listModel = new DefaultListModel<>();
 
         // Get all the factories that may have data within the extents
-        List<FuelModelProvider> instances = DefaultFuelModelProvider.getInstances(context);
+        List<FuelModelProvider> instances = FuelModelProviderFactory.getInstances(context);
         instances.stream().forEach((instance) -> {
             listModel.addElement(instance);
         });
