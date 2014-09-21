@@ -36,18 +36,18 @@ import java.util.logging.Logger;
 import org.openide.util.Lookup;
 
 /**
- * The DefaultFireBehaviorProvider provides the registered FireBehaviorProvider service provider found
+ * The FireBehaviorProviderFactory provides the registered FireBehaviorProvider service provider found
  on the global lookup, or, if not found, a SurfaceFireProvider instance.
  *
  * @author Bruce Schubert
  */
-public class DefaultFireBehaviorProvider {
+public class FireBehaviorProviderFactory {
 
-    private static final Logger logger = Logger.getLogger(DefaultFireBehaviorProvider.class.getName());
+    private static final Logger logger = Logger.getLogger(FireBehaviorProviderFactory.class.getName());
     private static FireBehaviorProvider instance;
 
     /** Hidden constructor. */
-    private DefaultFireBehaviorProvider() {
+    private FireBehaviorProviderFactory() {
     }
 
     /**

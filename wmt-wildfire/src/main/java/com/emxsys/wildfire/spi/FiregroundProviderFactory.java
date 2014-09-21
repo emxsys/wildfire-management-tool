@@ -43,30 +43,30 @@ import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Lookup;
 
 /**
- * Factory class that supplies either a default DefaultFiregroundProvider or the registered
- * FiregroundProvider service provider found on the global lookup.
+ * Factory class that supplies either a default FiregroundProviderFactory or the registered
+ FiregroundProvider service provider found on the global lookup.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DefaultFiregroundProvider implements FiregroundProvider {
+public class FiregroundProviderFactory implements FiregroundProvider {
 
-    private static final Logger LOG = Logger.getLogger(DefaultFiregroundProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(FiregroundProviderFactory.class.getName());
     private FiregroundProvider instance;
-    private DefaultFiregroundProvider() {
+    private FiregroundProviderFactory() {
     }
 
     /**
      * Gets the registered FiregroundProvider from the global lookup. If a service provider has not
-     * been registered, then a DefaultFiregroundProvider will be used.
+ been registered, then a FiregroundProviderFactory will be used.
      *
-     * @return The FiregroundProvider found on the global lookup, else a DefaultFiregroundProvider.
+     * @return The FiregroundProvider found on the global lookup, else a FiregroundProviderFactory.
      * @see DefaultFactory
      */
     public static FiregroundProvider getInstance() {
         {
             FiregroundProvider instance = Lookup.getDefault().lookup(FiregroundProvider.class);
             if (instance == null) {
-                instance = new DefaultFiregroundProvider();
+                instance = new FiregroundProviderFactory();
             }
             LOG.log(Level.CONFIG, "Providing a {0} instance.", instance.getClass().getName());
             return instance;

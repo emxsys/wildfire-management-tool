@@ -44,15 +44,15 @@ import java.util.logging.Logger;
 import org.openide.util.Lookup;
 
 /**
- * The DefaultFuelModelProvider supplies a list of registered FuelModelProvider service providers
- * plus the system defined Std 13 and Std 40 SingleFuelModelProviders.
+ * The FuelModelProviderFactory supplies a list of registered FuelModelProvider service providers
+ plus the system defined Std 13 and Std 40 SingleFuelModelProviders.
  *
  * @author Bruce Schubert
  */
-public class DefaultFuelModelProvider {
+public class FuelModelProviderFactory {
 
     private static ArrayList<FuelModelProvider> instances;
-    private static final Logger logger = Logger.getLogger(DefaultFuelModelProvider.class.getName());
+    private static final Logger logger = Logger.getLogger(FuelModelProviderFactory.class.getName());
 
     /**
      * Gets the registered FuelModelProviders service providers from the global lookup (if any) plus
