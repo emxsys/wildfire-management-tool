@@ -57,12 +57,10 @@ import org.openide.util.NbPreferences;
 public class DefaultTimeProvider implements TimeProvider, Observer {
 
     private static final Logger logger = Logger.getLogger(DefaultTimeProvider.class.getName());
-    private static final Preferences prefs = NbPreferences.forModule(TimeOptions.class);
     static TimeProvider instance = null;
     private final EventListenerList listenerList = new EventListenerList();
     private DateProvider dateProvider;
     private ZonedDateTime curTime;
-    private final ZoneId UTC_ZONE = ZoneId.of("UTC");
 
     /**
      * Gets a TimeProvider instance, either from the global lookup or a default implementation.
@@ -122,7 +120,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
     @Override
     public void update(Observable dateProvider, Object date) {
         ZonedDateTime oldTime = curTime;
-        TimeZone timeZone = TimeZone.getTimeZone(prefs.get(TimeOptions.TIMEZONE, TimeZone.getDefault().getID()));
+        TimeZone timeZone = TimeOptions.getTimeZone();
         curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), timeZone.toZoneId());
         logger.log(Level.FINEST, "update: {0}", curTime.toString());
         TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
