@@ -45,7 +45,7 @@ import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
-import com.emxsys.wildfire.spi.DefaultFuelModelProvider;
+import com.emxsys.wildfire.spi.FuelModelProviderFactory;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.swarm.api.Agent;
 import com.emxsys.wmt.swarm.api.GoalForage;
@@ -142,7 +142,7 @@ public class Forage extends GoalForage {
      */
     private Real computeRateOfSpread(Agent agent, long millis, Real direction) throws UnitException {
         if (fuelModelProvider == null) {
-            List<FuelModelProvider> providers = DefaultFuelModelProvider.getInstances();
+            List<FuelModelProvider> providers = FuelModelProviderFactory.getInstances();
             for (FuelModelProvider provider : providers) {
                 if (provider.getClass().getName().equals("com.emxsys.wmt.landfire.Std40FuelModelProvider")) {
                     fuelModelProvider = provider;
