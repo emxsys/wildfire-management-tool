@@ -38,19 +38,19 @@ import visad.Real;
 import visad.RealType;
 
 /**
- * DefaultTerrainProvider. The default instance can be overridden by registering a TerrainProvider
+ * TerrainProviderFactory. The default instance can be overridden by registering a TerrainProvider
  * service provider on the global lookup.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DefaultTerrainProvider implements TerrainProvider {
+public class TerrainProviderFactory implements TerrainProvider {
 
     private static TerrainProvider instance = null;
 
     /**
      * Returns the singleton instance of a TerrainProvider. If a class has been registered as a
-     * TerrainProvider service provider, then an instance of that class will be returned. Otherwise,
-     * an instance of the DefaultTerrainProvider will be returned.
+ TerrainProvider service provider, then an instance of that class will be returned. Otherwise,
+ an instance of the TerrainProviderFactory will be returned.
      *
      * @return A singleton instance of a TerrainProvider
      */
@@ -61,13 +61,13 @@ public class DefaultTerrainProvider implements TerrainProvider {
 
             // Use our default provider if no registered provider.
             if (instance == null) {
-                instance = new DefaultTerrainProvider();
+                instance = new TerrainProviderFactory();
             }
         }
         return instance;
     }
 
-    private DefaultTerrainProvider() {
+    private TerrainProviderFactory() {
     }
 
     @Override

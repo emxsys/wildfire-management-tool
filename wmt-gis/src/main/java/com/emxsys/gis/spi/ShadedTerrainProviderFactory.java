@@ -44,7 +44,7 @@ import visad.RealType;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DefaultShadedTerrainProvider implements ShadedTerrainProvider {
+public class ShadedTerrainProviderFactory implements ShadedTerrainProvider {
 
     private static ShadedTerrainProvider instance = null;
 
@@ -62,13 +62,13 @@ public class DefaultShadedTerrainProvider implements ShadedTerrainProvider {
 
             // Use our default provider if no registered provider.
             if (instance == null) {
-                instance = new DefaultShadedTerrainProvider();
+                instance = new ShadedTerrainProviderFactory();
             }
         }
         return instance;
     }
 
-    private DefaultShadedTerrainProvider() {
+    private ShadedTerrainProviderFactory() {
     }
 
     @Override
