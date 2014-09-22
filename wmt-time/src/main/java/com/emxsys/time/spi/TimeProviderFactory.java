@@ -48,15 +48,15 @@ import org.openide.util.Lookup;
 import org.openide.util.NbPreferences;
 
 /**
- * DefaultTimeProvider provides the central time for the application as provided by Terramenta. The
+ * TimeProviderFactory provides the central time for the application as provided by Terramenta. The
  * default instance can be overridden by registering a TimeProvider service provider on the global
  * lookup.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class DefaultTimeProvider implements TimeProvider, Observer {
+public class TimeProviderFactory implements TimeProvider, Observer {
 
-    private static final Logger logger = Logger.getLogger(DefaultTimeProvider.class.getName());
+    private static final Logger logger = Logger.getLogger(TimeProviderFactory.class.getName());
     static TimeProvider instance = null;
     private final EventListenerList listenerList = new EventListenerList();
     private DateProvider dateProvider;
@@ -66,7 +66,7 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
      * Gets a TimeProvider instance, either from the global lookup or a default implementation.
      * 
      * @return A TimeProvider service provider found on the global lookup, or, if not found, a
-     * DefaultTimeProvider instance.
+ TimeProviderFactory instance.
      */
     public static TimeProvider getInstance() {
         if (instance == null) {
@@ -75,13 +75,13 @@ public class DefaultTimeProvider implements TimeProvider, Observer {
 
             // Use our default instance if no registered provider.
             if (instance == null) {
-                instance = new DefaultTimeProvider();
+                instance = new TimeProviderFactory();
             }
         }
         return instance;
     }
 
-    private DefaultTimeProvider() {
+    private TimeProviderFactory() {
         logger.config("Constructed TimeProvider");
         getDateProvider();
     }
