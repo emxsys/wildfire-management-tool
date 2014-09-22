@@ -48,9 +48,9 @@ import visad.Unit;
  *
  * @author Bruce Schubert
  */
-public class WeatherOptions {
+public class WeatherPreferences {
 
-    private static final Preferences prefs = NbPreferences.forModule(WeatherOptions.class);
+    private static final Preferences prefs = NbPreferences.forModule(WeatherPreferences.class);
 
     // Unit of Measure property key and values
     public static final String PREF_AIR_TEMP_UOM = "weather.airtemp.uom";
@@ -97,21 +97,6 @@ public class WeatherOptions {
         windUnits.put(UOM_MPS, CommonUnit.meterPerSecond);
     }
 
-    public static DiurnalWeatherProvider newDiurnalWeatherProvider() {
-        DiurnalWeatherProvider provider = new DiurnalWeatherProvider();
-        provider.initializeAirTemperatures(
-                getAirTempPreference(PREF_AIR_TEMP_SUNRISE),
-                getAirTempPreference(PREF_AIR_TEMP_1200),
-                getAirTempPreference(PREF_AIR_TEMP_1400),
-                getAirTempPreference(PREF_AIR_TEMP_SUNSET));
-
-        provider.initializeRelativeHumidities(
-                getRelHumidityPreference(PREF_RH_SUNRISE),
-                getRelHumidityPreference(PREF_RH_1200),
-                getRelHumidityPreference(PREF_RH_1400),
-                getRelHumidityPreference(PREF_RH_SUNSET));
-        return provider;
-    }
 
     /**
      * Adds a PreferenceChangeListener to the underlying WildfireOptions preferences file.
@@ -179,7 +164,7 @@ public class WeatherOptions {
         return windSpeedUomToUnit(getWindSpeedUom());
     }
 
-    public static Real getAirTempPreference(String key) {
+    public static Real getAirTempValue(String key) {
         int defValue;
         switch (key) {
             case PREF_AIR_TEMP_1200:
@@ -201,13 +186,13 @@ public class WeatherOptions {
         return getAirTempUnit().equals(degF) ? airTempF : Reals.convertTo(WeatherType.AIR_TEMP_C, airTempF);
     }
 
-    public static void setAirTempPreference(String key, Real value) {
+    public static void setAirTempValue(String key, Real value) {
         // Store the temp in Fahreheit
         Real airTempF = Reals.convertTo(WeatherType.AIR_TEMP_F, value);
         prefs.putInt(key, (int) round(airTempF.getValue()));
     }
 
-    public static Real getRelHumidityPreference(String key) {
+    public static Real getRelHumidityValue(String key) {
         int value;
         switch (key) {
             case PREF_RH_1200:
@@ -228,7 +213,7 @@ public class WeatherOptions {
         return new Real(WeatherType.REL_HUMIDITY, value);
     }
 
-    public static void setRelHumidityPreference(String key, int value) {
+    public static void setRelHumidityValue(String key, int value) {
         prefs.putInt(key, value);
     }
 

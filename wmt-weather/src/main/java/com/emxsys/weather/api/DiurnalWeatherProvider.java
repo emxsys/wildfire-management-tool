@@ -31,7 +31,7 @@ package com.emxsys.weather.api;
 
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.util.ImageUtil;
 import com.emxsys.visad.Reals;
 import com.emxsys.visad.SpatialDomain;
@@ -140,7 +140,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      */
     public DiurnalWeatherProvider(ZonedDateTime date, Coord3D coord) {
         this();
-        sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);
+        sunlight = SunlightProviderFactory.getInstance().getSunlight(date, coord);
     }
 
     @Override
@@ -236,7 +236,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @param coord Coordinate used to determine sunrise and sunset.
      */
     public void initializeSunlight(ZonedDateTime date, Coord3D coord) {
-        sunlight = DefaultSunlightProvider.getInstance().getSunlight(date, coord);
+        sunlight = SunlightProviderFactory.getInstance().getSunlight(date, coord);
     }
 
     /**

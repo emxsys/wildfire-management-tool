@@ -30,7 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
 import visad.CommonUnit;
@@ -43,14 +43,14 @@ public final class DiurnalWeatherPanelUnits extends JPanel {
     public DiurnalWeatherPanelUnits() {
         initComponents();
         
-        Unit tempUom = WeatherOptions.getAirTempUnit();
+        Unit tempUom = WeatherPreferences.getAirTempUnit();
         if (tempUom.equals(GeneralUnit.degF)) {
             fahrenheitButton.setSelected(true);
         } else {
             celsiusButton.setSelected(true);
         }
         
-        Unit speedUom = WeatherOptions.getWindSpeedUnit();
+        Unit speedUom = WeatherPreferences.getWindSpeedUnit();
         if (speedUom.equals(GeneralUnit.mph)) {
             mphButton.setSelected(true);
         } else if (speedUom.equals(GeneralUnit.knot)) {

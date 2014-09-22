@@ -32,7 +32,7 @@ package com.emxsys.weather.panels;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -194,15 +194,15 @@ public class WeatherChartPanel extends ChartPanel {
             this.vecDataset = vecDataset;
             this.vecDataset.addSeries(seriesW);
 
-            this.airTempUnit = WeatherOptions.getAirTempUnit();
-            this.windSpdUnit = WeatherOptions.getWindSpeedUnit();
-            WeatherOptions.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+            this.airTempUnit = WeatherPreferences.getAirTempUnit();
+            this.windSpdUnit = WeatherPreferences.getWindSpeedUnit();
+            WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
                 switch (evt.getKey()) {
-                    case WeatherOptions.PREF_WIND_SPD_UOM:
-                        setWindSpeedUnit(WeatherOptions.getWindSpeedUnit());
+                    case WeatherPreferences.PREF_WIND_SPD_UOM:
+                        setWindSpeedUnit(WeatherPreferences.getWindSpeedUnit());
                         break;
-                    case WeatherOptions.PREF_AIR_TEMP_UOM:
-                        setAirTempUnit(WeatherOptions.getAirTempUnit());
+                    case WeatherPreferences.PREF_AIR_TEMP_UOM:
+                        setAirTempUnit(WeatherPreferences.getAirTempUnit());
                         break;
                 }
             });

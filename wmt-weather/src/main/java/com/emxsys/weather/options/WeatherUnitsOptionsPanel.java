@@ -29,15 +29,15 @@
  */
 package com.emxsys.weather.options;
 
-import com.emxsys.weather.api.WeatherOptions;
-import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_UOM;
-import static com.emxsys.weather.api.WeatherOptions.PREF_WIND_SPD_UOM;
-import static com.emxsys.weather.api.WeatherOptions.UOM_CELSIUS;
-import static com.emxsys.weather.api.WeatherOptions.UOM_FAHRENHEIT;
-import static com.emxsys.weather.api.WeatherOptions.UOM_KPH;
-import static com.emxsys.weather.api.WeatherOptions.UOM_KTS;
-import static com.emxsys.weather.api.WeatherOptions.UOM_MPH;
-import static com.emxsys.weather.api.WeatherOptions.UOM_MPS;
+import com.emxsys.weather.api.WeatherPreferences;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_UOM;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_WIND_SPD_UOM;
+import static com.emxsys.weather.api.WeatherPreferences.UOM_CELSIUS;
+import static com.emxsys.weather.api.WeatherPreferences.UOM_FAHRENHEIT;
+import static com.emxsys.weather.api.WeatherPreferences.UOM_KPH;
+import static com.emxsys.weather.api.WeatherPreferences.UOM_KTS;
+import static com.emxsys.weather.api.WeatherPreferences.UOM_MPH;
+import static com.emxsys.weather.api.WeatherPreferences.UOM_MPS;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.Preferences;
@@ -45,7 +45,7 @@ import org.openide.util.NbPreferences;
 
 final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
-    private static final Preferences prefs = NbPreferences.forModule(WeatherOptions.class);
+    private static final Preferences prefs = NbPreferences.forModule(WeatherPreferences.class);
     private String initialAirTempUOM = "";
     private String initialWindSpdUOM = "";
     private boolean shouldRestart = false;
@@ -203,10 +203,10 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
         initialAirTempUOM = prefs.get(PREF_AIR_TEMP_UOM, UOM_FAHRENHEIT);
         initialWindSpdUOM = prefs.get(PREF_WIND_SPD_UOM, UOM_MPH);
         switch (initialAirTempUOM) {
-            case WeatherOptions.UOM_FAHRENHEIT:
+            case WeatherPreferences.UOM_FAHRENHEIT:
                 this.fahrenheitButton.setSelected(true);
                 break;
-            case WeatherOptions.UOM_CELSIUS:
+            case WeatherPreferences.UOM_CELSIUS:
                 this.celsiusButton.setSelected(true);
                 break;
         }
@@ -229,19 +229,19 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
     void store() {
         if (this.fahrenheitButton.isSelected()) {
-            WeatherOptions.setAirTempUom(UOM_FAHRENHEIT);
+            WeatherPreferences.setAirTempUom(UOM_FAHRENHEIT);
         } else if (this.celsiusButton.isSelected()) {
-            WeatherOptions.setAirTempUom(UOM_CELSIUS);
+            WeatherPreferences.setAirTempUom(UOM_CELSIUS);
         }
 
         if (this.mphButton.isSelected()) {
-            WeatherOptions.setWindSpeedUom(UOM_MPH);
+            WeatherPreferences.setWindSpeedUom(UOM_MPH);
         } else if (this.kphButton.isSelected()) {
-            WeatherOptions.setWindSpeedUom(UOM_KPH);
+            WeatherPreferences.setWindSpeedUom(UOM_KPH);
         } else if (this.ktsButton.isSelected()) {
-            WeatherOptions.setWindSpeedUom(UOM_KTS);
+            WeatherPreferences.setWindSpeedUom(UOM_KTS);
         } else if (this.mpsButton.isSelected()) {
-            WeatherOptions.setWindSpeedUom(UOM_MPS);
+            WeatherPreferences.setWindSpeedUom(UOM_MPS);
         }
 
     }

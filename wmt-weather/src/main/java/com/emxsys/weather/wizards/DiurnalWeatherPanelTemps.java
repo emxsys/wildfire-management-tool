@@ -30,7 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.panels.TemperaturePanel;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
@@ -54,10 +54,10 @@ public final class DiurnalWeatherPanelTemps extends JPanel {
      * @param provider
      */
     public DiurnalWeatherPanelTemps(DiurnalWeatherProvider provider) {
-        panelSunrise = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureSunrise(), WeatherOptions.getAirTempUnit(), provider.getTempAtSunrise());
-        panelNoon = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureNoon(), WeatherOptions.getAirTempUnit(), provider.getTempAtNoon());
-        panel1400 = new TemperaturePanel(Bundle.CTL_DiurnalTemperature1400(), WeatherOptions.getAirTempUnit(), provider.getTempAt1400());
-        panelSunset = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureSunset(), WeatherOptions.getAirTempUnit(), provider.getTempAtSunset());
+        panelSunrise = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureSunrise(), WeatherPreferences.getAirTempUnit(), provider.getTempAtSunrise());
+        panelNoon = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureNoon(), WeatherPreferences.getAirTempUnit(), provider.getTempAtNoon());
+        panel1400 = new TemperaturePanel(Bundle.CTL_DiurnalTemperature1400(), WeatherPreferences.getAirTempUnit(), provider.getTempAt1400());
+        panelSunset = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureSunset(), WeatherPreferences.getAirTempUnit(), provider.getTempAtSunset());
         initComponents();
         jPanel1.add(panelSunrise);
         jPanel2.add(panelNoon);

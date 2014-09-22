@@ -35,7 +35,7 @@ import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KPH;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KTS;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -127,7 +127,7 @@ public class WindSpdChartPanel extends ChartPanel {
     }
 
     /**
-     * Overrides the default UOM defined in the WeatherOptions.
+     * Overrides the default UOM defined in the WeatherPreferences.
      * @param unit Unit of measure to used in this display.
      */
     public void setUnit(Unit unit) {
@@ -158,7 +158,7 @@ public class WindSpdChartPanel extends ChartPanel {
             addSubtitle(subtitle);
             setPadding(RectangleInsets.ZERO_INSETS);
 
-            this.uom = WeatherOptions.getWindSpeedUnit();
+            this.uom = WeatherPreferences.getWindSpeedUnit();
             this.dataset = dataset;
             this.dataset.addChangeListener((DatasetChangeEvent event) -> {
                 try {
@@ -179,9 +179,9 @@ public class WindSpdChartPanel extends ChartPanel {
                 }
             });
 
-            WeatherOptions.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
-                if (evt.getKey().equals(WeatherOptions.PREF_WIND_SPD_UOM)) {
-                    setUnit(WeatherOptions.getWindSpeedUnit());
+            WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+                if (evt.getKey().equals(WeatherPreferences.PREF_WIND_SPD_UOM)) {
+                    setUnit(WeatherPreferences.getWindSpeedUnit());
                 }
             });
         }

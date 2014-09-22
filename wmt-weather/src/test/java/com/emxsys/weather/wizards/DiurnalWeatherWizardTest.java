@@ -30,18 +30,19 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.spi.WeatherProviderFactory;
 import java.time.ZonedDateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  * Performs interactive tests of the DiurnalWeatherWizard
- * 
+ *
  * Comment out @Ignore to run the tests.
- * 
+ *
  * @author Bruce Schubert
  */
 //@Ignore("interative test")
@@ -53,11 +54,14 @@ public class DiurnalWeatherWizardTest {
     @Test
     public void testShow() {
         System.out.println("testShow");
-        DiurnalWeatherProvider provider = WeatherOptions.newDiurnalWeatherProvider();
+        Sunlight sunlight = SunlightProviderFactory.getInstance().getSunlight(
+                ZonedDateTime.now(), 
+                GeoCoord3D.fromDegrees(34.2, -119.2));
+        DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
         DiurnalWeatherWizard instance = new DiurnalWeatherWizard(provider);
         boolean result = instance.testShow();
         assertTrue("Wizard was cancelled.", result);
-        
+
         provider.initializeSunlight(ZonedDateTime.now(), GeoCoord3D.fromDegrees(34.25, -119.2));
         System.out.println(provider.getWeather(ZonedDateTime.now()));
     }

@@ -29,17 +29,17 @@
  */
 package com.emxsys.weather.options;
 
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.api.WeatherType;
-import static com.emxsys.weather.api.WeatherOptions.PREF_RH_1200;
-import static com.emxsys.weather.api.WeatherOptions.PREF_RH_1400;
-import static com.emxsys.weather.api.WeatherOptions.PREF_RH_SUNRISE;
-import static com.emxsys.weather.api.WeatherOptions.PREF_RH_SUNSET;
-import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_1200;
-import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_1400;
-import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_SUNRISE;
-import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_SUNSET;
-import static com.emxsys.weather.api.WeatherOptions.getAirTempUnit;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_1200;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_1400;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_SUNRISE;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_SUNSET;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_1200;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_1400;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_SUNRISE;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_SUNSET;
+import static com.emxsys.weather.api.WeatherPreferences.getAirTempUnit;
 import static java.lang.Math.round;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -215,7 +215,7 @@ final class DiurnalWeatherOptionsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private String getAirTempText(String propertyKey) {
-        Real real = WeatherOptions.getAirTempPreference(propertyKey);
+        Real real = WeatherPreferences.getAirTempValue(propertyKey);
         int value = (int) round(real.getValue());
         return Integer.toString(value);
     }
@@ -223,20 +223,20 @@ final class DiurnalWeatherOptionsPanel extends javax.swing.JPanel {
     private void setAirTempPref(String propertyKey, String number) {
         try {
             Real value = new Real(WeatherType.AIR_TEMP, Integer.parseInt(number), getAirTempUnit());
-            WeatherOptions.setAirTempPreference(propertyKey, value);
+            WeatherPreferences.setAirTempValue(propertyKey, value);
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
     private String getHumidityText(String propertyKey) {
-        Real real = WeatherOptions.getRelHumidityPreference(propertyKey);
+        Real real = WeatherPreferences.getRelHumidityValue(propertyKey);
         int value = (int) round(real.getValue());
         return Integer.toString(value);
     }
 
     private void setHumidityPref(String propertyKey, String number) {
-        WeatherOptions.setRelHumidityPreference(propertyKey, Integer.parseInt(number));
+        WeatherPreferences.setRelHumidityValue(propertyKey, Integer.parseInt(number));
     }
 
     void load() {

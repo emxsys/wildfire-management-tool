@@ -31,7 +31,7 @@ package com.emxsys.weather.panels;
 
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -76,7 +76,7 @@ public class WindSpdChartPanelTest {
                         JOptionPane.PLAIN_MESSAGE,
                         null) == JOptionPane.YES_OPTION);
 
-        WeatherOptions.setWindSpeedUom(WeatherOptions.UOM_KTS);
+        WeatherPreferences.setWindSpeedUom(WeatherPreferences.UOM_KTS);
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame

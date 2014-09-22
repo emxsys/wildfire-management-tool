@@ -30,9 +30,12 @@
 package com.emxsys.weather.panels;
 
 import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.WeatherOptions;
+import com.emxsys.weather.api.WeatherPreferences;
+import com.emxsys.weather.spi.WeatherProviderFactory;
 import java.time.ZonedDateTime;
 import javax.swing.JOptionPane;
 import org.junit.Test;
@@ -52,16 +55,18 @@ public class WeatherChartPanelTest {
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
 
-        WeatherOptions.setAirTempUom(WeatherOptions.UOM_CELSIUS);
+        WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_CELSIUS);
 
         TemporalDomain domain = new TemporalDomain(ZonedDateTime.now(), 48);
 
-        DiurnalWeatherProvider provider = WeatherOptions.newDiurnalWeatherProvider();
-        provider.initializeSunlight(ZonedDateTime.now(), GeoCoord3D.fromDegrees(34.2, -119.2));
+        Sunlight sunlight = SunlightProviderFactory.getInstance().getSunlight(
+                ZonedDateTime.now(), 
+                GeoCoord3D.fromDegrees(34.2, -119.2));
+        DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
 
         FlatField wx = provider.getHourlyWeather(domain);
 
-        WeatherOptions.setAirTempUom(WeatherOptions.UOM_FAHRENHEIT);
+        WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_FAHRENHEIT);
         WeatherChartPanel instance = new WeatherChartPanel();
         instance.setTitle("Diurnal Weather");
         instance.setTemperatures(wx);
@@ -75,7 +80,7 @@ public class WeatherChartPanelTest {
                         JOptionPane.PLAIN_MESSAGE,
                         null) == JOptionPane.YES_OPTION);
 
-        WeatherOptions.setAirTempUom(WeatherOptions.UOM_CELSIUS);
+        WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_CELSIUS);
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame

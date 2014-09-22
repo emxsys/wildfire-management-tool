@@ -31,8 +31,20 @@ package com.emxsys.weather.spi;
 
 import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.Coord2D;
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.api.AbstractWeatherProvider;
+import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.Weather;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_1200;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_1400;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_SUNRISE;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_AIR_TEMP_SUNSET;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_1200;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_1400;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_SUNRISE;
+import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_SUNSET;
+import static com.emxsys.weather.api.WeatherPreferences.getAirTempValue;
+import static com.emxsys.weather.api.WeatherPreferences.getRelHumidityValue;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.weather.api.services.WeatherForecaster;
@@ -55,6 +67,29 @@ public class WeatherProviderFactory {
 
     private static ArrayList<WeatherProvider> instances;
     private static final Logger logger = Logger.getLogger(WeatherProviderFactory.class.getName());
+
+    /**
+     * Gets a DiurnalWeatherProvider initialized with the WeatherPreferences preferences.
+     *
+     * @param sunlight Provides the sunrise and sunset times for a date and location.
+     * @return A new DiurnalWeatherProvider instance.
+     */
+    public static DiurnalWeatherProvider newDiurnalWeatherProvider(Sunlight sunlight) {
+        DiurnalWeatherProvider provider = new DiurnalWeatherProvider();
+        provider.setSunlight(sunlight);
+
+        provider.initializeAirTemperatures(getAirTempValue(PREF_AIR_TEMP_SUNRISE),
+                getAirTempValue(PREF_AIR_TEMP_1200),
+                getAirTempValue(PREF_AIR_TEMP_1400),
+                getAirTempValue(PREF_AIR_TEMP_SUNSET));
+
+        provider.initializeRelativeHumidities(getRelHumidityValue(PREF_RH_SUNRISE),
+                getRelHumidityValue(PREF_RH_1200),
+                getRelHumidityValue(PREF_RH_1400),
+                getRelHumidityValue(PREF_RH_SUNSET));
+
+        return provider;
+    }
 
     /**
      * Gets the registered WeatherProviders service providers from the global lookup (if any) plus a
@@ -103,7 +138,6 @@ public class WeatherProviderFactory {
                 });
         return providers;
     }
-
 
     /**
      * Gets the WeatherProvider instances that intersect the given extents.
