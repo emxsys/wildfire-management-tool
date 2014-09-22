@@ -52,12 +52,10 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.w3c.dom.Element;
 
-
 /**
  *
  * @author Bruce Schubert
  */
-@Ignore
 @RunWith(Parameterized.class)
 public class LandfireTiledImageLayerFactoryTest {
 
@@ -115,6 +113,7 @@ public class LandfireTiledImageLayerFactoryTest {
         assertNotNull(result);
     }
 
+@Ignore("when servers are offline")
     @Test
     public void testGetCapabilities() throws MalformedURLException, IOException {
         System.out.println("testGetCapabilties - " + xmlCfgFile);
@@ -123,10 +122,13 @@ public class LandfireTiledImageLayerFactoryTest {
 
         String capsUrl = WWXML.getText(dom, SERVICE_GETCAPABILITIESURL);
         capsUrl += "request=GetCapabilities&service=WMS";
-        String result = HttpUtil.callWebService(new URL(capsUrl));
-
-        assertNotNull(result);
-        assertTrue(!result.isEmpty());
+        try {
+            String result = HttpUtil.callWebService(new URL(capsUrl));
+            assertNotNull(result);
+            assertTrue(!result.isEmpty());
+        } catch (RuntimeException e) {
+            fail(e.getMessage());
+        }
         //System.out.println(result);
     }
 
