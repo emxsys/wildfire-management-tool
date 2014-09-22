@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfire.options;
+package com.emxsys.wildfire.api;
 
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
@@ -39,12 +39,13 @@ import visad.CommonUnit;
 import visad.Unit;
 
 /**
- *
+ * Wildfire preferences.
+ * 
  * @author Bruce Schubert
  */
 public class WildfireOptions {
 
-    // Preference key and values
+    // Preference key and uoms
     public static final String PREF_ROS_UOM = "wildfire.ros.uom";
     public static final String UOM_CHAINS = "chains";
     public static final String UOM_MPH = "mph";
@@ -66,7 +67,7 @@ public class WildfireOptions {
     }
 
     /**
-     * Adds a PreferenceChangeListener to the underlying WildfireOptions preferences file.
+     * Adds a PreferenceChangeListener to the underlying Wildfire module preferences file.
      * @param listener 
      */
     public void addPreferenceChangeListener(PreferenceChangeListener listener) {
@@ -78,32 +79,32 @@ public class WildfireOptions {
     }
 
     /**
-     * @return The current preference value for rate of spread.
+     * @return The current unit of measure for rate of spread.
      */
-    public static String getRateOfSpreadValue() {
+    public static String getRateOfSpreadUom() {
         return prefs.get(PREF_ROS_UOM, DEFAULT_ROS_UOM);
     }
     /**
      * @return The current Unit for rate of spread.
      */
     public static Unit getRateOfSpreadUnit() {
-        String value = prefs.get(PREF_ROS_UOM, DEFAULT_ROS_UOM);
-        return rateOfSpreadValueToUnit(value);
+        String uom = prefs.get(PREF_ROS_UOM, DEFAULT_ROS_UOM);
+        return rateOfSpreadUomToUnit(uom);
     }
     
     /**
      * Sets the Rate of Spread UOM preference.
-     * @param uomValue One of UOM_CHAINS, UOM_MPH, UOM_KPH, UOM_MPS.
+     * @param uom One of: UOM_CHAINS, UOM_MPH, UOM_KPH, UOM_MPS.
      */
-    public static void setRateOfSpread(String uomValue) {
-        if (rosUnits.get(uomValue)==null) {
-            throw new IllegalArgumentException("Invalid ROS UOM: " + uomValue);
+    public static void setRateOfSpread(String uom) {
+        if (rosUnits.get(uom)==null) {
+            throw new IllegalArgumentException("Invalid ROS UOM: " + uom);
         }
-        prefs.put(PREF_ROS_UOM, uomValue);
+        prefs.put(PREF_ROS_UOM, uom);
     }
 
-    public static Unit rateOfSpreadValueToUnit(String rosUomValue) {
-        return rosUnits.get(rosUomValue);
+    public static Unit rateOfSpreadUomToUnit(String uom) {
+        return rosUnits.get(uom);
     }
 
 }

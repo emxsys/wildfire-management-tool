@@ -32,7 +32,8 @@
         categoryName = "#OptionsCategory_Name_Wildfire",
         iconBase = "com/emxsys/wildfire/images/flame-32x32.png",
         keywords = "#OptionsCategory_Keywords_Wildfire",
-        keywordsCategory = "Wildfire")
+        keywordsCategory = "Wildfire",
+        position = 30)
 @NbBundle.Messages(value = {
     "OptionsCategory_Name_Wildfire=Wildfire",
     "OptionsCategory_Keywords_Wildfire=wildfire behave rothermel fire behavior wildland"})

@@ -29,10 +29,11 @@
  */
 package com.emxsys.wildfire.options;
 
-import static com.emxsys.wildfire.options.WildfireOptions.UOM_CHAINS;
-import static com.emxsys.wildfire.options.WildfireOptions.UOM_KPH;
-import static com.emxsys.wildfire.options.WildfireOptions.UOM_MPH;
-import static com.emxsys.wildfire.options.WildfireOptions.UOM_MPS;
+import com.emxsys.wildfire.api.WildfireOptions;
+import static com.emxsys.wildfire.api.WildfireOptions.UOM_CHAINS;
+import static com.emxsys.wildfire.api.WildfireOptions.UOM_KPH;
+import static com.emxsys.wildfire.api.WildfireOptions.UOM_MPH;
+import static com.emxsys.wildfire.api.WildfireOptions.UOM_MPS;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -44,7 +45,7 @@ final class WildfireUnitsOptionsPanel extends javax.swing.JPanel {
     WildfireUnitsOptionsPanel(WildfireUnitsOptionsPanelController controller) {
         this.controller = controller;
         this.listener = (ActionEvent e) -> {
-            controller.changed();
+            this.controller.changed();
         };
         initComponents();
         // listen to changes in form fields and call controller.changed()
@@ -143,7 +144,7 @@ final class WildfireUnitsOptionsPanel extends javax.swing.JPanel {
 
     void load() {
         // read settings and initialize GUI
-        switch (WildfireOptions.getRateOfSpreadValue()) {
+        switch (WildfireOptions.getRateOfSpreadUom()) {
             case UOM_CHAINS:
                 this.chainsButton.setSelected(true);
                 break;
