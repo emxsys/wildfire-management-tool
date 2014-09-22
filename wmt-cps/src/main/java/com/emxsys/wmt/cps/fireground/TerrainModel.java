@@ -35,7 +35,7 @@ import com.emxsys.gis.api.ShadedTerrainProvider;
 import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.gis.api.layer.GisLayer;
 import com.emxsys.gis.api.viewer.GisViewer;
-import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
+import com.emxsys.gis.spi.ShadedTerrainProviderFactory;
 import com.emxsys.wildfire.api.WildfireType;
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -75,7 +75,7 @@ public class TerrainModel
     /**
      * The terrain data provider
      */
-    private final ShadedTerrainProvider terrainFactory;
+    private final ShadedTerrainProvider terrainProvider;
     /**
      * The Elevation data lookup
      */
@@ -116,7 +116,7 @@ public class TerrainModel
     {
         this.domain = domain;
         // Find the TerrainProvider Service Provider (possibly from either the WorldWind or LANDFIRE module)
-        this.terrainFactory = DefaultShadedTerrainProvider.getInstance();
+        this.terrainProvider = ShadedTerrainProviderFactory.getInstance();
         checkForDEMLayer();
 
         if (immediate)
@@ -133,7 +133,7 @@ public class TerrainModel
     {
         this.domain = null;
         this.terrain = terrain;
-        this.terrainFactory = DefaultShadedTerrainProvider.getInstance();
+        this.terrainProvider = ShadedTerrainProviderFactory.getInstance();
     }
 
     /**
@@ -249,7 +249,7 @@ public class TerrainModel
     {
         try
         {
-            if (this.terrainFactory == null)
+            if (this.terrainProvider == null)
             {
                 throw new IllegalStateException("A TerrainFactory wasn't found.  "
                     + "Ensure the module providing the terrain is installed.");
@@ -273,7 +273,7 @@ public class TerrainModel
 
 
                 // ... and then get the terrain at that lat/lon
-                TerrainTuple tuple = (TerrainTuple) this.terrainFactory.getTerrain(latLon);
+                TerrainTuple tuple = (TerrainTuple) this.terrainProvider.getTerrain(latLon);
 
                 // TEST
 // The LANDFIRE Dem layer is useless: the resolution is extremely low!                

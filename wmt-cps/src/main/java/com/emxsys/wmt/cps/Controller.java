@@ -37,14 +37,14 @@ import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
 import com.emxsys.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
-import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
+import com.emxsys.gis.spi.ShadedTerrainProviderFactory;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.api.SunlightProvider;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
-import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
@@ -138,9 +138,9 @@ public class Controller {
         coordinateUpdater = new CooridinateUpdater(this);
 
         // Data providers
-        sun = DefaultSunlightProvider.getInstance();
-        earth = DefaultShadedTerrainProvider.getInstance();
-        earthClock = DefaultTimeProvider.getInstance();
+        sun = SunlightProviderFactory.getInstance();
+        earth = ShadedTerrainProviderFactory.getInstance();
+        earthClock = TimeProviderFactory.getInstance();
 
         // Clock listens for TimeEvents and notifies SolarUpdater
         earthClock.addTimeListener(WeakListeners.create(

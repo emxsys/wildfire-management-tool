@@ -33,14 +33,11 @@ import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherProvider;
-import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
-import com.emxsys.weather.api.WeatherOptions;
 import com.emxsys.weather.spi.WeatherProviderFactory;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.WeatherManager;
-import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.views.weather.AirTemperaturePanel;
 import com.emxsys.wmt.cps.views.weather.RelativeHumidityPanel;
 import com.emxsys.wmt.cps.views.weather.WindPanel;
@@ -49,7 +46,6 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -63,8 +59,6 @@ import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.windows.TopComponent;
-import visad.Real;
-import visad.RealType;
 
 /**
  * The WeatherTopComponent provides the WeatherProvider selection interface and displays weather
@@ -131,8 +125,7 @@ public final class WeatherTopComponent extends TopComponent {
         logger.fine(PREFERRED_ID + " initializing....");
         
         // Initialize our "manual" weather provider
-        diurnalWx = WeatherOptions.newDiurnalWeatherProvider();
-        diurnalWx.setSunlight(Model.getInstance().getSunlight());
+        diurnalWx = WeatherProviderFactory.newDiurnalWeatherProvider(Model.getInstance().getSunlight());
         // Add a listener to update the Diurnal Weather with the current sunlight
         Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
             diurnalWx.setSunlight((Sunlight) evt.getNewValue());
