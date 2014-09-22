@@ -46,9 +46,9 @@ import com.emxsys.gis.api.layer.LayerGroup;
 import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.gis.api.symbology.Graphic;
 import com.emxsys.gis.api.viewer.GisViewer;
-import com.emxsys.gis.spi.DefaultShadedTerrainProvider;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
-import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.gis.spi.ShadedTerrainProviderFactory;
+import com.emxsys.solar.spi.SunlightProviderFactory;
+import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.visad.Reals;
 import com.emxsys.wmt.globe.layers.BackgroundLayers;
 import com.emxsys.wmt.globe.layers.BaseMapLayers;
@@ -258,9 +258,9 @@ public class Globe implements GisViewer {
         this.content.add(new GlobeCapabilities());
         this.content.add(new GlobeCoordinateProvider());
         this.content.add(new GlobeSectorEditor(this.content));
-        this.content.add(DefaultShadedTerrainProvider.getInstance());
-        this.content.add(DefaultSunlightProvider.getInstance());
-        this.content.add(DefaultTimeProvider.getInstance());
+        this.content.add(ShadedTerrainProviderFactory.getInstance());
+        this.content.add(SunlightProviderFactory.getInstance());
+        this.content.add(TimeProviderFactory.getInstance());
         wwm.addLookup(this.lookup);
 
         // Disable painting during the initialization

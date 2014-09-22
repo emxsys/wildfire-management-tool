@@ -38,7 +38,7 @@ import com.emxsys.wmt.globe.layers.GisLayerProxy;
 import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
-import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.time.spi.TimeProviderFactory;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
@@ -91,7 +91,7 @@ public class ParticleAnalytics {
     public static final String PREF_PARTICLE_ANALYTICS_NUM_PARTICLES = "particle_analytics_num_particles";
     public static final int DEFAULT_NUM_PARTICLES = 2000;
     private final String layerName;
-    private final TimeProvider controller = DefaultTimeProvider.getInstance();
+    private final TimeProvider controller = TimeProviderFactory.getInstance();
     private SurfaceImage surface;
     private BufferedImage image;
     private Sector sector;

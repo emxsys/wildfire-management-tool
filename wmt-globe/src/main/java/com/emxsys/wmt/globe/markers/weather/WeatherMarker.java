@@ -35,7 +35,7 @@ import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
-import com.emxsys.time.spi.DefaultTimeProvider;
+import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.WeatherModel;
@@ -203,7 +203,7 @@ public class WeatherMarker extends BasicMarker {
         initializeBrowserBalloon();
 
         // Listen to the application time
-        TimeProvider tp = DefaultTimeProvider.getInstance();
+        TimeProvider tp = TimeProviderFactory.getInstance();
         tp.addTimeListener(WeakListeners.create(TimeListener.class, updater, tp));
 
         // Add persistance capability
