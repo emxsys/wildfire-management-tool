@@ -34,7 +34,7 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.GeoSector;
 import static com.emxsys.solar.api.SolarType.SUNLIGHT;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
@@ -163,7 +163,7 @@ public class SolarModel {
     }
 
     private FieldImpl createSolarField() {
-        SunlightProvider sun = DefaultSunlightProvider.getInstance();
+        SunlightProvider sun = SunlightProviderFactory.getInstance();
         try {
             // Create the (time->((lat,lon)->(SUNLIGHT))) function
             FlatField spatialField = this.spatialDomain.createSimpleSpatialField(SUNLIGHT);

@@ -39,7 +39,7 @@ import org.openide.util.Lookup;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class DefaultSunlightProvider  {
+public abstract class SunlightProviderFactory  {
 
     private static SunlightProvider instance = null;
 
@@ -48,7 +48,7 @@ public abstract class DefaultSunlightProvider  {
      * SunlightProvider service provider, then an instance of that class will be returned.
      * Otherwise, an instance of the RothermelDefaultSunlightProvider will be returned.
      *
-     * @return A singleton instance of a DefaultSunlightProvider.
+     * @return A singleton instance of a SunlightProviderFactory.
      */
     public static SunlightProvider getInstance() {
         if (instance == null) {

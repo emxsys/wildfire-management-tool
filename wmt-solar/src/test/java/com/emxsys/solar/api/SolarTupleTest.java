@@ -32,7 +32,7 @@ package com.emxsys.solar.api;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.solar.internal.SolarData;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import org.junit.After;
@@ -70,7 +70,7 @@ public class SolarTupleTest {
 
         date = ZonedDateTime.of(2014, 05, 29, 15, 00, 00, 00, ZoneId.of("-8"));
         observer = GeoCoord3D.fromDegreesAndMeters(34.25, -119.2, 60);
-        instance = DefaultSunlightProvider.getInstance().getSunlight(date, observer);
+        instance = SunlightProviderFactory.getInstance().getSunlight(date, observer);
         /*
          Date,Time,Topocentric zenith angle,Top. azimuth angle (eastward from N),Local sunrise time,Local sun transit time,Local sunset time,Observer hour angle,Topocentric sun declination,Topocentric local hour angle,Top. elevation angle (uncorrected),Sunrise hour angle,Sunset hour angle,Sun transit altitude
          5/29/2014,0:00:00,124.114195,1.638156,4.782459,11.903856,19.019525,181.458900,21.618566,181.458845,-34.114195,-106.760688,106.737361,77.446386
