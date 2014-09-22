@@ -43,6 +43,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -56,6 +57,7 @@ import org.w3c.dom.Element;
  *
  * @author Bruce Schubert
  */
+@Ignore
 @RunWith(Parameterized.class)
 public class LandfireTiledImageLayerFactoryTest {
 

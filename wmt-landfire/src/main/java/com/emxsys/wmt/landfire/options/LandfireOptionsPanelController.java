@@ -43,7 +43,8 @@ import org.openide.util.Lookup;
 @OptionsPanelController.TopLevelRegistration(categoryName = "#OptionsCategory_Name_Landfire",
                                              iconBase = "com/emxsys/wmt/landfire/options/database_process32.png",
                                              keywords = "#OptionsCategory_Keywords_Landfire",
-                                             keywordsCategory = "Landfire")
+                                             keywordsCategory = "Landfire",
+                                             position = 50)
 public final class LandfireOptionsPanelController extends OptionsPanelController {
 
     private LandfireOptionsPanel panel;
