@@ -33,7 +33,7 @@ import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainProvider;
-import com.emxsys.gis.spi.DefaultTerrainProvider;
+import com.emxsys.gis.spi.TerrainProviderFactory;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
@@ -67,7 +67,7 @@ public class Environment implements Lookup.Provider {
         if (lookup == null) {
             // Deferred initialization
             content.add(new DiurnalWeatherProvider());
-            content.add(DefaultTerrainProvider.getInstance());
+            content.add(TerrainProviderFactory.getInstance());
             content.add(new SurfaceFireProvider());
 
             lookup = new AbstractLookup(content);

@@ -32,7 +32,7 @@ package com.emxsys.wmt.swarm.fireants;
 
 import com.emxsys.solar.api.SunlightProvider;
 import com.emxsys.solar.internal.SPASunlightProvider;
-import com.emxsys.solar.spi.DefaultSunlightProvider;
+import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.wmt.globe.Globe;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -74,7 +74,7 @@ public class SimulatorTest {
     @Test
     public void testRun() {
         System.out.println("run");
-        assertNotNull(DefaultSunlightProvider.getInstance());
+        assertNotNull(SunlightProviderFactory.getInstance());
         Simulator instance = Simulator.getInstance();
         instance.run();
     }
