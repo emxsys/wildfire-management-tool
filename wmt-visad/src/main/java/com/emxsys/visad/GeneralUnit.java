@@ -33,10 +33,9 @@ import visad.Unit;
 import static com.emxsys.visad.Units.*;
 
 /**
- * General units of measure not defined in visad.CommunUnit.
+ * General units of measure not defined in visad.CommonUnit.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: GeneralUnit.java 534 2013-04-18 15:26:05Z bdschubert $
  * @see visad.CommonUnit
  * @see FireUnit
  * @see Units
@@ -45,32 +44,52 @@ public class GeneralUnit {
 
     /** Common unit for distance - US */
     public static final Unit mile = getUnit("mile");
+
+    /** Common unit for distance - SI */
+    public static final Unit kilometer = getUnit("kilometer");
+
+    /** Common unit for fire perimeter, distance - US */
+    public static final Unit chain = getUnit("chain");
+    
     /** Common unit for fuel bed depth, flame length - US */
     public static final Unit nautical_mile = getUnit("nmile");
+    
     /** Common unit for fuel bed depth, flame length - US */
     public static final Unit foot = getUnit("ft");
+    
     /** Common unit for rainfall, inches - US */
     public static final Unit inch = getUnit("inch");
+    
     /** Common unit for humidity and moisture of extinction of dead fuel */
     public static final Unit percent = getUnit("percent");
+    
     /** Common unit for temperature in degrees Celsius */
     public static final Unit degC = getUnit("degC");
+    
     /** Common unit for temperature in degrees Fahrenheit */
     public static final Unit degF = getUnit("degF");
+    
     /** Common unit for temperature in degrees Kelvin */
     public static final Unit degK = getUnit("degK");
+    
     /** Common unit for speed in miles per hour */
     public static final Unit mph = getUnit("mile/(hour)");
+    
     /** Common unit for speed in kilometers per hour */
     public static final Unit kph = getUnit("kilometer/(hour)");
+    
     /** Common unit for speed in knots */
     public static final Unit knot = getUnit("kt");
+    
     /** Common unit for time in hours */
     public static final Unit hour = getUnit("h");
+    
     /** Common unit for time in hours */
     public static final Unit day = getUnit("d");
+    
     /** Common unit for area in hectares */
     public static final Unit hectare = getUnit("hectare");
+    
     /** Common unit for area in acres */
     public static final Unit acre = getUnit("acre");
 }
