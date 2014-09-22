@@ -44,7 +44,8 @@ import org.openide.util.Lookup;
         categoryName = "#OptionsCategory_Name_CPS",
         iconBase = "com/emxsys/wmt/cps/options/cps-icon32.png",
         keywords = "#OptionsCategory_Keywords_CPS",
-        keywordsCategory = "CPS"
+        keywordsCategory = "CPS",
+        position = 40
 )
 @org.openide.util.NbBundle.Messages({"OptionsCategory_Name_CPS=CPS", "OptionsCategory_Keywords_CPS=CPS, Fire Behavior"})
 public final class CpsOptionsPanelController extends OptionsPanelController {

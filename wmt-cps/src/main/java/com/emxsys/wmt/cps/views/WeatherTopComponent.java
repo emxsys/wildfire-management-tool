@@ -36,7 +36,7 @@ import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import com.emxsys.weather.spi.WeatherProviderFactory;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.WeatherManager;
