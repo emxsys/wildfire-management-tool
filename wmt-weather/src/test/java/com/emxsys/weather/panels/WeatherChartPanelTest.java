@@ -43,7 +43,8 @@ import static org.junit.Assert.*;
 import visad.FlatField;
 
 /**
- *
+ * Test the layout/display of the WeatherChartPanel.
+ * 
  * @author Bruce Schubert
  */
 public class WeatherChartPanelTest {
@@ -70,6 +71,7 @@ public class WeatherChartPanelTest {
         WeatherChartPanel instance = new WeatherChartPanel();
         instance.setTitle("Diurnal Weather");
         instance.setTemperatures(wx);
+        instance.setHumidities(wx);
 
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(

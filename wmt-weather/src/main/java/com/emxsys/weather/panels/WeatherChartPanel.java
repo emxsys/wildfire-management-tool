@@ -142,9 +142,14 @@ public class WeatherChartPanel extends ChartPanel {
         this.chart.plotTemperatures(ff);
     }
 
+    public void setHumidities(FlatField ff) {
+        this.chart.plotHumidities(ff);
+    }
+
     public void refresh() {
         this.chart.setNotify(true);
     }
+
     /**
      * The WeatherChart is a JFreeChart with a specialized XYPlot for displaying temperature,
      * humidity, winds and day/night.
@@ -240,31 +245,31 @@ public class WeatherChartPanel extends ChartPanel {
 
         /**
          * Plot the supplied temperatures in the chart.
-         * @param wxField (hour -> (temperature))
+         * @param weather (hour -> (temperature))
          */
-        public void plotTemperatures(FlatField wxField) {
+        public void plotTemperatures(FlatField weather) {
             seriesTa.clear();
             try {
                 // TODO test math types for compatablity and tuple index
-                FunctionType functionType = (FunctionType) wxField.getType();
+                FunctionType functionType = (FunctionType) weather.getType();
                 int index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_F);
                 Unit unit = GeneralUnit.degF;
                 if (index == -1) {
                     index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_C);
                     unit = GeneralUnit.degC;
                 }
-
                 if (index == -1) {
                     throw new IllegalArgumentException("FlatField must contain AIR_TEMP_C or AIR_TEMP_F.");
                 }
 
-                final float[][] times = wxField.getDomainSet().getSamples(false);
-                final float[][] values = wxField.getFloats(false);
+                final float[][] times = weather.getDomainSet().getSamples(false);
+                final float[][] values = weather.getFloats(false);
 
                 for (int i = 0; i < times[0].length; i++) {
+                    // Add values to the series in the preferred UOM
                     float value = values[index][i];
-                    seriesTa.add(times[0][i], airTempUnit.equals(unit) 
-                            ? value 
+                    seriesTa.add(times[0][i], airTempUnit.equals(unit)
+                            ? value
                             : airTempUnit.toThis(value, unit));
                 }
 
@@ -273,17 +278,17 @@ public class WeatherChartPanel extends ChartPanel {
             }
         }
 
-        public void plotHumidities(FlatField humidities) {
+        public void plotHumidities(FlatField weather) {
             seriesHa.clear();
             try {
-                FunctionType functionType = (FunctionType) humidities.getType();
+                FunctionType functionType = (FunctionType) weather.getType();
                 int index = findRangeComponentIndex(functionType, WeatherType.REL_HUMIDITY);
                 if (index == -1) {
                     throw new IllegalArgumentException("FlatField must contain REL_HUMIDITY.");
                 }
 
-                final float[][] times = humidities.getDomainSet().getSamples(false);
-                final float[][] values = humidities.getFloats(false);
+                final float[][] times = weather.getDomainSet().getSamples(false);
+                final float[][] values = weather.getFloats(false);
 
                 for (int i = 0; i < times[0].length; i++) {
                     seriesHa.add(times[0][i], values[index][i]);
