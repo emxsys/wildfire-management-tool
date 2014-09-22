@@ -119,9 +119,6 @@
               <ResourceString bundle="com/emxsys/weather/options/Bundle.properties" key="WeatherUnitsOptionsPanel.fahrenheitButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fahrenheitButtonActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="celsiusButton">
           <Properties>
@@ -132,9 +129,6 @@
               <ResourceString bundle="com/emxsys/weather/options/Bundle.properties" key="WeatherUnitsOptionsPanel.celsiusButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="celsiusButtonActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -195,9 +189,6 @@
               <ResourceString bundle="com/emxsys/weather/options/Bundle.properties" key="WeatherUnitsOptionsPanel.mphButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mphButtonActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="ktsButton">
           <Properties>
@@ -208,9 +199,6 @@
               <ResourceString bundle="com/emxsys/weather/options/Bundle.properties" key="WeatherUnitsOptionsPanel.ktsButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ktsButtonActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="kphButton">
           <Properties>
@@ -221,9 +209,6 @@
               <ResourceString bundle="com/emxsys/weather/options/Bundle.properties" key="WeatherUnitsOptionsPanel.kphButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="kphButtonActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="mpsButton">
           <Properties>
@@ -234,9 +219,6 @@
               <ResourceString bundle="com/emxsys/weather/options/Bundle.properties" key="WeatherUnitsOptionsPanel.mpsButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mpsButtonActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

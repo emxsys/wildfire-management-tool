@@ -33,7 +33,8 @@
         categoryName = "#OptionsCategory_Name_Weather",
         iconBase = "com/emxsys/weather/images/sun_clouds32.png",
         keywords = "#OptionsCategory_Keywords_Weather",
-        keywordsCategory = "Weather")
+        keywordsCategory = "Weather",
+        position = 20)
 @NbBundle.Messages(value = {
     "OptionsCategory_Name_Weather=Weather",
     "OptionsCategory_Keywords_Weather=weather diurnal units uom"})

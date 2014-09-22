@@ -31,7 +31,7 @@ package com.emxsys.weather.wizards;
 
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import java.time.ZonedDateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;

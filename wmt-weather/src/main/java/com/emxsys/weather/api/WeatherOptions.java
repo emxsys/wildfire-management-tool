@@ -27,17 +27,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.weather.options;
+package com.emxsys.weather.api;
 
 import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.visad.GeneralUnit.degF;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.WeatherType;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import static java.lang.Math.round;
 import java.util.HashMap;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
 import visad.CommonUnit;
@@ -98,8 +97,6 @@ public class WeatherOptions {
         windUnits.put(UOM_MPS, CommonUnit.meterPerSecond);
     }
 
-    private static final PropertyChangeSupport pcs = new PropertyChangeSupport(WeatherOptions.class);
-
     public static DiurnalWeatherProvider newDiurnalWeatherProvider() {
         DiurnalWeatherProvider provider = new DiurnalWeatherProvider();
         provider.initializeAirTemperatures(
@@ -116,61 +113,71 @@ public class WeatherOptions {
         return provider;
     }
 
-    public static void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
+    /**
+     * Adds a PreferenceChangeListener to the underlying WildfireOptions preferences file.
+     * @param listener
+     */
+    public static void addPreferenceChangeListener(PreferenceChangeListener listener) {
+        prefs.addPreferenceChangeListener(listener);
     }
 
-    public static void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
+    public static void removePreferenceChangeListener(PreferenceChangeListener listener) {
+        prefs.removePreferenceChangeListener(listener);
     }
 
+    /**
+     *
+     * @return The unit of measure preference for air temperature.
+     */
+    public static String getAirTempUom() {
+        return prefs.get(PREF_AIR_TEMP_UOM, DEFAULT_AIR_TEMP_UOM);
+    }
+
+    /**
+     *
+     * @return The current Unit for air temperature.
+     */
     public static Unit getAirTempUnit() {
-        String uom = prefs.get(PREF_AIR_TEMP_UOM, DEFAULT_AIR_TEMP_UOM);
-        return tempUnits.get(uom);
+        return airTempUomToUnit(getAirTempUom());
     }
 
-    public static void setAirTempUnit(Unit unit) {
-        String uom;
-        if (unit.equals(GeneralUnit.degF)) {
-            uom = UOM_FAHRENHEIT;
-        } else if (unit.equals(GeneralUnit.degC)) {
-            uom = UOM_CELSIUS;
-        } else {
-            throw new IllegalArgumentException("Invalid air temp unit: " + unit);
+    /**
+     * Sets the air temperature unit of measure preference.
+     * @param uom One of: UOM_FAHRENHEIT, UOM_CELSIUS.
+     */
+    public static void setAirTempUom(String uom) {
+        if (tempUnits.get(uom) == null) {
+            throw new IllegalArgumentException("Invalid air temp UOM: " + uom);
         }
-
-        Unit oldUnit = getAirTempUnit();
         prefs.put(PREF_AIR_TEMP_UOM, uom);
-        pcs.firePropertyChange(PREF_AIR_TEMP_UOM, oldUnit, getAirTempUnit());
-
     }
 
-
-    public static Unit getWindSpeedUnit() {
-        String uom = prefs.get(PREF_WIND_SPD_UOM, DEFAULT_WIND_SPD_UOM);
-        return windUnits.get(uom);
+    /**
+     *
+     * @return The unit of measure preference for air temperature wind speed.
+     */
+    public static String getWindSpeedUom() {
+        return prefs.get(PREF_WIND_SPD_UOM, DEFAULT_WIND_SPD_UOM);
     }
-    
-    public static void setWindSpeedUnit(Unit unit) {
-        String uom;
-        if (unit.equals(GeneralUnit.mph)) {
-            uom = UOM_MPH;
-        } else if (unit.equals(GeneralUnit.kph)) {
-            uom = UOM_KPH;
-        } else if (unit.equals(GeneralUnit.knot)) {
-            uom = UOM_KTS;
-        } else if (unit.equals(CommonUnit.meterPerSecond)) {
-            uom = UOM_MPS;
-        } else {
-            throw new IllegalArgumentException("Invalid wind speed unit: " + unit);
+
+    /**
+     * Sets the air temperature unit of measure preference.
+     * @param uom One of: UOM_MPH, UOM_KPH, UOM_KTS, UOM_MPS.
+     */
+    public static void setWindSpeedUom(String uom) {
+        if (windUnits.get(uom) == null) {
+            throw new IllegalArgumentException("Invalid wind speed UOM: " + uom);
         }
-
-        Unit oldUnit = getWindSpeedUnit();
         prefs.put(PREF_WIND_SPD_UOM, uom);
-        pcs.firePropertyChange(PREF_WIND_SPD_UOM, oldUnit, getWindSpeedUnit());
-
     }
 
+    /**
+     *
+     * @return The current Unit for wind speed.
+     */
+    public static Unit getWindSpeedUnit() {
+        return windSpeedUomToUnit(getWindSpeedUom());
+    }
 
     public static Real getAirTempPreference(String key) {
         int defValue;
@@ -223,6 +230,22 @@ public class WeatherOptions {
 
     public static void setRelHumidityPreference(String key, int value) {
         prefs.putInt(key, value);
+    }
+
+    public static Unit airTempUomToUnit(String uom) {
+        Unit unit = tempUnits.get(uom);
+        if (unit == null) {
+            throw new IllegalArgumentException("Invalid air temperature uom: " + uom);
+        }
+        return unit;
+    }
+
+    public static Unit windSpeedUomToUnit(String uom) {
+        Unit unit = windUnits.get(uom);
+        if (unit == null) {
+            throw new IllegalArgumentException("Invalid wind speed uom: " + uom);
+        }
+        return unit;
     }
 
 }

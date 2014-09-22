@@ -29,19 +29,15 @@
  */
 package com.emxsys.weather.panels;
 
-import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.api.WeatherType;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import java.time.ZonedDateTime;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import visad.FlatField;
-import visad.Real;
 
 /**
  *
@@ -56,7 +52,7 @@ public class WeatherChartPanelTest {
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
 
-        WeatherOptions.setAirTempUnit(GeneralUnit.degC);
+        WeatherOptions.setAirTempUom(WeatherOptions.UOM_CELSIUS);
 
         TemporalDomain domain = new TemporalDomain(ZonedDateTime.now(), 48);
 
@@ -65,7 +61,7 @@ public class WeatherChartPanelTest {
 
         FlatField wx = provider.getHourlyWeather(domain);
 
-        WeatherOptions.setAirTempUnit(GeneralUnit.degF);
+        WeatherOptions.setAirTempUom(WeatherOptions.UOM_FAHRENHEIT);
         WeatherChartPanel instance = new WeatherChartPanel();
         instance.setTitle("Diurnal Weather");
         instance.setTemperatures(wx);
@@ -79,7 +75,7 @@ public class WeatherChartPanelTest {
                         JOptionPane.PLAIN_MESSAGE,
                         null) == JOptionPane.YES_OPTION);
 
-        WeatherOptions.setAirTempUnit(GeneralUnit.degC);
+        WeatherOptions.setAirTempUom(WeatherOptions.UOM_CELSIUS);
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame

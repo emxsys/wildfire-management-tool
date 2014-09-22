@@ -29,10 +29,19 @@
  */
 package com.emxsys.weather.options;
 
-import com.emxsys.visad.GeneralUnit;
+import com.emxsys.weather.api.WeatherOptions;
+import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_UOM;
+import static com.emxsys.weather.api.WeatherOptions.PREF_WIND_SPD_UOM;
+import static com.emxsys.weather.api.WeatherOptions.UOM_CELSIUS;
+import static com.emxsys.weather.api.WeatherOptions.UOM_FAHRENHEIT;
+import static com.emxsys.weather.api.WeatherOptions.UOM_KPH;
+import static com.emxsys.weather.api.WeatherOptions.UOM_KTS;
+import static com.emxsys.weather.api.WeatherOptions.UOM_MPH;
+import static com.emxsys.weather.api.WeatherOptions.UOM_MPS;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
-import visad.CommonUnit;
 
 final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
@@ -41,11 +50,22 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
     private String initialWindSpdUOM = "";
     private boolean shouldRestart = false;
     private final WeatherUnitsOptionsPanelController controller;
+    private final ActionListener listener;
 
     WeatherUnitsOptionsPanel(WeatherUnitsOptionsPanelController controller) {
         this.controller = controller;
+        this.listener = (ActionEvent e) -> {
+            this.controller.changed();
+        };
         initComponents();
-        // TODO listen to changes in form fields and call controller.changed()
+        // listen to changes in form fields and call controller.changed()
+        this.fahrenheitButton.addActionListener(listener);
+        this.celsiusButton.addActionListener(listener);
+        this.ktsButton.addActionListener(listener);
+        this.ktsButton.addActionListener(listener);
+        this.mphButton.addActionListener(listener);
+        this.kphButton.addActionListener(listener);
+        this.mpsButton.addActionListener(listener);        
     }
 
     /** This method is called from within the constructor to initialize the form. WARNING: Do NOT
@@ -77,19 +97,9 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
         buttonGroup1.add(fahrenheitButton);
         org.openide.awt.Mnemonics.setLocalizedText(fahrenheitButton, org.openide.util.NbBundle.getMessage(WeatherUnitsOptionsPanel.class, "WeatherUnitsOptionsPanel.fahrenheitButton.text")); // NOI18N
-        fahrenheitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fahrenheitButtonActionPerformed(evt);
-            }
-        });
 
         buttonGroup1.add(celsiusButton);
         org.openide.awt.Mnemonics.setLocalizedText(celsiusButton, org.openide.util.NbBundle.getMessage(WeatherUnitsOptionsPanel.class, "WeatherUnitsOptionsPanel.celsiusButton.text")); // NOI18N
-        celsiusButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                celsiusButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -119,35 +129,15 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
         buttonGroup2.add(mphButton);
         org.openide.awt.Mnemonics.setLocalizedText(mphButton, org.openide.util.NbBundle.getMessage(WeatherUnitsOptionsPanel.class, "WeatherUnitsOptionsPanel.mphButton.text")); // NOI18N
-        mphButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mphButtonActionPerformed(evt);
-            }
-        });
 
         buttonGroup2.add(ktsButton);
         org.openide.awt.Mnemonics.setLocalizedText(ktsButton, org.openide.util.NbBundle.getMessage(WeatherUnitsOptionsPanel.class, "WeatherUnitsOptionsPanel.ktsButton.text")); // NOI18N
-        ktsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ktsButtonActionPerformed(evt);
-            }
-        });
 
         buttonGroup2.add(kphButton);
         org.openide.awt.Mnemonics.setLocalizedText(kphButton, org.openide.util.NbBundle.getMessage(WeatherUnitsOptionsPanel.class, "WeatherUnitsOptionsPanel.kphButton.text")); // NOI18N
-        kphButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kphButtonActionPerformed(evt);
-            }
-        });
 
         buttonGroup2.add(mpsButton);
         org.openide.awt.Mnemonics.setLocalizedText(mpsButton, org.openide.util.NbBundle.getMessage(WeatherUnitsOptionsPanel.class, "WeatherUnitsOptionsPanel.mpsButton.text")); // NOI18N
-        mpsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mpsButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -209,33 +199,9 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fahrenheitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fahrenheitButtonActionPerformed
-        controller.changed();
-    }//GEN-LAST:event_fahrenheitButtonActionPerformed
-
-    private void celsiusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_celsiusButtonActionPerformed
-        controller.changed();
-    }//GEN-LAST:event_celsiusButtonActionPerformed
-
-    private void mphButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mphButtonActionPerformed
-        controller.changed();
-    }//GEN-LAST:event_mphButtonActionPerformed
-
-    private void ktsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ktsButtonActionPerformed
-        controller.changed();
-    }//GEN-LAST:event_ktsButtonActionPerformed
-
-    private void kphButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kphButtonActionPerformed
-        controller.changed();
-    }//GEN-LAST:event_kphButtonActionPerformed
-
-    private void mpsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mpsButtonActionPerformed
-        controller.changed();
-    }//GEN-LAST:event_mpsButtonActionPerformed
-
     void load() {
-        initialAirTempUOM = prefs.get(WeatherOptions.PREF_AIR_TEMP_UOM, WeatherOptions.UOM_FAHRENHEIT);
-        initialWindSpdUOM = prefs.get(WeatherOptions.PREF_WIND_SPD_UOM, WeatherOptions.UOM_MPH);
+        initialAirTempUOM = prefs.get(PREF_AIR_TEMP_UOM, UOM_FAHRENHEIT);
+        initialWindSpdUOM = prefs.get(PREF_WIND_SPD_UOM, UOM_MPH);
         switch (initialAirTempUOM) {
             case WeatherOptions.UOM_FAHRENHEIT:
                 this.fahrenheitButton.setSelected(true);
@@ -245,16 +211,16 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
                 break;
         }
         switch (initialWindSpdUOM) {
-            case WeatherOptions.UOM_MPH:
+            case UOM_MPH:
                 this.mphButton.setSelected(true);
                 break;
-            case WeatherOptions.UOM_KPH:
+            case UOM_KPH:
                 this.kphButton.setSelected(true);
                 break;
-            case WeatherOptions.UOM_KTS:
+            case UOM_KTS:
                 this.ktsButton.setSelected(true);
                 break;
-            case WeatherOptions.UOM_MPS:
+            case UOM_MPS:
                 this.mpsButton.setSelected(true);
                 break;
         }
@@ -263,19 +229,19 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
 
     void store() {
         if (this.fahrenheitButton.isSelected()) {
-            WeatherOptions.setAirTempUnit(GeneralUnit.degF);
+            WeatherOptions.setAirTempUom(UOM_FAHRENHEIT);
         } else if (this.celsiusButton.isSelected()) {
-            WeatherOptions.setAirTempUnit(GeneralUnit.degC);
+            WeatherOptions.setAirTempUom(UOM_CELSIUS);
         }
 
         if (this.mphButton.isSelected()) {
-            WeatherOptions.setWindSpeedUnit(GeneralUnit.mph);
+            WeatherOptions.setWindSpeedUom(UOM_MPH);
         } else if (this.kphButton.isSelected()) {
-            WeatherOptions.setWindSpeedUnit(GeneralUnit.kph);
+            WeatherOptions.setWindSpeedUom(UOM_KPH);
         } else if (this.ktsButton.isSelected()) {
-            WeatherOptions.setWindSpeedUnit(GeneralUnit.knot);
+            WeatherOptions.setWindSpeedUom(UOM_KTS);
         } else if (this.mpsButton.isSelected()) {
-            WeatherOptions.setWindSpeedUnit(CommonUnit.meterPerSecond);
+            WeatherOptions.setWindSpeedUom(UOM_MPS);
         }
 
     }

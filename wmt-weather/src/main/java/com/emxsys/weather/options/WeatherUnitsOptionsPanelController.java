@@ -47,7 +47,9 @@ import org.openide.util.Lookup;
         keywords = "#AdvancedOption_Keywords_WeatherUnits",
         keywordsCategory = "Weather/WeatherUnits"
 )
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_WeatherUnits=Units", "AdvancedOption_Keywords_WeatherUnits=units uom measure"})
+@org.openide.util.NbBundle.Messages({
+    "AdvancedOption_DisplayName_WeatherUnits=Units",
+    "AdvancedOption_Keywords_WeatherUnits=units uom measure"})
 public final class WeatherUnitsOptionsPanelController extends OptionsPanelController {
 
     private WeatherUnitsOptionsPanel panel;

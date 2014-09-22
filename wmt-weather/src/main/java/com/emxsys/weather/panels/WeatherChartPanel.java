@@ -32,15 +32,15 @@ package com.emxsys.weather.panels;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -53,7 +53,6 @@ import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.DefaultWindDataset;
 import org.jfree.data.xy.VectorSeries;
@@ -197,13 +196,13 @@ public class WeatherChartPanel extends ChartPanel {
 
             this.airTempUnit = WeatherOptions.getAirTempUnit();
             this.windSpdUnit = WeatherOptions.getWindSpeedUnit();
-            WeatherOptions.addPropertyChangeListener((PropertyChangeEvent evt) -> {
-                switch (evt.getPropertyName()) {
+            WeatherOptions.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+                switch (evt.getKey()) {
                     case WeatherOptions.PREF_WIND_SPD_UOM:
-                        setWindSpeedUnit((Unit) evt.getNewValue());
+                        setWindSpeedUnit(WeatherOptions.getWindSpeedUnit());
                         break;
                     case WeatherOptions.PREF_AIR_TEMP_UOM:
-                        setAirTempUnit((Unit) evt.getNewValue());
+                        setAirTempUnit(WeatherOptions.getAirTempUnit());
                         break;
                 }
             });

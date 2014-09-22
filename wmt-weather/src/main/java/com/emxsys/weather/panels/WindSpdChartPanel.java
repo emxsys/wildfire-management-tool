@@ -35,7 +35,7 @@ import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KPH;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KTS;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_SI;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -46,6 +46,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
 import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
@@ -127,15 +128,15 @@ public class WindSpdChartPanel extends ChartPanel {
 
     /**
      * Overrides the default UOM defined in the WeatherOptions.
-     * @param uom Unit of measure to used in this display.
+     * @param unit Unit of measure to used in this display.
      */
-    public void setUnit(Unit uom) {
-        if (!(uom.equals(GeneralUnit.mph) || uom.equals(GeneralUnit.knot)
-                || uom.equals(GeneralUnit.kph) || uom.equals(CommonUnit.meterPerSecond))) {
-            throw new IllegalArgumentException("Invalid UOM for wind speed: " + uom);
+    public void setUnit(Unit unit) {
+        if (!(unit.equals(GeneralUnit.mph) || unit.equals(GeneralUnit.knot)
+                || unit.equals(GeneralUnit.kph) || unit.equals(CommonUnit.meterPerSecond))) {
+            throw new IllegalArgumentException("Invalid unit for wind speed: " + unit);
         }
         Real speed = chart.getWindSpeed();
-        chart.setUnit(uom);
+        chart.setUnit(unit);
         chart.setWindSpeed(speed);
     }
 
@@ -178,9 +179,9 @@ public class WindSpdChartPanel extends ChartPanel {
                 }
             });
 
-            WeatherOptions.addPropertyChangeListener((PropertyChangeEvent evt) -> {
-                if (evt.getPropertyName().equals(WeatherOptions.PREF_WIND_SPD_UOM)) {
-                    setUnit((Unit) evt.getNewValue());
+            WeatherOptions.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+                if (evt.getKey().equals(WeatherOptions.PREF_WIND_SPD_UOM)) {
+                    setUnit(WeatherOptions.getWindSpeedUnit());
                 }
             });
         }

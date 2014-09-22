@@ -29,16 +29,17 @@
  */
 package com.emxsys.weather.options;
 
+import com.emxsys.weather.api.WeatherOptions;
 import com.emxsys.weather.api.WeatherType;
-import static com.emxsys.weather.options.WeatherOptions.PREF_RH_1200;
-import static com.emxsys.weather.options.WeatherOptions.PREF_RH_1400;
-import static com.emxsys.weather.options.WeatherOptions.PREF_RH_SUNRISE;
-import static com.emxsys.weather.options.WeatherOptions.PREF_RH_SUNSET;
-import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_1200;
-import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_1400;
-import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_SUNRISE;
-import static com.emxsys.weather.options.WeatherOptions.PREF_AIR_TEMP_SUNSET;
-import static com.emxsys.weather.options.WeatherOptions.getAirTempUnit;
+import static com.emxsys.weather.api.WeatherOptions.PREF_RH_1200;
+import static com.emxsys.weather.api.WeatherOptions.PREF_RH_1400;
+import static com.emxsys.weather.api.WeatherOptions.PREF_RH_SUNRISE;
+import static com.emxsys.weather.api.WeatherOptions.PREF_RH_SUNSET;
+import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_1200;
+import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_1400;
+import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_SUNRISE;
+import static com.emxsys.weather.api.WeatherOptions.PREF_AIR_TEMP_SUNSET;
+import static com.emxsys.weather.api.WeatherOptions.getAirTempUnit;
 import static java.lang.Math.round;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;

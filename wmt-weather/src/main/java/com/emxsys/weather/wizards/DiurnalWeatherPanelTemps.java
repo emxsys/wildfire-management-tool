@@ -30,7 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import com.emxsys.weather.panels.TemperaturePanel;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;

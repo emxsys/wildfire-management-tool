@@ -30,7 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.weather.options.WeatherOptions;
+import com.emxsys.weather.api.WeatherOptions;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
 import visad.CommonUnit;
