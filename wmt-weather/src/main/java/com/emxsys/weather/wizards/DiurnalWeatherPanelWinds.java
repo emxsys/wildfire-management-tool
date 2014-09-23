@@ -30,7 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.panels.WeatherChartPanel;
+import com.emxsys.weather.panels.WindChartPanel;
 import com.emxsys.weather.panels.WindPanel;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +146,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        wxChartPanel = new WeatherChartPanel();
+        windChartPanel = new WindChartPanel();
         controlsPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -159,16 +159,16 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         windsTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
 
-        wxChartPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        windChartPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        javax.swing.GroupLayout wxChartPanelLayout = new javax.swing.GroupLayout(wxChartPanel);
-        wxChartPanel.setLayout(wxChartPanelLayout);
-        wxChartPanelLayout.setHorizontalGroup(
-            wxChartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout windChartPanelLayout = new javax.swing.GroupLayout(windChartPanel);
+        windChartPanel.setLayout(windChartPanelLayout);
+        windChartPanelLayout.setHorizontalGroup(
+            windChartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        wxChartPanelLayout.setVerticalGroup(
-            wxChartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        windChartPanelLayout.setVerticalGroup(
+            windChartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 135, Short.MAX_VALUE)
         );
 
@@ -259,7 +259,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
-                    .addComponent(wxChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(windChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
@@ -270,7 +270,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(wxChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(windChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -317,7 +317,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     private javax.swing.JButton removeAllButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JSpinner speedSpinField;
+    private javax.swing.JPanel windChartPanel;
     private javax.swing.JTable windsTable;
-    private javax.swing.JPanel wxChartPanel;
     // End of variables declaration//GEN-END:variables
 }
