@@ -113,7 +113,7 @@ public class LandfireTiledImageLayerFactoryTest {
         assertNotNull(result);
     }
 
-@Ignore("when servers are offline")
+//@Ignore("when servers are offline")
     @Test
     public void testGetCapabilities() throws MalformedURLException, IOException {
         System.out.println("testGetCapabilties - " + xmlCfgFile);

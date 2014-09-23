@@ -27,19 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wmt.cps.views.weather;
 
+import com.emxsys.weather.panels.WindChartPanel;
+
 /**
+ * Displays the winds.
  *
  * @author Bruce Schubert
- * @version $Id$
  */
 public class WindPanel extends javax.swing.JPanel {
+
+    private final WindChartPanel windChart = new WindChartPanel();
 
     /** Creates new form WindPanel */
     public WindPanel() {
         initComponents();
+        add(windChart);
     }
 
     /** This method is called from within the constructor to
@@ -52,21 +56,10 @@ public class WindPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindPanel.class, "WindPanel.border.title_1"))); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 372, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 258, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
 }

@@ -29,10 +29,9 @@
  */
 package com.emxsys.weather.panels;
 
-import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
-import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.WeatherPreferences;
+import com.emxsys.weather.api.WeatherType;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -51,10 +50,9 @@ import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.DefaultWindDataset;
+import org.jfree.data.xy.VectorDataItem;
 import org.jfree.data.xy.VectorSeries;
 import org.jfree.data.xy.VectorSeriesCollection;
 import org.jfree.data.xy.VectorXYDataset;
@@ -62,7 +60,6 @@ import org.jfree.data.xy.WindDataset;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
@@ -85,24 +82,21 @@ import visad.VisADException;
  * @author Bruce Schubert
  */
 @Messages({
-    "CTL_WeatherChartDomain=Time",
-    "CTL_WeatherChartRange1=Temp / RH",
-    "CTL_WeatherChartRange2=Wind Speed",
-    "CTL_WeatherChartTemperature=Temperature",
-    "CTL_WeatherChartHumidity=Humidity",
-    "CTL_WeatherChartWind=Winds",})
-public class WeatherChartPanel extends ChartPanel {
+    "CTL_WindChartDomain=Time",
+    "CTL_WindChartRange=Wind Speed",
+    "CTL_WindChartLegend=Winds",})
+public class WindChartPanel extends ChartPanel {
 
-    private WeatherChart chart;
+    private WindChart chart;
 
     /**
      * Constructor creates new form WeatherChartPanel.
      */
-    public WeatherChartPanel() {
-        this(new WeatherChart());
+    public WindChartPanel() {
+        this(new WindChart());
     }
 
-    WeatherChartPanel(WeatherChart chart) {
+    WindChartPanel(WindChart chart) {
         super(chart,
                 DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
@@ -138,41 +132,27 @@ public class WeatherChartPanel extends ChartPanel {
         this.chart.clearSubtitles();
     }
 
-    public void setTemperatures(FlatField ff) {
-        this.chart.plotTemperatures(ff);
-    }
-
-    public void setHumidities(FlatField ff) {
-        this.chart.plotHumidities(ff);
-    }
-
     public void refresh() {
         this.chart.setNotify(true);
     }
 
+    public void setWinds(FlatField weather) {
+        this.chart.plotWinds(weather);
+    }
+
     /**
-     * The WeatherChart is a JFreeChart with a specialized XYPlot for displaying temperature,
-     * humidity, winds and day/night.
+     * The WindChart is a JFreeChart with a specialized XYPlot for displaying temperature, humidity,
+     * winds and day/night.
      */
-    public static class WeatherChart extends JFreeChart {
+    public static class WindChart extends JFreeChart {
 
         private Unit windSpdUnit;
-        private Unit airTempUnit;
 
-        private boolean showingTemperatures = false;
-        private boolean showingHumidities = false;
-        private boolean showingWinds = false;
-
-        /** Dataset for temperature and humidity */
-        private XYSeriesCollection xyDataset;
         /** Dataset for wind vectors */
-        private VectorSeriesCollection vecDataset;
-        /** Air temperature */
-        private XYSeries seriesTa;
-        /** Relative humidity */
-        private XYSeries seriesHa;
+        private VectorSeriesCollection dataset;
+
         /** Wind direction and velocity */
-        private VectorSeries seriesW;
+        private VectorSeries series;
         /** Day/Night markers */
         private ArrayList<Marker> markers = new ArrayList<>();
         private WindDataset windDataset = new DefaultWindDataset();
@@ -180,136 +160,63 @@ public class WeatherChartPanel extends ChartPanel {
         /**
          * Constructor for a WeatherChart.
          */
-        public WeatherChart() {
-            this(new XYSeriesCollection(), new VectorSeriesCollection());
+        public WindChart() {
+            this(new VectorSeriesCollection());
         }
 
         /**
          * Constructor implementation.
          * @param xyDataset
-         * @param vecDataset
+         * @param dataset
          */
-        WeatherChart(XYSeriesCollection xyDataset, VectorSeriesCollection vecDataset) {
-            super(new WeatherPlot(xyDataset, vecDataset));
+        WindChart(VectorSeriesCollection dataset) {
+            super(new WindPlot(dataset));
 
-            seriesTa = new XYSeries(Bundle.CTL_WeatherChartTemperature());
-            seriesHa = new XYSeries(Bundle.CTL_WeatherChartHumidity());
-            seriesW = new VectorSeries(Bundle.CTL_WeatherChartWind());
+            this.series = new VectorSeries(Bundle.CTL_WindChartLegend());
+            this.dataset = dataset;
+            this.dataset.addSeries(series);
 
-            this.xyDataset = xyDataset;
-            this.xyDataset.addSeries(seriesTa);
-            this.xyDataset.addSeries(seriesHa);
-
-            this.vecDataset = vecDataset;
-            this.vecDataset.addSeries(seriesW);
-
-            this.airTempUnit = WeatherPreferences.getAirTempUnit();
             this.windSpdUnit = WeatherPreferences.getWindSpeedUnit();
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
-                switch (evt.getKey()) {
-                    case WeatherPreferences.PREF_WIND_SPD_UOM:
-                        setWindSpeedUnit(WeatherPreferences.getWindSpeedUnit());
-                        break;
-                    case WeatherPreferences.PREF_AIR_TEMP_UOM:
-                        setAirTempUnit(WeatherPreferences.getAirTempUnit());
-                        break;
+                if (evt.getKey().equals(WeatherPreferences.PREF_WIND_SPD_UOM)) {
+                    setWindSpeedUnit(WeatherPreferences.getWindSpeedUnit());
                 }
             });
-            
             this.removeLegend();
-        
-        }
 
-        public final void setAirTempUnit(Unit newUnit) {
-            if (this.airTempUnit.equals(newUnit)) {
-                return;
-            }
-            try {
-                // Refresh the temperature series with the new Unit of measure
-                XYSeries oldSeries = (XYSeries) seriesTa.clone();
-                seriesTa.clear();
-                for (int i = 0; i < oldSeries.getItemCount(); i++) {
-                    try {
-                        XYDataItem item = oldSeries.getDataItem(i);
-                        // convert item to new unit of measure
-                        item.setY(airTempUnit.toThat(item.getYValue(), newUnit));
-                        seriesTa.add(item);
-                    } catch (UnitException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
-                }
-                // Now set the new air temp unit property
-                this.airTempUnit = newUnit;
-                this.seriesTa.fireSeriesChanged();
-            } catch (CloneNotSupportedException ex) {
-                Exceptions.printStackTrace(ex);
-            }
         }
 
         public final void setWindSpeedUnit(Unit newUnit) {
-            this.windSpdUnit = newUnit;
-        }
-
-        /**
-         * Plot the supplied temperatures in the chart.
-         * @param weather (hour -> (temperature))
-         */
-        public void plotTemperatures(FlatField weather) {
-            seriesTa.clear();
-            try {
-                // TODO test math types for compatablity and tuple index
-                FunctionType functionType = (FunctionType) weather.getType();
-                int index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_F);
-                Unit unit = GeneralUnit.degF;
-                if (index == -1) {
-                    index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_C);
-                    unit = GeneralUnit.degC;
-                }
-                if (index == -1) {
-                    throw new IllegalArgumentException("FlatField must contain AIR_TEMP_C or AIR_TEMP_F.");
-                }
-
-                final float[][] times = weather.getDomainSet().getSamples(false);
-                final float[][] values = weather.getFloats(false);
-
-                for (int i = 0; i < times[0].length; i++) {
-                    // Add values to the series in the preferred UOM
-                    float value = values[index][i];
-                    seriesTa.add(times[0][i], airTempUnit.equals(unit)
-                            ? value
-                            : airTempUnit.toThis(value, unit));
-                }
-                showingTemperatures = true;
-
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
+            if (this.windSpdUnit.equals(newUnit)) {
+                return;
             }
-        }
+            // Refresh the series with the new unit of measure
+            VectorSeries newSeries = new VectorSeries(Bundle.CTL_WindChartLegend());
 
-        public void plotHumidities(FlatField weather) {
-            seriesHa.clear();
-            try {
-                FunctionType functionType = (FunctionType) weather.getType();
-                int index = findRangeComponentIndex(functionType, WeatherType.REL_HUMIDITY);
-                if (index == -1) {
-                    throw new IllegalArgumentException("FlatField must contain REL_HUMIDITY.");
+            for (int i = 0; i < series.getItemCount(); i++) {
+                try {
+                    double time = series.getXValue(i);
+                    double speed = series.getYValue(i);
+                    double vectorX = series.getVectorXValue(i);
+                    double vectorY = series.getVectorYValue(i);
+                    // convert speed  to new unit of measure
+                    speed = windSpdUnit.toThat(speed, newUnit);
+                    newSeries.add(time, speed, vectorX, vectorY);
+                } catch (UnitException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-
-                final float[][] times = weather.getDomainSet().getSamples(false);
-                final float[][] values = weather.getFloats(false);
-
-                for (int i = 0; i < times[0].length; i++) {
-                    seriesHa.add(times[0][i], values[index][i]);
-                }
-                showingHumidities = true;
-
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
             }
+            // Replace the old series
+            dataset.removeSeries(series);
+            dataset.addSeries(newSeries);
+            series = newSeries;
+            series.fireSeriesChanged();
+            
+            windSpdUnit = newUnit;
         }
 
         public void plotWinds(FlatField weather) {
-            seriesW.clear();
+            series.clear();
             try {
                 int dirIndex = getWindDirIndex(weather);
                 if (dirIndex == -1) {
@@ -319,19 +226,20 @@ public class WeatherChartPanel extends ChartPanel {
                 if (spdIndex == -1) {
                     throw new IllegalArgumentException("FlatField must contain WIND_SPEED_...");
                 }
+                Unit unit = weather.getDefaultRangeUnits()[spdIndex];
 
                 final float[][] times = weather.getDomainSet().getSamples(false);
                 final float[][] values = weather.getFloats(false);
                 for (int i = 0; i < times[0].length; i++) {
-                    double speed = values[spdIndex][i];
                     double dir = values[dirIndex][i];
+                    double speed = windSpdUnit.equals(unit)
+                            ? values[spdIndex][i]
+                            : windSpdUnit.toThis(values[spdIndex][i], unit);
                     // draw direction wind is blowing (vs from)
                     double deltax = -Math.sin(Math.toRadians(dir));
                     double deltay = -Math.cos(Math.toRadians(dir));
-                    seriesW.add(times[0][i], speed, deltax, deltay);
+                    series.add(times[0][i], speed, deltax, deltay);
                 }
-                showingWinds = true;
-
             } catch (VisADException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -396,6 +304,11 @@ public class WeatherChartPanel extends ChartPanel {
 
         }
 
+        private int getWindDirIndex(FlatField weather) {
+            FunctionType functionType = (FunctionType) weather.getType();
+            return findRangeComponentIndex(functionType, WeatherType.WIND_DIR);
+        }
+
         private int getWindSpeedIndex(FlatField weather) {
             FunctionType functionType = (FunctionType) weather.getType();
             int spdIndex = findRangeComponentIndex(functionType, WeatherType.WIND_SPEED_KTS);
@@ -406,11 +319,6 @@ public class WeatherChartPanel extends ChartPanel {
                 spdIndex = findRangeComponentIndex(functionType, WeatherType.WIND_SPEED_KPH);
             }
             return spdIndex;
-        }
-
-        private int getWindDirIndex(FlatField weather) {
-            FunctionType functionType = (FunctionType) weather.getType();
-            return findRangeComponentIndex(functionType, WeatherType.WIND_DIR);
         }
 
         private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
@@ -428,30 +336,22 @@ public class WeatherChartPanel extends ChartPanel {
         }
     }
 
-    private static class WeatherPlot extends XYPlot {
+    private static class WindPlot extends XYPlot {
 
-        WeatherPlot(XYDataset dataset, VectorSeriesCollection vecDataset) {
+        WindPlot(VectorSeriesCollection dataset) {
             super(dataset,
-                    new DateTimeAxis(Bundle.CTL_WeatherChartDomain()),
-                    new NumberAxis(Bundle.CTL_WeatherChartRange1()),
-                    new XYLineAndShapeRenderer()); // XYSplineRenderer());
+                    new DateTimeAxis(Bundle.CTL_WindChartDomain()),
+                    new NumberAxis(Bundle.CTL_WindChartRange()),
+                    new WindVectorRenderer());
 
-            // Customize the Temp / RH range
-            NumberAxis rangeAxis1 = (NumberAxis) getRangeAxis();
-            rangeAxis1.setAutoRangeIncludesZero(false);
-            rangeAxis1.setAutoRange(true);
+            // Customize the Wind range
+            NumberAxis rangeAxis = (NumberAxis) getRangeAxis();
+            rangeAxis.setAutoRange(true);
+            rangeAxis.setAutoRangeIncludesZero(true);
+            rangeAxis.setAutoRangeMinimumSize(20.0);
 
-            // Create the Wind range
-            NumberAxis rangeAxis2 = new NumberAxis(Bundle.CTL_WeatherChartRange2());
-            rangeAxis2.setAutoRangeIncludesZero(true);
-            rangeAxis2.setAutoRangeMinimumSize(20.0);
-
-            // Customize the renderer for Temp and RH
-            XYItemRenderer xyRenderer = getRenderer();
-            xyRenderer.setBaseToolTipGenerator(new DateTimeToolTipGenerator());
-
-            // Create the renderer for winds
-            WindVectorRenderer vecRenderer = new WindVectorRenderer();
+            // Customize the renderer for winds
+            WindVectorRenderer vecRenderer = (WindVectorRenderer) getRenderer();
             vecRenderer.setSeriesPaint(0, Color.magenta);
             vecRenderer.setBaseToolTipGenerator(new WindVectorToolTipGenerator());
 
@@ -465,11 +365,6 @@ public class WeatherChartPanel extends ChartPanel {
             setAxisOffset(new RectangleInsets(4, 4, 4, 4));
             setOutlinePaint(Color.darkGray);
 
-            // Add the secondary axis
-            setDataset(1, vecDataset);
-            setRangeAxis(1, rangeAxis2);
-            setRenderer(1, vecRenderer);
-            mapDatasetToRangeAxis(1, 1);
         }
 
     }
