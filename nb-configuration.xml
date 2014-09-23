@@ -16,5 +16,6 @@
         <netbeans.hint.license>bsd3</netbeans.hint.license>
         <netbeans.checkstyle.format>true</netbeans.checkstyle.format>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.wrapOneLineComment>false</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.wrapOneLineComment>
+        <netbeans.hint.jdkPlatform>JDK_1.8__u11_</netbeans.hint.jdkPlatform>
     </properties>
 </project-shared-configuration>
