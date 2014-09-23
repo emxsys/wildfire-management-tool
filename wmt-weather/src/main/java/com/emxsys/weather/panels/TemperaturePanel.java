@@ -79,17 +79,17 @@ public class TemperaturePanel extends javax.swing.JPanel {
 
         // Add the chart to the layout panel
         chartPanel.add(new ChartPanel(chart,
-                105, //DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
+                105, // DEFAULT_WIDTH,
+                200, // DEFAULT_HEIGHT,
                 100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
                 DEFAULT_MINIMUM_DRAW_HEIGHT,
                 DEFAULT_MAXIMUM_DRAW_WIDTH,
                 DEFAULT_MAXIMUM_DRAW_HEIGHT,
                 DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
                 true // tooltips
         ));
         

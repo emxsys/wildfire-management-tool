@@ -62,17 +62,17 @@ public class WindDirChartPanel extends ChartPanel {
 
     WindDirChartPanel(WindDirChart chart) {
         super(chart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                200, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
+                150, //DEFAULT_WIDTH,
+                150, //DEFAULT_HEIGHT,
+                50, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                50, // DEFAULT_MINIMUM_DRAW_HEIGHT,
                 DEFAULT_MAXIMUM_DRAW_WIDTH,
                 DEFAULT_MAXIMUM_DRAW_HEIGHT,
                 DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
                 true); // tooltips)
         this.chart = chart;
     }
@@ -121,11 +121,11 @@ public class WindDirChartPanel extends ChartPanel {
     /**
      * WindDirChart is a JFreeChart integrated with a WindDirPlot.
      */
-    static private class WindDirChart extends JFreeChart {
+    public static class WindDirChart extends JFreeChart {
 
         final DefaultValueDataset dataset;
 
-        WindDirChart() {
+        public WindDirChart() {
             this(new DefaultValueDataset(0.0));
         }
 
@@ -142,15 +142,17 @@ public class WindDirChartPanel extends ChartPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setMinimumSize(new java.awt.Dimension(100, 100));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 150, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGap(0, 150, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

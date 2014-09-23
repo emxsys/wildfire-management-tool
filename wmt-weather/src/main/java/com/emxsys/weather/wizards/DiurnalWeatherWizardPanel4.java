@@ -50,7 +50,7 @@ public class DiurnalWeatherWizardPanel4 implements WizardDescriptor.Panel<Wizard
     @Override
     public DiurnalWeatherPanelWinds getComponent() {
         if (component == null) {
-            component = new DiurnalWeatherPanelWinds();
+            component = new DiurnalWeatherPanelWinds(provider);
         }
         return component;
     }
