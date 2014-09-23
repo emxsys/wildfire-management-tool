@@ -29,7 +29,6 @@
  */
 package com.emxsys.weather.wizards;
 
-import com.emxsys.weather.panels.WindPanel;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
 
@@ -39,7 +38,6 @@ public final class DiurnalWeatherPanelClouds extends JPanel {
     /** Creates new form DiurnalWeatherVisualPanel5 */
     public DiurnalWeatherPanelClouds() {
         initComponents();
-        jPanel1.add(new WindPanel());
     }
 
     @Override
