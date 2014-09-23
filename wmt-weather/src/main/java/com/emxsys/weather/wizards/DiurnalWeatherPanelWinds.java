@@ -130,7 +130,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         public String getColumnName(int column) {
             switch (column) {
                 case 0:
-                    return "Date";
+                    return "Time";
                 case 1:
                     return "Speed";
                 case 2:
@@ -179,6 +179,11 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(DiurnalWeatherPanelWinds.class, "DiurnalWeatherPanelWinds.jLabel3.text")); // NOI18N
 
         compassSpinner.setModel(new javax.swing.SpinnerListModel(new String[] {"N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"}));
+        compassSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                compassSpinnerStateChanged(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(addButton, org.openide.util.NbBundle.getMessage(DiurnalWeatherPanelWinds.class, "DiurnalWeatherPanelWinds.addButton.text")); // NOI18N
         addButton.addActionListener(new java.awt.event.ActionListener() {
@@ -305,6 +310,11 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         this.tableModel.data.clear();
         this.tableModel.fireTableDataChanged();
     }//GEN-LAST:event_removeAllButtonActionPerformed
+
+    private void compassSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compassSpinnerStateChanged
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_compassSpinnerStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
