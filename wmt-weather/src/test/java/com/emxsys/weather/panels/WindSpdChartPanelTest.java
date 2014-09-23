@@ -35,6 +35,7 @@ import com.emxsys.weather.api.WeatherPreferences;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import visad.Real;
 import visad.VisADException;
 
@@ -49,7 +50,7 @@ public class WindSpdChartPanelTest {
     public WindSpdChartPanelTest() {
     }
 
-    //@Ignore
+    @Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");

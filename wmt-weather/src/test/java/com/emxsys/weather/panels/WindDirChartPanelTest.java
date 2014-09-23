@@ -29,11 +29,11 @@
  */
 package com.emxsys.weather.panels;
 
-import com.emxsys.visad.GeneralUnit;
 import com.emxsys.weather.api.WeatherType;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import visad.Real;
 
 /**
@@ -41,9 +41,11 @@ import visad.Real;
  * @author Bruce Schubert
  */
 public class WindDirChartPanelTest {
-    
+
     public WindDirChartPanelTest() {
     }
+
+    @Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
@@ -71,5 +73,5 @@ public class WindDirChartPanelTest {
         Real result = instance.getWindDirection();
         assertEquals(expResult, result);
     }
-    
+
 }

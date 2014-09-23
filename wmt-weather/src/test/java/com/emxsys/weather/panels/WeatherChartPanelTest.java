@@ -40,6 +40,7 @@ import java.time.ZonedDateTime;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import visad.FlatField;
 
 /**
@@ -52,6 +53,7 @@ public class WeatherChartPanelTest {
     public WeatherChartPanelTest() {
     }
 
+    @Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");

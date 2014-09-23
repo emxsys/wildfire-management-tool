@@ -50,6 +50,7 @@ public class TemperaturePanelTest {
     public TemperaturePanelTest() {
     }
 
+    @Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");

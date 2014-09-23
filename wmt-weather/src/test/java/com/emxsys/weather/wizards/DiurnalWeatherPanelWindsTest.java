@@ -32,6 +32,7 @@ package com.emxsys.weather.wizards;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -42,6 +43,7 @@ public class DiurnalWeatherPanelWindsTest {
     public DiurnalWeatherPanelWindsTest() {
     }
 
+    @Ignore("interactive test")
     @Test
     public void testLayout() {
         System.out.println("getLayout - interactive");

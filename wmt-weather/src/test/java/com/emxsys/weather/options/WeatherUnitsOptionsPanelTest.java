@@ -49,7 +49,7 @@ public class WeatherUnitsOptionsPanelTest {
      * Interactive tests to evaluate layout and load/store behavior.
      * Comment out @Ignore to interactively evaluate the behavior of the panel.
      */
-    @Ignore 
+    @Ignore("interactive")
     @Test
     public void testBehavior() {
         System.out.println("Layout and Behavior");

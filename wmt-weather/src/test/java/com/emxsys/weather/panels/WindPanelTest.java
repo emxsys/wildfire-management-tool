@@ -29,11 +29,10 @@
  */
 package com.emxsys.weather.panels;
 
-import com.emxsys.weather.api.WeatherType;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import visad.Real;
+import org.junit.Ignore;
 
 /**
  * Tests a combined wind direction and wind speed panel.
@@ -44,12 +43,11 @@ public class WindPanelTest {
     public WindPanelTest() {
     }
 
+    @Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
         WindPanel instance = new WindPanel();
-        //instance.setWindDirection(new Real(WeatherType.WIND_DIR, 225.0));
-        //instance.setWindSpeed(new Real(WeatherType.WIND_SPEED_KPH, 10.0));
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame
