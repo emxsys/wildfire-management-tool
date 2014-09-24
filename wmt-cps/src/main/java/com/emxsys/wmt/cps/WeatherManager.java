@@ -189,10 +189,16 @@ public class WeatherManager {
         WeatherModel model;
         Map<Long, FlatField> cache;
         if (historyDomain.contains(time)) {
+            if (weatherObservations == null) {
+                throw new IllegalStateException("weatherObservations is null.");
+            }
             model = weatherObservations;
             cache = observationCache;
         } else if (forecastDomain.contains(time)) {
             // Ensure the model contains the time
+            if (weatherForecast == null) {
+                throw new IllegalStateException("weatherForecast is null.");
+            }
             model = weatherForecast;
             cache = forecastCache;
         } else {

@@ -29,284 +29,63 @@
  */
 package com.emxsys.wmt.cps.views.forces;
 
-import com.emxsys.jfree.ChartCanvas;
-import static com.emxsys.jfree.ChartUtil.WIND_NEEDLE;
+import com.emxsys.gis.api.Coord3D;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.weather.api.WeatherType;
+import com.emxsys.weather.api.WeatherModel;
+import com.emxsys.weather.panels.WindSpeedDirPanel;
 import com.emxsys.wmt.cps.Model;
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import com.emxsys.wmt.cps.WeatherManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import org.jfree.chart.ChartPanel;
-import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
-import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
-import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_WIDTH;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CompassPlot;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.plot.PlotState;
-import org.jfree.chart.plot.dial.ArcDialFrame;
-import org.jfree.chart.plot.dial.DialBackground;
-import org.jfree.chart.plot.dial.DialPlot;
-import org.jfree.chart.plot.dial.DialPointer;
-import org.jfree.chart.plot.dial.StandardDialScale;
-import org.jfree.data.general.DefaultValueDataset;
-import org.jfree.data.general.ValueDataset;
-import org.jfree.ui.GradientPaintTransformType;
-import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.StandardGradientPaintTransformer;
 import org.openide.util.NbBundle;
-import visad.Real;
+import visad.FlatField;
 
 /**
+ * Displays the Wind Force.
  *
  * @author Bruce Schubert
  */
-@NbBundle.Messages({
-    "CTL_WindDirChartTitle=Direction",
-    "CTL_WindSpdChartTitle=Speed",})
+@NbBundle.Messages({})
 public class WindForcePanel extends javax.swing.JPanel {
-    //
+
     // Properties that are available from this panel
     public static final String PROP_WINDDIR = "PROP_WINDDIR";
     public static final String PROP_WINDSPEED = "PROP_WINDSPEED";
 
     // The ForcesTopComponent will add the PropertyChangeListeners
     public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-    private WindDirChart dirChart = new WindDirChart(Bundle.CTL_WindDirChartTitle());
-    private WindSpdChart spdChart = new WindSpdChart(Bundle.CTL_WindSpdChartTitle());
-    private ChartCanvas dirCanvas;
-    private ChartCanvas spdCanvas;
-    private JSlider dirSlider = new DirectionSlider(dirChart);
-    private JSlider spdSlider = new SpeedSlider(spdChart);
+    
+    // Implementation
+    private final WindSpeedDirPanel windPanel = new WindSpeedDirPanel();
 
     /**
-     * The DirectionSlider updates the WindDirChart and the SimpleWeatherProvider.
-     */
-    private class DirectionSlider extends JSlider {
-
-        DirectionSlider(WindDirChart chart) {
-            super(0, 360, 180);
-            setPaintLabels(false);
-            setPaintTicks(true);
-            setMajorTickSpacing(25);
-            setOrientation(SwingConstants.VERTICAL);
-            addChangeListener((ChangeEvent e) -> {
-                int windDir = getValue();
-                pcs.firePropertyChange(PROP_WINDDIR, null, new Real(WeatherType.WIND_DIR, windDir));
-            });
-        }
-    }
-
-    private class SpeedSlider extends JSlider {
-
-        SpeedSlider(WindSpdChart chart) {
-            super(0, 100, 0);
-            setPaintLabels(false);
-            setPaintTicks(true);
-            setMajorTickSpacing(25);
-            setOrientation(SwingConstants.VERTICAL);
-            addChangeListener((ChangeEvent e) -> {
-                int windSpd = getValue();
-                pcs.firePropertyChange(PROP_WINDSPEED, null, new Real(WeatherType.WIND_SPEED_MPH, windSpd));
-            });
-        }
-    }
-
-    /**
-     * WindDirPlot is a CompassPlot stylized for wind direction.
-     */
-    private class WindDirPlot extends CompassPlot {
-
-        WindDirPlot(ValueDataset dataset) {
-            super(dataset);
-            setRosePaint(Color.blue);
-            setRoseHighlightPaint(Color.gray);
-            setRoseCenterPaint(Color.white);
-            setDrawBorder(false);
-            setSeriesNeedle(0, WIND_NEEDLE);
-            setSeriesPaint(0, Color.black);        // arrow heads
-            setSeriesOutlinePaint(0, Color.black); // arrow shafts and arrow head outline
-        }
-    }
-
-    /**
-     * WindDirChart is a JFreeChart integrated with a WindDirPlot.
-     */
-    private class WindDirChart extends JFreeChart {
-
-        final DefaultValueDataset dataset;
-
-        WindDirChart(String title) {
-            this(title, new DefaultValueDataset(0.0));
-        }
-
-        WindDirChart(String title, DefaultValueDataset dataset) {
-            super(new WindDirPlot(dataset));
-            this.dataset = dataset;
-            setTitle(title);
-        }
-    }
-
-    /**
-     * WindSpdPlot is a DialPlot stylized for wind speed.
-     */
-    private class WindSpdPlot extends DialPlot {
-
-        WindSpdPlot(ValueDataset dataset) {
-            super(dataset);
-            setView(0.8, 0.37, 0.22, 0.26);
-            setInsets(RectangleInsets.ZERO_INSETS);
-            // Frame
-            ArcDialFrame dialFrame = new ArcDialFrame(-10.0, 20.0);
-            dialFrame.setInnerRadius(0.70);
-            dialFrame.setOuterRadius(0.90);
-            dialFrame.setForegroundPaint(Color.darkGray);
-            dialFrame.setStroke(new BasicStroke(2.0f));
-            dialFrame.setVisible(true);
-            setDialFrame(dialFrame);
-
-            // Dial Background 
-            GradientPaint gp = new GradientPaint(
-                    new Point(), new Color(180, 180, 180),
-                    new Point(), new Color(255, 255, 255));
-            DialBackground db = new DialBackground(gp);
-            db.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.CENTER_VERTICAL));
-            addLayer(db);
-
-            // Scale
-            double MIN_SPEED = 0;
-            double MAX_SPEED = 100;
-            StandardDialScale scale = new StandardDialScale(MIN_SPEED, MAX_SPEED, -8, 16.0, 10.0, 4);
-            scale.setTickRadius(0.82);
-            scale.setTickLabelOffset(-0.04);
-            scale.setMajorTickIncrement(25.0);
-            scale.setTickLabelFont(new Font("Dialog", Font.PLAIN, 14));
-            addScale(0, scale);
-
-            // Needle
-            DialPointer needle = new DialPointer.Pin();
-            needle.setRadius(0.84);
-            addLayer(needle);
-        }
-
-        @Override
-        public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor, PlotState parentState, PlotRenderingInfo info) {
-            super.draw(g2, area, anchor, parentState, info); //To change body of generated methods, choose Tools | Templates.
-        }
-
-    }
-
-    /**
-     * WindSpdChart is a JFreeChart integrated with a WindSpdPlot.
-     */
-    private class WindSpdChart extends JFreeChart {
-
-        final DefaultValueDataset dataset;
-
-        WindSpdChart(String title) {
-            this(title, new DefaultValueDataset(0.0));
-        }
-
-        WindSpdChart(String title, DefaultValueDataset dataset) {
-            super(new WindSpdPlot(dataset));
-            this.dataset = dataset;
-            setTitle(title);
-            setPadding(RectangleInsets.ZERO_INSETS);
-        }
-    }
-
-    /**
-     * Constructor creates new form WindPanel.
+     * Constructor creates new form WindForcePanel.
      */
     public WindForcePanel() {
         initComponents();
-
-        JFXPanel leftPanel = new JFXPanel();                    // ClockCompass
-        JPanel rightPanel = new JPanel(new BorderLayout());     // Dial and controls
-        add(leftPanel);
-        add(rightPanel);
-
-        // Layout the right panel
-        JPanel dialPanel = new JPanel(new BorderLayout());      // Speed dial
-        JPanel sliderPanel = new JPanel(new GridLayout(1, 2));  // Slider controls
-        dialPanel.add(new ChartPanel(spdChart, DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                200, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true) // tooltips
-        );
-        sliderPanel.add(dirSlider);
-        sliderPanel.add(spdSlider);
-        rightPanel.add(dialPanel, BorderLayout.CENTER);
-        rightPanel.add(sliderPanel, BorderLayout.EAST);
-
-        // Create the JavaFX scenes on an FX thread
-        Platform.setImplicitExit(false);
-        Platform.runLater(() -> {
-            leftPanel.setScene(createDirScene());
-            //dialPanel.setScene(createSpdScene());
-        });
+        add(windPanel);
         
+        // Forward property changes to parent
+        windPanel.addPropertyChangeListener((e) -> {
+            switch (e.getPropertyName()) {
+                case WindSpeedDirPanel.PROP_WIND_DIR:
+                    pcs.firePropertyChange(PROP_WINDDIR, e.getOldValue(), e.getNewValue());
+                    break;
+                case WindSpeedDirPanel.PROP_WIND_SPD:
+                    pcs.firePropertyChange(PROP_WINDSPEED, e.getOldValue(), e.getNewValue());
+                    break;
+            }
+        });
+
         // Update the charts from the CPS data model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather weather = (Weather) evt.getNewValue();
-            dirChart.dataset.setValue(weather.getWindDirection().getValue());
-            spdChart.dataset.setValue(weather.getWindSpeed().getValue());
-            
-            dirChart.setTitle(weather.getWindDirection().toValueString());
+            windPanel.setWindDirection(weather.getWindDirection());
+            windPanel.setWindSpeed(weather.getWindSpeed());
         });
+  
     }
 
-    private Scene createDirScene() {
-        dirCanvas = new ChartCanvas(dirChart);
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(dirCanvas);
-        // Bind canvas size to stack pane size. 
-        dirCanvas.widthProperty().bind(stackPane.widthProperty());
-        dirCanvas.heightProperty().bind(stackPane.heightProperty());
-
-        return new Scene(stackPane);
-    }
-
-//    private Scene createSpdScene() {
-//        spdCanvas = new ChartCanvas(spdChart);
-//        StackPane stackPane = new StackPane();
-//        stackPane.getChildren().add(spdCanvas);
-//        // Bind canvas size to stack pane size. 
-//        spdCanvas.widthProperty().bind(stackPane.widthProperty());
-//        spdCanvas.heightProperty().bind(stackPane.heightProperty());
-//
-//        return new Scene(stackPane);
-//    }
     /**
      * This method is called from within the constructor to
      * initialize the form.
@@ -318,7 +97,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title"))); // NOI18N
-        setLayout(new java.awt.GridLayout(1, 2));
+        setLayout(new java.awt.BorderLayout());
         getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 

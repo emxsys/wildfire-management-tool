@@ -30,6 +30,7 @@
 package com.emxsys.wmt.cps.views.weather;
 
 import com.emxsys.weather.panels.WindChartPanel;
+import visad.FlatField;
 
 /**
  * Displays the winds.
@@ -45,6 +46,10 @@ public class WindPanel extends javax.swing.JPanel {
         initComponents();
         add(windChart);
     }
+    public void setWeather(FlatField weather) {
+        windChart.setWinds(weather);
+    }
+    
 
     /** This method is called from within the constructor to
      * initialize the form.

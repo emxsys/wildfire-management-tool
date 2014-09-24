@@ -29,9 +29,11 @@
  */
 package com.emxsys.wmt.cps.views;
 
+import com.emxsys.gis.api.Coord3D;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
@@ -59,6 +61,7 @@ import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.windows.TopComponent;
+import visad.FlatField;
 
 /**
  * The WeatherTopComponent provides the WeatherProvider selection interface and displays weather
@@ -138,6 +141,18 @@ public final class WeatherTopComponent extends TopComponent {
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
+        // Update the charts from the CPS data model
+        Model.getInstance().addPropertyChangeListener(Model.PROP_COORD3D, (PropertyChangeEvent evt) -> {
+            Coord3D coord = (Coord3D) evt.getNewValue();
+            WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();
+            if (wxModel != null) {
+                FlatField wx = wxModel.getTemporalWeatherAt(coord);
+                airTemperaturePanel.setWeather(wx);
+                relativeHumidityPanel.setWeather(wx);
+                windPanel.setWeather(wx);
+            }           
+        });        
+        
         logger.config(PREFERRED_ID + " initialized.");
     }
 

@@ -74,7 +74,7 @@ import visad.VisADException;
 public class Model {
 
     /** Coord3D property */
-    public static final String PROP_COORD = "PROP_COORD";
+    public static final String PROP_COORD3D = "PROP_COORD";
     /** ZonedDateTime property */
     public static final String PROP_DATETIME = "PROP_DATETIME";
     /** SpatioTemporalDomain property */
@@ -426,7 +426,7 @@ public class Model {
                                 pcs.firePropertyChange(PROP_DATETIME, null, timeRef.get());
                                 break;
                             case Coord:
-                                pcs.firePropertyChange(PROP_COORD, null, coordRef.get());
+                                pcs.firePropertyChange(PROP_COORD3D, null, coordRef.get());
                                 break;
                             case Terrain:
                                 pcs.firePropertyChange(PROP_TERRAIN, null, terrainRef.get());

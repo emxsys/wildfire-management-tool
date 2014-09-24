@@ -27,23 +27,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wmt.cps.views.weather;
 
-import com.emxsys.weather.panels.WeatherChartPanel;
+import com.emxsys.weather.panels.TemperatureChartPanel;
+import visad.FlatField;
+
 /**
- *
+ * Layout wrapper around a TemperatureChartPanel.
+ * 
  * @author Bruce Schubert
- * @version $Id$
  */
 public class AirTemperaturePanel extends javax.swing.JPanel {
 
-    private final WeatherChartPanel wxPanel = new WeatherChartPanel();
-    
+    private final TemperatureChartPanel wxChart = new TemperatureChartPanel();
+
     /** Creates new form AirTemperaturePanel */
     public AirTemperaturePanel() {
         initComponents();
-        add(wxPanel);
+        add(wxChart);
+    }
+
+    public void setWeather(FlatField weather) {
+        wxChart.setTemperatures(weather);
     }
 
     /** This method is called from within the constructor to
@@ -62,5 +67,4 @@ public class AirTemperaturePanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
 }

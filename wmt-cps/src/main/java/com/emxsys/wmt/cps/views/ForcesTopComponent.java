@@ -32,6 +32,7 @@ package com.emxsys.wmt.cps.views;
 import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
 import com.emxsys.wmt.cps.views.forces.WindForcePanel;
+import com.emxsys.wmt.cps.views.forces.WindForcePanel;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -78,7 +79,7 @@ public final class ForcesTopComponent extends TopComponent {
     private static final Logger logger = Logger.getLogger(ForcesTopComponent.class.getName());
     public static final String PREFERRED_ID = "ForcesTopComponent";
     private PreheatForcePanel preheatPanel;
-    private WindForcePanel windPanel;
+    private WindForcePanel windForcePanel;
     private SlopeForcePanel slopePanel;
 
     public static ForcesTopComponent getInstance() {
@@ -101,11 +102,11 @@ public final class ForcesTopComponent extends TopComponent {
 
     private void createPanels() {
         preheatPanel = new PreheatForcePanel();
-        windPanel = new WindForcePanel();
+        windForcePanel = new WindForcePanel();
         slopePanel = new SlopeForcePanel();
         // Layout the panels to the Grid Layout
         add(preheatPanel);
-        add(windPanel);
+        add(windForcePanel);
         add(slopePanel);
     }
 
@@ -114,11 +115,11 @@ public final class ForcesTopComponent extends TopComponent {
     }
 
     public void addWindDirPropertyChangeListener(PropertyChangeListener listener) {
-        this.windPanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDDIR, listener);
+        this.windForcePanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDDIR, listener);
     }
 
     public void addWindSpeedPropertyChangeListener(PropertyChangeListener listener) {
-        this.windPanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDSPEED, listener);
+        this.windForcePanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDSPEED, listener);
     }
 
     /**

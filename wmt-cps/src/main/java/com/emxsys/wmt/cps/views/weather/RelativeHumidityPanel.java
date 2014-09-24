@@ -29,7 +29,8 @@
  */
 package com.emxsys.wmt.cps.views.weather;
 
-import com.emxsys.weather.panels.WeatherChartPanel;
+import com.emxsys.weather.panels.HumidityChartPanel;
+import visad.FlatField;
 
 /**
  * Displays the Relative Humidity in a chart.
@@ -38,12 +39,16 @@ import com.emxsys.weather.panels.WeatherChartPanel;
  */
 public class RelativeHumidityPanel extends javax.swing.JPanel {
 
-    private final WeatherChartPanel wxPanel = new WeatherChartPanel();
+    private final HumidityChartPanel wxPanel = new HumidityChartPanel();
 
     /** Creates new form RelativeHumidityPanel */
     public RelativeHumidityPanel() {
         initComponents();
         add(wxPanel);
+    }
+    public void setWeather(FlatField weather) {
+        wxPanel.setHumidities(weather);
+        wxPanel.setCloudCover(weather);
     }
 
     /** This method is called from within the constructor to
