@@ -40,21 +40,25 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTitleAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.axis.TickUnits;
+import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
@@ -75,10 +79,8 @@ import visad.VisADException;
  */
 @Messages({
     "CTL_HumidityChartDomain=Time",
-    "CTL_HumidityChartRange1=RH",
-    "CTL_HumidityChartRange2=Sky Cover",
-    "CTL_HumidityChartClouds=Clouds",
-    "CTL_HumidityChartHumidity=Humidity",})
+    "CTL_HumidityChartHumidity=Rel. Humidty (%)",
+    "CTL_HumidityChartClouds=Sky Cover (%)",})
 public class HumidityChartPanel extends ChartPanel {
 
     private HumidityChart chart;
@@ -139,8 +141,8 @@ public class HumidityChartPanel extends ChartPanel {
     }
 
     /**
-     * The HumidityChart is a JFreeChart with a specialized XYPlot for displaying Clouds, humidity,
-     * winds and day/night.
+     * The HumidityChart is a JFreeChart with a specialized XYPlot for displaying relative humidity,
+     * sky cover and day/night.
      */
     public static class HumidityChart extends JFreeChart {
 
@@ -149,7 +151,7 @@ public class HumidityChartPanel extends ChartPanel {
         /** Clouds */
         private XYSeries seriesC;
         /** Relative humidity */
-        private XYSeries seriesHa;
+        private XYSeries seriesH;
         /** Day/Night markers */
         private ArrayList<Marker> markers = new ArrayList<>();
 
@@ -165,17 +167,30 @@ public class HumidityChartPanel extends ChartPanel {
          * @param xyDataset
          */
         HumidityChart(XYSeriesCollection xyDataset) {
-            super(new HumidityPlot(xyDataset));
+            super(
+                    null, // title
+                    null, // title font
+                    new HumidityPlot(xyDataset),
+                    false); // don't create default legend
 
-            seriesHa = new XYSeries(Bundle.CTL_HumidityChartHumidity());
+            seriesH = new XYSeries(Bundle.CTL_HumidityChartHumidity());
             seriesC = new XYSeries(Bundle.CTL_HumidityChartClouds());
 
             this.xyDataset = xyDataset;
-            this.xyDataset.addSeries(seriesHa);
+            this.xyDataset.addSeries(seriesH);
             this.xyDataset.addSeries(seriesC);
 
-            this.removeLegend();
-
+            // Customize the legend - place inside plot
+            HumidityPlot plot = (HumidityPlot) getPlot();
+            LegendTitle lt = new LegendTitle(plot);
+            lt.setItemFont(new Font("Dialog", Font.PLAIN, 9));
+            lt.setBackgroundPaint(new Color(200, 200, 255, 100));
+            lt.setFrame(new BlockBorder(Color.white));
+            lt.setPosition(RectangleEdge.BOTTOM);
+            XYTitleAnnotation ta = new XYTitleAnnotation(0.98, 0.98, // coords in data space (0..1)
+                    lt, RectangleAnchor.TOP_RIGHT);
+            ta.setMaxWidth(0.90);
+            plot.addAnnotation(ta);
         }
 
         /**
@@ -206,7 +221,7 @@ public class HumidityChartPanel extends ChartPanel {
         }
 
         public void plotHumidities(FlatField weather) {
-            seriesHa.clear();
+            seriesH.clear();
             try {
                 FunctionType functionType = (FunctionType) weather.getType();
                 int index = findRangeComponentIndex(functionType, WeatherType.REL_HUMIDITY);
@@ -218,7 +233,7 @@ public class HumidityChartPanel extends ChartPanel {
                 final float[][] values = weather.getFloats(false);
 
                 for (int i = 0; i < times[0].length; i++) {
-                    seriesHa.add(times[0][i], values[index][i]);
+                    seriesH.add(times[0][i], values[index][i]);
                 }
 
             } catch (VisADException ex) {
@@ -305,7 +320,7 @@ public class HumidityChartPanel extends ChartPanel {
         HumidityPlot(XYDataset dataset) {
             super(dataset,
                     new DateTimeAxis(Bundle.CTL_HumidityChartDomain()),
-                    new NumberAxis(Bundle.CTL_HumidityChartRange1()),
+                    new NumberAxis(),
                     new XYLineAndShapeRenderer()); // XYSplineRenderer());
 
             // Customize the RH / Cloud Cover range

@@ -27,43 +27,71 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.weather.wizards;
+package com.emxsys.weather.panels;
 
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.spi.SunlightProviderFactory;
+import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.spi.WeatherProviderFactory;
 import java.time.ZonedDateTime;
+import javax.swing.JOptionPane;
+import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
-import org.junit.Test;
+import visad.FlatField;
 
 /**
- * Performs interactive tests of the DiurnalWeatherWizard
- *
- * Comment out @Ignore to run the tests.
- *
+ * Test the layout/display of the WeatherChartPanel.
+ * 
  * @author Bruce Schubert
  */
-@Ignore("interative test")
-public class DiurnalWeatherWizardTest {
+public class TemperatureChartPanelTest {
 
-    public DiurnalWeatherWizardTest() {
+    public TemperatureChartPanelTest() {
     }
 
+    @Ignore("interactive test")
     @Test
-    public void testShow() {
-        System.out.println("testShow");
+    public void testBehavior() {
+        System.out.println("testBehavior - interactive");
+
+        WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_CELSIUS);
+
+        TemporalDomain domain = new TemporalDomain(ZonedDateTime.now(), 48);
+
         Sunlight sunlight = SunlightProviderFactory.getInstance().getSunlight(
                 ZonedDateTime.now(), 
                 GeoCoord3D.fromDegrees(34.2, -119.2));
         DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
-        DiurnalWeatherWizard instance = new DiurnalWeatherWizard(provider);
-        boolean result = instance.testShow();
-        assertTrue("Wizard was cancelled.", result);
 
-        provider.initializeSunlight(ZonedDateTime.now(), GeoCoord3D.fromDegrees(34.25, -119.2));
-        System.out.println(provider.getWeather(ZonedDateTime.now()));
+        FlatField wx = provider.getHourlyWeather(domain);
+
+        WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_FAHRENHEIT);
+        TemperatureChartPanel instance = new TemperatureChartPanel();
+        instance.setTitle("Diurnal Weather");
+        instance.setTemperatures(wx);
+
+        assertTrue("Form was invalidated by the user",
+                JOptionPane.showConfirmDialog(
+                        null, // frame
+                        instance,
+                        "Are Values in Fahrenheit?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null) == JOptionPane.YES_OPTION);
+
+        WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_CELSIUS);
+        assertTrue("Form was invalidated by the user",
+                JOptionPane.showConfirmDialog(
+                        null, // frame
+                        instance,
+                        "Are Values in Celsius?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null) == JOptionPane.YES_OPTION);
     }
+
 }

@@ -43,22 +43,26 @@ import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTitleAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.axis.TickUnits;
+import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
@@ -74,14 +78,16 @@ import visad.UnitException;
 import visad.VisADException;
 
 /**
- * This class displays the air temperature weather in an JFreeChart XY graph complete with titles and
- * legends.
+ * This class displays the air temperature weather in an JFreeChart XY graph complete with titles
+ * and legends.
  *
  * @author Bruce Schubert
  */
 @Messages({
     "CTL_TemperatureChartDomain=Time",
     "CTL_TemperatureChartRange=Temperature",
+    "CTL_TemperatureChartFahrenheit=(°F)",
+    "CTL_TemperatureChartCelsius=(°C)",
     "CTL_TemperatureChartLegend=Temperature",})
 public class TemperatureChartPanel extends ChartPanel {
 
@@ -144,8 +150,7 @@ public class TemperatureChartPanel extends ChartPanel {
      */
     public static class TemperatureChart extends JFreeChart {
 
-        private Unit airTempUnit;
-
+        private Unit unit;
 
         /** Dataset for temperature and humidity */
         private XYSeriesCollection dataset;
@@ -167,25 +172,42 @@ public class TemperatureChartPanel extends ChartPanel {
          * @param vecDataset
          */
         TemperatureChart(XYSeriesCollection dataset) {
-            super(new TemperaturePlot(dataset));
+            super(
+                    null, // title
+                    null, // title font
+                    new TemperaturePlot(dataset, WeatherPreferences.getAirTempUnit()),
+                    false // create legend?
+            );
 
-            this.series = new XYSeries(Bundle.CTL_TemperatureChartLegend());
+            this.unit = WeatherPreferences.getAirTempUnit();
+            this.series = new XYSeries(getSeriesLegend(this.unit));
             this.dataset = dataset;
             this.dataset.addSeries(series);
 
-            this.airTempUnit = WeatherPreferences.getAirTempUnit();
+            // Customize the units when preferences change
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
                 switch (evt.getKey()) {
                     case WeatherPreferences.PREF_AIR_TEMP_UOM:
                         setAirTempUnit(WeatherPreferences.getAirTempUnit());
                         break;
                 }
-            });            
-            this.removeLegend();
+            });
+
+            // Customize the legend - place inside plot
+            TemperaturePlot plot = (TemperaturePlot) getPlot();
+            LegendTitle lt = new LegendTitle(plot);
+            lt.setItemFont(new Font("Dialog", Font.PLAIN, 9));
+            lt.setBackgroundPaint(new Color(200, 200, 255, 100));
+            lt.setFrame(new BlockBorder(Color.white));
+            lt.setPosition(RectangleEdge.BOTTOM);
+            XYTitleAnnotation ta = new XYTitleAnnotation(0.98, 0.98, // coords in data space (0..1)
+                    lt, RectangleAnchor.TOP_RIGHT);
+            ta.setMaxWidth(0.48);
+            plot.addAnnotation(ta);
         }
 
         public final void setAirTempUnit(Unit newUnit) {
-            if (this.airTempUnit.equals(newUnit)) {
+            if (this.unit.equals(newUnit)) {
                 return;
             }
             try {
@@ -196,17 +218,32 @@ public class TemperatureChartPanel extends ChartPanel {
                     try {
                         XYDataItem item = oldSeries.getDataItem(i);
                         // convert item to new unit of measure
-                        item.setY(airTempUnit.toThat(item.getYValue(), newUnit));
+                        item.setY(unit.toThat(item.getYValue(), newUnit));
                         series.add(item);
                     } catch (UnitException ex) {
                         Exceptions.printStackTrace(ex);
                     }
                 }
+                // Update the range units and scale
+                ((TemperaturePlot) getPlot()).setRangeUnit(newUnit);
+
                 // Now set the new air temp unit property
-                this.airTempUnit = newUnit;
+                this.unit = newUnit;
+                
+                this.series.setKey(getSeriesLegend(newUnit)); // updates the legend text
                 this.series.fireSeriesChanged();
             } catch (CloneNotSupportedException ex) {
                 Exceptions.printStackTrace(ex);
+            }
+        }
+
+        private static String getSeriesLegend(Unit unit) {
+            if (unit.equals(GeneralUnit.degF)) {
+                return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartFahrenheit();
+            } else if (unit.equals(GeneralUnit.degC)) {
+                return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartCelsius();
+            } else {
+                throw new IllegalArgumentException("unhandled unit: " + unit.toString());
             }
         }
 
@@ -235,9 +272,9 @@ public class TemperatureChartPanel extends ChartPanel {
                 for (int i = 0; i < times[0].length; i++) {
                     // Add values to the series in the preferred UOM
                     float value = values[index][i];
-                    series.add(times[0][i], airTempUnit.equals(unit)
+                    series.add(times[0][i], this.unit.equals(unit)
                             ? value
-                            : airTempUnit.toThis(value, unit));
+                            : this.unit.toThis(value, unit));
                 }
             } catch (VisADException ex) {
                 Exceptions.printStackTrace(ex);
@@ -303,7 +340,6 @@ public class TemperatureChartPanel extends ChartPanel {
 
         }
 
-
         private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
             if (!functionType.getReal()) {
                 throw new IllegalArgumentException("Range must be RealType or RealTypeTuple");
@@ -319,34 +355,52 @@ public class TemperatureChartPanel extends ChartPanel {
         }
     }
 
-    private static class TemperaturePlot extends XYPlot {
+    private static final class TemperaturePlot extends XYPlot {
 
-        TemperaturePlot(XYDataset dataset) {
+        TemperaturePlot(XYDataset dataset, Unit unit) {
             super(dataset,
                     new DateTimeAxis(Bundle.CTL_TemperatureChartDomain()),
-                    new NumberAxis(Bundle.CTL_TemperatureChartRange()),
+                    new NumberAxis(),
                     new XYLineAndShapeRenderer()); // XYSplineRenderer());
 
             // Customize range axis
-            NumberAxis rangeAxis1 = (NumberAxis) getRangeAxis();
-            rangeAxis1.setAutoRangeIncludesZero(false);
-            rangeAxis1.setAutoRange(true);
+            NumberAxis rangeAxis = (NumberAxis) getRangeAxis();
+            rangeAxis.setAutoRangeIncludesZero(false);
+            rangeAxis.setAutoRange(true);
+            rangeAxis.setAutoRangeMinimumSize(30);
 
             // Customize the renderer 
             XYItemRenderer xyRenderer = getRenderer();
             xyRenderer.setBaseToolTipGenerator(new DateTimeToolTipGenerator());
-            xyRenderer.setSeriesPaint(0, new Color(128,0,0));   // dark red
-            
+            xyRenderer.setSeriesPaint(0, new Color(128, 0, 0));   // dark red
+
+            // Customize the plot
+            setRangeUnit(unit); // Update the range axis label
             setDomainCrosshairVisible(true);
-            setRangeCrosshairVisible(true);
             setDomainZeroBaselineVisible(true);
+            setRangeCrosshairVisible(true);
             setRangeZeroBaselineVisible(true);
+
             setBackgroundPaint(Color.lightGray);
+            setOutlinePaint(Color.darkGray);
             setDomainGridlinePaint(Color.white);
             setRangeGridlinePaint(Color.white);
+
             setAxisOffset(new RectangleInsets(4, 4, 4, 4));
-            setOutlinePaint(Color.darkGray);
-            
+
+        }
+
+        void setRangeUnit(Unit unit) {
+            if (unit.equals(GeneralUnit.degF)) {
+                //getRangeAxis().setLabel(Bundle.CTL_TemperatureChartFahrenheit());
+                getRangeAxis().setAutoRangeMinimumSize(30);
+            } else if (unit.equals(GeneralUnit.degC)) {
+                //getRangeAxis().setLabel(Bundle.CTL_TemperatureChartCelsius());
+                getRangeAxis().setAutoRangeMinimumSize(15);
+            } else {
+                throw new IllegalArgumentException("unhandled unit: " + unit.toString());
+            }
+
         }
 
     }
@@ -387,6 +441,7 @@ public class TemperatureChartPanel extends ChartPanel {
         marker.setLabelFont(new Font("SansSerif", Font.ITALIC + Font.BOLD, 9));
         marker.setLabelTextAnchor(TextAnchor.BASELINE_LEFT);
         return marker;
+
     }
 
     public static final class DateTimeAxis extends NumberAxis {
