@@ -29,7 +29,9 @@
  */
 package com.emxsys.weather.panels;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -239,7 +241,15 @@ public class WindVectorRenderer extends VectorRenderer {
     protected void drawFirstPassShape(Graphics2D g2, int pass, int series,
                                       int item, Shape shape) {
         g2.setStroke(getItemStroke(series, item));
-        g2.setPaint(getItemPaint(series, item));
+        g2.setPaint(getSeriesPaint(series));
         g2.draw(shape);
     }
+
+    @Override
+    public Paint getItemPaint(int series, int item) {
+        // Color for wind vectors
+        return Color.darkGray;
+    }
+    
+    
 }

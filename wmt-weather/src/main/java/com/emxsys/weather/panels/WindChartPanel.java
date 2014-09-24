@@ -352,7 +352,7 @@ public class WindChartPanel extends ChartPanel {
 
             // Customize the renderer for winds
             WindVectorRenderer vecRenderer = (WindVectorRenderer) getRenderer();
-            vecRenderer.setSeriesPaint(0, Color.magenta);
+            vecRenderer.setSeriesPaint(0, new Color(128,0,128));    // purple
             vecRenderer.setBaseToolTipGenerator(new WindVectorToolTipGenerator());
 
             setDomainCrosshairVisible(true);

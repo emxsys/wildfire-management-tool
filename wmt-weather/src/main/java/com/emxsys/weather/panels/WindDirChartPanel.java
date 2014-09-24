@@ -87,7 +87,11 @@ public class WindDirChartPanel extends ChartPanel {
 
     public void setWindDirection(Real dir) {
         try {
-            this.chart.dataset.setValue(dir.getValue(CommonUnit.degree));
+            if (dir == null || dir.isMissing()) {
+                this.chart.dataset.setValue(null);
+            } else {
+                this.chart.dataset.setValue(dir.getValue(CommonUnit.degree));
+            }
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }

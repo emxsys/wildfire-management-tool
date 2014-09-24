@@ -43,6 +43,7 @@ import java.util.TreeMap;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import visad.FlatField;
 import visad.Real;
 
@@ -56,6 +57,7 @@ public class WindChartPanelTest {
     public WindChartPanelTest() {
     }
 
+    @Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
