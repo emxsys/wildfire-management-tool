@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.cps.views.weather;
 
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.panels.TemperatureChartPanel;
 import visad.FlatField;
 
@@ -45,6 +46,9 @@ public class AirTemperaturePanel extends javax.swing.JPanel {
     public AirTemperaturePanel() {
         initComponents();
         add(wxChart);
+    }
+    public void setSunlight(Sunlight sunlight) {
+        wxChart.setSunlight(sunlight);
     }
 
     public void setWeather(FlatField weather) {

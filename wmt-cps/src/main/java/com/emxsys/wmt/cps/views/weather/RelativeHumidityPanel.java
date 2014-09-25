@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.cps.views.weather;
 
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.panels.HumidityChartPanel;
 import visad.FlatField;
 
@@ -45,6 +46,10 @@ public class RelativeHumidityPanel extends javax.swing.JPanel {
     public RelativeHumidityPanel() {
         initComponents();
         add(wxPanel);
+    }
+    
+    public void setSunlight(Sunlight sunlight) {
+        wxPanel.setSunlight(sunlight);
     }
     public void setWeather(FlatField weather) {
         wxPanel.setHumidities(weather);

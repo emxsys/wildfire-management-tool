@@ -124,9 +124,9 @@ public final class WeatherTopComponent extends TopComponent {
     /**
      * Constructor.
      */
-    public WeatherTopComponent() {        
+    public WeatherTopComponent() {
         logger.fine(PREFERRED_ID + " initializing....");
-        
+
         // Initialize our "manual" weather provider
         diurnalWx = WeatherProviderFactory.newDiurnalWeatherProvider(Model.getInstance().getSunlight());
         // Add a listener to update the Diurnal Weather with the current sunlight
@@ -150,9 +150,14 @@ public final class WeatherTopComponent extends TopComponent {
                 airTemperaturePanel.setWeather(wx);
                 relativeHumidityPanel.setWeather(wx);
                 windPanel.setWeather(wx);
-            }           
-        });        
-        
+            }
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            Sunlight sunlight = (Sunlight) evt.getNewValue();
+            airTemperaturePanel.setSunlight(sunlight);
+            relativeHumidityPanel.setSunlight(sunlight);
+        });
+
         logger.config(PREFERRED_ID + " initialized.");
     }
 
@@ -160,7 +165,6 @@ public final class WeatherTopComponent extends TopComponent {
      * Initializes the fuel model selections.
      */
     private void initWeatherProviders() {
-
 
         // Using a LookupListener to reinitialize the combobox whenever the list of providersComboBox changes
         lookupWeatherProviders = Lookup.getDefault().lookupResult(WeatherProvider.class);
@@ -206,7 +210,7 @@ public final class WeatherTopComponent extends TopComponent {
             }
         }
         observers.addElement(diurnalWx);
-        
+
         String lastWxFcstService = prefs.get(PREF_LAST_WX_FORECAST_SERVICE,
                 instances.size() > 0 ? instances.get(0).getClass().getName() : "");
         if (!lastWxObsService.isEmpty()) {
@@ -220,7 +224,7 @@ public final class WeatherTopComponent extends TopComponent {
             }
         }
         forecasters.addElement(new DiurnalWeatherProvider());
-        
+
         this.observersComboBox.setModel(observers);
         this.forecastersComboBox.setModel(forecasters);
     }
@@ -350,27 +354,27 @@ public final class WeatherTopComponent extends TopComponent {
     }//GEN-LAST:event_configForecasterButtonActionPerformed
 
     private void forecastersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastersComboBoxActionPerformed
-        
+
         // Update the Weather Manager
         WeatherProvider provider = (WeatherProvider) forecastersComboBox.getSelectedItem();
         logger.log(Level.FINE, "Selected weather provider: {0}", provider);
         WeatherManager.getInstance().setForecaster(provider.getService(WeatherForecaster.class));
         prefs.put(PREF_LAST_WX_FORECAST_SERVICE, provider.getClass().getName());
-        
+
     }//GEN-LAST:event_forecastersComboBoxActionPerformed
 
     private void observersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_observersComboBoxActionPerformed
-        
+
         // Update the Weather Manager
         WeatherProvider provider = (WeatherProvider) observersComboBox.getSelectedItem();
         logger.log(Level.FINE, "Selected weather provider: {0}", provider);
         WeatherManager.getInstance().setObserver(provider.getService(WeatherObserver.class));
         prefs.put(PREF_LAST_WX_OBSERVER_SERVICE, provider.getClass().getName());
-        
+
     }//GEN-LAST:event_observersComboBoxActionPerformed
 
     private void configObserverButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configObserverButtonActionPerformed
-        
+
         // Configure the weather source
         WeatherProvider provider = (WeatherProvider) observersComboBox.getSelectedItem();
         Action action = provider.getConfigAction();
@@ -378,7 +382,7 @@ public final class WeatherTopComponent extends TopComponent {
             action.actionPerformed(evt);
             WeatherManager.getInstance().refreshModels();
         }
-        
+
     }//GEN-LAST:event_configObserverButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

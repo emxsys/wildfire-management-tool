@@ -4,7 +4,7 @@
   <Properties>
     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-        <TitledBorder title="Relative Humidity">
+        <TitledBorder title="Relative Humidity and Sky Cover">
           <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/views/weather/Bundle.properties" key="RelativeHumidityPanel.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </TitledBorder>
       </Border>

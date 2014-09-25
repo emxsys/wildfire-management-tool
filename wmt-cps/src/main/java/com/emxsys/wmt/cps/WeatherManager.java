@@ -73,15 +73,22 @@ public class WeatherManager {
     private ZonedDateTime hour;
     private Duration historyPeriod = Duration.ofHours(24);
     private Duration forecastPeriod = Duration.ofHours(72);
-    private TemporalDomain temporalDomain;
-    private TemporalDomain forecastDomain;
-    private TemporalDomain historyDomain;
+    private TemporalDomain forecastTimeframe;
+    private TemporalDomain observationTimeframe;
     private SpatialDomain spatialDomain;
     private WeatherModel weatherForecast;
     private WeatherModel weatherObservations;
 
+    /**
+     * Private constructor. Use WeatherManager.getInstance().
+     */
+    private WeatherManager() {
+        updateTime(ZonedDateTime.now());
+    }
+
     // Automatically update the weather when the system time advances past the top-of-the-hour
-    public void updateTime(ZonedDateTime time) {
+    public void updateTime(ZonedDateTime ignored) {
+        // real-time observations and forecast are relative to the current clock time, not application time.
         ZonedDateTime currentHour = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS);
         if (hour == null || !(hour.equals(currentHour))) {
             hour = currentHour;
@@ -89,8 +96,8 @@ public class WeatherManager {
             ZonedDateTime start = hour.minus(historyPeriod);
             ZonedDateTime end = hour.plus(forecastPeriod);
 
-            historyDomain = TemporalDomain.from(start, hour);
-            forecastDomain = TemporalDomain.from(hour, end);
+            observationTimeframe = TemporalDomain.from(start, hour);
+            forecastTimeframe = TemporalDomain.from(hour, end);
 
             refreshModels();
         }
@@ -108,7 +115,7 @@ public class WeatherManager {
             GeoCoord2D ne = GeoCoord2D.fromDegrees(lat + .5, lon + .5);
 
             // Set the domain to the sector extents
-            spatialDomain = SpatialDomain.from(sw, ne);
+            spatialDomain = SpatialDomain.from(sw, ne, 4, 4);
 
             refreshModels();
         }
@@ -116,20 +123,23 @@ public class WeatherManager {
 
     public void refreshModels() {
         // Prerequisites
-        if (spatialDomain == null || forecastDomain == null) {
+        if (spatialDomain == null || forecastTimeframe == null) {
             return;
         }
         // Update weather forecast
         if (forecaster != null) {
-            weatherForecast = forecaster.getForecast(spatialDomain, forecastDomain);
+            System.out.println("Getting Forecast for:");
+            System.out.println(forecastTimeframe.toString());
+
+            weatherForecast = forecaster.getForecast(spatialDomain, forecastTimeframe);
             // Remove any stale forecasts
-            forecastCache.clear();
+            //forecastCache.clear();
         }
         // Update weather history
         if (observer != null) {
-            weatherObservations = observer.getObservations(spatialDomain, historyDomain);
+            weatherObservations = observer.getObservations(spatialDomain, observationTimeframe);
             // No need to flush cache...observations do not change over time.
-            observationCache.clear();
+            //observationCache.clear();
         }
     }
 
@@ -188,13 +198,13 @@ public class WeatherManager {
         // Prerequistes
         WeatherModel model;
         Map<Long, FlatField> cache;
-        if (historyDomain.contains(time)) {
+        if (observationTimeframe.contains(time)) {
             if (weatherObservations == null) {
                 throw new IllegalStateException("weatherObservations is null.");
             }
             model = weatherObservations;
             cache = observationCache;
-        } else if (forecastDomain.contains(time)) {
+        } else if (forecastTimeframe.contains(time)) {
             // Ensure the model contains the time
             if (weatherForecast == null) {
                 throw new IllegalStateException("weatherForecast is null.");
