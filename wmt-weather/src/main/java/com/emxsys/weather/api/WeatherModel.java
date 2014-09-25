@@ -218,10 +218,13 @@ public class WeatherModel extends SpatioTemporalModel {
             MathType domainType = DataUtility.getDomainType(field);
             boolean isSpatialThenTemporal = domainType.equals(RealTupleType.LatitudeLongitudeTuple);
             if (isSpatialThenTemporal) {
+                
                 // Handle model function type: (Lat,Lon) -> (Time -> (Weather)) ...
+                
                 // ... Simply get the (Time -> (Weather)) FlatField
                 return (FlatField) field.evaluate(latLon, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
             } else {
+                
                 // Handle model function type: Time -> ((Lat,Lon) -> (Weather))...
 
                 // First, merge the spatial field for each time into a new range sample-array (wxSamples)
