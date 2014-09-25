@@ -29,6 +29,7 @@
  */
 package com.emxsys.weather.panels;
 
+import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.api.WeatherType;
@@ -51,20 +52,16 @@ import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.title.TextTitle;
-import org.jfree.data.xy.DefaultWindDataset;
-import org.jfree.data.xy.VectorDataItem;
 import org.jfree.data.xy.VectorSeries;
 import org.jfree.data.xy.VectorSeriesCollection;
 import org.jfree.data.xy.VectorXYDataset;
-import org.jfree.data.xy.WindDataset;
-import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
+import visad.CommonUnit;
 import visad.DateTime;
 import visad.FlatField;
 import visad.FunctionType;
@@ -83,8 +80,11 @@ import visad.VisADException;
  */
 @Messages({
     "CTL_WindChartDomain=Time",
-    "CTL_WindChartRange=Wind Speed",
-    "CTL_WindChartLegend=Winds",})
+    "CTL_WindChartMPH=(mph)",
+    "CTL_WindChartKnots=(kts)",
+    "CTL_WindChartKPH=(km/h)",
+    "CTL_WindChartMPS=(m/s)",
+    "CTL_WindChartLegend=Surface Winds",})
 public class WindChartPanel extends ChartPanel {
 
     private WindChart chart;
@@ -146,7 +146,7 @@ public class WindChartPanel extends ChartPanel {
      */
     public static class WindChart extends JFreeChart {
 
-        private Unit windSpdUnit;
+        private Unit unit;
 
         /** Dataset for wind vectors */
         private VectorSeriesCollection dataset;
@@ -155,13 +155,12 @@ public class WindChartPanel extends ChartPanel {
         private VectorSeries series;
         /** Day/Night markers */
         private ArrayList<Marker> markers = new ArrayList<>();
-        private WindDataset windDataset = new DefaultWindDataset();
 
         /**
          * Constructor for a WeatherChart.
          */
         public WindChart() {
-            this(new VectorSeriesCollection());
+            this(new VectorSeriesCollection(), WeatherPreferences.getWindSpeedUnit());
         }
 
         /**
@@ -169,29 +168,47 @@ public class WindChartPanel extends ChartPanel {
          * @param xyDataset
          * @param dataset
          */
-        WindChart(VectorSeriesCollection dataset) {
-            super(new WindPlot(dataset));
-
-            this.series = new VectorSeries(Bundle.CTL_WindChartLegend());
+        WindChart(VectorSeriesCollection dataset, Unit unit) {
+            super(null, // title
+                    null, // title font
+                    new WindPlot(dataset, unit),
+                    false // create legend?
+            );
+            this.unit = unit;
+            this.series = new VectorSeries(getSeriesLegend(unit));
             this.dataset = dataset;
             this.dataset.addSeries(series);
+            ChartHelper.createLegend((WindPlot) getPlot());
 
-            this.windSpdUnit = WeatherPreferences.getWindSpeedUnit();
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
                 if (evt.getKey().equals(WeatherPreferences.PREF_WIND_SPD_UOM)) {
                     setWindSpeedUnit(WeatherPreferences.getWindSpeedUnit());
                 }
             });
-            this.removeLegend();
+        }
 
+
+
+        private static String getSeriesLegend(Unit unit) {
+            if (unit.equals(GeneralUnit.mph)) {
+                return Bundle.CTL_WindChartLegend() + " " + Bundle.CTL_WindChartMPH();
+            } else if (unit.equals(GeneralUnit.knot)) {
+                return Bundle.CTL_WindChartLegend() + " " + Bundle.CTL_WindChartKnots();
+            } else if (unit.equals(GeneralUnit.kph)) {
+                return Bundle.CTL_WindChartLegend() + " " + Bundle.CTL_WindChartKPH();
+            } else if (unit.equals(CommonUnit.meterPerSecond)) {
+                return Bundle.CTL_WindChartLegend() + " " + Bundle.CTL_WindChartMPS();
+            } else {
+                throw new IllegalArgumentException("unhandled unit: " + unit.toString());
+            }
         }
 
         public final void setWindSpeedUnit(Unit newUnit) {
-            if (this.windSpdUnit.equals(newUnit)) {
+            if (this.unit.equals(newUnit)) {
                 return;
             }
             // Refresh the series with the new unit of measure
-            VectorSeries newSeries = new VectorSeries(Bundle.CTL_WindChartLegend());
+            VectorSeries newSeries = new VectorSeries(getSeriesLegend(newUnit));
 
             for (int i = 0; i < series.getItemCount(); i++) {
                 try {
@@ -200,7 +217,7 @@ public class WindChartPanel extends ChartPanel {
                     double vectorX = series.getVectorXValue(i);
                     double vectorY = series.getVectorYValue(i);
                     // convert speed  to new unit of measure
-                    speed = windSpdUnit.toThat(speed, newUnit);
+                    speed = unit.toThat(speed, newUnit);
                     newSeries.add(time, speed, vectorX, vectorY);
                 } catch (UnitException ex) {
                     Exceptions.printStackTrace(ex);
@@ -211,8 +228,8 @@ public class WindChartPanel extends ChartPanel {
             dataset.addSeries(newSeries);
             series = newSeries;
             series.fireSeriesChanged();
-            
-            windSpdUnit = newUnit;
+
+            unit = newUnit;
         }
 
         public void plotWinds(FlatField weather) {
@@ -232,9 +249,9 @@ public class WindChartPanel extends ChartPanel {
                 final float[][] values = weather.getFloats(false);
                 for (int i = 0; i < times[0].length; i++) {
                     double dir = values[dirIndex][i];
-                    double speed = windSpdUnit.equals(unit)
+                    double speed = unit.equals(unit)
                             ? values[spdIndex][i]
-                            : windSpdUnit.toThis(values[spdIndex][i], unit);
+                            : unit.toThis(values[spdIndex][i], unit);
                     // draw direction wind is blowing (vs from)
                     double deltax = -Math.sin(Math.toRadians(dir));
                     double deltay = -Math.cos(Math.toRadians(dir));
@@ -336,23 +353,24 @@ public class WindChartPanel extends ChartPanel {
         }
     }
 
-    private static class WindPlot extends XYPlot {
+    private static final class WindPlot extends XYPlot {
 
-        WindPlot(VectorSeriesCollection dataset) {
+        WindPlot(VectorSeriesCollection dataset, Unit unit) {
             super(dataset,
                     new DateTimeAxis(Bundle.CTL_WindChartDomain()),
-                    new NumberAxis(Bundle.CTL_WindChartRange()),
+                    new NumberAxis(),
                     new WindVectorRenderer());
 
             // Customize the Wind range
             NumberAxis rangeAxis = (NumberAxis) getRangeAxis();
             rangeAxis.setAutoRange(true);
             rangeAxis.setAutoRangeIncludesZero(true);
-            rangeAxis.setAutoRangeMinimumSize(20.0);
+            rangeAxis.setLowerBound(0);
+            setRangeUnit(unit);
 
             // Customize the renderer for winds
             WindVectorRenderer vecRenderer = (WindVectorRenderer) getRenderer();
-            vecRenderer.setSeriesPaint(0, new Color(128,0,128));    // purple
+            vecRenderer.setSeriesPaint(0, new Color(128, 0, 128));    // purple
             vecRenderer.setBaseToolTipGenerator(new WindVectorToolTipGenerator());
 
             setDomainCrosshairVisible(true);
@@ -364,6 +382,21 @@ public class WindChartPanel extends ChartPanel {
             setRangeGridlinePaint(Color.white);
             setAxisOffset(new RectangleInsets(4, 4, 4, 4));
             setOutlinePaint(Color.darkGray);
+
+        }
+
+        void setRangeUnit(Unit unit) {
+            if (unit.equals(GeneralUnit.mph)) {
+                getRangeAxis().setAutoRangeMinimumSize(20);
+            } else if (unit.equals(GeneralUnit.knot)) {
+                getRangeAxis().setAutoRangeMinimumSize(20);
+            } else if (unit.equals(GeneralUnit.kph)) {
+                getRangeAxis().setAutoRangeMinimumSize(30);
+            } else if (unit.equals(CommonUnit.meterPerSecond)) {
+                getRangeAxis().setAutoRangeMinimumSize(10);
+            } else {
+                throw new IllegalArgumentException("unhandled unit: " + unit.toString());
+            }
 
         }
 

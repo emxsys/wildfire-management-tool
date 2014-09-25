@@ -29,17 +29,17 @@
  */
 package com.emxsys.weather.panels;
 
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.WeatherPreferences;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -50,7 +50,6 @@ import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -61,10 +60,10 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import visad.DateTime;
@@ -140,6 +139,10 @@ public class TemperatureChartPanel extends ChartPanel {
         this.chart.plotTemperatures(ff);
     }
 
+    public void setSunlight(Sunlight sunlight) {
+        this.chart.setSunlight(sunlight);
+    }
+
     public void refresh() {
         this.chart.setNotify(true);
     }
@@ -152,12 +155,14 @@ public class TemperatureChartPanel extends ChartPanel {
 
         private Unit unit;
 
-        /** Dataset for temperature and humidity */
+        /** Datasets for temperature and dew point */
         private XYSeriesCollection dataset;
         /** Air temperature */
         private XYSeries series;
+        /** Sunlight for sunrise and sunset times */
+        private Sunlight sunlight;
         /** Day/Night markers */
-        private ArrayList<Marker> markers = new ArrayList<>();
+        private List<Marker> markers;
 
         /**
          * Constructor for a TemperatureChart.
@@ -183,6 +188,8 @@ public class TemperatureChartPanel extends ChartPanel {
             this.series = new XYSeries(getSeriesLegend(this.unit));
             this.dataset = dataset;
             this.dataset.addSeries(series);
+            // 
+            createLegend();
 
             // Customize the units when preferences change
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
@@ -192,7 +199,9 @@ public class TemperatureChartPanel extends ChartPanel {
                         break;
                 }
             });
+        }
 
+        private void createLegend() {
             // Customize the legend - place inside plot
             TemperaturePlot plot = (TemperaturePlot) getPlot();
             LegendTitle lt = new LegendTitle(plot);
@@ -204,6 +213,16 @@ public class TemperatureChartPanel extends ChartPanel {
                     lt, RectangleAnchor.TOP_RIGHT);
             ta.setMaxWidth(0.48);
             plot.addAnnotation(ta);
+        }
+
+        private static String getSeriesLegend(Unit unit) {
+            if (unit.equals(GeneralUnit.degF)) {
+                return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartFahrenheit();
+            } else if (unit.equals(GeneralUnit.degC)) {
+                return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartCelsius();
+            } else {
+                throw new IllegalArgumentException("unhandled unit: " + unit.toString());
+            }
         }
 
         public final void setAirTempUnit(Unit newUnit) {
@@ -229,21 +248,11 @@ public class TemperatureChartPanel extends ChartPanel {
 
                 // Now set the new air temp unit property
                 this.unit = newUnit;
-                
+
                 this.series.setKey(getSeriesLegend(newUnit)); // updates the legend text
                 this.series.fireSeriesChanged();
             } catch (CloneNotSupportedException ex) {
                 Exceptions.printStackTrace(ex);
-            }
-        }
-
-        private static String getSeriesLegend(Unit unit) {
-            if (unit.equals(GeneralUnit.degF)) {
-                return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartFahrenheit();
-            } else if (unit.equals(GeneralUnit.degC)) {
-                return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartCelsius();
-            } else {
-                throw new IllegalArgumentException("unhandled unit: " + unit.toString());
             }
         }
 
@@ -281,63 +290,30 @@ public class TemperatureChartPanel extends ChartPanel {
             }
         }
 
+        public void setSunlight(Sunlight sunlight) {
+            this.sunlight = sunlight;
+            plotDayNight();
+        }
+
         /**
          *
-         * @param solarData FunctionType: ( time, latitude ) -> ( declination, sunrise, sunset )
          */
-        public void plotDayNight(FlatField solarData) {
-//            XYPlot plot = (XYPlot) getPlot();
-//            for (Marker marker : markers) {
-//                plot.removeDomainMarker(marker, Layer.BACKGROUND);
-//            }
-//            markers.clear();
-//            try {
-//                Set domainSet = solarData.getDomainSet();
-//                int length = domainSet.getLength();
-//                RealTuple sample1 = DataUtility.getSample(domainSet, 0);
-//                RealTuple sample2 = DataUtility.getSample(domainSet, length - 1);
-//
-//                Real lat = (Real) sample1.getComponent(1);
-//                Real startDate = (Real) sample1.getComponent(0);
-//                Real endDate = (Real) sample2.getComponent(0);
-//                Real timeSpan = (Real) endDate.subtract(startDate);
-//                int numDays = (int) timeSpan.getValue(GeneralUnit.day);
-//                for (int i = 0; i < numDays; i++) {
-//                    // Day (between sunrise and sunset)
-//                    Real days = new Real(RealType.Time, i, GeneralUnit.day);
-//                    Real datetime = new DateTime((Real) startDate.add(days));
-//
-//                    Date date = Times.toDate(datetime)
-//                    RealTuple sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
-//                    Real sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
-//                    Real sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-//
-//                    DateTime sunrise1 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-//                    DateTime sunset1 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
-//
-////                Marker marker = createIntervalMarker(sunrise1, sunset1, "Day", new Color(255, 255, 255, 25));
-////                dayMarkers.add(marker);
-//                    // Night (need to compute next day's sunrise
-//                    days = new Real(RealType.Time, i + 1, GeneralUnit.day);
-//                    datetime = new DateTime((Real) startDate.add(days));
-//                    date = Times.toDate(datetime);
-//                    sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
-//                    sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
-//                    sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-//                    DateTime sunrise2 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-//                    //DateTime sunset2 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
-//
-//                    Marker marker = createIntervalMarker(sunset1, sunrise2, "Night", new Color(0, 0, 255, 25));
-//                    markers.add(marker);
-//                }
-//                for (Marker marker : markers) {
-//                    plot.addDomainMarker(marker, Layer.BACKGROUND);
-//                }
-//                plot.getDomainAxis().setRange(startDate.getValue(), endDate.getValue());
-//            } catch (VisADException | RemoteException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
+        void plotDayNight() {
+            TemperaturePlot plot = (TemperaturePlot) getPlot();
+            if (markers != null) {
+                for (Marker marker : markers) {
+                    plot.removeDomainMarker(marker, Layer.BACKGROUND);
+                }
+                markers.clear();
+            }
+            if (sunlight == null) {
+                return;
+            }
 
+            markers = ChartHelper.createNightMarkers(sunlight, dataset);
+            for (Marker marker : markers) {
+                plot.addDomainMarker(marker, Layer.BACKGROUND);
+            }
         }
 
         private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
@@ -424,24 +400,6 @@ public class TemperatureChartPanel extends ChartPanel {
                 throw new RuntimeException(ex);
             }
         }
-    }
-
-    /**
-     * Create a marker band used to depict daytime or nighttime.
-     */
-    public static Marker createIntervalMarker(DateTime begin, DateTime end, String label,
-                                              Color color) {
-        IntervalMarker marker
-                = new IntervalMarker(
-                        begin.getValue(),
-                        end.getValue(),
-                        color, new BasicStroke(1.0f), null, null, 1.0f);
-        marker.setLabel(label);
-        marker.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
-        marker.setLabelFont(new Font("SansSerif", Font.ITALIC + Font.BOLD, 9));
-        marker.setLabelTextAnchor(TextAnchor.BASELINE_LEFT);
-        return marker;
-
     }
 
     public static final class DateTimeAxis extends NumberAxis {

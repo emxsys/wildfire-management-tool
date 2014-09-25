@@ -29,15 +29,15 @@
  */
 package com.emxsys.weather.panels;
 
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherType;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
-import java.util.ArrayList;
+import java.util.List;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTitleAnnotation;
@@ -47,7 +47,6 @@ import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -57,10 +56,10 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import visad.DateTime;
@@ -136,6 +135,10 @@ public class HumidityChartPanel extends ChartPanel {
         this.chart.plotHumidities(ff);
     }
 
+    public void setSunlight(Sunlight sunlight) {
+        this.chart.setSunlight(sunlight);
+    }
+
     public void refresh() {
         this.chart.setNotify(true);
     }
@@ -146,14 +149,15 @@ public class HumidityChartPanel extends ChartPanel {
      */
     public static class HumidityChart extends JFreeChart {
 
-        /** Dataset for Clouds and humidity */
+        /** Dataset for clouds and humidity */
         private XYSeriesCollection xyDataset;
-        /** Clouds */
-        private XYSeries seriesC;
         /** Relative humidity */
         private XYSeries seriesH;
+        /** Clouds */
+        private XYSeries seriesC;
         /** Day/Night markers */
-        private ArrayList<Marker> markers = new ArrayList<>();
+        private List<Marker> markers;
+        private Sunlight sunlight;
 
         /**
          * Constructor for a HumidityChart.
@@ -194,8 +198,34 @@ public class HumidityChartPanel extends ChartPanel {
         }
 
         /**
-         * Plot the supplied Clouds in the chart.
-         * @param weather (hour -> (Clouds))
+         * Plot the relative humidity. This is the primary dataset.
+         * @param weather (hour -> (..., REL_HUMIDITY, ...))
+         */
+        public void plotHumidities(FlatField weather) {
+            seriesH.clear();
+            try {
+                FunctionType functionType = (FunctionType) weather.getType();
+                int index = findRangeComponentIndex(functionType, WeatherType.REL_HUMIDITY);
+                if (index == -1) {
+                    throw new IllegalArgumentException("FlatField must contain REL_HUMIDITY.");
+                }
+
+                final float[][] times = weather.getDomainSet().getSamples(false);
+                final float[][] values = weather.getFloats(false);
+
+                for (int i = 0; i < times[0].length; i++) {
+                    seriesH.add(times[0][i], values[index][i]);
+                }
+                plotDayNight();
+
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+
+        /**
+         * Plot the cloud cover in the chart. Clouds are the secondary dataset.
+         * @param weather (hour -> (..., CLOUD_COVER, ...))
          */
         public void plotClouds(FlatField weather) {
             seriesC.clear();
@@ -220,84 +250,30 @@ public class HumidityChartPanel extends ChartPanel {
             }
         }
 
-        public void plotHumidities(FlatField weather) {
-            seriesH.clear();
-            try {
-                FunctionType functionType = (FunctionType) weather.getType();
-                int index = findRangeComponentIndex(functionType, WeatherType.REL_HUMIDITY);
-                if (index == -1) {
-                    throw new IllegalArgumentException("FlatField must contain REL_HUMIDITY.");
-                }
-
-                final float[][] times = weather.getDomainSet().getSamples(false);
-                final float[][] values = weather.getFloats(false);
-
-                for (int i = 0; i < times[0].length; i++) {
-                    seriesH.add(times[0][i], values[index][i]);
-                }
-
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+        public void setSunlight(Sunlight sunlight) {
+            this.sunlight = sunlight;
+            plotDayNight();
         }
 
         /**
-         *
-         * @param solarData FunctionType: ( time, latitude ) -> ( declination, sunrise, sunset )
+         * Draws the day/night regions.
          */
-        public void plotDayNight(FlatField solarData) {
-//            XYPlot plot = (XYPlot) getPlot();
-//            for (Marker marker : markers) {
-//                plot.removeDomainMarker(marker, Layer.BACKGROUND);
-//            }
-//            markers.clear();
-//            try {
-//                Set domainSet = solarData.getDomainSet();
-//                int length = domainSet.getLength();
-//                RealTuple sample1 = DataUtility.getSample(domainSet, 0);
-//                RealTuple sample2 = DataUtility.getSample(domainSet, length - 1);
-//
-//                Real lat = (Real) sample1.getComponent(1);
-//                Real startDate = (Real) sample1.getComponent(0);
-//                Real endDate = (Real) sample2.getComponent(0);
-//                Real timeSpan = (Real) endDate.subtract(startDate);
-//                int numDays = (int) timeSpan.getValue(GeneralUnit.day);
-//                for (int i = 0; i < numDays; i++) {
-//                    // Day (between sunrise and sunset)
-//                    Real days = new Real(RealType.Time, i, GeneralUnit.day);
-//                    Real datetime = new DateTime((Real) startDate.add(days));
-//
-//                    Date date = Times.toDate(datetime)
-//                    RealTuple sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
-//                    Real sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
-//                    Real sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-//
-//                    DateTime sunrise1 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-//                    DateTime sunset1 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
-//
-////                Marker marker = createIntervalMarker(sunrise1, sunset1, "Day", new Color(255, 255, 255, 25));
-////                dayMarkers.add(marker);
-//                    // Night (need to compute next day's sunrise
-//                    days = new Real(RealType.Time, i + 1, GeneralUnit.day);
-//                    datetime = new DateTime((Real) startDate.add(days));
-//                    date = Times.toDate(datetime);
-//                    sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
-//                    sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
-//                    sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-//                    DateTime sunrise2 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-//                    //DateTime sunset2 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
-//
-//                    Marker marker = createIntervalMarker(sunset1, sunrise2, "Night", new Color(0, 0, 255, 25));
-//                    markers.add(marker);
-//                }
-//                for (Marker marker : markers) {
-//                    plot.addDomainMarker(marker, Layer.BACKGROUND);
-//                }
-//                plot.getDomainAxis().setRange(startDate.getValue(), endDate.getValue());
-//            } catch (VisADException | RemoteException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
+        void plotDayNight() {
+            HumidityPlot plot = (HumidityPlot) getPlot();
+            if (markers != null) {
+                for (Marker marker : markers) {
+                    plot.removeDomainMarker(marker, Layer.BACKGROUND);
+                }
+                markers.clear();
+            }
+            if (sunlight == null) {
+                return;
+            }
 
+            markers = ChartHelper.createNightMarkers(sunlight, xyDataset);
+            for (Marker marker : markers) {
+                plot.addDomainMarker(marker, Layer.BACKGROUND);
+            }
         }
 
         private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
@@ -369,22 +345,8 @@ public class HumidityChartPanel extends ChartPanel {
     }
 
     /**
-     * Create a marker band used to depict daytime or nighttime.
+     * Displays VisAD DateTime values.
      */
-    public static Marker createIntervalMarker(DateTime begin, DateTime end, String label,
-                                              Color color) {
-        IntervalMarker marker
-                = new IntervalMarker(
-                        begin.getValue(),
-                        end.getValue(),
-                        color, new BasicStroke(1.0f), null, null, 1.0f);
-        marker.setLabel(label);
-        marker.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
-        marker.setLabelFont(new Font("SansSerif", Font.ITALIC + Font.BOLD, 9));
-        marker.setLabelTextAnchor(TextAnchor.BASELINE_LEFT);
-        return marker;
-    }
-
     public static final class DateTimeAxis extends NumberAxis {
 
         public DateTimeAxis(String label) {
@@ -398,7 +360,7 @@ public class HumidityChartPanel extends ChartPanel {
         /**
          * Returns a collection of tick units for hours expressed in seconds.
          */
-        public TickUnitSource createTickUnits() {
+        TickUnitSource createTickUnits() {
             TickUnits units = new TickUnits();
             units.add(new NumberTickUnit(3600, new DateTimeFormat(), 0));       // 1hour
             units.add(new NumberTickUnit(3600 * 3, new DateTimeFormat(), 3));     // 3hour
@@ -407,11 +369,15 @@ public class HumidityChartPanel extends ChartPanel {
         }
     }
 
+    /**
+     * Formats VisAD DateTime values
+     */
     private static final class DateTimeFormat extends NumberFormat {
 
         @Override
         public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
             try {
+                // TODO: switch to ZonedDateTime and format to time preferences.
                 double local24HourTime = Times.toClockTime(new DateTime(number));
                 long hour = Math.round(local24HourTime);
                 if (hour == 0) {
