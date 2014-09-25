@@ -1,2 +1,3 @@
 Manifest-Version: 1.0
+OpenIDE-Module-Layer: com/emxsys/time/layer.xml
 OpenIDE-Module-Localizing-Bundle: com/emxsys/time/Bundle.properties
