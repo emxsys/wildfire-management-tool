@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="WorldWind">
+        <folder name="Categories">
+            <file name="Hazards">                
+                <attr name="displayName" stringvalue="Hazards"/>
+                <attr name="iconBase" stringvalue="com/emxsys/maps/geomac/images/layer-rgb-add.png"/>
+                <attr name="position" intvalue="450"/>
+                <attr name="priority" stringvalue="top"/>
+            </file>
+        </folder>
+        <folder name="Layers">
+            <folder name="Overlay">
+
+                <file name="Layer0.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="WUI"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer0"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/0.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/urbaninterface.jpg"/>
+                
+                </file>
+                <file name="Layer1.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="Ownership"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer1"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/1.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/land_ownership.jpg"/>
+                </file>
+                <file name="Layer6.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="Historic Fire Perimeters"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer6"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/6.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/hist_fire_perim.jpg"/>
+                </file>
+                <file name="Layer19.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="Previous Perimeters"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer19"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/19.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/PerimetersInactive.jpg"/>
+                    <!--Tiles expire in 12hrs, and the layer is refreshed every hour-->
+                    <attr name="expirationAgeSeconds" intvalue="43200"/>
+                    <attr name="refreshIntervalSeconds" intvalue="3600"/>
+                </file>
+                <file name="Layer20.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="All Current Year Fires"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer20"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/20.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/current_fires.png"/>
+                    <!--Tiles expire in 12hrs, and the layer is refreshed every hour-->
+                    <attr name="expirationAgeSeconds" intvalue="43200"/>
+                    <attr name="refreshIntervalSeconds" intvalue="3600"/>
+                </file>
+                <file name="Layer23.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="Current Fire Perimeters"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer23"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/23.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/PerimetersActive.jpg"/>
+                    <!--Tiles expire in 12hrs, and the layer is refreshed every hour-->
+                    <attr name="expirationAgeSeconds" intvalue="43200"/>
+                    <attr name="refreshIntervalSeconds" intvalue="3600"/>
+                </file>
+                <file name="Layer24.instance">
+                    <attr name="type" stringvalue="Raster"/>
+                    <attr name="role" stringvalue="Overlay"/>
+                    <attr name="category" stringvalue="Hazards"/>
+                    <!--The active flag controls whether the colorkey is lookup is done regardless of the enabled state-->
+                    <attr name="active" boolvalue="false"/>
+                    <attr name="name" stringvalue="Current Fires"/>
+                    <attr name="actuate" stringvalue="onRequest"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer24"/>
+                    <attr name="position" intvalue="1400"/>
+                    <!-- Look for our custom file resource under the cluster/modules/ext folder -->
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/24.xml"/>
+                    <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
+                    <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
+                    <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/current_fires.jpg"/>
+                    <!--Tiles expire in 12hrs, and the layer is refreshed every hour-->
+                    <attr name="expirationAgeSeconds" intvalue="43200"/>
+                    <attr name="refreshIntervalSeconds" intvalue="3600"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+
+</filesystem>
