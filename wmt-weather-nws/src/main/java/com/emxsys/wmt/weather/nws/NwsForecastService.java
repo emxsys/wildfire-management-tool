@@ -37,6 +37,7 @@ import com.emxsys.weather.api.WeatherModel;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
@@ -167,8 +168,16 @@ public class NwsForecastService implements WeatherForecaster {
                         xy + 1 < numSamples ? "%20" : ""));
             }
             // Build the query string and URL
-            String startTime = temporalDomain == null? "" : temporalDomain.getEarliest().format(DateTimeFormatter.ISO_INSTANT);
-            String endTime = temporalDomain == null? "" : temporalDomain.getLatest().format(DateTimeFormatter.ISO_INSTANT);
+            
+            // Date/time format is 2004-04-27T12:00 in UTC
+            DateTimeFormatter simpleUTC = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            String startTime = temporalDomain == null? "" : temporalDomain.getEarliest().format(simpleUTC);
+            String endTime = temporalDomain == null? "" : temporalDomain.getLatest().format(simpleUTC);
+            if (!startTime.isEmpty() && startTime.equals(endTime)) {
+                endTime = "";
+            }
+           
+            //String endTime = temporalDomain == null? "" : temporalDomain.getEarliest().plusDays(2).format(simpleUTC);
             String pointForecastQuery = String.format(NDFD_MULTIPOINT_FORECAST,
                     coords.toString(),
                     startTime,      // empty = first available time
@@ -180,7 +189,10 @@ public class NwsForecastService implements WeatherForecaster {
 
             // Invoke the REST service and get the JSON results
             String dwml = HttpUtil.callWebService(url);
-            WeatherModel weatherModel = DwmlParser.parse(dwml);
+            //System.out.println(dwml);
+            
+            WeatherModel weatherModel = NwsDwmlParser.parse(dwml);
+            //System.out.println(weatherModel);
             
             return weatherModel;
             

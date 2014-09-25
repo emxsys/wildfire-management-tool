@@ -30,6 +30,7 @@
 package com.emxsys.wmt.weather.nws;
 
 import com.emxsys.util.KeyValue;
+import com.emxsys.util.TimeUtil;
 import com.emxsys.util.XmlUtil;
 import com.emxsys.visad.Fields;
 import com.emxsys.visad.Times;
@@ -37,7 +38,9 @@ import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherType;
 import static com.emxsys.weather.api.WeatherType.*;
 import java.rmi.RemoteException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -192,18 +195,18 @@ import visad.georef.LatLonTuple;
     "# {0} - reason",
     "err.cannot.import.forecast=Cannot import forecast. {0}"
 })
-public class DwmlParser {
+public class NwsDwmlParser {
 
     public static final String DWML_SCHEMA_URI = "http://www.nws.noaa.gov/forecasts/xml/DWMLgen/schema/DWML.xsd";
     public static final String TAG_HEAD = "/dwml/head";
     public static final String TAG_DATA = "/dwml/data";
 
     public static WeatherModel parse(String dwml) {
-        DwmlParser parser = new DwmlParser(dwml);
+        NwsDwmlParser parser = new NwsDwmlParser(dwml);
         return parser.parseDocument();
     }
 
-    private static final Logger logger = Logger.getLogger(DwmlParser.class.getName());
+    private static final Logger logger = Logger.getLogger(NwsDwmlParser.class.getName());
 
     private final Document doc;
     private final XPath xpath;
@@ -216,7 +219,7 @@ public class DwmlParser {
      * Constructs a parser for the given XML document.
      * @param xmlString
      */
-    private DwmlParser(String xmlString) {
+    private NwsDwmlParser(String xmlString) {
         doc = XmlUtil.getDoc(xmlString);
         xpath = XPathFactory.newInstance().newXPath();
     }
@@ -244,6 +247,7 @@ public class DwmlParser {
                     new Irregular2DSet(LatitudeLongitudeTuple, latLonSamples)
             );
 
+            // Parse the Times
             Map<String, ArrayList<ZonedDateTime>> timeLayouts = parseTimeLayouts(dataNode);
 
             // Create a FlatField for each point
@@ -267,9 +271,10 @@ public class DwmlParser {
                 ArrayList<ZonedDateTime> times = timeLayouts.get(airTemps.getKey());
                 double[][] timeSamples = new double[1][times.size()];
                 for (int i = 0; i < times.size(); i++) {
-                    timeSamples[0][i] = times.get(i).toEpochSecond();
+                    ZonedDateTime utc = TimeUtil.toUTC(times.get(i));
+                    timeSamples[0][i] = utc.toEpochSecond();
                 }
- 
+
                 // Create the wx range samples, converting the units as necessary.
                 double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][times.size()];
                 for (int dim = 0; dim < FIRE_WEATHER.getDimension(); dim++) {
@@ -341,6 +346,7 @@ public class DwmlParser {
      * @throws XPathExpressionException
      */
     Map<String, ArrayList<ZonedDateTime>> parseTimeLayouts(Node dataNode) throws XPathExpressionException {
+        //System.out.println("NwsDwmlParser:parseTimeLayouts:");
         HashMap<String, ArrayList<ZonedDateTime>> map = new HashMap<>();
         NodeList nodes = (NodeList) xpath.evaluate("time-layout", dataNode, XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -348,8 +354,12 @@ public class DwmlParser {
             NodeList times = (NodeList) xpath.evaluate("start-valid-time", nodes.item(i), XPathConstants.NODESET);
             ArrayList<ZonedDateTime> values = new ArrayList<>();
             for (int j = 0; j < times.getLength(); j++) {
+                // E.g., 2014-03-28T01:00:00-07:00 
+                // Time is local date/time followed by time zone offset from UTC
                 String time = times.item(j).getTextContent();
-                values.add(ZonedDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME));
+                ZonedDateTime zdt = ZonedDateTime.parse(time, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+                //System.out.println(" " + time + " -> " + TimeUtil.toUTC(zdt));
+                values.add(zdt);
             }
             map.put(key, values);
         }

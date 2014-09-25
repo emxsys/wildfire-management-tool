@@ -107,6 +107,28 @@ public class NwsWeatherProviderTest {
 
         System.out.println(forecast);
     }
+    /**
+     * Test of getForecast method, of class NwsWeatherProvider.
+     */
+    @Test
+    public void testGetMultiPointForecast(){
+        System.out.println("getMultiPointForecast");
+        NwsWeatherProvider provider = NwsWeatherProvider.getInstance();
+        WeatherForecaster forecaster = provider.getLookup().lookup(WeatherForecaster.class);
+        assertNotNull(forecaster);
+
+        Coord2D coord1 = GeoCoord2D.fromDegrees(34.2, -119.2);
+        Coord2D coord2 = GeoCoord2D.fromDegrees(34.3, -119.3);
+        WeatherModel forecast = forecaster.getForecast(SpatialDomain.from(coord1, coord2), null);
+        assertNotNull(forecast);
+        
+        WeatherModel forecast2 = forecaster.getForecast(
+                SpatialDomain.from(coord1, coord2), 
+                TemporalDomain.from(ZonedDateTime.now(), ZonedDateTime.now().plusDays(2)));
+        assertNotNull(forecast2);
+
+        System.out.println(forecast);
+    }
     
     /**
      * Test of getForecast method, of class NwsWeatherProvider.
