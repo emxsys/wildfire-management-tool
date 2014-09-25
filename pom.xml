@@ -172,6 +172,7 @@
         <module>wmt-weather-nws</module>
         <module>wmt-wildfire</module>
         <module>wmt-gis-shapefile</module>
+        <module>wmt-maps-geomac</module>
     </modules>
     <reporting>
         <plugins>
