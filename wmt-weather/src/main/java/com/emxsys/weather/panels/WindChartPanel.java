@@ -187,8 +187,6 @@ public class WindChartPanel extends ChartPanel {
             });
         }
 
-
-
         private static String getSeriesLegend(Unit unit) {
             if (unit.equals(GeneralUnit.mph)) {
                 return Bundle.CTL_WindChartLegend() + " " + Bundle.CTL_WindChartMPH();
@@ -365,7 +363,6 @@ public class WindChartPanel extends ChartPanel {
             NumberAxis rangeAxis = (NumberAxis) getRangeAxis();
             rangeAxis.setAutoRange(true);
             rangeAxis.setAutoRangeIncludesZero(true);
-            rangeAxis.setLowerBound(0);
             setRangeUnit(unit);
 
             // Customize the renderer for winds
