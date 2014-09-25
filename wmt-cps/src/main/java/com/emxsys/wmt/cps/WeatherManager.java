@@ -214,7 +214,7 @@ public class WeatherManager {
         } else {
             return WeatherTuple.INVALID_TUPLE;
         }
-        System.out.println(model);
+        //System.out.println(model);
 
         if (!spatialDomain.contains(coord)) {
             return WeatherTuple.INVALID_TUPLE;
