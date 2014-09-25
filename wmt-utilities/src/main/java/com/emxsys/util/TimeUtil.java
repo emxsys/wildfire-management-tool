@@ -30,6 +30,7 @@
 package com.emxsys.util;
 
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
@@ -56,5 +57,9 @@ public class TimeUtil {
     
     public static ZonedDateTime toUTC(ZonedDateTime time) {
         return time.withZoneSameInstant(ZoneId.of("UTC"));
+    }
+    
+    public static ZonedDateTime toZoneOffset(ZonedDateTime time, double offsetHours) {
+        return time.withZoneSameInstant(ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds((int) (offsetHours * 3600))));        
     }
 }
