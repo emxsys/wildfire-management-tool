@@ -72,6 +72,18 @@ public class SpatialDomain {
      * @return
      */
     public static SpatialDomain from(LatLonPoint point1, LatLonPoint point2) {
+        return from(point1, point2, 2, 2);
+    }
+
+    /**
+     * Creates a spatial domain bounding box from two coordinates.
+     * @param point1
+     * @param point2
+     * @param rows
+     * @param cols
+     * @return
+     */
+    public static SpatialDomain from(LatLonPoint point1, LatLonPoint point2, int rows, int cols) {
         try {
             double minLat = Math.min(point1.getLatitude().getValue(), point2.getLatitude().getValue());
             double maxLat = Math.max(point1.getLatitude().getValue(), point2.getLatitude().getValue());
@@ -79,7 +91,7 @@ public class SpatialDomain {
             double maxLon = Math.max(point1.getLongitude().getValue(), point2.getLongitude().getValue());
             LatLonTuple sw = new LatLonTuple(minLat, minLon);
             LatLonTuple ne = new LatLonTuple(maxLat, maxLon);
-            return new SpatialDomain(sw, ne, 2, 2);
+            return new SpatialDomain(sw, ne, rows, cols);
         }
         catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
