@@ -331,7 +331,22 @@ public class TemporalDomain {
         if (timeDomainSet == null) {
             throw new IllegalStateException(Bundle.ERR_TemporalDomainNotInitialized());
         }
-        return timeDomainSet.toString();
+        StringBuilder sb = new StringBuilder("TemporalDomain: ");
+        sb.append(timeDomainSet.getType().prettyString());
+        try {
+            sb.append("\n  Length: ");
+            sb.append(timeDomainSet.getLength());
+            double[][] times = timeDomainSet.getDoubles();
+            for (int i = 0; i < times[0].length; i++) {
+                DateTime dt = Times.fromDouble(times[0][i]);
+                sb.append("\n    ");
+                sb.append(dt.timeString());
+            }
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return sb.toString();
     }
 
 }
