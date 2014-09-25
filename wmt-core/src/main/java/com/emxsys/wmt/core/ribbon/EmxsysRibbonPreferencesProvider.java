@@ -40,8 +40,9 @@ import org.openide.util.lookup.ServiceProvider;
  * Service Provider for Ribbon preferences.
  * <p>
  * @author Bruce Schubert
+ * @depeciated No longer needed. Terramenta has proper support for ribbons.
  */
-@ServiceProvider(service = com.terramenta.ribbon.spi.RibbonPreferencesProvider.class)
+//@ServiceProvider(service = com.terramenta.ribbon.spi.RibbonPreferencesProvider.class)
 public class EmxsysRibbonPreferencesProvider extends RibbonPreferencesProvider {
 
     @Override
