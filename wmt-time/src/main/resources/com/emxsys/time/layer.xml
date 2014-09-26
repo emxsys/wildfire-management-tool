@@ -22,7 +22,7 @@
         </folder>
         <folder name="Home">
             <folder name="Controls">
-                <attr name="position" intvalue="201"/>
+                <attr name="position" intvalue="101"/>
                 <file name="com-terramenta-time-actions-TimeStepBackwardAction.shadow">
                     <!--com.terramenta.time.actions.TimeActions.TimeStepBackwardAction-->
                     <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimeStepBackwardAction.instance"/>
@@ -55,15 +55,15 @@
                 </file>
 
             </folder>
+            <file name="com-terramenta-time-ribbons-SpeedBand.instance">
+                <attr name="position" intvalue="102"/>
+            </file>
             <file name="com-terramenta-time-ribbons-DatetimeBand.instance">
-                <attr name="position" intvalue="202"/>
+                <attr name="position" intvalue="103"/>
             </file>
             <!--            
             <file name="com-terramenta-time-ribbons-LingerBand.instance">
                 <attr name="position" intvalue="300"/>
-            </file>
-            <file name="com-terramenta-time-ribbons-SpeedBand.instance">
-                <attr name="position" intvalue="400"/>
             </file>
             -->
         </folder>
