@@ -37,14 +37,15 @@ import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
+import com.emxsys.weather.panels.HumidityChartPanel;
+import com.emxsys.weather.panels.TemperatureChartPanel;
+import com.emxsys.weather.panels.WindChartPanel;
 import com.emxsys.weather.spi.WeatherProviderFactory;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.WeatherManager;
-import com.emxsys.wmt.cps.views.weather.AirTemperaturePanel;
-import com.emxsys.wmt.cps.views.weather.RelativeHumidityPanel;
-import com.emxsys.wmt.cps.views.weather.WindPanel;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.beans.PropertyChangeEvent;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +53,6 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JPanel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.util.Lookup;
@@ -106,10 +106,6 @@ public final class WeatherTopComponent extends TopComponent {
     public static final String PREFERRED_ID = "WeatherTopComponent";
     public static final String PREF_LAST_WX_OBSERVER_SERVICE = "wmt.cps.lastWeatherObserver";
     public static final String PREF_LAST_WX_FORECAST_SERVICE = "wmt.cps.lastWeatherForecaster";
-    private JPanel layoutPanel;
-    private AirTemperaturePanel airTemperaturePanel;
-    private RelativeHumidityPanel relativeHumidityPanel;
-    private WindPanel windPanel;
     private final SimpleWeatherProvider simpleWx = new SimpleWeatherProvider();
     private final DiurnalWeatherProvider diurnalWx;
     private WeatherProvider selectedObserver;
@@ -120,6 +116,9 @@ public final class WeatherTopComponent extends TopComponent {
     private Result<WeatherProvider> lookupWeatherProviders;
     private final Preferences prefs = NbPreferences.forModule(WeatherTopComponent.class);
     private static final Logger logger = Logger.getLogger(WeatherTopComponent.class.getName());
+    private TemperatureChartPanel temperatureChart;
+    private HumidityChartPanel humidityChart;
+    private WindChartPanel windChart;
 
     /**
      * Constructor.
@@ -129,14 +128,11 @@ public final class WeatherTopComponent extends TopComponent {
 
         // Initialize our "manual" weather provider
         diurnalWx = WeatherProviderFactory.newDiurnalWeatherProvider(Model.getInstance().getSunlight());
-        // Add a listener to update the Diurnal Weather with the current sunlight
-        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
-            diurnalWx.setSunlight((Sunlight) evt.getNewValue());
-        });
 
         initComponents();
         initPanels();
         initWeatherProviders();
+        
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
@@ -147,15 +143,24 @@ public final class WeatherTopComponent extends TopComponent {
             WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();
             if (wxModel != null) {
                 FlatField wx = wxModel.getTemporalWeatherAt(coord);
-                airTemperaturePanel.setWeather(wx);
-                relativeHumidityPanel.setWeather(wx);
-                windPanel.setWeather(wx);
+                temperatureChart.setTemperatures(wx);
+                humidityChart.setHumidities(wx);
+                humidityChart.setCloudCover(wx);
+                windChart.setWinds(wx);
             }
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
+            ZonedDateTime datetime = (ZonedDateTime) evt.getNewValue();
+            temperatureChart.setDateTime(datetime);
+            humidityChart.setDateTime(datetime);
+            windChart.setDateTime(datetime);
         });
         Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
             Sunlight sunlight = (Sunlight) evt.getNewValue();
-            airTemperaturePanel.setSunlight(sunlight);
-            relativeHumidityPanel.setSunlight(sunlight);
+            diurnalWx.setSunlight((Sunlight) evt.getNewValue());
+            temperatureChart.setSunlight(sunlight);
+            humidityChart.setSunlight(sunlight);
+            //windChart.setSunlight(sunlight);
         });
 
         logger.config(PREFERRED_ID + " initialized.");
@@ -233,13 +238,12 @@ public final class WeatherTopComponent extends TopComponent {
      * Initializes the chart panels.
      */
     private void initPanels() {
-        airTemperaturePanel = new AirTemperaturePanel();
-        relativeHumidityPanel = new RelativeHumidityPanel();
-        windPanel = new WindPanel();
-
-        centerPanel.add(airTemperaturePanel);
-        centerPanel.add(relativeHumidityPanel);
-        centerPanel.add(windPanel);
+        this.temperatureChart = new TemperatureChartPanel();
+        this.humidityChart = new HumidityChartPanel();
+        this.windChart = new WindChartPanel();
+        this.jPanel1.add(temperatureChart);
+        this.jPanel2.add(humidityChart);
+        this.jPanel3.add(windChart);
     }
 
     /** This method is called from within the constructor to
@@ -259,6 +263,9 @@ public final class WeatherTopComponent extends TopComponent {
         configForecasterButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
         centerPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -342,6 +349,19 @@ public final class WeatherTopComponent extends TopComponent {
         add(upperPanel, java.awt.BorderLayout.NORTH);
 
         centerPanel.setLayout(new java.awt.GridLayout(3, 1));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jPanel1.border.title"))); // NOI18N
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        centerPanel.add(jPanel1);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jPanel1.border.title"))); // NOI18N
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        centerPanel.add(jPanel2);
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED), org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jPanel1.border.title"))); // NOI18N
+        jPanel3.setLayout(new java.awt.BorderLayout());
+        centerPanel.add(jPanel3);
+
         add(centerPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -392,6 +412,9 @@ public final class WeatherTopComponent extends TopComponent {
     private javax.swing.JComboBox forecastersComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JComboBox observersComboBox;
     private javax.swing.JButton refreshButton;
     private javax.swing.JPanel upperPanel;

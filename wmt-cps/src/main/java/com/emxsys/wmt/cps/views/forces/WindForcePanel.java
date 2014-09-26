@@ -32,7 +32,6 @@ package com.emxsys.wmt.cps.views.forces;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.panels.WindSpeedDirPanel;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.WeatherManager;
 import java.beans.PropertyChangeEvent;
@@ -56,7 +55,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     // Implementation
-    private final WindSpeedDirPanel windPanel = new WindSpeedDirPanel();
+    private final com.emxsys.weather.panels.WindForcePanel windPanel = new com.emxsys.weather.panels.WindForcePanel();
 
     /**
      * Constructor creates new form WindForcePanel.
@@ -68,10 +67,10 @@ public class WindForcePanel extends javax.swing.JPanel {
         // Forward property changes to parent
         windPanel.addPropertyChangeListener((e) -> {
             switch (e.getPropertyName()) {
-                case WindSpeedDirPanel.PROP_WIND_DIR:
+                case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_DIR:
                     pcs.firePropertyChange(PROP_WINDDIR, e.getOldValue(), e.getNewValue());
                     break;
-                case WindSpeedDirPanel.PROP_WIND_SPD:
+                case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_SPD:
                     pcs.firePropertyChange(PROP_WINDSPEED, e.getOldValue(), e.getNewValue());
                     break;
             }
