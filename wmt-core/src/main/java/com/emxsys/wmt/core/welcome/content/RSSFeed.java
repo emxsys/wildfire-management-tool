@@ -69,6 +69,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -724,13 +725,8 @@ public class RSSFeed extends JPanel implements Constants, PropertyChangeListener
         }
 
         protected String fixFeedItemUrl(String url) {
-            if( null != url && (url.contains(".netbeans.org") || url.contains("/netbeans.org")) ) {//NOI18N
-                if( url.contains("?") ) {
-                    url = url + "&";
-                } else {
-                    url = url + "?";
-                }
-                url += "utm_source=netbeans&utm_campaign=welcomepage";
+            if( null != url  ) {//NOI18N    
+                return url.replaceAll(" ", "%20");
             }
             return url;
         }
