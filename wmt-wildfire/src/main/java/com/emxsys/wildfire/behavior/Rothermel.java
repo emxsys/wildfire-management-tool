@@ -41,20 +41,24 @@ import java.util.logging.Logger;
  * <li><a name="bib_1000"></a>Albini, F.A., 1976, Estimating Wildfire Behavior and Effects, General
  * Technical Report INT-30, USDA Forest Service, Intermountain Forest and Range Experiment Station
  *
- * <li><a name="bib_1000"></a>Anderson, H.A., 1983, Predicting Wind-driven Wild Land Fire Size and
+ * <li><a name="bib_1001"></a>Anderson, H.A., 1983, Predicting Wind-driven Wild Land Fire Size and
  * Shape, Research Paper INT-305, USDA Forest Service, Intermountain Forest and Range Experiment
  * Station
  *
- * <li><a name="bib_1000"></a>Anderson, K., 2009, A Comparison of Hourly Fire Fuel Moisture Code
+ * <li><a name="bib_1002"></a>Anderson, K., 2009, A Comparison of Hourly Fire Fuel Moisture Code
  * Calculations within Canada, Canadian Forest Service
  *
- * <li><a name="bib_1010"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
+ * <li><a name="bib_1003"></a>Rothermel, R.C., 1972, A mathematical model for predicting fire spread
  * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
  * and Range Experiment Station
  *
- * <li style="bullet"><a name="bib_1000"></a> Rothermel et al, 1986, Modeling Moisture Content of
+ * <li><a name="bib_1004"></a>Rothermel et al, 1986, Modeling Moisture Content of
  * Fine Dead Wildland Fuels: Input to the BEHAVE Fire Prediction System, Research Paper, INT-359,
  * USDA Forest Service, Intermountain Research Station
+ * 
+ * <li><a name="bib_1005"></a>Van Wagner, C.E., 1977, A Method of Computing Fine Fuel Moisture Content
+ * Throughout the Diurnal Cycle, Information Report PS-X-69,
+ * Petawawa Forest Experiment Station, Canadian Forest Service
  * </ul>
  * Other Sources:
  * <ul>
