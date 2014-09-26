@@ -303,6 +303,53 @@ public class Model {
     }
 
     /**
+     * Adjusts the fuel to the current environment.
+     *
+     * @throws VisADException
+     * @throws RemoteException
+     */
+    public void conditionFuelbed() {
+        if (!validateInputs()) {
+            return;
+        }
+        try {
+            // Get inputs used for fuel conditioning
+            FuelModel fuelModel = fuelModelRef.get();
+            Terrain terrain = terrainRef.get();
+            Weather weather = weatherRef.get();
+            Sunlight sun = sunlightRef.get();
+            boolean isShaded = shaded.get();
+
+            // Condition the fuel
+            SurfaceFuel prev = fuelbedRef.get();
+            FuelMoisture m_0 = prev != null ? prev.getFuelMoisture() : fuelMoistureRef.get();
+            SurfaceFuel fuel = fuelProvider.getSurfaceFuel(fuelModel, sun, weather, terrain, isShaded, m_0);
+
+            // Save the outputs
+            fuelbedRef.set(fuel);
+            synchronized (dirtyFlags) {
+                dirtyFlags.set(Flag.Fuelbed.ordinal());
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "computeFireBehavior failed.", e);
+            Exceptions.printStackTrace(e);
+        }
+    }
+
+    /**
+     * The modify the current fuel bed with the supplied fuel moisture. Used to override the
+     * dead 1-hour fuel moisture when performing what-if scenarios.
+     */
+    public void modifyFuelbed(FuelMoisture fuelMoisture) {
+        SurfaceFuel fuel = getFuelbed();
+        SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(fuel.getFuelModel(), fuelMoisture);
+        fuelbedRef.set(newFuel);
+        synchronized (dirtyFlags) {
+            dirtyFlags.set(Flag.Fuelbed.ordinal());
+        }
+    }
+
+    /**
      * Computes the fire behavior for the current coordinate.
      *
      * @throws VisADException
@@ -313,24 +360,19 @@ public class Model {
             return;
         }
         try {
-            // Use the previous 24 hours of sunlight and the current location for fuel conditioning
-            Coord3D coord = coordRef.get();
-            FuelModel fuelModel = fuelModelRef.get();
+            // Get inputs used for fire behavior
+            SurfaceFuel fuel = fuelbedRef.get();
             Terrain terrain = terrainRef.get();
             Weather weather = weatherRef.get();
+            Coord3D coord = coordRef.get();
             Sunlight sun = sunlightRef.get();
-            boolean isShaded = shaded.get();
 
-            SurfaceFuel prev = fuelbedRef.get();
-            FuelMoisture m_0 = prev != null ? prev.getFuelMoisture() : fuelMoistureRef.get();
-            SurfaceFuel fuel = fuelProvider.getSurfaceFuel(fuelModel, sun, weather, terrain, isShaded, m_0);
+            // Compute fire behavior
             SurfaceFire fire = fireProvider.getFireBehavior(fuel, weather, terrain);
 
-            fuelbedRef.set(fuel);
+            // Save the outputs
             fireBehaviorRef.set(fire);
             synchronized (dirtyFlags) {
-                dirtyFlags.set(Flag.FuelCondition.ordinal());
-                dirtyFlags.set(Flag.Fuelbed.ordinal());
                 dirtyFlags.set(Flag.FireBehavior.ordinal());
             }
 

@@ -54,7 +54,10 @@ import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
+import com.emxsys.wildfire.api.FuelMoistureTuple;
 import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.views.ForcesTopComponent;
 import com.emxsys.wmt.globe.Globe;
@@ -185,21 +188,30 @@ public class Controller {
         // TODO: Move to Forces view
         // Listen for changes from the manual input controls
         ForcesTopComponent forcesWindow = ForcesTopComponent.getInstance();
-        forcesWindow.addAirTempPropertyChangeListener((PropertyChangeEvent evt) -> {
-            simpleWeather.setAirTemperature((Real) evt.getNewValue());
-            model.setWeather(simpleWeather.getWeather());
+
+        forcesWindow.addFuelMoisturePropertyChangeListener((PropertyChangeEvent evt) -> {
+            Real dead1HrFuelMoisture = ((Real) evt.getNewValue());
+            FuelMoisture fm = model.getFuelMoisture();
+            model.modifyFuelbed(FuelMoistureTuple.fromReals(
+                    dead1HrFuelMoisture,
+                    fm.getDead10HrFuelMoisture(),
+                    fm.getDead100HrFuelMoisture(),
+                    fm.getLiveHerbFuelMoisture(),
+                    fm.getLiveWoodyFuelMoisture()));
             model.computeFireBehavior();
             model.updateViews();
         });
         forcesWindow.addWindDirPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setWindDirection((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
+            model.conditionFuelbed();
             model.computeFireBehavior();
             model.updateViews();
         });
         forcesWindow.addWindSpeedPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setWindSpeed((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
+            model.conditionFuelbed();
             model.computeFireBehavior();
             model.updateViews();
         });
@@ -237,7 +249,6 @@ public class Controller {
         // Fire a coordinate-based update to change the current FuelModel
         coordinateUpdater.update();
     }
-
 
     /**
      * CooridinateUpdater monitors the globe's reticule (cross-hairs) layer and updates the domain
@@ -322,6 +333,7 @@ public class Controller {
                 controller.model.setFuelModel(fuelModel);
 
                 // Update the fire
+                controller.model.conditionFuelbed();
                 controller.model.computeFireBehavior();
 
                 // Update the GUI 
@@ -419,6 +431,7 @@ public class Controller {
                 controller.model.setShaded(isShaded);
 
                 // Update the fire
+                controller.model.conditionFuelbed();
                 controller.model.computeFireBehavior();
 
                 // Update the GUI 
