@@ -58,23 +58,25 @@ public class SurfaceFuelProvider {
     private final HashMap<FuelScenario, SurfaceFuel> cache = new HashMap<>();
 
     /**
-     * Gets a SurfaceFuel object from the given environmental parameters.
+     * Gets a SurfaceFuel object from the given environmental parameters. Dead 1-hour fuel moisture
+     * is computed using an "instantaneous" wetting or drying computation, versus the traditional
+     * 1-hour time lag formula.
      *
      * @param fuelModel The fuel model representative of fuel loading and SAV ratios.
      * @param sun The current sunlight prevailing upon the fuel
      * @param wx The current weather acting on the fuel
      * @param terrain The slope, aspect and elevation of the fuel
-     * @param shaded Set true if the fuel is shaded (by terrain or plume or night)
-     * @param initialFuelMoisture Initial fuel moisture determines a wetting or drying trend.
+     * @param shaded Set true if the fuel is currently shaded (by terrain or plume or night)
+     * @param initialFuelMoisture Previous hour's fuel moisture - determines a wetting or drying trend.
      *
      * @return A new SurfaceFuel for the given conditions.
      *
      * @see Rothermel
      */
     public SurfaceFuel getSurfaceFuel(FuelModel fuelModel,
-                                             Sunlight sun, Weather wx,
-                                             Terrain terrain, boolean shaded,
-                                             FuelMoisture initialFuelMoisture) {
+                                      Sunlight sun, Weather wx,
+                                      Terrain terrain, boolean shaded,
+                                      FuelMoisture initialFuelMoisture) {
         try {
             // Vegetation height [feet]
             double h_v = fuelModel.getFuelBedDepth().getValue(foot);
@@ -84,6 +86,7 @@ public class SurfaceFuelProvider {
             double S_c = shaded ? 100. : wx.getCloudCover().getValue(); // [percent]
             double T_a = wx.getAirTemperature().getValue(degF);
             double H_a = wx.getRelativeHumidity().getValue();
+          
 
             // Atmospheric transparency
             // p    Qualitative description
@@ -112,13 +115,13 @@ public class SurfaceFuelProvider {
 
             // Compute fine dead fuel moisture... requires metric values
             // and temp and humidity adjusted for solar preheating.
-            double T_c = new Real(FUEL_TEMP_F, T_f).getValue(degC); // convert to Celsius
+            double T_c = degF.toThat(T_f, degC); // convert to Celsius
             double m_0 = initialFuelMoisture.getDead1HrFuelMoisture().getValue();
             double m = Rothermel.calcFineDeadFuelMoisture(m_0, T_c, H_f);   // instantaneous wetting/drying
-            
+
             // Round the fuel moisture to reduce the number entries in cache
-            Real deadFineFuelMoisture = new Real(FUEL_MOISTURE_1H, MathUtil.round(m, m < 2 ? 1 : 0));
-            
+            Real deadFineFuelMoisture = new Real(FUEL_MOISTURE_1H, m);//MathUtil.round(m, m < 2 ? 1 : 2));
+
             FuelMoisture adjustedFuelMoisture = FuelMoistureTuple.fromReals(
                     deadFineFuelMoisture,
                     initialFuelMoisture.getDead10HrFuelMoisture(),
@@ -126,7 +129,9 @@ public class SurfaceFuelProvider {
                     initialFuelMoisture.getLiveHerbFuelMoisture(),
                     initialFuelMoisture.getLiveWoodyFuelMoisture());
 
-            return SurfaceFuel.from(fuelModel, adjustedFuelMoisture);
+            // TODO: Add fuel temperature to the SurfaceFuel
+            Real fuelTemp = new Real(FUEL_TEMP_F, T_f);
+            return SurfaceFuel.from(fuelModel, adjustedFuelMoisture, fuelTemp);
 
         } catch (VisADException ex) {
             throw new RuntimeException(ex);
@@ -144,7 +149,8 @@ public class SurfaceFuelProvider {
         FuelScenario key = new FuelScenario(fuelModel, fuelMoisture);
         SurfaceFuel fuel = cache.get(key);
         if (fuel == null) {
-            fuel = SurfaceFuel.from(fuelModel, fuelMoisture);
+            Real fuelTemp = new Real(FUEL_TEMP_F); // "missing" value
+            fuel = SurfaceFuel.from(fuelModel, fuelMoisture, fuelTemp);
             cache.put(key, fuel);
         }
         return fuel;
@@ -170,8 +176,6 @@ public class SurfaceFuelProvider {
             hash = 61 * hash + Objects.hashCode(this.fuelMoisture);
             return hash;
         }
-
-
 
         @Override
         public boolean equals(Object obj) {

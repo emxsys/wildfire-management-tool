@@ -56,6 +56,7 @@ import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_LIVE_WOODY;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_BED;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_BED_DEPTH;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_LOAD;
+import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_F;
 import static com.emxsys.wildfire.api.WildfireType.GAMMA;
 import static com.emxsys.wildfire.api.WildfireType.HEAT_CONTENT_US;
 import static com.emxsys.wildfire.api.WildfireType.I_R;
@@ -96,6 +97,10 @@ public class SurfaceFuel extends RealTuple {
     public static final int MX_DEAD_INDEX = Tuples.getIndex(MX_DEAD, FUEL_BED);
 
     public static SurfaceFuel from(FuelModel model, FuelMoisture moisture) {
+        return from(model, moisture, new Real(WildfireType.FUEL_TEMP_F));
+    }
+
+    public static SurfaceFuel from(FuelModel model, FuelMoisture moisture, Real fuelTemp) {
         try {
             // Transfer cured herbaceous fuel into the dead herbaceous fuel load
             double curing = model.isDynamic() ? calcHerbaceousCuring(moisture) : 0;
@@ -126,7 +131,7 @@ public class SurfaceFuel extends RealTuple {
             if (logger.isLoggable(Level.FINE)) {
                 logger.fine(tuple.longString());
             }
-            return new SurfaceFuel(model, moisture, tuple);
+            return new SurfaceFuel(model, moisture, tuple, fuelTemp);
 
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, "Error in fuel bed", ex);
@@ -175,6 +180,7 @@ public class SurfaceFuel extends RealTuple {
 
     FuelModel fuelModel;
     FuelMoisture fuelMoisture;
+    Real fuelTemperature;
     Real characteristicSAV;
     Real meanBulkDensity;
     Real liveMx;
@@ -183,7 +189,7 @@ public class SurfaceFuel extends RealTuple {
     Real optimalPackingRatio;
     Real reactionVelocity;
     Real reactionIntensity;
-    
+
     private static final Logger logger = Logger.getLogger(SurfaceFuel.class.getName());
 
     /**
@@ -198,10 +204,12 @@ public class SurfaceFuel extends RealTuple {
      *
      * @param fuelMoistureTuple Fuel moisture values.
      */
-    private SurfaceFuel(FuelModel model, FuelMoisture moisture, RealTuple tuple) throws VisADException, RemoteException {
+    private SurfaceFuel(FuelModel model, FuelMoisture moisture, RealTuple tuple, Real fuelTemp)
+            throws VisADException, RemoteException {
         super(WildfireType.FUEL_BED, tuple.getRealComponents(), null);
         this.fuelModel = model;
         this.fuelMoisture = moisture;
+        this.fuelTemperature = Reals.convertTo(FUEL_TEMP_F, fuelTemp);
 
         double[] values = getValues();
 
@@ -862,7 +870,7 @@ public class SurfaceFuel extends RealTuple {
     public Real getDeadMoistureOfExt() {
         return Reals.convertTo(MX_DEAD, fuelModel.getMoistureOfExtinction());
     }
-    
+
     public FuelMoisture getFuelMoisture() {
         return fuelMoisture;
     }
@@ -889,6 +897,14 @@ public class SurfaceFuel extends RealTuple {
 
     public Real getLiveWoodyFuelMoisture() {
         return fuelMoisture.getLiveWoodyFuelMoisture();
+    }
+
+    /**
+     * Gets the fuel temperature supplied in the constructor.
+     * @return The fuel temperature in Fahrenheit; may contain a missing value.
+     */
+    public Real getFuelTemperature() {
+        return fuelTemperature;
     }
 
     public String report() throws VisADException {
