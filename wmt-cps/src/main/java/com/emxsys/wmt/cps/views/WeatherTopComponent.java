@@ -160,7 +160,7 @@ public final class WeatherTopComponent extends TopComponent {
             diurnalWx.setSunlight((Sunlight) evt.getNewValue());
             temperatureChart.setSunlight(sunlight);
             humidityChart.setSunlight(sunlight);
-            //windChart.setSunlight(sunlight);
+            windChart.setSunlight(sunlight);
         });
 
         logger.config(PREFERRED_ID + " initialized.");
