@@ -32,7 +32,6 @@ package com.emxsys.wmt.cps.views;
 import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
 import com.emxsys.wmt.cps.views.forces.WindForcePanel;
-import com.emxsys.wmt.cps.views.forces.WindForcePanel;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
@@ -110,8 +109,8 @@ public final class ForcesTopComponent extends TopComponent {
         add(slopePanel);
     }
 
-    public void addAirTempPropertyChangeListener(PropertyChangeListener listener) {
-        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_AIRTEMP, listener);
+    public void addFuelMoisturePropertyChangeListener(PropertyChangeListener listener) {
+        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_FUEL_MOISTURE, listener);
     }
 
     public void addWindDirPropertyChangeListener(PropertyChangeListener listener) {

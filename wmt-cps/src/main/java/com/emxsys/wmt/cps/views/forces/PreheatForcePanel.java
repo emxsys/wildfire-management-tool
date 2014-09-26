@@ -36,8 +36,8 @@ import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.weather.api.WeatherType;
-import com.emxsys.wildfire.api.FuelCondition;
+import com.emxsys.wildfire.api.WildfireType;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wmt.cps.Model;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -81,12 +81,12 @@ import visad.VisADException;
  */
 @NbBundle.Messages({
     "CTL_SolarChartTitle=Solar Heating",
-    "CTL_AirTempChartTitle=Moisture",
-    "CTL_FuelTempChartTitle=Temperature",})
+    "CTL_FuelMoistureChartTitle=Moisture",
+    "CTL_FuelTempChartTitle=Temp.",})
 public class PreheatForcePanel extends javax.swing.JPanel {
 
     // Properties that are available from this panel
-    public static final String PROP_AIRTEMP = "PROP_AIRTEMP";
+    public static final String PROP_FUEL_MOISTURE = "PROP_FUEL_MOISTURE";
 
     // The ForcesTopComponent will add the PropertyChangeListeners
     public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -94,7 +94,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;
     private final SolarChart solarChart = new SolarChart(Bundle.CTL_SolarChartTitle());
-    private MoistureChart fuelMoistureChart = new MoistureChart(Bundle.CTL_AirTempChartTitle());
+    private MoistureChart fuelMoistureChart = new MoistureChart(Bundle.CTL_FuelMoistureChartTitle());
     private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
     private JSlider slider;
     private ChartCanvas canvas;
@@ -260,7 +260,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 
         // Create the thermometers
         JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
-        thermometerPanel.add(new ChartPanel(fuelMoistureChart,
+        thermometerPanel.add(new ChartPanel(fuelTempChart,
                 DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
                 100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
@@ -274,7 +274,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 true, // zoom
                 true // tooltips
         ));
-        thermometerPanel.add(new ChartPanel(fuelTempChart,
+        thermometerPanel.add(new ChartPanel(fuelMoistureChart,
                 DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
                 100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
@@ -292,7 +292,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         rightPanel.add(thermometerPanel, BorderLayout.CENTER);
 
         // Create the slider for the air temp
-        this.slider = new JSlider(0, 200, 100);
+        this.slider = new JSlider(0, 100, 0);
         this.slider.setPaintLabels(false);
         this.slider.setPaintTicks(true);
         this.slider.setMajorTickSpacing(25);
@@ -300,8 +300,8 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 
         // Add listener to handle manual air temp input
         this.slider.addChangeListener((ChangeEvent e) -> {
-            Real airTemp = new Real(WeatherType.AIR_TEMP_F, slider.getValue());
-            this.pcs.firePropertyChange(PROP_AIRTEMP, null, airTemp);
+            Real FuelMoisture = new Real(WildfireType.FUEL_MOISTURE_1H, slider.getValue());
+            this.pcs.firePropertyChange(PROP_FUEL_MOISTURE, null, FuelMoisture);
         });
 
         // Add the panel to the Grid layout
@@ -327,10 +327,10 @@ public class PreheatForcePanel extends javax.swing.JPanel {
             solarPlot.shaded = (boolean) evt.getNewValue();
             refresh();
         });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELCONDITION, (PropertyChangeEvent evt) -> {
-            FuelCondition condition = (FuelCondition) evt.getNewValue();
-            fuelTempChart.setTemperature(condition.getFuelTemperature());
-            fuelMoistureChart.setMoisture(condition.getDead1HrFuelMoisture());
+        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
+            SurfaceFuel fuel = (SurfaceFuel) evt.getNewValue();
+            fuelTempChart.setTemperature(fuel.getFuelTemperature());
+            fuelMoistureChart.setMoisture(fuel.getDead1HrFuelMoisture());
         });
     }
 
