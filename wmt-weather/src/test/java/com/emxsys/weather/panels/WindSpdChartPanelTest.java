@@ -40,7 +40,7 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * Unit test and interactive layout test for the WindSpdChartPanel.
+ * Unit test and interactive layout test for the WindSpeedDialPanel.
  * 
  * Comment out @Ignore to run the interactive layout test.
  * @author Bruce Schubert
@@ -54,7 +54,7 @@ public class WindSpdChartPanelTest {
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
-        WindSpdChartPanel instance = new WindSpdChartPanel();
+        WindSpeedDialPanel instance = new WindSpeedDialPanel();
         instance.setTitle("Wind Speed @ 10 KPH to MPH");
         instance.setUnit(GeneralUnit.mph);
         instance.setWindSpeed(new Real(WeatherType.WIND_SPEED_KPH, 10.0));
@@ -94,7 +94,7 @@ public class WindSpdChartPanelTest {
         Real speed = new Real(WeatherType.WIND_SPEED_KTS, 50);
         Real expResult = new Real(WeatherType.WIND_SPEED_KPH, speed.getValue(GeneralUnit.kph));
         
-        WindSpdChartPanel instance = new WindSpdChartPanel();
+        WindSpeedDialPanel instance = new WindSpeedDialPanel();
         instance.setUnit(GeneralUnit.kph);
         instance.setWindSpeed(speed);
         

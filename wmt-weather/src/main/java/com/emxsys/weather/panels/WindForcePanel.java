@@ -32,8 +32,8 @@ package com.emxsys.weather.panels;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.panels.WindChartPanel.WindChart;
-import com.emxsys.weather.panels.WindDirChartPanel.WindDirChart;
-import com.emxsys.weather.panels.WindSpdChartPanel.WindSpdChart;
+import com.emxsys.weather.panels.WindDirectionDialPanel.WindDirChart;
+import com.emxsys.weather.panels.WindSpeedDialPanel.WindSpdChart;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -46,25 +46,25 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The WindSpeedDirPanel is a combined WindDirChartPanel and WindSpdChartPanel used for editing wind speed
+ * The WindForcePanel is a combined WindDirectionDialPanel and WindSpeedDialPanel used for editing wind speed
  and direction.
  *
  * @author Bruce Schubert
  */
-public class WindSpeedDirPanel extends javax.swing.JPanel {
+public class WindForcePanel extends javax.swing.JPanel {
     
     public final static String PROP_WIND_SPD = "weather.windpanel.windspd";
     public final static String PROP_WIND_DIR = "weather.windpanel.winddir";
     
-    private final WindDirChartPanel dirPanel = new WindDirChartPanel();
-    private final WindSpdChartPanel spdPanel = new WindSpdChartPanel();
+    private final WindDirectionDialPanel dirPanel = new WindDirectionDialPanel();
+    private final WindSpeedDialPanel spdPanel = new WindSpeedDialPanel();
     private final JSlider dirSlider = new DirectionSlider((WindDirChart) dirPanel.getChart());
     private final JSlider spdSlider = new SpeedSlider((WindSpdChart) spdPanel.getChart());
     
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /** Creates new form WindPanel */
-    public WindSpeedDirPanel() {
+    public WindForcePanel() {
         initComponents();
         jPanel1.add(dirPanel);
         jPanel1.add(dirSlider);

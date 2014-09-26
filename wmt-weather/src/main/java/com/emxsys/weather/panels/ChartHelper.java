@@ -42,11 +42,15 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.jfree.chart.annotations.XYTitleAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.Range;
+import org.jfree.data.xy.VectorSeriesCollection;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleEdge;
@@ -86,6 +90,81 @@ class ChartHelper {
         try {
             DateTime startDate = Times.fromDouble(xyDataset.getDomainLowerBound(true)); // include interval
             DateTime endDate = Times.fromDouble(xyDataset.getDomainUpperBound(true));   // include interval
+            Real timeSpan = (Real) endDate.subtract(startDate);
+
+            int numDays = (int) ceil(timeSpan.getValue(GeneralUnit.day));
+            for (int i = 0; i < numDays; i++) {
+                // Day (between sunrise and sunset)
+                Real days = new Real(RealType.Time, i, GeneralUnit.day);
+                Real datetime = new DateTime((Real) startDate.add(days));
+
+                double rises = sunlight.getSunriseHour().getValue();    // local hour
+                double sets = sunlight.getSunsetHour().getValue();      // local hour
+                ZonedDateTime date = Times.toZonedDateTime(datetime);   // UTC zone
+                ZonedDateTime local = TimeUtil.toZoneOffset(date, sunlight.getZoneOffsetHour().getValue());
+                ZonedDateTime sunrise1 = local.withHour((int) rises).withMinute((int) ((rises * 60) % 60));
+                ZonedDateTime sunset1 = local.withHour((int) sets).withMinute((int) ((sets * 60) % 60));
+                // compute next day's sunrise
+                ZonedDateTime sunrise2 = sunrise1.plusDays(1);
+                Marker marker = createIntervalMarker(
+                        Times.fromZonedDateTime(sunset1),
+                        Times.fromZonedDateTime(sunrise2),
+                        "Night",
+                        new Color(0, 0, 255, 25));
+                markers.add(marker);
+            }
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return markers;
+    }
+
+    static List<Marker> createNightMarkers(Sunlight sunlight, VectorSeriesCollection vecDataset) {
+        ArrayList<Marker> markers = new ArrayList<>();
+
+        try {
+            double lower = vecDataset.getXValue(0, 0);
+            double upper = vecDataset.getXValue(0, vecDataset.getItemCount(0) - 1);
+            DateTime startDate = Times.fromDouble(lower);
+            DateTime endDate = Times.fromDouble(upper); 
+            Real timeSpan = (Real) endDate.subtract(startDate);
+
+            int numDays = (int) ceil(timeSpan.getValue(GeneralUnit.day));
+            for (int i = 0; i < numDays; i++) {
+                // Day (between sunrise and sunset)
+                Real days = new Real(RealType.Time, i, GeneralUnit.day);
+                Real datetime = new DateTime((Real) startDate.add(days));
+
+                double rises = sunlight.getSunriseHour().getValue();    // local hour
+                double sets = sunlight.getSunsetHour().getValue();      // local hour
+                ZonedDateTime date = Times.toZonedDateTime(datetime);   // UTC zone
+                ZonedDateTime local = TimeUtil.toZoneOffset(date, sunlight.getZoneOffsetHour().getValue());
+                ZonedDateTime sunrise1 = local.withHour((int) rises).withMinute((int) ((rises * 60) % 60));
+                ZonedDateTime sunset1 = local.withHour((int) sets).withMinute((int) ((sets * 60) % 60));
+                // compute next day's sunrise
+                ZonedDateTime sunrise2 = sunrise1.plusDays(1);
+                Marker marker = createIntervalMarker(
+                        Times.fromZonedDateTime(sunset1),
+                        Times.fromZonedDateTime(sunrise2),
+                        "Night",
+                        new Color(0, 0, 255, 25));
+                markers.add(marker);
+            }
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return markers;
+    }
+
+    static List<Marker> createNightMarkers(Sunlight sunlight, NumberAxis domainAxis) {
+        ArrayList<Marker> markers = new ArrayList<>();
+
+        try {
+            Range range = domainAxis.getRange();
+            double lower = range.getLowerBound();
+            double upper = range.getUpperBound();
+            DateTime startDate = Times.fromDouble(lower);
+            DateTime endDate = Times.fromDouble(upper); 
             Real timeSpan = (Real) endDate.subtract(startDate);
 
             int numDays = (int) ceil(timeSpan.getValue(GeneralUnit.day));

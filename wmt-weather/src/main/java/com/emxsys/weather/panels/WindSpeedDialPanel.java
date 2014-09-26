@@ -80,19 +80,19 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class WindSpdChartPanel extends ChartPanel {
+public class WindSpeedDialPanel extends ChartPanel {
 
     private WindSpdChart chart;
 
     /**
      * Constructor creates new form WindDirPanel
      */
-    public WindSpdChartPanel() {
+    public WindSpeedDialPanel() {
         this(new WindSpdChart());
         initComponents();
     }
 
-    WindSpdChartPanel(WindSpdChart chart) {
+    WindSpeedDialPanel(WindSpdChart chart) {
         super(chart,
                 100, //DEFAULT_WIDTH,
                 150, //DEFAULT_HEIGHT,

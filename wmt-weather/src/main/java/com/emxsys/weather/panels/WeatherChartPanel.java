@@ -91,6 +91,7 @@ import visad.VisADException;
     "CTL_WeatherChartTemperature=Temperature",
     "CTL_WeatherChartHumidity=Humidity",
     "CTL_WeatherChartWind=Winds",})
+@Deprecated
 public class WeatherChartPanel extends ChartPanel {
 
     private WeatherChart chart;

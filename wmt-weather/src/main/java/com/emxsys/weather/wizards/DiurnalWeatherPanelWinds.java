@@ -31,7 +31,7 @@ package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.panels.WindChartPanel;
-import com.emxsys.weather.panels.WindSpeedDirPanel;
+import com.emxsys.weather.panels.WindForcePanel;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
@@ -52,7 +52,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     /** Creates new form DiurnalWeatherVisualPanel4 */
     public DiurnalWeatherPanelWinds(DiurnalWeatherProvider provider) {
         initComponents();
-        jPanel1.add(new WindSpeedDirPanel());
+        jPanel1.add(new WindForcePanel());
     }
 
     @Override
@@ -291,8 +291,8 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
 //        int hour = hourSpinField.getValue();
 //        DateTime datetime = Times.fromDate(date, hour);
 //
-//        Real direction = ((WindSpeedDirPanel)windPanel).getWindDirection();
-//        Real windspeed = ((WindSpeedDirPanel)windPanel).getWindSpeed();
+//        Real direction = ((WindForcePanel)windPanel).getWindDirection();
+//        Real windspeed = ((WindForcePanel)windPanel).getWindSpeed();
 //
 //        tableModel.add(Tuples.fromReal(datetime, windspeed, direction));
     }//GEN-LAST:event_addButtonActionPerformed

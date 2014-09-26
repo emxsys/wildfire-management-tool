@@ -47,7 +47,7 @@ public class WindPanelTest {
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
-        WindSpeedDirPanel instance = new WindSpeedDirPanel();
+        WindForcePanel instance = new WindForcePanel();
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame

@@ -34,11 +34,14 @@ import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.WeatherPreferences;
+import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeAxis;
+import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeToolTipGenerator;
 import java.awt.Color;
 import java.awt.Font;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
@@ -51,11 +54,13 @@ import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.Marker;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -64,6 +69,7 @@ import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
+import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import visad.DateTime;
@@ -90,6 +96,7 @@ import visad.VisADException;
     "CTL_TemperatureChartLegend=Temperature",})
 public class TemperatureChartPanel extends ChartPanel {
 
+    // JFreeChart for Temperature
     private TemperatureChart chart;
 
     /**
@@ -143,6 +150,10 @@ public class TemperatureChartPanel extends ChartPanel {
         this.chart.setSunlight(sunlight);
     }
 
+    public void setDateTime(ZonedDateTime datetime) {
+        this.chart.setDateTime(datetime);
+    }
+
     public void refresh() {
         this.chart.setNotify(true);
     }
@@ -151,10 +162,10 @@ public class TemperatureChartPanel extends ChartPanel {
      * The TemperatureChart is a JFreeChart with a specialized XYPlot for displaying temperature,
      * humidity, winds and day/night.
      */
-    public static class TemperatureChart extends JFreeChart {
+    public static class TemperatureChart extends AbstractWeatherChart {
 
+        /** Unit of measure for displaying temperature */
         private Unit unit;
-
         /** Datasets for temperature and dew point */
         private XYSeriesCollection dataset;
         /** Air temperature */
@@ -163,6 +174,8 @@ public class TemperatureChartPanel extends ChartPanel {
         private Sunlight sunlight;
         /** Day/Night markers */
         private List<Marker> markers;
+        /** Marker for current time */
+        private ValueMarker domainMarker;
 
         /**
          * Constructor for a TemperatureChart.
@@ -177,19 +190,12 @@ public class TemperatureChartPanel extends ChartPanel {
          * @param vecDataset
          */
         TemperatureChart(XYSeriesCollection dataset) {
-            super(
-                    null, // title
-                    null, // title font
-                    new TemperaturePlot(dataset, WeatherPreferences.getAirTempUnit()),
-                    false // create legend?
-            );
+            super(new TemperaturePlot(dataset, WeatherPreferences.getAirTempUnit()));
 
             this.unit = WeatherPreferences.getAirTempUnit();
-            this.series = new XYSeries(getSeriesLegend(this.unit));
+            this.series = new XYSeries(getSeriesNameAndUom(this.unit));
             this.dataset = dataset;
             this.dataset.addSeries(series);
-            // 
-            createLegend();
 
             // Customize the units when preferences change
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
@@ -201,21 +207,12 @@ public class TemperatureChartPanel extends ChartPanel {
             });
         }
 
-        private void createLegend() {
-            // Customize the legend - place inside plot
-            TemperaturePlot plot = (TemperaturePlot) getPlot();
-            LegendTitle lt = new LegendTitle(plot);
-            lt.setItemFont(new Font("Dialog", Font.PLAIN, 9));
-            lt.setBackgroundPaint(new Color(200, 200, 255, 100));
-            lt.setFrame(new BlockBorder(Color.white));
-            lt.setPosition(RectangleEdge.BOTTOM);
-            XYTitleAnnotation ta = new XYTitleAnnotation(0.98, 0.98, // coords in data space (0..1)
-                    lt, RectangleAnchor.TOP_RIGHT);
-            ta.setMaxWidth(0.48);
-            plot.addAnnotation(ta);
-        }
-
-        private static String getSeriesLegend(Unit unit) {
+        /**
+         * Gets the string used for the legend based on the supplied unit of measure.
+         * @param unit Unit of measure used in legend.
+         * @return E.g. "Temperature (F)"
+         */
+        private static String getSeriesNameAndUom(Unit unit) {
             if (unit.equals(GeneralUnit.degF)) {
                 return Bundle.CTL_TemperatureChartLegend() + " " + Bundle.CTL_TemperatureChartFahrenheit();
             } else if (unit.equals(GeneralUnit.degC)) {
@@ -225,6 +222,10 @@ public class TemperatureChartPanel extends ChartPanel {
             }
         }
 
+        /**
+         * Changes the unit of measure.
+         * @param newUnit Unit used for the range and legend.
+         */
         public final void setAirTempUnit(Unit newUnit) {
             if (this.unit.equals(newUnit)) {
                 return;
@@ -249,7 +250,7 @@ public class TemperatureChartPanel extends ChartPanel {
                 // Now set the new air temp unit property
                 this.unit = newUnit;
 
-                this.series.setKey(getSeriesLegend(newUnit)); // updates the legend text
+                this.series.setKey(getSeriesNameAndUom(newUnit)); // updates the legend text
                 this.series.fireSeriesChanged();
             } catch (CloneNotSupportedException ex) {
                 Exceptions.printStackTrace(ex);
@@ -263,40 +264,41 @@ public class TemperatureChartPanel extends ChartPanel {
         public void plotTemperatures(FlatField weather) {
             series.clear();
             try {
-                // TODO test math types for compatablity and tuple index
                 FunctionType functionType = (FunctionType) weather.getType();
                 int index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_F);
-                Unit unit = GeneralUnit.degF;
                 if (index == -1) {
                     index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_C);
-                    unit = GeneralUnit.degC;
                 }
                 if (index == -1) {
                     throw new IllegalArgumentException("FlatField must contain AIR_TEMP_C or AIR_TEMP_F.");
                 }
-
+                Unit wxUnit = functionType.getRealComponents()[index].getDefaultUnit();
                 final float[][] times = weather.getDomainSet().getSamples(false);
                 final float[][] values = weather.getFloats(false);
 
                 for (int i = 0; i < times[0].length; i++) {
                     // Add values to the series in the preferred UOM
                     float value = values[index][i];
-                    series.add(times[0][i], this.unit.equals(unit)
+                    series.add(times[0][i], this.unit.equals(wxUnit)
                             ? value
-                            : this.unit.toThis(value, unit));
+                            : this.unit.toThis(value, wxUnit));
                 }
             } catch (VisADException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
 
+        /**
+         * Sets the sunrise and sunset hours used to depict nighttime.
+         * @param sunlight
+         */
         public void setSunlight(Sunlight sunlight) {
             this.sunlight = sunlight;
             plotDayNight();
         }
 
         /**
-         *
+         * Draws the day/night markers.
          */
         void plotDayNight() {
             TemperaturePlot plot = (TemperaturePlot) getPlot();
@@ -316,19 +318,6 @@ public class TemperatureChartPanel extends ChartPanel {
             }
         }
 
-        private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
-            if (!functionType.getReal()) {
-                throw new IllegalArgumentException("Range must be RealType or RealTypeTuple");
-            }
-            MathType rangeType = functionType.getRange();
-            int index = -1;
-            if (rangeType instanceof RealTupleType) {
-                index = ((RealTupleType) rangeType).getIndex(componentType);
-            } else {
-                index = rangeType.equals(componentType) ? 0 : -1;
-            }
-            return index;
-        }
     }
 
     private static final class TemperaturePlot extends XYPlot {
@@ -379,80 +368,6 @@ public class TemperatureChartPanel extends ChartPanel {
 
         }
 
-    }
-
-    static class DateTimeToolTipGenerator extends StandardXYToolTipGenerator {
-
-        public DateTimeToolTipGenerator() {
-            super();
-        }
-
-        @Override
-        public String generateToolTip(XYDataset dataset, int series, int item) {
-            double x = dataset.getXValue(series, item);
-            double y = dataset.getYValue(series, item);
-            try {
-                DateTime dateTime = new DateTime(x);
-                NumberFormat yf = getYFormat();
-                return yf.format(y) + " at " + dateTime.toString();
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    public static final class DateTimeAxis extends NumberAxis {
-
-        public DateTimeAxis(String label) {
-            super(label);
-            this.setAutoRange(true);
-            this.setAutoRangeIncludesZero(false);
-            this.setStandardTickUnits(createTickUnits());
-            this.setMinorTickMarksVisible(true);
-        }
-
-        /**
-         * Returns a collection of tick units for hours expressed in seconds.
-         */
-        public TickUnitSource createTickUnits() {
-            TickUnits units = new TickUnits();
-            units.add(new NumberTickUnit(3600, new DateTimeFormat(), 0));       // 1hour
-            units.add(new NumberTickUnit(3600 * 3, new DateTimeFormat(), 3));     // 3hour
-            units.add(new NumberTickUnit(3600 * 6, new DateTimeFormat(), 6));     // 6hour
-            return units;
-        }
-    }
-
-    private static final class DateTimeFormat extends NumberFormat {
-
-        @Override
-        public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-            try {
-                double local24HourTime = Times.toClockTime(new DateTime(number));
-                long hour = Math.round(local24HourTime);
-                if (hour == 0) {
-                    toAppendTo.append("mid");
-                } else if (hour == 12) {
-                    toAppendTo.append("noon");
-                } else {
-                    toAppendTo.append(Math.round(local24HourTime));
-                }
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            return toAppendTo;
-        }
-
-        @Override
-        public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Number parse(String source, ParsePosition parsePosition) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 
     /** This method is called from within the constructor to initialize the form. WARNING: Do NOT

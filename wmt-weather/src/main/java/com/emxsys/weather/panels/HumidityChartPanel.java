@@ -30,44 +30,25 @@
 package com.emxsys.weather.panels;
 
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherType;
+import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeAxis;
+import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeToolTipGenerator;
 import java.awt.Color;
-import java.awt.Font;
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.List;
+import java.time.ZonedDateTime;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYTitleAnnotation;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.TickUnitSource;
-import org.jfree.chart.axis.TickUnits;
-import org.jfree.chart.block.BlockBorder;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.Layer;
-import org.jfree.ui.RectangleAnchor;
-import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import visad.DateTime;
 import visad.FlatField;
 import visad.FunctionType;
-import visad.MathType;
-import visad.RealTupleType;
-import visad.RealType;
 import visad.VisADException;
 
 /**
@@ -139,6 +120,10 @@ public class HumidityChartPanel extends ChartPanel {
         this.chart.setSunlight(sunlight);
     }
 
+    public void setDateTime(ZonedDateTime datetime) {
+        this.chart.setDateTime(datetime);
+    }
+
     public void refresh() {
         this.chart.setNotify(true);
     }
@@ -147,7 +132,7 @@ public class HumidityChartPanel extends ChartPanel {
      * The HumidityChart is a JFreeChart with a specialized XYPlot for displaying relative humidity,
      * sky cover and day/night.
      */
-    public static class HumidityChart extends JFreeChart {
+    public static class HumidityChart extends AbstractWeatherChart {
 
         /** Dataset for clouds and humidity */
         private XYSeriesCollection xyDataset;
@@ -155,9 +140,6 @@ public class HumidityChartPanel extends ChartPanel {
         private XYSeries seriesH;
         /** Clouds */
         private XYSeries seriesC;
-        /** Day/Night markers */
-        private List<Marker> markers;
-        private Sunlight sunlight;
 
         /**
          * Constructor for a HumidityChart.
@@ -170,32 +152,15 @@ public class HumidityChartPanel extends ChartPanel {
          * Constructor implementation.
          * @param xyDataset
          */
-        HumidityChart(XYSeriesCollection xyDataset) {
-            super(
-                    null, // title
-                    null, // title font
-                    new HumidityPlot(xyDataset),
-                    false); // don't create default legend
-
-            seriesH = new XYSeries(Bundle.CTL_HumidityChartHumidity());
-            seriesC = new XYSeries(Bundle.CTL_HumidityChartClouds());
-
+        private HumidityChart(XYSeriesCollection xyDataset) {
+            super(new HumidityPlot(xyDataset));
+            this.seriesH = new XYSeries(Bundle.CTL_HumidityChartHumidity());
+            this.seriesC = new XYSeries(Bundle.CTL_HumidityChartClouds());
             this.xyDataset = xyDataset;
             this.xyDataset.addSeries(seriesH);
             this.xyDataset.addSeries(seriesC);
-
-            // Customize the legend - place inside plot
-            HumidityPlot plot = (HumidityPlot) getPlot();
-            LegendTitle lt = new LegendTitle(plot);
-            lt.setItemFont(new Font("Dialog", Font.PLAIN, 9));
-            lt.setBackgroundPaint(new Color(200, 200, 255, 100));
-            lt.setFrame(new BlockBorder(Color.white));
-            lt.setPosition(RectangleEdge.BOTTOM);
-            XYTitleAnnotation ta = new XYTitleAnnotation(0.98, 0.98, // coords in data space (0..1)
-                    lt, RectangleAnchor.TOP_RIGHT);
-            ta.setMaxWidth(0.90);
-            plot.addAnnotation(ta);
         }
+
 
         /**
          * Plot the relative humidity. This is the primary dataset.
@@ -250,45 +215,6 @@ public class HumidityChartPanel extends ChartPanel {
             }
         }
 
-        public void setSunlight(Sunlight sunlight) {
-            this.sunlight = sunlight;
-            plotDayNight();
-        }
-
-        /**
-         * Draws the day/night regions.
-         */
-        void plotDayNight() {
-            HumidityPlot plot = (HumidityPlot) getPlot();
-            if (markers != null) {
-                for (Marker marker : markers) {
-                    plot.removeDomainMarker(marker, Layer.BACKGROUND);
-                }
-                markers.clear();
-            }
-            if (sunlight == null) {
-                return;
-            }
-
-            markers = ChartHelper.createNightMarkers(sunlight, xyDataset);
-            for (Marker marker : markers) {
-                plot.addDomainMarker(marker, Layer.BACKGROUND);
-            }
-        }
-
-        private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
-            if (!functionType.getReal()) {
-                throw new IllegalArgumentException("Range must be RealType or RealTypeTuple");
-            }
-            MathType rangeType = functionType.getRange();
-            int index = -1;
-            if (rangeType instanceof RealTupleType) {
-                index = ((RealTupleType) rangeType).getIndex(componentType);
-            } else {
-                index = rangeType.equals(componentType) ? 0 : -1;
-            }
-            return index;
-        }
     }
 
     private static class HumidityPlot extends XYPlot {
@@ -323,86 +249,6 @@ public class HumidityChartPanel extends ChartPanel {
 
     }
 
-    static class DateTimeToolTipGenerator extends StandardXYToolTipGenerator {
-
-        public DateTimeToolTipGenerator() {
-            super();
-        }
-
-        @Override
-        public String generateToolTip(XYDataset dataset, int series, int item) {
-            double x = dataset.getXValue(series, item);
-            double y = dataset.getYValue(series, item);
-            try {
-                DateTime dateTime = new DateTime(x);
-                NumberFormat yf = getYFormat();
-                return yf.format(y) + " at " + dateTime.toString();
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    /**
-     * Displays VisAD DateTime values.
-     */
-    public static final class DateTimeAxis extends NumberAxis {
-
-        public DateTimeAxis(String label) {
-            super(label);
-            this.setAutoRange(true);
-            this.setAutoRangeIncludesZero(false);
-            this.setStandardTickUnits(createTickUnits());
-            this.setMinorTickMarksVisible(true);
-        }
-
-        /**
-         * Returns a collection of tick units for hours expressed in seconds.
-         */
-        TickUnitSource createTickUnits() {
-            TickUnits units = new TickUnits();
-            units.add(new NumberTickUnit(3600, new DateTimeFormat(), 0));       // 1hour
-            units.add(new NumberTickUnit(3600 * 3, new DateTimeFormat(), 3));     // 3hour
-            units.add(new NumberTickUnit(3600 * 6, new DateTimeFormat(), 6));     // 6hour
-            return units;
-        }
-    }
-
-    /**
-     * Formats VisAD DateTime values
-     */
-    private static final class DateTimeFormat extends NumberFormat {
-
-        @Override
-        public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-            try {
-                // TODO: switch to ZonedDateTime and format to time preferences.
-                double local24HourTime = Times.toClockTime(new DateTime(number));
-                long hour = Math.round(local24HourTime);
-                if (hour == 0) {
-                    toAppendTo.append("mid");
-                } else if (hour == 12) {
-                    toAppendTo.append("noon");
-                } else {
-                    toAppendTo.append(Math.round(local24HourTime));
-                }
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            return toAppendTo;
-        }
-
-        @Override
-        public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Number parse(String source, ParsePosition parsePosition) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
 
     /** This method is called from within the constructor to initialize the form. WARNING: Do NOT
      * modify this code. The content of this method is always regenerated by the Form Editor.

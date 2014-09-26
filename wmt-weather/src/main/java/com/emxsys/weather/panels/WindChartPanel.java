@@ -29,24 +29,20 @@
  */
 package com.emxsys.weather.panels;
 
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.api.WeatherType;
+import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeAxis;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.TickUnitSource;
-import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
@@ -56,6 +52,7 @@ import org.jfree.data.xy.VectorSeries;
 import org.jfree.data.xy.VectorSeriesCollection;
 import org.jfree.data.xy.VectorXYDataset;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
@@ -65,9 +62,6 @@ import visad.CommonUnit;
 import visad.DateTime;
 import visad.FlatField;
 import visad.FunctionType;
-import visad.MathType;
-import visad.RealTupleType;
-import visad.RealType;
 import visad.Unit;
 import visad.UnitException;
 import visad.VisADException;
@@ -140,21 +134,25 @@ public class WindChartPanel extends ChartPanel {
         this.chart.plotWinds(weather);
     }
 
+    public void setSunlight(Sunlight sunlight) {
+        this.chart.setSunlight(sunlight);
+    }
+
+    public void setDateTime(ZonedDateTime datetime) {
+        this.chart.setDateTime(datetime);
+    }
+
     /**
      * The WindChart is a JFreeChart with a specialized XYPlot for displaying temperature, humidity,
      * winds and day/night.
      */
-    public static class WindChart extends JFreeChart {
+    public static class WindChart extends AbstractWeatherChart {
 
         private Unit unit;
-
         /** Dataset for wind vectors */
         private VectorSeriesCollection dataset;
-
         /** Wind direction and velocity */
         private VectorSeries series;
-        /** Day/Night markers */
-        private ArrayList<Marker> markers = new ArrayList<>();
 
         /**
          * Constructor for a WeatherChart.
@@ -169,16 +167,11 @@ public class WindChartPanel extends ChartPanel {
          * @param dataset
          */
         WindChart(VectorSeriesCollection dataset, Unit unit) {
-            super(null, // title
-                    null, // title font
-                    new WindPlot(dataset, unit),
-                    false // create legend?
-            );
+            super(new WindPlot(dataset, unit));
             this.unit = unit;
-            this.series = new VectorSeries(getSeriesLegend(unit));
+            this.series = new VectorSeries(getSeriesNameAndUom(unit));
             this.dataset = dataset;
             this.dataset.addSeries(series);
-            ChartHelper.createLegend((WindPlot) getPlot());
 
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
                 if (evt.getKey().equals(WeatherPreferences.PREF_WIND_SPD_UOM)) {
@@ -187,7 +180,7 @@ public class WindChartPanel extends ChartPanel {
             });
         }
 
-        private static String getSeriesLegend(Unit unit) {
+        private static String getSeriesNameAndUom(Unit unit) {
             if (unit.equals(GeneralUnit.mph)) {
                 return Bundle.CTL_WindChartLegend() + " " + Bundle.CTL_WindChartMPH();
             } else if (unit.equals(GeneralUnit.knot)) {
@@ -206,7 +199,7 @@ public class WindChartPanel extends ChartPanel {
                 return;
             }
             // Refresh the series with the new unit of measure
-            VectorSeries newSeries = new VectorSeries(getSeriesLegend(newUnit));
+            VectorSeries newSeries = new VectorSeries(getSeriesNameAndUom(newUnit));
 
             for (int i = 0; i < series.getItemCount(); i++) {
                 try {
@@ -262,61 +255,23 @@ public class WindChartPanel extends ChartPanel {
 
         /**
          *
-         * @param solarData FunctionType: ( time, latitude ) -> ( declination, sunrise, sunset )
          */
-        public void plotDayNight(FlatField solarData) {
-//            XYPlot plot = (XYPlot) getPlot();
-//            for (Marker marker : markers) {
-//                plot.removeDomainMarker(marker, Layer.BACKGROUND);
-//            }
-//            markers.clear();
-//            try {
-//                Set domainSet = solarData.getDomainSet();
-//                int length = domainSet.getLength();
-//                RealTuple sample1 = DataUtility.getSample(domainSet, 0);
-//                RealTuple sample2 = DataUtility.getSample(domainSet, length - 1);
-//
-//                Real lat = (Real) sample1.getComponent(1);
-//                Real startDate = (Real) sample1.getComponent(0);
-//                Real endDate = (Real) sample2.getComponent(0);
-//                Real timeSpan = (Real) endDate.subtract(startDate);
-//                int numDays = (int) timeSpan.getValue(GeneralUnit.day);
-//                for (int i = 0; i < numDays; i++) {
-//                    // Day (between sunrise and sunset)
-//                    Real days = new Real(RealType.Time, i, GeneralUnit.day);
-//                    Real datetime = new DateTime((Real) startDate.add(days));
-//
-//                    Date date = Times.toDate(datetime)
-//                    RealTuple sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
-//                    Real sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
-//                    Real sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-//
-//                    DateTime sunrise1 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-//                    DateTime sunset1 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
-//
-////                Marker marker = createIntervalMarker(sunrise1, sunset1, "Day", new Color(255, 255, 255, 25));
-////                dayMarkers.add(marker);
-//                    // Night (need to compute next day's sunrise
-//                    days = new Real(RealType.Time, i + 1, GeneralUnit.day);
-//                    datetime = new DateTime((Real) startDate.add(days));
-//                    date = Times.toDate(datetime);
-//                    sunrise_sunset = (RealTuple) solarData.evaluate(Tuples.fromReal(datetime, lat));
-//                    sunrise = Tuples.getComponent(SolarType.SUNRISE_HOUR, sunrise_sunset);
-//                    sunset = Tuples.getComponent(SolarType.SUNSET_HOUR, sunrise_sunset);
-//                    DateTime sunrise2 = Times.fromDate(date, sunrise.getValue(GeneralUnit.hour));
-//                    //DateTime sunset2 = Times.fromDate(date, sunset.getValue(GeneralUnit.hour));
-//
-//                    Marker marker = createIntervalMarker(sunset1, sunrise2, "Night", new Color(0, 0, 255, 25));
-//                    markers.add(marker);
-//                }
-//                for (Marker marker : markers) {
-//                    plot.addDomainMarker(marker, Layer.BACKGROUND);
-//                }
-//                plot.getDomainAxis().setRange(startDate.getValue(), endDate.getValue());
-//            } catch (VisADException | RemoteException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-
+        @Override
+        public void plotDayNight() {
+            XYPlot plot = (XYPlot) getPlot();
+            if (markers != null) {
+                for (Marker marker : markers) {
+                    plot.removeDomainMarker(marker, Layer.BACKGROUND);
+                }
+                markers.clear();
+            }
+            if (sunlight == null) {
+                return;
+            }
+            markers = ChartHelper.createNightMarkers(sunlight, (VectorSeriesCollection) plot.getDataset());
+            for (Marker marker : markers) {
+                plot.addDomainMarker(marker, Layer.BACKGROUND);
+            }
         }
 
         private int getWindDirIndex(FlatField weather) {
@@ -336,19 +291,6 @@ public class WindChartPanel extends ChartPanel {
             return spdIndex;
         }
 
-        private int findRangeComponentIndex(FunctionType functionType, RealType componentType) {
-            if (!functionType.getReal()) {
-                throw new IllegalArgumentException("Range must be RealType or RealTypeTuple");
-            }
-            MathType rangeType = functionType.getRange();
-            int index = -1;
-            if (rangeType instanceof RealTupleType) {
-                index = ((RealTupleType) rangeType).getIndex(componentType);
-            } else {
-                index = rangeType.equals(componentType) ? 0 : -1;
-            }
-            return index;
-        }
     }
 
     private static final class WindPlot extends XYPlot {
@@ -424,27 +366,6 @@ public class WindChartPanel extends ChartPanel {
         }
     }
 
-    static class DateTimeToolTipGenerator extends StandardXYToolTipGenerator {
-
-        public DateTimeToolTipGenerator() {
-            super();
-        }
-
-        @Override
-        public String generateToolTip(XYDataset dataset, int series, int item) {
-            double x = dataset.getXValue(series, item);
-            double y = dataset.getYValue(series, item);
-            try {
-                DateTime dateTime = new DateTime(x);
-                NumberFormat yf = getYFormat();
-                return yf.format(y) + " at " + dateTime.toString();
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
     /**
      * Create a marker band used to depict daytime or nighttime.
      */
@@ -460,59 +381,6 @@ public class WindChartPanel extends ChartPanel {
         marker.setLabelFont(new Font("SansSerif", Font.ITALIC + Font.BOLD, 9));
         marker.setLabelTextAnchor(TextAnchor.BASELINE_LEFT);
         return marker;
-    }
-
-    public static final class DateTimeAxis extends NumberAxis {
-
-        public DateTimeAxis(String label) {
-            super(label);
-            this.setAutoRange(true);
-            this.setAutoRangeIncludesZero(false);
-            this.setStandardTickUnits(createTickUnits());
-            this.setMinorTickMarksVisible(true);
-        }
-
-        /**
-         * Returns a collection of tick units for hours expressed in seconds.
-         */
-        public TickUnitSource createTickUnits() {
-            TickUnits units = new TickUnits();
-            units.add(new NumberTickUnit(3600, new DateTimeFormat(), 0));       // 1hour
-            units.add(new NumberTickUnit(3600 * 3, new DateTimeFormat(), 3));     // 3hour
-            units.add(new NumberTickUnit(3600 * 6, new DateTimeFormat(), 6));     // 6hour
-            return units;
-        }
-    }
-
-    private static final class DateTimeFormat extends NumberFormat {
-
-        @Override
-        public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-            try {
-                double local24HourTime = Times.toClockTime(new DateTime(number));
-                long hour = Math.round(local24HourTime);
-                if (hour == 0) {
-                    toAppendTo.append("mid");
-                } else if (hour == 12) {
-                    toAppendTo.append("noon");
-                } else {
-                    toAppendTo.append(Math.round(local24HourTime));
-                }
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            return toAppendTo;
-        }
-
-        @Override
-        public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Number parse(String source, ParsePosition parsePosition) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 
     /** This method is called from within the constructor to initialize the form. WARNING: Do NOT
