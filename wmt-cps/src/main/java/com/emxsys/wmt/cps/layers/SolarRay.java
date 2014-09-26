@@ -40,6 +40,8 @@ import com.emxsys.visad.Units;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.GlobePath;
+import gov.nasa.worldwind.render.BasicShapeAttributes;
+import gov.nasa.worldwind.render.Material;
 import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 import static visad.CommonUnit.meter;
@@ -59,6 +61,11 @@ public class SolarRay {
 
     public SolarRay() {
         this.path = new GlobePath();
+        
+        BasicShapeAttributes attr = new BasicShapeAttributes();
+        attr.setInteriorMaterial(Material.YELLOW);
+        attr.setOutlineMaterial(Material.ORANGE);
+        this.path.setAttributes(attr);
     }
 
     /**
@@ -112,7 +119,11 @@ public class SolarRay {
             // Add the layer the globe. But defer creating the layer until Globe 
             // has been initialized, else WorldWind configs are read from native WW.
             WindowManager.getDefault().invokeWhenUIReady(() -> {
-                layer = new RenderableGisLayer("Solar Rays", BasicLayerGroup.Overlay, BasicLayerType.Other, BasicLayerCategory.Other);
+                layer = new RenderableGisLayer(
+                        "Solar Rays",
+                        BasicLayerGroup.Overlay,
+                        BasicLayerType.Other,
+                        BasicLayerCategory.Other);
                 layer.addRenderable(path);
                 Globe.getInstance().addGisLayer(layer);
             });
