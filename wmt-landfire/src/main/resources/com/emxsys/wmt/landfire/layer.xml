@@ -103,7 +103,9 @@
                     <attr name="source" stringvalue="LANDFIRE"/>
                 </file>
                 -->
-                <file name="DEM.instance">
+                
+                <!-- Unused layers         
+                 <file name="DEM.instance">
                     <attr name="category" stringvalue="Terrain"/>
                     <attr name="active" boolvalue="false"/>
                     <attr name="actuate" stringvalue="onRequest"/>
@@ -111,7 +113,7 @@
                     <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_DEM_Name"/>
                     <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.DEMLayer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                    <!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/DEM_021109.csv"/>-->
+                                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/DEM_021109.csv"/>
                     <attr name="name" stringvalue="Elevations"/>
                     <attr name="opacity" doublevalue="0.5"/>
                     <attr name="position" intvalue="1204"/>
@@ -125,7 +127,7 @@
                     <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_ASP_Name"/>
                     <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.ASPLayer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                    <!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/ASP_021109.csv"/>-->
+                                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/ASP_021109.csv"/>
                     <attr name="name" stringvalue="Aspect"/>
                     <attr name="opacity" doublevalue="0.5"/>
                     <attr name="position" intvalue="1205"/>
@@ -139,12 +141,13 @@
                     <attr name="displayName" bundlevalue="com.emxsys.wmt.landfire.Bundle#LAYER_SLP_Name"/>
                     <attr name="instanceClass" stringvalue="com.emxsys.wmt.landfire.layers.SLPLayer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.landfire.layers.LandfireTiledImageLayerFactory.newLayer"/>
-                    <!--                <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/SLP_021109.csv"/>-->
+                                    <attr name="colorkey" urlvalue="nbinst://com-emxsys-wmt-landfire/modules/ext/config/landfire/csv/SLP_021109.csv"/>
                     <attr name="name" stringvalue="Slope"/>
                     <attr name="opacity" doublevalue="0.5"/>
                     <attr name="position" intvalue="1206"/>
                     <attr name="source" stringvalue="LANDFIRE"/>
                 </file>
+                -->
                 <!-- Not as useful as vegetation height, at least not until we have a crown fire module
                             <file name="CH.instance">
                                 <attr name="active" boolvalue="false"/>
