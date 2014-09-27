@@ -38,11 +38,9 @@ import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.wildfire.api.WildfireType;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
-import com.emxsys.wmt.cps.Model;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 import static java.lang.Math.round;
 import java.time.ZonedDateTime;
@@ -100,92 +98,153 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     private ChartCanvas canvas;
 
     /**
-     * SolarPlot is a ClockCompassPlot stylized for solar heating.
+     * Creates new form PreheatForcePanel.
      */
-    private class SolarPlot extends ClockCompassPlot {
+    public PreheatForcePanel() {
+        initComponents();
 
-        boolean shaded = false;
-        boolean night = false;
+        // Create the primary panels
+        JFXPanel leftPanel = new JFXPanel();
+        JPanel rightPanel = new JPanel(new BorderLayout());
 
-        SolarPlot() {
-            setRosePaint(Color.orange);
-            setRoseHighlightPaint(Color.gray);
-            setRoseCenterPaint(Color.white);
-            setDrawBorder(false);
+        // Create the thermometers
+        JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
+        thermometerPanel.add(new ChartPanel(fuelTempChart,
+                DEFAULT_WIDTH,
+                DEFAULT_HEIGHT,
+                100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                true, // properties
+                true, // save
+                true, // print
+                true, // zoom
+                true // tooltips
+        ));
+        thermometerPanel.add(new ChartPanel(fuelMoistureChart,
+                DEFAULT_WIDTH,
+                DEFAULT_HEIGHT,
+                100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                true, // properties
+                true, // save
+                true, // print
+                true, // zoom
+                true // tooltips
+        ));
 
-            // The first (default) dataset is the direction of Solar Radiation
-            setSeriesNeedle(AZIMUTH_SERIES, WIND_NEEDLE);
-            setSeriesPaint(AZIMUTH_SERIES, Color.red);        // arrow heads
-            setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
+        rightPanel.add(thermometerPanel, BorderLayout.CENTER);
 
-            // The second  dataset is the Time / Clock
-            ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
-            addDataset(dataset, null);
-            setSeriesNeedle(HOUR_SERIES, CLOCK_HAND_NEEDLE);
-            setSeriesPaint(HOUR_SERIES, Color.black);        // arrow heads
-            setSeriesOutlinePaint(HOUR_SERIES, Color.black); // arrow shafts and arrow head outline        
-        }
+        // Create the slider for the fuel moisture (40% max)
+        this.slider = new JSlider(0, 40, 0);
+        this.slider.setPaintLabels(false);
+        this.slider.setPaintTicks(true);
+        this.slider.setMajorTickSpacing(10);
+        this.slider.setOrientation(SwingConstants.VERTICAL);
+
+        // Add listener to handle manual air temp input
+        this.slider.addChangeListener((ChangeEvent e) -> {
+            Real FuelMoisture = new Real(WildfireType.FUEL_MOISTURE_1H, slider.getValue());
+            this.pcs.firePropertyChange(PROP_FUEL_MOISTURE, null, FuelMoisture);
+        });
+
+        // Add the panel to the Grid layout
+        rightPanel.add(this.slider, BorderLayout.EAST);
+        add(leftPanel);
+        add(rightPanel);
+
+        // Create the JavaFX scene (ChartCanvas) on an FX thread
+        Platform.setImplicitExit(false);
+        Platform.runLater(() -> {
+            leftPanel.setScene(createScene());
+        });
+
+    }
+
+    private Scene createScene() {
+        canvas = new ChartCanvas(solarChart);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(canvas);
+        // Bind canvas size to stack pane size. 
+        canvas.widthProperty().bind(stackPane.widthProperty());
+        canvas.heightProperty().bind(stackPane.heightProperty());
+
+        return new Scene(stackPane);
     }
 
     /**
-     * SolarChart is a JFreeChart integrated with a SolarPlot.
+     * Updates the clock.
      */
-    private class SolarChart extends JFreeChart {
-
-        SolarChart(String title) {
-            super(new SolarPlot());
-            setTitle(title);
-        }
+    public void updateTime(ZonedDateTime time) {
+        // Update the Hour plot
+        ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
+        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
+        final double DEG_PER_HOUR12 = 360 / 12.0;
+        double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
+        double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
+        hourData.setValue(hourDegrees);
+        //canvas.draw();
     }
 
     /**
-     * TemperaturePlot is a ThermometerPlot stylized for air/fuel temperature.
+     * Updates the solar azimuth plot.
      */
-    private class TemperaturePlot extends ThermometerPlot {
+    public void updateSunlight(Sunlight sun) {
 
-        TemperaturePlot(ValueDataset dataset) {
-            super(dataset);
-            setBulbRadius(30);
-            setColumnRadius(15);
-            //setThermometerStroke(new BasicStroke(2.0f));
-            //setThermometerPaint(Color.darkGray);
-            //setGap(3);
-            setUnits(ThermometerPlot.UNITS_FAHRENHEIT);
-            setRange(0.0, 200.0);
-            setMercuryPaint(Color.red);
-//            setSubrange(0, 0.0, 85.0);
-//            setSubrangePaint(0, Color.red);
-//            setSubrange(1, 85.0, 125.0);
-//            setSubrangePaint(1, Color.green);
-//            setSubrange(2, 125.0, 200.0);
-//            setSubrangePaint(2, Color.red);    
-            setOutlineVisible(false);
+        try {
+            // Update the Azimuth Plot
+            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+            double A = sun.getAzimuthAngle().getValue(CommonUnit.degree);
+            DefaultValueDataset compassData = (DefaultValueDataset) solarPlot.getDatasets()[AZIMUTH_SERIES];
+            compassData.setValue(A);
+
+            // Color the background based on the Zenith angle (above or below the horizon)
+            double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
+            solarPlot.night = (Z > 90);
+            String title = solarPlot.night ? "Night" : String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
+            solarChart.setTitle(title);
+
+            refresh();
+
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 
-    /**
-     * MoisturePlot is a ThermometerPlot stylized for fuel moisture.
-     */
-    private class MoisturePlot extends ThermometerPlot {
+    public void updateShading(boolean isShaded) {
+        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+        solarPlot.shaded = isShaded;
+        refresh();
+    }
 
-        MoisturePlot(ValueDataset dataset) {
-            super(dataset);
-            setBulbRadius(30);
-            setColumnRadius(15);
-            //setThermometerStroke(new BasicStroke(2.0f));
-            //setThermometerPaint(Color.darkGray);
-            //setGap(3);
-            setUnits(ThermometerPlot.UNITS_NONE);
-            setRange(0.0, 100.0);
-            setMercuryPaint(Color.blue);
-//            setSubrange(0, 0.0, 85.0);
-//            setSubrangePaint(0, Color.red);
-//            setSubrange(1, 85.0, 125.0);
-//            setSubrangePaint(1, Color.green);
-//            setSubrange(2, 125.0, 200.0);
-//            setSubrangePaint(2, Color.red);    
-            setOutlineVisible(false);
-        }
+    /**
+     * Updates the fuel moisture and fuel temperature plots
+     */
+    public void updateFuel(SurfaceFuel fuel) {
+        fuelTempChart.setTemperature(fuel.getFuelTemperature());
+        fuelMoistureChart.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
+        fuelMoistureChart.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
+    }
+
+    /**
+     * Updates the solar azimuth plot.
+     */
+    public void refresh() {
+
+        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+
+        Color seriesColor = solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red;
+        Color centerColor = solarPlot.night ? Color.darkGray : Color.white;
+        solarPlot.setSeriesPaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setRoseCenterPaint(centerColor);
+        //canvas.draw();
+
     }
 
     /**
@@ -246,158 +305,104 @@ public class PreheatForcePanel extends javax.swing.JPanel {
             this.dataset.setValue(round(moisture.getValue()));
         }
 
-    }
-
-    /**
-     * Creates new form PreheatForcePanel.
-     */
-    public PreheatForcePanel() {
-        initComponents();
-
-        // Create the primary panels
-        JFXPanel leftPanel = new JFXPanel();
-        JPanel rightPanel = new JPanel(new BorderLayout());
-
-        // Create the thermometers
-        JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
-        thermometerPanel.add(new ChartPanel(fuelTempChart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true // tooltips
-        ));
-        thermometerPanel.add(new ChartPanel(fuelMoistureChart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true // tooltips
-        ));
-
-        rightPanel.add(thermometerPanel, BorderLayout.CENTER);
-
-        // Create the slider for the air temp
-        this.slider = new JSlider(0, 100, 0);
-        this.slider.setPaintLabels(false);
-        this.slider.setPaintTicks(true);
-        this.slider.setMajorTickSpacing(25);
-        this.slider.setOrientation(SwingConstants.VERTICAL);
-
-        // Add listener to handle manual air temp input
-        this.slider.addChangeListener((ChangeEvent e) -> {
-            Real FuelMoisture = new Real(WildfireType.FUEL_MOISTURE_1H, slider.getValue());
-            this.pcs.firePropertyChange(PROP_FUEL_MOISTURE, null, FuelMoisture);
-        });
-
-        // Add the panel to the Grid layout
-        rightPanel.add(this.slider, BorderLayout.EAST);
-        add(leftPanel);
-        add(rightPanel);
-
-        // Create the JavaFX scene (ChartCanvas) on an FX thread
-        Platform.setImplicitExit(false);
-        Platform.runLater(() -> {
-            leftPanel.setScene(createScene());
-        });
-
-        // Now update the charts from values in the CPS data model
-        Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
-            updateTime((ZonedDateTime) evt.getNewValue());
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
-            updateSunlight((Sunlight) evt.getNewValue());
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
-            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-            solarPlot.shaded = (boolean) evt.getNewValue();
-            refresh();
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
-            SurfaceFuel fuel = (SurfaceFuel) evt.getNewValue();
-            fuelTempChart.setTemperature(fuel.getFuelTemperature());
-            fuelMoistureChart.setMoisture(fuel.getDead1HrFuelMoisture());
-        });
-    }
-
-    private Scene createScene() {
-        canvas = new ChartCanvas(solarChart);
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(canvas);
-        // Bind canvas size to stack pane size. 
-        canvas.widthProperty().bind(stackPane.widthProperty());
-        canvas.heightProperty().bind(stackPane.heightProperty());
-
-        return new Scene(stackPane);
-    }
-
-    /**
-     * Updates the clock.
-     */
-    private void updateTime(ZonedDateTime time) {
-        // Update the Hour plot
-        ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
-        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
-        final double DEG_PER_HOUR12 = 360 / 12.0;
-        double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
-        double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
-        hourData.setValue(hourDegrees);
-        //canvas.draw();
-    }
-
-    /**
-     * Updates the solar azimuth plot.
-     */
-    private void updateSunlight(Sunlight sun) {
-
-        try {
-            // Update the Azimuth Plot
-            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-            double A = sun.getAzimuthAngle().getValue(CommonUnit.degree);
-            DefaultValueDataset compassData = (DefaultValueDataset) solarPlot.getDatasets()[AZIMUTH_SERIES];
-            compassData.setValue(A);
-
-            // Color the background based on the Zenith angle (above or below the horizon)
-            double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
-            solarPlot.night = (Z > 90);
-            String title = solarPlot.night ? "Night" : String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
-            solarChart.setTitle(title);
-
-            refresh();
-
-        } catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
+        void setMoistureOfExtinction(Real extinction) {
+            double value = (extinction == null || extinction.isMissing())
+                    ? 0 : extinction.getValue();
+            MoisturePlot plot = (MoisturePlot) getPlot();
+            plot.updateMoistureSubranges(value);
         }
     }
 
     /**
-     * Updates the solar azimuth plot.
+     * SolarPlot is a ClockCompassPlot stylized for solar heating.
      */
-    private void refresh() {
+    private class SolarPlot extends ClockCompassPlot {
 
-        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-        
-        Color seriesColor = solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red;
-        Color centerColor = solarPlot.night ? Color.darkGray : Color.white;
-        solarPlot.setSeriesPaint(AZIMUTH_SERIES, seriesColor);
-        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, seriesColor);
-        solarPlot.setRoseCenterPaint(centerColor);
-        //canvas.draw();
+        boolean shaded = false;
+        boolean night = false;
 
+        SolarPlot() {
+            setRosePaint(Color.orange);
+            setRoseHighlightPaint(Color.gray);
+            setRoseCenterPaint(Color.white);
+            setDrawBorder(false);
+
+            // The first (default) dataset is the direction of Solar Radiation
+            setSeriesNeedle(AZIMUTH_SERIES, WIND_NEEDLE);
+            setSeriesPaint(AZIMUTH_SERIES, Color.red);        // arrow heads
+            setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
+
+            // The second  dataset is the Time / Clock
+            ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
+            addDataset(dataset, null);
+            setSeriesNeedle(HOUR_SERIES, CLOCK_HAND_NEEDLE);
+            setSeriesPaint(HOUR_SERIES, Color.black);        // arrow heads
+            setSeriesOutlinePaint(HOUR_SERIES, Color.black); // arrow shafts and arrow head outline        
+        }
+    }
+
+    /**
+     * SolarChart is a JFreeChart integrated with a SolarPlot.
+     */
+    private class SolarChart extends JFreeChart {
+
+        SolarChart(String title) {
+            super(new SolarPlot());
+            setTitle(title);
+        }
+    }
+
+    /**
+     * TemperaturePlot is a ThermometerPlot stylized for air/fuel temperature.
+     */
+    class TemperaturePlot extends ThermometerPlot {
+
+        TemperaturePlot(ValueDataset dataset) {
+            super(dataset);
+            setBulbRadius(30);
+            setColumnRadius(15);
+            //setThermometerStroke(new BasicStroke(2.0f));
+            //setThermometerPaint(Color.darkGray);
+            //setGap(3);
+            setUnits(ThermometerPlot.UNITS_FAHRENHEIT);
+            setRange(0.0, 200.0);
+            setMercuryPaint(Color.red);
+//            setSubrange(0, 0.0, 85.0);
+//            setSubrangePaint(0, Color.red);
+//            setSubrange(1, 85.0, 125.0);
+//            setSubrangePaint(1, Color.green);
+//            setSubrange(2, 125.0, 200.0);
+//            setSubrangePaint(2, Color.red);    
+            setOutlineVisible(false);
+        }
+    }
+
+    /**
+     * MoisturePlot is a ThermometerPlot stylized for fuel moisture.
+     */
+    class MoisturePlot extends ThermometerPlot {
+
+        MoisturePlot(ValueDataset dataset) {
+            super(dataset);
+            setBulbRadius(30);
+            setColumnRadius(15);
+            //setThermometerStroke(new BasicStroke(2.0f));
+            //setThermometerPaint(Color.darkGray);
+            //setGap(3);
+            setUnits(ThermometerPlot.UNITS_NONE);
+            setRange(0.0, 40.0);
+            updateMoistureSubranges(0);    // initial rangle
+            setOutlineVisible(false);
+        }
+
+        void updateMoistureSubranges(double value) {
+            setSubrange(0, 0.0, value);      // burnable
+            setSubrangePaint(0, Color.red);
+            setSubrange(1, value, 100.0);    // unburnable
+            setSubrangePaint(1, Color.green);
+            setSubrange(2, -1, -1);         // Set off the scale to hide
+            setSubrangePaint(2, Color.red);
+        }
     }
 
     /**

@@ -29,12 +29,18 @@
  */
 package com.emxsys.wmt.cps.views;
 
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.wildfire.api.FuelModel;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
 import com.emxsys.wmt.cps.views.forces.WindForcePanel;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -96,6 +102,19 @@ public final class ForcesTopComponent extends TopComponent {
         setToolTipText(Bundle.CTL_ForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
+        // Now update the charts from values in the CPS data model
+        Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
+            preheatPanel.updateTime((ZonedDateTime) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            preheatPanel.updateSunlight((Sunlight) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
+            preheatPanel.updateShading((boolean) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
+            preheatPanel.updateFuel((SurfaceFuel) evt.getNewValue());
+        });
         logger.config(PREFERRED_ID + " initialized.");
     }
 
