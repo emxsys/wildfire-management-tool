@@ -35,9 +35,10 @@ import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.util.AngleUtil;
-import com.emxsys.visad.GeneralUnit;
+import com.emxsys.wildfire.api.WildfirePreferences;
 import com.emxsys.wildfire.api.WildfireType;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.emxsys.wildfire.panels.FuelTemperaturePanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -93,7 +94,8 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     private static final int HOUR_SERIES = 1;
     private final SolarChart solarChart = new SolarChart(Bundle.CTL_SolarChartTitle());
     private MoistureChart fuelMoistureChart = new MoistureChart(Bundle.CTL_FuelMoistureChartTitle());
-    private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
+    //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
+    private FuelTemperaturePanel fuelTempChart;
     private JSlider slider;
     private ChartCanvas canvas;
 
@@ -103,26 +105,19 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     public PreheatForcePanel() {
         initComponents();
 
+        fuelTempChart = new FuelTemperaturePanel(
+                Bundle.CTL_FuelTempChartTitle(),
+                WildfirePreferences.getFuelTemperatureUnit(),
+                new Real(WildfireType.FUEL_TEMP_F, 0));
+
         // Create the primary panels
         JFXPanel leftPanel = new JFXPanel();
         JPanel rightPanel = new JPanel(new BorderLayout());
 
         // Create the thermometers
         JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
-        thermometerPanel.add(new ChartPanel(fuelTempChart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true // tooltips
-        ));
+        thermometerPanel.add(fuelTempChart);
+
         thermometerPanel.add(new ChartPanel(fuelMoistureChart,
                 DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
@@ -226,7 +221,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
      * Updates the fuel moisture and fuel temperature plots
      */
     public void updateFuel(SurfaceFuel fuel) {
-        fuelTempChart.setTemperature(fuel.getFuelTemperature());
+        fuelTempChart.setFuelTemperature(fuel.getFuelTemperature());
         fuelMoistureChart.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
         fuelMoistureChart.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
     }
@@ -247,36 +242,8 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 
     }
 
-    /**
-     * TemperatureChart is a JFreeChart integrated with a TemperaturePlot.
-     */
-    private class TemperatureChart extends JFreeChart {
-
-        final DefaultValueDataset dataset;
-
-        TemperatureChart(String title) {
-            this(title, new DefaultValueDataset(0.0));
-        }
-
-        TemperatureChart(String title, DefaultValueDataset dataset) {
-            super(new TemperaturePlot(dataset));
-            this.dataset = dataset;
-            setTitle(title);
-            getPlot().setBackgroundPaint(this.getBackgroundPaint());
-        }
-
-        void setTemperature(Real temperature) {
-            if (temperature == null || temperature.isMissing()) {
-                this.dataset.setValue(null);
-                return;
-            }
-            try {
-                this.dataset.setValue(round(temperature.getValue(GeneralUnit.degF)));
-            } catch (VisADException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-
+    public void updateAirTemp(Real airTemperature) {
+        fuelTempChart.setAirTemperature(airTemperature);
     }
 
     /**
@@ -349,31 +316,6 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         SolarChart(String title) {
             super(new SolarPlot());
             setTitle(title);
-        }
-    }
-
-    /**
-     * TemperaturePlot is a ThermometerPlot stylized for air/fuel temperature.
-     */
-    class TemperaturePlot extends ThermometerPlot {
-
-        TemperaturePlot(ValueDataset dataset) {
-            super(dataset);
-            setBulbRadius(30);
-            setColumnRadius(15);
-            //setThermometerStroke(new BasicStroke(2.0f));
-            //setThermometerPaint(Color.darkGray);
-            //setGap(3);
-            setUnits(ThermometerPlot.UNITS_FAHRENHEIT);
-            setRange(0.0, 200.0);
-            setMercuryPaint(Color.red);
-//            setSubrange(0, 0.0, 85.0);
-//            setSubrangePaint(0, Color.red);
-//            setSubrange(1, 85.0, 125.0);
-//            setSubrangePaint(1, Color.green);
-//            setSubrange(2, 125.0, 200.0);
-//            setSubrangePaint(2, Color.red);    
-            setOutlineVisible(false);
         }
     }
 
