@@ -29,11 +29,11 @@
  */
 package com.emxsys.wildfire.options;
 
-import com.emxsys.wildfire.api.WildfireOptions;
-import static com.emxsys.wildfire.api.WildfireOptions.UOM_CHAINS;
-import static com.emxsys.wildfire.api.WildfireOptions.UOM_KPH;
-import static com.emxsys.wildfire.api.WildfireOptions.UOM_MPH;
-import static com.emxsys.wildfire.api.WildfireOptions.UOM_MPS;
+import com.emxsys.wildfire.api.WildfirePreferences;
+import static com.emxsys.wildfire.api.WildfirePreferences.UOM_CHAINS;
+import static com.emxsys.wildfire.api.WildfirePreferences.UOM_KPH;
+import static com.emxsys.wildfire.api.WildfirePreferences.UOM_MPH;
+import static com.emxsys.wildfire.api.WildfirePreferences.UOM_MPS;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -144,7 +144,7 @@ final class WildfireUnitsOptionsPanel extends javax.swing.JPanel {
 
     void load() {
         // read settings and initialize GUI
-        switch (WildfireOptions.getRateOfSpreadUom()) {
+        switch (WildfirePreferences.getRateOfSpreadUom()) {
             case UOM_CHAINS:
                 this.chainsButton.setSelected(true);
                 break;
@@ -163,13 +163,13 @@ final class WildfireUnitsOptionsPanel extends javax.swing.JPanel {
     void store() {
         // store modified settings
         if (this.mphButton.isSelected()) {
-            WildfireOptions.setRateOfSpread(UOM_MPH);
+            WildfirePreferences.setRateOfSpread(UOM_MPH);
         } else if (this.kphButton.isSelected()) {
-            WildfireOptions.setRateOfSpread(UOM_KPH);
+            WildfirePreferences.setRateOfSpread(UOM_KPH);
         } else if (this.chainsButton.isSelected()) {
-            WildfireOptions.setRateOfSpread(UOM_CHAINS);
+            WildfirePreferences.setRateOfSpread(UOM_CHAINS);
         } else if (this.mpsButton.isSelected()) {
-            WildfireOptions.setRateOfSpread(UOM_MPS);
+            WildfirePreferences.setRateOfSpread(UOM_MPS);
         }
     }
 

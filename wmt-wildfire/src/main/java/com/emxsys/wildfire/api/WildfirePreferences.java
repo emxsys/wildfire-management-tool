@@ -40,24 +40,28 @@ import visad.Unit;
 
 /**
  * Wildfire preferences.
- * 
+ *
  * @author Bruce Schubert
  */
-public class WildfireOptions {
+public class WildfirePreferences {
 
     // Preference key and uoms
     public static final String PREF_ROS_UOM = "wildfire.ros.uom";
+    public static final String PREF_FUEL_TEMP_UOM = "wildfire.fuel_temp.uom";
     public static final String UOM_CHAINS = "chains";
     public static final String UOM_MPH = "mph";
     public static final String UOM_MPS = "mps";
     public static final String UOM_KPH = "kph";
+    public static final String UOM_FAHRENHEIT = "fahrenheit";
+    public static final String UOM_CELSIUS = "celsius";
 
     // Defaults
     static final String DEFAULT_ROS_UOM = UOM_CHAINS;
+    static final String DEFAULT_FUEL_TEMP_UOM = UOM_FAHRENHEIT;
 
     // Implementation
     private static final HashMap<String, Unit> rosUnits = new HashMap<>();
-    private static final Preferences prefs = NbPreferences.forModule(WildfireOptions.class);
+    private static final Preferences prefs = NbPreferences.forModule(WildfirePreferences.class);
 
     static {
         rosUnits.put(UOM_CHAINS, FireUnit.chain_hour);
@@ -68,14 +72,36 @@ public class WildfireOptions {
 
     /**
      * Adds a PreferenceChangeListener to the underlying Wildfire module preferences file.
-     * @param listener 
+     * @param listener
      */
-    public void addPreferenceChangeListener(PreferenceChangeListener listener) {
+    public static void addPreferenceChangeListener(PreferenceChangeListener listener) {
         prefs.addPreferenceChangeListener(listener);
     }
 
-    public void removePreferenceChangeListener(PreferenceChangeListener listener) {
+    public static void removePreferenceChangeListener(PreferenceChangeListener listener) {
         prefs.removePreferenceChangeListener(listener);
+    }
+
+    /**
+     * @return The current unit of measure for fuel temperature.
+     */
+    public static String getFuelTemperatureUom() {
+        return prefs.get(PREF_FUEL_TEMP_UOM, DEFAULT_FUEL_TEMP_UOM);
+    }
+
+    /**
+     * @return The current Unit for fuel temperature
+     */
+    public static Unit getFuelTemperatureUnit() {
+        String uom = getFuelTemperatureUom();
+        switch (uom) {
+            case UOM_FAHRENHEIT:
+                return GeneralUnit.degF;
+            case UOM_CELSIUS:
+                return GeneralUnit.degC;
+            default:
+                throw new IllegalStateException("Unhandled fuel temp uom: " + uom);
+        }
     }
 
     /**
@@ -84,6 +110,7 @@ public class WildfireOptions {
     public static String getRateOfSpreadUom() {
         return prefs.get(PREF_ROS_UOM, DEFAULT_ROS_UOM);
     }
+
     /**
      * @return The current Unit for rate of spread.
      */
@@ -91,18 +118,23 @@ public class WildfireOptions {
         String uom = prefs.get(PREF_ROS_UOM, DEFAULT_ROS_UOM);
         return rateOfSpreadUomToUnit(uom);
     }
-    
+
     /**
      * Sets the Rate of Spread UOM preference.
      * @param uom One of: UOM_CHAINS, UOM_MPH, UOM_KPH, UOM_MPS.
      */
     public static void setRateOfSpread(String uom) {
-        if (rosUnits.get(uom)==null) {
+        if (rosUnits.get(uom) == null) {
             throw new IllegalArgumentException("Invalid ROS UOM: " + uom);
         }
         prefs.put(PREF_ROS_UOM, uom);
     }
 
+    /**
+     * Typically used by preference change listeners.
+     * @param uom
+     * @return 
+     */
     public static Unit rateOfSpreadUomToUnit(String uom) {
         return rosUnits.get(uom);
     }

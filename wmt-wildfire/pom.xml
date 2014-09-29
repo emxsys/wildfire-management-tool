@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <artifactId>wmt</artifactId>
-    <groupId>com.emxsys</groupId>
-    <version>4.0-SNAPSHOT</version>
-  </parent>
+        <artifactId>wmt</artifactId>
+        <groupId>com.emxsys</groupId>
+        <version>4.0-SNAPSHOT</version>
+    </parent>
 
     <groupId>com.emxsys</groupId>
     <artifactId>wmt-wildfire</artifactId>
@@ -123,6 +123,25 @@
             <artifactId>org-openide-awt</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-core-startup</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-bootstrap</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -136,9 +155,25 @@
                         <publicPackage>com.emxsys.wildfire.api</publicPackage>
                         <publicPackage>com.emxsys.wildfire.behave</publicPackage>
                         <publicPackage>com.emxsys.wildfire.behavior</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.options</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.panels</publicPackage>
                         <publicPackage>com.emxsys.wildfire.spi</publicPackage>
                         <publicPackage>com.emxsys.wildfire.surfacefire</publicPackage>
                     </publicPackages>
+                    <moduleDependencies>
+                        <dependency>
+                            <!--Adding the reference to jfree charts forced this dependency! Don't know why-->
+                            <!--Private Package (friend) Reference-->
+                            <id>org.netbeans.modules:org-netbeans-core-startup</id>
+                            <type>impl</type>
+                        </dependency>
+                         <dependency>
+                            <!--Adding the reference to jfree charts forced this dependency! Don't know why-->
+                            <!--Private Package (friend) Reference-->
+                            <id>org.netbeans.modules:org-netbeans-bootstrap</id>
+                            <type>impl</type>
+                        </dependency>
+                   </moduleDependencies>
                 </configuration>
             </plugin>
 
