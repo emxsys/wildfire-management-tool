@@ -97,7 +97,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
     private FuelTemperaturePanel fuelTempChart;
     private JSlider slider;
-    private ChartCanvas canvas;
+//    private ChartCanvas canvas;
 
     /**
      * Creates new form PreheatForcePanel.
@@ -111,9 +111,24 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 new Real(WildfireType.FUEL_TEMP_F, 0));
 
         // Create the primary panels
-        JFXPanel leftPanel = new JFXPanel();
+        JPanel leftPanel = new JPanel(new BorderLayout());
         JPanel rightPanel = new JPanel(new BorderLayout());
 
+        leftPanel.add( new ChartPanel(solarChart,
+                150, //DEFAULT_WIDTH,
+                150, //DEFAULT_HEIGHT,
+                50, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                50, // DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
+                true // tooltips
+        ));
+        
         // Create the thermometers
         JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
         thermometerPanel.add(fuelTempChart);
@@ -126,10 +141,10 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 DEFAULT_MAXIMUM_DRAW_WIDTH,
                 DEFAULT_MAXIMUM_DRAW_HEIGHT,
                 DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
                 true // tooltips
         ));
 
@@ -153,24 +168,24 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         add(leftPanel);
         add(rightPanel);
 
-        // Create the JavaFX scene (ChartCanvas) on an FX thread
-        Platform.setImplicitExit(false);
-        Platform.runLater(() -> {
-            leftPanel.setScene(createScene());
-        });
+//        // Create the JavaFX scene (ChartCanvas) on an FX thread
+//        Platform.setImplicitExit(false);
+//        Platform.runLater(() -> {
+//            leftPanel.setScene(createScene());
+//        });
 
     }
 
-    private Scene createScene() {
-        canvas = new ChartCanvas(solarChart);
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(canvas);
-        // Bind canvas size to stack pane size. 
-        canvas.widthProperty().bind(stackPane.widthProperty());
-        canvas.heightProperty().bind(stackPane.heightProperty());
-
-        return new Scene(stackPane);
-    }
+//    private Scene createScene() {
+//        canvas = new ChartCanvas(solarChart);
+//        StackPane stackPane = new StackPane();
+//        stackPane.getChildren().add(canvas);
+//        // Bind canvas size to stack pane size. 
+//        canvas.widthProperty().bind(stackPane.widthProperty());
+//        canvas.heightProperty().bind(stackPane.heightProperty());
+//
+//        return new Scene(stackPane);
+//    }
 
     /**
      * Updates the clock.
