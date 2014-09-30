@@ -119,7 +119,7 @@ public class WelcomeComponent extends TopComponent {
     public static WelcomeComponent findComp() {
         WelcomeComponent wc = component.get();
         if (wc == null) {
-            TopComponent tc = WindowManager.getDefault().findTopComponent("Welcome"); // NOI18N
+            TopComponent tc = WindowManager.getDefault().findTopComponent("WelcomeComponent"); // NOI18N
             if (tc != null) {
                 if (tc instanceof WelcomeComponent) {
                     wc = (WelcomeComponent) tc;

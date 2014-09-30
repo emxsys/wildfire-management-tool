@@ -74,7 +74,7 @@ public class Installer extends ModuleInstall {
                 WindowManager.getDefault().removeWindowSystemListener(this);
                 WelcomeComponent topComp = null;
                 boolean isEditorShowing = false;
-                Set<TopComponent> tcs = TopComponent.getRegistry().getOpened();
+                //Set<TopComponent> tcs = TopComponent.getRegistry().getOpened();
                 for (Mode mode : WindowManager.getDefault().getModes()) {
                     TopComponent tc = mode.getSelectedTopComponent();
                     if (tc instanceof WelcomeComponent) {
