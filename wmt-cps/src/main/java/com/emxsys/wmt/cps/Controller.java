@@ -98,10 +98,15 @@ public class Controller {
      *
      * @return The singleton.
      */
-    public static Controller getInstance() {
-        return ControllerHolder.INSTANCE;
+    public static synchronized Controller getInstance() {
+        if (null == instance) {
+            instance = new Controller();
+        }
+        return instance;
+        //return ControllerHolder.INSTANCE;
     }
-
+    private static Controller instance;
+    
     // Data providers - Event generators
     private final ShadedTerrainProvider earth;
     private final SunlightProvider sun;
@@ -448,8 +453,8 @@ public class Controller {
     /**
      * Singleton implementation.
      */
-    private static class ControllerHolder {
-
-        private static final Controller INSTANCE = new Controller();
-    }
+//    private static class ControllerHolder {
+//
+//        private static final Controller INSTANCE = new Controller();
+//    }
 }
