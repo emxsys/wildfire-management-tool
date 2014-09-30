@@ -45,6 +45,9 @@ import java.beans.PropertyChangeEvent;
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;
+import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
+import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
+import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CompassPlot;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -191,7 +194,19 @@ public class SlopeForcePanel extends javax.swing.JPanel {
      */
     private void createCharts() {
         aspectChart = ChartUtil.createCommonCompassChart(Bundle.CTL_AspectChartTitle(""), null, ChartUtil.WIND_NEEDLE, Color.GREEN);
-        aspectPanel.add(new ChartPanel(aspectChart));
+        aspectPanel.add(new ChartPanel(aspectChart,
+                150, //DEFAULT_WIDTH,
+                150, //DEFAULT_HEIGHT,
+                50, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                50, // DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
+                true)); // tooltips)
         slopePanel.add(new ChartPanel(slopeChart));
     }
 
