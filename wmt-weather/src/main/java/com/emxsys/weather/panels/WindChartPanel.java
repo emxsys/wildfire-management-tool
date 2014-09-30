@@ -39,15 +39,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.text.NumberFormat;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.VectorSeries;
 import org.jfree.data.xy.VectorSeriesCollection;
 import org.jfree.data.xy.VectorXYDataset;
@@ -79,7 +76,7 @@ import visad.VisADException;
     "CTL_WindChartKPH=(km/h)",
     "CTL_WindChartMPS=(m/s)",
     "CTL_WindChartLegend=Surface Winds",})
-public class WindChartPanel extends ChartPanel {
+public class WindChartPanel extends AbstractWeatherChartPanel {
 
     private WindChart chart;
 
@@ -91,43 +88,9 @@ public class WindChartPanel extends ChartPanel {
     }
 
     WindChartPanel(WindChart chart) {
-        super(chart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                200, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true); // tooltips
-
+        super(chart);
         this.chart = chart;
-
         initComponents();
-        // Setting the preferred size allows us to control the initial size
-        // of the panel when it's dragged-n-dropped in the NetBeans GUI editor.
-        setPreferredSize(new java.awt.Dimension(350, 150));
-
-    }
-
-    public void setTitle(String title) {
-        this.chart.setTitle(title);
-    }
-
-    public void addSubTitle(String subtitle) {
-        this.chart.addSubtitle(new TextTitle(subtitle));
-    }
-
-    public void clearSubTitles() {
-        this.chart.clearSubtitles();
-    }
-
-    public void refresh() {
-        this.chart.setNotify(true);
     }
 
     public void setWinds(FlatField weather) {
@@ -138,6 +101,7 @@ public class WindChartPanel extends ChartPanel {
         this.chart.setSunlight(sunlight);
     }
 
+    @Override
     public void setDateTime(ZonedDateTime datetime) {
         this.chart.setDateTime(datetime);
     }

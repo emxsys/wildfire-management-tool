@@ -30,19 +30,13 @@
 package com.emxsys.weather.panels;
 
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.util.TimeUtil;
-import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Times;
-import static com.emxsys.weather.panels.ChartHelper.createIntervalMarker;
 import java.awt.Color;
 import java.awt.Font;
-import static java.lang.Math.ceil;
-import java.rmi.RemoteException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTitleAnnotation;
@@ -68,7 +62,6 @@ import org.openide.util.Exceptions;
 import visad.DateTime;
 import visad.FunctionType;
 import visad.MathType;
-import visad.Real;
 import visad.RealTupleType;
 import visad.RealType;
 import visad.VisADException;

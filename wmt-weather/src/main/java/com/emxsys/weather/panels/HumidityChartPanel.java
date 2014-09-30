@@ -61,7 +61,7 @@ import visad.VisADException;
     "CTL_HumidityChartDomain=Time",
     "CTL_HumidityChartHumidity=Rel. Humidty (%)",
     "CTL_HumidityChartClouds=Sky Cover (%)",})
-public class HumidityChartPanel extends ChartPanel {
+public class HumidityChartPanel extends AbstractWeatherChartPanel {
 
     private HumidityChart chart;
 
@@ -73,39 +73,9 @@ public class HumidityChartPanel extends ChartPanel {
     }
 
     HumidityChartPanel(HumidityChart chart) {
-        super(chart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                200, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true); // tooltips
-
+        super(chart); 
         this.chart = chart;
-
         initComponents();
-        // Setting the preferred size allows us to control the initial size
-        // of the panel when it's dragged-n-dropped in the NetBeans GUI editor.
-        setPreferredSize(new java.awt.Dimension(350, 150));
-
-    }
-
-    public void setTitle(String title) {
-        this.chart.setTitle(title);
-    }
-
-    public void addSubTitle(String subtitle) {
-        this.chart.addSubtitle(new TextTitle(subtitle));
-    }
-
-    public void clearSubTitles() {
-        this.chart.clearSubtitles();
     }
 
     public void setCloudCover(FlatField ff) {
@@ -120,13 +90,11 @@ public class HumidityChartPanel extends ChartPanel {
         this.chart.setSunlight(sunlight);
     }
 
+    @Override
     public void setDateTime(ZonedDateTime datetime) {
         this.chart.setDateTime(datetime);
     }
 
-    public void refresh() {
-        this.chart.setNotify(true);
-    }
 
     /**
      * The HumidityChart is a JFreeChart with a specialized XYPlot for displaying relative humidity,

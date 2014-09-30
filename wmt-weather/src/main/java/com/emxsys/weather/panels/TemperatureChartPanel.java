@@ -31,53 +31,30 @@ package com.emxsys.weather.panels;
 
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.visad.GeneralUnit;
-import com.emxsys.visad.Times;
-import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.api.WeatherPreferences;
+import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeAxis;
 import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeToolTipGenerator;
 import java.awt.Color;
-import java.awt.Font;
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYTitleAnnotation;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.TickUnitSource;
-import org.jfree.chart.axis.TickUnits;
-import org.jfree.chart.block.BlockBorder;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.chart.title.TextTitle;
-import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.Layer;
-import org.jfree.ui.RectangleAnchor;
-import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
-import visad.DateTime;
 import visad.FlatField;
 import visad.FunctionType;
-import visad.MathType;
-import visad.RealTupleType;
-import visad.RealType;
 import visad.Unit;
 import visad.UnitException;
 import visad.VisADException;
@@ -94,7 +71,7 @@ import visad.VisADException;
     "CTL_TemperatureChartFahrenheit=(°F)",
     "CTL_TemperatureChartCelsius=(°C)",
     "CTL_TemperatureChartLegend=Temperature",})
-public class TemperatureChartPanel extends ChartPanel {
+public class TemperatureChartPanel extends AbstractWeatherChartPanel {
 
     // JFreeChart for Temperature
     private TemperatureChart chart;
@@ -107,39 +84,9 @@ public class TemperatureChartPanel extends ChartPanel {
     }
 
     TemperatureChartPanel(TemperatureChart chart) {
-        super(chart,
-                DEFAULT_WIDTH,
-                DEFAULT_HEIGHT,
-                200, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
-                DEFAULT_MINIMUM_DRAW_HEIGHT,
-                DEFAULT_MAXIMUM_DRAW_WIDTH,
-                DEFAULT_MAXIMUM_DRAW_HEIGHT,
-                DEFAULT_BUFFER_USED,
-                true, // properties
-                true, // save
-                true, // print
-                true, // zoom
-                true); // tooltips
-
+        super(chart);
         this.chart = chart;
-
         initComponents();
-        // Setting the preferred size allows us to control the initial size
-        // of the panel when it's dragged-n-dropped in the NetBeans GUI editor.
-        setPreferredSize(new java.awt.Dimension(350, 150));
-
-    }
-
-    public void setTitle(String title) {
-        this.chart.setTitle(title);
-    }
-
-    public void addSubTitle(String subtitle) {
-        this.chart.addSubtitle(new TextTitle(subtitle));
-    }
-
-    public void clearSubTitles() {
-        this.chart.clearSubtitles();
     }
 
     public void setTemperatures(FlatField ff) {
@@ -152,10 +99,6 @@ public class TemperatureChartPanel extends ChartPanel {
 
     public void setDateTime(ZonedDateTime datetime) {
         this.chart.setDateTime(datetime);
-    }
-
-    public void refresh() {
-        this.chart.setNotify(true);
     }
 
     /**
@@ -343,8 +286,10 @@ public class TemperatureChartPanel extends ChartPanel {
             setRangeUnit(unit); // Update the range axis label
             setDomainCrosshairVisible(true);
             setDomainZeroBaselineVisible(true);
+            setDomainCrosshairLockedOnData(false);
             setRangeCrosshairVisible(true);
             setRangeZeroBaselineVisible(true);
+            setRangeCrosshairLockedOnData(true);
 
             setBackgroundPaint(Color.lightGray);
             setOutlinePaint(Color.darkGray);
