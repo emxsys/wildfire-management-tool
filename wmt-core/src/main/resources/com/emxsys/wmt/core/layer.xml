@@ -17,7 +17,81 @@
         </folder> 
     </folder> 
     <folder name="Menu">
+        <!--Hide the default Terramenta Animate tab...we'll place these controls on the Home tab-->
+        <folder name="Animate_hidden">
+            <folder name="Controls">
+                <file name="com-terramenta-time-actions-TimeStepBackwardAction.shadow_hidden"/>
+                <file name="com-terramenta-time-actions-TimeRewindAction.shadow_hidden"/>
+                <file name="com-terramenta-time-actions-TimeStopAction.shadow_hidden"/>
+                <file name="com-terramenta-time-actions-TimePlayAction.shadow_hidden"/>
+                <file name="com-terramenta-time-actions-TimeStepForwardAction.shadow_hidden"/>
+                <file name="com-terramenta-time-actions-TimeResetAction.shadow_hidden"/>
+            </folder>
+            <file name="com-terramenta-time-ribbons-DatetimeBand.instance_hidden">
+                <attr name="position" intvalue="200"/>
+            </file>
+            <file name="com-terramenta-time-ribbons-LingerBand.instance_hidden">
+                <attr name="position" intvalue="300"/>
+            </file>
+            <file name="com-terramenta-time-ribbons-SpeedBand.instance_hidden">
+                <attr name="position" intvalue="400"/>
+            </file>
+        </folder>        
         <folder name="Home">
+            <!-- Time Controls Group Play, Slop, FF, RW, etc.-->
+            <folder name="Controls">
+                <attr name="position" intvalue="101"/>
+                <file name="com-terramenta-time-actions-TimeStepBackwardAction.shadow">
+                    <!--com.terramenta.time.actions.TimeActions.TimeStepBackwardAction-->
+                    <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimeStepBackwardAction.instance"/>
+                    <attr intvalue="1" name="position"/>
+                    <attr name="priority" stringvalue="TOP"/>
+                </file>
+                <file name="com-terramenta-time-actions-TimeRewindAction.shadow">
+                    <!--com.terramenta.time.actions.TimeActions.TimeRewindAction-->
+                    <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimeRewindAction.instance"/>
+                    <attr intvalue="2" name="position"/>
+                    <attr name="priority" stringvalue="TOP"/>
+                </file>
+                <file name="com-terramenta-time-actions-TimeStopAction.shadow">
+                    <!--com.terramenta.time.actions.TimeActions.TimeStopAction-->
+                    <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimeStopAction.instance"/>
+                    <attr intvalue="3" name="position"/>
+                    <attr name="priority" stringvalue="TOP"/>
+                </file>
+                <file name="com-terramenta-time-actions-TimePlayAction.shadow">
+                    <!--com.terramenta.time.actions.TimeActions.TimePlayAction-->
+                    <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimePlayAction.instance"/>
+                    <attr intvalue="4" name="position"/>
+                    <attr name="priority" stringvalue="TOP"/>
+                </file>
+                <file name="com-terramenta-time-actions-TimeStepForwardAction.shadow">
+                    <!--com.terramenta.time.actions.TimeActions.TimeStepForwardAction-->
+                    <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimeStepForwardAction.instance"/>
+                    <attr intvalue="5" name="position"/>
+                    <attr name="priority" stringvalue="TOP"/>
+                </file>
+                <file name="ContolsSeparator1.instance">
+                    <attr name="position" intvalue="6"/>
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                </file>
+                
+                <file name="com-terramenta-time-actions-TimeResetAction.shadow">
+                    <!--com.terramenta.time.actions.TimeActions.TimeResetAction-->
+                    <attr name="originalFile" stringvalue="Actions/Other/com-terramenta-time-actions-TimeResetAction.instance"/>
+                    <attr intvalue="7" name="position"/>
+                    <attr name="priority" stringvalue="TOP"/>
+                </file>
+            </folder>
+            <!--Play Speed Band-->
+            <file name="com-terramenta-time-ribbons-SpeedBand.instance">
+                <attr name="position" intvalue="102"/>
+            </file>
+            <!--Application Date/Time Band-->
+            <file name="com-terramenta-time-ribbons-DatetimeBand.instance">
+                <attr name="position" intvalue="103"/>
+            </file>
+            
             <!-- Manage Group (e.g., Base Maps, Overlays, Layer Manager -->
             <folder name="Manage">
                 <attr name="position" intvalue="400"/>                
