@@ -46,21 +46,22 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The WindForcePanel is a combined WindDirectionDialPanel and WindSpeedDialPanel used for editing wind speed
- and direction.
+ * The WindForcePanel is a combined WindDirectionDialPanel and WindSpeedDialPanel used for editing
+ * wind speed and direction.
  *
  * @author Bruce Schubert
  */
 public class WindForcePanel extends javax.swing.JPanel {
-    
+
     public final static String PROP_WIND_SPD = "weather.windpanel.windspd";
     public final static String PROP_WIND_DIR = "weather.windpanel.winddir";
-    
+
     private final WindDirectionDialPanel dirPanel = new WindDirectionDialPanel();
     private final WindSpeedDialPanel spdPanel = new WindSpeedDialPanel();
     private final JSlider dirSlider = new DirectionSlider((WindDirChart) dirPanel.getChart());
     private final JSlider spdSlider = new SpeedSlider((WindSpdChart) spdPanel.getChart());
-    
+    private Real lastWindDir = new Real(WeatherType.WIND_DIR);
+
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /** Creates new form WindPanel */
@@ -79,7 +80,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     public Real getWindSpeed() {
         return spdPanel.getWindSpeed();
     }
-    
+
     public void setWindSpeed(Real speed) {
         try {
             if (speed == null || speed.isMissing() || speed.getValue() == 0) {
@@ -93,12 +94,14 @@ public class WindForcePanel extends javax.swing.JPanel {
             Exceptions.printStackTrace(ex);
         }
     }
-    
+
     public Real getWindDirection() {
         return dirPanel.getWindDirection();
     }
-    
+
     public void setWindDirection(Real direction) {
+        // Cache the wind dir so we can restore it when speed is > 0.
+        lastWindDir = direction;
         // Slider will generate event that updates the chart.
         if (direction.isMissing()) {
             dirPanel.setWindDirection(null);
@@ -106,13 +109,13 @@ public class WindForcePanel extends javax.swing.JPanel {
             dirSlider.setValue((int) direction.getValue());
         }
     }
-    
+
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         super.addPropertyChangeListener(listener);
         pcs.addPropertyChangeListener(listener);
     }
-    
+
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         super.removePropertyChangeListener(listener);
@@ -123,7 +126,7 @@ public class WindForcePanel extends javax.swing.JPanel {
      * The DirectionSlider updates the WindDirChart and fires a property change event.
      */
     private class DirectionSlider extends JSlider {
-        
+
         DirectionSlider(WindDirChart chart) {
             super(0, 360, 180);
             setMaximumSize(new Dimension(200, 30));
@@ -147,7 +150,7 @@ public class WindForcePanel extends javax.swing.JPanel {
      * The SpeedSlider updates the WindSpdChart.
      */
     private class SpeedSlider extends JSlider {
-        
+
         SpeedSlider(WindSpdChart chart) {
             super(0, 500, 0);    // SpeedSlider UOM is MPH x 10
             setMaximumSize(new Dimension(200, 30));
@@ -166,10 +169,13 @@ public class WindForcePanel extends javax.swing.JPanel {
                 }
                 if (value == 0) {
                     dirPanel.setWindDirection(null);
+                } else if (oldSpd.getValue() == 0) {
+                    dirPanel.setWindDirection(lastWindDir);
                 }
+
             });
         }
-        
+
     }
 
     /** This method is called from within the constructor to initialize the form. WARNING: Do NOT
