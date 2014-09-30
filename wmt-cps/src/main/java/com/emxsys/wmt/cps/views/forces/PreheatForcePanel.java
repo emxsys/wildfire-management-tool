@@ -337,10 +337,10 @@ public class PreheatForcePanel extends javax.swing.JPanel {
             setOutlineVisible(false);
         }
 
-        void updateMoistureSubranges(double value) {
-            setSubrange(0, 0.0, value);      // burnable
+        void updateMoistureSubranges(double moistureOfExt) {
+            setSubrange(0, 0.0, moistureOfExt);      // burnable
             setSubrangePaint(0, Color.red);
-            setSubrange(1, value, 100.0);    // unburnable
+            setSubrange(1, moistureOfExt, 100.0);    // unburnable
             setSubrangePaint(1, Color.green);
             setSubrange(2, -1, -1);         // Set off the scale to hide
             setSubrangePaint(2, Color.red);
