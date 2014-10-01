@@ -49,7 +49,7 @@ import org.openide.windows.TopComponent;
         iconBase = "com/emxsys/wmt/cps/images/fire-behavior-moderate.gif",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "rightSide", openAtStartup = true)
+@TopComponent.Registration(mode = "upperRightSide", openAtStartup = true)
 @ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.HaulChartTopComponent")
 @ActionReference(path = "Menu/Window/Show", position = 210)
 @TopComponent.OpenActionRegistration(
