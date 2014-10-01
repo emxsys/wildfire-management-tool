@@ -39,12 +39,17 @@ import com.emxsys.wildfire.api.WildfirePreferences;
 import com.emxsys.wildfire.api.WildfireType;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.panels.FuelTemperaturePanel;
+import com.terramenta.time.options.TimeOptions;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeSupport;
 import static java.lang.Math.round;
+import static java.lang.Math.round;
+import static java.lang.Math.round;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -63,6 +68,7 @@ import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
 import static org.jfree.chart.ChartPanel.DEFAULT_WIDTH;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.ThermometerPlot;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.general.ValueDataset;
 import org.openide.util.Exceptions;
@@ -97,14 +103,22 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
     private FuelTemperaturePanel fuelTempChart;
     private JSlider slider;
-//    private ChartCanvas canvas;
 
+    //private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern(TimeOptions.getTimeFormat());
+    private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
+
+//    private ChartCanvas canvas;
     /**
      * Creates new form PreheatForcePanel.
      */
     public PreheatForcePanel() {
         initComponents();
-
+        
+        // Override the default title font size so we can display long date time strings
+        TextTitle title = solarChart.getTitle();
+        Font font = title.getFont().deriveFont(11);
+        title.setFont(font);
+        
         fuelTempChart = new FuelTemperaturePanel(
                 Bundle.CTL_FuelTempChartTitle(),
                 WildfirePreferences.getFuelTemperatureUnit(),
@@ -114,7 +128,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         JPanel leftPanel = new JPanel(new BorderLayout());
         JPanel rightPanel = new JPanel(new BorderLayout());
 
-        leftPanel.add( new ChartPanel(solarChart,
+        leftPanel.add(new ChartPanel(solarChart,
                 150, //DEFAULT_WIDTH,
                 150, //DEFAULT_HEIGHT,
                 50, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
@@ -128,7 +142,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 false, // zoom
                 true // tooltips
         ));
-        
+
         // Create the thermometers
         JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
         thermometerPanel.add(fuelTempChart);
@@ -173,7 +187,6 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 //        Platform.runLater(() -> {
 //            leftPanel.setScene(createScene());
 //        });
-
     }
 
 //    private Scene createScene() {
@@ -186,7 +199,6 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 //
 //        return new Scene(stackPane);
 //    }
-
     /**
      * Updates the clock.
      */
@@ -199,6 +211,10 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
         hourData.setValue(hourDegrees);
         //canvas.draw();
+
+        // Set the title
+        String title = time.format(titleFormatter);
+        solarChart.setTitle(title);
     }
 
     /**
@@ -216,9 +232,11 @@ public class PreheatForcePanel extends javax.swing.JPanel {
             // Color the background based on the Zenith angle (above or below the horizon)
             double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
             solarPlot.night = (Z > 90);
-            String title = solarPlot.night ? "Night" : String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
-            solarChart.setTitle(title);
 
+            // Set the title
+// Using date/time instead            
+//            String title = solarPlot.night ? "Night" : String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
+//            solarChart.setTitle(title);
             refresh();
 
         } catch (VisADException ex) {

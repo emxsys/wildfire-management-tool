@@ -222,6 +222,12 @@
             <groupId>org.jfree</groupId>
             <artifactId>jcommon</artifactId>
         </dependency>
+        <dependency>
+            <artifactId>terramenta-time</artifactId>
+            <groupId>com.terramenta</groupId>
+            <type>jar</type>
+            <version>2.0.0-EMXSYS-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
