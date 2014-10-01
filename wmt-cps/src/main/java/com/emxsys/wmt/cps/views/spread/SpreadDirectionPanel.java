@@ -109,7 +109,7 @@ public final class SpreadDirectionPanel extends javax.swing.JPanel {
         // Plot spread direction
         CompassPlot compassPlot = (CompassPlot) compassChart.getPlot();
         DefaultValueDataset compassData = (DefaultValueDataset) compassPlot.getDatasets()[0];
-        compassData.setValue(dir);
+        compassData.setValue(fln > 0 ? dir : null);
 
         // Determine cardinal point
         //String cardinalPt = headingToString(dir.getValue());
@@ -131,14 +131,22 @@ public final class SpreadDirectionPanel extends javax.swing.JPanel {
                 dialScale.setUpperBound(100);
             }
         } else {
-            if (fln < 15) {
+            if (fln < 8) {
+                dialScale.setUpperBound(8);
+                dialScale.setMinorTickCount(1);
+                dialScale.setMajorTickIncrement(2);
+            } else if (fln < 15) {
                 dialScale.setUpperBound(15);
+                dialScale.setMinorTickCount(4);
+                dialScale.setMajorTickIncrement(5);
             } else if (fln < 25) {
                 dialScale.setUpperBound(25);
-            } else if (fln < 50) {
-                dialScale.setUpperBound(50);
+                dialScale.setMinorTickCount(0);
+                dialScale.setMajorTickIncrement(5);
             } else {
-                dialScale.setUpperBound(200);
+                dialScale.setMinorTickCount(1);
+                dialScale.setMajorTickIncrement(10);
+                dialScale.setUpperBound(50);
             }
         }
         dialData.setValue(fln);
