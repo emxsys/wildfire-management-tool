@@ -38,6 +38,10 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.text.DecimalFormat;
 import java.util.prefs.Preferences;
+import org.jfree.chart.ChartPanel;
+import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
+import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
+import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CompassPlot;
 import org.jfree.chart.plot.dial.DialPlot;
@@ -154,8 +158,33 @@ public final class SpreadDirectionPanel extends javax.swing.JPanel {
 
         dialChart = ChartUtil.createCommonDialChart("Flame Length", "", 0, 50);
 
-        leftPanel.add(ChartUtil.createCommonChartPanel(compassChart));
-        rightPanel.add(ChartUtil.createCommonChartPanel(dialChart));
+        leftPanel.add(new ChartPanel(compassChart,
+                150, //DEFAULT_WIDTH,
+                150, //DEFAULT_HEIGHT,
+                150, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                150, // DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
+                true));
+        rightPanel.add(new ChartPanel(dialChart,
+                150, //DEFAULT_WIDTH,
+                150, //DEFAULT_HEIGHT,
+                150, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                150, // DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                false, // properties
+                false, // save
+                false, // print
+                false, // zoom
+                true)
+        );
 
         //dialPanel.add(ChartUtil.createCommonChartPanel(dialChart));
     }
