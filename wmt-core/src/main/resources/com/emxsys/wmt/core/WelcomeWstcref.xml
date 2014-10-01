@@ -6,6 +6,6 @@
 
 <tc-ref version="2.0" id="Welcome">
     <module name="com.emxsys.welcome" />
-    <tc-id id="Welcome" />
+    <tc-id id="WelcomeComponent" />
     <state opened="true" />
 </tc-ref>

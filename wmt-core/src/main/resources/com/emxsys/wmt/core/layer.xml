@@ -321,14 +321,21 @@
             <folder name="editor">
                 <file name="Welcome.wstcref" url="Welcome.wstcref"/>
             </folder>
+            <folder name="leftSlidingSide">
+                <file name="LayerManagerTopComponent.wstcref" url="LayerManagerTopComponentWstcref.xml"/>
+                <file name="projectTabLogical_tc.wstcref" url="projectTabLogical_tcWstcref.xml"/>
+                <file name="projectTab_tc.wstcref" url="projectTab_tcWstcref.xml"/>
+            </folder>
             <file name="editor.wsmode" url="editorWsmode.xml"/>
             <file name="explorer.wsmode" url="explorerWsmode.xml"/>
             <file name="leftSlidingSide.wsmode" url="leftSlidingSideWsmode.xml"/>
+            <file name="lowerRightSide.wsmode" url="lowerRightSideWsmode.xml"/>
             <file name="output.wsmode" url="outputWsmode.xml"/>
             <file name="properties.wsmode" url="propertiesWsmode.xml"/>
             <file name="rightSide.wsmode" url="rightSideWsmode.xml"/>
             <file name="rightSlidingSide.wsmode" url="rightSlidingSideWsmode.xml"/>
             <file name="topSlidingSide.wsmode" url="topSlidingSideWsmode.xml"/>
+            <file name="upperRightSide.wsmode" url="upperRightSideWsmode.xml"/>
         </folder>
         <folder name="Components">
             <file name="Welcome.settings" url="Welcome.settings"/>

@@ -3,8 +3,10 @@
     <name unique="leftSlidingSide"/>
   <kind type="sliding"/>
   <slidingSide side="left"/>
+  <slide-in-size tc-id="LayerManagerTopComponent" size="302"/>
+  <slide-in-size tc-id="DesignViewComponentTopComponent_5" size="336"/>
   <state type="joined"/>
-  <bounds x="1" y="0" width="428" height="737"/>
+  <bounds x="22" y="22" width="336" height="558"/>
   <frame state="0"/>
     <empty-behavior permanent="true"/>
 </mode>
