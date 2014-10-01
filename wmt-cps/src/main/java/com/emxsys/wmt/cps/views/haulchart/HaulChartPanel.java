@@ -52,6 +52,9 @@ import java.time.ZonedDateTime;
 import java.util.prefs.Preferences;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
+import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
+import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYAnnotation;
@@ -386,7 +389,21 @@ public class HaulChartPanel extends javax.swing.JPanel {
 
     private void initChart() {
         createChart();
-        ChartPanel chartPanel = new ChartPanel(chart);
+        ChartPanel chartPanel = new ChartPanel(chart,
+                300, //DEFAULT_WIDTH,
+                400, //DEFAULT_HEIGHT,
+                150, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
+                150, // DEFAULT_MINIMUM_DRAW_HEIGHT,
+                DEFAULT_MAXIMUM_DRAW_WIDTH,
+                DEFAULT_MAXIMUM_DRAW_HEIGHT,
+                DEFAULT_BUFFER_USED,
+                false, // properties
+                true,  // save
+                true,  // print
+                false, // zoom
+                true); // tooltips
+        chartPanel.setMouseZoomable(false);
+                
         add(chartPanel, BorderLayout.CENTER);
     }
 
