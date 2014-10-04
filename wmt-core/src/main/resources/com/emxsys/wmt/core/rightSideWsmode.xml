@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><mode version="2.4">
     <name unique="rightSide"/>
     <kind type="view"/>
-    <state type="joined"  minimized="true"  />
+    <state type="joined"  minimized="true" />
     <constraints>
         <path orientation="horizontal" number="60" weight="0.7"/>
         <path orientation="vertical" number="40" weight="0.7"/>
