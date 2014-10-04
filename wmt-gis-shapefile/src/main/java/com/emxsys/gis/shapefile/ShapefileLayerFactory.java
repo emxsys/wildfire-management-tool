@@ -460,11 +460,11 @@ public class ShapefileLayerFactory {
 
     @SuppressWarnings({"UnusedDeclaration"})
     protected ShapeAttributes createPolylineAttributes(ShapefileRecord record) {
-        return randomAttrs.nextPolylineAttributes();
+        return randomAttrs.nextAttributes().asShapeAttributes();
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
     protected ShapeAttributes createPolygonAttributes(ShapefileRecord record) {
-        return randomAttrs.nextPolygonAttributes();
+        return randomAttrs.nextAttributes().asShapeAttributes();
     }
 }
