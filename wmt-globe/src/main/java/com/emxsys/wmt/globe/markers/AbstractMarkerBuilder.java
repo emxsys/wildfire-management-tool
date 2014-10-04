@@ -98,6 +98,10 @@ public abstract class AbstractMarkerBuilder implements Marker.Builder {
     private XPath xpath;
     private Coord3D coord;
     private String name;
+    
+    static {
+        logger.setLevel(Level.FINE);
+    }
 
     /**
      * Basic constructor.
