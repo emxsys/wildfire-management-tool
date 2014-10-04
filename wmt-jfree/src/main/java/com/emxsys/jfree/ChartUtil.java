@@ -121,7 +121,7 @@ public class ChartUtil {
 
     @SuppressWarnings("unchecked")
     public static JFreeChart createCommonCompassChart(String title, String subTitle, int needleType,
-                                                      Color roseColor) {
+            Color roseColor) {
 
         ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
         CompassPlot plot = new CompassPlot(dataset);
@@ -132,7 +132,7 @@ public class ChartUtil {
         plot.setRosePaint(roseColor);
         plot.setRoseHighlightPaint(Color.gray);
         plot.setRoseCenterPaint(Color.white);
-        
+
         plot.setDrawBorder(false);
         // Create the chart
         JFreeChart chart = new JFreeChart(plot);
@@ -146,7 +146,6 @@ public class ChartUtil {
         return chart;
     }
 
-    
     @SuppressWarnings("unchecked")
     public static JFreeChart createCommonDialChart(String title, String subTitle, int minScale, int maxScale) {
 
@@ -164,12 +163,12 @@ public class ChartUtil {
         dialFrame.setStroke(new BasicStroke(3.0f));
         plot.setDialFrame(dialFrame);
 
-        GradientPaint gp = new GradientPaint(new Point(),
-                new Color(255, 255, 255), new Point(),
-                new Color(240, 240, 240));
+        GradientPaint gp = new GradientPaint(
+                new Point(), new Color(180, 180, 180),
+                new Point(), new Color(255, 255, 255));
         DialBackground sdb = new DialBackground(gp);
-        sdb.setGradientPaintTransformer(new StandardGradientPaintTransformer(
-                GradientPaintTransformType.VERTICAL));
+        sdb.setGradientPaintTransformer(
+                new StandardGradientPaintTransformer(GradientPaintTransformType.CENTER_VERTICAL));
         plot.addLayer(sdb);
 
         StandardDialScale scale = new StandardDialScale(minScale, maxScale, -8, 16.0, 10.0, 4);
