@@ -33,7 +33,11 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.wmt.globe.util.Positions;
 import static com.emxsys.wmt.globe.util.Positions.fromCoord2D;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.render.BasicShapeAttributes;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.SurfaceEllipse;
+import java.awt.Color;
 import visad.Real;
 
 /**
@@ -42,21 +46,39 @@ import visad.Real;
  */
 public class GlobeEllipse extends SurfaceEllipse {
 
+    private BasicShapeAttributes attrs;
+
     public GlobeEllipse() {
+        attrs = new BasicShapeAttributes();
     }
 
     public GlobeEllipse(Coord2D center, Real majorRadius, Real minorRadius, Real heading) {
-        super(fromCoord2D(center),
+        this(new BasicShapeAttributes(),
+                fromCoord2D(center),
                 majorRadius.getValue(),
                 minorRadius.getValue(),
                 Angle.fromDegrees(heading.getValue()));
     }
 
-    public void update(Coord2D center, Real majorRadius, Real minorRadius, Real heading) {
+    GlobeEllipse(BasicShapeAttributes normalAttrs, LatLon center, double majorRadius, double minorRadius, Angle heading) {
+        super(normalAttrs,
+                center,
+                majorRadius,
+                minorRadius,
+                heading);
+        this.attrs = normalAttrs;
+    }
+
+    public void updateEllipse(Coord2D center, Real majorRadius, Real minorRadius, Real heading) {
         setCenter(Positions.fromCoord2D(center));
         setMajorRadius(majorRadius.getValue());
         setMinorRadius(minorRadius.getValue());
         setHeading(Angle.fromDegrees(heading.getValue()));
+    }
+
+    public void setInteriorColor(Color color) {
+        attrs.setInteriorMaterial(new Material(color));
+        setAttributes(attrs);
     }
 
 }
