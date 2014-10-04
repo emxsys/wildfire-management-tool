@@ -59,7 +59,7 @@
                     <attr name="source" stringvalue="LANDFIRE"/>
                 </file>
 
-                <file name="EVH.instance">
+<!--                <file name="EVH.instance">
                     <attr name="category" stringvalue="Vegetation"/>
                     <attr name="active" boolvalue="false"/>
                     <attr name="actuate" stringvalue="onRequest"/>
@@ -72,9 +72,9 @@
                     <attr name="opacity" doublevalue="0.5"/>
                     <attr name="position" intvalue="1202"/>
                     <attr name="source" stringvalue="LANDFIRE"/>
-                </file>
+                </file>-->
 
-                <file name="EVC.instance">
+<!--                <file name="EVC.instance">
                     <attr name="category" stringvalue="Vegetation"/>
                     <attr name="active" boolvalue="false"/>
                     <attr name="actuate" stringvalue="onRequest"/>
@@ -87,7 +87,7 @@
                     <attr name="opacity" doublevalue="0.5"/>
                     <attr name="position" intvalue="1203"/>
                     <attr name="source" stringvalue="LANDFIRE"/>
-                </file>
+                </file>-->
             
                 <!--            <file name="EVT.instance">
                     <attr name="active" boolvalue="false"/>
