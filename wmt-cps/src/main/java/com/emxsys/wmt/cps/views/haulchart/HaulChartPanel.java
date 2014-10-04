@@ -96,17 +96,17 @@ import visad.VisADException;
 public class HaulChartPanel extends javax.swing.JPanel {
 
     // Chart colors for fire behavior adjectives
-    final int ALPHA = 200;
-    final Color COLOR_LOW = new Color(128, 127, 255, ALPHA);         // blue
-    final Color COLOR_MODERATE = new Color(127, 193, 151, ALPHA);    // green
-    final Color COLOR_ACTIVE = new Color(255, 179, 130, ALPHA);      // tan
-    final Color COLOR_VERY_ACTIVE = new Color(255, 128, 255, ALPHA); // magenta
-    final Color COLOR_EXTREME = new Color(253, 128, 124, ALPHA);     // orange
+    static final int ALPHA = 200;
+    public static final Color COLOR_LOW = new Color(128, 127, 255, ALPHA);         // blue
+    public static final Color COLOR_MODERATE = new Color(127, 193, 151, ALPHA);    // green
+    public static final Color COLOR_ACTIVE = new Color(255, 179, 130, ALPHA);      // tan
+    public static final Color COLOR_VERY_ACTIVE = new Color(255, 128, 255, ALPHA); // magenta
+    public static final Color COLOR_EXTREME = new Color(253, 128, 124, ALPHA);     // orange
     // Flame Length thresholds
-    final double FL_THRESHOLD_LOW = 1D;
-    final double FL_THRESHOLD_MODERATE = 3D;
-    final double FL_THRESHOLD_ACTIVE = 7D;
-    final double FL_THRESHOLD_VERY_ACTIVE = 15D;
+    public static final double FL_THRESHOLD_LOW = 1D;
+    public static final double FL_THRESHOLD_MODERATE = 3D;
+    public static final double FL_THRESHOLD_ACTIVE = 7D;
+    public static final double FL_THRESHOLD_VERY_ACTIVE = 15D;
     int xMin = 10;
     int yMin = 1;
     int xMax = 11000;

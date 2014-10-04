@@ -35,14 +35,27 @@ import com.emxsys.gis.api.layer.BasicLayerCategory;
 import com.emxsys.gis.api.layer.BasicLayerGroup;
 import com.emxsys.gis.api.layer.BasicLayerType;
 import com.emxsys.util.AngleUtil;
+import com.emxsys.visad.GeneralUnit;
 import com.emxsys.wildfire.behavior.FireEllipse;
 import com.emxsys.wildfire.behavior.SurfaceFire;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.COLOR_ACTIVE;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.COLOR_EXTREME;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.COLOR_LOW;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.COLOR_MODERATE;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.COLOR_VERY_ACTIVE;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.FL_THRESHOLD_ACTIVE;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.FL_THRESHOLD_LOW;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.FL_THRESHOLD_MODERATE;
+import static com.emxsys.wmt.cps.views.haulchart.HaulChartPanel.FL_THRESHOLD_VERY_ACTIVE;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.GlobeEllipse;
+import java.awt.Color;
 import java.time.Duration;
+import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 import visad.Real;
+import visad.VisADException;
 
 /**
  * The class is renderable representative of a fire's shape.
@@ -52,11 +65,12 @@ import visad.Real;
 public class FireShape {
 
     // An ellipse is used to represent a wind-driven fire.
-    private final GlobeEllipse renderable;
     private RenderableGisLayer layer;
+    private final GlobeEllipse shape;
+    private Color shapeColor = Color.red;
 
     public FireShape() {
-        this.renderable = new GlobeEllipse();
+        this.shape = new GlobeEllipse();
     }
 
     /**
@@ -73,7 +87,7 @@ public class FireShape {
             // Get the fire's shape after the elapsed duration.
             FireEllipse ellipse = FireEllipse.from(fire, duration);
             if (ellipse == null) {
-                renderable.setVisible(false);
+                shape.setVisible(false);
                 return;
             }
 
@@ -82,14 +96,38 @@ public class FireShape {
             Coord2D ellipseCenter = Globe.computeGreatCircleCoordinate(origin,
                     ellipse.getHeading(),
                     ellipse.getOriginOffsetFromCenter());
+            
 
-            // Draw the renderable
-            renderable.update(ellipseCenter,
+            // Draw the renderable  
+            try {
+                double fln = fire.getFlameLength().getValue(GeneralUnit.foot);
+                Color flnColor;
+                if (fln < FL_THRESHOLD_LOW) {
+                    flnColor = COLOR_LOW;
+                } else if (fln < FL_THRESHOLD_MODERATE) {
+                    flnColor = COLOR_MODERATE;
+                } else if (fln < FL_THRESHOLD_ACTIVE) {
+                    flnColor = COLOR_ACTIVE;
+                } else if (fln < FL_THRESHOLD_VERY_ACTIVE) {
+                    flnColor = COLOR_VERY_ACTIVE;
+                } else {
+                    flnColor = COLOR_EXTREME;
+                }
+                if (flnColor != shapeColor) {
+                    shape.setInteriorColor(flnColor);
+                    shapeColor = flnColor;
+                }
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            
+            shape.updateEllipse(ellipseCenter,
                     ellipse.getMajorRadius(),
                     ellipse.getMinorRadius(),
                     new Real(ANGLE, AngleUtil.normalize360(ellipse.getHeading().getValue() + 90)));
-            if (!renderable.isVisible()) {
-                renderable.setVisible(true);
+
+            if (!shape.isVisible()) {
+                shape.setVisible(true);
             }
             Globe.getInstance().refreshView();
         });
@@ -101,7 +139,7 @@ public class FireShape {
             // has been initialized, else WorldWind configs are read from native WW.
             WindowManager.getDefault().invokeWhenUIReady(() -> {
                 layer = new RenderableGisLayer("Fire Shape", BasicLayerGroup.Overlay, BasicLayerType.Other, BasicLayerCategory.Other);
-                layer.addRenderable(renderable);
+                layer.addRenderable(shape);
                 Globe.getInstance().addGisLayer(layer);
             });
         }
