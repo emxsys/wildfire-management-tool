@@ -44,7 +44,12 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.Exceptions;
+import org.openide.util.RequestProcessor;
+import org.openide.util.RequestProcessor.Task;
 import visad.Data;
 import visad.FlatField;
 import visad.RealTuple;
@@ -73,20 +78,26 @@ public class WeatherManager {
     private ZonedDateTime hour;
     private Duration historyPeriod = Duration.ofHours(24);
     private Duration forecastPeriod = Duration.ofHours(72);
-    private TemporalDomain forecastTimeframe;
-    private TemporalDomain observationTimeframe;
-    private SpatialDomain spatialDomain;
+    private final AtomicReference<TemporalDomain> forecastTimeframe = new AtomicReference<>();
+    private final AtomicReference<TemporalDomain> observationTimeframe = new AtomicReference<>();
+    private final AtomicReference<SpatialDomain> spatialDomain = new AtomicReference<>();
     private WeatherModel weatherForecast;
     private WeatherModel weatherObservations;
 
+    private final RequestProcessor executor = new RequestProcessor(WeatherManager.class);
+    private Task refreshTask;
+
     /**
-     * Private constructor. Use WeatherManager.getInstance().
+     * Private constructor. Use WeatherManager.getInstance() to get the singleton.
      */
     private WeatherManager() {
-        updateTime(ZonedDateTime.now());
+        updateTime(null);
     }
 
-    // Automatically update the weather when the system time advances past the top-of-the-hour
+    /**
+     * Automatically update the weather forecast when the system time advances past the
+     * top-of-the-hour.
+     */
     public void updateTime(ZonedDateTime ignored) {
         // real-time observations and forecast are relative to the current clock time, not application time.
         ZonedDateTime currentHour = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS);
@@ -96,51 +107,80 @@ public class WeatherManager {
             ZonedDateTime start = hour.minus(historyPeriod);
             ZonedDateTime end = hour.plus(forecastPeriod);
 
-            observationTimeframe = TemporalDomain.from(start, hour);
-            forecastTimeframe = TemporalDomain.from(hour, end);
+            observationTimeframe.set(TemporalDomain.from(start, hour));
+            forecastTimeframe.set(TemporalDomain.from(hour, end));
 
             refreshModels();
         }
     }
 
-    // Update the weather's spatial domain when the project's sector/area-of-interest changes
-    public void updateCoord(Coord2D coord) {
+    /**
+     * Update the weather's spatial domain when the project's sector/area-of-interest changes
+     */
+    public synchronized void updateCoord(Coord2D coord) {
         // Ensure the current area of interest is meets the minumum spatial domain requirements
-        if (spatialDomain == null || !spatialDomain.contains(coord)) {
-            double lat = coord.getLatitudeDegrees();
-            double lon = coord.getLongitudeDegrees();
+        SpatialDomain domain = spatialDomain.get();
+        if (domain == null || !domain.contains(coord)) {
 
             // Create a one-degree sector around the position of interest.
-            GeoCoord2D sw = GeoCoord2D.fromDegrees(lat - .5, lon - .5);
-            GeoCoord2D ne = GeoCoord2D.fromDegrees(lat + .5, lon + .5);
+            // TODO: Make the area of interest size a configurable CPS Option.
+            double lat = coord.getLatitudeDegrees();
+            double lon = coord.getLongitudeDegrees();
+            GeoCoord2D sw = GeoCoord2D.fromDegrees(lat - .1, lon - .1);
+            GeoCoord2D ne = GeoCoord2D.fromDegrees(lat + .1, lon + .1);
 
-            // Set the domain to the sector extents
-            spatialDomain = SpatialDomain.from(sw, ne, 4, 4);
+            // Set the domain to the sector's extents
+            // TODO: Make the number of grid points a configurable CPS Option
+            spatialDomain.set(SpatialDomain.from(sw, ne, 10, 10));
 
             refreshModels();
         }
     }
 
-    public void refreshModels() {
+    public synchronized void refreshModels() {
         // Prerequisites
-        if (spatialDomain == null || forecastTimeframe == null) {
+        if (spatialDomain.get() == null || forecastTimeframe.get() == null) {
             return;
         }
-        // Update weather forecast
-        if (forecaster != null) {
-            System.out.println("Getting Forecast for:");
-            System.out.println(forecastTimeframe.toString());
 
-            weatherForecast = forecaster.getForecast(spatialDomain, forecastTimeframe);
-            // Remove any stale forecasts
-            //forecastCache.clear();
+        // Perform task in a worker thread.
+        if (refreshTask == null) {
+            
+            // Create the runnable task
+            refreshTask = executor.create(() -> {
+                
+                // Create a 'cancellable' progress bar
+                ProgressHandle progressBar = ProgressHandleFactory.createHandle("Downloading weather", refreshTask);
+                try {
+                    // Update weather forecast
+                    progressBar.start();
+                    if (forecaster != null) {
+                        System.out.println("Getting Forecast for:");
+                        System.out.println(forecastTimeframe.get().toString());
+                        progressBar.progress("Downloading weather forecast");
+
+                        weatherForecast = forecaster.getForecast(spatialDomain.get(), forecastTimeframe.get());
+                        // Remove any stale forecasts
+                        //forecastCache.clear();
+                    }
+
+                    // Update weather history
+                    if (observer != null) {
+                        progressBar.progress("Downloading weather observations");
+                        weatherObservations = observer.getObservations(spatialDomain.get(), observationTimeframe.get());
+                        // No need to flush cache...observations do not change over time.
+                        //observationCache.clear();
+                    }
+                } finally {
+                    progressBar.finish();
+                }
+            }, true);
         }
-        // Update weather history
-        if (observer != null) {
-            weatherObservations = observer.getObservations(spatialDomain, observationTimeframe);
-            // No need to flush cache...observations do not change over time.
-            //observationCache.clear();
-        }
+
+        // Coellese refresh requests.  Each refresh request (re)postpones the task.
+        // The refresh will occur when the system is motionless for the specified delay time.
+        int msDelay = 1000; // TODO: Make the delay time a configurable CpsOption.
+        refreshTask.schedule(msDelay);
     }
 
     public WeatherTuple getCurrentWeatherAt(Coord2D coord) {
@@ -195,28 +235,32 @@ public class WeatherManager {
     }
 
     public WeatherTuple getWeatherAt(Coord2D coord, ZonedDateTime time) {
-        // Prerequistes
-        WeatherModel model;
-        Map<Long, FlatField> cache;
-        if (observationTimeframe.contains(time)) {
-            if (weatherObservations == null) {
-                throw new IllegalStateException("weatherObservations is null.");
+        WeatherModel model = null;
+        Map<Long, FlatField> cache = null;
+
+        // Temporal prerequistes: ensure a model exists for the temporal domain
+        TemporalDomain obsTime = observationTimeframe.get();
+        TemporalDomain fcstTime = forecastTimeframe.get();
+        if (obsTime != null && obsTime.contains(time)) {
+            if (weatherObservations != null) {
+                model = weatherObservations;
+                cache = observationCache;
             }
-            model = weatherObservations;
-            cache = observationCache;
-        } else if (forecastTimeframe.contains(time)) {
+        } else if (fcstTime != null && fcstTime.contains(time)) {
             // Ensure the model contains the time
-            if (weatherForecast == null) {
-                throw new IllegalStateException("weatherForecast is null.");
+            if (weatherForecast != null) {
+                model = weatherForecast;
+                cache = forecastCache;
             }
-            model = weatherForecast;
-            cache = forecastCache;
-        } else {
+        }
+        if (model == null || cache == null) {
             return WeatherTuple.INVALID_TUPLE;
         }
         //System.out.println(model);
 
-        if (!spatialDomain.contains(coord)) {
+        // Spatial prerequisite: ensure the spatial domain is valid
+        SpatialDomain area = spatialDomain.get();
+        if (area == null || !area.contains(coord)) {
             return WeatherTuple.INVALID_TUPLE;
         }
         // Get the hourly floor and cache key for the hour-by-hour weather
@@ -264,6 +308,7 @@ public class WeatherManager {
 
     public WeatherModel getWeatherHistory() {
         return weatherObservations;
+
     }
 
     /**
