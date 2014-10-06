@@ -97,12 +97,13 @@ public final class AddPushpinAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         // Create a pushpin in memory (not a DataObject)
         Pushpin pushpin = new Pushpin("Pushpin", GeoCoord3D.INVALID_COORD);
 
         // Position the marker on the globe where clicked. The positioner is released on click or ESC.
         MarkerPositioner positioner = new MarkerPositioner(wwm.getWorldWindow(), pushpin);
-        PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
+        positioner.addPropertyChangeListener((evt) -> {
             if (evt.getPropertyName().equals("armed") && evt.getNewValue().equals(false)) {
                 if (positioner.isCanceled()) {
                     return;
@@ -116,8 +117,7 @@ public final class AddPushpinAction implements ActionListener {
                             .write();
                 }
             }
-        };
-        positioner.addPropertyChangeListener(WeakListeners.propertyChange(listener, positioner));
+        });
 
         // Force keyboard focus to globe
         Globe.getInstance().getRendererComponent().requestFocusInWindow();
