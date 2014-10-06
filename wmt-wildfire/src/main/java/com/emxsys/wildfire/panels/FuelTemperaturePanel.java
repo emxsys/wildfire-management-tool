@@ -60,7 +60,7 @@ public class FuelTemperaturePanel extends javax.swing.JPanel {
     private FuelTemperatureChart chart;
     private Unit uom;
     private double range;
-    private static final Real maxFuelTemp = new Real(FUEL_TEMP_F, 180);
+    private static final Real maxFuelTemp = new Real(FUEL_TEMP_F, 140);
     private static final Real minFuelTemp = new Real(FUEL_TEMP_F, 32);
 
     /**
