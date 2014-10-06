@@ -158,6 +158,19 @@ public class SurfaceFire implements FireBehavior {
     }
 
     /**
+     * Gets the rate of spread of the flanking fire (90 degrees from direction of max spread): ros.
+     * @return Flanking fire rate of spread, ros [ft/min]
+     */
+    public Real getRateOfSpreadFlanking() {
+        double ros = 0;
+        if (this.fuelBed.isBurnable()) {
+            double azimuth = AngleUtil.normalize360(getDirectionMaxSpread().getValue() + 90);
+            return getRateOfSpreadAtAzimuth(new Real(azimuth));
+        }
+        return new Real(ROS, ros);
+    }
+
+    /**
      * Gets the rate of spread of the fire along a given azimuth (true north): ros.
      * @param azimuth A true north azimuth [degrees].
      * @return The rate of spread, ros, along the azimuth [ft/min].
@@ -289,7 +302,7 @@ public class SurfaceFire implements FireBehavior {
         if (this.fuelBed.isBurnable()) {
             if (this.rateOfSpread == null) {
 
-                // Compute phiEw, effective wind and spread direction
+                // Compute phiEw, effective wind and spread direction, and eccentricity
                 calcWindAndSlopeEffects(windSpd, windDir, aspect, slope);
 
                 double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
