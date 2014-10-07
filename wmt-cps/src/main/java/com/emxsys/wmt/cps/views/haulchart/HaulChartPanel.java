@@ -31,10 +31,10 @@ package com.emxsys.wmt.cps.views.haulchart;
 
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
+import com.emxsys.wildfire.api.WildfirePreferences;
 import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wmt.cps.Model;
-import com.emxsys.wmt.cps.options.CpsOptions;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -48,8 +48,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.text.DecimalFormat;
-import java.time.ZonedDateTime;
-import java.util.prefs.Preferences;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
@@ -84,7 +82,6 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
-import org.openide.util.NbPreferences;
 import visad.CommonUnit;
 import visad.Unit;
 import visad.VisADException;
@@ -114,24 +111,22 @@ public class HaulChartPanel extends javax.swing.JPanel {
     private JFreeChart chart;
     private XYSeriesCollection dataset;
     private XYSeries seriesMax;
-    private XYSeries seriesNoWnd;
+    private XYSeries seriesFlank;
     private LogAxis xAxis;
     private LogAxis yAxis;
     private TextTitle subTitle;
-    private final Preferences pref;
-    private final boolean useSI;
-    private final Unit heatUOM;
-    private final Unit rosUOM;
-    private final Unit flnUOM;
-    private final Unit fliUOM;
-    private final Unit heatUS;
-    private final Unit rosUS;
-    private final Unit flnUS;
-    private final Unit fliUS;
-    private final String heatStr;
-    private final String rosStr;
-    private final String flnStr;
-    private final String fliStr;
+    private Unit heatUOM;
+    private Unit rosUOM;
+    private Unit flnUOM;
+    private Unit fliUOM;
+    private final Unit heatUS = FireUnit.Btu_ft2;
+    private final Unit rosUS = FireUnit.chain_hour;
+    private final Unit flnUS = GeneralUnit.foot;
+    private final Unit fliUS = FireUnit.Btu_ft_s;
+    private String heatStr;
+    private String rosStr;
+    private String flnStr;
+    private String fliStr;
     private SurfaceFuel fuel;
     private SurfaceFire fire;
     private final Object fuelLock = new Object();
@@ -224,27 +219,8 @@ public class HaulChartPanel extends javax.swing.JPanel {
      * Creates new form HaulChart
      */
     public HaulChartPanel() {
-        pref = NbPreferences.forModule(CpsOptions.class);
-        String uom = pref.get(CpsOptions.UOM_KEY, CpsOptions.UOM_US);
-        useSI = !uom.matches(CpsOptions.UOM_US);
 
-        // Heat Release
-        heatUS = FireUnit.Btu_ft2;
-        heatUOM = useSI ? FireUnit.kJ_m2 : FireUnit.Btu_ft2;
-        heatStr = (useSI ? "kJ/m^2" : "btu/ft^2");
-        // Rate of Spread
-        rosUS = FireUnit.chain_hour;
-        rosUOM = useSI ? FireUnit.meter_minute : FireUnit.chain_hour;
-        rosStr = (useSI ? "m/min" : "ch/hr");
-        // Flame Length
-        flnUS = GeneralUnit.foot;
-        flnUOM = useSI ? CommonUnit.meter : GeneralUnit.foot;
-        flnStr = (useSI ? "m" : "ft");
-        // Byram's fire line intensity
-        fliUS = FireUnit.Btu_ft_s;
-        fliUOM = useSI ? FireUnit.kW_m : FireUnit.Btu_ft_s;
-        fliStr = (useSI ? "kW/m" : "btu/ft/s");
-
+        initUnitsOfMeasure();
         initComponents();
         initChart();
         // Now update the charts from values in the CPS data model
@@ -261,7 +237,45 @@ public class HaulChartPanel extends javax.swing.JPanel {
             }
             plotFireBehavior();
         });
+        
+        // React to Wildfire Options
+        WildfirePreferences.addPreferenceChangeListener((e) -> {
+            initUnitsOfMeasure();
+        });
 
+    }
+
+    private void initUnitsOfMeasure() throws IllegalStateException {
+        // Heat Release
+        heatUOM = WildfirePreferences.getHeatReleaseUnit();
+        heatStr = (heatUOM == FireUnit.kJ_m2 ? "kJ/m^2" : "btu/ft^2");
+
+        // Rate of Spread
+        rosUOM = WildfirePreferences.getRateOfSpreadUnit();
+        switch (WildfirePreferences.getRateOfSpreadUom()) {
+            case WildfirePreferences.UOM_CHAINS:
+                rosStr = "ch/hr";
+                break;
+            case WildfirePreferences.UOM_KPH:
+                rosStr = "kph";
+                break;
+            case WildfirePreferences.UOM_MPH:
+                rosStr = "mph";
+                break;
+            case WildfirePreferences.UOM_MPS:
+                rosStr = "mps";
+                break;
+            default:
+                throw new IllegalStateException("unhandled ROS: " + WildfirePreferences.getRateOfSpreadUom());
+        }
+
+        // Flame Length
+        flnUOM = WildfirePreferences.getFlameLengthUnit();
+        flnStr = (flnUOM == CommonUnit.meter ? "m" : "ft");
+
+        // Byram's fire line intensity
+        fliUOM = WildfirePreferences.getByramsIntensityUnit();
+        fliStr = (fliUOM == FireUnit.kW_m ? "kW/m" : "btu/ft/s");
     }
 
     /**
@@ -273,7 +287,7 @@ public class HaulChartPanel extends javax.swing.JPanel {
     private void plotFireBehavior() {
         // Resetting the chart so we don't display stale data if we don't have a valid fire.
         seriesMax.clear();
-        seriesNoWnd.clear();
+        seriesFlank.clear();
         if (fuel == null || fire == null) {
             chart.clearSubtitles();
             return;
@@ -286,62 +300,62 @@ public class HaulChartPanel extends javax.swing.JPanel {
         }
 
         // Get values in units compatible with Chart        
-        double heatMax = 0;
+        double heat = 0;
         double rosMax = 0;
-        double rosNoWnd = 0;
+        double rosFlank = 0;
         double fln = 0;
         double fli = 0;
-        double heatMax_US = 0;
+        double heat_US = 0;
         double rosMax_US = 0;
         double btuNoWnd_US = 0;
-        double rosNoWnd_US = 0;
+        double rosFlank_US = 0;
         double fln_US = 0;
         double fli_US = 0;
         try {
             // Use US values for placement inside the chart
-            heatMax_US = fuel.getHeatRelease().getValue(heatUS);
+            heat_US = fuel.getHeatRelease().getValue(heatUS);
             rosMax_US = fire.getRateOfSpreadMax().getValue(rosUS);
-            rosNoWnd_US = fire.getRateOfSpreadNoWindNoSlope().getValue(rosUS);
+            rosFlank_US = fire.getRateOfSpreadFlanking().getValue(rosUS);
             fln_US = fire.getFlameLength().getValue(flnUS);
             fli_US = fire.getFirelineIntensity().getValue(fliUS);
 
             // Get values used for labels
-            heatMax = fuel.getHeatRelease().getValue(heatUOM);
+            heat = fuel.getHeatRelease().getValue(heatUOM);
             rosMax = fire.getRateOfSpreadMax().getValue(rosUOM);
-            rosNoWnd = fire.getRateOfSpreadNoWindNoSlope().getValue(rosUOM);
+            rosFlank = fire.getRateOfSpreadFlanking().getValue(rosUOM);
             fln = fire.getFlameLength().getValue(flnUOM);
             fli = fire.getFirelineIntensity().getValue(fliUOM);
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
         // Add our two x/y points
-        seriesMax.add(heatMax_US, rosMax_US);
-        seriesNoWnd.add(btuNoWnd_US, rosNoWnd_US);
+        seriesMax.add(heat_US, rosMax_US);
+        seriesFlank.add(heat_US, rosFlank_US);
         // Add marker lines to follow Rate of Spread
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.clearRangeMarkers();
         plot.clearDomainMarkers();
 
-        // Add a labeled marker for "no wind" ROS
+        // Add a labeled marker for "flanking" ROS
         Font font = new Font("SansSerif", Font.BOLD, 12);
         DecimalFormat dfRos = new DecimalFormat("#0.0 " + rosStr);
-        Marker mrkRosNoWnd = new ValueMarker(rosNoWnd_US);
-        mrkRosNoWnd.setLabelOffsetType(LengthAdjustmentType.EXPAND);
-        mrkRosNoWnd.setPaint(Color.blue);
-        mrkRosNoWnd.setLabel(dfRos.format(rosNoWnd) + " ROS-No Wind/Slope");
-        mrkRosNoWnd.setLabelFont(font);
-        mrkRosNoWnd.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
-        mrkRosNoWnd.setLabelTextAnchor(TextAnchor.TOP_LEFT);
-        plot.addRangeMarker(mrkRosNoWnd);
+        Marker mrkRosFlank = new ValueMarker(rosFlank_US);
+        mrkRosFlank.setLabelOffsetType(LengthAdjustmentType.EXPAND);
+        mrkRosFlank.setPaint(Color.blue);
+        mrkRosFlank.setLabel(dfRos.format(rosFlank) + " ROS-Flank");
+        mrkRosFlank.setLabelFont(font);
+        mrkRosFlank.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+        mrkRosFlank.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+        plot.addRangeMarker(mrkRosFlank);
 
         // Add a labeled marker for HPA
         DecimalFormat dfBtu = new DecimalFormat("#0 " + heatStr);
-        Marker mrkBtu = new ValueMarker(heatMax_US);
+        Marker mrkBtu = new ValueMarker(heat_US);
         mrkBtu.setLabelOffsetType(LengthAdjustmentType.EXPAND);
         mrkBtu.setPaint(Color.black);
         mrkBtu.setLabelFont(font);
-        mrkBtu.setLabel(dfBtu.format(heatMax) + " HPA");
-        if (heatMax_US < 1000) {
+        mrkBtu.setLabel(dfBtu.format(heat) + " HPA");
+        if (heat_US < 1000) {
             mrkBtu.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
             mrkBtu.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
         } else {
@@ -363,12 +377,12 @@ public class HaulChartPanel extends javax.swing.JPanel {
         // Label FlameLength with arrow and label...
         DecimalFormat dfFln = new DecimalFormat("#0.0 " + flnStr);
         CircleDrawer cd = new CircleDrawer(Color.red, new BasicStroke(1.0f), null);
-        XYAnnotation annFln = new XYDrawableAnnotation(heatMax_US, rosMax_US, 11, 11, cd);
+        XYAnnotation annFln = new XYDrawableAnnotation(heat_US, rosMax_US, 11, 11, cd);
         plot.clearAnnotations();
         plot.addAnnotation(annFln);
         XYPointerAnnotation pointer = new XYPointerAnnotation(
                 dfFln.format(fln) + " Flame",
-                heatMax_US,
+                heat_US,
                 rosMax_US, (rosMax_US > 550 ? 3.0 : 5.0) * Math.PI / 4.0);
         pointer.setBaseRadius(35.0);
         pointer.setTipRadius(10.0);
@@ -383,7 +397,7 @@ public class HaulChartPanel extends javax.swing.JPanel {
         // Adjust the range to grow if it exceeds the minimum
         // This will also reset the chart in case the user zoomed in/out,
         // which is helpfull because I was unable to reset it interactively.
-        xAxis.setRange(xMin, Math.max(xMax, heatMax_US));
+        xAxis.setRange(xMin, Math.max(xMax, heat_US));
         yAxis.setRange(yMin, Math.max(yMax, rosMax_US));
     }
 
@@ -398,12 +412,12 @@ public class HaulChartPanel extends javax.swing.JPanel {
                 DEFAULT_MAXIMUM_DRAW_HEIGHT,
                 DEFAULT_BUFFER_USED,
                 false, // properties
-                true,  // save
-                true,  // print
+                true, // save
+                true, // print
                 false, // zoom
                 true); // tooltips
         chartPanel.setMouseZoomable(false);
-                
+
         add(chartPanel, BorderLayout.CENTER);
     }
 
@@ -430,9 +444,9 @@ public class HaulChartPanel extends javax.swing.JPanel {
         yAxis.setRange(yMin, yMax);
 
         seriesMax = new XYSeries("Max Spread");
-        seriesNoWnd = new XYSeries("No Wind/No Slope Spread");
+        seriesFlank = new XYSeries("No Wind/No Slope Spread");
         dataset = new XYSeriesCollection(seriesMax);
-        dataset.addSeries(seriesNoWnd);
+        dataset.addSeries(seriesFlank);
 
         chart = ChartFactory.createScatterPlot(title, xAxisTitle, yAxisTitle,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
