@@ -114,13 +114,16 @@ public abstract class Ant implements Agent {
 
     @Override
     public boolean update() {
+        // Is this ant done?
         if (goal.isFinished()) {
             return true;
         }
+        // Execute this ant's goal.
         boolean success = goal.execute(this);
         switch (goal.getType()) {
             case Forage:
                 if (success) {
+                    // Is the ant done now?
                     if (goal.isFinished()) {
                         // Add the completed path to the environment
                         environment.addPath(new Path(coords, elapsedTime));
@@ -130,12 +133,12 @@ public abstract class Ant implements Agent {
                     }
                     return true;
                 } else {
+                    // Kill the ant if it's unable to complete it's foraging task (trapped?)
                     killMe();
                     return false;
                 }
             default:
         }
-
         return false;
     }
 
@@ -154,7 +157,7 @@ public abstract class Ant implements Agent {
 
     @Override
     public String toString() {
-        return "Ant{" + "id=" + id + ", alive=" + alive + ", working=" + working + ", coords=" + coords.size() + '}';
+        return "Ant{" + "id=" + id + ", alive=" + alive + ", working=" + working + ", location=" + getLocation() + '}';
     }
 
     

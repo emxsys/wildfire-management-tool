@@ -29,7 +29,19 @@
  */
 package com.emxsys.wmt.swarm.fireants;
 
+import com.emxsys.gis.api.Coord2D;
+import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.GeoSector;
+import com.emxsys.visad.SpatialDomain;
+import com.emxsys.visad.TemporalDomain;
+import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.api.services.WeatherObserver;
+import com.emxsys.wmt.swarm.api.Asset;
 import com.emxsys.wmt.swarm.api.Environment;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -37,6 +49,42 @@ import com.emxsys.wmt.swarm.api.Environment;
  */
 public class World extends Environment {
 
+    private GeoCoord2D nest;
+    private ArrayList<FireAnt> ants = new ArrayList<>();
     
+    public World() {
+        // Setup environment
+        setExtents(new GeoSector(
+                GeoCoord2D.fromDegrees(34.4, -119.2),
+                GeoCoord2D.fromDegrees(34.50, -119.4)));
 
+        Asset asset = new Asset(Asset.Value.High, new GeoSector(
+                GeoCoord2D.fromDegrees(34.49, -119.35),
+                GeoCoord2D.fromDegrees(34.495, -119.36)));
+        addAsset(asset);
+
+        nest = GeoCoord2D.fromDegrees(34.41, -119.25);
+        for (int i = 0; i < 10; i++) {
+            ants.add(new FireAnt(new Forage(), nest, this));
+}
+        
+        // Initialize world time to noon 
+        setTime(ZonedDateTime.now().withHour(12).plusDays(1));
+        
+        DiurnalWeatherProvider wxProvider = getLookup().lookup(DiurnalWeatherProvider.class);
+        wxProvider.initializeSunlight(getTime(), GeoCoord3D.fromCoord(nest));
+        
+        SpatialDomain area = SpatialDomain.from(getExtents().getSouthwest(), getExtents().getNortheast());
+        TemporalDomain timeframe = TemporalDomain.from(getTime(), getTime().plusDays(2));
+        setWeatherModel(wxProvider.getService(WeatherObserver.class).getObservations(area, timeframe));
+        
+    }
+
+    public Coord2D getNest() {
+        return nest;
+    }
+
+    public List<FireAnt> getAnts() {
+        return ants;
+    }
 }

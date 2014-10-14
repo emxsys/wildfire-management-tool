@@ -77,8 +77,9 @@ public class AssetShape {
 
     void initialize() {
         if (layer == null) {
-            // Add the layer the globe. But defer creating the layer until Globe 
-            // has been initialized, else WorldWind configs are read from native WW.
+            // Add the layer the globe. But defer creating the layer until the Globe 
+            // has been initialized, else WorldWind configs are read from native WW 
+            // instead of XML Layer specs.
             WindowManager.getDefault().invokeWhenUIReady(() -> {
                 layer = new RenderableGisLayer("Assets", BasicLayerGroup.Overlay, BasicLayerType.Other, BasicLayerCategory.Other);
                 layer.addRenderable(renderable);

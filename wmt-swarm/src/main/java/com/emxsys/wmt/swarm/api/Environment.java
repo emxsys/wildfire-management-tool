@@ -36,7 +36,9 @@ import com.emxsys.gis.api.TerrainProvider;
 import com.emxsys.gis.spi.TerrainProviderFactory;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.Weather;
+import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
+import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import java.time.ZonedDateTime;
@@ -59,15 +61,16 @@ public class Environment implements Lookup.Provider {
     private ZonedDateTime time;
     private TerrainProvider terrainProvider;
     private WeatherProvider weatherProvider;
-    private WeatherObserver wxObserver;
+    private WeatherForecaster wxForecaster;
+    private WeatherModel weatherModel;
     private final ArrayList<Path> paths = new ArrayList<>();
 
     @Override
     public Lookup getLookup() {
         if (lookup == null) {
             // Deferred initialization
-            content.add(new DiurnalWeatherProvider());
             content.add(TerrainProviderFactory.getInstance());
+            content.add(new DiurnalWeatherProvider());
             content.add(new SurfaceFireProvider());
 
             lookup = new AbstractLookup(content);
@@ -111,15 +114,12 @@ public class Environment implements Lookup.Provider {
         return terrainProvider.getTerrain(coord);
     }
 
+    public void setWeatherModel(WeatherModel weatherModel) {
+        this.weatherModel = weatherModel;
+    }
+
     public Weather getWeather(Coord2D coord) {
-        throw new UnsupportedOperationException("getWeather not implemented.");
-        // TODO: get weather from WeatherModel instead of wxObserver
-        // TODO: WeatherModel should be set externally.
-//        if (weatherProvider == null) {
-//            weatherProvider = getLookup().lookup(WeatherProvider.class);
-//            wxObserver = weatherProvider.getCapability(WeatherObserver.class);
-//        }
-//        return wxObserver.getCurrentConditions(time, coord);
+        return weatherModel.getWeather(time, coord);
     }
 
     public boolean doesPointIntersectAsset(Coord2D destination) {
