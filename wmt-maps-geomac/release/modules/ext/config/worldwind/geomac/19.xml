@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>Previous Perimeters : 19</DisplayName>
+    <DisplayName>Previous MODIS : 19</DisplayName>
     <DatasetName>19</DatasetName>
-    <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\19\default</DataCacheName>
+    <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\PrevModis\default</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
         <LayerNames>19</LayerNames>
         <StyleNames>default</StyleNames>
@@ -12,10 +12,10 @@
     <NumLevels count="19" numEmpty="0"/>
     <Sector>
         <SouthWest>
-            <LatLon latitude="3.3864261395352" longitude="-164.430086505212" units="degrees"/>
+            <LatLon latitude="17.9938871939449" longitude="-169.962824902874" units="degrees"/>
         </SouthWest>
         <NorthEast>
-            <LatLon latitude="70.1591616806822" longitude="-65.3331601881966" units="degrees"/>
+            <LatLon latitude="70.337355041864" longitude="-50.4252046780034" units="degrees"/>
         </NorthEast>
     </Sector>
     <TileOrigin>

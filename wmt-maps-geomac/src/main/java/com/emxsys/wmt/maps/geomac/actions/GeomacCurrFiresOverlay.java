@@ -74,7 +74,7 @@ import org.openide.util.NbBundle.Messages;
 public final class GeomacCurrFiresOverlay extends AbstractGisLayerToggleAction {
 
     private static final Logger logger = Logger.getLogger(GeomacCurrFiresOverlay.class.getName());
-    private static final String OVERLAY_NAME = NbBundle.getBundle("com.emxsys.wmt.maps.geomac.Bundle").getString("Layers.Layer24");
+    private static final String OVERLAY_NAME = NbBundle.getBundle("com.emxsys.wmt.maps.geomac.Bundle").getString("Layers.LayerCurrFirePoints");
     private static final String ICON_BASE = "com/emxsys/wmt/maps/geomac/images/map.png";
 
     public GeomacCurrFiresOverlay() {
