@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>HMS Thermal Satellite : 22</DisplayName>
-    <DatasetName>22</DatasetName>
-    <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\HmsThermalSat\default</DataCacheName>
+    <DisplayName>Current Fires : 25</DisplayName>
+    <DatasetName>25</DatasetName>
+    <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\CurrFirePoints\default</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
-        <LayerNames>22</LayerNames>
+        <LayerNames>25</LayerNames>
         <StyleNames>default</StyleNames>
         <GetMapURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
         <GetCapabilitiesURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
@@ -12,10 +12,10 @@
     <NumLevels count="19" numEmpty="0"/>
     <Sector>
         <SouthWest>
-            <LatLon latitude="8.06499999998151" longitude="-165.267999999744" units="degrees"/>
+            <LatLon latitude="18.138" longitude="-163.492" units="degrees"/>
         </SouthWest>
         <NorthEast>
-            <LatLon latitude="70.4929999999558" longitude="-65.5940000002917" units="degrees"/>
+            <LatLon latitude="70.138" longitude="-11.277" units="degrees"/>
         </NorthEast>
     </Sector>
     <TileOrigin>

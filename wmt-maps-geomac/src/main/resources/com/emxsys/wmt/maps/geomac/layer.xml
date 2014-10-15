@@ -62,7 +62,7 @@
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
                     <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/hist_fire_perim.jpg"/>
                 </file>
-                <file name="Layer19.instance">
+                <file name="LayerPrevFirePerims.instance">
                     <attr name="type" stringvalue="Raster"/>
                     <attr name="role" stringvalue="Overlay"/>
                     <attr name="category" stringvalue="Hazards"/>
@@ -70,18 +70,18 @@
                     <attr name="active" boolvalue="false"/>
                     <attr name="name" stringvalue="Previous Perimeters"/>
                     <attr name="actuate" stringvalue="onRequest"/>
-                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer19"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer20"/>
                     <attr name="position" intvalue="1400"/>
                     <!-- Look for our custom file resource under the cluster/modules/ext folder -->
-                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/19.xml"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/PrevFirePerims.xml"/>
                     <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
                     <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/PerimetersInactive.jpg"/>
                     <!--Tiles expire in 12hrs, and the layer is refreshed every hour-->
-                    <attr name="expirationAgeSeconds" intvalue="43200"/>
-                    <attr name="refreshIntervalSeconds" intvalue="3600"/>
+<!--                    <attr name="expirationAgeSeconds" intvalue="43200"/>
+                    <attr name="refreshIntervalSeconds" intvalue="3600"/>-->
                 </file>
-                <file name="Layer20.instance">
+                <file name="LayerAllCurrYearFires.instance">
                     <attr name="type" stringvalue="Raster"/>
                     <attr name="role" stringvalue="Overlay"/>
                     <attr name="category" stringvalue="Hazards"/>
@@ -89,18 +89,18 @@
                     <attr name="active" boolvalue="false"/>
                     <attr name="name" stringvalue="All Current Year Fires"/>
                     <attr name="actuate" stringvalue="onRequest"/>
-                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer20"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.LayerAllCurrYearFires"/>
                     <attr name="position" intvalue="1400"/>
                     <!-- Look for our custom file resource under the cluster/modules/ext folder -->
-                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/20.xml"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/21.xml"/>
                     <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
                     <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/current_fires.png"/>
                     <!--Tiles expire in 12hrs, and the layer is refreshed every hour-->
-                    <attr name="expirationAgeSeconds" intvalue="43200"/>
-                    <attr name="refreshIntervalSeconds" intvalue="3600"/>
+<!--                    <attr name="expirationAgeSeconds" intvalue="43200"/>
+                    <attr name="refreshIntervalSeconds" intvalue="3600"/>-->
                 </file>
-                <file name="Layer23.instance">
+                <file name="LayerCurrFirePerims.instance">
                     <attr name="type" stringvalue="Raster"/>
                     <attr name="role" stringvalue="Overlay"/>
                     <attr name="category" stringvalue="Hazards"/>
@@ -108,10 +108,10 @@
                     <attr name="active" boolvalue="false"/>
                     <attr name="name" stringvalue="Current Fire Perimeters"/>
                     <attr name="actuate" stringvalue="onRequest"/>
-                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer23"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.LayerCurrFirePerims"/>
                     <attr name="position" intvalue="1400"/>
                     <!-- Look for our custom file resource under the cluster/modules/ext folder -->
-                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/23.xml"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/CurrFirePerims.xml"/>
                     <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
                     <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/PerimetersActive.jpg"/>
@@ -119,7 +119,7 @@
                     <attr name="expirationAgeSeconds" intvalue="43200"/>
                     <attr name="refreshIntervalSeconds" intvalue="3600"/>
                 </file>
-                <file name="Layer24.instance">
+                <file name="LayerCurrFirePoints.instance">
                     <attr name="type" stringvalue="Raster"/>
                     <attr name="role" stringvalue="Overlay"/>
                     <attr name="category" stringvalue="Hazards"/>
@@ -127,10 +127,10 @@
                     <attr name="active" boolvalue="false"/>
                     <attr name="name" stringvalue="Current Fires"/>
                     <attr name="actuate" stringvalue="onRequest"/>
-                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer24"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.LayerCurrFirePoints"/>
                     <attr name="position" intvalue="1400"/>
                     <!-- Look for our custom file resource under the cluster/modules/ext folder -->
-                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/24.xml"/>
+                    <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/CurrFirePoints.xml"/>
                     <attr name="instanceClass" stringvalue="gov.nasa.worldwind.layers.Layer"/>
                     <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.LayerFactory.createLayer"/>
                     <attr name="legendImage" stringvalue="com/emxsys/wmt/maps/geomac/images/current_fires.jpg"/>

@@ -210,7 +210,7 @@ public final class LayerFactory {
          * RefreshService constructor.
          * @param layer to refresh
          * @param expirationAge The expiration age of a layer tile, in seconds after initialization.
-         * @param refreshPeriod The amount of time to wait before checking for expiration.
+         * @param refreshPeriod The amount of time in seconds to wait before checking for expiration.
          */
         RefreshService(final Layer layer, final long expirationAge, final long refreshPeriod) {
 
@@ -219,8 +219,8 @@ public final class LayerFactory {
                 public void run() {
                     // If greater than zero, the layer ignores and eliminates any previously cached 
                     // data older than the time specified, and requests new information from the data source.
-                    layer.setExpiryTime(System.currentTimeMillis() + (expirationAge * 1000));
-                    System.out.println(" Refreshing " + layer.getName() + ", expiration time: " + LocalDateTime.ofEpochSecond(layer.getExpiryTime(), 0, ZoneOffset.UTC));
+                    layer.setExpiryTime(System.currentTimeMillis() - (expirationAge * 1000));
+                    System.out.println(" RefreshService refreshing " + layer.getName() + ", expiration time: " + LocalDateTime.ofEpochSecond((layer.getExpiryTime() / 1000), 0, ZoneOffset.UTC));
                 }
             }, 0, refreshPeriod * 1000);
         }
