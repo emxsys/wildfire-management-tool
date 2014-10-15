@@ -86,11 +86,22 @@ public class AngleUtil {
      * @return "N", "NE", "E", "SE", "S", "SW", "W" or "NW"
      */
     public static String degreesToCardinalPoint8(double degrees) {
-        String directions[]
-                = {
-                    "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"
-                };
+        final String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
         degrees = normalize360(degrees);
         return directions[(int) Math.round(degrees / 45)];
+    }
+
+    /**
+     * Returns one of the 16 cardinal points for the angle.
+     *
+     * @param degrees
+     * @return "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W",
+     * "WNW", "NW" or "NNW"
+     */
+    public static String degreesToCardinalPoint16(double degrees) {
+        final String directions[]
+                = {"N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"};
+        degrees = normalize360(degrees);
+        return directions[(int) Math.round(degrees / 22.5)];
     }
 }
