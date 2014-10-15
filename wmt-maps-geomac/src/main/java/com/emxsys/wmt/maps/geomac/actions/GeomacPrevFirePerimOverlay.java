@@ -77,7 +77,7 @@ import org.openide.util.NbBundle.Messages;
 public final class GeomacPrevFirePerimOverlay extends AbstractGisLayerToggleAction
 {
     private static final Logger logger = Logger.getLogger(GeomacPrevFirePerimOverlay.class.getName());
-    private static final String OVERLAY_NAME = NbBundle.getBundle("com.emxsys.wmt.maps.geomac.Bundle").getString("Layers.Layer19");
+    private static final String OVERLAY_NAME = NbBundle.getBundle("com.emxsys.wmt.maps.geomac.Bundle").getString("Layers.LayerPrevFirePerims");
     private static final String ICON_BASE = "com/emxsys/wmt/maps/geomac/images/map.png";
 
 

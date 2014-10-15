@@ -29,6 +29,12 @@
  */
 package com.emxsys.weather.wizards;
 
+import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.solar.api.Sunlight;
+import com.emxsys.solar.spi.SunlightProviderFactory;
+import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.spi.WeatherProviderFactory;
+import java.time.ZonedDateTime;
 import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -43,11 +49,13 @@ public class DiurnalWeatherPanelWindsTest {
     public DiurnalWeatherPanelWindsTest() {
     }
 
-    @Ignore("interactive test")
+    //@Ignore("interactive test")
     @Test
     public void testLayout() {
         System.out.println("getLayout - interactive");
-        DiurnalWeatherPanelWinds instance = new DiurnalWeatherPanelWinds(null);
+        Sunlight sunlight = SunlightProviderFactory.getInstance().getSunlight(ZonedDateTime.now(), GeoCoord3D.fromDegrees(34.2, -119.2));
+        DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
+        DiurnalWeatherPanelWinds instance = new DiurnalWeatherPanelWinds(provider);
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame
