@@ -154,7 +154,11 @@ public class Globe implements GisViewer {
         Angle angle = LatLon.greatCircleDistance(pos2, pos1);
 
         WorldWindManager wwm = Globe.getInstance().getWorldWindManager();
-        double radius = wwm.getWorldWindow().getModel().getGlobe().getRadius();
+        // Use average earth radius between the two positions.  
+        // Should be OK unless route goes over the poles or across equator.
+        double r1 = wwm.getWorldWindow().getModel().getGlobe().getRadiusAt(pos1);
+        double r2 = wwm.getWorldWindow().getModel().getGlobe().getRadiusAt(pos2);
+        double radius = (r1 + r2) / 2.0;
         double distance = angle.radians * radius;
         return Reals.newDistance(distance, meter);
     }
@@ -193,6 +197,7 @@ public class Globe implements GisViewer {
             return null;
         }
     }
+    
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
     private final GisLayerList gisLayers = new GisLayerList();
@@ -443,7 +448,6 @@ public class Globe implements GisViewer {
         this.gisLayers.remove(gisLayer);
     }
 
-    
     public void addFeature(Feature feature, RenderableGisLayer layer) {
         if (feature == null) {
             throw new IllegalArgumentException("Feature cannot be null.");
