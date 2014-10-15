@@ -29,17 +29,23 @@
  */
 package com.emxsys.weather.wizards;
 
+import com.emxsys.util.AngleUtil;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.panels.WindChartPanel;
 import com.emxsys.weather.panels.WindForcePanel;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.TreeMap;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.text.DateFormatter;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import visad.Real;
-import visad.RealTuple;
 
 @Messages({"CTL_DiurnalWinds=Daily Winds"})
 public final class DiurnalWeatherPanelWinds extends JPanel {
@@ -48,11 +54,31 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"
     };
     private final WindsTableModel tableModel = new WindsTableModel();
+    private WindForcePanel windPanel;
 
     /** Creates new form DiurnalWeatherVisualPanel4 */
     public DiurnalWeatherPanelWinds(DiurnalWeatherProvider provider) {
         initComponents();
-        jPanel1.add(new WindForcePanel());
+
+        // Customize Date spinner to only show/edit time
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(timeSpinField, "HH:mm");
+        DateFormatter formatter = (DateFormatter) editor.getTextField().getFormatter();
+        formatter.setAllowsInvalid(false); // this makes what you want
+        formatter.setOverwriteMode(true);
+        timeSpinField.setEditor(editor);
+
+        // Add the wind direction and speed dials.
+        windPanel = new WindForcePanel();
+        jPanel1.add(windPanel);
+
+        // Populate the table model (assumes dirs and speeds have cooincident times)
+        TreeMap<LocalTime, Real> dirs = provider.getWindDirs();
+        TreeMap<LocalTime, Real> spds = provider.getWindSpeeds();
+        Iterator<LocalTime> times = spds.keySet().iterator();
+        while (times.hasNext()) {
+            LocalTime time = times.next();
+            tableModel.add(time, dirs.get(time), spds.get(time));
+        }
     }
 
     @Override
@@ -63,38 +89,46 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     /**
      * Sorted table for winds
      */
-    public static class WindsTableModel extends AbstractTableModel //implements TableModel
+    public class WindsTableModel extends AbstractTableModel //implements TableModel
     {
 
-        private static final int NUM_COLS = 3;
-        private final ArrayList<RealTuple> data = new ArrayList<>();
+        public class Item {
 
-        public void add(RealTuple tuple) {
+            Real windDir;
+            Real windSpd;
+
+            public Item(Real windSpd, Real windDir) {
+                this.windDir = windDir;
+                this.windSpd = windSpd;
+            }
+
+        }
+        private static final int NUM_COLS = 3;
+        private final TreeMap<LocalTime, Item> map = new TreeMap<>();
+
+        public void add(LocalTime time, Real dir, Real spd) {
             try {
-                // Implement a simple sorted list (linear search
-                Real datetime = (Real) tuple.getComponent(0);
-                for (int i = 0; i < data.size(); i++) {
-                    RealTuple item = data.get(i);
-                    double seconds = ((Real) item.getComponent(0)).getValue();
-                    if (seconds > datetime.getValue()) {
-                        data.add(i, tuple);
-                        this.fireTableDataChanged();
-                        return;
-                    } else if (seconds == datetime.getValue()) {
-                        data.set(i, tuple);
-                        this.fireTableDataChanged();
-                        return;
-                    }
-                }
-                data.add(tuple);
+                map.put(time, new Item(dir, spd));
                 this.fireTableDataChanged();
+                int row = getRow(time);
+                if (row >= 0) {
+                    windsTable.setRowSelectionInterval(row, row);
+                }
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
 
-        public List<RealTuple> getData() {
-            return data;
+        public void clear() {
+            map.clear();
+            this.fireTableDataChanged();
+        }
+
+        public void remove(int row) {
+            LocalTime key = (LocalTime) map.navigableKeySet().toArray()[row];
+            map.remove(key);
+            this.fireTableDataChanged();
+
         }
 
         @Override
@@ -104,22 +138,25 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
 
         @Override
         public int getRowCount() {
-            return this.data.size();
+            return this.map.size();
+        }
+
+        public int getRow(LocalTime time) {
+            return Arrays.binarySearch(map.navigableKeySet().toArray(), time);
         }
 
         @Override
         public Object getValueAt(int row, int column) {
-            RealTuple tuple = data.get(row);
+            LocalTime key = (LocalTime) map.navigableKeySet().toArray()[row];
+            Item item = map.get(key);
             try {
                 if (column == 0) {
-                    //return Times.toDate((Real) tuple.getComponent(column));
-                } else if (column == 2) {
-                    Real windDir = (Real) tuple.getComponent(column);
-                    double dirFrom = windDir.getValue();
-                    int pt_index = (int) Math.round(dirFrom / 22.5);
-                    return PTS[pt_index];
+                    return key;
+                } else if (column == 1) {
+                    return item.windSpd;
+                } else {
+                    return AngleUtil.degreesToCardinalPoint16(item.windDir.getValue());
                 }
-                return tuple.getComponent(column);
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
                 throw new IllegalStateException(ex);
@@ -155,6 +192,8 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         removeButton = new javax.swing.JButton();
         removeAllButton = new javax.swing.JButton();
         speedSpinField = new javax.swing.JSpinner();
+        jLabel4 = new javax.swing.JLabel();
+        timeSpinField = new javax.swing.JSpinner();
         jScrollPane1 = new javax.swing.JScrollPane();
         windsTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -169,7 +208,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         );
         windChartPanelLayout.setVerticalGroup(
             windChartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 135, Short.MAX_VALUE)
+            .addGap(0, 174, Short.MAX_VALUE)
         );
 
         controlsPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -206,7 +245,11 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             }
         });
 
-        speedSpinField.setModel(new javax.swing.SpinnerListModel(new String[] {"N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"}));
+        speedSpinField.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), Float.valueOf(50.0f), Float.valueOf(1.0f)));
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(DiurnalWeatherPanelWinds.class, "DiurnalWeatherPanelWinds.jLabel4.text")); // NOI18N
+
+        timeSpinField.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1388584800000L), null, null, java.util.Calendar.DAY_OF_MONTH));
 
         javax.swing.GroupLayout controlsPanelLayout = new javax.swing.GroupLayout(controlsPanel);
         controlsPanel.setLayout(controlsPanelLayout);
@@ -215,38 +258,43 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             .addGroup(controlsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(controlsPanelLayout.createSequentialGroup()
+                        .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4))
+                        .addGap(19, 19, 19))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlsPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(compassSpinner, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(speedSpinField, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(timeSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(compassSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
-                    .addComponent(speedSpinField))
-                .addGap(46, 46, 46)
-                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(addButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(removeAllButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
-                    .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removeAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))
         );
         controlsPanelLayout.setVerticalGroup(
             controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlsPanelLayout.createSequentialGroup()
-                .addGap(58, 58, 58)
+                .addContainerGap()
+                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(timeSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(compassSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(removeButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(speedSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(addButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeAllButton)
+                    .addComponent(speedSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(removeAllButton))
                 .addGap(17, 17, 17))
         );
 
@@ -263,11 +311,11 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                     .addComponent(windChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(controlsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -284,36 +332,33 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+    private void removeAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllButtonActionPerformed
         // TODO addWindParam your handling code here:
-        // Add an entry to the table model
-//        Date date = dateChooser.getDate();
-//        int hour = hourSpinField.getValue();
-//        DateTime datetime = Times.fromDate(date, hour);
-//
-//        Real direction = ((WindForcePanel)windPanel).getWindDirection();
-//        Real windspeed = ((WindForcePanel)windPanel).getWindSpeed();
-//
-//        tableModel.add(Tuples.fromReal(datetime, windspeed, direction));
-    }//GEN-LAST:event_addButtonActionPerformed
+        this.tableModel.clear();
+    }//GEN-LAST:event_removeAllButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         int selectedRow = windsTable.getSelectedRow();
         if (selectedRow >= 0) {
-            this.tableModel.data.remove(selectedRow);
-            this.tableModel.fireTableDataChanged();
+            this.tableModel.remove(selectedRow);
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
-    private void removeAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllButtonActionPerformed
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO addWindParam your handling code here:
-        this.tableModel.data.clear();
-        this.tableModel.fireTableDataChanged();
-    }//GEN-LAST:event_removeAllButtonActionPerformed
+
+        // Use a LocalTime to get second-of-day for the map ky
+        Calendar cal = Calendar.getInstance();
+        cal.setTime((Date) timeSpinField.getValue());
+        LocalTime time = LocalTime.of(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        Real direction = windPanel.getWindDirection();
+        Real windspeed = windPanel.getWindSpeed();
+
+        tableModel.add(time, windspeed, direction);
+    }//GEN-LAST:event_addButtonActionPerformed
 
     private void compassSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compassSpinnerStateChanged
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_compassSpinnerStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -322,11 +367,13 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     private javax.swing.JPanel controlsPanel;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton removeAllButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JSpinner speedSpinField;
+    private javax.swing.JSpinner timeSpinField;
     private javax.swing.JPanel windChartPanel;
     private javax.swing.JTable windsTable;
     // End of variables declaration//GEN-END:variables
