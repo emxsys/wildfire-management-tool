@@ -287,9 +287,9 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     }
 
     /**
-     * Adds a sector to the fireground.
+     * Adds a sector to the fireground, and in turn, updates the viewer(s)
      *
-     * @param sector the sector to be added
+     * @param sector The sector geometry to be added to the fireground.
      */
     @Override
     public void addSector(Box sector, FuelModelProvider fuelModels) {
@@ -316,6 +316,8 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
                 pcs.firePropertyChange(SECTOR_REMOVED_EVENT, object, null);
             }
         }
+        // TODO: Add to globe with a given style appropriate for fireground.
+        // See FireShape
         Viewers.addToViewers(sector);
         pcs.firePropertyChange(SECTOR_ADDED_EVENT, null, sector);
 
