@@ -29,7 +29,6 @@
  */
 package com.emxsys.gis.api;
 
-import com.emxsys.gis.api.Part;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.openide.util.Lookup;
