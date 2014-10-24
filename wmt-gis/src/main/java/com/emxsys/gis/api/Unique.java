@@ -30,7 +30,7 @@
 package com.emxsys.gis.api;
 
 /**
- * This interface provides a unique ID in the form of a long.
+ * This interface provides a unique ID in the form of a String.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: Unique.java 527 2013-04-18 15:01:15Z bdschubert $
