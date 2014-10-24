@@ -35,8 +35,6 @@ import com.emxsys.gis.api.Geometry;
 import com.emxsys.gis.api.LineString;
 import com.emxsys.gis.api.Part;
 import com.emxsys.gis.api.Polygon;
-import com.emxsys.gis.api.shape.Region;
-import com.emxsys.gis.api.shape.Shape;
 import com.emxsys.wmt.globe.util.Sectors;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
@@ -57,22 +55,6 @@ public class ShapeAdapter {
 
     private static final Logger logger = Logger.getLogger(ShapeAdapter.class.getName());
 
-    public static Renderable createRenderable(Shape shape) {
-        BasicShapeAttributes outlineAttributes = new BasicShapeAttributes();
-        outlineAttributes.setDrawInterior(false);
-        outlineAttributes.setDrawOutline(true);
-
-        if (shape instanceof Region) {
-            Region region = (Region) shape;
-            SurfaceSector ss = new SurfaceSector(Sectors.fromBox(region.getSector()));
-            ss.setAttributes(outlineAttributes);
-            return ss;
-        } else {
-            logger.log(Level.WARNING, "createRenderable does not support: {0}", shape.getClass().getName());
-            return null;
-        }
-    }
-
     /**
      * Creates a Renderable from a GIS Geometry object.
      *
@@ -80,8 +62,14 @@ public class ShapeAdapter {
      * @return a Renderable that represents the shape.
      */
     public static Renderable createRenderable(Geometry shape) {
-        return createRenderable(shape, null, null);
-    }
+        // Extract the optional drawing attributes from the shape's lookup
+        ShapeAttributes normalAttrs = shape.getLookup().lookup(ShapeAttributes.class);
+        ShapeAttributes highlightAttrs = null;
+        if (normalAttrs != null) {
+            //highlightAttrs = normalAttrs.copy();
+        }
+        return createRenderable(shape, normalAttrs, highlightAttrs);
+    } 
 
     /**
      * Creates a Renderable from a GIS Geometry object.
@@ -98,30 +86,38 @@ public class ShapeAdapter {
         outlineAttributes.setDrawOutline(true);
 
         if (shape instanceof Box) {
+            // Draw a GIS Box with a WW SurfaceSector
             SurfaceSector ss = new SurfaceSector(Sectors.fromBox((Box) shape));
             ss.setAttributes(normalAttrs == null ? outlineAttributes : normalAttrs);
             ss.setHighlightAttributes(highlightAttrs);
             return ss;
+
         } else if (shape instanceof Coord2D) {
+            // TODO: Draw a Coord2D with a point!
             return null;
+
         } else if (shape instanceof LineString) {
+            // Draw a GIS LineString with a WW Polyline
             Iterator<Part> parts = shape.getParts().iterator();
             if (parts.hasNext()) {
                 PartAdapter partAdapter = new PartAdapter(parts.next());
                 gov.nasa.worldwind.render.Polyline poly = new gov.nasa.worldwind.render.Polyline(partAdapter);
-                // TODO: set attributes
 
+                // TODO: set attributes
                 return poly;
             }
             return null;
+
         } else if (shape instanceof Polygon) {
+            // Draw a GIS Polygon with a WW Polygon
             Iterator<Part> parts = shape.getParts().iterator();
             if (parts.hasNext()) {
                 PartAdapter partAdapter = new PartAdapter(parts.next());
                 gov.nasa.worldwind.render.Polygon poly = new gov.nasa.worldwind.render.Polygon(partAdapter);
-                // TODO: set attributes
 
+                // TODO: set attributes
                 return poly;
+
             }
             return null;
         } else {
