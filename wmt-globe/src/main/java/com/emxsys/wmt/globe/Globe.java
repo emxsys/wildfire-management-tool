@@ -65,6 +65,7 @@ import com.emxsys.wmt.globe.ribbons.SceneTools;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.WorldWindManager;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
@@ -123,6 +124,18 @@ public class Globe implements GisViewer {
         } else {
             return INSTANCE;
         }
+    }
+
+    /**
+     * Gets the network status.
+     * @return True if WorldWind is in offline mode.
+     */
+    public static boolean isOfflineMode() {
+        return WorldWind.isOfflineMode();
+    }
+
+    public static boolean isNetworkUnavailable() {
+        return WorldWind.getNetworkStatus().isNetworkUnavailable();
     }
 
     /**
