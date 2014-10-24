@@ -41,6 +41,7 @@ import org.openide.util.Lookup;
  *
  * @author Bruce Schubert
  */
+@Deprecated
 public class FireBehaviorProviderFactory {
 
     private static final Logger logger = Logger.getLogger(FireBehaviorProviderFactory.class.getName());

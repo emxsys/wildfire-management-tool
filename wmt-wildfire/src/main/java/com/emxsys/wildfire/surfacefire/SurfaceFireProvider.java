@@ -48,6 +48,7 @@ import visad.VisADException;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
+@Deprecated
 public class SurfaceFireProvider implements FireBehaviorProvider {
 
     private final Behave behave;
