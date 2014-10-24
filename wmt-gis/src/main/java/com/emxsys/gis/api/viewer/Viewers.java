@@ -31,7 +31,6 @@ package com.emxsys.gis.api.viewer;
 
 import com.emxsys.gis.api.Geometry;
 import com.emxsys.gis.api.layer.GisLayer;
-import com.emxsys.gis.api.viewer.GisViewer;
 import java.util.Collection;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
@@ -55,6 +54,7 @@ public class Viewers {
      * @param geometry to be displayed
      */
     public static void addToViewers(Geometry geometry) {
+        boolean success = false;
         // Place it in all compatible viewers
         Collection<? extends GisViewer> viewers = Lookup.getDefault().lookupAll(GisViewer.class);
         for (GisViewer viewer : viewers) {
@@ -62,7 +62,11 @@ public class Viewers {
             Geometry.Renderer renderer = viewer.getLookup().lookup(Geometry.Renderer.class);
             if (renderer != null) {
                 renderer.addGeometry(geometry);
+                success = true;
             }
+        }
+        if (!success) {
+            logger.warning("addToViewers(geometry) could not find a Geometry.Renderer to update.");
         }
     }
 
