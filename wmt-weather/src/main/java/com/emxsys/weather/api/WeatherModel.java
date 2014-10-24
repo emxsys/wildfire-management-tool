@@ -50,7 +50,6 @@ import visad.MathType;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.SampledSet;
-import visad.Set;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
 import visad.util.DataUtility;
@@ -65,19 +64,31 @@ import visad.util.DataUtility;
  * <pre>(Lat, Lon) -> (Time -> (Weather))</pre>
  *
  *
- *
  * @author Bruce Schubert
  */
 public class WeatherModel extends SpatioTemporalModel {
 
     private static final Logger logger = Logger.getLogger(WeatherModel.class.getName());
 
+    /**
+     * Creates a WeatherModel at a single location at a single point in time.
+     * @param time Point in time.
+     * @param coord Location.
+     * @param tuple Weather values.
+     * @return A new WeatherModel instance.
+     */
     public static WeatherModel from(ZonedDateTime time, Coord2D coord, WeatherTuple tuple) {
         TemporalDomain timeDomain = new TemporalDomain(time, 1);
         SpatialField spatialField = SpatialField.from(coord, tuple);
         return WeatherModel.from(timeDomain, new SpatialField[]{spatialField});
     }
 
+    /**
+     * Creates a temporal-spatial organized WeatherModel.
+     * @param domain The temporal domain.
+     * @param ranges An array of (Lat, Lon) -> (Weather) range samples for the time domain.
+     * @return A new WeatherModel organized as <pre>Time -> ((Lat, Lon) -> (Weather))</pre>
+     */
     public static WeatherModel from(TemporalDomain domain, SpatialField[] ranges) {
         try {
             FieldImpl temporalSpatialWeather = domain.createTemporalField(ranges[0].getField().getType());
@@ -91,6 +102,12 @@ public class WeatherModel extends SpatioTemporalModel {
         }
     }
 
+    /**
+     * Creates a spatial-temporal organized WeatherModel.
+     * @param domain The spatial domain.
+     * @param ranges An array of Time -> (Weather) range samples for the spatial domain.
+     * @return A new WeatherModel organized as <pre>(Lat, Lon) -> (Time -> (Weather))</pre>
+     */
     public static WeatherModel from(SpatialDomain domain, FlatField[] ranges) {
         try {
             FieldImpl spatioTemporalWeather = domain.createSpatialField(ranges[0].getType());
@@ -109,9 +126,9 @@ public class WeatherModel extends SpatioTemporalModel {
     }
 
     /**
-     *
-     * @param time
-     * @param coord
+     * Gets the Weather at the specific time and place
+     * @param time Time at which to sample the weather.
+     * @param coord Place at which to sample the weather.
      * @return A {@code FIRE_WEATHER} tuple.
      */
     public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord) {
