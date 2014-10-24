@@ -49,17 +49,17 @@ import org.openide.util.lookup.Lookups;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 @MapLayerRegistrations({
-//    @MapLayerRegistration(
-//            position = 1,
-//            name = "Shapes",
-//            actuate = "onLoad",
-//            role = "Overlay",
-//            type = "Vector",
-//            category = "Other",
-//            displayName = "#CTL_Shapes",
-//            instanceClass = "com.emxsys.wmt.globe.layers.RenderableGisLayer",
-//            factoryClass = "com.emxsys.wmt.globe.layers.RenderableGisLayer",
-//            factoryMethod = "newInstance"),
+    @MapLayerRegistration(
+            position = 1,
+            name = "Shapes",
+            actuate = "onLoad",
+            role = "Overlay",
+            type = "Vector",
+            category = "Other",
+            displayName = "#CTL_Shapes",
+            instanceClass = "com.emxsys.wmt.globe.layers.ShapesLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.ShapesLayer",
+            factoryMethod = "newInstance"),
     @MapLayerRegistration(
             position = 10,
             name = "Markers",
