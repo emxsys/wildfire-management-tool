@@ -37,9 +37,6 @@ import com.emxsys.gis.spi.TerrainProviderFactory;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.api.WeatherProvider;
-import com.emxsys.weather.api.services.WeatherForecaster;
-import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -60,15 +57,13 @@ public class Environment implements Lookup.Provider {
     private Box extents;
     private ZonedDateTime time;
     private TerrainProvider terrainProvider;
-    private WeatherProvider weatherProvider;
-    private WeatherForecaster wxForecaster;
     private WeatherModel weatherModel;
     private final ArrayList<Path> paths = new ArrayList<>();
 
     @Override
     public Lookup getLookup() {
         if (lookup == null) {
-            // Deferred initialization
+            // Populate the lookup: deferred initialization
             content.add(TerrainProviderFactory.getInstance());
             content.add(new DiurnalWeatherProvider());
             content.add(new SurfaceFireProvider());
