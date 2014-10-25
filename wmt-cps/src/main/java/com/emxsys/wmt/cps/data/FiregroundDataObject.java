@@ -296,9 +296,9 @@ public class FiregroundDataObject extends XMLDataObject {
 
             // Read the fireground xml data
             // Initialize the spatial domain
-            Map<Box,FuelModelProvider> sectors = FiregroundXmlEncoder.parseSectors(this.getDocument());
-            sectors.keySet().stream().forEach((box) -> {
-                FuelModelProvider provider = sectors.get(box);
+            Map<Box,FuelModelProvider> sectorFuels = FiregroundXmlEncoder.parseSectors(this.getDocument());
+            sectorFuels.keySet().stream().forEach((box) -> {
+                FuelModelProvider provider = sectorFuels.get(box);
                 this.fireground.addSector(box, provider);
             });                        
  

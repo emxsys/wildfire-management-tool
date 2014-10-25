@@ -36,6 +36,7 @@ import com.emxsys.gis.gml.GmlBuilder;
 import com.emxsys.gis.gml.GmlParser;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.StdFuelModelProvider;
+import com.emxsys.wildfire.spi.FuelModelProviderFactory;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,33 +143,32 @@ public class FiregroundXmlEncoder {
         Element providerNode = (Element) providers.item(0);
         String className = providerNode.getAttribute(ATTR_CLASS);
         String fuelModelNo = providerNode.getAttribute(ATTR_MODEL);
-        return createFuelModelProvider(className, fuelModelNo);
-
+        return FuelModelProviderFactory.getInstance(className, fuelModelNo);
     }
 
-    @SuppressWarnings("UseSpecificCatch")
-    private static FuelModelProvider createFuelModelProvider(String className, String fuelModelNo) {
-        try {
-            // Get the FuelModelProvider subclass
-            Class clazz = Class.forName(className);
-            if (!FuelModelProvider.class.isAssignableFrom(clazz)) {
-                throw new IllegalArgumentException(className + " must be a FuelModelProvider subclass.");
-            }
-            if (fuelModelNo.isEmpty()) {
-                // Invoke the default constructor
-                return (FuelModelProvider) clazz.newInstance();
-            } else {
-                // Invoke the constructor that takes an int fuel model no
-                // See StdFuelModelProvider(Integer)
-                Constructor ctor = clazz.getDeclaredConstructor(Integer.class);
-                ctor.setAccessible(true);
-                return (FuelModelProvider) ctor.newInstance(Integer.parseInt(fuelModelNo));
-            }
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, "Cannot create fuel model provider.", ex);
-        }
-        return null;
-    }
+//    @SuppressWarnings("UseSpecificCatch")
+//    private static FuelModelProvider createFuelModelProvider(String className, String fuelModelNo) {
+//        try {
+//            // Get the FuelModelProvider subclass
+//            Class clazz = Class.forName(className);
+//            if (!FuelModelProvider.class.isAssignableFrom(clazz)) {
+//                throw new IllegalArgumentException(className + " must be a FuelModelProvider subclass.");
+//            }
+//            if (fuelModelNo.isEmpty()) {
+//                // Invoke the default constructor
+//                return (FuelModelProvider) clazz.newInstance();
+//            } else {
+//                // Invoke the constructor that takes an int fuel model no
+//                // See StdFuelModelProvider(Integer)
+//                Constructor ctor = clazz.getDeclaredConstructor(Integer.class);
+//                ctor.setAccessible(true);
+//                return (FuelModelProvider) ctor.newInstance(Integer.parseInt(fuelModelNo));
+//            }
+//        } catch (Exception ex) {
+//            logger.log(Level.SEVERE, "Cannot create fuel model provider.", ex);
+//        }
+//        return null;
+//    }
 
     /**
      * Writes the sector(s) in the given fireground to the supplied document.

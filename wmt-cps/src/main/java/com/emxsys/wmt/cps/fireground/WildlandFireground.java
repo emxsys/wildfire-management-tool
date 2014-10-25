@@ -85,6 +85,8 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
     public static final String FIRE_BEHAVIOR_ADDED_EVENT = "fire_behavior_added";
     /** FIRE_WEATHER_ADDED_EVENT property change accompanied by weather data in FieldImpl */
     public static final String FIRE_WEATHER_ADDED_EVENT = "fire_weather_added";
+    
+    private static final Logger logger = Logger.getLogger(WildlandFireground.class.getName());
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -112,8 +114,6 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
 
     private boolean cancelAnalysis = false;
     private boolean analysisRunning = false;
-
-    private static final Logger logger = Logger.getLogger(WildlandFireground.class.getName());
 
     /**
      *
@@ -303,7 +303,9 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
         this.sectors.add(sector);
 
         if (fuelModels == null) {
-            throw new IllegalArgumentException("add sector failed: FuelModelProvider is null.");
+            String msg = "addSector() failed: FuelModelProvider is null.";
+            logger.severe(msg);
+            throw new IllegalArgumentException(msg);
         }
         this.fuelModelProviders.put(sector, fuelModels);
         resetModels();
@@ -317,7 +319,6 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
             }
         }
         // TODO: Add to globe with a given style appropriate for fireground.
-        // See FireShape
         Viewers.addToViewers(sector);
         pcs.firePropertyChange(SECTOR_ADDED_EVENT, null, sector);
 

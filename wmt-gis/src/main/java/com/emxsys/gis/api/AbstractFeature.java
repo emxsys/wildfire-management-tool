@@ -48,7 +48,7 @@ public abstract class AbstractFeature implements Feature {
     private ProxyLookup proxyLookup;
 
     /**
-     * Gets this Feature's lookup merged with the Geography lookup.
+     * Gets this Feature's lookup merged with the Geometry lookup.
      *
      * @return a ProxyLookup object initialized from this object and the Geography lookups
      */

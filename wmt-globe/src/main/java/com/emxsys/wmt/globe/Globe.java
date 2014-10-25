@@ -296,14 +296,19 @@ public class Globe implements GisViewer {
         addAll(OverlayLayers.getLayers());
         addAll(WidgetLayers.getLayers());
 
-        // Some layers provide capabilities. Find them and add them to the Globe's lookup.
+        // Some layers expose capabilities used by the GIS Viewer interface. 
+        // Find them and add them to the Globe's lookup.
         Marker.Renderer markerRenderer = this.gisLayers.getLookup().lookup(Marker.Renderer.class);
         if (markerRenderer != null) {
-            this.content.add(markerRenderer);
+            this.content.add(markerRenderer);   
         }
         Graphic.Renderer graphicRenderer = this.gisLayers.getLookup().lookup(Graphic.Renderer.class);
         if (graphicRenderer != null) {
             this.content.add(graphicRenderer);
+        }
+        Geometry.Renderer geometryRenderer = this.gisLayers.getLookup().lookup(Geometry.Renderer.class);
+        if (geometryRenderer != null) {
+            this.content.add(geometryRenderer);
         }
 
         // Update the UI

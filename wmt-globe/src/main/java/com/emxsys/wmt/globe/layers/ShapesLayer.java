@@ -88,13 +88,15 @@ public class ShapesLayer extends RenderableLayer implements GisLayer, Geometry.R
      * @param instanceFile The .instance file object specified in the XML layer (layer.xml)
      * @return A ShapeLayer instance
      */
-    public static Layer getInstance(FileObject instanceFile) {
-        // Psuedo singleton: look for an existing instance and if found, initialize it with the 
-        // FileObject, otherwise, use a default instance.
-        Geometry.Renderer renderer = Lookup.getDefault().lookup(Geometry.Renderer.class);
-        ShapesLayer renderableLayer
-                = renderer instanceof ShapesLayer ? (ShapesLayer) renderer : new ShapesLayer();
-
+    public static Layer newInstance(FileObject instanceFile) {
+// The following commented code block is for getInstance() -- vs newInstance()/
+//        // Psuedo singleton: look for an existing instance and if found, initialize it with the 
+//        // FileObject, otherwise, use a default instance.
+//        Geometry.Renderer renderer = Lookup.getDefault().lookup(Geometry.Renderer.class);
+//        ShapesLayer renderableLayer
+//                = renderer instanceof ShapesLayer ? (ShapesLayer) renderer : new ShapesLayer();
+        
+        ShapesLayer renderableLayer = new ShapesLayer();
         // Update GisLayer from xml
         BasicLayerType type = BasicLayerType.fromString((String) instanceFile.getAttribute("type"));
         BasicLayerGroup role = BasicLayerGroup.fromString((String) instanceFile.getAttribute("role"));
