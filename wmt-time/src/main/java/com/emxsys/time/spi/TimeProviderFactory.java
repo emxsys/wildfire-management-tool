@@ -34,7 +34,6 @@ import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
 import com.terramenta.time.DateProvider;
 import com.terramenta.time.options.TimeOptions;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Observable;
@@ -42,10 +41,8 @@ import java.util.Observer;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.swing.event.EventListenerList;
 import org.openide.util.Lookup;
-import org.openide.util.NbPreferences;
 
 /**
  * TimeProviderFactory provides the central time for the application as provided by Terramenta. The
@@ -64,9 +61,9 @@ public class TimeProviderFactory implements TimeProvider, Observer {
 
     /**
      * Gets a TimeProvider instance, either from the global lookup or a default implementation.
-     * 
+     *
      * @return A TimeProvider service provider found on the global lookup, or, if not found, a
- TimeProviderFactory instance.
+     * TimeProviderFactory instance.
      */
     public static TimeProvider getInstance() {
         if (instance == null) {
