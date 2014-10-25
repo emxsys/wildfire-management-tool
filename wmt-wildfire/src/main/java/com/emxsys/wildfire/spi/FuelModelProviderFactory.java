@@ -45,7 +45,7 @@ import org.openide.util.Lookup;
 
 /**
  * The FuelModelProviderFactory supplies a list of registered FuelModelProvider service providers
- plus the system defined Std 13 and Std 40 SingleFuelModelProviders.
+ * plus the system defined Std 13 and Std 40 SingleFuelModelProviders.
  *
  * @author Bruce Schubert
  */
@@ -53,6 +53,34 @@ public class FuelModelProviderFactory {
 
     private static ArrayList<FuelModelProvider> instances;
     private static final Logger logger = Logger.getLogger(FuelModelProviderFactory.class.getName());
+
+    /**
+     * Gets a FuelModelProvider service provider of the given class; or searches for a
+     * SingleFuelModelProvider if a fuel model code/no is supplied.
+     * @param className FuelModelProvider instance class to look for.
+     * @param fuelModelNo Optional fuel model no/code used when looking for a SingleFuelModelProvider.
+     * @return The provider, if found, else null.
+     */
+    public static FuelModelProvider getInstance(String className, String fuelModelNo) {
+        List<FuelModelProvider> providers = getInstances();
+        for (FuelModelProvider provider : providers) {
+            if (provider.getClass().getName().equals(className)) {
+                if (fuelModelNo == null || fuelModelNo.isEmpty()) {
+                    return provider;
+                } else {
+                    // Look for a provider for a single fuel model
+                    if (provider instanceof SingleFuelModelProvider) {
+                        if (((SingleFuelModelProvider) provider).getFuelModel().getModelCode().equals(fuelModelNo)) {
+                            return provider;
+                        }
+                    }
+                }
+            }
+        }
+        logger.log(Level.WARNING, "getInstance() was unable to find a FuelModelProvider for {0} and number: {1}", 
+                new Object[]{className, fuelModelNo});
+        return null;
+    }
 
     /**
      * Gets the registered FuelModelProviders service providers from the global lookup (if any) plus
@@ -100,15 +128,14 @@ public class FuelModelProviderFactory {
                 });
         return providers;
     }
-    
+
     /**
      * Gets the FuelModelProvider instances that intersect the given extents.
      *
      * @param extents The box that will be tested for intersection with the provider's extents.
      * @return A collection of FuelModelProvider instances that are valid for the box.
      */
-    public static List<FuelModelProvider> getInstances(Box extents)
-    {
+    public static List<FuelModelProvider> getInstances(Box extents) {
         ArrayList<FuelModelProvider> providers = new ArrayList<>();
 
         getInstances().stream()
@@ -117,6 +144,6 @@ public class FuelModelProviderFactory {
                     providers.add(provider);
                 });
         return providers;
-      }
-    
+    }
+
 }
