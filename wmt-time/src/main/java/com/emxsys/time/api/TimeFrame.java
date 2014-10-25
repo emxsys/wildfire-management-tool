@@ -37,7 +37,6 @@ public interface TimeFrame {
 
     static final String PROP_TIMEFRAME_BEGIN = "time.timeframe.begin";
     static final String PROP_TIMEFRAME_END = "time.timeframe.end";
-    static final String PROP_TIMEFRAME_DURATION = "time.timeframe.duration";
 
     ZonedDateTime getBegin();
 

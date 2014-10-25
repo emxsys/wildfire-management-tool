@@ -35,7 +35,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 
 /**
- * A simple timeframe with a derived duration.
+ * A simple time frame with a derived duration.
  */
 public class BasicTimeFrame implements TimeFrame {
 
@@ -49,14 +49,17 @@ public class BasicTimeFrame implements TimeFrame {
         this.end = end;
     }
 
+    /**
+     * @return The beginning of the time frame.
+     */
     @Override
     public ZonedDateTime getBegin() {
         return this.begin;
     }
 
     /**
-     *
-     * @param newBegin Beginning of the timeframe.
+     * Sets the beginning.
+     * @param newBegin The beginning of the time frame.
      */
     public void setBegin(ZonedDateTime newBegin) {
         ZonedDateTime oldBegin = this.begin;
@@ -64,13 +67,17 @@ public class BasicTimeFrame implements TimeFrame {
         pcs.firePropertyChange(PROP_TIMEFRAME_BEGIN, oldBegin, newBegin);
     }
 
+    /**
+     * @return The end of the time frame.
+     */
     @Override
     public ZonedDateTime getEnd() {
         return this.end;
     }
 
     /**
-     * @param newEnd The end of the timeframe.
+     * Sets the end.
+     * @param newEnd The end of the time frame.
      */
     public void setEnd(ZonedDateTime newEnd) {
         ZonedDateTime oldEnd = this.end;
@@ -78,13 +85,17 @@ public class BasicTimeFrame implements TimeFrame {
         pcs.firePropertyChange(PROP_TIMEFRAME_END, oldEnd, newEnd);
     }
 
+    /**
+     * Gets the computed duration of the timeframe.
+     * @return The length of the time frame.
+     */
     @Override
     public Duration getDuration() {
         return Duration.between(begin, end);
     }
 
     /**
-     *
+     * Add a listener for PROP_TIMEFRAME_BEGIN and PROP_TIMEFRAME_END events.
      * @param listener
      */
     @Override
@@ -93,7 +104,7 @@ public class BasicTimeFrame implements TimeFrame {
     }
 
     /**
-     *
+     * Removes a listener.
      * @param listener
      */
     @Override
