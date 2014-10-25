@@ -51,6 +51,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.progress.ProgressHandle;
@@ -74,12 +75,13 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
 /**
- * This class represents a "com-emxsys-wmt-project" project in memory. The project's properties
- * are stored in its lookup.
+ * This class represents a {@code com-emxsys-wmt-project} project-type in memory. The project's
+ * properties are stored in its lookup.
  * <p>
  * This project type can be extended through the ProjectServiceProvider annotation using
- * "com-emxsys-basic-project" for the projectType parameter.
- *
+ * "com-emxsys-basic-project" for the projectType parameter. For example:
+ * <pre>{@code @ProjectServiceProvider(service=..., projectType="com-emxsys-basic-project")}</pre>
+ * 
  * @author Bruce Schubert
  */
 public class WmtProject implements Project {
@@ -120,7 +122,6 @@ public class WmtProject implements Project {
 
         IDLE, COPYING, DELETING, MOVING, RENAMING
     };
-
 
     /**
      * Lightweight constructor. Heavyweight operations are deferred to the ProjectOpenHook.
@@ -191,35 +192,39 @@ public class WmtProject implements Project {
         if (!isNew && !this.init.compareAndSet(State.CLOSED, State.INITILIZING)) {
             throw new IllegalStateException("Cannot open, state must be NEW or CLOSED, not " + this.init.get());
         }
-        THREAD_POOL.post(() -> {
-            logger.log(Level.INFO, "Loading project {0} data files...", getProjectName()); //NOI18N
+        // Post a runnable
+        THREAD_POOL.post(new Runnable() {
 
-            final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading data files...");
-            handle.start(); // start in indeterminate mode
-            try {
-                handle.progress("Loading scenes...");
-                loadScenes(SCENE_FOLDER_NAME);
-
-                handle.progress("Loading markers...");
-                loadMarkers(MARKER_FOLDER_NAME);
-
-                handle.progress("Loading symbology...");
-                loadSymbology(SYMBOLOGY_FOLDER_NAME);
-
-                handle.progress("Loading fireground...");
-                loadFireground(FIREGROUND_FOLDER_NAME);
-
-                // Ok to Load/convert file formats in the project root now
-                // that the project folder hierarchay has been established
-                handle.progress("Loading/converting legacy files...");
-                loadLegacyFiles();
-
-                init.set(State.INITIALIZED);
-            } catch (Exception exception) {
-                logger.severe(exception.toString());
-            } finally {
-                handle.finish();
-                logger.log(Level.INFO, "Finished loading project {0} data files...", getProjectName()); //NOI18N                logger.log(Level.INFO, "Opening project folder {0} ...", getProjectDirectory().getName());
+            public void run() {
+                logger.log(Level.INFO, "Loading project {0} data files...", getProjectName()); //NOI18N
+                
+                final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading data files...");
+                handle.start(); // start in indeterminate mode
+                try {
+                    handle.progress("Loading scenes...");
+                    loadScenes(SCENE_FOLDER_NAME);
+                    
+                    handle.progress("Loading markers...");
+                    loadMarkers(MARKER_FOLDER_NAME);
+                    
+                    handle.progress("Loading symbology...");
+                    loadSymbology(SYMBOLOGY_FOLDER_NAME);
+                    
+                    handle.progress("Loading fireground...");
+                    loadFireground(FIREGROUND_FOLDER_NAME);
+                    
+                    // Ok to Load/convert file formats in the project root now
+                    // that the project folder hierarchay has been established
+                    handle.progress("Loading/converting legacy files...");
+                    loadLegacyFiles();
+                    
+                    init.set(State.INITIALIZED);
+                } catch (Exception exception) {
+                    logger.severe(exception.toString());
+                } finally {
+                    handle.finish();
+                    logger.log(Level.INFO, "Finished loading project {0} data files...", getProjectName()); //NOI18N                logger.log(Level.INFO, "Opening project folder {0} ...", getProjectDirectory().getName());
+                }
             }
         });
     }
@@ -256,8 +261,11 @@ public class WmtProject implements Project {
         }
         // TODO: query project extensions; find a way to signal them that the project is closed.
         Collection<? extends Disposable> lookupAll = this.compositeLookup.lookupAll(Disposable.class);
-        lookupAll.stream().forEach((object) -> {
-            object.dispose();
+        lookupAll.stream().forEach(new Consumer<Disposable>() {
+
+            public void accept(Disposable object) {
+                object.dispose();
+            }
         });
 
         init.set(State.CLOSED);
@@ -342,10 +350,11 @@ public class WmtProject implements Project {
      */
     private void loadFireground(String folderName) {
         logger.log(Level.INFO, "Loading {0} fireground...", getProjectName());
-        FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
-        // Use the factory to get a fireground dataobject from the disk file(s)        
         FiregroundProvider factory = FiregroundProviderFactory.getInstance();
+        
+        // Use the factory to get a fireground dataobject from the disk file(s)        
         // Read the fireground.xml file
+        FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
         DataObject dataObject = factory.getFiregroundDataObject(subfolder, FIREGROUND_FILENAME);
         if (dataObject == null) {
             // Create the file

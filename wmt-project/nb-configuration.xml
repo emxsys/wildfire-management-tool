@@ -28,4 +28,8 @@
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.wrapOneLineComment>false</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.wrapOneLineComment>
         <org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.blankLineAfterJavadocDescription>false</org-netbeans-modules-editor-indent.text.x-java.CodeStyle.project.blankLineAfterJavadocDescription>
     </properties>
+    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>Fireground</word>
+        <word>firegrounds</word>
+    </spellchecker-wordlist>
 </project-shared-configuration>
