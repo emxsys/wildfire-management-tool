@@ -29,83 +29,79 @@
  */
 package com.emxsys.wmt.core.project;
 
-import java.util.Collection;
+import java.awt.Frame;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
-import org.openide.util.Lookup;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
-import org.openide.util.Utilities;
-
+import org.openide.windows.WindowManager;
 
 /**
  * This class provides the application's window title with the selected project's name.
  *
- * @see GlobalActionContextProxy
  * @author Bruce Schubert
- * @version $Id: MainWindowTitleManager.java 344 2012-11-25 21:50:24Z bdschubert $
  */
-public class MainWindowTitleManager
-{
+public class MainWindowTitleManager implements PropertyChangeListener {
 
-    private static Lookup.Result<Project> lookupResults;
-    private static LookupListener lookupListener;
+    private static String originalWindowTitle;
     private static final Logger logger = Logger.getLogger(MainWindowTitleManager.class.getName());
 
-
-    static
-    {
-        logger.setLevel(Level.ALL);
+    MainWindowTitleManager() {
     }
-
-
-    private MainWindowTitleManager()
-    {
-    }
-
 
     /**
-     * Creates a LookupListener on the Project.class that handles changes in the project selection.
+     * Handles changes in the project selection.
      */
-    public static void activate()
-    {
-        if (lookupResults == null)
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
+        if (!evt.getPropertyName().equals(CurrentProjectTracker.PROP_CURRENT_PROJECT_LIST)) {
+            logger.log(Level.WARNING, "Inappropriate property change event: {0}", evt.getPropertyName());
+        }
+        String projectName;
+        @SuppressWarnings("unchecked")
+        List<Project> projects = (List<Project>) evt.getNewValue();
+        if (projects.isEmpty()) {
+            projectName = "<No Project>";
+        }
+        else if (projects.size() == 1) {
+            Project project = projects.iterator().next();
+            projectName = ProjectUtils.getInformation(project).getDisplayName();
+        }
+        else {
+            projectName = "Multiple Projects";
+        }
+        updateWindowTitle(projectName);
+    }
+
+    /**
+     * Called to update the window title with a project name.
+     * @param projectName name used in window title
+     */
+    public static void updateWindowTitle(final String projectName) {
+        // We have to do this on the AWT thread, so we use the invokeWhenUIReady
+        // method which can be called from any thread.
         {
-            logger.config("Initializing global context lookup listener for Projects");
-
-            // Monitor the existance of Projects in the global context lookup
-            lookupResults = Utilities.actionsGlobalContext().lookupResult(Project.class);
-            // Create the listener on the lookupResults
-            lookupListener = new LookupListener()
-            {
-                // Update window title when the Project changes
+            WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
                 @Override
-                public void resultChanged(LookupEvent ignored)
-                {
-                    String projectName;
-                    Collection<? extends Project> projects = lookupResults.allInstances();
-                    if (projects.isEmpty())
-                    {
-                        projectName = "<No Project>";
+                public void run() {
+                    Frame mainWindow = WindowManager.getDefault().getMainWindow();
+                    if (originalWindowTitle == null) {
+                        originalWindowTitle = mainWindow.getTitle();
                     }
-                    else if (projects.size() == 1)
-                    {
-                        Project project = projects.iterator().next();
-                        projectName = ProjectUtils.getInformation(project).getDisplayName();
+                    String title;
+                    if (projectName == null || projectName.isEmpty()) {
+                        title = originalWindowTitle;
                     }
-                    else
-                    {
-                        projectName = "Multiple Projects";
+                    else {
+                        title = projectName + " - " + originalWindowTitle;
                     }
-                    CurrentProjectTracker.getDefault().updateWindowTitle(projectName);
-
+                    mainWindow.setTitle(title);
                 }
-            };
-            // Activate the listener
-            lookupResults.addLookupListener(lookupListener);
-            lookupListener.resultChanged(null);
+            });
         }
     }
 

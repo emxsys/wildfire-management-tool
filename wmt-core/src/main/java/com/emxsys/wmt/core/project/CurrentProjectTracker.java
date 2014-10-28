@@ -29,30 +29,68 @@
  */
 package com.emxsys.wmt.core.project;
 
-import java.awt.Frame;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Logger;
+import org.netbeans.api.project.Project;
 import org.openide.util.Lookup;
-import org.openide.windows.WindowManager;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
 
 /**
  * CurrentProjectTracker is responsible for
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: CurrentProjectTracker.java 486 2013-03-02 12:58:00Z bdschubert $
  */
 public abstract class CurrentProjectTracker {
 
+    public static final String PROP_CURRENT_PROJECT_LIST = "current_project.list";
+
     /** Instance of the default project assistant. */
     private static CurrentProjectTracker defaultInstance = null;
-
-    /** Dummy constructor. Clients should call getDefault to get a ProjectAssistant instance. */
-    CurrentProjectTracker() {
-    }
+    private static Lookup.Result<Project> lookupResults;
+    private static LookupListener lookupListener;
+    private ArrayList<Project> currentProjects = new ArrayList<>();
+    private static final Logger logger = Logger.getLogger(DefaultCurrentProjectTracker.class.getName());
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
-     * Updates the main window title with the given project name.
-     * @param projectName name to be used in the window title.
+     * Protected constructor. Clients should call getDefault() to get an instance. Subclasses must
+     * call.
      */
-    public abstract void updateWindowTitle(String projectName);
+    protected CurrentProjectTracker() {
+        if (lookupResults == null) {
+            logger.config("Initializing global context lookup listener for Projects");
+
+            // Monitor the existance of Projects in the global context lookup
+            lookupResults = Utilities.actionsGlobalContext().lookupResult(Project.class);
+            // Create the listener on the lookupResults
+            lookupListener = new LookupListener() {
+                // Update window title when the Project changes
+                @Override
+                public void resultChanged(LookupEvent ignored) {
+
+                    Collection<? extends Project> projects = lookupResults.allInstances();
+                    @SuppressWarnings("unchecked")
+                    ArrayList<Project> oldProjects = (ArrayList<Project>) currentProjects.clone(); // shallow copy
+                    currentProjects.clear();
+                    currentProjects.addAll(projects);
+                    pcs.firePropertyChange(PROP_CURRENT_PROJECT_LIST, oldProjects, currentProjects);
+                }
+            };
+            // Activate the listener
+            lookupResults.addLookupListener(lookupListener);
+            lookupListener.resultChanged(null);
+        }
+    }
+
+    public List<Project> getCurrentProjects() {
+        return currentProjects;
+    }
 
     /**
      * Singleton instance accessor method for a project assistant. Provides entry point for further
@@ -76,48 +114,33 @@ public abstract class CurrentProjectTracker {
     }
 
     /**
-     * This class keeps the main window title up-to-date with the currently selected project name.
+     * Adds a property change listener that handles {@code PROP_CURRENT_PROJECT_LIST} events. The
+     * event will contain {@code List<Project>} collections in the old and new value event
+     * properties.
+     * @param listener Listener to receive PROP_CURRENT_PROJECT_LIST events.
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    /**
+     * This subclass keeps the main window title up-to-date with the currently selected project
+     * name.
      *
      * @author Bruce Schubert
      */
     public static class DefaultCurrentProjectTracker extends CurrentProjectTracker {
 
-        private static String originalWindowTitle;
-
         public DefaultCurrentProjectTracker() {
+
             // The window title manager will call updateWindowTitle whenever the project selection changes
-            MainWindowTitleManager.activate();
+            addPropertyChangeListener(new MainWindowTitleManager());
         }
 
-        /**
-         * Called by the MainWindowTitleManager to update the window title when a project is
-         * selected.
-         * @param projectName name used in window title
-         * @see MainWindowTitleManager
-         */
-        @Override
-        public void updateWindowTitle(final String projectName) {
-            // We have to do this on the AWT thread, so we use the invokeWhenUIReady
-            // method which can be called from any thread.
-            {
-                WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
-                    @Override
-                    public void run() {
-                        Frame mainWindow = WindowManager.getDefault().getMainWindow();
-                        if (originalWindowTitle == null) {
-                            originalWindowTitle = mainWindow.getTitle();
-                        }
-                        String title;
-                        if (projectName == null || projectName.isEmpty()) {
-                            title = originalWindowTitle;
-                        }
-                        else {
-                            title = projectName + " - " + originalWindowTitle;
-                        }
-                        mainWindow.setTitle(title);
-                    }
-                });
-            }
-        }
     }
 }
