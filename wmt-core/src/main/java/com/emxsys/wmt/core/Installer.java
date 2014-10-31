@@ -53,7 +53,7 @@ public class Installer extends ModuleInstall {
         
         WindowManager.getDefault().invokeWhenUIReady(() -> {
             // Install component that tracks the current project and updates the global lookup
-            CurrentProjectTracker.getDefault();
+            CurrentProjectTracker.getDefault().activate();
             
             // Launch feedback survey...if its active
             FeedbackSurvey.start();

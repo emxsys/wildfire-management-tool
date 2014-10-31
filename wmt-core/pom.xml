@@ -156,6 +156,12 @@
             <version>${netbeans.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.emxsys</groupId>
+            <artifactId>wmt-time</artifactId>
+            <version>4.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>

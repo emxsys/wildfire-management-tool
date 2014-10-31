@@ -63,6 +63,12 @@ public abstract class CurrentProjectTracker {
      * call.
      */
     protected CurrentProjectTracker() {
+    }
+
+    /**
+     * Activates the project tracking.
+     */
+    public void activate() {
         if (lookupResults == null) {
             logger.config("Initializing global context lookup listener for Projects");
 
@@ -89,6 +95,9 @@ public abstract class CurrentProjectTracker {
     }
 
     public List<Project> getCurrentProjects() {
+        if (lookupResults == null) {
+            logger.warning("The project tracker has not been activated. Call CurrentProjectTracker.getDefault().activate()");
+        }
         return currentProjects;
     }
 
