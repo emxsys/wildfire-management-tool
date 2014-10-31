@@ -51,19 +51,16 @@ import org.openide.util.Lookup;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class TimeProviderFactory implements TimeProvider, Observer {
+public class TimeProviderFactory {
 
     private static final Logger logger = Logger.getLogger(TimeProviderFactory.class.getName());
     static TimeProvider instance = null;
-    private final EventListenerList listenerList = new EventListenerList();
-    private DateProvider dateProvider;
-    private ZonedDateTime curTime;
 
     /**
      * Gets a TimeProvider instance, either from the global lookup or a default implementation.
      *
      * @return A TimeProvider service provider found on the global lookup, or, if not found, a
-     * TimeProviderFactory instance.
+     * DefaultTimeProvider instance.
      */
     public static TimeProvider getInstance() {
         if (instance == null) {
@@ -72,58 +69,71 @@ public class TimeProviderFactory implements TimeProvider, Observer {
 
             // Use our default instance if no registered provider.
             if (instance == null) {
-                instance = new TimeProviderFactory();
+                instance = new DefaultTimeProvider();
             }
         }
         return instance;
     }
 
     private TimeProviderFactory() {
-        logger.config("Constructed TimeProvider");
-        getDateProvider();
     }
 
-    private DateProvider getDateProvider() {
-        if (dateProvider == null) {
-            dateProvider = Lookup.getDefault().lookup(DateProvider.class);
-            if (dateProvider != null) {
-                dateProvider.addObserver(this);
+    /**
+     * The default implementation of a TimeProvider.
+     */
+    static class DefaultTimeProvider implements TimeProvider, Observer {
+
+        private final EventListenerList listenerList = new EventListenerList();
+        private DateProvider dateProvider;
+        private ZonedDateTime curTime;
+
+        private DefaultTimeProvider() {
+            logger.config("Constructed TimeProvider");
+            getDateProvider();
+        }
+
+        private DateProvider getDateProvider() {
+            if (dateProvider == null) {
+                dateProvider = Lookup.getDefault().lookup(DateProvider.class);
+                if (dateProvider != null) {
+                    dateProvider.addObserver(this);
+                }
+            }
+            return dateProvider;
+        }
+
+        @Override
+        public ZonedDateTime getTime() {
+            return curTime;
+        }
+
+        @Override
+        public void setTime(ZonedDateTime utcTime) {
+            // Update Terramenta
+            getDateProvider().setDate(Date.from(utcTime.toInstant()));
+        }
+
+        @Override
+        public void addTimeListener(TimeListener listener) {
+            listenerList.add(TimeListener.class, listener);
+        }
+
+        @Override
+        public void removeTimeListener(TimeListener listener) {
+            listenerList.remove(TimeListener.class, listener);
+        }
+
+        @Override
+        public void update(Observable dateProvider, Object date) {
+            ZonedDateTime oldTime = curTime;
+            TimeZone timeZone = TimeOptions.getTimeZone();
+            curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), timeZone.toZoneId());
+            logger.log(Level.FINEST, "update: {0}", curTime.toString());
+            TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
+            for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {
+                listener.updateTime(timeEvent);
             }
         }
-        return dateProvider;
-    }
 
-    @Override
-    public ZonedDateTime getTime() {
-        return curTime;
     }
-
-    @Override
-    public void setTime(ZonedDateTime utcTime) {
-        // Update Terramenta
-        getDateProvider().setDate(Date.from(utcTime.toInstant()));
-    }
-
-    @Override
-    public void addTimeListener(TimeListener listener) {
-        listenerList.add(TimeListener.class, listener);
-    }
-
-    @Override
-    public void removeTimeListener(TimeListener listener) {
-        listenerList.remove(TimeListener.class, listener);
-    }
-
-    @Override
-    public void update(Observable dateProvider, Object date) {
-        ZonedDateTime oldTime = curTime;
-        TimeZone timeZone = TimeOptions.getTimeZone();
-        curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), timeZone.toZoneId());
-        logger.log(Level.FINEST, "update: {0}", curTime.toString());
-        TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
-        for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {
-            listener.updateTime(timeEvent);
-        }
-    }
-
 }

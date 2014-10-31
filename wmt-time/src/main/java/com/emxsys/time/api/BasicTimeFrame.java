@@ -112,4 +112,10 @@ public class BasicTimeFrame implements TimeFrame {
         pcs.removePropertyChangeListener(listener);
     }
 
+    public boolean contains(ZonedDateTime time) {
+        return ((time.isAfter(getBegin()) || time.isEqual(getBegin()))
+                && (time.isBefore(getEnd()) || time.isEqual(getEnd())));
+
+    }
+
 }

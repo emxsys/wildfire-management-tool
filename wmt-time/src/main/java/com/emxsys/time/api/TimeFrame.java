@@ -44,6 +44,8 @@ public interface TimeFrame {
 
     Duration getDuration();
 
+    boolean contains(ZonedDateTime time);
+
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     void removePropertyChangeListener(PropertyChangeListener listener);
