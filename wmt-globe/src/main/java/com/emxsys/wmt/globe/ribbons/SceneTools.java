@@ -7,6 +7,7 @@ package com.emxsys.wmt.globe.ribbons;
 
 import com.emxsys.wmt.globe.scenes.BasicSceneNode;
 import com.terramenta.ribbon.RibbonManager;
+import java.awt.EventQueue;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -22,8 +23,9 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonContextualTaskGroup;
  * NOTE: The singleton must be instantiated for this contextual menu to work. You should call
  * {@code SceneTools.getInstance()} in the Globe {@code initializeResources()} body.
  * <p>
- * See the {@code Ribbon/TaskPanes/SceneTools} folder in {@code layer.xml} and {@code generated-layer.xml} for content.
- * 
+ * See the {@code Ribbon/TaskPanes/SceneTools} folder in {@code layer.xml} and
+ * {@code generated-layer.xml} for content.
+ *
  * @author Bruce Schubert
  */
 @Messages({
@@ -51,14 +53,16 @@ public final class SceneTools implements LookupListener {
     public void resultChanged(LookupEvent ev) {
         RibbonContextualTaskGroup group = getTaskGroup();
         if (group != null) {
-            JRibbon ribbon = Lookup.getDefault().lookup(RibbonManager.class).getRibbon();
-            // Enable and show the task pane when a single marker is selected.
-            if (this.lookupResult.allInstances().size() == 1) {
-                ribbon.setVisible(group, true);
-                ribbon.setSelectedTask(group.getTask(0)); // use the first (and only) task.
-            } else {
-                ribbon.setVisible(group, false);
-            }
+            EventQueue.invokeLater(() -> {
+                JRibbon ribbon = Lookup.getDefault().lookup(RibbonManager.class).getRibbon();
+                // Enable and show the task pane when a single marker is selected.
+                if (this.lookupResult.allInstances().size() == 1) {
+                    ribbon.setVisible(group, true);
+                    ribbon.setSelectedTask(group.getTask(0)); // use the first (and only) task.
+                } else {
+                    ribbon.setVisible(group, false);
+                }
+            });
         }
     }
 
