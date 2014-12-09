@@ -173,6 +173,7 @@
         <module>wmt-wildfire</module>
         <module>wmt-gis-shapefile</module>
         <module>wmt-maps-geomac</module>
+        <module>wmt-gis-sqlserver</module>
     </modules>
     <reporting>
         <plugins>
