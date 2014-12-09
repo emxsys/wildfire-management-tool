@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.emxsys</groupId>
+        <artifactId>wmt</artifactId>
+        <version>4.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>wmt-gis-sqlserver</artifactId>
+    <packaging>nbm</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <publicPackages>
+                        <publicPackage>com.microsoft.sqlserver.jdbc</publicPackage>
+                        <publicPackage>microsoft.sql</publicPackage>
+                    </publicPackages>
+                    <nbmResources>
+                        <nbmResource>
+                            <directory>release/modules</directory>  <!-- This is the sourcedir -->
+                            <targetPath>modules</targetPath>        <!-- This is the path relative to the installed module -->
+                            <includes>
+                                <include>**/*.*</include>           <!-- Pattern of files to include -->
+                            </includes>
+                        </nbmResource>
+                    </nbmResources>
+                </configuration>
+            </plugin>        
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <id>install-sqlserver-jdbc</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.basedir}/src/main/repository/sqljdbc_4.1/enu/sqljdbc41.jar</file>
+                            <!--<classifier>${classifier_if_this_isnt_the_main_artifact_of_this_project}</classifier>-->
+                            <groupId>com.microsoft.sqlserver</groupId>
+                            <artifactId>sqljdbc</artifactId>
+                            <version>4.1</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-annotations-common</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc</artifactId>
+            <version>4.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <name>WMT GIS SQL Server</name>
+    <description>Module for accessing SQL Server GIS data.</description>
+</project>
