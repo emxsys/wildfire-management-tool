@@ -147,8 +147,11 @@ public abstract class CurrentProjectTracker {
 
         public DefaultCurrentProjectTracker() {
 
-            // The window title manager will call updateWindowTitle whenever the project selection changes
+            // The window title manager will update the window title with the current project's name
             addPropertyChangeListener(new MainWindowTitleManager());
+            
+            // The application time manager will set the applicationtime to the current project's timeframe
+            addPropertyChangeListener(new ApplicationTimeManager());
         }
 
     }

@@ -29,19 +29,15 @@
  */
 package com.emxsys.wmt.core.project;
 
-import com.emxsys.time.api.TimeFrame;
+import com.emxsys.time.api.TimeRegistrar;
 import com.emxsys.time.spi.TimeProviderFactory;
-import java.awt.Frame;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectUtils;
-import org.openide.windows.WindowManager;
 
 /**
  * This class updates the application time from the current project.
@@ -50,13 +46,15 @@ import org.openide.windows.WindowManager;
  */
 public class ApplicationTimeManager implements PropertyChangeListener {
 
+    private TimeRegistrar registrar = null;
     private static final Logger logger = Logger.getLogger(ApplicationTimeManager.class.getName());
 
     ApplicationTimeManager() {
     }
 
     /**
-     * Handles changes in the project selection.
+     * Handles changes in the project selection by setting the application time to the current
+     * project's time settings.
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -65,16 +63,28 @@ public class ApplicationTimeManager implements PropertyChangeListener {
             logger.log(Level.WARNING, "Inappropriate property change event: {0}", evt.getPropertyName());
             return;
         }
-        String projectName;
         @SuppressWarnings("unchecked")
         List<Project> projects = (List<Project>) evt.getNewValue();
         if (projects.isEmpty()) {
-            projectName = "<No Project>";
+            // TODO: Set the application time to the system time or a previously cached time.
         }
         else if (projects.size() == 1) {
+            // Turn off the old registrar
+            if (registrar != null) {
+                registrar.deactivate();
+            }
+
+            // Set the new time registrar
             Project project = projects.iterator().next();
-            Properties props = project.getLookup().lookup(Properties.class);
-            if (props == null) {
+            registrar = project.getLookup().lookup(TimeRegistrar.class);
+            
+            if (registrar == null) {
+                // TODO: set to system time; log warning
+                updateApplicationTime(ZonedDateTime.now());
+            }
+            else {                
+                // Set the time to the current project's last instant.
+                updateApplicationTime(registrar.getCurrentTime());
             }
         }
         else {
@@ -90,6 +100,4 @@ public class ApplicationTimeManager implements PropertyChangeListener {
     public static void updateApplicationTime(final ZonedDateTime dateTime) {
         TimeProviderFactory.getInstance().setTime(dateTime);
     }
-}
-
 }
