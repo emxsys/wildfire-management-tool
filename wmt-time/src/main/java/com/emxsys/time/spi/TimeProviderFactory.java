@@ -54,7 +54,7 @@ import org.openide.util.Lookup;
 public class TimeProviderFactory {
 
     private static final Logger logger = Logger.getLogger(TimeProviderFactory.class.getName());
-    static TimeProvider instance = null;
+    private static TimeProvider instance = null;
 
     /**
      * Gets a TimeProvider instance, either from the global lookup or a default implementation.
@@ -95,9 +95,12 @@ public class TimeProviderFactory {
         private DateProvider getDateProvider() {
             if (dateProvider == null) {
                 dateProvider = Lookup.getDefault().lookup(DateProvider.class);
-                if (dateProvider != null) {
-                    dateProvider.addObserver(this);
+
+                if (dateProvider == null) {
+                    throw new IllegalStateException("getDateProvider() unable to locate a DateProvider.");
                 }
+                dateProvider.addObserver(this);
+                curTime = dateToZonedDateTime(dateProvider.getDate());
             }
             return dateProvider;
         }
@@ -109,6 +112,9 @@ public class TimeProviderFactory {
 
         @Override
         public void setTime(ZonedDateTime utcTime) {
+            if (utcTime == null) {
+                throw new IllegalArgumentException("setTime() utcTime arg cannot be null.");
+            }
             // Update Terramenta
             getDateProvider().setDate(Date.from(utcTime.toInstant()));
         }
@@ -123,11 +129,15 @@ public class TimeProviderFactory {
             listenerList.remove(TimeListener.class, listener);
         }
 
+        /**
+         * Notifies TimeListeners upon DateProvider updates.
+         * @param dateProvider Ignored.
+         * @param date New date.
+         */
         @Override
         public void update(Observable dateProvider, Object date) {
             ZonedDateTime oldTime = curTime;
-            TimeZone timeZone = TimeOptions.getTimeZone();
-            curTime = ZonedDateTime.ofInstant(((Date) date).toInstant(), timeZone.toZoneId());
+            curTime = dateToZonedDateTime((Date) date);
             logger.log(Level.FINEST, "update: {0}", curTime.toString());
             TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
             for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {
@@ -135,5 +145,9 @@ public class TimeProviderFactory {
             }
         }
 
+        static ZonedDateTime dateToZonedDateTime(Date date) {
+            TimeZone timeZone = TimeOptions.getTimeZone();
+            return ZonedDateTime.ofInstant(date.toInstant(), timeZone.toZoneId());            
+        }
     }
 }

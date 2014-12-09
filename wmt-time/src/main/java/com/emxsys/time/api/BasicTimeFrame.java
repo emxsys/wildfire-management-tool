@@ -95,6 +95,14 @@ public class BasicTimeFrame implements TimeFrame {
     }
 
     /**
+     * Sets the end of the time frame based on the beginning plus duration.
+     * @param duration Duration of time frame
+     */
+    public void setDuration(Duration duration) {
+        setEnd(getBegin().plus(duration));
+    }
+
+    /**
      * Add a listener for PROP_TIMEFRAME_BEGIN and PROP_TIMEFRAME_END events.
      * @param listener
      */
@@ -112,10 +120,24 @@ public class BasicTimeFrame implements TimeFrame {
         pcs.removePropertyChangeListener(listener);
     }
 
+    @Override
     public boolean contains(ZonedDateTime time) {
-        return ((time.isAfter(getBegin()) || time.isEqual(getBegin()))
-                && (time.isBefore(getEnd()) || time.isEqual(getEnd())));
+        return !(this.isBefore(time) || this.isAfter(time));
+    }
 
+    @Override
+    public boolean isAfter(ZonedDateTime time) {
+        return getEnd().isBefore(time);
+    }
+
+    @Override
+    public boolean isBefore(ZonedDateTime time) {
+        return getBegin().isAfter(time);
+    }
+
+    @Override
+    public String toString() {
+        return "BasicTimeFrame{" + "begin=" + begin + ", end=" + end + '}';
     }
 
 }

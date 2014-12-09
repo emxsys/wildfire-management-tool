@@ -37,6 +37,7 @@ public interface TimeFrame {
 
     static final String PROP_TIMEFRAME_BEGIN = "time.timeframe.begin";
     static final String PROP_TIMEFRAME_END = "time.timeframe.end";
+    static final String PROP_TIMEFRAME_DURATION = "time.timeframe.duration";
 
     ZonedDateTime getBegin();
 
@@ -44,10 +45,27 @@ public interface TimeFrame {
 
     Duration getDuration();
 
+    /**
+     * @param time
+     * @return True if time is within the time frame.
+     */
     boolean contains(ZonedDateTime time);
+
+    /**
+     * @param time
+     * @return True if the time argument is greater than the end time.
+     */
+    boolean isAfter(ZonedDateTime time);
+
+    /**
+     * @param time
+     * @return True if the time argument is less than the begin time.
+     */
+    boolean isBefore(ZonedDateTime time);
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     void removePropertyChangeListener(PropertyChangeListener listener);
 
+    
 }

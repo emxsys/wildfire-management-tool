@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012, Bruce Schubert. <bruce@emxsys.com>
+ * Copyright (c) 2014, Bruce Schubert. <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,23 @@
  */
 package com.emxsys.time.api;
 
-import java.util.EventListener;
+import java.time.ZonedDateTime;
 
 /**
- * A TimeListener receives a TimeEvent message when the TimeProvider advances or reverses the time.
- * 
- * @author Bruce Schubert (bruce@emxsys.com)
- * @see TimeEvent
+ * This class is responsible for recording time properties.
  */
-public interface TimeListener extends EventListener {
+public interface TimeRegistrar extends TimeListener {
 
-    public void updateTime(TimeEvent evt);
+    ZonedDateTime getCurrentTime();
+
+    TimeFrame getTimeFrame();
+
+    void activate();
+
+    void deactivate();
+
+    boolean isActive();
+    
+
+
 }
