@@ -37,6 +37,12 @@ import com.emxsys.gis.api.marker.MarkerManager;
 import com.emxsys.gis.api.scene.BasicSceneCatalog;
 import com.emxsys.gis.api.symbology.GraphicCatalog;
 import com.emxsys.gis.api.symbology.SymbolCatalog;
+import com.emxsys.time.api.BasicTimeFrame;
+import com.emxsys.time.api.BasicTimeRegistrar;
+import com.emxsys.time.api.TimeListener;
+import com.emxsys.time.api.TimeProvider;
+import com.emxsys.time.api.TimeRegistrar;
+import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.project.capabilities.ProjectSelectionHandler;
 import com.emxsys.wildfire.api.Fireground;
@@ -45,6 +51,7 @@ import com.emxsys.wildfire.spi.FiregroundProviderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -71,6 +78,7 @@ import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
+import org.openide.util.WeakListeners;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
@@ -81,7 +89,7 @@ import org.openide.util.lookup.InstanceContent;
  * This project type can be extended through the ProjectServiceProvider annotation using
  * "com-emxsys-basic-project" for the projectType parameter. For example:
  * <pre>{@code @ProjectServiceProvider(service=..., projectType="com-emxsys-basic-project")}</pre>
- * 
+ *
  * @author Bruce Schubert
  */
 public class WmtProject implements Project {
@@ -101,6 +109,9 @@ public class WmtProject implements Project {
     public static final boolean DO_NOT_CREATE = false;
     static final String CONFIG_PROPFILE_NAME = "wmt.properties"; //NOI18N
     static final String LEGACY_CONFIG_PROPFILE_NAME = "cps.properties"; //NOI18N
+    static final String PROP_TIMEFRAME_BEGIN = "wmt.timeframe.begin"; //NOI18N
+    static final String PROP_TIMEFRAME_END = "wmt.timeframe.end"; //NOI18N
+    static final String PROP_TIME_CURRENT = "wmt.time.current"; //NOI18N
     private final FileObject projectFolder;
     private final ProjectState projectState;
     final ProjectProperties projectProperties;
@@ -154,17 +165,22 @@ public class WmtProject implements Project {
         return ProjectUtils.getInformation(WmtProject.this).getDisplayName();
     }
 
+    /**
+     * Gets the project's lookup. Modules can can extend this projectType
+     * by adding a service to this project's lookup via an annotation: 
+     * {@code @ProjectServiceProvider(service=..., projectType="com-emxsys-wmt-project")}
+     * @return A composite lookup from {@code LookupProviderSupport.createCompositeLookup(...)}
+     */
     @Override
     public Lookup getLookup() {
         if (this.baseLookup == null) {
             // Project info
-            this.content.add(this); // required for LazyLookupProviders in createCompositeLookup()
             this.content.add(new WmtProjectInfo(this));
             this.content.add(new WmtProjectLogicalView(this));
             this.content.add(new WmtProjectCustomizerProvider(this));
             // Now we add our project specific content
             this.content.add(this.projectState);
-            this.content.add(this.projectProperties);
+            this.content.add(this.projectProperties);   // String key/value pairs
             // Actions and handlers
             this.content.add(new ActionProviderImpl());
             this.content.add(new ProjectCopyOperation());
@@ -172,12 +188,16 @@ public class WmtProject implements Project {
             this.content.add(new ProjectMoveOperation());
             this.content.add(new ProjectOpenedOrClosedHook());
             this.content.add(new ProjectSelectionHandler(this));
-
+            
+            // Note: many individual load...() methods will add their own content to the lookup
+           
             this.baseLookup = new AbstractLookup(this.content);
+
             // We allow third party lookup providers to extend this projectType when this
             // project's lookup is queried for a service. A service provider class or factory
             // method can extend this project with an annotation like this:
             //  @ProjectServiceProvider(service=..., projectType="com-emxsys-basic-project")
+            this.content.add(this); // required for LazyLookupProviders in createCompositeLookup()
             this.compositeLookup = LookupProviderSupport.createCompositeLookup(
                     this.baseLookup, "Projects/" + PROJECT_TYPE + "/Lookup"); //NOI18N        
         }
@@ -197,27 +217,30 @@ public class WmtProject implements Project {
 
             public void run() {
                 logger.log(Level.INFO, "Loading project {0} data files...", getProjectName()); //NOI18N
-                
+
                 final ProgressHandle handle = ProgressHandleFactory.createHandle("Loading data files...");
                 handle.start(); // start in indeterminate mode
                 try {
+                    handle.progress("Loading times...");
+                    loadTimes();
+                    
                     handle.progress("Loading scenes...");
                     loadScenes(SCENE_FOLDER_NAME);
-                    
+
                     handle.progress("Loading markers...");
                     loadMarkers(MARKER_FOLDER_NAME);
-                    
+
                     handle.progress("Loading symbology...");
                     loadSymbology(SYMBOLOGY_FOLDER_NAME);
-                    
+
                     handle.progress("Loading fireground...");
                     loadFireground(FIREGROUND_FOLDER_NAME);
-                    
+
                     // Ok to Load/convert file formats in the project root now
                     // that the project folder hierarchay has been established
                     handle.progress("Loading/converting legacy files...");
                     loadLegacyFiles();
-                    
+
                     init.set(State.INITIALIZED);
                 } catch (Exception exception) {
                     logger.severe(exception.toString());
@@ -259,6 +282,13 @@ public class WmtProject implements Project {
         if (fireground != null) {
             this.content.remove(fireground);
         }
+        TimeRegistrar registrar = getLookup().lookup(TimeRegistrar.class);
+        if (registrar != null) {
+            this.content.remove(registrar);
+            this.projectProperties.setProperty(PROP_TIMEFRAME_BEGIN, registrar.getTimeFrame().getBegin().toString());
+            this.projectProperties.setProperty(PROP_TIMEFRAME_END, registrar.getTimeFrame().getEnd().toString());
+            this.projectProperties.setProperty(PROP_TIME_CURRENT, registrar.getCurrentTime().toString());
+        }
         // TODO: query project extensions; find a way to signal them that the project is closed.
         Collection<? extends Disposable> lookupAll = this.compositeLookup.lookupAll(Disposable.class);
         lookupAll.stream().forEach(new Consumer<Disposable>() {
@@ -268,6 +298,8 @@ public class WmtProject implements Project {
             }
         });
 
+        
+        
         init.set(State.CLOSED);
     }
 
@@ -291,6 +323,33 @@ public class WmtProject implements Project {
         return properties;
     }
 
+    /**
+     * Adds support for project time frames.
+     */
+    private void loadTimes(){
+        logger.log(Level.INFO, "Loading times...");
+        String beginTime = projectProperties.getProperty(PROP_TIMEFRAME_BEGIN);
+        String endTime = projectProperties.getProperty(PROP_TIMEFRAME_END);
+        String currentTime = projectProperties.getProperty(PROP_TIME_CURRENT);
+        TimeRegistrar registrar;
+        if (beginTime == null || endTime == null) {
+            ZonedDateTime now = ZonedDateTime.now();
+            registrar = new BasicTimeRegistrar(now, now.plusDays(2), now);
+        } else {
+            ZonedDateTime begin = ZonedDateTime.parse(beginTime);
+            ZonedDateTime end = ZonedDateTime.parse(endTime);
+            ZonedDateTime current = currentTime == null? begin : ZonedDateTime.parse(currentTime);
+            registrar = new BasicTimeRegistrar(begin, end, current);
+        }
+        TimeProvider provider = TimeProviderFactory.getInstance();
+        provider.addTimeListener(WeakListeners.create(TimeListener.class, registrar, provider));
+        
+        // TODO: Activate registrar... (done in Core..ApplicationTimeManager)
+        
+        this.content.add(registrar);
+        logger.log(Level.FINE, "Loaded times: {0}", registrar.toString());
+
+    }
     /**
      * Adds support for Scenes by placing a SceneCatalog in the project lookup.
      *
@@ -351,7 +410,7 @@ public class WmtProject implements Project {
     private void loadFireground(String folderName) {
         logger.log(Level.INFO, "Loading {0} fireground...", getProjectName());
         FiregroundProvider factory = FiregroundProviderFactory.getInstance();
-        
+
         // Use the factory to get a fireground dataobject from the disk file(s)        
         // Read the fireground.xml file
         FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
