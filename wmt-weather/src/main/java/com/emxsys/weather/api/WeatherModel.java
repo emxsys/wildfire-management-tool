@@ -72,12 +72,25 @@ public class WeatherModel extends SpatioTemporalModel {
 
     private static final Logger logger = Logger.getLogger(WeatherModel.class.getName());
 
+    /**
+     * Factory method for a single point
+     * @param time Temporal point.
+     * @param coord Spatial point.
+     * @param tuple Weather data.
+     * @return A new WeatherModel from temporal-spatial weather data.
+     */
     public static WeatherModel from(ZonedDateTime time, Coord2D coord, WeatherTuple tuple) {
         TemporalDomain timeDomain = new TemporalDomain(time, 1);
         SpatialField spatialField = SpatialField.from(coord, tuple);
         return WeatherModel.from(timeDomain, new SpatialField[]{spatialField});
     }
 
+    /**
+     * Factory method.
+     * @param domain Temporal domain.
+     * @param ranges Spatial weather data.
+     * @return A new WeatherModel from temporal-spatial weather data.
+     */
     public static WeatherModel from(TemporalDomain domain, SpatialField[] ranges) {
         try {
             FieldImpl temporalSpatialWeather = domain.createTemporalField(ranges[0].getField().getType());
@@ -91,6 +104,12 @@ public class WeatherModel extends SpatioTemporalModel {
         }
     }
 
+    /**
+     * Factory method.
+     * @param domain Spatial domain.
+     * @param ranges Temporal weather data.
+     * @return A new WeatherModel from spatio-temporal weather data.
+     */
     public static WeatherModel from(SpatialDomain domain, FlatField[] ranges) {
         try {
             FieldImpl spatioTemporalWeather = domain.createSpatialField(ranges[0].getType());
@@ -104,6 +123,10 @@ public class WeatherModel extends SpatioTemporalModel {
         }
     }
 
+    /**
+     * Constructor.
+     * @param field Weather data.
+     */
     public WeatherModel(FieldImpl field) {
         super(field);
     }
@@ -260,7 +283,7 @@ public class WeatherModel extends SpatioTemporalModel {
     }
 
     /**
-     *
+     * 
      * @return A (Lat, Lon) -> (Weather) {@code FlatField}.
      */
     public FlatField getLatestWeather() {
