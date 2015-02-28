@@ -9,8 +9,16 @@ WMT is a software application based on the Campbell Prediction System (CPS) that
 This project uses the NASA WorldWind SDK for the virtual globe, which is provided by the [Emxsys - Terramenta](https://bitbucket.org/emxsys/emxsys-terramenta) project dependency, which is another NetBeans maven project.  
 
 This project is licensed under the BSD 3-Clause license. 
+
 #### Version ####
 4.0
+
+#### More Information ####
+For more information visit the WMT project [Wiki](https://bitbucket.org/emxsys/wildfire-management-tool/wiki/Home).
+
+* [Vision and Scope](https://bitbucket.org/emxsys/wildfire-management-tool/wiki/Vision%20and%20Scope)
+* [Software Architecture](https://bitbucket.org/emxsys/wildfire-management-tool/wiki/Software%20Architecture)
+
 
 ### How do I get set up? ###
 #### Summary of set up 
