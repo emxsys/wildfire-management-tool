@@ -37,29 +37,28 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
-@Messages(
-        {
-            "err.graphic.null=Graphic argument cannot be null.",
-            "err.graphics.null=Graphics collection cannot be null.",
-            "# {0} - graphic type",
-            "err.graphic.incompatible=The graphic type is incompatable [{0}]. The graphic was not added.",
-            "# {0} - graphic id",
-            "err.graphic.already.exists=The graphic ID ({0}) already exists.",
-            "# {0} - graphic id",
-            "err.graphic.renderer.not.found=A renderer for the graphic was not found. The graphic {0} will not be displayed.",
-            "# {0} - graphic id",
-            "info.adding.graphic.to.renderer=Adding the {0} graphic to a renderer.",
-            "# {0} - graphic id",
-            "info.removing.graphic.from.renderer=Removing the {0} graphic from the renderer."
-        })
+@Messages({
+    "err.graphic.null=Graphic argument cannot be null.",
+    "err.graphics.null=Graphics collection cannot be null.",
+    "# {0} - graphic type",
+    "err.graphic.incompatible=The graphic type is incompatable [{0}]. The graphic was not added.",
+    "# {0} - graphic id",
+    "err.graphic.already.exists=The graphic ID ({0}) already exists.",
+    "# {0} - graphic id",
+    "err.graphic.renderer.not.found=A renderer for the graphic was not found. The graphic {0} will not be displayed.",
+    "# {0} - graphic id",
+    "info.adding.graphic.to.renderer=Adding the {0} graphic to a renderer.",
+    "# {0} - graphic id",
+    "info.removing.graphic.from.renderer=Removing the {0} graphic from the renderer."
+})
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: GraphicCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
-public class GraphicCatalog extends EntityCatalog<Graphic> {
+public class GraphicManager extends EntityCatalog<Graphic> {
 
-    private static final Logger logger = Logger.getLogger(GraphicCatalog.class.getName());
+    private static final Logger logger = Logger.getLogger(GraphicManager.class.getName());
     private FileObject folder;
 
     /**
@@ -67,7 +66,7 @@ public class GraphicCatalog extends EntityCatalog<Graphic> {
      *
      * @param folder the folder where Graphics are saved
      */
-    public GraphicCatalog(FileObject folder) {
+    public GraphicManager(FileObject folder) {
         setFolder(folder);
     }
 

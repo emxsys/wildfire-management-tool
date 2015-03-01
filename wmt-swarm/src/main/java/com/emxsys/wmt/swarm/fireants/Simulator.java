@@ -45,50 +45,35 @@ import java.util.ArrayList;
  */
 public class Simulator {
 
-    private ArrayList<FireAnt> ants = new ArrayList<>();
     private final World world = new World();
-    private GeoCoord2D nest;
 
     private Simulator() {
-        // Setup environment
 
-        world.setExtents(new GeoSector(
-                GeoCoord2D.fromDegrees(34.4, -119.2),
-                GeoCoord2D.fromDegrees(34.50, -119.4)));
-
-        Asset asset = new Asset(Asset.Value.High, new GeoSector(
-                GeoCoord2D.fromDegrees(34.49, -119.35),
-                GeoCoord2D.fromDegrees(34.495, -119.36)));
-
-        world.addAsset(asset);
-
-        nest = GeoCoord2D.fromDegrees(34.41, -119.25);
-        for (int i = 0; i < 10; i++) {
-            ants.add(new FireAnt(new Forage(), nest, world));
         }
-    }
 
     public void run() {
-        int remaining = ants.size();
-        world.setTime(ZonedDateTime.now());
-        DiurnalWeatherProvider wxProvider = world.getLookup().lookup(DiurnalWeatherProvider.class);
-        wxProvider.initializeSunlight(world.getTime(), GeoCoord3D.fromCoord(nest));
-
         long counter = 0;
-        while (remaining > 0) {
-            remaining = 0;
+
+        // Process until all ants have reached their goal
+        int numAnts = world.getAnts().size();
+        while (numAnts > 0) {
             counter++;
+            if (counter % 100 == 0) {
+                System.out.println(counter);
+            }
+
             // Increment the clock
             world.setTime(world.getTime().plusMinutes(10));
 
-            for (FireAnt ant : ants) {
+            numAnts = 0;
+            for (FireAnt ant : world.getAnts()) {
                 if (ant.isAlive()) {
                     ant.update();
                 }
                 if (ant.isAlive() && ant.isWorking()) {
-                    remaining++;
+                    numAnts++;
                 }
-                if (counter%100 == 0) {
+                if (counter % 100 == 0) {
                     System.out.println(ant);
                 }
             }

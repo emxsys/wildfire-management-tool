@@ -35,11 +35,8 @@ import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
-import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -49,7 +46,6 @@ import org.w3c.dom.Node;
  * @see Entity
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: Graphic.java 540 2013-04-18 15:48:26Z bdschubert $
  */
 public interface Graphic extends Entity {
 
@@ -154,13 +150,12 @@ public interface Graphic extends Entity {
      */
     void detachFromRenderer(Graphic.Renderer renderer);
 
-    Node toXmlElement(Document doc, String tag);
-
     /**
      * Gets the factory class used to create this symbol. The provider class may be stored in the
      * file representing this symbol.
+     * @return A Builder class.
      */
-    Class<? extends Factory> getFactoryClass();
+    Class<? extends Builder> getFactoryClass();
 
     /**
      * An interface for interacting with the layer that renders the graphic.
@@ -186,33 +181,27 @@ public interface Graphic extends Entity {
     }
 
     /**
-     * Factory for creating new Graphic instances.
+     * A Graphic factory. Uses the Builder pattern.
      */
-    public interface Factory {
+    public interface Builder {
 
         /**
-         * Creates a Graphic from an XML Document
+         * Creates a Graphic instance.
          *
-         * @param doc document containing a Graphic representation
-         * @return a new Graphic
+         * @return A new Graphic.
          */
-        Graphic createFromXml(Document doc);
+        Graphic build();
+    }
+
+    /**
+     * A Graphic writer.
+     */
+    public interface Writer {
 
         /**
-         * Creates a Graphic from an XML element node
-         *
-         * @param element an Element (Node) containing a Graphic representation
-         * @return a new Graphic
+         * Writes a graphic to a persistent store.
+         * @return The updated Document.
          */
-        Graphic createFromXml(Element element);
-
-        /**
-         * Creates a DataObject representing the supplied Graphic in the specified folder.
-         *
-         * @param graphic model graphic
-         * @param folder location for new Graphic file
-         * @return a new DataObject
-         */
-        DataObject createDataObject(Graphic graphic, FileObject folder);
+        Document write();
     }
 }

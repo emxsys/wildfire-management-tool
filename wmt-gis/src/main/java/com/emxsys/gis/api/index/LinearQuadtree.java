@@ -35,7 +35,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * A container of type T, indexed by morton codes. 
+ * A container of type T, indexed by Morton codes. 
+ * 
  * @author Bruce Schubert <bruce@emxsys.com>
  * @param <T>
  */

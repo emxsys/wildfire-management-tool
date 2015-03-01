@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.swarm.actions;
 
+import com.emxsys.wmt.swarm.fireants.Simulator;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,6 +51,6 @@ public final class TestSwarmAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO implement action body
+        Simulator.getInstance().run();
     }
 }

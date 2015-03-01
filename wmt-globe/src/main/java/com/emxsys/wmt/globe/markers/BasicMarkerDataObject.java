@@ -417,7 +417,6 @@ public class BasicMarkerDataObject extends XMLDataObject {
             writeSchema(dob.getPrimaryFile().getParent());
         }
         return dob;
-
     }
 
     /**

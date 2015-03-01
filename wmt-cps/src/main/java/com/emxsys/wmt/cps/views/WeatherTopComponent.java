@@ -358,7 +358,7 @@ public final class WeatherTopComponent extends TopComponent {
         jPanel2.setLayout(new java.awt.BorderLayout());
         centerPanel.add(jPanel2);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jPanel1.border.title"))); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WeatherTopComponent.class, "WeatherTopComponent.jPanel3.border.title"))); // NOI18N
         jPanel3.setLayout(new java.awt.BorderLayout());
         centerPanel.add(jPanel3);
 

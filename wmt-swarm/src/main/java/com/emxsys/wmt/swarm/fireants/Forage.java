@@ -35,6 +35,7 @@ import com.emxsys.gis.api.GeoCoord2D;
 import static com.emxsys.gis.api.GisType.ANGLE;
 import static com.emxsys.gis.api.GisType.DISTANCE;
 import com.emxsys.gis.api.Terrain;
+import com.emxsys.visad.FireUnit;
 import static com.emxsys.visad.GeneralUnit.foot;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
@@ -51,9 +52,12 @@ import com.emxsys.wmt.swarm.api.Agent;
 import com.emxsys.wmt.swarm.api.GoalForage;
 import java.time.Duration;
 import java.util.List;
+import org.openide.util.Exceptions;
+import visad.CommonUnit;
 import static visad.CommonUnit.meter;
 import visad.Real;
 import visad.UnitException;
+import visad.VisADException;
 
 /**
  *
@@ -77,7 +81,7 @@ public class Forage extends GoalForage {
             Real azimuth = chooseDirection();
 
             // Compute the distance a FireAnt agent would travel along the azimuth
-            Real distance = computeRateOfSpread(agent, duration.toMillis(), azimuth);
+            Real distance = computeSpreadDistance(agent, duration.toMillis(), azimuth);
 
             if (distance.getValue() <= 0) {
                 return agent.getLocation();
@@ -92,6 +96,8 @@ public class Forage extends GoalForage {
         } catch (UnburnableException ex) {
             return GeoCoord2D.INVALID_COORD;
         } catch (UnitException ex) {
+            throw new IllegalStateException(ex);
+        } catch (VisADException ex) {
             throw new IllegalStateException(ex);
         }
 
@@ -140,7 +146,7 @@ public class Forage extends GoalForage {
      * @return [meters]
      * @throws UnitException
      */
-    private Real computeRateOfSpread(Agent agent, long millis, Real direction) throws UnitException {
+    private Real computeSpreadDistance(Agent agent, long millis, Real direction) throws UnitException, VisADException {
         if (fuelModelProvider == null) {
             List<FuelModelProvider> providers = FuelModelProviderFactory.getInstances();
             for (FuelModelProvider provider : providers) {
@@ -167,8 +173,8 @@ public class Forage extends GoalForage {
         Real ros = fire.getRateOfSpreadAtAzimuth(direction);
 
         // ros [ft/min]
-        double distance = ros.getValue() * millis * 60000;
-        return new Real(DISTANCE, foot.toThat(distance, meter));
+        double meters = ros.getValue(CommonUnit.meterPerSecond) * (millis / 1000.0);
+        return new Real(DISTANCE, meters);
     }
 
     private class UnburnableException extends RuntimeException {

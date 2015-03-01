@@ -37,37 +37,35 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
-@Messages(
-        {
-            "err.symbol.null=Symbol argument cannot be null.",
-            "err.symbols.null=Symbols collection cannot be null.",
-            "# {0} - symbol type",
-            "err.symbol.incompatible=The symbol type is incompatable [{0}]. The symbol was not added.",
-            "# {0} - symbol id",
-            "err.symbol.already.exists=The symbol ID ({0}) already exists.",
-            "# {0} - symbol id",
-            "err.symbol.renderer.not.found=A renderer for the symbol was not found. The symbol {0} may not be displayed.",
-            "# {0} - symbol id",
-            "info.symbol.added=The {0} symbol was added.",
-            "# {0} - symbol id",
-            "info.symbol.removed=The {0} symbol was removed."
-        })
+@Messages({
+    "err.symbol.null=Symbol argument cannot be null.",
+    "err.symbols.null=Symbols collection cannot be null.",
+    "# {0} - symbol type",
+    "err.symbol.incompatible=The symbol type is incompatable [{0}]. The symbol was not added.",
+    "# {0} - symbol id",
+    "err.symbol.already.exists=The symbol ID ({0}) already exists.",
+    "# {0} - symbol id",
+    "err.symbol.renderer.not.found=A renderer for the symbol was not found. The symbol {0} may not be displayed.",
+    "# {0} - symbol id",
+    "info.symbol.added=The {0} symbol was added.",
+    "# {0} - symbol id",
+    "info.symbol.removed=The {0} symbol was removed."
+})
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: SymbolCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
-public class SymbolCatalog extends EntityCatalog<Symbol> {
+public class SymbolManager extends EntityCatalog<Symbol> {
 
     private FileObject folder;
-    private static final Logger logger = Logger.getLogger(SymbolCatalog.class.getName());
+    private static final Logger logger = Logger.getLogger(SymbolManager.class.getName());
 
     /**
      * Constructs a EntityCatalog for symbols stored in a folder.
      *
      * @param folder the folder where symbols are saved.
      */
-    public SymbolCatalog(FileObject folder) {
+    public SymbolManager(FileObject folder) {
         this.folder = folder;
     }
 

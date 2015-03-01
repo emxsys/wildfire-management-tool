@@ -32,6 +32,8 @@ package com.emxsys.gis.api.data;
 import java.awt.geom.*;
 
 /**
+ * From VisAD library:
+ * 
  * Fast implementation for tracking data overlap and closest point in a
  * 2D region. The region of interest is divided into non-overlapping cells.
  * Each cell may contain zero or one data objects. This allows quickly finding

@@ -33,7 +33,13 @@ import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord2D;
+import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.geom.Intersection;
+import gov.nasa.worldwind.geom.Line;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.util.RayCastingSupport;
 import org.openide.util.Exceptions;
 
 /**
@@ -115,6 +121,44 @@ public class Positions {
                 position.getElevation());
     }
 
+    
+    /**
+     * Returns a WorldWind Position from a screen point (x, y).
+     * 
+     * Copied from WorldWind's BasicDragger
+     *
+     * @param x Screen point in X dim.
+     * @param y Screen point in Y dim.
+     * @return a computed Position at screen x, y.
+     */
+    public static Position fromScreenPoint(double x, double y) {
+        WorldWindow wwd = (WorldWindow) com.emxsys.wmt.globe.Globe.getInstance().getRendererComponent();
+        View view = wwd.getView();
+        Globe wwGlobe = view.getGlobe();
+        Line ray = view.computeRayFromScreenPoint(x, y);
+        Position pickPos = null;
+        if (view.getEyePosition().getElevation() < wwGlobe.getMaxElevation() * 10) {
+            // Use ray casting below some altitude
+            // Try ray intersection with current terrain geometry
+            Intersection[] intersections = wwd.getSceneController().getTerrain().intersect(ray);
+            if (intersections != null && intersections.length > 0) {
+                pickPos = wwGlobe.computePositionFromPoint(intersections[0].getIntersectionPoint());
+            } else // Fallback on raycasting using elevation data
+            {
+                pickPos = RayCastingSupport.intersectRayWithTerrain(wwGlobe, ray.getOrigin(), ray.getDirection(),
+                        200, 20);
+            }
+        }
+        if (pickPos == null) {
+            // Use intersection with sphere at reference altitude.
+            Intersection inters[] = wwGlobe.intersect(ray, 0);
+            if (inters != null) {
+                pickPos = wwGlobe.computePositionFromPoint(inters[0].getIntersectionPoint());
+            }
+        }
+        return pickPos;
+    }
+    
     private Positions() {
     }
 

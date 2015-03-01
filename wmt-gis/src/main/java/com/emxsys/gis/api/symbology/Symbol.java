@@ -35,9 +35,8 @@ import com.emxsys.gis.api.layer.GisLayer;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
+import org.w3c.dom.Document;
 
 /**
  * The Symbol interface manages the placement and control of point-based icons.
@@ -139,8 +138,9 @@ public interface Symbol extends Entity {
     /**
      * Gets the factory class used to create this symbol. The provider class may be stored in the
      * file representing this symbol.
+     * @return A Builder class.
      */
-    Class<? extends Factory> getFactoryClass();
+    Class<? extends Builder> getFactoryClass();
 
     /**
      * The Symbol.Renderer interface defines the methods used to manage add and remove Symbols to
@@ -195,24 +195,27 @@ public interface Symbol extends Entity {
     }
 
     /**
-     * The Factory interface defines factory methods for creating Symbols from XML.
+     * A Symbol factory. Uses the Builder pattern.
      */
-    public interface Factory {
+    public interface Builder {
 
         /**
          * Creates a Symbol instance.
          *
-         * @return a new Symbol.
+         * @return A new Symbol.
          */
-        Symbol newSymbol();
+        Symbol build();
+    }
+
+    /**
+     * A Symbol writer.
+     */
+    public interface Writer {
 
         /**
-         * Creates a DataObject representing the supplied Symbol in the specified folder.
-         *
-         * @param symbol assigned to the DataObject
-         * @param folder where the DataObject is created
-         * @return a new DataObject
+         * Writes a symbol to a persistent store.
+         * @return The updated Document.
          */
-        DataObject createDataObject(Symbol symbol, FileObject folder);
+        Document write();
     }
 }

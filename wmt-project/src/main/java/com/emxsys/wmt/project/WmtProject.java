@@ -35,8 +35,8 @@ import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.capabilities.Disposable;
 import com.emxsys.gis.api.marker.MarkerManager;
 import com.emxsys.gis.api.scene.BasicSceneCatalog;
-import com.emxsys.gis.api.symbology.GraphicCatalog;
-import com.emxsys.gis.api.symbology.SymbolCatalog;
+import com.emxsys.gis.api.symbology.GraphicManager;
+import com.emxsys.gis.api.symbology.SymbolManager;
 import com.emxsys.time.api.BasicTimeFrame;
 import com.emxsys.time.api.BasicTimeRegistrar;
 import com.emxsys.time.api.TimeListener;
@@ -264,12 +264,12 @@ public class WmtProject implements Project {
             markerManager.dispose();
             this.content.remove(markerManager);
         }
-        GraphicCatalog graphicCatalog = getLookup().lookup(GraphicCatalog.class);
+        GraphicManager graphicCatalog = getLookup().lookup(GraphicManager.class);
         if (graphicCatalog != null) {
             graphicCatalog.dispose();
             this.content.remove(graphicCatalog);
         }
-        SymbolCatalog symbolCatalog = getLookup().lookup(SymbolCatalog.class);
+        SymbolManager symbolCatalog = getLookup().lookup(SymbolManager.class);
         if (symbolCatalog != null) {
             symbolCatalog.dispose();
             this.content.remove(symbolCatalog);
@@ -386,15 +386,15 @@ public class WmtProject implements Project {
 
     /**
      * Loads the MIL-STD 2525C tactical graphics and symbols found in a folder, adds support for
-     * Tactical Graphics and Symbols by adding GraphicCatalog and SymbolCatalog to the lookup.
+ Tactical Graphics and Symbols by adding GraphicManager and SymbolManager to the lookup.
      *
      * @param folderName name of folder containing symbology
      */
     private void loadSymbology(String folderName) {
         logger.log(Level.INFO, "Loading {0} MIL-STD 2525C symbology...", getProjectName());
         FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
-        this.content.add(new GraphicCatalog(subfolder));
-        this.content.add(new SymbolCatalog(subfolder));
+        this.content.add(new GraphicManager(subfolder));
+        this.content.add(new SymbolManager(subfolder));
 
         // Force the loading of the children so the symbols appear on the map without any user input
         DataFolder dataFolder = DataFolder.findFolder(subfolder);
