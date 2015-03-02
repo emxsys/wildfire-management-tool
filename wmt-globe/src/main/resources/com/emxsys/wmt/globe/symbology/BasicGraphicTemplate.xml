@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="http://emxsys.com/worldwind-basicgraphic">
+    <Graphic Identifier="GFGPSAO-------X" Moveable="true" Name="Graphic" Type="TACGRP.C2GM.SPL.ARA.AOO" UUID="">
+        <Positions>
+        </Positions>
+    </Graphic>
+</root>

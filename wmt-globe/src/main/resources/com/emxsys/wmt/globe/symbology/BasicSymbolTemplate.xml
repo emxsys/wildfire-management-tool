@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TacticalSymbolCollection 
+        xmlns="http://emxsys.com/worldwind-basicsymbol"
+        xmlns:gml="http://www.opengis.net/gml"       
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://emxsys.com/worldwind-basicsymbol BasicSymbolSchema.xsd">
+    <gml:boundedBy>
+        <gml:Box>
+            <gml:coord>
+                <gml:X>-119.2</gml:X>
+                <gml:Y>34.2</gml:Y>
+            </gml:coord>
+            <gml:coord>
+                <gml:X>-119.2</gml:X>
+                <gml:Y>34.2</gml:Y>
+            </gml:coord>
+        </gml:Box>
+    </gml:boundedBy>
+    <gml:featureMember>
+        <TacticalSymbol fid="tacsym-123456"
+                        factory="com.emxsys.wmt.globe.symbology.BasicSymbolBuilder"
+                        movable="true">
+            <gml:description>This is a comment</gml:description>
+            <gml:name>This is a tactical symbol template</gml:name>
+            <gml:pointProperty>
+                <gml:Point>
+                    <gml:coordinates>-119.2,34.2,15</gml:coordinates>
+                </gml:Point>        
+            </gml:pointProperty>
+            <milStd2525Id>ehipe----------</milStd2525Id>
+        </TacticalSymbol>
+    </gml:featureMember>
+</TacticalSymbolCollection>
