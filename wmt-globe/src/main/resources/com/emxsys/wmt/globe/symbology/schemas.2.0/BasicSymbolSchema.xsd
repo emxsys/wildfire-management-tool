@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            xmlns:gml="http://www.opengis.net/gml" 
            xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
-           version="1.0">
+           version="2.0">
 
     <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/2.1.2/gml.xsd"/>
     

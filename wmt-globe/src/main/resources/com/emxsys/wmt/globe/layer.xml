@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
+    <folder name="Loaders">
+    </folder>
     <folder name="Ribbon">
         <folder name="TaskPanes"> 
             <!-- Marker Tools - CONTEXTUAL TAB -->
@@ -18,9 +20,32 @@
                     <attr name="menuText" stringvalue="View"/>
                 </folder> 
             </folder>
+            <!-- Symbology Tools - CONTEXTUAL TAB -->
+            <folder name="SymbolTools">
+                <attr name="position" intvalue="100"/> 
+                <attr name="menuText" stringvalue="Symbol"/>
+                <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_SymbolTools"/>
+                    
+                <folder name="Edit">
+                    <attr name="position" intvalue="100"/>
+                    <attr name="menuText" stringvalue="Edit"/>
+                </folder> 
+                <folder name="Affiliation">
+                    <attr name="position" intvalue="200"/>
+                    <attr name="menuText" stringvalue="Affiliation"/>
+                </folder> 
+                <folder name="Status">
+                    <attr name="position" intvalue="300"/>
+                    <attr name="menuText" stringvalue="Status"/>
+                </folder> 
+                <folder name="View">
+                    <attr name="position" intvalue="400"/>
+                    <attr name="menuText" stringvalue="View"/>
+                </folder> 
+            </folder>
             <!-- Scene Tools - CONTEXTUAL TAB -->
             <folder name="SceneTools">
-                <attr name="position" intvalue="200"/> 
+                <attr name="position" intvalue="300"/> 
                 <attr name="menuText" stringvalue="Scene"/>
                 <attr name="contextualTaskGroup" bundlevalue="com.emxsys.wmt.globe.ribbons.Bundle#CTL_SceneTools"/>
                     
@@ -55,6 +80,224 @@
             </folder>
         </folder>                
     </folder>
+    <folder name="Globe Palette">
+        <!--Subfolders are palette categories-->
+        <folder name="Fire Resources">
+        </folder>
+        <folder name="EMS Incidents">
+            <attr name="position" intvalue="100"/>
+            <!--Files are palette items.  See the Globe's symbology PaletteItemDataObject class-->
+            <file name="EMS.INCDNT.FIRE.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.properties">
+                <attr name="position" intvalue="100"/>
+            </file>
+            <file name="EMS.INCDNT.CVDIS.symbol" url="symbology/symbols/EMS.INCDNT.CVDIS.properties">
+                <attr name="position" intvalue="1000"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.properties">
+                <attr name="position" intvalue="2000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.AIR.symbol" url="symbology/symbols/EMS.INCDNT.AIR.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.MRN.symbol" url="symbology/symbols/EMS.INCDNT.MRN.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.RAIL.symbol" url="symbology/symbols/EMS.INCDNT.RAIL.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.VEH.symbol" url="symbology/symbols/EMS.INCDNT.VEH.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            
+        </folder>
+<!--        Fire Incidents-->
+        <folder name="EMS Incidents - Fire">
+            <attr name="position" intvalue="101"/>
+            <file name="EMS.INCDNT.FIRE.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.properties">
+                <attr name="position" intvalue="100"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.HTSPT.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.HTSPT.properties">
+                <attr name="position" intvalue="200"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.NRES.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.NRES.properties">
+                <attr name="position" intvalue="300"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.ORGN.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.ORGN.properties">
+                <attr name="position" intvalue="400"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.RES.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.RES.properties">
+                <attr name="position" intvalue="500"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.SCH.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.SCH.properties">
+                <attr name="position" intvalue="600"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.SMK.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.SMK.properties">
+                <attr name="position" intvalue="700"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.SN.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.SN.properties">
+                <attr name="position" intvalue="800"/>
+            </file>
+            <file name="EMS.INCDNT.FIRE.WLD.symbol" url="symbology/symbols/EMS.INCDNT.FIRE.WLD.properties">
+                <attr name="position" intvalue="900"/>
+            </file>
+        </folder>
+<!--        Civil Disturbance Incidents-->
+<!--        <folder name="EMS Incidents - Civil Disturbance">
+            <attr name="position" intvalue="110"/>
+            <file name="EMS.INCDNT.CVDIS.symbol" url="symbology/symbols/EMS.INCDNT.CVDIS.properties">
+                <attr name="position" intvalue="1000"/>
+            </file>
+            <file name="EMS.INCDNT.CVDIS.DEMO.symbol" url="symbology/symbols/EMS.INCDNT.CVDIS.DEMO.properties">
+                <attr name="position" intvalue="1001"/>
+            </file>
+            <file name="EMS.INCDNT.CVDIS.DISPOP.symbol" url="symbology/symbols/EMS.INCDNT.CVDIS.DISPOP.properties">
+                <attr name="position" intvalue="1002"/>
+            </file>
+            <file name="EMS.INCDNT.CVDIS.CVRIOT.symbol" url="symbology/symbols/EMS.INCDNT.CVDIS.CVRIOT.properties">
+                <attr name="position" intvalue="1003"/>
+            </file>
+        </folder>-->
+<!--        Criminal Activity Incidents-->
+<!--        <folder name="EMS Incidents - Criminal Activity">
+            <attr name="position" intvalue="120"/>
+            <file name="EMS.INCDNT.CRMACT.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.properties">
+                <attr name="position" intvalue="2000"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.BMTHT.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.BMTHT.properties">
+                <attr name="position" intvalue="2001"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.BM.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.BM.properties">
+                <attr name="position" intvalue="2002"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.EXPLN.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.EXPLN.properties">
+                <attr name="position" intvalue="2003"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.LOOT.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.LOOT.properties">
+                <attr name="position" intvalue="2004"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.PSNG.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.PSNG.properties">
+                <attr name="position" intvalue="2005"/>
+            </file>
+            <file name="EMS.INCDNT.CRMACT.SHTG.symbol" url="symbology/symbols/EMS.INCDNT.CRMACT.SHTG.properties">
+                <attr name="position" intvalue="2006"/>
+            </file>
+        </folder>-->
+<!--        HazMat Incidents-->
+<!--        <folder name="EMS Incidents - Hazardous Materials">
+            <attr name="position" intvalue="130"/>
+            <file name="EMS.INCDNT.HAZMAT.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.CHMAGT.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.CHMAGT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.CORMTL.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.CORMTL.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.WHWET.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.WHWET.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.EXPLV.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.EXPLV.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.FLGAS.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.FLGAS.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.FLLIQ.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.FLLIQ.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.FLSLD.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.FLSLD.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.NFLGAS.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.NFLGAS.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.ORGPER.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.ORGPER.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.OXDZR.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.OXDZR.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.RADMTL.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.RADMTL.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.SPCMG.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.SPCMG.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.TXGAS.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.TXGAS.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.TXINF.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.TXINF.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.UNXORD.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.UNXORD.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.CHMAGT.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.CHMAGT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.HAZMAT.CHMAGT.symbol" url="symbology/symbols/EMS.INCDNT.HAZMAT.CHMAGT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+        </folder>-->
+<!--       Air, Marine, Rail and Vehicular Indicidents -->
+<!--        <folder name="EMS Incidents - Transportation">
+            <attr name="position" intvalue="140"/>
+            <file name="EMS.INCDNT.AIR.symbol" url="symbology/symbols/EMS.INCDNT.AIR.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.AIR.ACDNT.symbol" url="symbology/symbols/EMS.INCDNT.AIR.ACDNT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.AIR.HJKG.symbol" url="symbology/symbols/EMS.INCDNT.AIR.HJKG.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.MRN.symbol" url="symbology/symbols/EMS.INCDNT.MRN.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.MRN.ACDNT.symbol" url="symbology/symbols/EMS.INCDNT.MRN.ACDNT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.MRN.HJKG.symbol" url="symbology/symbols/EMS.INCDNT.MRN.HJKG.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.RAIL.symbol" url="symbology/symbols/EMS.INCDNT.RAIL.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.RAIL.ACDNT.symbol" url="symbology/symbols/EMS.INCDNT.RAIL.ACDNT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.RAIL.HJKG.symbol" url="symbology/symbols/EMS.INCDNT.RAIL.HJKG.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.VEH.symbol" url="symbology/symbols/EMS.INCDNT.VEH.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.VEH.ACDNT.symbol" url="symbology/symbols/EMS.INCDNT.VEH.ACDNT.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>
+            <file name="EMS.INCDNT.VEH.HJKG.symbol" url="symbology/symbols/EMS.INCDNT.VEH.HJKG.properties">
+                <attr name="position" intvalue="3000"/>
+            </file>        
+        </folder>-->
+
+<!--        <folder name="EMS Natural Events">
+            
+        </folder>-->
+
+<!--        <folder name="EMS Operations">
+            
+        </folder>-->
+
+<!--        <folder name="EMS Infrastructure">
+            
+        </folder>-->
+            
+    </folder>
+
     <folder name="WorldWind">
         <!--Categories are used to group layers within the menu system-->
         <folder name="Categories">
@@ -92,7 +335,7 @@
         </folder>
             
         <folder name="Layers">
-             <file name="Graphics.instance">
+            <file name="Graphics.instance">
                 <attr name="name" stringvalue="Graphics"/>
                 <attr name="type" stringvalue="Vector"/>
                 <attr name="role" stringvalue="Data"/>
@@ -104,7 +347,7 @@
                 <attr name="instanceClass" stringvalue="com.emxsys.wmt.globe.layers.GraphicLayer"/>
                 <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.GraphicLayer.getInstance"/>
             </file>
-            <file name="Symbols.instance">
+<!--            <file name="Symbols.instance">
                 <attr name="name" stringvalue="Symbols"/>
                 <attr name="type" stringvalue="Vector"/>
                 <attr name="role" stringvalue="Symbology"/>
@@ -115,7 +358,7 @@
                 <attr name="displayName" bundlevalue="com.emxsys.wmt.globe.Bundle#WorldWind/Layers/Symbols.instance"/>
                 <attr name="instanceClass" stringvalue="com.emxsys.wmt.globe.layers.SymbolLayer"/>
                 <attr name="instanceCreate" methodvalue="com.emxsys.wmt.globe.layers.SymbolLayer.getInstance"/>
-            </file>
+            </file>-->
             <file name="Shapes.instance">
                 <attr name="name" stringvalue="Shapes"/>
                 <attr name="type" stringvalue="Vector"/>
