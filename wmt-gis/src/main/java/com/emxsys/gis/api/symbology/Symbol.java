@@ -30,7 +30,7 @@
 package com.emxsys.gis.api.symbology;
 
 import com.emxsys.gis.api.Coord3D;
-import com.emxsys.gis.api.Entity;
+import com.emxsys.gis.api.Feature;
 import com.emxsys.gis.api.layer.GisLayer;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
@@ -43,7 +43,7 @@ import org.w3c.dom.Document;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Symbol extends Entity {
+public interface Symbol extends Feature {
 
     public static final String PROP_SYMBOL_NAME = "PROP_SYMBOL_NAME";
     public static final String PROP_SYMBOL_UNIQUE_ID = "PROP_SYMBOL_UNIQUE_ID";

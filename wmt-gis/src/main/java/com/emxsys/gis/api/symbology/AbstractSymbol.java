@@ -29,8 +29,12 @@
  */
 package com.emxsys.gis.api.symbology;
 
+import com.emxsys.gis.api.AbstractFeature;
 import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.FeatureClass;
 import com.emxsys.gis.api.GeoCoord3D;
+import com.emxsys.gis.api.GeoPoint;
+import com.emxsys.gis.api.Geometry;
 import com.emxsys.gis.api.symbology.Symbol;
 import com.emxsys.gis.api.viewer.GisViewer;
 import com.emxsys.gis.api.viewer.Viewers;
@@ -49,7 +53,7 @@ import java.util.logging.Logger;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public abstract class AbstractSymbol implements Symbol {
+public abstract class AbstractSymbol extends AbstractFeature implements Symbol {
 
     private String uniqueID;
     protected String name;
@@ -58,6 +62,7 @@ public abstract class AbstractSymbol implements Symbol {
     private boolean visible = true;
     private Symbol.Renderer renderer;
     protected GeoCoord3D position;
+    protected GeoPoint geometry = new GeoPoint();
     protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private static Random random = new Random();
     private static final Logger LOG = Logger.getLogger(AbstractSymbol.class.getName());
@@ -108,6 +113,8 @@ public abstract class AbstractSymbol implements Symbol {
         catch (Exception ex) {
             this.position = GeoCoord3D.INVALID_COORD;
         }
+        // Sync the GIS geometry with the implementation
+        this.geometry.setPosition(position);
         pcs.firePropertyChange(PROP_SYMBOL_POSITION, oldLocation, this.position);
     }
 
@@ -176,4 +183,13 @@ public abstract class AbstractSymbol implements Symbol {
         return this.visible;
     }
 
+    @Override
+    public FeatureClass getFeatureClass() {
+        return FeatureClass.POINT;
+    }
+
+    @Override
+    public Geometry getGeometry() {
+        return geometry;
+    }
 }

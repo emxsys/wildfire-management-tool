@@ -57,7 +57,6 @@ import org.openide.util.NbBundle.Messages;
 /**
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: MarkerCatalog.java 441 2012-12-12 13:11:18Z bdschubert $
  */
 public class MarkerManager extends EntityCatalog<Marker> {
 

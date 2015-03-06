@@ -30,11 +30,13 @@
 package com.emxsys.gis.api.symbology;
 
 import com.emxsys.gis.api.EntityCatalog;
-import com.emxsys.gis.api.symbology.Symbol.Renderer;
 import com.emxsys.gis.api.viewer.GisViewer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle.Messages;
 
 @Messages({
@@ -49,7 +51,11 @@ import org.openide.util.NbBundle.Messages;
     "# {0} - symbol id",
     "info.symbol.added=The {0} symbol was added.",
     "# {0} - symbol id",
-    "info.symbol.removed=The {0} symbol was removed."
+    "info.symbol.removed=The {0} symbol was removed.",
+    "# {0} - symbol name",
+    "info.adding.symbol.to.renderer=Adding the {0} symbol to a renderer.",
+    "# {0} - symbol name",
+    "info.removing.symbol.from.renderer=Removing the {0} symbol from the renderer."
 })
 /**
  *
@@ -58,6 +64,12 @@ import org.openide.util.NbBundle.Messages;
 public class SymbolManager extends EntityCatalog<Symbol> {
 
     private FileObject folder;
+    /** The object (layer) that renders the symbols */
+    private Symbol.Renderer symbolRenderer;
+    /** Lookup result used to monitor the arrival of renderers (layers) */
+    private Lookup.Result<Symbol.Renderer> rendererResults;
+    /** Container that holds symbols awaiting a renderer */
+    private final ArrayList<Symbol> pendingAdds = new ArrayList<>();
     private static final Logger logger = Logger.getLogger(SymbolManager.class.getName());
 
     /**
@@ -92,10 +104,13 @@ public class SymbolManager extends EntityCatalog<Symbol> {
         // Get the renderer (map layer) associated with Symbols
         Symbol.Renderer renderer = getSymbolRenderer();
         if (renderer != null) {
+            logger.fine(Bundle.info_adding_symbol_to_renderer(symbol.getName()));
             renderer.addSymbol(symbol);
         }
+        // Queue symbols while waiting for a renderer to show up.
         else {
             logger.warning(Bundle.err_symbol_renderer_not_found(symbol.getName()));
+            pendingAdds.add(symbol);
         }
     }
 
@@ -106,8 +121,11 @@ public class SymbolManager extends EntityCatalog<Symbol> {
         // Remove from the renderer
         Symbol.Renderer renderer = getSymbolRenderer();
         if (renderer != null) {
+            logger.fine(Bundle.info_removing_symbol_from_renderer(item.getName()));
             renderer.removeSymbol(item);
         }
+        // Ensure item is not in the queue
+        pendingAdds.remove(item);
     }
 
     /**
@@ -116,28 +134,48 @@ public class SymbolManager extends EntityCatalog<Symbol> {
     @Override
     public void dispose() {
         synchronized (this) {
-            Renderer symbolRenderer = getSymbolRenderer();
-            if (symbolRenderer != null) {
+            Symbol.Renderer renderer = getSymbolRenderer();
+            if (renderer != null) {
                 // The renderer may force the removal of an item from the catalog, so 
                 // copy the symbols to array that won't be modified by a possible call 
                 // to removeItem by the Renderer.
                 Symbol[] array = getItems().toArray(new Symbol[0]);
                 for (Symbol symbol : array) {
-                    symbolRenderer.removeSymbol(symbol);
+                    renderer.removeSymbol(symbol);
                 }
             }
-            // Now remove the catalog items, if present.
-            if (!this.getItems().isEmpty()) {
-                this.getItems().clear();
-            }
         }
+        pendingAdds.clear();
+        super.dispose();
     }
 
     private Symbol.Renderer getSymbolRenderer() {
-        GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
-        if (viewer != null) {
-            return viewer.getLookup().lookup(Symbol.Renderer.class);
+        if (symbolRenderer == null) {
+            GisViewer viewer = Lookup.getDefault().lookup(GisViewer.class);
+            if (viewer != null && rendererResults == null) {
+                
+                // Create lookup listener to watch for the arrival or disposal of a Marker.Renderer
+                this.rendererResults = viewer.getLookup().lookupResult(Symbol.Renderer.class);
+                this.rendererResults.addLookupListener((LookupEvent ev) -> {
+                    // Add any pending symbols to the renderer when it appears in the Lookup.Result
+                    Collection<? extends Symbol.Renderer> allInstances = rendererResults.allInstances();
+                    if (allInstances.isEmpty()) {
+                        symbolRenderer = null;
+                    }
+                    else {
+                        // Update the renderer and process any pending Symbols
+                        symbolRenderer = allInstances.iterator().next();
+                        pendingAdds.stream().forEach((symbol) -> {
+                            addSymbolToRenderer(symbol);
+                        });
+                        pendingAdds.clear();
+                    }
+                });
+                if (!rendererResults.allInstances().isEmpty()) {
+                    symbolRenderer = rendererResults.allInstances().iterator().next();
+                }
+            }
         }
-        return null;
+        return symbolRenderer;
     }
 }
