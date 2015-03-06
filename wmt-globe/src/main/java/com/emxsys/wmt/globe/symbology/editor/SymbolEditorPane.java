@@ -32,26 +32,20 @@ package com.emxsys.wmt.globe.symbology.editor;
 import com.emxsys.gis.api.Coord3D;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 
-
 /**
  * GUI component for editing a MilStd2525TacticalSymbol.
  *
  * @author Bruce Schubert
- * @version $Id: SymbolEditorPane.java 540 2013-04-18 15:48:26Z bdschubert $
  * @see MilStd2525TacticalSymbol
  */
-public class SymbolEditorPane extends javax.swing.JPanel
-{
+class SymbolEditorPane extends javax.swing.JPanel {
 
     /**
      * Creates new form SymbolEditorPane
      */
-    public SymbolEditorPane(String name, Coord3D position, boolean isLocked,
-        MilStd2525TacticalSymbol symbol)
-    {
+    SymbolEditorPane(String name, Coord3D position, boolean isLocked, MilStd2525TacticalSymbol symbol) {
         initComponents();
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT
