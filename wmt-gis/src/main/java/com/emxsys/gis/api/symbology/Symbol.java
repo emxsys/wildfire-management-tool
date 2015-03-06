@@ -63,14 +63,14 @@ public interface Symbol extends Feature {
     /**
      * @return the position of the symbol on the globe.
      */
-    Coord3D getPosition();
+    Coord3D getCoordinates();
 
     /**
      * Sets the geographic position of the symbol.
      *
      * @param position the position of the symbol on the globe.
      */
-    void setPosition(Coord3D position);
+    void setCoordinates(Coord3D position);
 
     /**
      * Gets a representation of the symbol, which can be used in UI elements.

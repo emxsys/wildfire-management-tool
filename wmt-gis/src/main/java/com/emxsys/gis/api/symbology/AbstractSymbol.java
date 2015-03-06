@@ -100,13 +100,13 @@ public abstract class AbstractSymbol extends AbstractFeature implements Symbol {
     }
 
     @Override
-    public Coord3D getPosition() {
+    public Coord3D getCoordinates() {
         return this.position;
     }
 
     @Override
-    public void setPosition(Coord3D location) {
-        Coord3D oldLocation = getPosition();
+    public void setCoordinates(Coord3D location) {
+        Coord3D oldLocation = getCoordinates();
         try {
             this.position = new GeoCoord3D(location);
         }
