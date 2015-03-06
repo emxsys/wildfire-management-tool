@@ -75,7 +75,7 @@ public final class GotoSymbolAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         EventQueue.invokeLater(() -> {
-            Globe.getInstance().centerOn(context.getPosition());
+            Globe.getInstance().centerOn(context.getCoordinates());
         });
     }
 }
