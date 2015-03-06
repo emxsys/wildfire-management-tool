@@ -45,6 +45,10 @@ public class EmgyMgmtSymbol extends BasicSymbol {
     protected static Set<StandardIdentity> validStdIds = EnumSet.allOf(StandardIdentity.class);
     private static final Logger logger = Logger.getLogger(EmgyMgmtSymbol.class.getName());
 
+    public EmgyMgmtSymbol() {
+    }
+    
+
     public EmgyMgmtSymbol(String symbolId, Coord3D position) {
         super(symbolId, position);
     }
@@ -58,5 +62,5 @@ public class EmgyMgmtSymbol extends BasicSymbol {
             logger.severe(msg);
             throw new IllegalArgumentException(msg);
         }
-    }
+    }        
 }
