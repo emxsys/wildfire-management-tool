@@ -386,15 +386,15 @@ public class WmtProject implements Project {
 
     /**
      * Loads the MIL-STD 2525C tactical graphics and symbols found in a folder, adds support for
- Tactical Graphics and Symbols by adding GraphicManager and SymbolManager to the lookup.
+     * Tactical Graphics and Symbols by adding GraphicManager and SymbolManager to the lookup.
      *
      * @param folderName name of folder containing symbology
      */
     private void loadSymbology(String folderName) {
         logger.log(Level.INFO, "Loading {0} MIL-STD 2525C symbology...", getProjectName());
         FileObject subfolder = getSubfolder(getProjectDirectory(), folderName, CREATE_IF_MISSING);
-        this.content.add(new GraphicManager(subfolder));
         this.content.add(new SymbolManager(subfolder));
+        this.content.add(new GraphicManager(subfolder));
 
         // Force the loading of the children so the symbols appear on the map without any user input
         DataFolder dataFolder = DataFolder.findFolder(subfolder);
