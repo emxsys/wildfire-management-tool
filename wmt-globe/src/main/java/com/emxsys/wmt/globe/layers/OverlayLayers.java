@@ -72,6 +72,17 @@ import org.openide.util.lookup.Lookups;
             factoryClass = "com.emxsys.wmt.globe.layers.MarkerLayer",
             factoryMethod = "newInstance"),
     @MapLayerRegistration(
+            position = 20,
+            name = "Symbols",
+            actuate = "onLoad",
+            role = "Overlay",
+            type = "Vector",
+            category = "Other",
+            displayName = "#CTL_Symbols",
+            instanceClass = "com.emxsys.wmt.globe.layers.SymbolLayer",
+            factoryClass = "com.emxsys.wmt.globe.layers.SymbolLayer",
+            factoryMethod = "newInstance"),
+    @MapLayerRegistration(
             position = 100,
             name = "Borders",
             actuate = "onRequest",
@@ -129,6 +140,7 @@ import org.openide.util.lookup.Lookups;
 @Messages({
     "CTL_Shapes=Shapes",
     "CTL_Markers=Markers",
+    "CTL_Symbols=Symbols",
     "CTL_CountryBoundaries=Country Boundaries",
     "CTL_LatLonGraticule=Lat/Lon Graticule",
     "CTL_MGRSGraticule=MGRS Graticule",
@@ -138,6 +150,7 @@ public class OverlayLayers {
 
     public static String LAYER_SHAPES = Bundle.CTL_Shapes();
     public static String LAYER_MARKERS = Bundle.CTL_Markers();
+    public static String LAYER_SYMBOLS = Bundle.CTL_Symbols();
     public static String LAYER_COUNTRY_BOUNDARIES = Bundle.CTL_CountryBoundaries();
     public static String LAYER_LATLON_GRATICULE = Bundle.CTL_LatLonGraticule();
     public static String LAYER_UTM_GRATICULE = Bundle.CTL_UTMGraticule();
