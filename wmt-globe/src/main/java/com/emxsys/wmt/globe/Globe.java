@@ -29,14 +29,7 @@
  */
 package com.emxsys.wmt.globe;
 
-import com.emxsys.gis.api.Coord2D;
-import com.emxsys.gis.api.Coord3D;
-import com.emxsys.gis.api.Feature;
-import com.emxsys.gis.api.GeoCoord2D;
-import com.emxsys.gis.api.GeoLineString;
-import com.emxsys.gis.api.GeoPolygon;
-import com.emxsys.gis.api.GeoSector;
-import com.emxsys.gis.api.Geometry;
+import com.emxsys.gis.api.*;
 import static com.emxsys.gis.api.GisType.ANGLE;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.api.layer.BasicLayerGroup;
@@ -45,23 +38,21 @@ import com.emxsys.gis.api.layer.GisLayerList;
 import com.emxsys.gis.api.layer.LayerGroup;
 import com.emxsys.gis.api.marker.Marker;
 import com.emxsys.gis.api.symbology.Graphic;
+import com.emxsys.gis.api.symbology.Symbol;
 import com.emxsys.gis.api.viewer.GisViewer;
 import com.emxsys.gis.spi.ShadedTerrainProviderFactory;
 import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.visad.Reals;
-import com.emxsys.wmt.globe.layers.BackgroundLayers;
-import com.emxsys.wmt.globe.layers.BaseMapLayers;
-import com.emxsys.wmt.globe.layers.DummyLayer;
-import com.emxsys.wmt.globe.layers.GisLayerProxy;
-import com.emxsys.wmt.globe.layers.OverlayLayers;
-import com.emxsys.wmt.globe.layers.RenderableGisLayer;
-import com.emxsys.wmt.globe.layers.WidgetLayers;
-import com.emxsys.wmt.globe.render.GlobeLineString;
-import com.emxsys.wmt.globe.render.GlobePolygon;
-import com.emxsys.wmt.globe.render.GlobeSector;
+import com.emxsys.wmt.globe.dnd.BasicDropTargetListener;
+import com.emxsys.wmt.globe.layers.*;
+import com.emxsys.wmt.globe.render.*;
 import com.emxsys.wmt.globe.ribbons.MarkerTools;
 import com.emxsys.wmt.globe.ribbons.SceneTools;
+import com.emxsys.wmt.globe.ribbons.SymbolTools;
+import com.emxsys.wmt.globe.symbology.palette.GraphicDragAndDropHandler;
+import com.emxsys.wmt.globe.symbology.palette.PaletteSupport;
+import com.emxsys.wmt.globe.symbology.palette.SymbolDragAndDropHandler;
 import com.emxsys.wmt.globe.ui.ReticuleStatusLine;
 import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.WorldWindManager;
@@ -75,6 +66,7 @@ import gov.nasa.worldwind.render.SurfaceShape;
 import gov.nasa.worldwindx.examples.util.BalloonController;
 import gov.nasa.worldwindx.examples.util.HotSpotController;
 import java.awt.Component;
+import java.awt.dnd.DropTarget;
 import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,7 +202,7 @@ public class Globe implements GisViewer {
             return null;
         }
     }
-    
+
     private final InstanceContent content = new InstanceContent();
     private final Lookup lookup = new AbstractLookup(content);
     private final GisLayerList gisLayers = new GisLayerList();
@@ -266,8 +258,8 @@ public class Globe implements GisViewer {
     public void initializeResources() {
         logger.fine("initializeResources() started");
 
-        // We've deferred creating the WorldWind environment until now
-        // to prevent an application lockup while loading modules.
+        // Initialize WorldWind. We've deferred creating the WorldWind environment until now
+        // to prevent an application lock-up while loading modules.
         WorldWindManager wwm = getWorldWindManager();
 
         // Assemble the components of the globe
@@ -283,6 +275,19 @@ public class Globe implements GisViewer {
 
         // Disable painting during the initialization
         ((Component) wwm.getWorldWindow()).setVisible(false);
+        initializeLayers();
+        initializeDragAndDrop();
+        initializeRibbon();
+        initializeStatusBar();
+        ((Component) wwm.getWorldWindow()).setVisible(true);
+
+        // 
+        this.initialized = true;
+        postInitializeLayers();
+    }
+
+    private void initializeLayers() {
+        WorldWindManager wwm = getWorldWindManager();
 
         // Create table-of-contents layers
         for (BasicLayerGroup layerGroup : BasicLayerGroup.values()) {
@@ -296,11 +301,15 @@ public class Globe implements GisViewer {
         addAll(OverlayLayers.getLayers());
         addAll(WidgetLayers.getLayers());
 
-        // Some layers expose capabilities used by the GIS Viewer interface. 
+        // Some GIS layers expose capabilities used by the GIS Viewer interface. 
         // Find them and add them to the Globe's lookup.
         Marker.Renderer markerRenderer = this.gisLayers.getLookup().lookup(Marker.Renderer.class);
         if (markerRenderer != null) {
-            this.content.add(markerRenderer);   
+            this.content.add(markerRenderer);
+        }
+        Symbol.Renderer symbolRenderer = this.gisLayers.getLookup().lookup(Symbol.Renderer.class);
+        if (symbolRenderer != null) {
+            this.content.add(symbolRenderer);
         }
         Graphic.Renderer graphicRenderer = this.gisLayers.getLookup().lookup(Graphic.Renderer.class);
         if (graphicRenderer != null) {
@@ -310,21 +319,40 @@ public class Globe implements GisViewer {
         if (geometryRenderer != null) {
             this.content.add(geometryRenderer);
         }
+    }
 
-        // Update the UI
-        MarkerTools.getInstance();  // Creates the Marker Tools contextual task pane
-        SceneTools.getInstance();   // Creates the Scene Tools contextual task pane
-        ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar
-
-        ((Component) wwm.getWorldWindow()).setVisible(true);
-        this.initialized = true;
-
-        // Process any layers we cached during startup.
+    private void postInitializeLayers() {
+        // Post-initialization Step: Process any layers that we cached during startup
+        // see addGisLayer()
         if (!startupLayers.isEmpty()) {
             logger.log(Level.FINE, "addGisLayer() processing {0} cached layers.", startupLayers.size());
             addAll(startupLayers);
             startupLayers.clear();
-        }
+        }        
+    }
+    
+    private void initializeDragAndDrop() {
+        // Setup WorldWind DnD support:
+        // Add drag and drop functionality to the viewer. Only one listener is allowed. However,
+        // various DND handlers can be registered with the sole listener.
+        BasicDropTargetListener dropTargetListener = new BasicDropTargetListener(this);
+        dropTargetListener.addDndHandler(new SymbolDragAndDropHandler(this));
+        dropTargetListener.addDndHandler(new GraphicDragAndDropHandler(this));
+        this.getRendererComponent().setDropTarget(new DropTarget(this.getRendererComponent(), dropTargetListener));
+        // Now add a PaletteController to the lookup to make a DnD Palette available
+        this.content.add(PaletteSupport.createPalette());
+    }
+
+    private void initializeRibbon() {
+        // Update the UI Ribbon
+        MarkerTools.getInstance();  // Creates the Marker Tools contextual task pane (see layer.xml)
+        SymbolTools.getInstance();  // Creates the Symbol Tools contextual task pane (see layer.xml)
+        SceneTools.getInstance();   // Creates the Scene Tools contextual task pane (see layer.xml)
+    }
+
+    private void initializeStatusBar() {
+        // Update the status bar
+        ReticuleStatusLine.getInstance().initialize();  // Adds the cross-hair coordinates to the status bar        
     }
 
     /**
@@ -367,7 +395,9 @@ public class Globe implements GisViewer {
 
     @Override
     public void addGisLayer(GisLayer gisLayer) {
-        // Special handling reqd for initialization by other map modules before WorldWind is ready
+        // Special handling reqd for initialization by other map modules before WorldWind is ready.
+        // If this method is invoked before we're initialized, then cache the layer for
+        // post-initalization processing.
         if (!this.initialized) {
             // Cache the layer until WorldWindManager and Globe are ready.
             logger.log(Level.FINE, "addGisLayer({0}): caching layer at startup", gisLayer.getName());
