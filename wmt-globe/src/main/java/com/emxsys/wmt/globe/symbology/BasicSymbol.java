@@ -36,7 +36,10 @@ import com.emxsys.gis.api.symbology.Symbol;
 import com.emxsys.gis.api.symbology.StandardIdentity;
 import com.emxsys.gis.api.symbology.Status;
 import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.symbology.editor.SymbolEditor;
 import com.emxsys.wmt.globe.util.Positions;
+import com.terramenta.globe.GlobeTopComponent;
+import com.terramenta.globe.dnd.Draggable;
 import gov.nasa.worldwind.Movable;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.Position;
@@ -51,7 +54,9 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.media.opengl.GLContext;
 import javax.swing.JPopupMenu;
+import org.openide.explorer.ExplorerManager;
 import org.openide.loaders.DataNode;
+import org.openide.nodes.Node;
 import org.openide.nodes.NodeOperation;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
@@ -93,13 +98,19 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
     private static SymbolSelectionController controller;
     private static final Logger logger = Logger.getLogger(BasicSymbol.class.getName());
 
-    // 
-    private static class TacticalSymbol extends MilStd2525TacticalSymbol {
+    /**
+     * Implementation class.
+     */
+    private static class TacticalSymbol extends MilStd2525TacticalSymbol implements Draggable {
 
         private GLContext lastContext;
+        private BasicSymbol owner;
+        GeoCoord3D syncPosition;
 
-        TacticalSymbol(String symbolId, Position position) {
+        TacticalSymbol(String symbolId, Position position, BasicSymbol owner) {
             super(symbolId, position);
+            this.owner = owner;
+            this.syncPosition = Positions.toGeoCoord3D(position);
         }
 
         @Override
@@ -113,7 +124,6 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
                 this.setShowTextModifiers(preferences.getBoolean("tactical.symbol.show.text.modifiers", true));
                 this.lastContext = currContext;
             }
-
             super.render(dc); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -122,6 +132,26 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
             super.drawTextModifiers(dc);
         }
 
+        @Override
+        public boolean isDraggable() {
+            return owner.isMovable();
+        }
+
+        @Override
+        public void setDraggable(boolean draggable) {
+            owner.setMovable(draggable);
+        }
+
+        /**
+         * Called by Terramenta DragController.
+         * @param position New position.
+         */
+        @Override
+        public void setPosition(Position position) {
+            syncPosition = Positions.toGeoCoord3D(position);
+            super.setPosition(position);
+            owner.setPosition(syncPosition);
+        }
     }
 
     /**
@@ -129,26 +159,32 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
      */
     public BasicSymbol() {
         super.setPosition(GeoCoord3D.INVALID_COORD);
+        // Add persistance capability
+        this.content.add(new BasicSymbolWriter(this));
     }
 
     /**
      * Constructs a new Symbol from a MILSTD-2525C symbol ID and at the given position.
      *
-     * @param symbolId defines specific symbology
-     * @param position used for symbol
+     * @param symbolId A 15-character alphanumeric symbol identification code (SIDC).
+     * @param coord The coordinate where the symbol is placed.
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public BasicSymbol(String symbolId, Coord3D position) {
-        assignTacticalSymbol(symbolId, position);
+    public BasicSymbol(String symbolId, Coord3D coord) {
+        // Add persistance capability
+        this.content.add(new BasicSymbolWriter(this));
+        // Create the symbol implementation
+        assignTacticalSymbol(symbolId, coord);
     }
 
     /**
-     * Assigns new tactical symbol implementation to this object.
+     * Assigns new tactical symbol implementation to an uninitialized object.
      *
-     * @param symbolId defines specific symbology
+     * @param symbolId A 15-character alphanumeric symbol identification code (SIDC).
      * @param coord used for symbol
      */
     final void assignTacticalSymbol(String symbolId, Coord3D coord) {
+        //
         if (this.impl != null) {
             throw new IllegalStateException("this.impl != null.  Use replaceTacticalSymbol instead.");
         }
@@ -184,7 +220,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
      */
     static MilStd2525TacticalSymbol createTacticalSymbol(String symbolId, Position position,
                                                          BasicSymbol owner) {
-        MilStd2525TacticalSymbol tacsym = new TacticalSymbol(symbolId, position);
+        MilStd2525TacticalSymbol tacsym = new TacticalSymbol(symbolId, position, owner);
         // Create normal and highlight attribute bundles that are shared by all tactical symbols. 
         // Changes to these attribute bundles are reflected in all symbols. 
         // TODO: update these static vars when the preferences change
@@ -356,6 +392,14 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
         super.setPosition(coord); // fires property change
     }
 
+    /**
+     * Launches the symbol editor. Subclasses should override.
+     */
+    public void edit() {
+        SymbolEditor editor = new SymbolEditor(this);
+        editor.edit();
+    }
+
     public boolean isMovable() {
         return this.movable;
     }
@@ -368,6 +412,10 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
         }
     }
 
+    /**
+     * Selects the Node associated with this Symbol.
+     * @param selected
+     */
     @Override
     public void setSelected(boolean selected) {
         boolean oldSelected = isSelected();
@@ -377,14 +425,22 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
             }
             this.impl.setAttributes(selected ? selectedSharedAttr : normalSharedAttr);
 
-            // TODO: Activate this node in the Viewier's explorer manager
-//            WorldWindTopComponent tc = WorldWindTopComponent.findInstance();
-//            if (selected) {
-//                tc.setExplorerManagerSelectedNode(this.node);
-//            } // Deselect only if THIS node is currently selected
-//            else if (tc.getExplorerManager().getRootContext() == this.node) {
-//                tc.setExplorerManagerSelectedNode(null);
-//            }
+            // Activate this node in the Viewier's explorer manager
+            if (node != null) {
+                // Update the selection in Viewer's explorer manager
+                GlobeTopComponent tc = (GlobeTopComponent) Globe.getInstance().getGlobeTopComponent();
+                ExplorerManager em = tc.getExplorerManager();
+
+                if (selected) {
+                    em.setRootContext(node);
+                    em.setExploredContext(node, new Node[]{
+                        node
+                    });
+                } // Deselect only if THIS node is currently selected
+                else if (em.getRootContext() == node) {
+                    em.setExploredContext(null);
+                }
+            }
             // fires property change
             super.setSelected(selected);
         }
@@ -465,11 +521,11 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
     /**
      * Supplies a class name that is stored in the XML files and used by the XML encoder.
      *
-     * @return AbstractSymbolBuilder.class
+     * @return BasicSymbolBuilder.class
      */
     @Override
     public Class<? extends Symbol.Builder> getFactoryClass() {
-        return AbstractSymbolBuilder.class;
+        return BasicSymbolBuilder.class;
     }
 
     @Override

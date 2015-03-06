@@ -35,7 +35,7 @@ import com.emxsys.gis.api.symbology.Symbol;
 import com.emxsys.gis.api.symbology.SymbolManager;
 import com.emxsys.gis.gml.GmlConstants;
 import static com.emxsys.wmt.globe.symbology.AbstractGraphicWriter.*;
-import static com.emxsys.wmt.globe.symbology.AbstractSymbolWriter.*;
+import static com.emxsys.wmt.globe.symbology.BasicSymbolWriter.*;
 import com.emxsys.util.TimeUtil;
 import java.net.URL;
 import java.util.Iterator;
@@ -75,7 +75,7 @@ public class SymbologySupport {
         try {
             NodeList list = document.getElementsByTagName("Graphic");
             if (list.getLength() == 0) {
-                list = document.getElementsByTagName(GRF_PREFIX+":Graphic");
+                list = document.getElementsByTagName(GRF_PREFIX + ":Graphic");
             }
             if (list.getLength() == 0) {
                 throw new IllegalArgumentException("Document does not contain a Graphic or grf:Graphic element.");
@@ -102,16 +102,17 @@ public class SymbologySupport {
 
         String clazz = null;
         try {
-            NodeList list = document.getElementsByTagName("Symbol");
+            NodeList list = document.getElementsByTagName(TAG_TACTICAL_SYMBOL);
             if (list.getLength() == 0) {
-                list = document.getElementsByTagName(SMB_PREFIX+":Symbol");
+                list = document.getElementsByTagName(SMB_PREFIX + ":" + TAG_TACTICAL_SYMBOL);
             }
             if (list.getLength() == 0) {
-                throw new IllegalArgumentException("Document does not contain a Symbol or smb:Symbol element.");
+                throw new IllegalArgumentException("Document does not contain a " + TAG_TACTICAL_SYMBOL
+                        + " or " + SMB_PREFIX + ":" + TAG_TACTICAL_SYMBOL + " element.");
             }
             // Construct a factory object.
             // Use the Symbol.Builder(Document document) interface.
-            clazz = ((Element) list.item(0)).getAttribute("factory");
+            clazz = ((Element) list.item(0)).getAttribute(BasicSymbolWriter.ATTR_FACTORY);
             return (Symbol.Builder) Class.forName(clazz)
                     .getConstructor(Document.class)
                     .newInstance(document);
@@ -149,7 +150,7 @@ public class SymbologySupport {
      */
     public static FileObject getLocalSchemaFile(String version) {
         // Get a file object from a jar file entry (URL).
-        URL resource = AbstractSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_SYMBOL_SCHEMA_FILE);
+        URL resource = BasicSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_SYMBOL_SCHEMA_FILE);
         return URLMapper.findFileObject(resource);
     }
 
@@ -160,7 +161,7 @@ public class SymbologySupport {
     static Schema getSymbolSchema(String version) {
         if (schema == null) {
             SchemaFactory f = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            URL schemaUrl = AbstractSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_SYMBOL_SCHEMA_FILE);
+            URL schemaUrl = BasicSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_SYMBOL_SCHEMA_FILE);
             try {
                 logger.log(Level.CONFIG, "Loading Schema ({0}) ...", schemaUrl);
                 long startMs = System.currentTimeMillis();
@@ -180,7 +181,7 @@ public class SymbologySupport {
     static Schema getGraphicSchema(String version) {
         if (schema == null) {
             SchemaFactory f = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            URL schemaUrl = AbstractSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_GRAPHIC_SCHEMA_FILE);
+            URL schemaUrl = BasicSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_GRAPHIC_SCHEMA_FILE);
             try {
                 logger.log(Level.CONFIG, "Loading Schema ({0}) ...", schemaUrl);
                 long startMs = System.currentTimeMillis();

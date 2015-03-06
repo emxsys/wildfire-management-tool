@@ -29,6 +29,11 @@
  */
 package com.emxsys.wmt.globe.symbology;
 
+import com.emxsys.wmt.globe.capabilities.FriendlyAffiliationCapability;
+import com.emxsys.wmt.globe.capabilities.HostileAffiliationCapability;
+import com.emxsys.wmt.globe.capabilities.NeutralAffiliationCapability;
+import com.emxsys.wmt.globe.capabilities.PlannedStatusCapability;
+import com.emxsys.wmt.globe.capabilities.PresentStatusCapability;
 import com.emxsys.gis.api.symbology.Graphic;
 import com.emxsys.gis.api.symbology.StandardIdentity;
 import com.emxsys.gis.api.symbology.Status;

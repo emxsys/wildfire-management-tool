@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Bruce Schubert <bruce@emxsys.com>
+ * Copyright (c) 2012-2015, Bruce Schubert <bruce@emxsys.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,22 +74,20 @@ import org.xml.sax.SAXException;
  * @see BasicSymbol
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: BasicSymbolDataObject.java 497 2013-03-14 16:53:06Z bdschubert $
  */
-@Messages(
-        {
-            "LBL_BasicSymbol_LOADER=Files of Tactical Symbol",
-            "# {0} - reason",
-            "error_cannot_load_tactical_symbol=Cannot load tactical symbol. {0}",
-            "# {0} - symbol name",
-            "error_cannot_addtactical_symbol=Cannot add tactical symbol to catalog. {0}",
-            "# {0} - symbol name",
-            "error_cannot_savetactical_symbol=Cannot save tactical symbol. {0}",
-            "# {0} - symbol name",
-            "error_cannot_deletetactical_symbol=Cannot delete tactical symbol. {0}",})
+@Messages({
+    "LBL_BasicSymbol_LOADER=Files of Tactical Symbol",
+    "# {0} - reason",
+    "error_cannot_load_tactical_symbol=Cannot load tactical symbol. {0}",
+    "# {0} - symbol name",
+    "error_cannot_addtactical_symbol=Cannot add tactical symbol to catalog. {0}",
+    "# {0} - symbol name",
+    "error_cannot_savetactical_symbol=Cannot save tactical symbol. {0}",
+    "# {0} - symbol name",
+    "error_cannot_deletetactical_symbol=Cannot delete tactical symbol. {0}",})
 @MIMEResolver.NamespaceRegistration(
         displayName = "#LBL_BasicSymbol_LOADER",
-        mimeType = "text/emxsys-worldwind-basicsymbol+xml",
+        mimeType = "text/emxsys-wmt-basicsymbol+xml",
         elementNS
         = {
             "http://emxsys.com/worldwind-basicsymbol"
@@ -99,41 +97,34 @@ import org.xml.sax.SAXException;
         iconBase = "com/emxsys/wmt/globe/symbology/favorite.png",
         displayName = "#LBL_BasicSymbol_LOADER",
         position = 300)
-@ActionReferences(
-        {
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "com.emxsys.basicui.actions.EditAction"),
-                    position = 90),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-                    position = 100,
-                    separatorAfter = 200),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-                    position = 300),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-                    position = 400,
-                    separatorAfter = 500),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-                    position = 600),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-                    position = 700,
-                    separatorAfter = 800),
+@ActionReferences({
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "Edit", id = "com.emxsys.basicui.actions.EditAction"),
+            position = 90),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
 //    @ActionReference(
 //        path = "Loaders/text/emxsys-worldwind-basicsymbol+xml/Actions",
 //                     id =
@@ -151,12 +142,11 @@ import org.xml.sax.SAXException;
 //                     id =
 //    @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
 //                     position = 1300),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-                    position = 1400)
-        })
+    @ActionReference(
+            path = "Loaders/text/emxsys-wmt-basicsymbol+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
+})
 public class BasicSymbolDataObject extends AbstractDataObject {
 
     private BasicSymbol symbol;
@@ -250,7 +240,7 @@ public class BasicSymbolDataObject extends AbstractDataObject {
     @Override
     protected void writeFile() {
         try {
-            AbstractSymbolWriter writer = this.symbol.getLookup().lookup(AbstractSymbolWriter.class);
+            BasicSymbolWriter writer = this.symbol.getLookup().lookup(BasicSymbolWriter.class);
             if (writer == null) {
                 throw new IllegalStateException("marker must have an AbstractSymbolWriter instance in its lookup.");
             }
@@ -322,7 +312,7 @@ public class BasicSymbolDataObject extends AbstractDataObject {
      */
     private static void writeSchema(FileObject folder) throws IOException {
         // Copy an XML schema to the document folder
-        File schemaTarget = new File(folder.getPath(), AbstractSymbolWriter.BASIC_SYMBOL_SCHEMA_FILE);
+        File schemaTarget = new File(folder.getPath(), BasicSymbolWriter.BASIC_SYMBOL_SCHEMA_FILE);
         if (!schemaTarget.exists()) {
             logger.log(Level.CONFIG, "Creating Schema: {0}", schemaTarget.getPath());
             FileObject schemaSource = SymbologySupport.getLocalSchemaFile("2.0");

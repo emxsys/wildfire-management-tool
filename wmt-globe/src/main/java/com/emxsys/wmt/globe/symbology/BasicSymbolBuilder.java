@@ -33,7 +33,7 @@ import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.symbology.Symbol;
 import com.emxsys.gis.gml.GmlConstants;
 import com.emxsys.gis.gml.GmlParser;
-import static com.emxsys.wmt.globe.symbology.AbstractSymbolWriter.*;
+import static com.emxsys.wmt.globe.symbology.BasicSymbolWriter.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.xpath.XPath;
@@ -45,15 +45,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * The AbstractSymbolBuilder is responsible for creating a BasicSymbol from a set of parameters
- * that are set via the the Fluent interface pattern. 
- * Concrete classes must implement the build() method.
+ * The BasicSymbolBuilder is responsible for creating a BasicSymbol from a set of parameters that
+ * are set via the the Fluent interface pattern. Concrete classes must implement the build() method.
  * Examples:
  *
  * <pre>
  * To create a new Symbol from given parameters:
  * {@code new Builder()
  *      .coordinate(new GeoCoord3D())
+ *      .symbolId("ehipch---------")
  *      .name("Symbol")
  *      .build();
  * }
@@ -84,14 +84,15 @@ import org.w3c.dom.NodeList;
     "# {0} - document",
     "err.document.has.extra.symbols={0} contains more than one Symbol element. Only one Symbol will be processed.",})
 
-public abstract class AbstractSymbolBuilder implements Symbol.Builder {
+public class BasicSymbolBuilder implements Symbol.Builder {
 
-    private static final Logger logger = Logger.getLogger(AbstractSymbolBuilder.class.getName());
+    private static final Logger logger = Logger.getLogger(BasicSymbolBuilder.class.getName());
     private Document doc;
     private XPath xpath;
     private Coord3D coord;
+    private String symbolId;
     private String name;
-    
+
     static {
         logger.setLevel(Level.FINE);
     }
@@ -99,52 +100,43 @@ public abstract class AbstractSymbolBuilder implements Symbol.Builder {
     /**
      * Basic constructor.
      */
-    public AbstractSymbolBuilder() {
+    public BasicSymbolBuilder() {
     }
 
     /**
      * Minimal constructor for a Builder that uses an XML document for the Symbol parameters.
      * @param document The document to read.
      */
-    public AbstractSymbolBuilder(Document document) {
+    public BasicSymbolBuilder(Document document) {
         this.doc = document;
     }
 
-    public AbstractSymbolBuilder document(Document document) {
+    public BasicSymbolBuilder document(Document document) {
         this.doc = document;
         return this;
     }
 
-    public AbstractSymbolBuilder coordinate(Coord3D coord) {
+    public BasicSymbolBuilder coordinate(Coord3D coord) {
         this.coord = coord;
         return this;
     }
 
-    public AbstractSymbolBuilder name(String name) {
+    public BasicSymbolBuilder name(String name) {
         this.name = name;
         return this;
     }
 
-    /**
-     * Builds a new BasicSymbol from the established parameters.
-     * <pre>
-     * Suggested build() method body template: 
-     * {@code 
-     *    {
-     *        BasicSymbol Symbol = new BasicSymbol();
-     *        if (doc != null) {
-     *            Symbol = initializeFromXml(Symbol);
-     *        }
-     *        return initializeFromParameters(Symbol);
-     *    }
-     * }</pre>
-     * @return a new BasicSymbol instance.
-     */
-    @Override
-    public abstract Symbol build();
+    public BasicSymbolBuilder symbolId(String symbolId) {
+        this.symbolId = symbolId;
+        return this;
+    }
 
     public String getName() {
         return name;
+    }
+
+    public String getSymbolId() {
+        return symbolId;
     }
 
     public Coord3D getCoordinate() {
@@ -156,17 +148,57 @@ public abstract class AbstractSymbolBuilder implements Symbol.Builder {
     }
 
     /**
-     * Initializes the supplied Symbol from the established parameters. Allows the parameters to
-     * override the settings established by an XML document. Subclasses should call or override.
+     * Builds a new BasicSymbol from the established parameters.
+     * <pre>
+     * Suggested build() method body template:
+     * {@code
+     *    {
+     *        BasicSymbol Symbol = new BasicSymbol();
+     *        if (doc != null) {
+     *            Symbol = initializeFromXml(Symbol);
+     *        }
+     *        return initializeFromParameters(Symbol);
+     *    }
+     * }</pre>
+     * @return a new BasicSymbol instance.
+     */
+    @Override
+    public Symbol build() {
+        BasicSymbol symbol = new BasicSymbol();
+
+        // Initialize from an XML document, if provided.
+        if (getDocument() != null) {
+            symbol = initializeFromXml(symbol);
+        }
+
+        // Now, initialize from the builder parameters, if provided
+        // (it's permissible to override the XML parameters)
+        return initializeFromParameters(symbol);
+    }
+
+    /**
+     * Initializes the supplied Symbol from the established Builder parameters. Allows the
+     * parameters to override the settings established by an XML document. Subclasses should call or
+     * override.
      * @param symbol The Symbol to update.
      * @return The updated Symbol.
      */
     protected BasicSymbol initializeFromParameters(BasicSymbol symbol) {
-        if (coord != null) {
+        if (coord != null && symbolId != null) {
+            if (doc != null) {
+                logger.log(Level.INFO, "Overriding the symbol and position set by XML document for {0}.", symbol.getName());
+            }
+            symbol.assignTacticalSymbol(symbolId, coord);
+        } else if (coord != null) {
             if (doc != null) {
                 logger.log(Level.INFO, "Overriding the position set by XML document for {0}.", symbol.getName());
             }
             symbol.setPosition(coord);
+        } else if (symbolId != null && !symbolId.isEmpty()) {
+            if (doc != null) {
+                logger.log(Level.INFO, "Overriding the symbol set by XML document for {0}.", symbol.getName());
+            }
+            symbol.assignTacticalSymbol(symbolId, symbol.getPosition());
         }
         if (name != null) {
             if (doc != null) {
@@ -195,43 +227,42 @@ public abstract class AbstractSymbolBuilder implements Symbol.Builder {
             } else if (nodeList.getLength() > 1) {
                 logger.warning(Bundle.err_document_has_extra_symbols(doc.getDocumentURI()));
             }
-            // Set the name
             Element symElement = (Element) nodeList.item(0);
-            symbol.setName(xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.NAME_PROPERTY_ELEMENT_NAME, symElement));
-            
-            // Get the position
-            Element pntElem = (Element) xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.POINT_PROPERTY_ELEMENT_NAME, symElement, XPathConstants.NODE);
-            if (pntElem == null) { // pointProperty tag not found--look for depreciated Position tag.
-                pntElem = (Element) xpath.evaluate(SMB_PREFIX + ":" +TAG_POSITION, symElement, XPathConstants.NODE); // depreciated tag
-            }
-            Coord3D coordinate = GmlParser.parsePosition(pntElem);
 
-            // Get the MILSTD2525C ID 
+            // First, we must build the tactical symbol implementation. The symbol implementation
+            // is a prerequisite to updating any other symbol properties.
+            //  1) Read the MILSTD2525C ID 
             String identifier = xpath.evaluate(SMB_PREFIX + ":" + TAG_MILSTD2525ID, symElement);
-            if (identifier == null || identifier.isEmpty())
-            {
+            if (identifier == null || identifier.isEmpty()) {
                 String msg = TAG_MILSTD2525ID + " attribute is missing or empty.";
                 logger.severe(msg);
-                // Use an Unknown Ground Track symbol as the default for missing IDs
-                identifier = "SUGP-----------";
+                // Use an Unknown symbol as the default for missing IDs
+                //identifier = "SUGP-----------"; // Unknown/Ground Track (empty symbol)
+                identifier = "SUZP-----------"; // Unknown/Unknown (question mark)
             }
-            
-            // Assign the tactical symbol
+            //  2) Read the position
+            Element pntElem = (Element) xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.POINT_PROPERTY_ELEMENT_NAME, symElement, XPathConstants.NODE);
+            if (pntElem == null) { // pointProperty tag not found--look for depreciated Position tag.
+                pntElem = (Element) xpath.evaluate(SMB_PREFIX + ":" + TAG_POSITION, symElement, XPathConstants.NODE); // depreciated tag
+            }
+            Coord3D coordinate = GmlParser.parsePosition(pntElem);
+            //  3) Create the implementation: assign the tactical symbol at the given position.
             symbol.assignTacticalSymbol(identifier, coordinate);
-            
+
+            // Set the name property
+            symbol.setName(xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.NAME_PROPERTY_ELEMENT_NAME, symElement));
+
             // Set the unique ID
             //String SymbolID = symElement.getAttribute(GmlConstants.FID_ATTR_NAME);
             //symbol.setUniqueID(SymbolID);
-            
             String movable = symElement.getAttribute(ATTR_MOVABLE);
             symbol.setMovable(movable.isEmpty() ? true : Boolean.parseBoolean(movable));
-            
+
             return symbol;
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "initializeFromXml encountered {0}", ex.toString());
             throw new RuntimeException("Builder.initializeFromXml() failed!");
         }
     }
-
 
 }

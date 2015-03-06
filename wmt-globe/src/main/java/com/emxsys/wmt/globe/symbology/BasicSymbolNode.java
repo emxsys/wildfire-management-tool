@@ -29,28 +29,45 @@
  */
 package com.emxsys.wmt.globe.symbology;
 
+import com.emxsys.wmt.globe.capabilities.FriendlyAffiliationCapability;
+import com.emxsys.wmt.globe.capabilities.HostileAffiliationCapability;
+import com.emxsys.wmt.globe.capabilities.NeutralAffiliationCapability;
+import com.emxsys.wmt.globe.capabilities.PlannedStatusCapability;
+import com.emxsys.wmt.globe.capabilities.PresentStatusCapability;
+import com.emxsys.wmt.globe.capabilities.UnknownAffiliationCapability;
 import com.emxsys.gis.api.symbology.StandardIdentity;
 import com.emxsys.gis.api.symbology.Status;
 import com.emxsys.gis.api.symbology.Symbol;
 import com.emxsys.util.FilenameUtils;
+import com.emxsys.util.ModuleUtil;
 import com.emxsys.wmt.core.capabilities.*;
+import com.emxsys.wmt.globe.Globe;
+import com.emxsys.wmt.globe.symbology.editor.SymbolEditor;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import org.netbeans.api.actions.Editable;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.actions.CopyAction;
+import org.openide.actions.CutAction;
+import org.openide.actions.PropertiesAction;
+import org.openide.cookies.EditCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Children;
+import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.WeakListeners;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
@@ -59,7 +76,6 @@ import org.openide.util.lookup.ProxyLookup;
  * A Node representation of a BasicSymbol. Provides actions and an icons.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: BasicSymbolNode.java 453 2012-12-17 15:39:53Z bdschubert $
  */
 public class BasicSymbolNode extends DataNode implements PropertyChangeListener {
 
@@ -117,13 +133,17 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
 
     @Override
     public Action[] getActions(boolean context) {
-        return super.getActions(context);
-
-//        return new Action[]
-//            {
-//                ModuleUtil.getAction("Edit", "com.emxsys.basicui.actions.DeleteAction"),
-//                SystemAction.get(PropertiesAction.class)
-//            };
+        return new Action[]{
+            new CenterOnAction("Go To"),
+            null,
+            SystemAction.get(CopyAction.class),
+            SystemAction.get(CutAction.class),
+            null,
+            ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.EditAction"),
+            ModuleUtil.getAction("Edit", "com.emxsys.wmt.core.actions.DeleteAction"),
+            null,
+            SystemAction.get(PropertiesAction.class)
+        };
     }
 
     /**
@@ -242,6 +262,21 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
 
     }
 
+    /**
+     * The is the Go To action.
+     */
+    private class CenterOnAction extends AbstractAction {
+
+        private CenterOnAction(String name) {
+            super(name);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Globe.getInstance().centerOn(symbol.getPosition());
+        }
+    }
+
     private class SelectableSupport implements SelectCapability {
 
         @Override
@@ -255,15 +290,24 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
         }
     }
 
-    private class EditSupport implements Editable {
+    /**
+     * Use EditCookie (versus Editable) so other NetBeans API (like the Ribbon Contextual Task
+     * Panes) can find the editor for this symbol.
+     */
+    private class EditSupport implements EditCookie {
 
         @Override
         public void edit() {
-            throw new UnsupportedOperationException("edit() not implemented yet.");
+            // Create the editor panel wrapped in a standard dialog...
+            SymbolEditor editor = new SymbolEditor(symbol);
+            editor.edit();
         }
     };
 
-    private class DeleteSupport implements DeleteCapability {
+    /**
+     * DeleteSupport implements Node.Cookie for Ribbon ContextualTaskPane support
+     */
+    private class DeleteSupport implements DeleteCapability, Node.Cookie {
 
         @Override
         public void delete() {
@@ -277,7 +321,10 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
         }
     }
 
-    private class LockSupport implements LockCapability {
+    /**
+     * LockSupport implements Node.Cookie for Ribbon ContextualTaskPane support
+     */
+    private class LockSupport implements LockCapability, Node.Cookie {
 
         @Override
         public void setLocked(boolean locked) {
@@ -317,7 +364,7 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
         }
     }
 
-    private class StatusDeterminationSupport implements 
+    private class StatusDeterminationSupport implements
             PresentStatusCapability,
             PlannedStatusCapability {
 

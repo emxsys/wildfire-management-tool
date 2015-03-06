@@ -35,15 +35,17 @@ import com.emxsys.gis.gml.GmlBuilder;
 import com.emxsys.gis.gml.GmlConstants;
 import static com.emxsys.gis.gml.GmlConstants.*;
 import com.emxsys.util.FilenameUtils;
-import static com.emxsys.wmt.globe.symbology.AbstractSymbolWriter.*;
+import static com.emxsys.wmt.globe.symbology.BasicSymbolWriter.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.XMLConstants;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.NbBundle;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -52,20 +54,20 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * The BasicSymbol.Writer class is responsible for writing out a symbol to an XML document. It can
+ * The BasicSymbolWriter class is responsible for writing out a symbol to an XML document. It can
  * either create an XML file or update an XML document by invoking either the {@code folder()} or
  * the {@code document()} method, respectively. Follows the Fluent interface pattern. For example:
  *
  * <pre>
  * To update a Symbol XML document:
- * {@code new Writer()
+ * {@code new BasicSymbolWriter()
  *      .document(doc)
  *      .symbol(symbol)
  *      .write();
  * }
  *
  * To create a new Symbol XML document on disk:
- * {@code new Writer()
+ * {@code new BasicSymbolWriter()
  *      .folder(folder)
  *      .symbol(symbol)
  *      .write();
@@ -77,7 +79,7 @@ import org.xml.sax.SAXException;
 @NbBundle.Messages({
     "# {0} - reason",
     "err.cannot.export.symbol=Cannot export symbol. {0}",})
-public abstract class AbstractSymbolWriter implements Symbol.Writer {
+public class BasicSymbolWriter implements Symbol.Writer {
 
     public static final String SMB_PREFIX = "smb";
     public static final String BASIC_SYMBOL_NS_URI = "http://emxsys.com/worldwind-basicsymbol";
@@ -90,8 +92,10 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
     public static final String TAG_MILSTD2525ID = "milStd2525Id";
     public static final String ATTR_FACTORY = "factory";
     public static final String ATTR_MOVABLE = "movable";
-
-    private static final Logger logger = Logger.getLogger(AbstractSymbolWriter.class.getName());
+    // See package-info.java for the declaration of the IcsMarkerTemplate
+    private static final String TEMPLATE_CONFIG_FILE = "Templates/Symbology/BasicSymbolTemplate.xml";
+    private static DataObject template;
+    private static final Logger logger = Logger.getLogger(BasicSymbolWriter.class.getName());
 
     private final BasicSymbol symbol;
     private Document doc;
@@ -101,7 +105,7 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
      * Constructs a Writer for the the given Symbol.
      * @param symbol The Symbol to be written to persistent storage.
      */
-    public AbstractSymbolWriter(BasicSymbol symbol) {
+    public BasicSymbolWriter(BasicSymbol symbol) {
         this.symbol = symbol;
     }
 
@@ -110,7 +114,7 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
      * @param doc The document to update.
      * @param symbol The symbol to write.
      */
-    public AbstractSymbolWriter(Document doc, BasicSymbol symbol) {
+    public BasicSymbolWriter(Document doc, BasicSymbol symbol) {
         this.doc = doc;
         this.symbol = symbol;
     }
@@ -121,7 +125,7 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
      * @param folder The folder where the XML document will be created.
      * @param symbol The symbol to write.
      */
-    public AbstractSymbolWriter(FileObject folder, BasicSymbol symbol) {
+    public BasicSymbolWriter(FileObject folder, BasicSymbol symbol) {
         this.symbol = symbol;
         this.folder = folder;
     }
@@ -131,7 +135,7 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
      * @param doc The document to write to.
      * @return The updated Writer.
      */
-    public AbstractSymbolWriter document(Document doc) {
+    public BasicSymbolWriter document(Document doc) {
         this.doc = doc;
         this.folder = null;
         return this;
@@ -143,7 +147,7 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
      * @param folder The folder where the new Symbol file will be created.
      * @return The updated Writer.
      */
-    public AbstractSymbolWriter folder(FileObject folder) {
+    public BasicSymbolWriter folder(FileObject folder) {
         this.folder = folder;
         this.doc = null;
         return this;
@@ -169,14 +173,16 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
     @Override
     public Document write() {
         if (symbol == null) {
-            throw new IllegalArgumentException("AbstractSymbolWriter.write() failed: The symbol object cannot be null");
+            throw new IllegalArgumentException("BasicSymbolWriter.write() failed: The symbol object cannot be null");
         }
         if (folder != null) {
+            // Create a new Document
             return createDataObject();
         } else if (doc != null) {
+            // Update existing document
             return writeDocument();
         } else {
-            throw new IllegalStateException("AbstractSymbolWriter.write() failed: Either the folder or the document must be set.");
+            throw new IllegalStateException("BasicSymbolWriter.write() failed: Either the folder or the document must be set.");
         }
     }
 
@@ -189,20 +195,19 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
         try {
             // throws an IllegalArgumentException if not found
             DataFolder dataFolder = DataFolder.findFolder(folder);
-            DataObject template = getTemplate();
-            if (template == null) {
+            DataObject symbolTemplate = getTemplate();
+            if (symbolTemplate == null) {
                 throw new IllegalStateException("getTemplate() returned null.");
             }
             // Ensure the filename is unique -- appends a numeral if not
-            String filename = FilenameUtils.getUniqueEncodedFilename(folder, symbol.getName(), template.getPrimaryFile().getExt());
+            String filename = FilenameUtils.getUniqueEncodedFilename(folder, symbol.getName(), symbolTemplate.getPrimaryFile().getExt());
 
             // Get the registered templateFile (could be from a subclass).
-            
             // Create the symbol file from our templateFile. Delegates to BasicSymbolTemplateHandler,
             // which is a CreateFromTemplateHandler service provider.
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("model", symbol);
-            BasicSymbolDataObject dataObject = (BasicSymbolDataObject) template.createFromTemplate(dataFolder, filename, parameters);
+            BasicSymbolDataObject dataObject = (BasicSymbolDataObject) symbolTemplate.createFromTemplate(dataFolder, filename, parameters);
 
             return dataObject.getDocument();
 
@@ -213,11 +218,20 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
     }
 
     /**
-     * Gets the template file used by createDataObject(). Subclasses must define the template.
+     * Gets the template file used by createDataObject(). Subclasses can override the template.
      *
      * @return A template file file for new Symbols.
      */
-    protected abstract DataObject getTemplate();
+    protected DataObject getTemplate() {
+        if (template == null) {
+            try {
+                template = DataObject.find(FileUtil.getConfigFile(TEMPLATE_CONFIG_FILE));
+            } catch (DataObjectNotFoundException ex) {
+                logger.log(Level.SEVERE, "IcsMarker.Writer.getTemplate() cannot find: {0}", TEMPLATE_CONFIG_FILE);
+            }
+        }
+        return template;
+    }
 
     /**
      * Performs a complete rewrite of the symbol XML file via DOM.
@@ -272,9 +286,8 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
      * @return A new Element representing the symbol.
      */
     protected Element createSymbolElement() {
-        try
-        {
-            Element smb = doc.createElementNS(BASIC_SYMBOL_NS_URI, TAG_TACTICAL_SYMBOL);
+        try {
+            Element smb = doc.createElementNS(BASIC_SYMBOL_NS_URI, SMB_PREFIX + ":" + TAG_TACTICAL_SYMBOL);
             smb.setAttribute(GmlConstants.FID_ATTR_NAME, "smb-" + symbol.getUniqueID());
             smb.setAttribute(ATTR_FACTORY, symbol.getFactoryClass().getName());
             smb.setAttribute(ATTR_MOVABLE, Boolean.toString(symbol.isMovable()));
@@ -291,16 +304,13 @@ public abstract class AbstractSymbolWriter implements Symbol.Writer {
             gmlBuilder.append(symbol.getPosition());
             smb.appendChild(gmlBuilder.toElement());
 
-            Element milstd2525_id = doc.createElementNS(BASIC_SYMBOL_NS_URI, TAG_MILSTD2525ID);
+            Element milstd2525_id = doc.createElementNS(BASIC_SYMBOL_NS_URI, SMB_PREFIX + ":" + TAG_MILSTD2525ID);
             milstd2525_id.appendChild(doc.createTextNode(symbol.getIdentifier()));
             smb.appendChild(milstd2525_id);
 
             return smb;
-        }
-        catch (Exception ex)
-        {
-            logger.log(Level.SEVERE, "createTacticalSymbolElement failed! Unabled to export symbol ({0}). Reason: {1}", new Object[]
-            {
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "createTacticalSymbolElement failed! Unabled to export symbol ({0}). Reason: {1}", new Object[]{
                 symbol.toString(), ex.toString()
             });
         }

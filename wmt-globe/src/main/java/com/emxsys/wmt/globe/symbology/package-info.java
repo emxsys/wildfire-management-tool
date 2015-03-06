@@ -27,6 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/**
+ * Provides the classes and resources used to manifest and manage tactical graphics and symbols.
+ */
 @TemplateRegistrations(
 {
     @TemplateRegistration(folder = "Symbology", content = "BasicGraphicTemplate.xml"),

@@ -85,7 +85,7 @@ public class BasicSymbolTemplateHandler extends CreateFromTemplateHandler {
         BasicSymbol symbol = (BasicSymbol) model;
         
         // ASSERT that our symbol has a writer
-        AbstractSymbolWriter writer = symbol.getLookup().lookup(AbstractSymbolWriter.class);
+        BasicSymbolWriter writer = symbol.getLookup().lookup(BasicSymbolWriter.class);
         if (writer == null) {
             String msg = "createFromTemplate: symbol must have an AbstractSymbolWriter instance in its lookup.";
             logger.severe(msg);
