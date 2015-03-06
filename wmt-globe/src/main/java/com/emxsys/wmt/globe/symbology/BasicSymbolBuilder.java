@@ -193,12 +193,12 @@ public class BasicSymbolBuilder implements Symbol.Builder {
             if (doc != null) {
                 logger.log(Level.INFO, "Overriding the position set by XML document for {0}.", symbol.getName());
             }
-            symbol.setPosition(coord);
+            symbol.setCoordinates(coord);
         } else if (symbolId != null && !symbolId.isEmpty()) {
             if (doc != null) {
                 logger.log(Level.INFO, "Overriding the symbol set by XML document for {0}.", symbol.getName());
             }
-            symbol.assignTacticalSymbol(symbolId, symbol.getPosition());
+            symbol.assignTacticalSymbol(symbolId, symbol.getCoordinates());
         }
         if (name != null) {
             if (doc != null) {

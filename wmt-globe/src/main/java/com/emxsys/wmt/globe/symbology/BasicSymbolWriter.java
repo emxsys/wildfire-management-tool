@@ -244,7 +244,7 @@ public class BasicSymbolWriter implements Symbol.Writer {
             doc.removeChild(children.item(i));
         }
         // Create the nodes
-        Element root = createSymbolsElement(new GeoSector(symbol.getPosition(), symbol.getPosition()));
+        Element root = createSymbolsElement(new GeoSector(symbol.getCoordinates(), symbol.getCoordinates()));
         Element feature = doc.createElementNS(GmlConstants.GML_NS_URI, GmlConstants.GML_PREFIX + ":" + GmlConstants.FEATURE_MEMBER_PROPERTY_ELEMENT_NAME);
         Element symbolElement = createSymbolElement();
         if (root != null && feature != null && symbolElement != null) {
@@ -301,7 +301,7 @@ public class BasicSymbolWriter implements Symbol.Writer {
             smb.appendChild(name);
 
             GmlBuilder gmlBuilder = new GmlBuilder(doc, GML_NS_URI, GML_PREFIX + ":" + GmlConstants.POINT_PROPERTY_ELEMENT_NAME);
-            gmlBuilder.append(symbol.getPosition());
+            gmlBuilder.append(symbol.getCoordinates());
             smb.appendChild(gmlBuilder.toElement());
 
             Element milstd2525_id = doc.createElementNS(BASIC_SYMBOL_NS_URI, SMB_PREFIX + ":" + TAG_MILSTD2525ID);

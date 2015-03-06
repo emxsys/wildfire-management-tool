@@ -61,7 +61,7 @@ public class SymbolEditor {
         // Create the dialog content panel
         SymbolEditorPane dialogPane = new SymbolEditorPane(
                 symbol.getName(),
-                symbol.getPosition(),
+                symbol.getCoordinates(),
                 symbol.isMovable(),
                 implCopy);
 

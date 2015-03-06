@@ -41,7 +41,9 @@ import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.GlobeTopComponent;
 import com.terramenta.globe.dnd.Draggable;
 import gov.nasa.worldwind.Movable;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
+import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.DrawContext;
@@ -63,6 +65,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.windows.WindowManager;
 
 /**
  * The Symbol interface manages the placement of and control of bill-boarded symbols.
@@ -76,7 +79,7 @@ import org.openide.util.lookup.InstanceContent;
     "# {0} - milstd2525 id",
     "err_cannot_create_symbol_identifier=Cannot create a tactical system for {0}."
 })
-public class BasicSymbol extends AbstractSymbol implements Movable {
+public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
 
     public static final String PROP_SYMBOL_MOVABLE = "symbol.movable";
     public static final String PROP_SYMBOL_ATTRIBUTES = "symbol.attributes";
@@ -95,22 +98,22 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
     private static BasicTacticalSymbolAttributes normalSharedAttr = null;
     private static BasicTacticalSymbolAttributes highlightedSharedAttr = null;
     private static BasicTacticalSymbolAttributes selectedSharedAttr = null;
-    private static SymbolSelectionController controller;
+    private static SymbolSelectionController selectController;
+
     private static final Logger logger = Logger.getLogger(BasicSymbol.class.getName());
 
+
     /**
-     * Implementation class.
+     * Implementation class. The drag capability is provided by the Terramenta Globe via the
+     * Draggable interface.
      */
-    private static class TacticalSymbol extends MilStd2525TacticalSymbol implements Draggable {
+    private static class TacticalSymbol extends MilStd2525TacticalSymbol {
 
         private GLContext lastContext;
         private BasicSymbol owner;
-        GeoCoord3D syncPosition;
 
         TacticalSymbol(String symbolId, Position position, BasicSymbol owner) {
             super(symbolId, position);
-            this.owner = owner;
-            this.syncPosition = Positions.toGeoCoord3D(position);
         }
 
         @Override
@@ -132,82 +135,6 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
             super.drawTextModifiers(dc);
         }
 
-        @Override
-        public boolean isDraggable() {
-            return owner.isMovable();
-        }
-
-        @Override
-        public void setDraggable(boolean draggable) {
-            owner.setMovable(draggable);
-        }
-
-        /**
-         * Called by Terramenta DragController.
-         * @param position New position.
-         */
-        @Override
-        public void setPosition(Position position) {
-            syncPosition = Positions.toGeoCoord3D(position);
-            super.setPosition(position);
-            owner.setPosition(syncPosition);
-        }
-    }
-
-    /**
-     * Constructs a Symbol with an invalid position.
-     */
-    public BasicSymbol() {
-        super.setPosition(GeoCoord3D.INVALID_COORD);
-        // Add persistance capability
-        this.content.add(new BasicSymbolWriter(this));
-    }
-
-    /**
-     * Constructs a new Symbol from a MILSTD-2525C symbol ID and at the given position.
-     *
-     * @param symbolId A 15-character alphanumeric symbol identification code (SIDC).
-     * @param coord The coordinate where the symbol is placed.
-     */
-    @SuppressWarnings("LeakingThisInConstructor")
-    public BasicSymbol(String symbolId, Coord3D coord) {
-        // Add persistance capability
-        this.content.add(new BasicSymbolWriter(this));
-        // Create the symbol implementation
-        assignTacticalSymbol(symbolId, coord);
-    }
-
-    /**
-     * Assigns new tactical symbol implementation to an uninitialized object.
-     *
-     * @param symbolId A 15-character alphanumeric symbol identification code (SIDC).
-     * @param coord used for symbol
-     */
-    final void assignTacticalSymbol(String symbolId, Coord3D coord) {
-        //
-        if (this.impl != null) {
-            throw new IllegalStateException("this.impl != null.  Use replaceTacticalSymbol instead.");
-        }
-        super.setPosition(coord);
-
-        // Force the SelectionController to be instanciated 
-        if (BasicSymbol.controller == null) {
-            BasicSymbol.controller = SymbolSelectionController.getInstance();
-        }
-
-        // Validate the standard identity - assign the 'friend' status if none is given
-        if (symbolId.substring(1, 2).equals("-")) {
-            symbolId = symbolId.charAt(0) + "F" + symbolId.substring(2);
-        }
-
-        // Create the implementation
-        this.impl = createTacticalSymbol(symbolId, Positions.fromCoord3D(coord), this);
-
-        // Update our lookup...this allows the renderer to access and modify the 
-        // rendering attributes.
-        this.content.add(this.impl);
-
-        updateImage();
     }
 
     /**
@@ -251,10 +178,67 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
         tacsym.setShowGraphicModifiers(preferences.getBoolean("tactical.symbol.show.graphic.modifiers", true));
         tacsym.setShowTextModifiers(preferences.getBoolean("tactical.symbol.show.text.modifiers", true));
 
-        // Delegate the implementation's move and selection/highlight operations to this BasicSymbol
+        // Delegate the implementation's drag and selection/highlight operations to the BasicSymbol
         tacsym.setDelegateOwner(owner);
 
         return tacsym;
+    }
+
+    /**
+     * Constructs a Symbol with an invalid position.
+     */
+    public BasicSymbol() {
+        super.setCoordinates(GeoCoord3D.INVALID_COORD);
+        // Add persistance capability
+        this.content.add(new BasicSymbolWriter(this));
+    }
+
+    /**
+     * Constructs a new Symbol from a MILSTD-2525C symbol ID and at the given position.
+     *
+     * @param symbolId A 15-character alphanumeric symbol identification code (SIDC).
+     * @param coord The coordinate where the symbol is placed.
+     */
+    @SuppressWarnings("LeakingThisInConstructor")
+    public BasicSymbol(String symbolId, Coord3D coord) {
+        // Add persistance capability
+        this.content.add(new BasicSymbolWriter(this));
+
+        // Create the implementation
+        assignTacticalSymbol(symbolId, coord);
+    }
+
+    /**
+     * Assigns new tactical symbol implementation to an uninitialized object.
+     *
+     * @param symbolId A 15-character alphanumeric symbol identification code (SIDC).
+     * @param coord used for symbol
+     */
+    final void assignTacticalSymbol(String symbolId, Coord3D coord) {
+        //
+        if (this.impl != null) {
+            throw new IllegalStateException("this.impl != null.  Use replaceTacticalSymbol instead.");
+        }
+        super.setCoordinates(coord);
+
+        // Force the SelectionController to be instanciated 
+        if (selectController == null) {
+            selectController = SymbolSelectionController.getInstance();
+        }
+        
+        // Validate the standard identity - assign the 'friend' status if none is given
+        if (symbolId.substring(1, 2).equals("-")) {
+            symbolId = symbolId.charAt(0) + "F" + symbolId.substring(2);
+        }
+
+        // Create the implementation
+        this.impl = createTacticalSymbol(symbolId, Positions.fromCoord3D(coord), this);
+
+        // Update our lookup...this allows the renderer to access and modify the 
+        // rendering attributes.
+        this.content.add(this.impl);
+
+        updateImage();
     }
 
     public Lookup getLookup() {
@@ -384,12 +368,46 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
     }
 
     @Override
-    public void setPosition(Coord3D coord) {
-        if (getPosition().equals(coord)) {
+    public void setCoordinates(Coord3D coord) {
+        if (getCoordinates().equals(coord)) {
             return;
         }
         this.impl.setPosition(Positions.fromCoord3D(coord));
-        super.setPosition(coord); // fires property change
+        super.setCoordinates(coord); // fires property change
+    }
+
+    /**
+     * Called by Terramenta DragController. Member of the Draggable interface.
+     */
+    @Override
+    public boolean isDraggable() {
+        return isMovable();
+    }
+
+    /**
+     * Called by Terramenta DragController. Member of the Draggable interface.
+     */
+    @Override
+    public void setDraggable(boolean draggable) {
+        setMovable(draggable);
+    }
+
+    /**
+     * Called by Terramenta DragController. Member of the Draggable interface
+     * @param position New WorldWind position.
+     */
+    @Override
+    public void setPosition(Position position) {
+        setCoordinates(Positions.toGeoCoord3D(position));
+    }
+
+    /**
+     * Called by Terramenta DragController. Member of the Draggable interface
+     * @return 
+     */
+    @Override
+    public Position getPosition() {
+        return Positions.fromCoord3D(getCoordinates());
     }
 
     /**
@@ -497,7 +515,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
             }
             this.impl.move(delta);
             // Fire property change
-            super.setPosition(Positions.toGeoCoord3D(this.impl.getReferencePosition()));
+            super.setCoordinates(Positions.toGeoCoord3D(this.impl.getReferencePosition()));
         }
     }
 
@@ -514,7 +532,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable {
             }
             this.impl.moveTo(position);
             // Update owner and fire property change
-            super.setPosition(Positions.toGeoCoord3D(this.impl.getReferencePosition()));
+            super.setCoordinates(Positions.toGeoCoord3D(this.impl.getReferencePosition()));
         }
     }
 

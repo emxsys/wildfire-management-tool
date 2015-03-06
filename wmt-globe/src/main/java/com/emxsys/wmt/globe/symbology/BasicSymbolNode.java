@@ -192,11 +192,12 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
             this.image = getImageFromSymbol();
         }
         Image markerImage = (this.image == null ? super.getIcon(type) : this.image);
+        
         // Add a lock 'badge' if locked
         Image lockedImage = null;
         LockCapability lockable = getLookup().lookup(LockCapability.class);
         if (lockable != null && lockable.isLocked()) {
-            Image badgeImage = ImageUtilities.loadImage("com/emxsys/worldwind/resources/lock_badge.png");
+            Image badgeImage = ImageUtilities.loadImage("com/emxsys/wmt/globe/images/lock_badge.png");
             if (badgeImage != null) {
                 lockedImage = ImageUtilities.mergeImages(markerImage, badgeImage, 16, 8);
             }
@@ -273,7 +274,7 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Globe.getInstance().centerOn(symbol.getPosition());
+            Globe.getInstance().centerOn(symbol.getCoordinates());
         }
     }
 
