@@ -292,21 +292,18 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
     }
 
     /**
-     * Use EditCookie (versus Editable) so other NetBeans API (like the Ribbon Contextual Task
-     * Panes) can find the editor for this symbol.
+     * Use EditCookie (versus Editable) so other NetBeans API can find the editor for this symbol.
      */
     private class EditSupport implements EditCookie {
 
         @Override
         public void edit() {
-            // Create the editor panel wrapped in a standard dialog...
-            SymbolEditor editor = new SymbolEditor(symbol);
-            editor.edit();
+            symbol.edit();
         }
     };
 
     /**
-     * DeleteSupport implements Node.Cookie for Ribbon ContextualTaskPane support
+     * DeleteSupport 
      */
     private class DeleteSupport implements DeleteCapability, Node.Cookie {
 
@@ -323,7 +320,7 @@ public class BasicSymbolNode extends DataNode implements PropertyChangeListener 
     }
 
     /**
-     * LockSupport implements Node.Cookie for Ribbon ContextualTaskPane support
+     * LockSupport 
      */
     private class LockSupport implements LockCapability, Node.Cookie {
 

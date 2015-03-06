@@ -75,7 +75,7 @@ public final class EditSymbolAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         EventQueue.invokeLater(() -> {
-            //context.edit();
+            context.edit();
         });
     }
 }

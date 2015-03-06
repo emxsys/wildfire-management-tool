@@ -35,6 +35,7 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525Constants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525IconRetriever;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import org.openide.util.RequestProcessor;
@@ -66,6 +67,36 @@ public class SymbolIconRetriever {
      * @return Buffered Image icon representing the symbol
      */
     public Image getSymbolImage(BasicSymbol symbol) {
+        AVList params = new AVListImpl();
+
+        BufferedImage image = iconRetriever.createIcon(symbol.getIdentifier(), params);
+        return image;
+        //                // Create an icon with the default parameters.
+        //                BufferedImage image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+        //
+        //                // Create a unframed icon.
+        //                params.setValue(SymbologyConstants.SHOW_FRAME, false);
+        //                image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+        //
+        //                // Create a framed icon with no fill.
+        //                params.setValue(SymbologyConstants.SHOW_FRAME, true);
+        //                params.setValue(SymbologyConstants.SHOW_FILL, false);
+        //                image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+        //
+        //                // Create an icon with a custom color.
+        //                params.setValue(AVKey.COLOR, Color.GREEN);
+        //                params.setValue(SymbologyConstants.SHOW_FRAME, true);
+        //                params.setValue(SymbologyConstants.SHOW_FILL, true);
+        //                image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+    }
+
+    /**
+     * Gets a BufferedImage representing the supplied symbol.
+     *
+     * @param symbol contains the MilStd2525 identifier and modifiers
+     * @return Buffered Image icon representing the symbol
+     */
+    public Image getSymbolImage(MilStd2525TacticalSymbol symbol) {
         AVList params = new AVListImpl();
 
         BufferedImage image = iconRetriever.createIcon(symbol.getIdentifier(), params);

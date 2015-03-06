@@ -76,17 +76,15 @@ public class SymbolEditor {
         // ... and present to the user
         Object result = DialogDisplayer.getDefault().notify(descriptor);
 
-        // Update the marker
+        // Update the symbol
         if (result != null && result == DialogDescriptor.OK_OPTION) {
-//            if (!symbol.getName().equals(dialogPane.getMarkerName()))
-//            {
-//                symbol.setName(dialogPane.getMarkerName());
-//            }
-//            if (symbol.isMovable() != dialogPane.isMovable())
-//            {
-//                symbol.setMovable(dialogPane.isMovable());
-//            }
-            symbol.replaceTacticalSymbol(implCopy);
+            if (!symbol.getName().equals(dialogPane.getSymbolName())) {
+                symbol.setName(dialogPane.getSymbolName());
+            }
+            if (symbol.isMovable() != dialogPane.isMovable()) {
+                symbol.setMovable(dialogPane.isMovable());
+            }
+            //symbol.replaceTacticalSymbol(implCopy);
 
             success = true;
         }
