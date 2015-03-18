@@ -29,6 +29,8 @@
  */
 package com.emxsys.wmt.globe.symbology;
 
+import com.emxsys.util.ClassUtil;
+import com.emxsys.util.ModuleUtil;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
@@ -38,6 +40,12 @@ import gov.nasa.worldwind.symbology.milstd2525.MilStd2525IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 
 /**
@@ -47,17 +55,36 @@ import org.openide.util.RequestProcessor;
  */
 public class SymbolIconRetriever {
 
+    //private final String LOCAL_ICON_RETRIEVER_PATH = "jar:file:milstd2525-symbols.zip!";
+    // The icon file is located in the release/modules/config/globe folder 
+    private final String LOCAL_ICON_RETRIEVER_PATH = "nbinst://com-emxsys-wmt-globe/modules/ext/config/globe/milstd2525-symbols.zip";
     private final MilStd2525IconRetriever iconRetriever;
     private final RequestProcessor requestProcessor = new RequestProcessor(SymbolIconRetriever.class);
+    private static final Logger logger = Logger.getLogger(SymbolIconRetriever.class.getName());
 
     /**
      * Constructs the icon retriever.
      */
     private SymbolIconRetriever() {
-        // Create an icon retriever using the path specified in the config file, or the default path.
-        String iconRetrieverPath = Configuration.getStringValue(
-                AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH, MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
-        this.iconRetriever = new MilStd2525IconRetriever(iconRetrieverPath);
+        try {
+            // Create an icon retriever using the path specified in the config file, or the default path.
+            String iconRetrieverPath;
+            File file = ModuleUtil.createFileFromUrl(new URL(LOCAL_ICON_RETRIEVER_PATH));
+            if (file != null) {
+                // Replace backslashes with forward slash and remove leading slash
+                String filepath = file.getPath().replace("\\", "/").replaceFirst("^/", "");
+                iconRetrieverPath = "jar:file:/" + filepath + "!";
+            } else {
+                iconRetrieverPath = Configuration.getStringValue(
+                        AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH, MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
+                logger.log(Level.WARNING,"Unable to open " + LOCAL_ICON_RETRIEVER_PATH + ". Using WorldWind defaults: {0}", iconRetrieverPath);
+            }
+            logger.log(Level.INFO, "MilStd2525IconRetriever configured to use {0}", iconRetrieverPath);
+            this.iconRetriever = new MilStd2525IconRetriever(iconRetrieverPath);
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     /**

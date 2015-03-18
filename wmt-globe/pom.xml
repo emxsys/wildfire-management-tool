@@ -277,10 +277,10 @@
                     <useDefaultManifestFile>true</useDefaultManifestFile>
                 </configuration>
             </plugin>
-            <!--            <plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
-                     Copy WorldWind config into WMT cluster 
+                    <!--Copy Globe MilStd2525 icon resources into WMT cluster--> 
                     <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
@@ -299,7 +299,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 </project>
