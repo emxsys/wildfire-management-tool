@@ -150,7 +150,12 @@ public class SymbologySupport {
      */
     public static FileObject getLocalSchemaFile(String version) {
         // Get a file object from a jar file entry (URL).
-        URL resource = BasicSymbolWriter.class.getResource("schemas/" + version + "/" + BASIC_SYMBOL_SCHEMA_FILE);
+        String filename = "schemas/" + version + "/" + BASIC_SYMBOL_SCHEMA_FILE;
+        URL resource = BasicSymbolWriter.class.getResource(filename);
+        if (resource == null) {
+            logger.log(Level.SEVERE, "getLocalSchemaFile failed: cannot find resource: {0}", filename);
+            return null;
+        }
         return URLMapper.findFileObject(resource);
     }
 
