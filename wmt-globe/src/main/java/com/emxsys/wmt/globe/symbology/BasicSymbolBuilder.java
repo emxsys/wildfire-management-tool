@@ -251,7 +251,9 @@ public class BasicSymbolBuilder implements Symbol.Builder {
 
             // Set the name property
             symbol.setName(xpath.evaluate(GmlConstants.GML_PREFIX + ":" + GmlConstants.NAME_PROPERTY_ELEMENT_NAME, symElement));
-
+            symbol.setType(xpath.evaluate(SMB_PREFIX + ":" + TAG_TYPE, symElement));
+            symbol.setQuantity(xpath.evaluate(SMB_PREFIX + ":" + TAG_QUANTITY, symElement));
+            
             // Set the unique ID
             //String SymbolID = symElement.getAttribute(GmlConstants.FID_ATTR_NAME);
             //symbol.setUniqueID(SymbolID);

@@ -41,9 +41,7 @@ import com.emxsys.wmt.globe.util.Positions;
 import com.terramenta.globe.GlobeTopComponent;
 import com.terramenta.globe.dnd.Draggable;
 import gov.nasa.worldwind.Movable;
-import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.DrawContext;
@@ -65,7 +63,6 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.windows.WindowManager;
 
 /**
  * The Symbol interface manages the placement of and control of bill-boarded symbols.
@@ -90,7 +87,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
     public static final int CODING_SCHEME_POSITION = 0;
     private String type;
     private boolean movable = true;
-    private MilStd2525TacticalSymbol impl;
+    private TacticalSymbol impl;
     private DataNode node;
     private Image image;
     private InstanceContent content = new InstanceContent();
@@ -102,12 +99,11 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
 
     private static final Logger logger = Logger.getLogger(BasicSymbol.class.getName());
 
-
     /**
      * Implementation class. The drag capability is provided by the Terramenta Globe via the
      * Draggable interface.
      */
-    private static class TacticalSymbol extends MilStd2525TacticalSymbol {
+    public static class TacticalSymbol extends MilStd2525TacticalSymbol {
 
         private GLContext lastContext;
         private BasicSymbol owner;
@@ -135,6 +131,11 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
             super.drawTextModifiers(dc);
         }
 
+        @Override
+        public void reset() {
+            super.reset();
+        }
+
     }
 
     /**
@@ -145,9 +146,9 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
      * @param owner
      * @return a MilStd2525TacticalSymbol for the symbolId, or null on error.
      */
-    static MilStd2525TacticalSymbol createTacticalSymbol(String symbolId, Position position,
-                                                         BasicSymbol owner) {
-        MilStd2525TacticalSymbol tacsym = new TacticalSymbol(symbolId, position, owner);
+    static TacticalSymbol createTacticalSymbol(String symbolId, Position position,
+                                               BasicSymbol owner) {
+        TacticalSymbol tacsym = new TacticalSymbol(symbolId, position, owner);
         // Create normal and highlight attribute bundles that are shared by all tactical symbols. 
         // Changes to these attribute bundles are reflected in all symbols. 
         // TODO: update these static vars when the preferences change
@@ -225,7 +226,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
         if (selectController == null) {
             selectController = SymbolSelectionController.getInstance();
         }
-        
+
         // Validate the standard identity - assign the 'friend' status if none is given
         if (symbolId.substring(1, 2).equals("-")) {
             symbolId = symbolId.charAt(0) + "F" + symbolId.substring(2);
@@ -233,6 +234,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
 
         // Create the implementation
         this.impl = createTacticalSymbol(symbolId, Positions.fromCoord3D(coord), this);
+        this.impl.setModifier(SymbologyConstants.TYPE, type);
 
         // Update our lookup...this allows the renderer to access and modify the 
         // rendering attributes.
@@ -283,7 +285,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
      *
      * @param tacticalSymbol
      */
-    public void replaceTacticalSymbol(MilStd2525TacticalSymbol tacticalSymbol) {
+    public void replaceTacticalSymbol(TacticalSymbol tacticalSymbol) {
         if (tacticalSymbol == null) {
             throw new IllegalArgumentException(Bundle.err_tac_symbol_impl_is_null());
         }
@@ -322,6 +324,32 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
         super.setName(name);
     }
 
+    public void setType(String type) {
+        if (this.impl == null) {
+            throw new IllegalStateException(Bundle.err_tac_symbol_impl_is_null());
+        }
+        this.impl.setModifier(SymbologyConstants.TYPE, type == null ? "" : type);
+        this.type = type;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setQuantity(String quantity) {
+        if (this.impl == null) {
+            throw new IllegalStateException(Bundle.err_tac_symbol_impl_is_null());
+        }
+        this.impl.setModifier(SymbologyConstants.QUANTITY, quantity == null ? "" : quantity);
+        this.impl.reset();
+        //this.quantity = quantity;
+    }
+
+    public String getQuantity() {
+        String qty = (String) this.impl.getModifier(SymbologyConstants.QUANTITY);
+        return (qty == null ? "" : qty);
+    }
+
     public void setNode(DataNode node) {
         this.node = node;
     }
@@ -348,7 +376,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
 
     public void setStandardIdentity(StandardIdentity si) {
         String identifier = newIdentifier(this.impl.getIdentifier(), si.code, STANDARD_ID_POSITION);
-        MilStd2525TacticalSymbol symbol = createTacticalSymbol(identifier, this.getReferencePosition(), this);
+        TacticalSymbol symbol = createTacticalSymbol(identifier, this.getReferencePosition(), this);
         if (symbol != null) {
             replaceTacticalSymbol(symbol);
         }
@@ -361,7 +389,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
 
     public void setStatus(Status status) {
         String identifier = newIdentifier(this.impl.getIdentifier(), status.code, STATUS_INDEX);
-        MilStd2525TacticalSymbol symbol = createTacticalSymbol(identifier, this.getReferencePosition(), this);
+        TacticalSymbol symbol = createTacticalSymbol(identifier, this.getReferencePosition(), this);
         if (symbol != null) {
             replaceTacticalSymbol(symbol);
         }
@@ -403,7 +431,7 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
 
     /**
      * Called by Terramenta DragController. Member of the Draggable interface
-     * @return 
+     * @return
      */
     @Override
     public Position getPosition() {
@@ -552,14 +580,6 @@ public class BasicSymbol extends AbstractSymbol implements Movable, Draggable {
             throw new IllegalStateException(Bundle.err_tac_symbol_impl_is_null());
         }
         return this.impl.equals(impl);
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return this.type;
     }
 
     /**

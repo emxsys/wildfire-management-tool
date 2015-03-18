@@ -82,6 +82,7 @@ public class SymbolPalette {
         private static final String PROP_IDENTIFIER = "identifier";
         private static final String PROP_NAME = "display_name";
         private static final String PROP_COMMENT = "comment";
+        private static final String PROP_QUANTITY = "quantity";
         private static final String PROP_ICON16 = "icon_small";
         private static final String PROP_ICON32 = "icon_large";
 
@@ -104,6 +105,10 @@ public class SymbolPalette {
 
         public String getType() {
             return props.getProperty(PROP_TYPE);
+        }
+
+        public String getQuantity() {
+            return props.getProperty(PROP_QUANTITY);
         }
 
         public String getIdentifier() {

@@ -31,6 +31,7 @@ package com.emxsys.wmt.globe.symbology.editor;
 
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.wmt.globe.symbology.SymbolIconRetriever;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -53,21 +54,26 @@ import org.openide.util.NbBundle;
 
 class SymbolEditorPane extends javax.swing.JPanel {
 
+    private MilStd2525TacticalSymbol symbol;
+    private boolean taskForce;
+    private boolean installation;
+
     /**
      * Creates new form SymbolEditorPane
      */
     SymbolEditorPane(String name, Coord3D position, boolean isLocked, MilStd2525TacticalSymbol symbol) {
+        this.symbol = symbol;
         initComponents();
 
-        // Draw the symbol
-        ((ImagePanel)imagePanel).setImage(SymbolIconRetriever.getDefault().getSymbolImage(symbol));
+        updateImage();
 
         // Create the name field -- autoselect the text to ease the editing of default names
-        nameTextField.setText(name);
-        nameTextField.setSelectionStart(0);
-        nameTextField.setSelectionEnd(name.length());
-        
+        nameText.setText(name);
+        nameText.setSelectionStart(0);
+        nameText.setSelectionEnd(name.length());
+
         identifierText.setText(symbol.getIdentifier());
+        commentsText.setText((String) symbol.getModifier(SymbologyConstants.STAFF_COMMENTS));
 
         // Position coordinates
         latitudeLabel.setText(position.getLatitude().toValueString());
@@ -78,8 +84,13 @@ class SymbolEditorPane extends javax.swing.JPanel {
         lockToggleButtonStateChanged(null);
     }
 
+    private void updateImage() {
+        // Draw the symbol
+        ((ImagePanel) imagePanel).setImage(SymbolIconRetriever.getDefault().getSymbolImage(symbol));
+    }
+
     public String getSymbolName() {
-        return nameTextField.getText().trim();
+        return nameText.getText().trim();
     }
 
     public boolean isMovable() {
@@ -116,25 +127,31 @@ class SymbolEditorPane extends javax.swing.JPanel {
     private void initComponents() {
 
         nameLabel = new javax.swing.JLabel();
-        nameTextField = new javax.swing.JTextField();
+        nameText = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
+        lockToggleButton = new javax.swing.JToggleButton();
+        lockLabel = new javax.swing.JLabel();
+        IdentifierLabel = new javax.swing.JLabel();
+        identifierText = new javax.swing.JLabel();
+        imagePanel = new ImagePanel();
+        commentsLabel = new javax.swing.JLabel();
+        commentsText = new javax.swing.JTextField();
+        quantityText = new javax.swing.JTextField();
+        taskForceCheckBox = new javax.swing.JCheckBox();
+        installationCheckBox = new javax.swing.JCheckBox();
+        commentsLabel1 = new javax.swing.JLabel();
+        commentsText1 = new javax.swing.JTextField();
+        commentsLabel2 = new javax.swing.JLabel();
         latLabel = new javax.swing.JLabel();
         lonLabel = new javax.swing.JLabel();
         latitudeLabel = new javax.swing.JLabel();
         longitudeLabel = new javax.swing.JLabel();
-        lockToggleButton = new javax.swing.JToggleButton();
-        lockLabel = new javax.swing.JLabel();
-        imagePanel = new ImagePanel();
-        IdentifierLabel = new javax.swing.JLabel();
-        identifierText = new javax.swing.JLabel();
+        nameText1 = new javax.swing.JTextField();
+        nameLabel1 = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(nameLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.nameLabel.text")); // NOI18N
 
         jPanel1.setBorder(new javax.swing.border.MatteBorder(null));
-
-        org.openide.awt.Mnemonics.setLocalizedText(latLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.latLabel.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(lonLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.lonLabel.text")); // NOI18N
 
         lockToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.lockToggleButton.toolTipText")); // NOI18N
         lockToggleButton.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -150,47 +167,43 @@ class SymbolEditorPane extends javax.swing.JPanel {
 
         lockLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(IdentifierLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.IdentifierLabel.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(latLabel)
-                    .addComponent(lonLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lockToggleButton, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(longitudeLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(latitudeLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lockToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lockLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(353, 353, 353))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(IdentifierLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lockLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(identifierText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(latLabel)
-                    .addComponent(latitudeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(IdentifierLabel)
+                    .addComponent(identifierText, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lonLabel)
-                    .addComponent(longitudeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lockLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lockToggleButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                    .addComponent(lockToggleButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(lockLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
+
+        imagePanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         javax.swing.GroupLayout imagePanelLayout = new javax.swing.GroupLayout(imagePanel);
         imagePanel.setLayout(imagePanelLayout);
@@ -203,7 +216,40 @@ class SymbolEditorPane extends javax.swing.JPanel {
             .addGap(0, 148, Short.MAX_VALUE)
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(IdentifierLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.IdentifierLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(commentsLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.commentsLabel.text")); // NOI18N
+
+        commentsText.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                commentsTextFocusLost(evt);
+            }
+        });
+
+        quantityText.setText(org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.quantityText.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(taskForceCheckBox, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.taskForceCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(installationCheckBox, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.installationCheckBox.text")); // NOI18N
+        installationCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                installationCheckBoxItemStateChanged(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(commentsLabel1, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.commentsLabel1.text")); // NOI18N
+
+        commentsText1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                commentsText1FocusLost(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(commentsLabel2, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.commentsLabel2.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(latLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.latLabel.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(lonLabel, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.lonLabel.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(nameLabel1, org.openide.util.NbBundle.getMessage(SymbolEditorPane.class, "SymbolEditorPane.nameLabel1.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -212,35 +258,95 @@ class SymbolEditorPane extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(nameLabel)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lonLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(longitudeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(nameLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nameText1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(nameLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nameText))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(commentsLabel2)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(latLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(latitudeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nameTextField))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(IdentifierLabel)
-                        .addGap(291, 291, 291)
-                        .addComponent(identifierText, javax.swing.GroupLayout.DEFAULT_SIZE, 3, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(taskForceCheckBox)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(commentsLabel1)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(commentsText1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                                        .addComponent(commentsText, javax.swing.GroupLayout.Alignment.TRAILING))
+                                    .addComponent(commentsLabel)))
+                            .addComponent(installationCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(246, 246, 246)
+                .addComponent(quantityText, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(13, 13, 13)
+                .addComponent(installationCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(taskForceCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(quantityText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(IdentifierLabel)
-                    .addComponent(identifierText, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(42, 42, 42)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(commentsLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(latLabel)
+                                            .addComponent(latitudeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(lonLabel))
+                                    .addComponent(longitudeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(nameLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(nameText1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(nameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(commentsLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(commentsText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(commentsLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(commentsText1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -261,10 +367,31 @@ class SymbolEditorPane extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_lockToggleButtonActionPerformed
 
+    private void commentsTextFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_commentsTextFocusLost
+        symbol.setModifier(SymbologyConstants.STAFF_COMMENTS, commentsText.getText());
+    }//GEN-LAST:event_commentsTextFocusLost
+
+    private void commentsText1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_commentsText1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_commentsText1FocusLost
+
+    private void installationCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_installationCheckBoxItemStateChanged
+        // Toggle the installation glphh
+        symbol.setModifier(SymbologyConstants.INSTALLATION,
+                evt.getStateChange() == 1 ? SymbologyConstants.INSTALLATION_NORMAL : null);
+        updateImage();
+    }//GEN-LAST:event_installationCheckBoxItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel IdentifierLabel;
+    private javax.swing.JLabel commentsLabel;
+    private javax.swing.JLabel commentsLabel1;
+    private javax.swing.JLabel commentsLabel2;
+    private javax.swing.JTextField commentsText;
+    private javax.swing.JTextField commentsText1;
     private javax.swing.JLabel identifierText;
     private javax.swing.JPanel imagePanel;
+    private javax.swing.JCheckBox installationCheckBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel latLabel;
     private javax.swing.JLabel latitudeLabel;
@@ -273,6 +400,10 @@ class SymbolEditorPane extends javax.swing.JPanel {
     private javax.swing.JLabel lonLabel;
     private javax.swing.JLabel longitudeLabel;
     private javax.swing.JLabel nameLabel;
-    private javax.swing.JTextField nameTextField;
+    private javax.swing.JLabel nameLabel1;
+    private javax.swing.JTextField nameText;
+    private javax.swing.JTextField nameText1;
+    private javax.swing.JTextField quantityText;
+    private javax.swing.JCheckBox taskForceCheckBox;
     // End of variables declaration//GEN-END:variables
 }

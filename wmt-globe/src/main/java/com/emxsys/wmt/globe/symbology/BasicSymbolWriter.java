@@ -87,7 +87,9 @@ public class BasicSymbolWriter implements Symbol.Writer {
     public static final String TAG_SYMBOLS = "TacticalSymbolCollection";
     public static final String TAG_TACTICAL_SYMBOL = "TacticalSymbol";
     public static final String TAG_NAME = "name";
-    public static final String TAG_DECRIPTION = "description";
+    public static final String TAG_TYPE = "type";
+    public static final String TAG_QUANTITY = "quantity";
+    public static final String TAG_DECRIPTION = "description";  // Addl info
     public static final String TAG_POSITION = "Position";
     public static final String TAG_MILSTD2525ID = "milStd2525Id";
     public static final String ATTR_FACTORY = "factory";
@@ -307,6 +309,14 @@ public class BasicSymbolWriter implements Symbol.Writer {
             Element milstd2525_id = doc.createElementNS(BASIC_SYMBOL_NS_URI, SMB_PREFIX + ":" + TAG_MILSTD2525ID);
             milstd2525_id.appendChild(doc.createTextNode(symbol.getIdentifier()));
             smb.appendChild(milstd2525_id);
+
+            Element type = doc.createElementNS(BASIC_SYMBOL_NS_URI, SMB_PREFIX + ":" + TAG_TYPE);
+            type.appendChild(doc.createTextNode(symbol.getType()));
+            smb.appendChild(type);
+            
+            Element quantity = doc.createElementNS(BASIC_SYMBOL_NS_URI, SMB_PREFIX + ":" + TAG_QUANTITY);
+            quantity.appendChild(doc.createTextNode(symbol.getQuantity()));
+            smb.appendChild(quantity);
 
             return smb;
         } catch (Exception ex) {

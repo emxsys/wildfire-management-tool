@@ -74,70 +74,58 @@ import org.openide.xml.XMLUtil;
  * @author Bruce Schubert <bruce@emxsys.com>
  * @version $Id: BasicGraphicDataObject.java 490 2013-03-02 17:59:27Z bdschubert $
  */
-@Messages(
-        {
-            "LBL_BasicGraphic_LOADER=Files of Tactical Graphic",
-            "error_cannot_load_graphic=Cannot load graphic. {0}",
-            "error_cannot_save_graphic=Cannot save graphic. {0}",
-            "error_cannot_delete_graphic=Cannot delete graphic. {0}",})
+@Messages({
+    "LBL_BasicGraphic_LOADER=Files of Tactical Graphic",
+    "error_cannot_load_graphic=Cannot load graphic. {0}",
+    "error_cannot_save_graphic=Cannot save graphic. {0}",
+    "error_cannot_delete_graphic=Cannot delete graphic. {0}",})
 @MIMEResolver.NamespaceRegistration(
         displayName = "#LBL_BasicGraphic_LOADER",
         mimeType = "text/emxsys-worldwind-basicgraphic+xml",
         elementNS
-        = {
-            "http://emxsys.com/worldwind-basicgraphic"
-        })
+        = {"http://emxsys.com/worldwind-basicgraphic"})
 @DataObject.Registration(
         mimeType = "text/emxsys-worldwind-basicgraphic+xml",
         iconBase = "com/emxsys/wmt/globe/symbology/favorite.png",
         displayName = "#LBL_BasicGraphic_LOADER",
         position = 300)
-@ActionReferences(
-        {
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "com.emxsys.basicui.actions.EditAction"),
-                    position = 80),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "com.emxsys.basicui.actions.DesignAction"),
-                    position = 90),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-                    position = 100,
-                    separatorAfter = 200),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-                    position = 100,
-                    separatorAfter = 200),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
-                    position = 300),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
-                    position = 400,
-                    separatorAfter = 500),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
-                    position = 600),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
-                    position = 700,
-                    separatorAfter = 800),
+@ActionReferences({
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "Edit", id = "com.emxsys.basicui.actions.EditAction"),
+            position = 80),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "Edit", id = "com.emxsys.basicui.actions.DesignAction"),
+            position = 90),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            position = 100,
+            separatorAfter = 200),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"),
+            position = 300),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"),
+            position = 400,
+            separatorAfter = 500),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"),
+            position = 600),
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"),
+            position = 700,
+            separatorAfter = 800),
 //    @ActionReference(
 //        path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
 //                     id =
@@ -155,12 +143,11 @@ import org.openide.xml.XMLUtil;
 //                     id =
 //    @ActionID(category = "System", id = "org.openide.actions.ToolsAction"),
 //                     position = 1300),
-            @ActionReference(
-                    path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
-                    id
-                    = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
-                    position = 1400)
-        })
+    @ActionReference(
+            path = "Loaders/text/emxsys-worldwind-basicgraphic+xml/Actions",
+            id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
+            position = 1400)
+})
 public class BasicGraphicDataObject extends AbstractDataObject {
 
     private BasicGraphic graphic;
@@ -202,7 +189,7 @@ public class BasicGraphicDataObject extends AbstractDataObject {
         // Create the graphic object
         try {
             // Read a the symbol from the XML document
-            this.graphic =  (BasicGraphic) SymbologySupport.getGraphicBuilder(getDocument()).build();
+            this.graphic = (BasicGraphic) SymbologySupport.getGraphicBuilder(getDocument()).build();
             if (this.graphic == null) {
                 throw new RuntimeException("readFile() failed for " + getName()
                         + ". Reason: The Graphic.Builder returned null.");
@@ -251,7 +238,7 @@ public class BasicGraphicDataObject extends AbstractDataObject {
             }
             // Write to the XML document
             writer.document(getDocument()).write();
-            
+
             try (OutputStream output = getPrimaryFile().getOutputStream(FileLock.NONE)) {
                 XMLUtil.write(getDocument(), output, "UTF-8");
                 output.flush();
@@ -261,7 +248,6 @@ public class BasicGraphicDataObject extends AbstractDataObject {
             logger.severe(ex.getMessage());
         }
     }
-
 
     /**
      * Removes the graphic from the catalog. Called by handleDelete().
@@ -292,6 +278,7 @@ public class BasicGraphicDataObject extends AbstractDataObject {
         }
         init.set(State.DELETED);
     }
+
     /**
      *
      * @param df
@@ -308,6 +295,7 @@ public class BasicGraphicDataObject extends AbstractDataObject {
         }
         return dob;
     }
+
     /**
      * Generates a schema file in the specified folder if one does not exist.
      *
@@ -327,6 +315,7 @@ public class BasicGraphicDataObject extends AbstractDataObject {
             }
         }
     }
+
     /**
      * Gets a Lookup that includes the Graphic, DataObject and Node objects and the associated
      * capabilities.

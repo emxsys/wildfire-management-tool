@@ -288,9 +288,37 @@
             
         </folder>-->
 
-<!--        <folder name="EMS Operations">
+        <folder name="EMS Operations">
+            <attr name="position" intvalue="50"/>
+
+            <!--Files are palette items.  See the Globe's symbology PaletteItemDataObject class-->
+            <file name="EMS.OPN.FIRFT.symbol" url="symbology/symbols/EMS.OPN.FIRFT.properties">
+                <attr name="position" intvalue="100"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRFTU.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRFTU.properties">
+                <attr name="position" intvalue="200"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRFTE.ENG.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRFTE.ENG.properties">
+                <attr name="position" intvalue="300"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRFTE.DZR.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRFTE.DZR.properties">
+                <attr name="position" intvalue="301"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRFTE.ENG.STKTM.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRFTE.ENG.STKTM.properties">
+                <attr name="position" intvalue="400"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRFTE.DZR.ST.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRFTE.DZR.ST.properties">
+                <attr name="position" intvalue="401"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRSTN.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRSTN.properties">
+                <attr name="position" intvalue="500"/>
+            </file>
+            <file name="EMS.OPN.FIRFT.FIRFTU.symbol" url="symbology/symbols/EMS.OPN.FIRFT.FIRFTU.properties">
+                <attr name="position" intvalue="600"/>
+            </file>
             
-        </folder>-->
+            
+        </folder>
 
 <!--        <folder name="EMS Infrastructure">
             

@@ -144,9 +144,10 @@ public class SymbolDragAndDropHandler extends AbstractDragAndDropHandler {
                 GeoCoord3D.fromDegrees(position.latitude.degrees, position.longitude.degrees)); // no altitude!
         model.setName(data.getDisplayName());
         model.setType(data.getType());
+        model.setQuantity(data.getQuantity());
+        
 
-        // Create the Symbol file using the model Symbol object;
-        // create it in the current project.
+        // Create the Symbol file using the model Symbol object; create it in the current project.
         FileObject folder = null;
         Project currentProject = ProjectUtil.getCurrentProject();
         if (currentProject != null) {
@@ -154,7 +155,8 @@ public class SymbolDragAndDropHandler extends AbstractDragAndDropHandler {
             if (manager != null) {
                 folder = manager.getFolder();
             }
-        }
+        }        
+        // After writing, the new symbol be read from the disk and displayed on the globe
         BasicSymbolWriter writer = new BasicSymbolWriter(folder, model);
         Document doc = writer.write();
         if (doc == null) {
