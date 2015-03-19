@@ -32,6 +32,8 @@ package com.emxsys.wmt.globe.render;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.wmt.globe.util.Positions;
 import static com.emxsys.wmt.globe.util.Positions.fromCoord2D;
+import com.terramenta.globe.utilities.QuickTipController;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
@@ -79,6 +81,24 @@ public class GlobeEllipse extends SurfaceEllipse {
     public void setInteriorColor(Color color) {
         attrs.setInteriorMaterial(new Material(color));
         setAttributes(attrs);
+    }
+
+    public void setRollOverText(String tooltip) {
+        // The rollOverKey (AVKey.DISPLAY_NAME) is defined in the Terrament QuickTipController
+        if (tooltip == null || tooltip.isEmpty()) {
+            removeKey(QuickTipController.getRolloverKey());
+        } else {
+            setValue(QuickTipController.getRolloverKey(), tooltip);
+        }
+    }
+
+    public void setHoverText(String tooltip) {
+        // The hoverKey (AVKey.DESCRIPTION) is defined in the Terrament QuickTipController
+        if (tooltip == null || tooltip.isEmpty()) {
+            removeKey(QuickTipController.getHoverKey());
+        } else {
+            setValue(QuickTipController.getHoverKey(), tooltip);
+        }
     }
 
 }
