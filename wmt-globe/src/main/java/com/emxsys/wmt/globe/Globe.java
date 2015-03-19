@@ -328,9 +328,9 @@ public class Globe implements GisViewer {
             logger.log(Level.FINE, "addGisLayer() processing {0} cached layers.", startupLayers.size());
             addAll(startupLayers);
             startupLayers.clear();
-        }        
+        }
     }
-    
+
     private void initializeDragAndDrop() {
         // Setup WorldWind DnD support:
         // Add drag and drop functionality to the viewer. Only one listener is allowed. However,
@@ -589,11 +589,20 @@ public class Globe implements GisViewer {
         return (Component) getWorldWindManager().getWorldWindow();
     }
 
+    /**
+     * Redraws the globe.
+     */
     @Override
     public void refreshView() {
         getWorldWindManager().getWorldWindow().redraw();
     }
 
+    /**
+     * Returns a GeoSector that contains a circle defined by a point and radius.
+     * @param point The center of the circle.
+     * @param radius The circle's radius.
+     * @return A new GeoSector who's sides are 2X radius.
+     */
     @Override
     public GeoSector computeSector(Coord2D point, Real radius) {
         double meters;
