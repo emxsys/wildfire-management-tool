@@ -29,6 +29,9 @@
  */
 package com.emxsys.wmt.cps.options;
 
+import java.util.prefs.Preferences;
+import org.openide.util.NbPreferences;
+
 /**
  * CPS Options
  *
@@ -64,4 +67,11 @@ public class CpsOptions {
     public static final int DEFAULT_TEMP_1200 = 80;
     public static final int DEFAULT_TEMP_1400 = 82;
     public static final int DEFAULT_TEMP_SUNSET = 75;
+
+    private static Preferences prefs = NbPreferences.forModule(CpsOptions.class);
+
+    public static String getUom() {
+        return prefs.get(UOM_KEY, DEFAULT_UOM);
+    }
+
 }

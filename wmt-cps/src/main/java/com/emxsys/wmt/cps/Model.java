@@ -49,7 +49,7 @@ import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
-import com.emxsys.wmt.cps.render.FireShape;
+import com.emxsys.wmt.cps.render.FirePerimeterEllipse;
 import com.emxsys.wmt.cps.render.SolarRay;
 import java.awt.EventQueue;
 import java.beans.PropertyChangeListener;
@@ -113,7 +113,7 @@ public class Model {
 
     private final SurfaceFuelProvider fuelProvider = new SurfaceFuelProvider();
     private final SurfaceFireProvider fireProvider = new SurfaceFireProvider();
-    private FireShape fireShape;    // Deferred initialization
+    private FirePerimeterEllipse fireShape;    // Deferred initialization
     private SolarRay solarRay;      // Deferred initialization
 
     // Current data values
@@ -378,12 +378,12 @@ public class Model {
 
             // Update the Renderable(s)
             if (fireShape == null) {
-                fireShape = new FireShape();
+                fireShape = new FirePerimeterEllipse();
             }
             if (solarRay == null) {
                 solarRay = new SolarRay();
             }
-            fireShape.update(coord, fire, Duration.ofMinutes(5));
+            fireShape.update(coord, weather, fire, Duration.ofMinutes(5));
             solarRay.update(coord, sun);
 
         } catch (Exception e) {
