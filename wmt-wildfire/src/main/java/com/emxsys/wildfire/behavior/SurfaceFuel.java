@@ -36,35 +36,7 @@ import com.emxsys.visad.Tuples;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.WildfireType;
-import static com.emxsys.wildfire.api.WildfireType.BETA;
-import static com.emxsys.wildfire.api.WildfireType.BETA_OPT;
-import static com.emxsys.wildfire.api.WildfireType.BETA_RATIO;
-import static com.emxsys.wildfire.api.WildfireType.ETA_M;
-import static com.emxsys.wildfire.api.WildfireType.ETA_S;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_100H;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_10H;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_1H;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_DEAD_HERB;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_LIVE_HERB;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_LOAD_LIVE_WOODY;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_100H;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_10H;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_1H;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_DEAD_HERB;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_LIVE_HERB;
-import static com.emxsys.wildfire.api.WildfireType.FUELBED_SAV_LIVE_WOODY;
-import static com.emxsys.wildfire.api.WildfireType.FUEL_BED;
-import static com.emxsys.wildfire.api.WildfireType.FUEL_BED_DEPTH;
-import static com.emxsys.wildfire.api.WildfireType.FUEL_LOAD;
-import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_F;
-import static com.emxsys.wildfire.api.WildfireType.GAMMA;
-import static com.emxsys.wildfire.api.WildfireType.HEAT_CONTENT_US;
-import static com.emxsys.wildfire.api.WildfireType.I_R;
-import static com.emxsys.wildfire.api.WildfireType.MX_DEAD;
-import static com.emxsys.wildfire.api.WildfireType.MX_LIVE;
-import static com.emxsys.wildfire.api.WildfireType.RHO_B;
-import static com.emxsys.wildfire.api.WildfireType.RHO_P;
-import static com.emxsys.wildfire.api.WildfireType.SIGMA;
+import static com.emxsys.wildfire.api.WildfireType.*;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.Objects;
@@ -76,6 +48,8 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
+ * The SurfaceFuel class represents a fuel complex, including the fuel moisture, fuel loading and
+ * surface area to volume ratios, reaction intensities and moistures of extinction.
  *
  * @author Bruce Schubert
  */
