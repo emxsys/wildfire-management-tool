@@ -31,7 +31,6 @@ package com.emxsys.wildfire.behavior;
 
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.util.MathUtil;
 import static com.emxsys.visad.GeneralUnit.degC;
 import static com.emxsys.visad.GeneralUnit.degF;
 import static com.emxsys.visad.GeneralUnit.foot;
@@ -49,7 +48,18 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The SurfaceFuelProvider is a SurfaceFuel factory capable of caching SurfaceFuel objects.
+ * The SurfaceFuelProvider is a SurfaceFuel factory capable of caching SurfaceFuel objects. The
+ * surface fuel's dead 1-hour fuel moisture is computed using an "instantaneous" wetting or drying
+ * computation, versus the traditional 1-hour time lag formula. Per K. Anderson, "This approach
+ * produces diurnal variations closer to expected values and when used in fire-growth modeling,
+ * over-predictions are reduced by 30%."
+ * <p>
+ * References:
+ * <ul>
+ * <li><a name="bib_1002"></a>Anderson, K., 2009, A Comparison of Hourly Fire Fuel Moisture Code
+ * Calculations within Canada, Canadian Forest Service
+ * </ul>
+ *
  * @author Bruce Schubert
  */
 public class SurfaceFuelProvider {
@@ -60,18 +70,20 @@ public class SurfaceFuelProvider {
     /**
      * Gets a SurfaceFuel object from the given environmental parameters. Dead 1-hour fuel moisture
      * is computed using an "instantaneous" wetting or drying computation, versus the traditional
-     * 1-hour time lag formula.
+     * 1-hour time lag formula.  This approach is computationally more performant.
      *
      * @param fuelModel The fuel model representative of fuel loading and SAV ratios.
      * @param sun The current sunlight prevailing upon the fuel
      * @param wx The current weather acting on the fuel
      * @param terrain The slope, aspect and elevation of the fuel
      * @param shaded Set true if the fuel is currently shaded (by terrain or plume or night)
-     * @param initialFuelMoisture Previous hour's fuel moisture - determines a wetting or drying trend.
+     * @param initialFuelMoisture Previous hour's fuel moisture - determines a wetting or drying
+     * trend.
      *
      * @return A new SurfaceFuel for the given conditions.
      *
      * @see Rothermel
+     *
      */
     public SurfaceFuel getSurfaceFuel(FuelModel fuelModel,
                                       Sunlight sun, Weather wx,
@@ -86,7 +98,6 @@ public class SurfaceFuelProvider {
             double S_c = shaded ? 100. : wx.getCloudCover().getValue(); // [percent]
             double T_a = wx.getAirTemperature().getValue(degF);
             double H_a = wx.getRelativeHumidity().getValue();
-          
 
             // Atmospheric transparency
             // p    Qualitative description
