@@ -57,6 +57,9 @@ import visad.Real;
 import visad.VisADException;
 
 /**
+ * The SurfaceFire class computes the surface fire behavior from the given fire environment
+ * variables: fuel, weather and terrain. The fuel's fuel moisture content is typically conditioned
+ * to the its temporal-spatial location.
  *
  * @author Bruce Schubert
  */
@@ -89,7 +92,7 @@ public class SurfaceFire implements FireBehavior {
 
     /**
      * Creates a SurfaceFire instance.
-     * @param fuelbed The fuel complex.
+     * @param fuelbed The conditioned fuel complex.
      * @param weather The weather with 20ft wind speeds.
      * @param terrain The terrain aspect and slope at the point of interest.
      * @return A new SurfaceFire instance.
@@ -126,6 +129,14 @@ public class SurfaceFire implements FireBehavior {
         this.windDir = windDir;
         this.aspect = aspect;
         this.slope = slope;
+    }
+
+    /**
+     * Gets the fuel complex that generates this fire behavior.
+     * @return A WildfireType.FUEL_BED tuple representing the surface fuel.
+     */
+    public SurfaceFuel getFuelBed() {
+        return this.fuelBed;
     }
 
     /**
