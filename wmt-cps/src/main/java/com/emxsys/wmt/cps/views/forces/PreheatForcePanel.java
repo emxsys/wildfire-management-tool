@@ -29,43 +29,31 @@
  */
 package com.emxsys.wmt.cps.views.forces;
 
-import com.emxsys.jfree.ChartCanvas;
 import com.emxsys.jfree.ClockCompassPlot;
 import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.util.AngleUtil;
 import com.emxsys.wildfire.api.WildfirePreferences;
 import com.emxsys.wildfire.api.WildfireType;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.panels.FuelTemperaturePanel;
-import com.terramenta.time.options.TimeOptions;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeSupport;
-import static java.lang.Math.round;
-import static java.lang.Math.round;
+import static java.lang.Math.min;
 import static java.lang.Math.round;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import org.jfree.chart.ChartPanel;
-import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
-import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
-import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_WIDTH;
+import static org.jfree.chart.ChartPanel.*;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.chart.title.TextTitle;
@@ -92,6 +80,8 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 
     // Properties that are available from this panel
     public static final String PROP_FUEL_MOISTURE = "PROP_FUEL_MOISTURE";
+    public static final String PROP_FUEL_TEMP = "PROP_FUEL_TEMP";
+    public static final String PROP_OVERRIDE_FUEL_TEMP = "PROP_OVERRIDE_FUEL_TEMP";
 
     // The ForcesTopComponent will add the PropertyChangeListeners
     public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -103,6 +93,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
     private FuelTemperaturePanel fuelTempChart;
     private JSlider slider;
+    private JCheckBox checkbox;
 
     //private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern(TimeOptions.getTimeFormat());
     private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
@@ -113,12 +104,12 @@ public class PreheatForcePanel extends javax.swing.JPanel {
      */
     public PreheatForcePanel() {
         initComponents();
-        
+
         // Override the default title font size so we can display long date time strings
         TextTitle title = solarChart.getTitle();
         Font font = title.getFont().deriveFont(11);
         title.setFont(font);
-        
+
         fuelTempChart = new FuelTemperaturePanel(
                 Bundle.CTL_FuelTempChartTitle(),
                 WildfirePreferences.getFuelTemperatureUnit(),
@@ -164,21 +155,34 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 
         rightPanel.add(thermometerPanel, BorderLayout.CENTER);
 
-        // Create the slider for the fuel moisture (40% max)
-        this.slider = new JSlider(0, 40, 0);
+        // Create the slider for the fuel temp (140 deg max)
+        this.slider = new JSlider(32, 140, 59); // fahrenheit
         this.slider.setPaintLabels(false);
         this.slider.setPaintTicks(true);
         this.slider.setMajorTickSpacing(10);
         this.slider.setOrientation(SwingConstants.VERTICAL);
+        this.slider.setEnabled(false);
 
-        // Add listener to handle manual air temp input
+        // Add listener to handle manual fuel temp input
         this.slider.addChangeListener((ChangeEvent e) -> {
-            Real FuelMoisture = new Real(WildfireType.FUEL_MOISTURE_1H, slider.getValue());
-            this.pcs.firePropertyChange(PROP_FUEL_MOISTURE, null, FuelMoisture);
+            Real FuelTemp = new Real(WildfireType.FUEL_TEMP_F, slider.getValue());
+            this.pcs.firePropertyChange(PROP_FUEL_TEMP, null, FuelTemp);
         });
 
+        // Create checkbox to enable/disable manual fuel temp override
+        this.checkbox = new JCheckBox("Override", null, false);
+        this.checkbox.addChangeListener((ChangeEvent e) -> {
+            boolean selected = checkbox.isSelected();
+            this.slider.setEnabled(selected);
+            this.pcs.firePropertyChange(PROP_OVERRIDE_FUEL_TEMP, null, selected);
+        });
+
+        JPanel sliderPanel = new JPanel(new BorderLayout());
+        sliderPanel.add(this.slider, BorderLayout.CENTER);
+        sliderPanel.add(this.checkbox, BorderLayout.NORTH);
+
         // Add the panel to the Grid layout
-        rightPanel.add(this.slider, BorderLayout.EAST);
+        rightPanel.add(sliderPanel, BorderLayout.EAST);
         add(leftPanel);
         add(rightPanel);
 
@@ -275,6 +279,11 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     * Sets the tick mark indicating air temperature.
+     *
+     * @param airTemperature
+     */
     public void updateAirTemp(Real airTemperature) {
         fuelTempChart.setAirTemperature(airTemperature);
     }
@@ -302,7 +311,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
                 this.dataset.setValue(null);
                 return;
             }
-            this.dataset.setValue(round(moisture.getValue()));
+            this.dataset.setValue(min(round(moisture.getValue()), 100));
         }
 
         void setMoistureOfExtinction(Real extinction) {
@@ -370,13 +379,13 @@ public class PreheatForcePanel extends javax.swing.JPanel {
             setOutlineVisible(false);
         }
 
-        void updateMoistureSubranges(double moistureOfExt) {
+        final void updateMoistureSubranges(double moistureOfExt) {
             setSubrange(0, 0.0, moistureOfExt);      // burnable
-            setSubrangePaint(0, Color.red);
+            setSubrangePaint(0, Color.orange);
             setSubrange(1, moistureOfExt, 100.0);    // unburnable
             setSubrangePaint(1, Color.green);
             setSubrange(2, -1, -1);         // Set off the scale to hide
-            setSubrangePaint(2, Color.red);
+            setSubrangePaint(2, Color.orange);
         }
     }
 

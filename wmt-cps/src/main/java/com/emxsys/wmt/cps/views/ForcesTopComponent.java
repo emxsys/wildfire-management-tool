@@ -29,14 +29,10 @@
  */
 package com.emxsys.wmt.cps.views;
 
-import com.emxsys.gis.api.Coord3D;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wmt.cps.Model;
-import com.emxsys.wmt.cps.WeatherManager;
 import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
 import com.emxsys.wmt.cps.views.forces.WindForcePanel;
@@ -51,7 +47,6 @@ import org.openide.awt.ActionID;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
-import visad.FlatField;
 
 /**
  * Top component which displays the CPS Primary Forces.
@@ -121,9 +116,9 @@ public final class ForcesTopComponent extends TopComponent {
             preheatPanel.updateFuel((SurfaceFuel) evt.getNewValue());
         });
         Model.getInstance().addPropertyChangeListener(Model.PROP_COORD3D, (PropertyChangeEvent evt) -> {
-                Weather wx = Model.getInstance().getWeather();
-                preheatPanel.updateAirTemp(wx.getAirTemperature());
-        });        
+            Weather wx = Model.getInstance().getWeather();
+            preheatPanel.updateAirTemp(wx.getAirTemperature());
+        });
         logger.config(PREFERRED_ID + " initialized.");
     }
 
@@ -137,8 +132,9 @@ public final class ForcesTopComponent extends TopComponent {
         add(slopePanel);
     }
 
-    public void addFuelMoisturePropertyChangeListener(PropertyChangeListener listener) {
-        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_FUEL_MOISTURE, listener);
+    public void addFuelTempPropertyChangeListener(PropertyChangeListener listener) {
+        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_FUEL_TEMP, listener);
+        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_OVERRIDE_FUEL_TEMP, listener);
     }
 
     public void addWindDirPropertyChangeListener(PropertyChangeListener listener) {

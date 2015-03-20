@@ -48,18 +48,15 @@ import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
 import com.emxsys.wildfire.api.StdFuelModel;
-import com.emxsys.wildfire.behavior.SurfaceFuel;
-import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.cps.views.ForcesTopComponent;
+import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.globe.Globe;
 import java.beans.PropertyChangeEvent;
 import java.time.ZoneId;
@@ -106,7 +103,7 @@ public class Controller {
         //return ControllerHolder.INSTANCE;
     }
     private static Controller instance;
-    
+
     // Data providers - Event generators
     private final ShadedTerrainProvider earth;
     private final SunlightProvider sun;
@@ -115,6 +112,10 @@ public class Controller {
     private FuelModelProvider fuels;
 
     private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
+
+    // Overrides (these values are read and writted on the EDT)
+    private boolean overrideFuelTemp = false;
+    private Real fuelTemp = null;
 
     // Event handlers
     private final CooridinateUpdater coordinateUpdater;
@@ -191,25 +192,44 @@ public class Controller {
         this.projectListener.resultChanged(null);
 
         // TODO: Move to Forces view
-        // Listen for changes from the manual input controls
+        // Listen for changes from the manual Fuel Temp input controls
         ForcesTopComponent forcesWindow = ForcesTopComponent.getInstance();
 
-        forcesWindow.addFuelMoisturePropertyChangeListener((PropertyChangeEvent evt) -> {
-            Real dead1HrFuelMoisture = ((Real) evt.getNewValue());
-            FuelMoisture fm = model.getFuelMoisture();
-            model.modifyFuelbed(FuelMoistureTuple.fromReals(
-                    dead1HrFuelMoisture,
-                    fm.getDead10HrFuelMoisture(),
-                    fm.getDead100HrFuelMoisture(),
-                    fm.getLiveHerbFuelMoisture(),
-                    fm.getLiveWoodyFuelMoisture()));
-            model.computeFireBehavior();
-            model.updateViews();
+        // Listen for changes from the manual Fuel Temp input controls
+        forcesWindow.addFuelTempPropertyChangeListener((PropertyChangeEvent evt) -> {
+            switch (evt.getPropertyName()) {
+                case PreheatForcePanel.PROP_OVERRIDE_FUEL_TEMP:
+                    overrideFuelTemp = (boolean) evt.getNewValue();
+                    break;
+                case PreheatForcePanel.PROP_FUEL_TEMP:
+                    fuelTemp = ((Real) evt.getNewValue());
+                    model.modifyFuelbed(fuelTemp);
+                    model.computeFireBehavior();
+                    model.updateViews();
+                    break;
+            }
         });
+
+//        forcesWindow.addFuelMoisturePropertyChangeListener((PropertyChangeEvent evt) -> {
+//            Real dead1HrFuelMoisture = ((Real) evt.getNewValue());
+//            FuelMoisture fm = model.getFuelMoisture();
+//            model.modifyFuelbed(FuelMoistureTuple.fromReals(
+//                    dead1HrFuelMoisture,
+//                    fm.getDead10HrFuelMoisture(),
+//                    fm.getDead100HrFuelMoisture(),
+//                    fm.getLiveHerbFuelMoisture(),
+//                    fm.getLiveWoodyFuelMoisture()));
+//            model.computeFireBehavior();
+//            model.updateViews();
+//        });
+        // Listen for changes from the manual Wind controls
         forcesWindow.addWindDirPropertyChangeListener((PropertyChangeEvent evt) -> {
             simpleWeather.setWindDirection((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
             model.conditionFuelbed();
+            if (overrideFuelTemp && fuelTemp != null) {
+                model.modifyFuelbed(fuelTemp);
+            }
             model.computeFireBehavior();
             model.updateViews();
         });
@@ -217,6 +237,9 @@ public class Controller {
             simpleWeather.setWindSpeed((Real) evt.getNewValue());
             model.setWeather(simpleWeather.getWeather());
             model.conditionFuelbed();
+            if (overrideFuelTemp && fuelTemp != null) {
+                model.modifyFuelbed(fuelTemp);
+            }
             model.computeFireBehavior();
             model.updateViews();
         });
@@ -337,8 +360,13 @@ public class Controller {
                         : StdFuelModel.INVALID;
                 controller.model.setFuelModel(fuelModel);
 
-                // Update the fire
+                // Update the fuel bed - use the fuel temp override if provided
                 controller.model.conditionFuelbed();
+                if (controller.overrideFuelTemp && controller.fuelTemp != null) {
+                    controller.model.modifyFuelbed(controller.fuelTemp);
+                }
+
+                // Update the fire behavior
                 controller.model.computeFireBehavior();
 
                 // Update the GUI 
@@ -434,9 +462,12 @@ public class Controller {
                         //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
                         : false;
                 controller.model.setShaded(isShaded);
-
-                // Update the fire
+                // Update the fuel
                 controller.model.conditionFuelbed();
+                if (controller.overrideFuelTemp && controller.fuelTemp != null) {
+                    controller.model.modifyFuelbed(controller.fuelTemp);
+                }
+                // Update the fire
                 controller.model.computeFireBehavior();
 
                 // Update the GUI 

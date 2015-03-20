@@ -64,6 +64,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
+import visad.Real;
 import visad.VisADException;
 
 /**
@@ -340,9 +341,28 @@ public class Model {
      * The modify the current fuel bed with the supplied fuel moisture. Used to override the
      * dead 1-hour fuel moisture when performing what-if scenarios.
      */
+    @Deprecated
     public void modifyFuelbed(FuelMoisture fuelMoisture) {
         SurfaceFuel fuel = getFuelbed();
         SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(fuel.getFuelModel(), fuelMoisture);
+        fuelbedRef.set(newFuel);
+        synchronized (dirtyFlags) {
+            dirtyFlags.set(Flag.Fuelbed.ordinal());
+        }
+    }
+    
+    /**
+     * The modify the current fuel bed with the supplied fuel temperature. Used to override the
+     * dead 1-hour fuel moisture when performing what-if scenarios.
+     */
+    public void modifyFuelbed(Real fuelTemperature) {
+        SurfaceFuel fuel = getFuelbed();
+        // Recondition the fuel using the provided the fuel temperature
+        SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(fuel.getFuelModel(), 
+                fuelTemperature, 
+                getWeather().getAirTemperature(), 
+                getWeather().getRelativeHumidity(), 
+                getFuelMoisture());
         fuelbedRef.set(newFuel);
         synchronized (dirtyFlags) {
             dirtyFlags.set(Flag.Fuelbed.ordinal());
