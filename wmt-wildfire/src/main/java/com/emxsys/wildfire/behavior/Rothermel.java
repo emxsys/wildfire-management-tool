@@ -52,13 +52,13 @@ import java.util.logging.Logger;
  * in wildland fuels, General Technical Report INT-115, USDA Forest Service, Intermountain Forest
  * and Range Experiment Station
  *
- * <li><a name="bib_1004"></a>Rothermel et al, 1986, Modeling Moisture Content of
- * Fine Dead Wildland Fuels: Input to the BEHAVE Fire Prediction System, Research Paper, INT-359,
- * USDA Forest Service, Intermountain Research Station
- * 
- * <li><a name="bib_1005"></a>Van Wagner, C.E., 1977, A Method of Computing Fine Fuel Moisture Content
- * Throughout the Diurnal Cycle, Information Report PS-X-69,
- * Petawawa Forest Experiment Station, Canadian Forest Service
+ * <li><a name="bib_1004"></a>Rothermel et al, 1986, Modeling Moisture Content of Fine Dead Wildland
+ * Fuels: Input to the BEHAVE Fire Prediction System, Research Paper, INT-359, USDA Forest Service,
+ * Intermountain Research Station
+ *
+ * <li><a name="bib_1005"></a>Van Wagner, C.E., 1977, A Method of Computing Fine Fuel Moisture
+ * Content Throughout the Diurnal Cycle, Information Report PS-X-69, Petawawa Forest Experiment
+ * Station, Canadian Forest Service
  * </ul>
  * Other Sources:
  * <ul>
@@ -997,7 +997,7 @@ public class Rothermel {
             // No change
             m = m_0;
         }
-        return m;
+        return max(m, 0);
     }
 
 }
