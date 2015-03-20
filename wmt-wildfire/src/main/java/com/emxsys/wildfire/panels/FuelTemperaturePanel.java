@@ -206,12 +206,13 @@ public class FuelTemperaturePanel extends javax.swing.JPanel {
             super(dataset);
             setBulbRadius(30);
             setColumnRadius(15);
-            setMercuryPaint(Color.orange);
+            setMercuryPaint(Color.red);
+            
             // Initially set the subranges off the scale to prevent drawing tick marks
             setSubrange(0, -100, 200);
-            setSubrangePaint(0, Color.orange);
+            setSubrangePaint(0, Color.red);
             setSubrange(1, -100, -100);
-            setSubrangePaint(1, Color.red);
+            setSubrangePaint(1, Color.red);   
             setSubrange(2, -100, -100);
             setUseSubrangePaint(false);
             setOutlineVisible(false);

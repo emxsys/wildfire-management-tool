@@ -70,7 +70,7 @@ public class SurfaceFuelProvider {
     /**
      * Gets a SurfaceFuel object from the given environmental parameters. Dead 1-hour fuel moisture
      * is computed using an "instantaneous" wetting or drying computation, versus the traditional
-     * 1-hour time lag formula.  This approach is computationally more performant.
+     * 1-hour time lag formula. This approach is computationally more performant.
      *
      * @param fuelModel The fuel model representative of fuel loading and SAV ratios.
      * @param sun The current sunlight prevailing upon the fuel
@@ -122,13 +122,71 @@ public class SurfaceFuelProvider {
             // Calculate fuel temperature and humidity immediatly adjacent to fuel
             double U_h = Rothermel.calcWindSpeedNearFuel(W, h_v);
             double T_f = Rothermel.calcFuelTemp(I, T_a, U_h); // fahrenheit
-            double H_f = Rothermel.calcRelativeHumidityNearFuel(H_a, T_f, T_a);
 
-            // Compute fine dead fuel moisture... requires metric values
-            // and temp and humidity adjusted for solar preheating.
-            double T_c = degF.toThat(T_f, degC); // convert to Celsius
+            return getSurfaceFuel(fuelModel, new Real(FUEL_TEMP_F, T_f),
+                    wx.getAirTemperature(), wx.getRelativeHumidity(), initialFuelMoisture);
+
+//            double H_f = Rothermel.calcRelativeHumidityNearFuel(H_a, T_f, T_a);
+//
+//            // Compute fine dead fuel moisture... requires metric values
+//            // and temp and humidity adjusted for solar preheating.
+//            double T_c = degF.toThat(T_f, degC); // convert to Celsius
+//            double m_0 = initialFuelMoisture.getDead1HrFuelMoisture().getValue();
+//            double m = Rothermel.calcFineDeadFuelMoisture(m_0, T_c, H_f);   // instantaneous wetting/drying
+//
+//            // Round the fuel moisture to reduce the number entries in cache
+//            Real deadFineFuelMoisture = new Real(FUEL_MOISTURE_1H, m);//MathUtil.round(m, m < 2 ? 1 : 2));
+//
+//            FuelMoisture adjustedFuelMoisture = FuelMoistureTuple.fromReals(
+//                    deadFineFuelMoisture,
+//                    initialFuelMoisture.getDead10HrFuelMoisture(),
+//                    initialFuelMoisture.getDead100HrFuelMoisture(),
+//                    initialFuelMoisture.getLiveHerbFuelMoisture(),
+//                    initialFuelMoisture.getLiveWoodyFuelMoisture());
+//
+//            // TODO: Add fuel temperature to the SurfaceFuel
+//            Real fuelTemp = new Real(FUEL_TEMP_F, T_f);
+//            return SurfaceFuel.from(fuelModel, adjustedFuelMoisture, fuelTemp);
+//
+        } catch (VisADException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Gets a SurfaceFuel object from the given environmental parameters. Dead 1-hour fuel moisture
+     * is computed using an "instantaneous" wetting or drying computation, versus the traditional
+     * 1-hour time lag formula. This approach is computationally more performant.
+     *
+     * @param fuelModel The fuel model representative of fuel loading and SAV ratios.
+     * @param initialFuelMoisture Previous hour's fuel moisture - determines a wetting or drying
+     * trend.
+     *
+     * @return A new SurfaceFuel for the given conditions.
+     *
+     * @see Rothermel
+     *
+     */
+    public SurfaceFuel getSurfaceFuel(FuelModel fuelModel,
+                                      Real fuelTemperature,
+                                      Real airTemperature,
+                                      Real relHumidity,
+                                      FuelMoisture initialFuelMoisture) {
+        try {
+
+            // Weather inputs
+            double Ta_f = airTemperature.getValue(degF);
+            double Ha = relHumidity.getValue();    // %
+
+            // Calculate humidity immediatly adjacent to fuel
+            double Tf_f = fuelTemperature.getValue(degF); // fahrenheit
+            double Hf = Rothermel.calcRelativeHumidityNearFuel(Ha, Tf_f, Ta_f); // humidity at fuel
+
+            // Compute fine dead fuel moisture... requires metric values;
+            // temp and humidity have been adjusted for solar preheating.
+            double Tf_c = fuelTemperature.getValue(degC); // celsius
             double m_0 = initialFuelMoisture.getDead1HrFuelMoisture().getValue();
-            double m = Rothermel.calcFineDeadFuelMoisture(m_0, T_c, H_f);   // instantaneous wetting/drying
+            double m = Rothermel.calcFineDeadFuelMoisture(m_0, Tf_c, Hf);   // instantaneous wetting/drying
 
             // Round the fuel moisture to reduce the number entries in cache
             Real deadFineFuelMoisture = new Real(FUEL_MOISTURE_1H, m);//MathUtil.round(m, m < 2 ? 1 : 2));
@@ -140,8 +198,8 @@ public class SurfaceFuelProvider {
                     initialFuelMoisture.getLiveHerbFuelMoisture(),
                     initialFuelMoisture.getLiveWoodyFuelMoisture());
 
-            // TODO: Add fuel temperature to the SurfaceFuel
-            Real fuelTemp = new Real(FUEL_TEMP_F, T_f);
+            // Add fuel temperature to the SurfaceFuel
+            Real fuelTemp = new Real(FUEL_TEMP_F, Tf_f);
             return SurfaceFuel.from(fuelModel, adjustedFuelMoisture, fuelTemp);
 
         } catch (VisADException ex) {
@@ -150,7 +208,9 @@ public class SurfaceFuelProvider {
     }
 
     /**
-     * Gets a SurfaceFuel object from the from the given parameters.
+     * Gets a cached SurfaceFuel object the from the given parameters, computes and caches the fuel
+     * object if not found.
+     *
      * @param fuelModel The fuel model representative of fuel loading and SAV ratios.
      * @param fuelMoisture The 'adjusted' or active fuel moisture values to use.
      * @return A SurfaceFuel object created from the fuel model and fuel moisture values.
