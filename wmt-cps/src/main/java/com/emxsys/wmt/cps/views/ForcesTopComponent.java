@@ -29,18 +29,11 @@
  */
 package com.emxsys.wmt.cps.views;
 
-import com.emxsys.solar.api.Sunlight;
-import com.emxsys.weather.api.Weather;
-import com.emxsys.wildfire.behavior.SurfaceFuel;
-import com.emxsys.wmt.cps.Model;
-import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
-import com.emxsys.wmt.cps.views.forces.SlopeForcePanel;
-import com.emxsys.wmt.cps.views.forces.WindForcePanel;
+import com.emxsys.wmt.cps.views.forces.PreheatForceView;
+import com.emxsys.wmt.cps.views.forces.SlopeForceView;
+import com.emxsys.wmt.cps.views.forces.WindForceView;
 import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -83,66 +76,33 @@ public final class ForcesTopComponent extends TopComponent {
 
     private static final Logger logger = Logger.getLogger(ForcesTopComponent.class.getName());
     public static final String PREFERRED_ID = "ForcesTopComponent";
-    private PreheatForcePanel preheatPanel;
-    private WindForcePanel windForcePanel;
-    private SlopeForcePanel slopePanel;
+    // Embedded Views:
+    private PreheatForceView preheatView;
+    private WindForceView windView;
+    private SlopeForceView slopeView;
 
     public static ForcesTopComponent getInstance() {
         return (ForcesTopComponent) WindowManager.getDefault().findTopComponent(PREFERRED_ID);
     }
 
     public ForcesTopComponent() {
-        //
         logger.fine(PREFERRED_ID + " initializing....");
-
         initComponents();
-        createPanels();
-
+        createViews();
         setName(Bundle.CTL_ForcesTopComponent());
         setToolTipText(Bundle.CTL_ForcesTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-
-        // Now update the charts from values in the CPS data model
-        Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
-            preheatPanel.updateTime((ZonedDateTime) evt.getNewValue());
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
-            preheatPanel.updateSunlight((Sunlight) evt.getNewValue());
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
-            preheatPanel.updateShading((boolean) evt.getNewValue());
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
-            preheatPanel.updateFuel((SurfaceFuel) evt.getNewValue());
-        });
-        Model.getInstance().addPropertyChangeListener(Model.PROP_COORD3D, (PropertyChangeEvent evt) -> {
-            Weather wx = Model.getInstance().getWeather();
-            preheatPanel.updateAirTemp(wx.getAirTemperature());
-        });
         logger.config(PREFERRED_ID + " initialized.");
     }
 
-    private void createPanels() {
-        preheatPanel = new PreheatForcePanel();
-        windForcePanel = new WindForcePanel();
-        slopePanel = new SlopeForcePanel();
+    private void createViews() {
+        preheatView = new PreheatForceView();
+        windView = new WindForceView();
+        slopeView = new SlopeForceView();
         // Layout the panels to the Grid Layout
-        add(preheatPanel);
-        add(windForcePanel);
-        add(slopePanel);
-    }
-
-    public void addFuelTempPropertyChangeListener(PropertyChangeListener listener) {
-        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_FUEL_TEMP, listener);
-        this.preheatPanel.pcs.addPropertyChangeListener(PreheatForcePanel.PROP_OVERRIDE_FUEL_TEMP, listener);
-    }
-
-    public void addWindDirPropertyChangeListener(PropertyChangeListener listener) {
-        this.windForcePanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDDIR, listener);
-    }
-
-    public void addWindSpeedPropertyChangeListener(PropertyChangeListener listener) {
-        this.windForcePanel.pcs.addPropertyChangeListener(WindForcePanel.PROP_WINDSPEED, listener);
+        add(preheatView);
+        add(windView);
+        add(slopeView);
     }
 
     /**
