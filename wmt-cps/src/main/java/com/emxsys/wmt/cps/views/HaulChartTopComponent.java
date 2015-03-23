@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.views;
 
-import com.emxsys.wmt.cps.views.haulchart.HaulChartPanel;
+import com.emxsys.wmt.cps.views.haulchart.HaulChartView;
 import java.awt.BorderLayout;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -64,7 +64,7 @@ import org.openide.windows.TopComponent;
 public final class HaulChartTopComponent extends TopComponent {
     
     public static final String PREFERRED_ID = "HaulChartTopComponent";
-    private HaulChartPanel chart;
+    private HaulChartView chart;
 
     public HaulChartTopComponent() {
         initComponents();
@@ -75,7 +75,7 @@ public final class HaulChartTopComponent extends TopComponent {
     }
 
     private void initChart() {
-        this.chart = new HaulChartPanel();
+        this.chart = new HaulChartView();
         add(this.chart, BorderLayout.CENTER);
     }
     

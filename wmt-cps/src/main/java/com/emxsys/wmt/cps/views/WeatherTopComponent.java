@@ -37,9 +37,9 @@ import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
-import com.emxsys.weather.panels.HumidityChartPanel;
-import com.emxsys.weather.panels.TemperatureChartPanel;
-import com.emxsys.weather.panels.WindChartPanel;
+import com.emxsys.weather.panels.RelativeHumiditySkyCoverChart;
+import com.emxsys.weather.panels.AirTemperatureChart;
+import com.emxsys.weather.panels.WindSpeedDirectionChart;
 import com.emxsys.weather.spi.WeatherProviderFactory;
 import com.emxsys.wmt.cps.Model;
 import com.emxsys.wmt.cps.WeatherManager;
@@ -116,9 +116,9 @@ public final class WeatherTopComponent extends TopComponent {
     private Result<WeatherProvider> lookupWeatherProviders;
     private final Preferences prefs = NbPreferences.forModule(WeatherTopComponent.class);
     private static final Logger logger = Logger.getLogger(WeatherTopComponent.class.getName());
-    private TemperatureChartPanel temperatureChart;
-    private HumidityChartPanel humidityChart;
-    private WindChartPanel windChart;
+    private AirTemperatureChart temperatureChart;
+    private RelativeHumiditySkyCoverChart humidityChart;
+    private WindSpeedDirectionChart windChart;
 
     /**
      * Constructor.
@@ -238,9 +238,9 @@ public final class WeatherTopComponent extends TopComponent {
      * Initializes the chart panels.
      */
     private void initPanels() {
-        this.temperatureChart = new TemperatureChartPanel();
-        this.humidityChart = new HumidityChartPanel();
-        this.windChart = new WindChartPanel();
+        this.temperatureChart = new AirTemperatureChart();
+        this.humidityChart = new RelativeHumiditySkyCoverChart();
+        this.windChart = new WindSpeedDirectionChart();
         this.jPanel1.add(temperatureChart);
         this.jPanel2.add(humidityChart);
         this.jPanel3.add(windChart);

@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.views;
 
-import com.emxsys.wmt.cps.views.spread.SpreadDirectionPanel;
+import com.emxsys.wmt.cps.views.spread.SpreadDirectionView;
 import java.awt.BorderLayout;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -64,7 +64,7 @@ import org.openide.windows.TopComponent;
 public final class SpreadDirectionTopComponent extends TopComponent {
     
     public static final String PREFERRED_ID = "SpreadDirectionTopComponent";
-    private SpreadDirectionPanel chart;
+    private SpreadDirectionView chart;
 
     public SpreadDirectionTopComponent() {
         initComponents();
@@ -75,7 +75,7 @@ public final class SpreadDirectionTopComponent extends TopComponent {
     }
 
     private void initChart() {
-        this.chart = new SpreadDirectionPanel();
+        this.chart = new SpreadDirectionView();
         add(this.chart, BorderLayout.CENTER);
     }
     

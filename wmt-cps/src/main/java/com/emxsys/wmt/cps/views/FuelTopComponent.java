@@ -29,9 +29,9 @@
  */
 package com.emxsys.wmt.cps.views;
 
-import com.emxsys.wmt.cps.views.fuel.FuelMoistureScenarioPanel;
-import com.emxsys.wmt.cps.views.fuel.FuelMoisturePanel;
-import com.emxsys.wmt.cps.views.fuel.FuelModelPanel;
+import com.emxsys.wmt.cps.views.fuel.FuelMoistureScenarioView;
+import com.emxsys.wmt.cps.views.fuel.FuelEnvironmentView;
+import com.emxsys.wmt.cps.views.fuel.FuelModelView;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.StdFuelModel;
@@ -54,6 +54,7 @@ import org.openide.util.LookupEvent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * The FuelTopComponent provides the FuelModelProvider selection interface and displays the
@@ -100,13 +101,15 @@ public final class FuelTopComponent extends TopComponent {
     public static final String PREFERRED_ID = "FuelTopComponent";
     public static final String LAST_FUEL_MODEL_PROVIDER = "wmt.cps.lastFuelModelProvider";
 
-    private FuelModelPanel fuelModelPanel;
-    private FuelMoisturePanel fuelMoisturePanel;
-    private FuelMoistureScenarioPanel fuelMoistureScenarioPanel;
+    public static FuelTopComponent getInstance() {
+        return (FuelTopComponent) WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+    }
 
+    private FuelModelView fuelModelView;
+    private FuelEnvironmentView fuelEnvironmentView;
+    private FuelMoistureScenarioView fuelMoistureScenarioPanel;
     /** Listener for changes in the existence of data providersComboBox */
     private Result<FuelModelProvider> lookupFuelModelProviders;
-
     private final Preferences prefs = NbPreferences.forModule(FuelTopComponent.class);
     private static final Logger logger = Logger.getLogger(FuelTopComponent.class.getName());
 
@@ -116,7 +119,7 @@ public final class FuelTopComponent extends TopComponent {
     public FuelTopComponent() {
         logger.fine(PREFERRED_ID + " initializing....");
         initComponents();
-        initPanels();
+        createViews();
         initFuelModelProviders();
 
         setName(Bundle.CTL_FuelTopComponent());
@@ -127,16 +130,16 @@ public final class FuelTopComponent extends TopComponent {
     }
 
     /**
-     * Initializes the chart panels.
+     * Initializes the child views (panels).
      */
-    private void initPanels() {
-        fuelModelPanel = new FuelModelPanel();
-        fuelMoisturePanel = new FuelMoisturePanel();
-        fuelMoistureScenarioPanel = new FuelMoistureScenarioPanel();
+    private void createViews() {
+        fuelModelView = new FuelModelView();
+        fuelEnvironmentView = new FuelEnvironmentView();
+        fuelMoistureScenarioPanel = new FuelMoistureScenarioView();
 
         // Assign panels to the Grid Layout
-        centerPanel.add(fuelModelPanel);
-        centerPanel.add(fuelMoisturePanel);
+        centerPanel.add(fuelModelView);
+        centerPanel.add(fuelEnvironmentView);
         centerPanel.add(fuelMoistureScenarioPanel);
     }
 
@@ -183,10 +186,9 @@ public final class FuelTopComponent extends TopComponent {
         this.providersComboBox.setModel(comboBoxModel);
     }
 
-
-
     /**
      * Shows the Java Help for the current fuel model.
+     *
      * @param id Help ID (see cps-map.xml)
      */
     private void showHelp(String id) {
@@ -265,7 +267,7 @@ public final class FuelTopComponent extends TopComponent {
     private void infoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoBtnActionPerformed
 
         // Build a help string ID that matches an entry in cps-map.xml file ...
-        FuelModel fuelModel = fuelModelPanel.getFuelModel();
+        FuelModel fuelModel = fuelModelView.getFuelModel();
         if (fuelModel != null) {
             String id;
             switch (fuelModel.getModelGroup()) {
