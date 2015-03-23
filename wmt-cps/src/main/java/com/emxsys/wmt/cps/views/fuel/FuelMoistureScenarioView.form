@@ -5,7 +5,7 @@
     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
         <TitledBorder title="Fuel Moisture Scenario">
-          <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </TitledBorder>
       </Border>
     </Property>
@@ -57,7 +57,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jLabel1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jLabel1.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -83,7 +83,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Fuel Moisture % Levels">
-              <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jPanel2.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jPanel2.border.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -97,35 +97,35 @@
         <Component class="javax.swing.JLabel" name="jLabel1hr">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jLabel1hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jLabel1hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel10hr">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jLabel10hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jLabel10hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel100hr">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jLabel100hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jLabel100hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabelHerb">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jLabelHerb.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jLabelHerb.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabelWoody">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jLabelWoody.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jLabelWoody.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -133,7 +133,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jText1hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jText1hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -141,7 +141,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jText10hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jText10hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -149,7 +149,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jText100hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jText100hr.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -157,7 +157,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jTextHerb.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jTextHerb.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -165,7 +165,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioPanel.jTextWoody.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="com/emxsys/wmt/cps/views/fuel/Bundle.properties" key="FuelMoistureScenarioView.jTextWoody.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>

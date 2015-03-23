@@ -29,15 +29,12 @@
  */
 package com.emxsys.wmt.cps.views.forces;
 
-import com.emxsys.gis.api.Coord3D;
 import com.emxsys.weather.api.Weather;
-import com.emxsys.weather.api.WeatherModel;
+import com.emxsys.wmt.cps.Controller;
 import com.emxsys.wmt.cps.Model;
-import com.emxsys.wmt.cps.WeatherManager;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeSupport;
 import org.openide.util.NbBundle;
-import visad.FlatField;
+import visad.Real;
 
 /**
  * Displays the Wind Force.
@@ -45,14 +42,11 @@ import visad.FlatField;
  * @author Bruce Schubert
  */
 @NbBundle.Messages({})
-public class WindForcePanel extends javax.swing.JPanel {
+public class WindForceView extends javax.swing.JPanel {
 
     // Properties that are available from this panel
     public static final String PROP_WINDDIR = "PROP_WINDDIR";
     public static final String PROP_WINDSPEED = "PROP_WINDSPEED";
-
-    // The ForcesTopComponent will add the PropertyChangeListeners
-    public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     // Implementation
     private final com.emxsys.weather.panels.WindForcePanel windPanel = new com.emxsys.weather.panels.WindForcePanel();
@@ -60,23 +54,25 @@ public class WindForcePanel extends javax.swing.JPanel {
     /**
      * Constructor creates new form WindForcePanel.
      */
-    public WindForcePanel() {
+    public WindForceView() {
         initComponents();
         add(windPanel);
         
-        // Forward property changes to parent
+        // Update the Conroller et al from inputs in this View
         windPanel.addPropertyChangeListener((e) -> {
             switch (e.getPropertyName()) {
                 case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_DIR:
-                    pcs.firePropertyChange(PROP_WINDDIR, e.getOldValue(), e.getNewValue());
+                    Controller.getInstance().setWindDir((Real) e.getNewValue());
+                    firePropertyChange(PROP_WINDDIR, e.getOldValue(), e.getNewValue());
                     break;
                 case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_SPD:
-                    pcs.firePropertyChange(PROP_WINDSPEED, e.getOldValue(), e.getNewValue());
+                    Controller.getInstance().setWindSpeed((Real) e.getNewValue());
+                    firePropertyChange(PROP_WINDSPEED, e.getOldValue(), e.getNewValue());
                     break;
             }
         });
 
-        // Update the charts from the CPS data model
+        // Syncronized this View to the Model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather weather = (Weather) evt.getNewValue();
             windPanel.setWindDirection(weather.getWindDirection());
@@ -95,9 +91,9 @@ public class WindForcePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(WindForceView.class, "WindForceView.border.title"))); // NOI18N
         setLayout(new java.awt.BorderLayout());
-        getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(WindForcePanel.class, "WindForcePanel.border.title")); // NOI18N
+        getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(WindForceView.class, "WindForceView.border.title")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
 

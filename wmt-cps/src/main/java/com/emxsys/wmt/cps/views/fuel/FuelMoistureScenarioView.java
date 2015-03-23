@@ -37,17 +37,17 @@ import javax.swing.DefaultComboBoxModel;
 import org.openide.util.NbPreferences;
 
 /**
- * FuelMoistureScenarioPanel
+ * This is a view of the Fuel Moisture Scenario. 
  *
  * @author Bruce Schubert
  */
-public class FuelMoistureScenarioPanel extends javax.swing.JPanel {
+public class FuelMoistureScenarioView extends javax.swing.JPanel {
     public static final String LAST_FUEL_MOISTURE = "wmt.cps.lastFuelMoisture";
-    private final Preferences prefs = NbPreferences.forModule(FuelMoistureScenarioPanel.class);
+    private final Preferences prefs = NbPreferences.forModule(FuelMoistureScenarioView.class);
     
 
     /** Creates new form FuelMoistureScenarioPanel */
-    public FuelMoistureScenarioPanel() {
+    public FuelMoistureScenarioView() {
         initComponents();
         initScenariosComboBox();
     }
@@ -102,9 +102,9 @@ public class FuelMoistureScenarioPanel extends javax.swing.JPanel {
         jTextHerb = new javax.swing.JTextField();
         jTextWoody = new javax.swing.JTextField();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jLabel1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jLabel1.text")); // NOI18N
 
         scenariosComboBox.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         scenariosComboBox.setDoubleBuffered(true);
@@ -119,42 +119,42 @@ public class FuelMoistureScenarioPanel extends javax.swing.JPanel {
             }
         });
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jPanel2.border.title"))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jPanel2.border.title"))); // NOI18N
         jPanel2.setLayout(new java.awt.GridLayout(2, 5));
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1hr, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jLabel1hr.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1hr, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jLabel1hr.text")); // NOI18N
         jPanel2.add(jLabel1hr);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel10hr, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jLabel10hr.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel10hr, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jLabel10hr.text")); // NOI18N
         jPanel2.add(jLabel10hr);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel100hr, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jLabel100hr.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel100hr, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jLabel100hr.text")); // NOI18N
         jPanel2.add(jLabel100hr);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabelHerb, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jLabelHerb.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelHerb, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jLabelHerb.text")); // NOI18N
         jPanel2.add(jLabelHerb);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabelWoody, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jLabelWoody.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabelWoody, org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jLabelWoody.text")); // NOI18N
         jPanel2.add(jLabelWoody);
 
         jText1hr.setEditable(false);
-        jText1hr.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jText1hr.text")); // NOI18N
+        jText1hr.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jText1hr.text")); // NOI18N
         jPanel2.add(jText1hr);
 
         jText10hr.setEditable(false);
-        jText10hr.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jText10hr.text")); // NOI18N
+        jText10hr.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jText10hr.text")); // NOI18N
         jPanel2.add(jText10hr);
 
         jText100hr.setEditable(false);
-        jText100hr.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jText100hr.text")); // NOI18N
+        jText100hr.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jText100hr.text")); // NOI18N
         jPanel2.add(jText100hr);
 
         jTextHerb.setEditable(false);
-        jTextHerb.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jTextHerb.text")); // NOI18N
+        jTextHerb.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jTextHerb.text")); // NOI18N
         jPanel2.add(jTextHerb);
 
         jTextWoody.setEditable(false);
-        jTextWoody.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioPanel.class, "FuelMoistureScenarioPanel.jTextWoody.text")); // NOI18N
+        jTextWoody.setText(org.openide.util.NbBundle.getMessage(FuelMoistureScenarioView.class, "FuelMoistureScenarioView.jTextWoody.text")); // NOI18N
         jPanel2.add(jTextWoody);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -200,6 +200,7 @@ public class FuelMoistureScenarioPanel extends javax.swing.JPanel {
         jText100hr.setText(Integer.toString((int) fuelMoisture.getDead100HrFuelMoisture().getValue()));
         jTextHerb.setText(Integer.toString((int) fuelMoisture.getLiveHerbFuelMoisture().getValue()));
         jTextWoody.setText(Integer.toString((int) fuelMoisture.getLiveWoodyFuelMoisture().getValue()));
+        
         // Update the Controller
         Controller.getInstance().setFuelMoisture(fuelMoisture);
     }//GEN-LAST:event_scenariosComboBoxActionPerformed

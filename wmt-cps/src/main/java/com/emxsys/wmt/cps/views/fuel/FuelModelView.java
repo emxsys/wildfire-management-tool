@@ -30,41 +30,43 @@
 package com.emxsys.wmt.cps.views.fuel;
 
 import com.emxsys.wildfire.api.FuelModel;
+import com.emxsys.wildfire.panels.FuelModelChart;
 import com.emxsys.wmt.cps.Model;
 import java.beans.PropertyChangeEvent;
 import java.util.logging.Logger;
 
 /**
- * FuelModelPanel displays the Fuel Model Bar Chart.
- * 
+ * This panel is a view of the fuel model. It displays the Fuel Model Bar Chart.
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class FuelModelPanel extends javax.swing.JPanel {
+public class FuelModelView extends javax.swing.JPanel {
 
     private FuelModel fuelModel;
     private final FuelModelChart chart;
-    private static final Logger logger = Logger.getLogger(FuelModelPanel.class.getName());
-
+    private static final Logger logger = Logger.getLogger(FuelModelView.class.getName());
 
     /**
      * Creates new form FuelModelInputPanel
      */
-    public FuelModelPanel() {
+    public FuelModelView() {
         initComponents();
         chart = new FuelModelChart();
         add(chart);
-        
+
+        // Syncronize this View to the Model via PropertyChangeEvents
         Model.getInstance().addPropertyChangeListener(Model.PROP_FUELMODEL, (PropertyChangeEvent evt) -> {
             updateChart((FuelModel) evt.getNewValue());
         });
     }
-    
+
     /**
      * @return The current FuelModel depicted in the chart.
      */
     public FuelModel getFuelModel() {
         return this.fuelModel;
     }
+
     private void updateChart(FuelModel fuelModel) {
         if (this.fuelModel != null && this.fuelModel.equals(fuelModel)) {
             return;
@@ -72,7 +74,6 @@ public class FuelModelPanel extends javax.swing.JPanel {
         this.fuelModel = fuelModel;
         this.chart.updateChart(fuelModel);
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form. WARNING: Do NOT

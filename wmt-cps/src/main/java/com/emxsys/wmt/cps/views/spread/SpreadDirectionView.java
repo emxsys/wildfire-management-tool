@@ -57,7 +57,7 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public final class SpreadDirectionPanel extends javax.swing.JPanel {
+public final class SpreadDirectionView extends javax.swing.JPanel {
 
     JFreeChart compassChart;
     JFreeChart dialChart;
@@ -66,7 +66,7 @@ public final class SpreadDirectionPanel extends javax.swing.JPanel {
     /**
      * Creates new form SpreadDirectionChart
      */
-    public SpreadDirectionPanel() {
+    public SpreadDirectionView() {
         initComponents();
         initChartPanels();
 

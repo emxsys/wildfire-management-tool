@@ -90,7 +90,7 @@ import visad.VisADException;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class HaulChartPanel extends javax.swing.JPanel {
+public class HaulChartView extends javax.swing.JPanel {
 
     // Chart colors for fire behavior adjectives
     static final int ALPHA = 200;
@@ -218,7 +218,7 @@ public class HaulChartPanel extends javax.swing.JPanel {
     /**
      * Creates new form HaulChart
      */
-    public HaulChartPanel() {
+    public HaulChartView() {
 
         initUnitsOfMeasure();
         initComponents();
@@ -444,7 +444,7 @@ public class HaulChartPanel extends javax.swing.JPanel {
         yAxis.setRange(yMin, yMax);
 
         seriesMax = new XYSeries("Max Spread");
-        seriesFlank = new XYSeries("No Wind/No Slope Spread");
+        seriesFlank = new XYSeries("Flanking Spread");
         dataset = new XYSeriesCollection(seriesMax);
         dataset.addSeries(seriesFlank);
 

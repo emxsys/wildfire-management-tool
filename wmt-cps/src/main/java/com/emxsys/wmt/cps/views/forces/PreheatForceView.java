@@ -33,15 +33,18 @@ import com.emxsys.jfree.ClockCompassPlot;
 import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.solar.api.Sunlight;
+import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.WildfirePreferences;
 import com.emxsys.wildfire.api.WildfireType;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
-import com.emxsys.wildfire.panels.FuelTemperaturePanel;
+import com.emxsys.wildfire.panels.FuelTemperatureGauge;
+import com.emxsys.wmt.cps.Controller;
+import com.emxsys.wmt.cps.Model;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.beans.PropertyChangeSupport;
+import java.beans.PropertyChangeEvent;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import java.time.ZonedDateTime;
@@ -66,7 +69,7 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The PreheatForcePanel depicts the direction of the sun's rays onto the terrain and shows the
+ * The PreheatForceView depicts the direction of the sun's rays onto the terrain and shows the
  * surface temperature of the fuels. The panel listens to the application time and the reticule
  * coordinate.
  *
@@ -75,42 +78,155 @@ import visad.VisADException;
 @NbBundle.Messages({
     "CTL_SolarChartTitle=Solar Heating",
     "CTL_FuelMoistureChartTitle=Moisture",
-    "CTL_FuelTempChartTitle=Temp.",})
-public class PreheatForcePanel extends javax.swing.JPanel {
+    "CTL_FuelTempChartTitle=Fuel",})
+public final class PreheatForceView extends javax.swing.JPanel {
 
     // Properties that are available from this panel
     public static final String PROP_FUEL_MOISTURE = "PROP_FUEL_MOISTURE";
     public static final String PROP_FUEL_TEMP = "PROP_FUEL_TEMP";
     public static final String PROP_OVERRIDE_FUEL_TEMP = "PROP_OVERRIDE_FUEL_TEMP";
 
-    // The ForcesTopComponent will add the PropertyChangeListeners
-    public final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;
     private final SolarChart solarChart = new SolarChart(Bundle.CTL_SolarChartTitle());
     private MoistureChart fuelMoistureChart = new MoistureChart(Bundle.CTL_FuelMoistureChartTitle());
     //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
-    private FuelTemperaturePanel fuelTempChart;
+    private FuelTemperatureGauge fuelTempChart;
     private JSlider slider;
     private JCheckBox checkbox;
 
     //private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern(TimeOptions.getTimeFormat());
     private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
-
 //    private ChartCanvas canvas;
+
     /**
      * Creates new form PreheatForcePanel.
      */
-    public PreheatForcePanel() {
+    public PreheatForceView() {
         initComponents();
+        initializeView();
 
+        // Syncronize this View to the Model via PropertyChangeEvents
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
+            updateSunlight((Sunlight) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
+            updateShading((boolean) evt.getNewValue());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
+            Weather wx = Model.getInstance().getWeather();
+            updateAirTemp(wx.getAirTemperature());
+        });
+        Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
+            updateFuel((SurfaceFuel) evt.getNewValue());
+        });
+
+        // Update the Controller from inputs in this View
+        this.slider.addChangeListener((ChangeEvent e) -> {
+            Real FuelTemp = new Real(WildfireType.FUEL_TEMP_F, slider.getValue());
+            Controller.getInstance().setFuelTemperature(FuelTemp);
+            firePropertyChange(PROP_FUEL_TEMP, null, FuelTemp);
+        });
+
+        this.checkbox.addChangeListener((ChangeEvent e) -> {
+            boolean selected = checkbox.isSelected();
+            this.slider.setEnabled(selected);
+            firePropertyChange(PROP_OVERRIDE_FUEL_TEMP, null, selected);
+        });
+
+    }
+
+    /**
+     * Updates the clock.
+     */
+    public void updateTime(ZonedDateTime time) {
+        // Update the Hour plot
+        ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
+        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
+        final double DEG_PER_HOUR12 = 360 / 12.0;
+        double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
+        double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
+        hourData.setValue(hourDegrees);
+        //canvas.draw();
+
+        // Set the title
+        String title = time.format(titleFormatter);
+        solarChart.setTitle(title);
+    }
+
+    /**
+     * Updates the solar azimuth plot.
+     */
+    public void updateSunlight(Sunlight sun) {
+
+        try {
+            // Update the Azimuth Plot
+            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+            double A = sun.getAzimuthAngle().getValue(CommonUnit.degree);
+            DefaultValueDataset compassData = (DefaultValueDataset) solarPlot.getDatasets()[AZIMUTH_SERIES];
+            compassData.setValue(A);
+
+            // Color the background based on the Zenith angle (above or below the horizon)
+            double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
+            solarPlot.night = (Z > 90);
+
+            // Set the title
+            //  Using date/time instead            
+            //String title = solarPlot.night ? "Night" : String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
+            //solarChart.setTitle(title);
+            refresh();
+
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    public void updateShading(boolean isShaded) {
+        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+        solarPlot.shaded = isShaded;
+        refresh();
+    }
+
+    /**
+     * Updates the fuel moisture and fuel temperature plots
+     */
+    public void updateFuel(SurfaceFuel fuel) {
+        fuelTempChart.setFuelTemperature(fuel.getFuelTemperature());
+        fuelMoistureChart.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
+        fuelMoistureChart.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
+    }
+
+    /**
+     * Updates the solar azimuth plot.
+     */
+    public void refresh() {
+
+        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
+
+        Color seriesColor = solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red;
+        Color centerColor = solarPlot.night ? Color.darkGray : Color.white;
+        solarPlot.setSeriesPaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setRoseCenterPaint(centerColor);
+        //canvas.draw();
+    }
+
+    /**
+     * Sets the tick mark indicating air temperature.
+     *
+     * @param airTemperature
+     */
+    public void updateAirTemp(Real airTemperature) {
+        fuelTempChart.setAirTemperature(airTemperature);
+    }
+
+    private void initializeView() {
         // Override the default title font size so we can display long date time strings
         TextTitle title = solarChart.getTitle();
         Font font = title.getFont().deriveFont(11);
         title.setFont(font);
 
-        fuelTempChart = new FuelTemperaturePanel(
+        fuelTempChart = new FuelTemperatureGauge(
                 Bundle.CTL_FuelTempChartTitle(),
                 WildfirePreferences.getFuelTemperatureUnit(),
                 new Real(WildfireType.FUEL_TEMP_F, 0));
@@ -163,19 +279,8 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         this.slider.setOrientation(SwingConstants.VERTICAL);
         this.slider.setEnabled(false);
 
-        // Add listener to handle manual fuel temp input
-        this.slider.addChangeListener((ChangeEvent e) -> {
-            Real FuelTemp = new Real(WildfireType.FUEL_TEMP_F, slider.getValue());
-            this.pcs.firePropertyChange(PROP_FUEL_TEMP, null, FuelTemp);
-        });
-
         // Create checkbox to enable/disable manual fuel temp override
         this.checkbox = new JCheckBox("Override", null, false);
-        this.checkbox.addChangeListener((ChangeEvent e) -> {
-            boolean selected = checkbox.isSelected();
-            this.slider.setEnabled(selected);
-            this.pcs.firePropertyChange(PROP_OVERRIDE_FUEL_TEMP, null, selected);
-        });
 
         JPanel sliderPanel = new JPanel(new BorderLayout());
         sliderPanel.add(this.slider, BorderLayout.CENTER);
@@ -186,11 +291,6 @@ public class PreheatForcePanel extends javax.swing.JPanel {
         add(leftPanel);
         add(rightPanel);
 
-//        // Create the JavaFX scene (ChartCanvas) on an FX thread
-//        Platform.setImplicitExit(false);
-//        Platform.runLater(() -> {
-//            leftPanel.setScene(createScene());
-//        });
     }
 
 //    private Scene createScene() {
@@ -203,91 +303,6 @@ public class PreheatForcePanel extends javax.swing.JPanel {
 //
 //        return new Scene(stackPane);
 //    }
-    /**
-     * Updates the clock.
-     */
-    public void updateTime(ZonedDateTime time) {
-        // Update the Hour plot
-        ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
-        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
-        final double DEG_PER_HOUR12 = 360 / 12.0;
-        double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
-        double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
-        hourData.setValue(hourDegrees);
-        //canvas.draw();
-
-        // Set the title
-        String title = time.format(titleFormatter);
-        solarChart.setTitle(title);
-    }
-
-    /**
-     * Updates the solar azimuth plot.
-     */
-    public void updateSunlight(Sunlight sun) {
-
-        try {
-            // Update the Azimuth Plot
-            SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-            double A = sun.getAzimuthAngle().getValue(CommonUnit.degree);
-            DefaultValueDataset compassData = (DefaultValueDataset) solarPlot.getDatasets()[AZIMUTH_SERIES];
-            compassData.setValue(A);
-
-            // Color the background based on the Zenith angle (above or below the horizon)
-            double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
-            solarPlot.night = (Z > 90);
-
-            // Set the title
-// Using date/time instead            
-//            String title = solarPlot.night ? "Night" : String.format("%1$s Solar Heating", AngleUtil.degreesToCardinalPoint8(A));
-//            solarChart.setTitle(title);
-            refresh();
-
-        } catch (VisADException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
-
-    public void updateShading(boolean isShaded) {
-        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-        solarPlot.shaded = isShaded;
-        refresh();
-    }
-
-    /**
-     * Updates the fuel moisture and fuel temperature plots
-     */
-    public void updateFuel(SurfaceFuel fuel) {
-        fuelTempChart.setFuelTemperature(fuel.getFuelTemperature());
-        fuelMoistureChart.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
-        fuelMoistureChart.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
-    }
-
-    /**
-     * Updates the solar azimuth plot.
-     */
-    public void refresh() {
-
-        SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-
-        Color seriesColor = solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red;
-        Color centerColor = solarPlot.night ? Color.darkGray : Color.white;
-        solarPlot.setSeriesPaint(AZIMUTH_SERIES, seriesColor);
-        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, seriesColor);
-        solarPlot.setRoseCenterPaint(centerColor);
-        //canvas.draw();
-
-    }
-
-    /**
-     * Sets the tick mark indicating air temperature.
-     *
-     * @param airTemperature
-     */
-    public void updateAirTemp(Real airTemperature) {
-        fuelTempChart.setAirTemperature(airTemperature);
-    }
-
     /**
      * MoistureChart is a JFreeChart integrated with a MoisturePlot.
      */
@@ -399,7 +414,7 @@ public class PreheatForcePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(PreheatForcePanel.class, "PreheatForcePanel.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(PreheatForceView.class, "PreheatForceView.border.title"))); // NOI18N
         setLayout(new java.awt.GridLayout(1, 2));
     }// </editor-fold>//GEN-END:initComponents
 
