@@ -29,6 +29,7 @@
  */
 package com.emxsys.visad;
 
+import com.emxsys.util.MathUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
@@ -51,6 +52,28 @@ public class Reals {
     private static final Logger logger = Logger.getLogger(Reals.class.getName());
 
     private Reals() {
+    }
+
+    /**
+     * Compare two Reals for equality with a given epsilon (tolerance) in the a given RealType. Both
+     * values must be convertable to the given UOM.
+     *
+     * @param a The lhs value to be compared.
+     * @param b The rhs value to be compared.
+     * @param uom The unit of measure for the tolerance.
+     * @param epsilon The tolerance in the given type UOM
+     * @return true if the difference between a and b is less than epsilon
+     */
+    public static boolean nearlyEquals(Real a, Real b, Unit uom, double epsilon) {
+        try {
+            double aVal = a.getValue(uom);
+            double bVal = b.getValue(uom);
+            return MathUtil.nearlyEquals(aVal, bVal, epsilon);
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            return false;
+        }
     }
 
     /**
