@@ -168,9 +168,16 @@ public class Model {
     }
 
     void setDateTime(ZonedDateTime datetime) {
-        timeRef.set(datetime);
+        ZonedDateTime prev = timeRef.getAndSet(datetime);
+        boolean isBefore = datetime.isBefore(prev);
+        if (isBefore) {
+            fuelbedRef.set(null);   // reset so we don't use fuel moisture from prev's time      
+        }
         synchronized (dirtyFlags) {
             dirtyFlags.set(Flag.Time.ordinal());
+            if (isBefore) {
+                dirtyFlags.set(Flag.Fuelbed.ordinal());
+            }
         }
     }
 
@@ -183,10 +190,17 @@ public class Model {
         return coordRef.get();
     }
 
+    /**
+     * Sets the current coordinate; resets the fuel bed.
+     *
+     * @param coord
+     */
     void setCoord(Coord3D coord) {
         coordRef.set(coord);
+        fuelbedRef.set(null);   // reset so we don't use fuel moisture from other coord
         synchronized (dirtyFlags) {
             dirtyFlags.set(Flag.Coord.ordinal());
+            dirtyFlags.set(Flag.Fuelbed.ordinal());
         }
     }
 
@@ -285,8 +299,10 @@ public class Model {
 
     void setFuelMoisture(FuelMoisture fuelMoisture) {
         fuelMoistureRef.set(fuelMoisture);
+        fuelbedRef.set(null);   // reset so we don't use previous computed fuel moisture 
         synchronized (dirtyFlags) {
             dirtyFlags.set(Flag.FuelMoisture.ordinal());
+            dirtyFlags.set(Flag.Fuelbed.ordinal());
         }
     }
 
@@ -485,7 +501,7 @@ public class Model {
     }
 
     /**
-     * Publish the updated data via PropertyChangeEvents.
+     * Queues a request to publish the updated data. The data is published via PropertyChangeEvents.
      */
     public void publishUpdates() {
 

@@ -213,8 +213,8 @@ public final class Controller {
     }
 
     /**
-     * Sets the FuelMoisure used by the Controller to determine the Fire Behavior at the current
-     * coordinate. Set by the FuelTopComponent.
+     * Sets the initial fuel moisture used to determine the fire behavior at the current
+     * coordinate.
      *
      * @param fuelMoisture The new FuelMoisture.
      */
@@ -224,6 +224,8 @@ public final class Controller {
         }
         logger.log(Level.CONFIG, "FuelMoisture set to: {0}", fuelMoisture.toString());
         model.setFuelMoisture(fuelMoisture);
+        updateFireBehavior();
+        updateView();
     }
 
     public void setAirTemperature(Real airTemp) {

@@ -77,8 +77,8 @@ import visad.VisADException;
  */
 @NbBundle.Messages({
     "CTL_SolarChartTitle=Solar Heating",
-    "CTL_FuelMoistureChartTitle=Moisture",
-    "CTL_FuelTempChartTitle=Fuel",})
+    "CTL_FuelMoistureChartTitle=Fine Fuel Moisture",
+    "CTL_FuelTempChartTitle=Fuel Temp",})
 public final class PreheatForceView extends javax.swing.JPanel {
 
     // Properties that are available from this panel
