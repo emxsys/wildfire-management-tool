@@ -30,7 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.panels.RelativeHumidityGuage;
+import com.emxsys.weather.panels.RelativeHumidityGauge;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle;
 import visad.Real;
@@ -43,20 +43,20 @@ import visad.Real;
 
 public final class DiurnalWeatherPanelHumidities extends JPanel {
 
-    private final RelativeHumidityGuage panelSunrise;
-    private final RelativeHumidityGuage panelNoon;
-    private final RelativeHumidityGuage panel1400;
-    private final RelativeHumidityGuage panelSunset;
+    private final RelativeHumidityGauge panelSunrise;
+    private final RelativeHumidityGauge panelNoon;
+    private final RelativeHumidityGauge panel1400;
+    private final RelativeHumidityGauge panelSunset;
 
     /** 
      * Creates new form DiurnalWeatherPanelHumidities
      * @param provider 
      */
     public DiurnalWeatherPanelHumidities(DiurnalWeatherProvider provider) {
-        panelSunrise = new RelativeHumidityGuage(Bundle.CTL_DiurnalHumiditySunrise(), provider.getRelativeHumidityAtSunrise());
-        panelNoon = new RelativeHumidityGuage(Bundle.CTL_DiurnalHumidityNoon(), provider.getRelativeHumidityAtNoon());
-        panel1400 = new RelativeHumidityGuage(Bundle.CTL_DiurnalHumidity1400(), provider.getRelativeHumidityAt1400());
-        panelSunset = new RelativeHumidityGuage(Bundle.CTL_DiurnalHumiditySunset(), provider.getRelativeHumidityAtSunset());
+        panelSunrise = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumiditySunrise(), provider.getRelativeHumidityAtSunrise());
+        panelNoon = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumidityNoon(), provider.getRelativeHumidityAtNoon());
+        panel1400 = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumidity1400(), provider.getRelativeHumidityAt1400());
+        panelSunset = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumiditySunset(), provider.getRelativeHumidityAtSunset());
         initComponents();
         jPanel1.add(panelSunrise);
         jPanel2.add(panelNoon);

@@ -29,6 +29,7 @@
  */
 package com.emxsys.weather.panels;
 
+import com.emxsys.util.HelpUtil;
 import com.emxsys.visad.GeneralType;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.weather.api.WeatherPreferences;
@@ -36,6 +37,8 @@ import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
 import static com.emxsys.weather.api.WeatherType.AIR_TEMP_F;
 import java.awt.Color;
 import static java.lang.Math.round;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
 import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
@@ -55,15 +58,18 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class AirTemperatureGuage extends javax.swing.JPanel {
+public class AirTemperatureGauge extends javax.swing.JPanel {
 
     public final static String PROP_AIR_TEMP = "weather.airtemppanel.airtemp";
 
     private TemperatureChart chart;
+    private Real temperature;
     private Unit uom;
     private double range;
+    private String helpID = null;
     private static final Real maxAirTemp = new Real(AIR_TEMP_F, 120);
     private static final Real minAirTemp = new Real(AIR_TEMP_F, 32);
+    private static final Logger logger = Logger.getLogger(AirTemperatureGauge.class.getName());
 
     /**
      * Constructor creates new form TemperaturePanel.
@@ -71,12 +77,29 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
      * @param uom Unit of measure for temperatures (Fahrenheit or Celsius)
      * @param initialTemp
      */
-    public AirTemperatureGuage(String title, Unit uom, Real initialTemp) {
+    public AirTemperatureGauge(String title, Unit uom, Real initialTemp) {
+        this(title, uom, initialTemp, null);
+    }
+
+    /**
+     * Constructor creates new form TemperaturePanel.
+     * @param title Title displayed above thermometer dial.
+     * @param uom Unit of measure for temperatures (Fahrenheit or Celsius)
+     * @param initialTemp
+     * @param helpID The javahelp ID to be associated with the help button (can be null).
+     */
+    public AirTemperatureGauge(String title, Unit uom, Real initialTemp, String helpID) {
         if (!(uom.equals(GeneralUnit.degC) || uom.equals(GeneralUnit.degF))) {
             throw new IllegalArgumentException("Invalid UOM: must be degC or degF, not " + uom.toString());
         }
         initComponents();
 
+        // Initialize the help button
+        if (helpID == null || helpID.isEmpty()) {
+            this.infoBtn.setVisible(false);
+        } else {
+            this.helpID = helpID;
+        }
         // Initalize the JFreeChart
         chart = new TemperatureChart(title, uom);
 
@@ -106,7 +129,7 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
         setTemperature(initialTemp);
 
     }
-    
+
     public final void updateUom(Unit uom) {
         try {
             this.uom = uom;
@@ -122,6 +145,7 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
     }
 
     public final void setTemperature(Real temperature) {
+        this.temperature = temperature;
         chart.setTemperature(temperature);
         updateSlider(temperature);
     }
@@ -158,6 +182,7 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
             Exceptions.printStackTrace(ex);
         }
     }
+
 
     private class TemperatureChartPanel extends ChartPanel {
 
@@ -296,30 +321,49 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
 
         unitsButtonGroup = new javax.swing.ButtonGroup();
         chartPanel = new javax.swing.JPanel();
+        sliderPanel = new javax.swing.JPanel();
         slider = new javax.swing.JSlider();
+        infoBtn = new javax.swing.JButton();
 
         setMaximumSize(new java.awt.Dimension(200, 2147483647));
 
         chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
+        sliderPanel.setLayout(new java.awt.BorderLayout());
+
         slider.setMajorTickSpacing(10);
         slider.setOrientation(javax.swing.JSlider.VERTICAL);
+        slider.setPaintTicks(true);
         slider.setMaximumSize(new java.awt.Dimension(30, 32767));
         slider.setMinimumSize(new java.awt.Dimension(30, 17));
+        slider.setPreferredSize(new java.awt.Dimension(28, 200));
         slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderStateChanged(evt);
             }
         });
+        sliderPanel.add(slider, java.awt.BorderLayout.CENTER);
+
+        infoBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/weather/images/help.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(infoBtn, org.openide.util.NbBundle.getMessage(AirTemperatureGauge.class, "AirTemperatureGauge.infoBtn.text")); // NOI18N
+        infoBtn.setMaximumSize(new java.awt.Dimension(28, 28));
+        infoBtn.setMinimumSize(new java.awt.Dimension(28, 28));
+        infoBtn.setPreferredSize(new java.awt.Dimension(28, 28));
+        infoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoBtnActionPerformed(evt);
+            }
+        });
+        sliderPanel.add(infoBtn, java.awt.BorderLayout.SOUTH);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(slider, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sliderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -327,8 +371,8 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
             .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(35, 35, 35))
+                .addComponent(sliderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -338,10 +382,18 @@ public class AirTemperatureGuage extends javax.swing.JPanel {
 
     }//GEN-LAST:event_sliderStateChanged
 
+    private void infoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoBtnActionPerformed
+
+        logger.log(Level.FINE, "Invoking help ID: {0}", helpID);
+        HelpUtil.showHelp(helpID);
+    }//GEN-LAST:event_infoBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel chartPanel;
+    private javax.swing.JButton infoBtn;
     private javax.swing.JSlider slider;
+    private javax.swing.JPanel sliderPanel;
     private javax.swing.ButtonGroup unitsButtonGroup;
     // End of variables declaration//GEN-END:variables
 
