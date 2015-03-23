@@ -35,10 +35,8 @@ import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_C;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_F;
 import java.awt.Color;
 import static java.lang.Math.round;
-import static java.lang.Math.round;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
-import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
 import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
 import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
 import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
@@ -55,7 +53,7 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class FuelTemperaturePanel extends javax.swing.JPanel {
+public class FuelTemperatureGauge extends javax.swing.JPanel {
 
     private FuelTemperatureChart chart;
     private Unit uom;
@@ -69,7 +67,7 @@ public class FuelTemperaturePanel extends javax.swing.JPanel {
      * @param uom Unit of measure for temperatures (Fahrenheit or Celsius)
      * @param initialTemp
      */
-    public FuelTemperaturePanel(String title, Unit uom, Real initialTemp) {
+    public FuelTemperatureGauge(String title, Unit uom, Real initialTemp) {
         if (!(uom.equals(GeneralUnit.degC) || uom.equals(GeneralUnit.degF))) {
             throw new IllegalArgumentException("Invalid UOM: must be degC or degF, not " + uom.toString());
         }

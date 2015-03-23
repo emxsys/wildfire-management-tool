@@ -55,7 +55,7 @@ public class FuelTemperaturePanelTest {
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
-        FuelTemperaturePanel instance = new FuelTemperaturePanel("Fuel Temp.", GeneralUnit.degC, new Real(WildfireType.FUEL_TEMP_F, 90));
+        FuelTemperatureGauge instance = new FuelTemperatureGauge("Fuel Temp.", GeneralUnit.degC, new Real(WildfireType.FUEL_TEMP_F, 90));
         instance.setAirTemperature(new Real(WeatherType.AIR_TEMP_F, 80));
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
