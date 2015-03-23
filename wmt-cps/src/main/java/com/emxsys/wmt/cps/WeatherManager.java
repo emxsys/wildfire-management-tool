@@ -117,7 +117,7 @@ public class WeatherManager {
     /**
      * Update the weather's spatial domain when the project's sector/area-of-interest changes
      */
-    public synchronized void updateCoord(Coord2D coord) {
+    public synchronized void updateSpatialDomain(Coord2D coord) {
         // Ensure the current area of interest is meets the minumum spatial domain requirements
         SpatialDomain domain = spatialDomain.get();
         if (domain == null || !domain.contains(coord)) {

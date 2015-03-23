@@ -68,7 +68,8 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * CPS data model for a point within a temporal-spatial domain.
+ * The CPS data model for a point within a temporal-spatial domain. Changes in the model data can be
+ * monitored via PropertyChangeEvents (see the public PROP_* properties)
  *
  * @author Bruce Schubert
  */
@@ -104,6 +105,8 @@ public class Model {
     private static final Logger logger = Logger.getLogger(Model.class.getName());
 
     /**
+     * GetInstance() returns the Model.
+     *
      * @return The Model singleton.
      */
     public static Model getInstance() {
@@ -115,7 +118,7 @@ public class Model {
     private final SurfaceFuelProvider fuelProvider = new SurfaceFuelProvider();
     private final SurfaceFireProvider fireProvider = new SurfaceFireProvider();
     private FirePerimeterEllipse fireShape;    // Deferred initialization
-    private SolarRay solarRay;      // Deferred initialization
+    private SolarRay solarRay;                 // Deferred initialization
 
     // Current data values
     private final AtomicReference<SpatioTemporalDomain> domainRef = new AtomicReference<>();
@@ -131,6 +134,7 @@ public class Model {
     private final AtomicReference<SurfaceFire> fireBehaviorRef = new AtomicReference<>();
     private final AtomicBoolean shaded = new AtomicBoolean(false);
 
+    // Support for property change notifications
     private final BitSet dirtyFlags = new BitSet(Flag.values().length);
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -139,6 +143,7 @@ public class Model {
     }
 
     /**
+     * The entire temporal-spatio domain.
      *
      * @return A SpatioTemporalDomain representing the model's domain.
      */
@@ -202,58 +207,6 @@ public class Model {
     }
 
     /**
-     * The fuel model at the current coordinate.
-     *
-     * @return A FuelModel for the current coordinate.
-     */
-    public FuelModel getFuelModel() {
-        return fuelModelRef.get();
-    }
-
-    void setFuelModel(FuelModel fuelModel) {
-        FuelModel oldValue = fuelModelRef.getAndSet(fuelModel);
-        if (fuelModel != oldValue) {
-            synchronized (dirtyFlags) {
-                dirtyFlags.set(Flag.FuelModel.ordinal());
-            }
-        }
-    }
-
-    /**
-     * The conditioned fuel for the current coordinate and time.
-     *
-     * @return A SurfaceFuel for the current coordinate and time.
-     */
-    public SurfaceFuel getFuelbed() {
-        return fuelbedRef.get();
-    }
-
-    /**
-     * The fire behavior for the current coordinate and time.
-     *
-     * @return A SurfaceFire for the current coordinate and time.
-     */
-    public SurfaceFire getFireBehavior() {
-        return fireBehaviorRef.get();
-    }
-
-    /**
-     * The fuel moisture for the current coordinate and time.
-     *
-     * @return A FuelMoisture for the current coordinate and time.
-     */
-    public FuelMoisture getFuelMoisture() {
-        return fuelMoistureRef.get();
-    }
-
-    void setFuelMoisture(FuelMoisture fuelMoisture) {
-        fuelMoistureRef.set(fuelMoisture);
-        synchronized (dirtyFlags) {
-            dirtyFlags.set(Flag.FuelMoisture.ordinal());
-        }
-    }
-
-    /**
      * The shaded state for the current coordinate and time.
      *
      * @return True if the coordinate is shaded at the current time.
@@ -304,6 +257,49 @@ public class Model {
     }
 
     /**
+     * The fuel model at the current coordinate.
+     *
+     * @return A FuelModel for the current coordinate.
+     */
+    public FuelModel getFuelModel() {
+        return fuelModelRef.get();
+    }
+
+    void setFuelModel(FuelModel fuelModel) {
+        FuelModel oldValue = fuelModelRef.getAndSet(fuelModel);
+        if (fuelModel != oldValue) {
+            synchronized (dirtyFlags) {
+                dirtyFlags.set(Flag.FuelModel.ordinal());
+            }
+        }
+    }
+
+    /**
+     * The fuel moisture for the current coordinate and time.
+     *
+     * @return A FuelMoisture for the current coordinate and time.
+     */
+    public FuelMoisture getFuelMoisture() {
+        return fuelMoistureRef.get();
+    }
+
+    void setFuelMoisture(FuelMoisture fuelMoisture) {
+        fuelMoistureRef.set(fuelMoisture);
+        synchronized (dirtyFlags) {
+            dirtyFlags.set(Flag.FuelMoisture.ordinal());
+        }
+    }
+
+    /**
+     * The conditioned fuel for the current coordinate and time.
+     *
+     * @return A SurfaceFuel for the current coordinate and time.
+     */
+    public SurfaceFuel getFuelbed() {
+        return fuelbedRef.get();
+    }
+
+    /**
      * Adjusts the fuel to the current environment.
      *
      * @throws VisADException
@@ -350,7 +346,7 @@ public class Model {
             dirtyFlags.set(Flag.Fuelbed.ordinal());
         }
     }
-    
+
     /**
      * The modify the current fuel bed with the supplied fuel temperature. Used to override the
      * dead 1-hour fuel moisture when performing what-if scenarios.
@@ -358,15 +354,24 @@ public class Model {
     public void modifyFuelbed(Real fuelTemperature) {
         SurfaceFuel fuel = getFuelbed();
         // Recondition the fuel using the provided the fuel temperature
-        SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(fuel.getFuelModel(), 
-                fuelTemperature, 
-                getWeather().getAirTemperature(), 
-                getWeather().getRelativeHumidity(), 
+        SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(fuel.getFuelModel(),
+                fuelTemperature,
+                getWeather().getAirTemperature(),
+                getWeather().getRelativeHumidity(),
                 getFuelMoisture());
         fuelbedRef.set(newFuel);
         synchronized (dirtyFlags) {
             dirtyFlags.set(Flag.Fuelbed.ordinal());
         }
+    }
+
+    /**
+     * The fire behavior for the current coordinate and time.
+     *
+     * @return A SurfaceFire for the current coordinate and time.
+     */
+    public SurfaceFire getFireBehavior() {
+        return fireBehaviorRef.get();
     }
 
     /**
@@ -441,87 +446,109 @@ public class Model {
         return true;
     }
 
+    /**
+     * Adds a listener that receives all PropertyChangeEvent notifications.
+     *
+     * @param listener
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
+    /**
+     * Adds a listener that receives specific PropertyChangeEvent notifications.
+     *
+     * @param property
+     * @param listener
+     */
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(property, listener);
     }
 
+    /**
+     * Removes a listener.
+     *
+     * @param listener
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
+    /**
+     * Removes a listener for a specific property
+     *
+     * @param property
+     * @param listener
+     */
     public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(property, listener);
     }
 
-    public void updateViews() {
+    /**
+     * Publish the updated data via PropertyChangeEvents.
+     */
+    public void publishUpdates() {
 
-        EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(() -> { // Runnable
 
-            @Override
-            public void run() {
-                // Clone and reset the dirty flags (Note: a BitSet doesn't support multithreading)
-                BitSet flags;
-                synchronized (dirtyFlags) {
-                    if (dirtyFlags.cardinality() > 0) {
-                        flags = (BitSet) dirtyFlags.clone();
-                        dirtyFlags.clear();
-                    } else {
-                        return;
-                    }
+            // Clone and reset the dirty flags (Note: a BitSet doesn't support multithreading)
+            BitSet flags;
+            synchronized (dirtyFlags) {
+                if (dirtyFlags.cardinality() > 0) {
+                    flags = (BitSet) dirtyFlags.clone();
+                    dirtyFlags.clear();
+                } else {
+                    return;
                 }
-                // Notify property listeners that listener on the entire "model"
-                pcs.firePropertyChange(PROP_MODEL, null, Model.this);
+            }
+            // Notify property listeners that listener on the entire "model"
+            pcs.firePropertyChange(PROP_MODEL, null, Model.this);
 
-                // Notify individual property listeners
-                for (int i = 0; i < flags.length(); i++) {
-                    if (flags.get(i)) {
-                        Flag flag = Flag.values()[i];
-                        switch (flag) {
-                            case Domain:
-                                pcs.firePropertyChange(PROP_DOMAIN, null, domainRef.get());
-                                break;
-                            case Time:
-                                pcs.firePropertyChange(PROP_DATETIME, null, timeRef.get());
-                                break;
-                            case Coord:
-                                pcs.firePropertyChange(PROP_COORD3D, null, coordRef.get());
-                                break;
-                            case Terrain:
-                                pcs.firePropertyChange(PROP_TERRAIN, null, terrainRef.get());
-                                break;
-                            case Sunlight:
-                                pcs.firePropertyChange(PROP_SUNLIGHT, null, sunlightRef.get());
-                                break;
-                            case Shaded:
-                                pcs.firePropertyChange(PROP_SHADED, null, shaded.get());
-                                break;
-                            case Weather:
-                                pcs.firePropertyChange(PROP_WEATHER, null, weatherRef.get());
-                                break;
-                            case FuelModel:
-                                pcs.firePropertyChange(PROP_FUELMODEL, null, fuelModelRef.get());
-                                break;
-                            case FuelMoisture:
-                                pcs.firePropertyChange(PROP_FUELMOISTURE, null, fuelMoistureRef.get());
-                                break;
-                            case FuelCondition:
-                                pcs.firePropertyChange(PROP_FUELCONDITION, null, fuelConditionRef.get());
-                                break;
-                            case Fuelbed:
-                                pcs.firePropertyChange(PROP_FUELBED, null, fuelbedRef.get());
-                                break;
-                            case FireBehavior:
-                                pcs.firePropertyChange(PROP_FIREBEHAVIOR, null, fireBehaviorRef.get());
-                                break;
-                            default:
-                                throw new UnsupportedOperationException("Unhandled dirty flag: " + flag);
-                        }
-
+            // Notify individual property listeners
+            for (int i = 0; i < flags.length(); i++) {
+                if (flags.get(i)) {
+                    Flag flag = Flag.values()[i];
+                    switch (flag) {
+                        case Domain:
+                            pcs.firePropertyChange(PROP_DOMAIN, null, domainRef.get());
+                            break;
+                        case Time:
+                            pcs.firePropertyChange(PROP_DATETIME, null, timeRef.get());
+                            break;
+                        case Coord:
+                            pcs.firePropertyChange(PROP_COORD3D, null, coordRef.get());
+                            break;
+                        case Terrain:
+                            pcs.firePropertyChange(PROP_TERRAIN, null, terrainRef.get());
+                            break;
+                        case Sunlight:
+                            pcs.firePropertyChange(PROP_SUNLIGHT, null, sunlightRef.get());
+                            break;
+                        case Shaded:
+                            pcs.firePropertyChange(PROP_SHADED, null, shaded.get());
+                            break;
+                        case Weather:
+                            pcs.firePropertyChange(PROP_WEATHER, null, weatherRef.get());
+                            break;
+                        case FuelModel:
+                            pcs.firePropertyChange(PROP_FUELMODEL, null, fuelModelRef.get());
+                            break;
+                        case FuelMoisture:
+                            pcs.firePropertyChange(PROP_FUELMOISTURE, null, fuelMoistureRef.get());
+                            break;
+                        case FuelCondition:
+                            pcs.firePropertyChange(PROP_FUELCONDITION, null, fuelConditionRef.get());
+                            break;
+                        case Fuelbed:
+                            pcs.firePropertyChange(PROP_FUELBED, null, fuelbedRef.get());
+                            break;
+                        case FireBehavior:
+                            pcs.firePropertyChange(PROP_FIREBEHAVIOR, null, fireBehaviorRef.get());
+                            break;
+                        default:
+                            throw new UnsupportedOperationException("Unhandled dirty flag: " + flag);
                     }
+
                 }
             }
         });
@@ -536,7 +563,12 @@ public class Model {
         private static final Model INSTANCE = new Model();
     }
 
-    // Note: The ordering of these flags controls the order of the property change notifications
+    /**
+     * Flags used to monitor the dirty state of the model properties.
+     *
+     * Note: The ordering of these flags controls the order of the property change notifications
+     * (see publishUpdates()).
+     */
     private enum Flag {
 
         Domain, Time, Coord, Terrain, Sunlight, Shaded, Weather, FuelModel, FuelMoisture, FuelCondition, Fuelbed, FireBehavior

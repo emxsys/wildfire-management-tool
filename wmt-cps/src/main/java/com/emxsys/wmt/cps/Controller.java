@@ -49,16 +49,12 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.SimpleWeatherProvider;
-import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
-import com.emxsys.wmt.cps.views.ForcesTopComponent;
-import com.emxsys.wmt.cps.views.forces.PreheatForcePanel;
 import com.emxsys.wmt.globe.Globe;
-import java.beans.PropertyChangeEvent;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -85,7 +81,7 @@ import visad.Real;
  *
  * @author Bruce Schubert
  */
-public class Controller {
+public final class Controller {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
     private static final Preferences prefs = NbPreferences.forModule(CpsOptions.class);
@@ -100,8 +96,8 @@ public class Controller {
             instance = new Controller();
         }
         return instance;
-        //return ControllerHolder.INSTANCE;
     }
+
     private static Controller instance;
 
     // Data providers - Event generators
@@ -115,6 +111,11 @@ public class Controller {
 
     // Overrides (these values are read and writted on the EDT)
     private boolean overrideFuelTemp = false;
+    private Real airTemp = null;
+    private Real relHumidity = null;
+    private Real windDir = null;
+    private Real windSpd = null;
+    private Real cloudCover = null;
     private Real fuelTemp = null;
 
     // Event handlers
@@ -191,74 +192,7 @@ public class Controller {
         this.projects.addLookupListener(this.projectListener);
         this.projectListener.resultChanged(null);
 
-        // TODO: Move to Forces view
-        // Listen for changes from the manual Fuel Temp input controls
-        ForcesTopComponent forcesWindow = ForcesTopComponent.getInstance();
-
-        // Listen for changes from the manual Fuel Temp input controls
-        forcesWindow.addFuelTempPropertyChangeListener((PropertyChangeEvent evt) -> {
-            switch (evt.getPropertyName()) {
-                case PreheatForcePanel.PROP_OVERRIDE_FUEL_TEMP:
-                    overrideFuelTemp = (boolean) evt.getNewValue();
-                    break;
-                case PreheatForcePanel.PROP_FUEL_TEMP:
-                    fuelTemp = ((Real) evt.getNewValue());
-                    model.modifyFuelbed(fuelTemp);
-                    model.computeFireBehavior();
-                    model.updateViews();
-                    break;
-            }
-        });
-
-//        forcesWindow.addFuelMoisturePropertyChangeListener((PropertyChangeEvent evt) -> {
-//            Real dead1HrFuelMoisture = ((Real) evt.getNewValue());
-//            FuelMoisture fm = model.getFuelMoisture();
-//            model.modifyFuelbed(FuelMoistureTuple.fromReals(
-//                    dead1HrFuelMoisture,
-//                    fm.getDead10HrFuelMoisture(),
-//                    fm.getDead100HrFuelMoisture(),
-//                    fm.getLiveHerbFuelMoisture(),
-//                    fm.getLiveWoodyFuelMoisture()));
-//            model.computeFireBehavior();
-//            model.updateViews();
-//        });
-        // Listen for changes from the manual Wind controls
-        forcesWindow.addWindDirPropertyChangeListener((PropertyChangeEvent evt) -> {
-            simpleWeather.setWindDirection((Real) evt.getNewValue());
-            model.setWeather(simpleWeather.getWeather());
-            model.conditionFuelbed();
-            if (overrideFuelTemp && fuelTemp != null) {
-                model.modifyFuelbed(fuelTemp);
-            }
-            model.computeFireBehavior();
-            model.updateViews();
-        });
-        forcesWindow.addWindSpeedPropertyChangeListener((PropertyChangeEvent evt) -> {
-            simpleWeather.setWindSpeed((Real) evt.getNewValue());
-            model.setWeather(simpleWeather.getWeather());
-            model.conditionFuelbed();
-            if (overrideFuelTemp && fuelTemp != null) {
-                model.modifyFuelbed(fuelTemp);
-            }
-            model.computeFireBehavior();
-            model.updateViews();
-        });
-
         logger.config("Controller initialized.");
-    }
-
-    /**
-     * Sets the FuelMoisure used by the Controller to determine the Fire Behavior at the current
-     * coordinate. Set by the FuelTopComponent.
-     *
-     * @param fuelMoisture The new FuelMoisture.
-     */
-    public void setFuelMoisture(FuelMoisture fuelMoisture) {
-        if (fuelMoisture == null) {
-            throw new IllegalArgumentException("FuelMoisture is null");
-        }
-        logger.log(Level.CONFIG, "FuelMoisture set to: {0}", fuelMoisture.toString());
-        model.setFuelMoisture(fuelMoisture);
     }
 
     /**
@@ -276,6 +210,169 @@ public class Controller {
 
         // Fire a coordinate-based update to change the current FuelModel
         coordinateUpdater.update();
+    }
+
+    /**
+     * Sets the FuelMoisure used by the Controller to determine the Fire Behavior at the current
+     * coordinate. Set by the FuelTopComponent.
+     *
+     * @param fuelMoisture The new FuelMoisture.
+     */
+    public void setFuelMoisture(FuelMoisture fuelMoisture) {
+        if (fuelMoisture == null) {
+            throw new IllegalArgumentException("FuelMoisture is null");
+        }
+        logger.log(Level.CONFIG, "FuelMoisture set to: {0}", fuelMoisture.toString());
+        model.setFuelMoisture(fuelMoisture);
+    }
+
+    public void setAirTemperature(Real airTemp) {
+        this.airTemp = airTemp;
+        this.fuelTemp = null;   // reset 
+        updateWeather();
+        updateFireBehavior();
+        updateView();
+    }
+
+    public void setRelativeHumidity(Real relHumidity) {
+        this.relHumidity = relHumidity;
+        updateWeather();
+        updateFireBehavior();
+        updateView();
+    }
+
+    public void setWindDir(Real windDir) {
+        this.windDir = windDir;
+        updateWeather();
+        updateFireBehavior();
+        updateView();
+    }
+
+    public void setWindSpeed(Real windSpd) {
+        this.windSpd = windSpd;
+        updateWeather();
+        updateFireBehavior();
+        updateView();
+    }
+
+    public void setFuelTemperature(Real fuelTemp) {
+        this.fuelTemp = fuelTemp;
+        updateFireBehavior();
+        updateView();
+    }
+
+    /**
+     * Updates the weather using the current coordinate and time.
+     */
+    void updateWeather() {
+        // Get the current weather and store it in our mutable SimpleWeatherProvider
+        simpleWeather.setWeather(WeatherManager.getInstance().getWeatherAt(model.getCoord(), model.getDateTime()));
+
+        // Apply wx overrides
+        if (airTemp != null && !airTemp.isMissing()) {
+            simpleWeather.setAirTemperature(airTemp);
+        }
+        if (relHumidity != null && !relHumidity.isMissing()) {
+            simpleWeather.setRelativeHumdity(relHumidity);
+        }
+        if (windDir != null) {
+            simpleWeather.setWindDirection(windDir);
+        }
+        if (windSpd != null) {
+            simpleWeather.setWindSpeed(windSpd);
+        }
+        if (cloudCover != null) {
+            simpleWeather.setCloudCover(cloudCover);
+        }
+        // Update the model
+        model.setWeather(simpleWeather.getWeather());
+
+        //                if (controller.forecastProvider != null) {
+        //                    if (controller.forecastProvider instanceof DiurnalWeatherProvider) {
+        //                        // Update sunrise/sunset times
+        //                        DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherForecaster;
+        //                        diurnalWx.setSunlight(sunlight); 
+        //                    }
+        //                    
+        //                    if (controller.forecastProvider.hasCapability(WeatherForecaster.class)) {
+        //                        WeatherForecaster wxObs = controller.forecastProvider.getCapability(WeatherForecaster.class);
+        //                        controller.model.setWeather(wxObs.getSpotWeather(time, coord));                        
+        //                    }
+        ////                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
+        //                        PointForecaster forecaster = controller.weatherSource.getCapability(PointForecaster.class);
+        //                        Field forecast = forecaster.getForecast(coord);
+        //                        RealTuple wx = (RealTuple) forecast.evaluate(new DateTime(time.toEpochSecond()));
+        //
+        //                    }
+        //                }
+    }
+
+    /**
+     * Reset the weather overrides.
+     */
+    void resetWeather() {
+        airTemp = null;
+        relHumidity = null;
+        windDir = null;
+        windSpd = null;
+        cloudCover = null;
+        //fuelTemp = null;
+    }
+
+    /**
+     * Updates the solar angles and sun position using the current coordinate and time.
+     */
+    void updateSunlight() {
+        Sunlight sunlight = sun.getSunlight(model.getDateTime(), model.getCoord());
+        if (sunlight.isMissing()) {
+            return;
+        }
+        model.setSunlight(sunlight);
+    }
+
+    /**
+     * Updates the terrain shading at the current coordinate.
+     */
+    void updateTerrainShading() {
+        Sunlight sunlight = model.getSunlight();
+        Real azimuth = sunlight.getAzimuthAngle();
+        Real zenith = sunlight.getZenithAngle();
+        GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
+        boolean isShaded
+                = terrainShadingEnabled //&& !(azimuth.isMissing() || zenith.isMissing())
+                        ? earth.isCoordinateTerrestialShaded(model.getCoord(), subsolarPoint)
+                        //? earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
+                        : false;
+        model.setShaded(isShaded);
+    }
+
+    /**
+     * Updates the fuel model data at the current coordinate.
+     */
+    void updateFuelModel() {
+        FuelModel fuelModel = fuels != null
+                ? fuels.getFuelModel(model.getCoord())
+                : StdFuelModel.INVALID;
+        model.setFuelModel(fuelModel);
+
+    }
+
+    /**
+     * Updates the fire behavior using the current weather.
+     */
+    void updateFireBehavior() {
+        model.conditionFuelbed();
+        if (fuelTemp != null && !fuelTemp.isMissing()) {
+            model.modifyFuelbed(fuelTemp);
+        }
+        model.computeFireBehavior();
+    }
+
+    /**
+     * Updates the View in the Model-View-Controller relationship.
+     */
+    void updateView() {
+        model.publishUpdates();
     }
 
     /**
@@ -320,57 +417,29 @@ public class Controller {
                 if (coord.isMissing()) {
                     return;
                 }
-
-                // Update the terrain
-                Terrain terrain = controller.earth.getTerrain(coord);
                 controller.model.setCoord(coord);
+
+                // Update the terrain and terrestrial shading
+                Terrain terrain = controller.earth.getTerrain(coord);
                 controller.model.setTerrain(terrain);
+                controller.updateTerrainShading();
 
                 // Update the temporal-spatial domain
                 controller.spatialDomain = SpatialDomain.from(coord);
                 SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
                 controller.model.setDomain(domain);
 
-                // Update the fire environment
-                Sunlight sunlight = controller.model.getSunlight();
-                Real azimuth = sunlight.getAzimuthAngle();
-                Real zenith = sunlight.getZenithAngle();
-                GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
-                boolean isShaded
-                        = controller.terrainShadingEnabled && !(azimuth.isMissing() || zenith.isMissing())
-                                ? controller.earth.isCoordinateTerrestialShaded(coord, subsolarPoint)
-                                //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
-                                : false;
-                controller.model.setShaded(isShaded);
+                // Update the weather
+                WeatherManager.getInstance().updateSpatialDomain(coord);
+                controller.updateWeather();
 
-                // Update the Weather
-                WeatherManager.getInstance().updateCoord(coord);
-                WeatherTuple weather = WeatherManager.getInstance().getWeatherAt(coord, controller.model.getDateTime());
-                controller.model.setWeather(weather);
-                // Update the Weather
-//                if (controller.weather != null) {
-//                    if (controller.weather instanceof DiurnalWeatherProvider) {
-//                        controller.model.setWeather(((DiurnalWeatherProvider)simpleWeather).getWeatherObservation(controller.model.getDateTime(), null));
-//                    }
-//                }
-
-                // Get the fuel model data at the coordinate
-                FuelModel fuelModel = controller.fuels != null
-                        ? controller.fuels.getFuelModel(coord)
-                        : StdFuelModel.INVALID;
-                controller.model.setFuelModel(fuelModel);
-
-                // Update the fuel bed - use the fuel temp override if provided
-                controller.model.conditionFuelbed();
-                if (controller.overrideFuelTemp && controller.fuelTemp != null) {
-                    controller.model.modifyFuelbed(controller.fuelTemp);
-                }
-
-                // Update the fire behavior
-                controller.model.computeFireBehavior();
+                // Update the fuel bed and the fire behavior
+                controller.fuelTemp = null;   // reset fuel temp. override
+                controller.updateFuelModel();
+                controller.updateFireBehavior();
 
                 // Update the GUI 
-                controller.model.updateViews();
+                controller.updateView();
 
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "CooridinateUpdater failed.", e);
@@ -415,63 +484,25 @@ public class Controller {
             ZonedDateTime time = timeEvent.getNewTime();
             controller.temporalDomain = new TemporalDomain(time.minusHours(24), 25);
 
-            WeatherManager.getInstance().updateTime(time);
-
             SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
             controller.model.setDateTime(time);
             controller.model.setDomain(domain);
 
             try {
                 // Update solar angles and position
-                Coord3D coord = controller.model.getCoord();
-                Sunlight sunlight = controller.sun.getSunlight(time, coord);
-                if (sunlight.isMissing()) {
-                    return;
-                }
-                controller.model.setSunlight(sunlight);
+                controller.updateSunlight();
+                controller.updateTerrainShading();
 
                 // Update the Weather
                 WeatherManager.getInstance().updateTime(time);
-                WeatherTuple weather = WeatherManager.getInstance().getWeatherAt(coord, time);
-                controller.model.setWeather(weather);
+                controller.resetWeather();  // Cancel the wx overrides
+                controller.updateWeather(); // Update the model
 
-//                if (controller.forecastProvider != null) {
-//                    if (controller.forecastProvider instanceof DiurnalWeatherProvider) {
-//                        // Update sunrise/sunset times
-//                        DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherForecaster;
-//                        diurnalWx.setSunlight(sunlight); 
-//                    }
-//                    
-//                    if (controller.forecastProvider.hasCapability(WeatherForecaster.class)) {
-//                        WeatherForecaster wxObs = controller.forecastProvider.getCapability(WeatherForecaster.class);
-//                        controller.model.setWeather(wxObs.getSpotWeather(time, coord));                        
-//                    }
-////                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
-//                        PointForecaster forecaster = controller.weatherSource.getCapability(PointForecaster.class);
-//                        Field forecast = forecaster.getForecast(coord);
-//                        RealTuple wx = (RealTuple) forecast.evaluate(new DateTime(time.toEpochSecond()));
-//
-//                    }
-//                }
-                // Update the fire environment
-                Real azimuth = sunlight.getAzimuthAngle();
-                Real zenith = sunlight.getZenithAngle();
-                GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
-                boolean isShaded = controller.terrainShadingEnabled
-                        ? controller.earth.isCoordinateTerrestialShaded(coord, subsolarPoint)
-                        //? controller.earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
-                        : false;
-                controller.model.setShaded(isShaded);
-                // Update the fuel
-                controller.model.conditionFuelbed();
-                if (controller.overrideFuelTemp && controller.fuelTemp != null) {
-                    controller.model.modifyFuelbed(controller.fuelTemp);
-                }
-                // Update the fire
-                controller.model.computeFireBehavior();
+                // Update the fuelbed and fire behavior
+                controller.updateFireBehavior();
 
                 // Update the GUI 
-                controller.model.updateViews();
+                controller.updateView();
 
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, "TimeUpdater failed.", ex);
@@ -481,11 +512,4 @@ public class Controller {
         }
     }
 
-    /**
-     * Singleton implementation.
-     */
-//    private static class ControllerHolder {
-//
-//        private static final Controller INSTANCE = new Controller();
-//    }
 }
