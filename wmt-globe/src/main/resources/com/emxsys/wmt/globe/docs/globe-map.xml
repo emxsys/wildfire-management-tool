@@ -30,5 +30,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <!DOCTYPE map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN" "http://java.sun.com/products/javahelp/map_2_0.dtd">
 <map version="2.0">
-    <mapID target="com.emxsys.wmt.globe.about" url="globe-about.html"/>
+    <mapID target="com.emxsys.wmt.globe.basemaps" url="globe-basemaps.html"/>
+    <mapID target="com.emxsys.wmt.globe.overlays" url="globe-overlays.html"/>
+    <mapID target="com.emxsys.wmt.globe.effects" url="globe-effects.html"/>
+    <mapID target="com.emxsys.wmt.globe.markers" url="globe-markers.html"/>
+    <mapID target="com.emxsys.wmt.globe.symbology" url="globe-symbology.html"/>
 </map>
