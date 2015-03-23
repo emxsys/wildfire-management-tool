@@ -50,7 +50,6 @@ import static java.lang.Math.round;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -84,7 +83,6 @@ public final class PreheatForceView extends javax.swing.JPanel {
     // Properties that are available from this panel
     public static final String PROP_FUEL_MOISTURE = "PROP_FUEL_MOISTURE";
     public static final String PROP_FUEL_TEMP = "PROP_FUEL_TEMP";
-    public static final String PROP_OVERRIDE_FUEL_TEMP = "PROP_OVERRIDE_FUEL_TEMP";
 
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;
@@ -93,7 +91,6 @@ public final class PreheatForceView extends javax.swing.JPanel {
     //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
     private FuelTemperatureGauge fuelTempChart;
     private JSlider slider;
-    private JCheckBox checkbox;
 
     //private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern(TimeOptions.getTimeFormat());
     private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
@@ -126,12 +123,6 @@ public final class PreheatForceView extends javax.swing.JPanel {
             Real FuelTemp = new Real(WildfireType.FUEL_TEMP_F, slider.getValue());
             Controller.getInstance().setFuelTemperature(FuelTemp);
             firePropertyChange(PROP_FUEL_TEMP, null, FuelTemp);
-        });
-
-        this.checkbox.addChangeListener((ChangeEvent e) -> {
-            boolean selected = checkbox.isSelected();
-            this.slider.setEnabled(selected);
-            firePropertyChange(PROP_OVERRIDE_FUEL_TEMP, null, selected);
         });
 
     }
@@ -279,12 +270,8 @@ public final class PreheatForceView extends javax.swing.JPanel {
         this.slider.setOrientation(SwingConstants.VERTICAL);
         this.slider.setEnabled(false);
 
-        // Create checkbox to enable/disable manual fuel temp override
-        this.checkbox = new JCheckBox("Override", null, false);
-
         JPanel sliderPanel = new JPanel(new BorderLayout());
         sliderPanel.add(this.slider, BorderLayout.CENTER);
-        sliderPanel.add(this.checkbox, BorderLayout.NORTH);
 
         // Add the panel to the Grid layout
         rightPanel.add(sliderPanel, BorderLayout.EAST);

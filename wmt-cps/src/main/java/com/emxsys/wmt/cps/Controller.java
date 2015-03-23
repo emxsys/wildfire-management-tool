@@ -115,7 +115,7 @@ public final class Controller {
     private Real relHumidity = null;
     private Real windDir = null;
     private Real windSpd = null;
-    private Real cloudCover = null;
+    private Real skyCover = null;
     private Real fuelTemp = null;
 
     // Event handlers
@@ -256,6 +256,12 @@ public final class Controller {
         updateFireBehavior();
         updateView();
     }
+    public void setSkyCover(Real skyCover) {
+        this.skyCover = skyCover;
+        updateWeather();
+        updateFireBehavior();
+        updateView();
+    }
 
     public void setFuelTemperature(Real fuelTemp) {
         this.fuelTemp = fuelTemp;
@@ -283,8 +289,8 @@ public final class Controller {
         if (windSpd != null) {
             simpleWeather.setWindSpeed(windSpd);
         }
-        if (cloudCover != null) {
-            simpleWeather.setCloudCover(cloudCover);
+        if (skyCover != null) {
+            simpleWeather.setCloudCover(skyCover);
         }
         // Update the model
         model.setWeather(simpleWeather.getWeather());
@@ -317,7 +323,7 @@ public final class Controller {
         relHumidity = null;
         windDir = null;
         windSpd = null;
-        cloudCover = null;
+        skyCover = null;
         //fuelTemp = null;
     }
 

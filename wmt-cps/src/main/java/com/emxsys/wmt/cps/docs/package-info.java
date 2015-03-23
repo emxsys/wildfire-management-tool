@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-@HelpSetRegistration(helpSet = "cps-hs.xml", position = 3379)
+@HelpSetRegistration(helpSet = "cps-hs.xml", position = 100)
 package com.emxsys.wmt.cps.docs;
 
 import org.netbeans.api.javahelp.HelpSetRegistration;

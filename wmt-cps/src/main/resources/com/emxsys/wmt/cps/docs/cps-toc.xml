@@ -18,9 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0">
-    <tocitem text="CPS">
-        <tocitem text="Overiew" target="com.emxsys.wmt.cps.overview"/>
-        <tocitem text="CPS Fire Prediction Language" target="com.emxsys.wmt.cps.language"/>
+    <tocitem text="WMT - The Wildfire Managment Tool">
+        <tocitem text="Overview" target="com.emxsys.wmt.cps.overview"/>
+        <tocitem text="The CPS Fire Prediction Language" target="com.emxsys.wmt.cps.language"/>
+        
+        <tocitem text="The Fire Environment">
+            <tocitem text="Air Temperature" target="com.emxsys.wmt.cps.airtemperature"/>
+            <tocitem text="Relative Humidity" target="com.emxsys.wmt.cps.relativehumidity"/>
+            <tocitem text="Sky Cover" target="com.emxsys.wmt.cps.skycover"/>
+            <tocitem text="Winds" target="com.emxsys.wmt.cps.winds"/>
+            <tocitem text="Terrain" target="com.emxsys.wmt.cps.terrain"/>
+            <tocitem text="Fuel Temperature" target="com.emxsys.wmt.cps.fueltemperature"/>
+            <tocitem text="Fine Fuel Moisture" target="com.emxsys.wmt.cps.fuelmoisture"/>
+        </tocitem>
+        
         <tocitem text="Fuel Models - Standard 40">
             <tocitem text="About the Standard 40 Fuel Models" target="com.emxsys.wmt.cps.fuelmodel-40"/>
             <tocitem text="Grass Fuel (GS) Type Models">
@@ -105,8 +116,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <tocitem text="Fire Behavior Fuel Model 13" target="com.emxsys.wmt.cps.fuelmodel-13#13"/>
             </tocitem>
         </tocitem>
-    </tocitem>
-    <tocitem text="About">
-        <tocitem text="About CPS" target="com.emxsys.wmt.cps.about" />        
     </tocitem>
 </toc>

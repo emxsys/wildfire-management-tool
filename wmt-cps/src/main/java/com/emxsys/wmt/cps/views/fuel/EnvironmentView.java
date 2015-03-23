@@ -29,56 +29,97 @@
  */
 package com.emxsys.wmt.cps.views.fuel;
 
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.weather.panels.RelativeHumidityGuage;
-import com.emxsys.weather.panels.AirTemperatureGuage;
+import com.emxsys.weather.panels.AirTemperatureGauge;
+import com.emxsys.weather.panels.SkyCoverGauge;
+import com.emxsys.weather.panels.RelativeHumidityGauge;
 import com.emxsys.wmt.cps.Controller;
 import com.emxsys.wmt.cps.Model;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import visad.Real;
 
 /**
- * This panel is a view of the fuel's environment. It hosts a side-by-side AirTemperatureGuage and a
- RelativeHumidityGuage.
+ * This panel is a view of the fuel's environment. It hosts a side-by-side AirTemperatureGauge and a
+ * RelativeHumidityGauge.
  *
  * @author Bruce Schubert
  */
-public class FuelEnvironmentView extends javax.swing.JPanel {
+public class EnvironmentView extends javax.swing.JPanel {
 
     // Properties that are available from this panel
-    public static final String PROP_AIRTEMP = "PROP_AIRTEMP";
-    public static final String PROP_RELHUMIDITY = "PROP_RELHUMIDITY";
+    public static final String PROP_AIRTEMP = "EnvironmentView.AirTemp";
+    public static final String PROP_RELHUMIDITY = "EnvironmentView.RelHumidity";
+    public static final String PROP_SKYCOVER = "EnvironmentView.SkyCover";
 
     // Implementations
-    private AirTemperatureGuage airTempPanel;
-    private RelativeHumidityGuage relHumidityPanel;
+    private AirTemperatureGauge airTempPanel;
+    private RelativeHumidityGauge relHumidityPanel;
+    private SkyCoverGauge skyCoverPanel;
+
+    private LineBorder lineBorder = new LineBorder(Color.black);
+    private EmptyBorder emptyBorder = new EmptyBorder(1, 1, 1, 1);
 
     /** Creates new form FuelMoisturePanel */
-    public FuelEnvironmentView() {
+    public EnvironmentView() {
         initComponents();
-        this.airTempPanel = new AirTemperatureGuage("Air Temp.", WeatherPreferences.getAirTempUnit(), new Real(WeatherType.AIR_TEMP_F, 59));
-        this.relHumidityPanel = new RelativeHumidityGuage("Rel. Humidty", new Real(WeatherType.REL_HUMIDITY, 20));
+        
+        // See com.emxsys.wmt.cps.docs.cps-map.xml for help ids.
+        this.airTempPanel = new AirTemperatureGauge("Air Temp.", WeatherPreferences.getAirTempUnit(),
+                new Real(WeatherType.AIR_TEMP_F, 59), 
+                "com.emxsys.wmt.cps.airtemperature");
+        this.relHumidityPanel = new RelativeHumidityGauge("Humidty", 
+                new Real(WeatherType.REL_HUMIDITY, 20),
+                "com.emxsys.wmt.cps.relativehumidity");
+        this.skyCoverPanel = new SkyCoverGauge("Sky Cover", 
+                new Real(WeatherType.CLOUD_COVER, 10),
+                "com.emxsys.wmt.cps.skycover");
         add(airTempPanel);
         add(relHumidityPanel);
-        this.airTempPanel.setToolTipText("Air temperature is general indicator of the underlying surface temperature.");
+        add(skyCoverPanel);
 
         // Update this View from the Model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather wx = Model.getInstance().getWeather();
-            airTempPanel.setTemperature(wx.getAirTemperature());
-            relHumidityPanel.setHumidity(wx.getRelativeHumidity());
+
+            Real newAirTemp = wx.getAirTemperature();
+            if (!Reals.nearlyEquals(newAirTemp, airTempPanel.getTemperature(), GeneralUnit.degF, 0.5d)) {
+                airTempPanel.setTemperature(newAirTemp);
+                airTempPanel.setBorder(emptyBorder);
+            }
+            Real newHumidity = wx.getRelativeHumidity();
+            if (!newHumidity.equals(relHumidityPanel.getHumidity())) {
+                relHumidityPanel.setHumidity(newHumidity);
+                relHumidityPanel.setBorder(emptyBorder);
+            }
+            Real newSkyCover = wx.getCloudCover();
+            if (!newSkyCover.equals(skyCoverPanel.getCloudCover())) {
+                skyCoverPanel.setSkyCover(newSkyCover);
+                skyCoverPanel.setBorder(emptyBorder);
+            }
         });
 
         // Update the Controller et al from inputs in this View
-        airTempPanel.addPropertyChangeListener(AirTemperatureGuage.PROP_AIR_TEMP, (e) -> {
+        airTempPanel.addPropertyChangeListener(AirTemperatureGauge.PROP_AIR_TEMP, (e) -> {
             Controller.getInstance().setAirTemperature((Real) e.getNewValue());
             firePropertyChange(PROP_AIRTEMP, e.getOldValue(), e.getNewValue());
+            airTempPanel.setBorder(lineBorder);    // indicates manual override
         });
-        relHumidityPanel.addPropertyChangeListener(RelativeHumidityGuage.PROP_REL_HUMIDITY, (e) -> {
+        relHumidityPanel.addPropertyChangeListener(RelativeHumidityGauge.PROP_REL_HUMIDITY, (e) -> {
             Controller.getInstance().setRelativeHumidity((Real) e.getNewValue());
             firePropertyChange(PROP_RELHUMIDITY, e.getOldValue(), e.getNewValue());
+            relHumidityPanel.setBorder(lineBorder);    // indicates manual override
+        });
+        skyCoverPanel.addPropertyChangeListener(SkyCoverGauge.PROP_SKY_COVER, (e) -> {
+            Controller.getInstance().setSkyCover((Real) e.getNewValue());
+            firePropertyChange(PROP_SKYCOVER, e.getOldValue(), e.getNewValue());
+            skyCoverPanel.setBorder(lineBorder);    // indicates manual override
         });
 
     }
@@ -91,6 +132,10 @@ public class FuelEnvironmentView extends javax.swing.JPanel {
         relHumidityPanel.setHumidity(relHumidity);
     }
 
+    public void updateSkyCover(Real skyCover) {
+        skyCoverPanel.setSkyCover(skyCover);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -100,7 +145,7 @@ public class FuelEnvironmentView extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(FuelEnvironmentView.class, "FuelEnvironmentView.border.title"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(EnvironmentView.class, "EnvironmentView.border.title"))); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.X_AXIS));
     }// </editor-fold>//GEN-END:initComponents
 

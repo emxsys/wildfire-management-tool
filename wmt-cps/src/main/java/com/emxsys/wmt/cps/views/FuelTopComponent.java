@@ -30,7 +30,7 @@
 package com.emxsys.wmt.cps.views;
 
 import com.emxsys.wmt.cps.views.fuel.FuelMoistureScenarioView;
-import com.emxsys.wmt.cps.views.fuel.FuelEnvironmentView;
+import com.emxsys.wmt.cps.views.fuel.EnvironmentView;
 import com.emxsys.wmt.cps.views.fuel.FuelModelView;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
@@ -106,7 +106,7 @@ public final class FuelTopComponent extends TopComponent {
     }
 
     private FuelModelView fuelModelView;
-    private FuelEnvironmentView fuelEnvironmentView;
+    private EnvironmentView environmentView;
     private FuelMoistureScenarioView fuelMoistureScenarioPanel;
     /** Listener for changes in the existence of data providersComboBox */
     private Result<FuelModelProvider> lookupFuelModelProviders;
@@ -134,12 +134,12 @@ public final class FuelTopComponent extends TopComponent {
      */
     private void createViews() {
         fuelModelView = new FuelModelView();
-        fuelEnvironmentView = new FuelEnvironmentView();
+        environmentView = new EnvironmentView();
         fuelMoistureScenarioPanel = new FuelMoistureScenarioView();
 
         // Assign panels to the Grid Layout
         centerPanel.add(fuelModelView);
-        centerPanel.add(fuelEnvironmentView);
+        centerPanel.add(environmentView);
         centerPanel.add(fuelMoistureScenarioPanel);
     }
 

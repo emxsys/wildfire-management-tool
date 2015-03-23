@@ -32,6 +32,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <map version="2.0">
     <mapID target="com.emxsys.wmt.cps.about" url="cps-about.html"/>
     <mapID target="com.emxsys.wmt.cps.overview" url="cps-overview.html"/>
+    <mapID target="com.emxsys.wmt.cps.airtemperature" url="cps-airtemperature.html"/>
+    <mapID target="com.emxsys.wmt.cps.relativehumidity" url="cps-relativehumidity.html"/>
+    <mapID target="com.emxsys.wmt.cps.skycover" url="cps-skycover.html"/>
+    <mapID target="com.emxsys.wmt.cps.fueltemperature" url="cps-fueltemperature.html"/>
+    <mapID target="com.emxsys.wmt.cps.fuelmoisture" url="cps-fuelmoisture.html"/>
+    <mapID target="com.emxsys.wmt.cps.winds" url="cps-winds.html"/>
+    <mapID target="com.emxsys.wmt.cps.terrain" url="cps-terrain.html"/>
     <mapID target="com.emxsys.wmt.cps.language" url="cps-language.html"/>
     <mapID target="com.emxsys.wmt.cps.fuelmodel-40" url="cps-fuelmodel-40.html"/>
     <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR1" url="cps-fuelmodel-40_GR1.html"/>
