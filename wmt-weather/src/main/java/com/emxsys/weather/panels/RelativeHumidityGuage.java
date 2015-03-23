@@ -32,8 +32,6 @@ package com.emxsys.weather.panels;
 import com.emxsys.weather.api.WeatherType;
 import java.awt.Color;
 import static java.lang.Math.round;
-import java.util.ArrayList;
-import java.util.List;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
 import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
@@ -43,7 +41,6 @@ import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.chart.title.TextTitle;
-import org.jfree.chart.title.Title;
 import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.general.ValueDataset;
 import visad.Real;
@@ -52,16 +49,18 @@ import visad.Real;
  *
  * @author Bruce Schubert
  */
-public final class HumidityPanel extends javax.swing.JPanel {
+public final class RelativeHumidityGuage extends javax.swing.JPanel {
+
+    public final static String PROP_REL_HUMIDITY = "weather.relhumiditypanel.relhumidity";
 
     private HumidityChart humidityChart;
 
     /**
-     * Constructor creates new form AirTempPanel.
+     * Constructor creates new form RelativeHumidityPanel.
      * @param title
      * @param initialValue
      */
-    public HumidityPanel(String title, Real initialValue) {
+    public RelativeHumidityGuage(String title, Real initialValue) {
         initComponents();
 
         // Initalize the JFreeChart
@@ -100,8 +99,11 @@ public final class HumidityPanel extends javax.swing.JPanel {
         slider.setValue((int) round(humidity.getValue()));
     }
 
-    void updateHumidity(int sliderValue) {
-        humidityChart.setHumidity(new Real(WeatherType.REL_HUMIDITY, sliderValue));
+    void updateHumidityFromSlider(int sliderValue) {
+        Real oldValue = getHumidity();
+        Real newValue = new Real(WeatherType.REL_HUMIDITY, sliderValue);
+        humidityChart.setHumidity(newValue);
+        firePropertyChange(PROP_REL_HUMIDITY, oldValue, newValue);
     }
 
     /**
@@ -118,16 +120,16 @@ public final class HumidityPanel extends javax.swing.JPanel {
         HumidityChart(String title, DefaultValueDataset dataset) {
             super(new HumidityPlot(dataset));
             this.dataset = dataset;
-            
+
             setTitle(title);
             addSubtitle(new TextTitle("%"));
-            
+
             getPlot().setBackgroundPaint(this.getBackgroundPaint());
         }
 
         Real getHumidity() {
-            double value = this.dataset.getValue().doubleValue();
-            return new Real(WeatherType.REL_HUMIDITY, value);
+            Number value = this.dataset.getValue();
+            return new Real(WeatherType.REL_HUMIDITY, value == null ? Double.NaN : value.doubleValue());
         }
 
         void setHumidity(Real humidity) {
@@ -207,7 +209,7 @@ public final class HumidityPanel extends javax.swing.JPanel {
 
     private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderStateChanged
 
-        updateHumidity(slider.getValue());
+        updateHumidityFromSlider(slider.getValue());
 
     }//GEN-LAST:event_sliderStateChanged
 

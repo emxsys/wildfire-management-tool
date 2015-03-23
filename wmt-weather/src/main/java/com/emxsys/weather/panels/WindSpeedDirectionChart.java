@@ -64,8 +64,7 @@ import visad.UnitException;
 import visad.VisADException;
 
 /**
- * This class displays the general weather in an JFreeChart XY graph complete with titles and
- * legends.
+ * This class displays winds in an JFreeChart XY graph complete with titles and legends.
  *
  * @author Bruce Schubert
  */
@@ -76,18 +75,18 @@ import visad.VisADException;
     "CTL_WindChartKPH=(km/h)",
     "CTL_WindChartMPS=(m/s)",
     "CTL_WindChartLegend=Surface Winds",})
-public class WindChartPanel extends AbstractWeatherChartPanel {
+public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
 
     private WindChart chart;
 
     /**
      * Constructor creates new form WeatherChartPanel.
      */
-    public WindChartPanel() {
+    public WindSpeedDirectionChart() {
         this(new WindChart());
     }
 
-    WindChartPanel(WindChart chart) {
+    WindSpeedDirectionChart(WindChart chart) {
         super(chart);
         this.chart = chart;
         initComponents();

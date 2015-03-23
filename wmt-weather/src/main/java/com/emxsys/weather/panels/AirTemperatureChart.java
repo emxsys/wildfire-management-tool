@@ -71,7 +71,7 @@ import visad.VisADException;
     "CTL_TemperatureChartFahrenheit=(°F)",
     "CTL_TemperatureChartCelsius=(°C)",
     "CTL_TemperatureChartLegend=Temperature",})
-public class TemperatureChartPanel extends AbstractWeatherChartPanel {
+public class AirTemperatureChart extends AbstractWeatherChartPanel {
 
     // JFreeChart for Temperature
     private TemperatureChart chart;
@@ -79,11 +79,11 @@ public class TemperatureChartPanel extends AbstractWeatherChartPanel {
     /**
      * Constructor creates new form TemperatureChartPanel.
      */
-    public TemperatureChartPanel() {
+    public AirTemperatureChart() {
         this(new TemperatureChart());
     }
 
-    TemperatureChartPanel(TemperatureChart chart) {
+    AirTemperatureChart(TemperatureChart chart) {
         super(chart);
         this.chart = chart;
         initComponents();
@@ -97,13 +97,14 @@ public class TemperatureChartPanel extends AbstractWeatherChartPanel {
         this.chart.setSunlight(sunlight);
     }
 
+    @Override
     public void setDateTime(ZonedDateTime datetime) {
         this.chart.setDateTime(datetime);
     }
 
     /**
-     * The TemperatureChart is a JFreeChart with a specialized XYPlot for displaying temperature,
-     * humidity, winds and day/night.
+     * The TemperatureChart is a JFreeChart with a specialized XYPlot for displaying air
+     * temperature.
      */
     public static class TemperatureChart extends AbstractWeatherChart {
 
@@ -113,12 +114,6 @@ public class TemperatureChartPanel extends AbstractWeatherChartPanel {
         private XYSeriesCollection dataset;
         /** Air temperature */
         private XYSeries series;
-        /** Sunlight for sunrise and sunset times */
-        private Sunlight sunlight;
-        /** Day/Night markers */
-        private List<Marker> markers;
-        /** Marker for current time */
-        private ValueMarker domainMarker;
 
         /**
          * Constructor for a TemperatureChart.
@@ -228,36 +223,6 @@ public class TemperatureChartPanel extends AbstractWeatherChartPanel {
                 }
             } catch (VisADException ex) {
                 Exceptions.printStackTrace(ex);
-            }
-        }
-
-        /**
-         * Sets the sunrise and sunset hours used to depict nighttime.
-         * @param sunlight
-         */
-        public void setSunlight(Sunlight sunlight) {
-            this.sunlight = sunlight;
-            plotDayNight();
-        }
-
-        /**
-         * Draws the day/night markers.
-         */
-        void plotDayNight() {
-            TemperaturePlot plot = (TemperaturePlot) getPlot();
-            if (markers != null) {
-                for (Marker marker : markers) {
-                    plot.removeDomainMarker(marker, Layer.BACKGROUND);
-                }
-                markers.clear();
-            }
-            if (sunlight == null) {
-                return;
-            }
-
-            markers = ChartHelper.createNightMarkers(sunlight, dataset);
-            for (Marker marker : markers) {
-                plot.addDomainMarker(marker, Layer.BACKGROUND);
             }
         }
 

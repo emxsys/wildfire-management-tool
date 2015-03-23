@@ -31,7 +31,7 @@ package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.WeatherPreferences;
-import com.emxsys.weather.panels.TemperaturePanel;
+import com.emxsys.weather.panels.AirTemperatureGuage;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
 import visad.Real;
@@ -44,20 +44,20 @@ import visad.Unit;
            "CTL_DiurnalTemperatureSunset=Sunset",})
 public final class DiurnalWeatherPanelTemps extends JPanel {
 
-    private final TemperaturePanel panelSunrise;
-    private final TemperaturePanel panelNoon;
-    private final TemperaturePanel panel1400;
-    private final TemperaturePanel panelSunset;
+    private final AirTemperatureGuage panelSunrise;
+    private final AirTemperatureGuage panelNoon;
+    private final AirTemperatureGuage panel1400;
+    private final AirTemperatureGuage panelSunset;
 
     /**
      * Creates new form DiurnalWeatherPanelTemps.
      * @param provider
      */
     public DiurnalWeatherPanelTemps(DiurnalWeatherProvider provider) {
-        panelSunrise = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureSunrise(), WeatherPreferences.getAirTempUnit(), provider.getTempAtSunrise());
-        panelNoon = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureNoon(), WeatherPreferences.getAirTempUnit(), provider.getTempAtNoon());
-        panel1400 = new TemperaturePanel(Bundle.CTL_DiurnalTemperature1400(), WeatherPreferences.getAirTempUnit(), provider.getTempAt1400());
-        panelSunset = new TemperaturePanel(Bundle.CTL_DiurnalTemperatureSunset(), WeatherPreferences.getAirTempUnit(), provider.getTempAtSunset());
+        panelSunrise = new AirTemperatureGuage(Bundle.CTL_DiurnalTemperatureSunrise(), WeatherPreferences.getAirTempUnit(), provider.getTempAtSunrise());
+        panelNoon = new AirTemperatureGuage(Bundle.CTL_DiurnalTemperatureNoon(), WeatherPreferences.getAirTempUnit(), provider.getTempAtNoon());
+        panel1400 = new AirTemperatureGuage(Bundle.CTL_DiurnalTemperature1400(), WeatherPreferences.getAirTempUnit(), provider.getTempAt1400());
+        panelSunset = new AirTemperatureGuage(Bundle.CTL_DiurnalTemperatureSunset(), WeatherPreferences.getAirTempUnit(), provider.getTempAtSunset());
         initComponents();
         jPanel1.add(panelSunrise);
         jPanel2.add(panelNoon);

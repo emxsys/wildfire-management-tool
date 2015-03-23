@@ -38,7 +38,6 @@ import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
 import com.emxsys.weather.api.services.WeatherObserver;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.openide.util.lookup.InstanceContent;
 import visad.Real;
@@ -56,7 +55,7 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
     private Real cldCovr = new Real(WeatherType.CLOUD_COVER);
 
     /**
-     * Default Constructor.  The weather values are all "missing".
+     * Default Constructor. The weather values are all "missing".
      */
     public SimpleWeatherProvider() {
         // Initialize the lookup with this provider's capabilities
@@ -108,6 +107,14 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
     @Override
     public String getName() {
         return "Simple Weather";
+    }
+
+    public void setWeather(Weather wx) {
+        setWindSpeed(wx.getWindSpeed());
+        setWindDirection(wx.getWindDirection());
+        setAirTemperature(wx.getAirTemperature());
+        setRelativeHumdity(wx.getRelativeHumidity());
+        setCloudCover(wx.getCloudCover());
     }
 
     public void setWindSpeed(Real windSpd) {

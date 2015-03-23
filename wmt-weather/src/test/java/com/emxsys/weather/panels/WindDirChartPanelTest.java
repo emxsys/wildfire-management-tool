@@ -49,7 +49,7 @@ public class WindDirChartPanelTest {
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
-        WindDirectionDialPanel instance = new WindDirectionDialPanel();
+        WindDirectionDial instance = new WindDirectionDial();
         instance.setTitle("Wind Direction");
         instance.setSubTitle("Southwest Wind");
         instance.setWindDirection(new Real(WeatherType.WIND_DIR, 225.0));
@@ -68,7 +68,7 @@ public class WindDirChartPanelTest {
         System.out.println("setWindDirection/getWindDirection");
         Real dir = new Real(WeatherType.WIND_DIR, 235.0);
         Real expResult = new Real(WeatherType.WIND_DIR, 235.0);
-        WindDirectionDialPanel instance = new WindDirectionDialPanel();
+        WindDirectionDial instance = new WindDirectionDial();
         instance.setWindDirection(dir);
         Real result = instance.getWindDirection();
         assertEquals(expResult, result);

@@ -57,7 +57,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new WindChartPanel()"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.emxsys.weather.panels.WindSpeedDirectionChart()"/>
       </AuxValues>
 
       <Layout>

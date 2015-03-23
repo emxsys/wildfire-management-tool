@@ -44,23 +44,23 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * WindDirectionDialPanel is ChartPanel containing a wind direction compass plot.
+ * WindDirectionDial is ChartPanel containing a wind direction compass plot.
  *
  * @author Bruce Schubert
  */
-public class WindDirectionDialPanel extends ChartPanel {
+public class WindDirectionDial extends ChartPanel {
 
     private WindDirChart chart;
 
     /**
      * Constructor creates new form WindDirPanel
      */
-    public WindDirectionDialPanel() {
+    public WindDirectionDial() {
         this(new WindDirChart());
         initComponents();
     }
 
-    WindDirectionDialPanel(WindDirChart chart) {
+    WindDirectionDial(WindDirChart chart) {
         super(chart,
                 150, //DEFAULT_WIDTH,
                 150, //DEFAULT_HEIGHT,

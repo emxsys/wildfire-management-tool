@@ -31,6 +31,7 @@ package com.emxsys.weather.panels;
 
 import com.emxsys.visad.GeneralType;
 import com.emxsys.visad.GeneralUnit;
+import com.emxsys.weather.api.WeatherPreferences;
 import static com.emxsys.weather.api.WeatherType.AIR_TEMP_C;
 import static com.emxsys.weather.api.WeatherType.AIR_TEMP_F;
 import java.awt.Color;
@@ -54,7 +55,9 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class TemperaturePanel extends javax.swing.JPanel {
+public class AirTemperatureGuage extends javax.swing.JPanel {
+
+    public final static String PROP_AIR_TEMP = "weather.airtemppanel.airtemp";
 
     private TemperatureChart chart;
     private Unit uom;
@@ -63,12 +66,12 @@ public class TemperaturePanel extends javax.swing.JPanel {
     private static final Real minAirTemp = new Real(AIR_TEMP_F, 32);
 
     /**
-     * Constructor creates new form AirTempPanel.
-     * @param title
+     * Constructor creates new form TemperaturePanel.
+     * @param title Title displayed above thermometer dial.
      * @param uom Unit of measure for temperatures (Fahrenheit or Celsius)
      * @param initialTemp
      */
-    public TemperaturePanel(String title, Unit uom, Real initialTemp) {
+    public AirTemperatureGuage(String title, Unit uom, Real initialTemp) {
         if (!(uom.equals(GeneralUnit.degC) || uom.equals(GeneralUnit.degF))) {
             throw new IllegalArgumentException("Invalid UOM: must be degC or degF, not " + uom.toString());
         }
@@ -92,13 +95,18 @@ public class TemperaturePanel extends javax.swing.JPanel {
                 false, // zoom
                 true // tooltips
         ));
-        
+
+        WeatherPreferences.addPreferenceChangeListener(e -> {
+            if (e.getKey().equals(WeatherPreferences.PREF_AIR_TEMP_UOM)) {
+                updateUom(WeatherPreferences.getAirTempUnit());
+            }
+        });
         updateUom(uom);
 
-        // Updating the slider should trigger event to update the thermometer
-        updateSlider(initialTemp);
-    }
+        setTemperature(initialTemp);
 
+    }
+    
     public final void updateUom(Unit uom) {
         try {
             this.uom = uom;
@@ -109,34 +117,43 @@ public class TemperaturePanel extends javax.swing.JPanel {
         }
     }
 
-    public void setTemperature(Real temperature) {
-        chart.setTemperature(temperature);
-        updateSlider(temperature);
-    }
-
     public Real getTemperature() {
         return chart.getTemperature();
     }
 
-    // Convert air temp to a slider % value.
-    private int convertTempToPercentRange(Real temperature) {
-        try {
-            double fraction = (temperature.getValue(uom) - minAirTemp.getValue(uom)) / range;
-            return (int) round(fraction * 100);
-        } catch (VisADException ex) {
-            return 0;
-        }
+    public final void setTemperature(Real temperature) {
+        chart.setTemperature(temperature);
+        updateSlider(temperature);
     }
 
     private void updateSlider(Real temperature) {
         slider.setValue(convertTempToPercentRange(temperature));
     }
 
-    void updateTemperature(int sliderValue) {
+    // Convert air temp to a slider % value.
+    private int convertTempToPercentRange(Real temperature) {
+        try {
+            if (temperature == null || temperature.isMissing()) {
+                return 0;
+            } else {
+                double fraction = (temperature.getValue(uom) - minAirTemp.getValue(uom)) / range;
+                return (int) round(fraction * 100);
+            }
+        } catch (VisADException ex) {
+            return 0;
+        }
+    }
+
+    private void updateTemperatureFromSlider(int sliderValue) {
         try {
             // Convert slider % value to an air temp in the configured UOM
             double airTemp = minAirTemp.getValue(uom) + (sliderValue * range / 100.0);
-            chart.setTemperature(new Real(GeneralType.TEMPERATURE, airTemp, uom));
+            Real oldTemp = getTemperature();
+            Real newTemp = new Real(GeneralType.TEMPERATURE, airTemp, uom);
+            chart.setTemperature(newTemp);
+            // Notify listeners
+            firePropertyChange(PROP_AIR_TEMP, oldTemp, newTemp);
+
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -204,8 +221,9 @@ public class TemperaturePanel extends javax.swing.JPanel {
         }
 
         Real getTemperature() {
-            double value = this.dataset.getValue().doubleValue();
-            return new Real(uom.equals(GeneralUnit.degF) ? AIR_TEMP_F : AIR_TEMP_C, value);
+            Number value = this.dataset.getValue();
+            return new Real(uom.equals(GeneralUnit.degF) ? AIR_TEMP_F : AIR_TEMP_C,
+                    value == null ? Double.NaN : value.doubleValue());
         }
 
         void setTemperature(Real temperature) {
@@ -316,7 +334,7 @@ public class TemperaturePanel extends javax.swing.JPanel {
 
     private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderStateChanged
 
-        updateTemperature(slider.getValue());
+        updateTemperatureFromSlider(slider.getValue());
 
     }//GEN-LAST:event_sliderStateChanged
 

@@ -250,9 +250,5 @@ public abstract class AbstractWeatherChart extends JFreeChart {
         }
     }
     
-    /**
-     * Draws the day/night regions.
-     * @param sunlight Contains sunrise and sunset times
-     */
     
 }

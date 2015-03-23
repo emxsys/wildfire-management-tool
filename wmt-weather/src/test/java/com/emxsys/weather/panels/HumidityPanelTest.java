@@ -37,7 +37,7 @@ import org.junit.Ignore;
 import visad.Real;
 
 /**
- * Tests the layout and behavior of the HumidityPanel.
+ * Tests the layout and behavior of the RelativeHumidityGuage.
  *
  * @author Bruce Schubert
  */
@@ -49,14 +49,13 @@ public class HumidityPanelTest {
     /**
      * Comment out @Ignore to display the interactive unit test.
      */
-    @Ignore("interative test")
+    //@Ignore("interative test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interative");
         assertTrue("Form was invalidated by the user",
-                JOptionPane.showConfirmDialog(
-                        null, // frame
-                        new HumidityPanel("Humidity", new Real(WeatherType.REL_HUMIDITY, 21)),
+                JOptionPane.showConfirmDialog(null, // frame
+                        new RelativeHumidityGuage("Humidity", new Real(WeatherType.REL_HUMIDITY, 21)),
                         "Is Form Valid?",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.PLAIN_MESSAGE,

@@ -79,7 +79,7 @@ public class HumidityChartPanelTest {
 
         FlatField wx = provider.getHourlyWeather(domain);
 
-        HumidityChartPanel instance = new HumidityChartPanel();
+        RelativeHumiditySkyCoverChart instance = new RelativeHumiditySkyCoverChart();
         instance.setTitle("Diurnal Weather");
         instance.setSunlight(sunlight);
         instance.setHumidities(wx);

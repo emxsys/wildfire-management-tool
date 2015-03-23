@@ -82,7 +82,7 @@ public class WindChartPanelTest {
         TemporalDomain timeDomain = new TemporalDomain(ZonedDateTime.now(), 24);
         FlatField wx = wxProvider.getHourlyWeather(timeDomain);
 
-        WindChartPanel instance = new WindChartPanel();
+        WindSpeedDirectionChart instance = new WindSpeedDirectionChart();
         instance.setTitle("Diurnal Weather");
         instance.setWinds(wx);
 

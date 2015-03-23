@@ -43,7 +43,7 @@ public class WindPanelTest {
     public WindPanelTest() {
     }
 
-    @Ignore("interactive test")
+    //@Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");

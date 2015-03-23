@@ -31,7 +31,7 @@ package com.emxsys.weather.wizards;
 
 import com.emxsys.util.AngleUtil;
 import com.emxsys.weather.api.DiurnalWeatherProvider;
-import com.emxsys.weather.panels.WindChartPanel;
+import com.emxsys.weather.panels.WindSpeedDirectionChart;
 import com.emxsys.weather.panels.WindForcePanel;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -183,7 +183,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        windChartPanel = new WindChartPanel();
+        windChartPanel = new WindSpeedDirectionChart();
         controlsPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();

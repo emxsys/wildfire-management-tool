@@ -44,16 +44,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.DEFAULT_BUFFER_USED;
-import static org.jfree.chart.ChartPanel.DEFAULT_HEIGHT;
 import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
 import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
-import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
-import static org.jfree.chart.ChartPanel.DEFAULT_WIDTH;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.PlotState;
@@ -80,19 +75,19 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class WindSpeedDialPanel extends ChartPanel {
+public class WindSpeedDial extends ChartPanel {
 
     private WindSpdChart chart;
 
     /**
      * Constructor creates new form WindDirPanel
      */
-    public WindSpeedDialPanel() {
+    public WindSpeedDial() {
         this(new WindSpdChart());
         initComponents();
     }
 
-    WindSpeedDialPanel(WindSpdChart chart) {
+    WindSpeedDial(WindSpdChart chart) {
         super(chart,
                 100, //DEFAULT_WIDTH,
                 150, //DEFAULT_HEIGHT,

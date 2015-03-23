@@ -38,7 +38,7 @@ import org.junit.Ignore;
 import visad.Real;
 
 /**
- * Tests the layout and behavior of the TemperaturePanel.
+ * Tests the layout and behavior of the AirTemperatureGuage.
  *
  * Comment out @Ignore to display the interactive unit tests.
  *
@@ -50,14 +50,13 @@ public class TemperaturePanelTest {
     public TemperaturePanelTest() {
     }
 
-    @Ignore("interactive test")
+    //@Ignore("interactive test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interactive");
         assertTrue("Form was invalidated by the user",
-                JOptionPane.showConfirmDialog(
-                        null, // frame
-                        new TemperaturePanel("Temperature", GeneralUnit.degC, new Real(WeatherType.AIR_TEMP_F, 59)),
+                JOptionPane.showConfirmDialog(null, // frame
+                        new AirTemperatureGuage("Temperature", GeneralUnit.degC, new Real(WeatherType.AIR_TEMP_F, 59)),
                         "Is Form Valid?",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.PLAIN_MESSAGE,

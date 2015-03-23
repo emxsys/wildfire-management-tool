@@ -70,7 +70,7 @@ public class TemperatureChartPanelTest {
         FlatField wx = provider.getHourlyWeather(domain);
 
         WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_FAHRENHEIT);
-        TemperatureChartPanel instance = new TemperatureChartPanel();
+        AirTemperatureChart instance = new AirTemperatureChart();
         instance.setTitle("Diurnal Weather");
         instance.setTemperatures(wx);
 
