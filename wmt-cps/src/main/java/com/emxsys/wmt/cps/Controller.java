@@ -256,8 +256,10 @@ public final class Controller {
         updateFireBehavior();
         updateView();
     }
+
     public void setSkyCover(Real skyCover) {
         this.skyCover = skyCover;
+        this.fuelTemp = null;   // reset 
         updateWeather();
         updateFireBehavior();
         updateView();
