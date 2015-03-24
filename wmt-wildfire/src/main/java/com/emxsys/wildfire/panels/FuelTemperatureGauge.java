@@ -289,7 +289,9 @@ public final class FuelTemperatureGauge extends javax.swing.JPanel {
         infoBtn = new javax.swing.JButton();
 
         setMaximumSize(new java.awt.Dimension(200, 2147483647));
+        setPreferredSize(new java.awt.Dimension(100, 283));
 
+        chartPanel.setPreferredSize(new java.awt.Dimension(60, 0));
         chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
         sliderPanel.setLayout(new java.awt.BorderLayout());
@@ -298,7 +300,7 @@ public final class FuelTemperatureGauge extends javax.swing.JPanel {
         slider.setOrientation(javax.swing.JSlider.VERTICAL);
         slider.setPaintTicks(true);
         slider.setMaximumSize(new java.awt.Dimension(30, 32767));
-        slider.setMinimumSize(new java.awt.Dimension(30, 17));
+        slider.setMinimumSize(new java.awt.Dimension(10, 17));
         slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderStateChanged(evt);
@@ -324,11 +326,11 @@ public final class FuelTemperatureGauge extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(34, 34, 34))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addGap(0, 128, Short.MAX_VALUE)
+                    .addGap(0, 120, Short.MAX_VALUE)
                     .addComponent(sliderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         layout.setVerticalGroup(

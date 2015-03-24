@@ -197,6 +197,7 @@ public final class SkyCoverGauge extends javax.swing.JPanel {
         infoBtn = new javax.swing.JButton();
 
         setMaximumSize(new java.awt.Dimension(200, 2147483647));
+        setPreferredSize(new java.awt.Dimension(100, 258));
 
         chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
@@ -205,9 +206,6 @@ public final class SkyCoverGauge extends javax.swing.JPanel {
         slider.setMajorTickSpacing(25);
         slider.setOrientation(javax.swing.JSlider.VERTICAL);
         slider.setPaintTicks(true);
-        slider.setMaximumSize(new java.awt.Dimension(28, 32767));
-        slider.setMinimumSize(new java.awt.Dimension(28, 17));
-        slider.setPreferredSize(new java.awt.Dimension(28, 200));
         slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderStateChanged(evt);

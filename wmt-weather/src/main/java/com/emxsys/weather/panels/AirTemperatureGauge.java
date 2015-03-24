@@ -326,6 +326,7 @@ public class AirTemperatureGauge extends javax.swing.JPanel {
         infoBtn = new javax.swing.JButton();
 
         setMaximumSize(new java.awt.Dimension(200, 2147483647));
+        setPreferredSize(new java.awt.Dimension(100, 288));
 
         chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
@@ -336,7 +337,6 @@ public class AirTemperatureGauge extends javax.swing.JPanel {
         slider.setPaintTicks(true);
         slider.setMaximumSize(new java.awt.Dimension(30, 32767));
         slider.setMinimumSize(new java.awt.Dimension(30, 17));
-        slider.setPreferredSize(new java.awt.Dimension(28, 200));
         slider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderStateChanged(evt);

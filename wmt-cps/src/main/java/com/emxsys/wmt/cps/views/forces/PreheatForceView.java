@@ -43,17 +43,19 @@ import com.emxsys.wmt.cps.Model;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.*;
 import org.jfree.chart.JFreeChart;
@@ -77,25 +79,23 @@ import visad.VisADException;
 @NbBundle.Messages({
     "CTL_SolarChartTitle=Solar Heating",
     "CTL_FuelMoistureChartTitle=Fine Fuel Moisture",
-    "CTL_FuelTempChartTitle=Fuel Temp",})
+    "CTL_FuelTempChartTitle=Fuel Temp."
+})
 public final class PreheatForceView extends javax.swing.JPanel {
 
     // Properties that are available from this panel
-    public static final String PROP_FUEL_MOISTURE = "PROP_FUEL_MOISTURE";
-    public static final String PROP_FUEL_TEMP = "PROP_FUEL_TEMP";
+    public static final String PROP_FUELTEMP = "PreheatForceView.FuelTemp";
+
+    private SolarChart solarChart;
+    private MoistureChart fuelMoistureGauge;
+    private FuelTemperatureGauge fuelTempGauge;
 
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;
-    private final SolarChart solarChart = new SolarChart(Bundle.CTL_SolarChartTitle());
-    private MoistureChart fuelMoistureChart = new MoistureChart(Bundle.CTL_FuelMoistureChartTitle());
-    //private TemperatureChart fuelTempChart = new TemperatureChart(Bundle.CTL_FuelTempChartTitle());
-    private FuelTemperatureGauge fuelTempChart;
-    private JSlider slider;
+    private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
 
     //private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern(TimeOptions.getTimeFormat());
-    private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
-//    private ChartCanvas canvas;
-
+    //private ChartCanvas canvas;
     /**
      * Creates new form PreheatForcePanel.
      */
@@ -119,10 +119,10 @@ public final class PreheatForceView extends javax.swing.JPanel {
         });
 
         // Update the Controller from inputs in this View
-        this.slider.addChangeListener((ChangeEvent e) -> {
-            Real FuelTemp = new Real(WildfireType.FUEL_TEMP_F, slider.getValue());
-            Controller.getInstance().setFuelTemperature(FuelTemp);
-            firePropertyChange(PROP_FUEL_TEMP, null, FuelTemp);
+        this.fuelTempGauge.addPropertyChangeListener(FuelTemperatureGauge.PROP_FUEL_TEMP, (PropertyChangeEvent evt) -> {
+            Real fuelTemp = (Real) evt.getNewValue();
+            Controller.getInstance().setFuelTemperature(fuelTemp);
+            firePropertyChange(PROP_FUELTEMP, (Real) evt.getOldValue(), fuelTemp);
         });
 
     }
@@ -182,9 +182,9 @@ public final class PreheatForceView extends javax.swing.JPanel {
      * Updates the fuel moisture and fuel temperature plots
      */
     public void updateFuel(SurfaceFuel fuel) {
-        fuelTempChart.setFuelTemperature(fuel.getFuelTemperature());
-        fuelMoistureChart.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
-        fuelMoistureChart.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
+        fuelTempGauge.setFuelTemperature(fuel.getFuelTemperature());
+        fuelMoistureGauge.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
+        fuelMoistureGauge.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
     }
 
     /**
@@ -208,23 +208,20 @@ public final class PreheatForceView extends javax.swing.JPanel {
      * @param airTemperature
      */
     public void updateAirTemp(Real airTemperature) {
-        fuelTempChart.setAirTemperature(airTemperature);
+        fuelTempGauge.setAirTemperature(airTemperature);
     }
 
     private void initializeView() {
+        solarChart = new SolarChart(Bundle.CTL_SolarChartTitle());
+        fuelMoistureGauge = new MoistureChart(Bundle.CTL_FuelMoistureChartTitle());
+        fuelTempGauge = new FuelTemperatureGauge(Bundle.CTL_FuelTempChartTitle(),
+                WildfirePreferences.getFuelTemperatureUnit(),
+                new Real(WildfireType.FUEL_TEMP_F, 0), "com.emxsys.wmt.cps.fueltemperature");
+
         // Override the default title font size so we can display long date time strings
         TextTitle title = solarChart.getTitle();
         Font font = title.getFont().deriveFont(11);
         title.setFont(font);
-
-        fuelTempChart = new FuelTemperatureGauge(
-                Bundle.CTL_FuelTempChartTitle(),
-                WildfirePreferences.getFuelTemperatureUnit(),
-                new Real(WildfireType.FUEL_TEMP_F, 0));
-
-        // Create the primary panels
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        JPanel rightPanel = new JPanel(new BorderLayout());
 
         leftPanel.add(new ChartPanel(solarChart,
                 150, //DEFAULT_WIDTH,
@@ -241,11 +238,12 @@ public final class PreheatForceView extends javax.swing.JPanel {
                 true // tooltips
         ));
 
-        // Create the thermometers
-        JPanel thermometerPanel = new JPanel(new GridLayout(1, 2));
-        thermometerPanel.add(fuelTempChart);
-
-        thermometerPanel.add(new ChartPanel(fuelMoistureChart,
+        // Create the fuel properties panel
+        JPanel fuelPropertiesPanel = new JPanel(); // Layout Manager with percentages
+        fuelPropertiesPanel.setLayout(new BoxLayout(fuelPropertiesPanel, BoxLayout.X_AXIS));
+        
+        temperaturePanel.add(fuelTempGauge);        
+        moisturePanel.add(new ChartPanel(fuelMoistureGauge,
                 DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
                 100, // DEFAULT_MINIMUM_DRAW_WIDTH, // Default = 300
@@ -259,24 +257,23 @@ public final class PreheatForceView extends javax.swing.JPanel {
                 false, // zoom
                 true // tooltips
         ));
+        //rightPanel.add(fuelPropertiesPanel, BorderLayout.CENTER);
 
-        rightPanel.add(thermometerPanel, BorderLayout.CENTER);
-
-        // Create the slider for the fuel temp (140 deg max)
-        this.slider = new JSlider(32, 140, 59); // fahrenheit
-        this.slider.setPaintLabels(false);
-        this.slider.setPaintTicks(true);
-        this.slider.setMajorTickSpacing(10);
-        this.slider.setOrientation(SwingConstants.VERTICAL);
-        this.slider.setEnabled(false);
-
-        JPanel sliderPanel = new JPanel(new BorderLayout());
-        sliderPanel.add(this.slider, BorderLayout.CENTER);
-
-        // Add the panel to the Grid layout
-        rightPanel.add(sliderPanel, BorderLayout.EAST);
-        add(leftPanel);
-        add(rightPanel);
+//        // Create the slider for the fuel temp (140 deg max)
+//        this.slider = new JSlider(32, 140, 59); // fahrenheit
+//        this.slider.setPaintLabels(false);
+//        this.slider.setPaintTicks(true);
+//        this.slider.setMajorTickSpacing(10);
+//        this.slider.setOrientation(SwingConstants.VERTICAL);
+//        this.slider.setEnabled(false);
+//
+//        JPanel sliderPanel = new JPanel(new BorderLayout());
+//        sliderPanel.add(this.slider, BorderLayout.CENTER);
+//
+//        // Add the panel to the Grid layout
+//        rightPanel.add(sliderPanel, BorderLayout.EAST);
+//        add(leftPanel);
+//        add(rightPanel);
 
     }
 
@@ -400,12 +397,41 @@ public final class PreheatForceView extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        leftPanel = new javax.swing.JPanel();
+        rightPanel = new javax.swing.JPanel();
+        temperaturePanel = new javax.swing.JPanel();
+        moisturePanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(PreheatForceView.class, "PreheatForceView.border.title"))); // NOI18N
-        setLayout(new java.awt.GridLayout(1, 2));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
+
+        leftPanel.setBorder(null);
+        leftPanel.setPreferredSize(new java.awt.Dimension(100, 100));
+        leftPanel.setLayout(new java.awt.BorderLayout());
+        add(leftPanel);
+
+        rightPanel.setLayout(new javax.swing.BoxLayout(rightPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        temperaturePanel.setBorder(null);
+        temperaturePanel.setPreferredSize(new java.awt.Dimension(70, 100));
+        temperaturePanel.setLayout(new java.awt.BorderLayout());
+        rightPanel.add(temperaturePanel);
+
+        moisturePanel.setBorder(null);
+        moisturePanel.setPreferredSize(new java.awt.Dimension(30, 100));
+        moisturePanel.setLayout(new java.awt.BorderLayout());
+        rightPanel.add(moisturePanel);
+
+        add(rightPanel);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel leftPanel;
+    private javax.swing.JPanel moisturePanel;
+    private javax.swing.JPanel rightPanel;
+    private javax.swing.JPanel temperaturePanel;
     // End of variables declaration//GEN-END:variables
 }
