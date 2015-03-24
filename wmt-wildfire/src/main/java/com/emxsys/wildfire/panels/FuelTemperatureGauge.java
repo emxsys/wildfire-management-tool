@@ -29,6 +29,8 @@
  */
 package com.emxsys.wildfire.panels;
 
+import com.emxsys.util.HelpUtil;
+import com.emxsys.visad.GeneralType;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.wildfire.api.WildfirePreferences;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_C;
@@ -50,14 +52,19 @@ import visad.Unit;
 import visad.VisADException;
 
 /**
+ * This panel displays a thermometer depicting fuel temperature. The slider generates PROP_FUEL_TEMP
+ * PropertyChangeEvents when changed.
  *
  * @author Bruce Schubert
  */
-public class FuelTemperatureGauge extends javax.swing.JPanel {
+public final class FuelTemperatureGauge extends javax.swing.JPanel {
+
+    public final static String PROP_FUEL_TEMP = "wildfire.fueltempguage.fueltemp";
 
     private FuelTemperatureChart chart;
     private Unit uom;
     private double range;
+    private String helpID;
     private static final Real maxFuelTemp = new Real(FUEL_TEMP_F, 140);
     private static final Real minFuelTemp = new Real(FUEL_TEMP_F, 32);
 
@@ -68,14 +75,30 @@ public class FuelTemperatureGauge extends javax.swing.JPanel {
      * @param initialTemp
      */
     public FuelTemperatureGauge(String title, Unit uom, Real initialTemp) {
+        this(title, uom, initialTemp, null);
+    }
+
+    /**
+     * Constructor creates new form FuelTemperaturePanel.
+     * @param title Text displayed as a title
+     * @param uom Unit of measure for temperatures (Fahrenheit or Celsius)
+     * @param initialTemp Initial temperature
+     * @param helpID ID of topic to be displayed (can be null)
+     */
+    public FuelTemperatureGauge(String title, Unit uom, Real initialTemp, String helpID) {
         if (!(uom.equals(GeneralUnit.degC) || uom.equals(GeneralUnit.degF))) {
             throw new IllegalArgumentException("Invalid UOM: must be degC or degF, not " + uom.toString());
         }
         initComponents();
 
+        // Initialize the help button
+        if (helpID == null || helpID.isEmpty()) {
+            this.infoBtn.setVisible(false);
+        } else {
+            this.helpID = helpID;
+        }
         // Initalize the JFreeChart
         chart = new FuelTemperatureChart(title, uom);
-
         // Add the chart to the layout panel
         chartPanel.add(new ChartPanel(chart,
                 105, // DEFAULT_WIDTH,
@@ -91,14 +114,15 @@ public class FuelTemperatureGauge extends javax.swing.JPanel {
                 false, // zoom
                 true // tooltips
         ));
-        
-        setFuelTemperature(initialTemp);
-
+        // Monitor changes in UOM 
         WildfirePreferences.addPreferenceChangeListener(e -> {
             if (e.getKey().equals(WildfirePreferences.PREF_FUEL_TEMP_UOM)) {
                 updateUom(WildfirePreferences.getFuelTemperatureUnit());
             }
         });
+
+        updateUom(uom);
+        setFuelTemperature(initialTemp);
     }
 
     public final void updateUom(Unit uom) {
@@ -117,10 +141,44 @@ public class FuelTemperatureGauge extends javax.swing.JPanel {
 
     public void setFuelTemperature(Real value) {
         chart.setFuelTemperature(value);
+        updateSlider(value);
     }
 
     public void setAirTemperature(Real value) {
         chart.setAirTemperatureMark(value);
+    }
+
+    private void updateSlider(Real temperature) {
+        slider.setValue(convertTempToPercentRange(temperature));
+    }
+
+    // Convert fuel temp to a slider % value.
+    private int convertTempToPercentRange(Real temperature) {
+        try {
+            if (temperature == null || temperature.isMissing()) {
+                return 0;
+            } else {
+                double fraction = (temperature.getValue(uom) - minFuelTemp.getValue(uom)) / range;
+                return (int) round(fraction * 100);
+            }
+        } catch (VisADException ex) {
+            return 0;
+        }
+    }
+
+    private void updateTemperatureFromSlider(int sliderValue) {
+        try {
+            // Convert slider % value to an air temp in the configured UOM
+            double fuelTemp = minFuelTemp.getValue(uom) + (sliderValue * range / 100.0);
+            Real oldTemp = getFuelTemperature();
+            Real newTemp = new Real(GeneralType.TEMPERATURE, fuelTemp, uom);
+            chart.setFuelTemperature(newTemp);
+            // Notify listeners
+            firePropertyChange(PROP_FUEL_TEMP, oldTemp, newTemp);
+
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     /**
@@ -153,8 +211,9 @@ public class FuelTemperatureGauge extends javax.swing.JPanel {
         }
 
         Real getFuelTemperature() {
-            double value = this.dataset.getValue().doubleValue();
-            return new Real(uom.equals(GeneralUnit.degF) ? FUEL_TEMP_F : FUEL_TEMP_C, value);
+            Number value = this.dataset.getValue();
+            return new Real(uom.equals(GeneralUnit.degF) ? FUEL_TEMP_F : FUEL_TEMP_C,
+                    value == null ? Double.NaN : value.doubleValue());
         }
 
         void setFuelTemperature(Real temperature) {
@@ -205,12 +264,12 @@ public class FuelTemperatureGauge extends javax.swing.JPanel {
             setBulbRadius(30);
             setColumnRadius(15);
             setMercuryPaint(Color.red);
-            
+
             // Initially set the subranges off the scale to prevent drawing tick marks
             setSubrange(0, -100, 200);
             setSubrangePaint(0, Color.red);
             setSubrange(1, -100, -100);
-            setSubrangePaint(1, Color.red);   
+            setSubrangePaint(1, Color.red);
             setSubrange(2, -100, -100);
             setUseSubrangePaint(false);
             setOutlineVisible(false);
@@ -224,29 +283,83 @@ public class FuelTemperatureGauge extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        unitsButtonGroup = new javax.swing.ButtonGroup();
         chartPanel = new javax.swing.JPanel();
+        sliderPanel = new javax.swing.JPanel();
+        slider = new javax.swing.JSlider();
+        infoBtn = new javax.swing.JButton();
 
         setMaximumSize(new java.awt.Dimension(200, 2147483647));
 
         chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
+        sliderPanel.setLayout(new java.awt.BorderLayout());
+
+        slider.setMajorTickSpacing(10);
+        slider.setOrientation(javax.swing.JSlider.VERTICAL);
+        slider.setPaintTicks(true);
+        slider.setMaximumSize(new java.awt.Dimension(30, 32767));
+        slider.setMinimumSize(new java.awt.Dimension(30, 17));
+        slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderStateChanged(evt);
+            }
+        });
+        sliderPanel.add(slider, java.awt.BorderLayout.CENTER);
+
+        infoBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/emxsys/wildfire/images/help.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(infoBtn, org.openide.util.NbBundle.getMessage(FuelTemperatureGauge.class, "FuelTemperatureGauge.infoBtn.text")); // NOI18N
+        infoBtn.setMaximumSize(new java.awt.Dimension(28, 28));
+        infoBtn.setMinimumSize(new java.awt.Dimension(28, 28));
+        infoBtn.setPreferredSize(new java.awt.Dimension(28, 28));
+        infoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoBtnActionPerformed(evt);
+            }
+        });
+        sliderPanel.add(infoBtn, java.awt.BorderLayout.PAGE_END);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addGap(34, 34, 34))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGap(0, 128, Short.MAX_VALUE)
+                    .addComponent(sliderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+            .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(sliderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderStateChanged
+
+        updateTemperatureFromSlider(slider.getValue());
+
+    }//GEN-LAST:event_sliderStateChanged
+
+    private void infoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoBtnActionPerformed
+
+        HelpUtil.showHelp(helpID);
+
+    }//GEN-LAST:event_infoBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel chartPanel;
-    private javax.swing.ButtonGroup unitsButtonGroup;
+    private javax.swing.JButton infoBtn;
+    private javax.swing.JSlider slider;
+    private javax.swing.JPanel sliderPanel;
     // End of variables declaration//GEN-END:variables
 
 }
