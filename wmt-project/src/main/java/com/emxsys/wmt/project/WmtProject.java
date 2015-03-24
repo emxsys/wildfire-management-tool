@@ -222,7 +222,7 @@ public class WmtProject implements Project {
                 handle.start(); // start in indeterminate mode
                 try {
                     handle.progress("Loading times...");
-                    loadTimes();
+                    //loadTimes();
                     
                     handle.progress("Loading scenes...");
                     loadScenes(SCENE_FOLDER_NAME);
