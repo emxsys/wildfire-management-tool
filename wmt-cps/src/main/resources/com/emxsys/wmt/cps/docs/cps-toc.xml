@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tocitem text="WMT - The Wildfire Managment Tool">
         <tocitem text="Overview" target="com.emxsys.wmt.cps.overview"/>
         <tocitem text="The CPS Fire Prediction Language" target="com.emxsys.wmt.cps.language"/>
+        <tocitem text="The Art of Wildland Firefighting" target="com.emxsys.wmt.cps.art_wildland_firefighting"/>
         
         <tocitem text="The Fire Environment">
             <tocitem text="Air Temperature" target="com.emxsys.wmt.cps.airtemperature"/>

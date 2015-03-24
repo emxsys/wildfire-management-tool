@@ -1,0 +1,693 @@
+<!--
+Copyright (c) 2015, Bruce Schubert <bruce@emxsys.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    - Neither the name of Bruce Schubert, Emxsys nor the names of its 
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>The Art of Wildland Firefighting</title>
+        <link rel="stylesheet" href="nbdocs:/org/netbeans/modules/usersguide/ide.css" type="text/css">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+
+        <h2>The Art of Wildland Firefighting</h2>
+        <p>A working paper by Doug Campbell and Bruce Schubert detailing the Campbell Prediction System, (CPS) consisting 
+            of selecting the correct information from observations, using logic 
+            to rank the importance of information and language to explain and express 
+            the desired outcome.</p>
+        <h5>Contents</h5>
+        <ul>
+            <li><a href="#Abstract">Abstract</a></li>
+            <li><a href="#Introduction">Introduction</a></li>
+            <li><a href="#The_Situation">The Situation</a></li>
+            <li><a href="#Secrets_of_the_Successful_Firefighter">Secrets of the Successful Firefighter</a></li>
+            <li><a href="#Reading_a_Wildland_Fire">Reading a Wildland Fire</a></li>
+            <li><a href="#Learn_from_the_Past">Learn from the Past; Predict the Future</a></li>
+            <li><a href="#Using_the_Correct_Information">Using the Correct Information for Fire Behavior Predictions</a></li>
+            <li><a href="#How_to_Predict_Fire_Behavior_Change">How to Predict Fire Behavior Change</a></li>
+            <li><a href="#Logic_for_Tactics_and_Strategies">Logic for Tactics and Strategies</a></li>
+            <li><a href="#Conclusions">Conclusions</a></li>
+        </ul>
+        <h3><a name="Abstract">Abstract</a></h3>
+        <p>Wildland firefighters face variations in fire behavior that can be 
+            predicable, but unfortunately, too many fire fighters lack the training 
+            and knowledge to foresee these changes, resulting in unsafe and/or ineffective 
+            tactics that can lead to burnover accidents and/or the inefficient use 
+            of resources. The development of a reliable prediction system that would 
+            mitigate these problems included drawing upon the first hand experiences 
+            of seasoned firefighters, investigating the commonalities in burnover 
+            accident reports, analyzing and challenging fire weather and fuel moisture 
+            concepts, developing and field testing prediction and tactics on wildland 
+            fires and prescribed burns. The Campbell Prediction System has been 
+            developed to explain how firefighters can make predictions of fire behavior 
+            changes that may occur at any time, and make these predictions while 
+            on the fireline. This prediction system has been field-tested and validated 
+            on wildland fires and has prevented deaths and injuries of fire fighters 
+            from burnovers.</p>
+        <h3><a name="Introduction">Introduction</a></h3>
+        <p>Wildland firefighters face variations in fire behavior that occur 
+            under all fire danger situations. Some firefighters instinctively know 
+            when and where the variations may occur. Unfortunately, firefighters 
+            who do not know these things have a reduced situational awareness. Many 
+            burnover situations could have been avoided had they known how dangerous 
+            the fire potential was, and had they told others how they knew. Reading 
+            accident reports from the 1949 Mann Gulch through the 2006 Esperanza 
+            fires reveals that had the simple knowledge of when and where the variation 
+            was about to occur would have made a difference. <em>It is better to 
+                leave early, rather than to stay until the fire runs you out.</em></p>
+        <p>The Campbell Prediction System (CPS) is a practical way to use on-scene 
+            observations to determine fire behavior strategies and tactics. With 
+            the Campbell Prediction System, logic replaces intuition, allowing an 
+            explanation of how tactics are developed. Scientific research combined 
+            with the knowledge of the successful firefighters&#39; methods and practices 
+            are used to explain fire behavior. In these situations the observed 
+            fire behavior becomes the baseline, or signature, for fire behavior 
+            predictions.</p>
+        <p>The Campbell Prediction System enables you to:</p>
+        <ul>
+            <li>Identify and use the correct information to make fire behavior 
+                predictions </li>
+            <li>Explain how you arrived at your prediction of fire behavior 
+                change</li>
+            <li>Choose the tactic or strategy to utilize and explain how it 
+                was selected</li>
+            <li>Display and communicate the predicted fire behavior on a map</li>
+        </ul>
+        <p>Logic allows an explanation of what the fire is telling you, and 
+            reasoned tactics maintain effectiveness and safety.</p>
+        <h3><a name="The_Situation">The Situation</a></h3>
+        <p>Wildfire suppression tactics are sometimes unsafe and can result 
+            in injuries and/or fatalities from burnovers. Prescribed burning projects 
+            sometimes escape control due to poor planning or execution.(1) Tactics 
+            fail as a result of fire behavior predictions that are either not made 
+            or are inaccurate.(2) Why do these events occur?</p>
+        <p>Firefighters do not have a simple and reliable method to assess the 
+            fire and fireground situations. Firefighters are taught to think about 
+            suppressing the fire and not to think logically of how the fire could 
+            thwart their plan. The firefighter&#39;s emotional hook to <em>fight fire</em> 
+            to often outweighs a logical approach and can lead to accidents. Firefighters 
+            that cannot explain the factors that cause fires to transition from 
+            controllable to beyond human control are more at risk.</p>
+        <p>Current training points to a dependence on staying informed of the 
+            air temperature, relative humidity, and the forecast wind direction 
+            and speed. These are generalities that are not specific to time and 
+            place; this data is not the best information to base a tactical plan 
+            on. Unfortunately, most scenarios use these fire danger elements and 
+            incorrectly expect that accurate fire behavior predictions can be made.</p>
+        <p>Statistics show that there is a weakness in the training of firefighters. 
+            Many rules and fixes for the problem have been implemented with no significant 
+            reduction in burnovers. Accident reports assign causes of fatalities 
+            to these weaknesses. Some blame it on attitude or leadership deficiencies. 
+            Others blame it on failure to obey the rules and &quot;watch outs.&quot;(3) Reducing 
+            the rate of burnover and shelter deployments will require a new approach.</p>
+        <p align="center">
+            <img alt="image_1" height="302" src="campbell_cps_clip_image002.jpg" width="580"></p>
+        <strong><br clear="all"></strong>
+        <p align="center">Figure 1. Burnover Fatalities for Federal Firefighters 
+            (4 a)<br>
+            <img alt="image_2" height="387" src="campbell_cps_clip_image004.jpg" width="420"><br>
+            (4a)<br></p>
+        <h3><a name="Secrets_of_the_Successful_Firefighter">Secrets of the Successful Firefighter</a></h3><p>Campbell 
+            writes, &quot;In 1966, the Loop Fire (Angeles National Forest, CA) burned 
+            over the El Cariso Hotshot crew. The superintendent in charge had years 
+            of experience and was, in my opinion, a very knowledgeable firefighter. 
+            I came to the conclusion that if he could be caught in a burnover situation, 
+            then anyone could. That accident started my search for what was missing 
+            in our training. I wanted to find out what the successful leaders who 
+            worked on fires for years and avoided entrapments knew that others did 
+            not. That may be the secret.</p>
+        <p>&quot;I sought to discover the secrets of the successful firefighter. 
+            My curiosity began with asking, &#39;How did you know what was going to 
+            happen?&#39; No one could explain to me how he or she knew what the fire 
+            was going to do in the near future.<br>Asking my mentors the same question 
+            over the years, I failed to get the answers that I sought. Apparently 
+            the knowledge was intuitive and did not lend itself to a simple set 
+            of spoken words and phrases to explain the situation or the cause of 
+            the change.</p>
+        <p>&quot;I set out to discover how the experienced firefighters came to conclusions. 
+            I would have to explain, show, and prove how one could view the scene 
+            and arrive at a reliable prediction and tactic. Examining the training 
+            programs and literature over a period of years, I centered on the primary 
+            causes of fire behavior variations.&quot;(5) (6) (7) (8) (9) (10)<br></p>
+        <h3><strong><a name="Reading_a_Wildland_Fire">Reading a Wildland Fire</a></strong></h3>
+        <p>There are three primary 
+            forces causing <em><strong>variations</strong></em> in fire behavior. 
+            They are wind, slope, and pre-heat.(11)When these forces align, the 
+            fire is going to be at its maximum intensity. When these forces are 
+            not in alignment, the intensity is lower than the maximum. This is the 
+            alignment of forces concept. Each side of a fire, the head, flanks and 
+            heel, has a different alignment and intensity. For example, if the head 
+            is in alignment with the wind, then the flanks and heel will be out 
+            of alignment. Each of these alignment sets produces a fire signature, 
+            which is the observed fire behavior within the current alignment of 
+            forces. The fire signature is the ground truth. It is how the fire will 
+            behave in similar conditions.</p>
+        <p>The terrain will host replications of these fire signatures on those 
+            exposures that have a similar alignment. Where and when the alignment 
+            of forces in the path of the fire is similar to those of a previous 
+            fire signature, the fire behavior will be similar. When we identify 
+            how these forces are aligned ahead of the fire, and have paid attention 
+            to previous fire signatures, then we can more accurately predict the
+            <em>fire signature that will result.</em></p>
+        <p>What is important for situational awareness is when and where the 
+            fire signature will exceed the threshold of safety for the firefighter. 
+            This awareness becomes more accurate with practice.</p>
+        <p>A trigger point is a place on the terrain where a change in the alignment 
+            of forces will change the fire behavior, creating either opportunity 
+            or danger. Trigger points are a time and/or place the tactic or placement 
+            of resources needs to be changed to assure firefighter safety. There 
+            are two crucial trigger points to establish: one is where the fire will 
+            change; the other is when and where fire on the landscape triggers a 
+            decision to change tactics. Selecting a trigger point of change or the 
+            trigger point for tactical adjustment requires firsthand experience. 
+            Neither trigger point was established when the 1985 Butte Fire made 
+            an in-alignment run and drove firefighters into fire shelters.(12)</p>
+        <h3><strong><a name="Learn_from_the_Past">Learn from the Past; Predict the Future</a></strong></h3>
+        <p>The following 
+            is a case study showing the successful application of this method on 
+            the 1994 Dillon Fire, in the Klamath National Forest (California)</p>
+        <p>The Dillon Fire was located southwest of Dillon Creek. On the afternoon 
+            of August 12 at the peak of the solar heating time (1600 hours) it moved 
+            to a place where it was in full alignment with slope, wind and preheat: 
+            on the SW aspect with a SW wind. From there, the fire made a run to 
+            the top of the ridge through timber crowns with 150-foot flames. The 
+            following day, a small spot fire on top of a knob was detected by an 
+            early morning infrared flight. A firing operation along the burnout 
+            line had begun on the previous day shift and was planned for the following 
+            day shift, the day of the fire run.</p>
+        <p>Figure 2 is a shaded relief map illustrating this situation. The 
+            fire&#39;s run on the SW aspect is indicated with a red arrow on the left 
+            within the orange shading of the main fire. The wind direction is depicted 
+            with a blue arrow in the lower left. The burnout line and firing operation 
+            can be seen to the north and east of the main fire, as indicated by 
+            the brown line along the ridgeline and the firefighter icons. The spot 
+            fire is located between the main fire perimeter and the lower end of 
+            the firing operation.</p>
+        <p align="center">
+            <img alt="#1 Dillon" height="452" src="campbell_cps_clip_image002_0000.jpg" width="456"><br>
+            Figure 2. Dillon Fire Situation Assessment.<br></p>
+        <p>The Plans Section staff showed this information to the Fire Behavior 
+            Analyst and Operations Chief. The conversation went thusly:</p>
+        <p>This fire burned through the night and will continue to burn and 
+            move downhill. After the inversion burns off over the area, the fire 
+            will move faster. Let&#39;s identify where the fire may threaten the firefighters 
+            on the line.</p>
+        <p>The trigger point for a run is at the bottom of the canyon. There 
+            the fire will be in alignment with wind and slope on a hot aspect. When 
+            this happened before, the fire launched to the crowns of the timber 
+            and produced 150-foot flame lengths. The fire is telling you how it 
+            will behave. That run is very likely to occur sometime after 1600 hours. 
+            We recommend the firefighters on that entire burnout and holding operation 
+            be evacuated by 1100 hours.</p>
+        <p>At noon, the firefighters were sent to a safety area and the fire 
+            made a run with the same signature as noted before. No personnel were 
+            in the track of the fire when it made its run. The fire burned over 
+            the ridge, and like the fire signature of the previous day&#39;s run, it 
+            replicated to a slow moving ground fire that was quickly contained.<br>
+            Figure 3 is an illustration depicting the potential fire behavior on 
+            that day. It is similar to the actual graphic used on the fire. The 
+            fire&#39;s <em>predicted tracks</em> are red arrows that emanate from
+            <em>trigger points</em> depicted with T&#39;s. The burnout tactic was
+            <em>time-tagged</em> to be off line at 1100. This illustration also 
+            shows the actual run that the fire made on August 13, at 1732 hours, 
+            represented by the orange shading in the center.</p>
+        <p align="center">
+            <img alt="#2 Dillon" height="515" src="campbell_cps_clip_image004_0000.jpg" width="524"></p>
+        <p align="center">Figure 3. Dillon Fire trigger points, predictions 
+            and tactics.</p>
+        <p>The behavior of the Dillon Fire has many similarities with the well-documented 
+            1994 South Canyon Fire. (13) Figure 4 compares the Dillon and South 
+            Canyon terrain, and shows the spot fires and the fire runs made by both 
+            fires. The two fires are displayed side by side; the Dillon Fire is 
+            on the left and the South Canyon Fire is on the right. In both cases, 
+            the crews were working <em>indirect. </em>On the Dillon fire the crews 
+            were firing out the ridge top when a spot fire was located on a hilltop 
+            between the main fire and the firing job. Both fires had been burning 
+            all night and would continue burning out of alignment with slope until 
+            they reached the bottom of the canyon.</p>
+        <p align="center">
+            <img alt="So" height="388" src="campbell_cps_clip_image006.jpg" width="552"><br>
+            Dillon 8/14/1994&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            South Canyon 7/6/1994<br>Figure 4.&nbsp; Dillon and South Canyon Fire 
+            Comparison</p>
+        <p>The similarities of the two fires are not unique. The fire situation 
+            began on a hilltop and backed downward to a trigger point where the 
+            fire found terrain that was in alignment. The trigger point for a run 
+            in alignment with wind, slope and near the peak time of the solar heating 
+            period is shown at the start of the arrows. The arrow indicates the 
+            track the fire took. The Dillon made its run at 1732 hours, the South 
+            Canyon at 1630 hours.</p>
+        <p>The difference, however, is in the outcome. The South Canyon firefighters 
+            failed to understand the fire&#39;s potential and they ran the escape route 
+            after the fire began its run. Thirteen firefighters perished. On the 
+            Dillon, the threat and trigger point were identified in advance and 
+            the firefighters were evacuated from the path before the run started.</p>
+        <p>There are many fires where this system could have made a difference 
+            in the outcome. CPS class exercises allow students to create solutions 
+            for some of the fatality fires.(14)</p>
+        <h3><font size="+1"><a name="Using_the_Correct_Information">Using the Correct Information for Fire Behavior 
+                    Predictions</a></font></h3>
+        <p>Across the fireground, within a single fuel type on any given day, 
+            variations can be observed in the fire&#39;s intensity, rate of spread, 
+            and consumption of live and dead fuel. The primary forces that cause 
+            these variations are various alignments of<strong><em> wind, slope and 
+                    preheat</em></strong> in the path of the fire.</p>
+        <div align="left">
+            Wind and slope both act on a fire by changing the angle and orientation 
+            of the flame with respect to the fuel bed; preheat is a force that 
+            alters the fire&#39;s intensity. Solar heated fuels ignite more readily 
+            than cooler fuels. Solar preheating is a force multiplier when applied 
+            to the wind and slope vectors. Figure 5 shows how the magnitude 
+            of solar preheating in the fuel bed varies by time of day and slope 
+            aspect.<br></div>
+        <div align="center">
+            <img alt="Countrymans cd" height="173" src="campbell_cps_clip_image002_0001.jpg" width="219"></div>
+        <br>Figure 5. Solar Preheating by Time of Day and Aspect (15) Countryman 
+        1966<p></p>
+        <p>The effects of wind and slope on a fire are well understood, however, 
+            the topic of solar preheating and its effects on fuel moisture and fuel 
+            temperature warrant further discussion. Air temperature and relative 
+            humidity do not cause the differences in fuel flammability but instead, 
+            it is the microclimatic variations influenced by solar radiation that 
+            cause variations in fuel flammability and fire behavior. (15) (16) (17)<br>
+            <br />
+            Solar radiation affects the moisture content of the fine fuels during 
+            the daytime. On a sunny day, the solar radiation is heating the surface 
+            of the sunlit fuels and driving off moisture. The relative humidity 
+            is regulating how fast moisture can be driven off by radiation, but 
+            it&#39;s the radiation that&#39;s heating and drying the fuel. Conversely, shaded 
+            fuels have more moisture content.<br><br />
+            Measuring the differences in temperature between sunlit and shaded fuels 
+            in the fine fuel beds shows they correlate to fuel flammability variation. 
+            Fuel temperature variation is easy to measure and has a more direct 
+            effect on fuel moisture than calculations of humidity. Figure 6 shows 
+            the fuel temperature being measured on sunlit and shaded fuel beds using 
+            an infrared thermometer. The sunlit fuel is 104 degrees F whereas the 
+            shaded fuel is 71degrees F. When these photos were taken, the air temperature 
+            was measured at 70degrees F and the relative humidity measured 30%. 
+            Your observations of fire signatures in both solar preheated fuel and 
+            shaded fuel will tell you how much difference it makes in fire intensity.</p>
+        <div align="center">
+            <img alt="P0001901" height="185" hspace="12" src="campbell_cps_clip_image004_0001.jpg" width="173">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <img alt="P0001900" height="185" src="campbell_cps_clip_image006_0000.jpg" width="177"></div>
+        <div align="center">
+            <br>&nbsp; Sunlit Fuel Temp: 104 degrees F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            Shaded Fuel Temp: 71 degrees F<br>Figure 6. Fuel temperatures variations 
+            measured with an infrared thermometer.
+            <p></p>
+        </div>
+        <p>To establish the fuel flammability curves for a specific location 
+            use the Shadommeter (Figure 7). The Shadommeter was used on fires to 
+            determine the time each aspect reached the peak solar heating period 
+            and to determine the surface temperature variation.</p>
+        <p align="center">
+            <img alt="Shadommeter" height="205" src="campbell_cps_clip_image008.gif" width="302"><br>
+            Figure 7. Shadommeter (14)</p>
+        <p>To utilize this idea in a predictive way, categorize the various 
+            terrain aspects as <em>hot fuel beds</em> and <em>cool fuel beds</em> 
+            that are either <em>heating up</em> or <em>cooling down</em>. Hot fuels 
+            burn with more intensity than cooler fuels because the temperature is 
+            closer to ignition and the fuel is dryer. The effects of solar preheating 
+            can be seen in the following photographs (Figure 8) from the Zaca Fire. 
+            These photos represent four changes in the fire signature of a topography 
+            fire that is out of alignment with wind and slope but in a fuel bed 
+            that is being heated and dried by the solar effect. Note how the fire 
+            intensity increases as the sunlit fuels are heated throughout the day.</p>
+        <p>Morning&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            Noon<br>
+            <img alt="1-Zaca" height="172" src="campbell_cps_clip_image010.jpg" width="257">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <img alt="2-Zaca" height="169" src="campbell_cps_clip_image012.jpg" width="243"></p>
+        <p>3 p.m.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            6 p.m.<br>
+            <img alt="3-zaca" height="183" src="campbell_cps_clip_image014.jpg" width="251">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <img alt="4 zaca" height="185" src="campbell_cps_clip_image016.jpg" width="248"><br>
+            Figure 8. Fuel flammability and fire signature variation on a daytime 
+            topography fire.</p>
+        <p>Thermodynamic studies have shown that a <strong>chemical reaction</strong> 
+            will double for <strong>every 18 degrees</strong> (<strong>F</strong>) 
+            increase in temperature.<a href="http://www.google.com/search?hl=en&amp;client=safari&amp;rls=en&amp;q=chemical+reaction+doubles+with+18+deg.f&amp;btnG=Search">http://www.google.com/search?hl=en&amp;client=safari&amp;rls=en&amp;q=chemical+reaction+doubles+with+18+deg.f&amp;btnG=Search</a></p>
+        <p>Prediction of fire behavior change becomes simpler when you use the 
+            fire behavior elements of wind, slope and preheat to explain the cause 
+            of the variations in fire intensity and flame lengths.</p>
+        <h3><font size="+1"><a name="How_to_Predict_Fire_Behavior_Change">How to Predict Fire Behavior Change</a> </font></h3>
+        <p>Here we have an example of how to use the CPS logic, information 
+            and language to predict and explain fire behavior changes. Figure 9 
+            shows two photographs of a test burn. (18) In these photos, there are 
+            sunlit and shaded fuels and a 3 mph wind blowing from left to right; 
+            the head fire in the left hand photo has 10&#39; flame lengths. Wind, slope 
+            and preheat are acting on the fire to either help or hinder the spread. 
+            The alignment of these forces make the fire burn with more intensity 
+            and when the forces are out of alignment the fire behavior ebbs. Observe 
+            how the fire signatures change as the alignment of forces change. Examine 
+            these snapshots and ask yourself the following questions:</p>
+        <ul>
+            <li>What is making the fire burn with different intensities?</li>
+            <li>What is the <strong><em>cause</em></strong> of the variations 
+                seen in these two pictures?</li>
+            <li>What is the fire telling us?</li>
+        </ul>
+        <p align="center">&nbsp;</p>
+        <p align="center">
+            <img alt="image_3" height="302" src="campbell_cps_clip_image002_0002.jpg" width="600"><br clear="ALL">
+            <br>9:43 AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            9:48 AM<br>Figure 9. Footprint Test Burn (18)<br>(S) Stands for fire 
+            signature<br><br />
+        </p>
+        <div align="left">
+            <strong>Isolating Information: </strong>The upper left-hand flank 
+            (S-2), the lower right-hand flank (S-3), and the heel of the fire 
+            (S-1) will not change alignments with the forces of wind, slope 
+            and preheat. Therefore the fire will continue to advance with the 
+            same intensity and rate of spread on these fronts. However, the 
+            fire signature at S-5 will change because the force alignments change 
+            between S-4 and S-5: the fire moves out of alignment with slope 
+            and into cool fuel. The S-5 signature will replicate the fire signature 
+            of S-3, as can be seen in the right hand photo.<p></p>
+        </div>
+        <p><strong>Logic:</strong> Knowing there will be a reduction in flame 
+            length when the fire gets to the S-5 location, it makes sense to wait 
+            and engage the fire after it goes out of alignment. (19) You&#39;ll<em> 
+                notice that neither air temperature nor humidity measurements are necessary 
+                to make this prediction.</em></p>
+        <p><strong>Language: It is important to wait and see what the fire does 
+                as it burns into a different area. The slope, solar preheat and wind 
+                on the fire will change. </strong>This fire went out of alignment with 
+            wind, slope and preheat when it burned over the small ridge. It was 
+            a topography ruled fire with wind domination. If the wind quits the 
+            fire will turn up slope. To suppress this fire enter the fire at S-3 
+            and work along the S-2 flank using the burn as the safety area. When 
+            the fire goes out of alignment then turn the corner with a direct attack 
+            on what was the head. This is a two or three person hand crew task.</p>
+        <p>Understanding the alignment of forces on a topography fire and knowing 
+            how to describe the fire in terms of alignments goes a long way toward 
+            seeing where the fire will get worse or easier. [T] Is the trigger point 
+            of fire behavior change that becomes an opportunity for control. Explaining 
+            the fire before selecting the tactics is an important safety issue. 
+            This is a lesson in how to compare the alignment of forces to the fire 
+            signatures and predict changes before they occur. The fire signature 
+            at S-5 is an out of alignment signature and it replicates the shaded 
+            lower flank signature S-3.</p>
+        <h3><font size="+1"><a name="Logic_for_Tactics_and_Strategies">Logic for Tactics and Strategies</a></font></h3>
+        <p>Tactics need to be considered when and/or where there may be significant 
+            variations in the fire behavior. Knowing when and where fire behavior 
+            will change for the better or worse is crucial to firefighter safety 
+            and situational awareness. The best relationship for a tactical advantage 
+            is to engage the fire during the time the fire is getting easier rather 
+            than worse. To borrow from Sun Tzu, &quot;attack when your enemy is lax.&quot;(19)</p>
+        <p>The dominant force could change from slope, to wind, to preheating. 
+            Any one of these forces can dominate the fire behavior. This is important 
+            because if the dominant force changes, the character of the fire will 
+            change also. For instance, a wind driven fire will, in effect, flatten 
+            the effects of terrain and reduce fuel temperature and moisture variations. 
+            When this fire burns to a location that is sheltered from wind, a new 
+            dominant force will drive the fire. For example:</p>
+        <p>In California, a strong Santa Ana wind drives the fire toward the 
+            Pacific coast and then weakens on the third day. Now slope and preheat 
+            forces come into play. The fire will behave differently because the 
+            dominant force has changed. The tactical match for the type of fire 
+            needs to be adjusted (see Table 1). Now there may be opportunity, but 
+            also danger because it has become less stable.</p>
+        <p>Each type of fire requires a different tactical approach. Wind driven 
+            fires require a flanking attack. Fuel dominated fires require an indirect 
+            attack. Topography fires require a tactical evaluation and the use of 
+            time tags.</p>
+        <table align="center" border="1" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top" width="177">
+                    <p align="center"><strong><em>Type of Fire</em></strong></p>
+                </td>
+                <td valign="top" width="181">
+                    <p align="center"><strong><em>Tactic</em></strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" width="177">
+                    <p align="center">Wind Driven</p>
+                </td>
+                <td valign="top" width="181">
+                    <p align="center">Flank</p>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" width="177">
+                    <p align="center">Fuels Fire</p>
+                </td>
+                <td valign="top" width="181">
+                    <p align="center">Indirect</p>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" width="177">
+                    <p align="center">Topography Fire</p>
+                </td>
+                <td valign="top" width="181">
+                    <p align="center">Time Tag</p>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" width="177">
+                    <p align="center">Angry Fire</p>
+                </td>
+                <td valign="top" width="181">
+                    <p align="center">Move Away</p>
+                </td>
+            </tr>
+        </table>
+        <p>Table 1. Fire Behavior Tactics</p>
+        <p>If the fire burns into a different fuel type, wait until you can 
+            see the fire burning in the new environment and use its behavior and 
+            alignment with the forces on the fire to develop new fire signature 
+            concepts. Recalibration of the fire signatures needs to be done whenever 
+            the fire burns into another fuel type, when the dominant force changes, 
+            or when there are significant differences over time or terrain. A wise 
+            firefighter once said, &quot;Wait until I can figure this out.&quot;</p>
+        <p>The CPS Flammability Card (Figure 10) is most useful in topography 
+            and fuel dominated fires. This graph illustrates the fuel/aspect temperature 
+            variation on the four primary aspects.</p>
+        <p align="center">
+            <img alt="image_4" height="201" src="campbell_cps_clip_image004_0002.jpg" width="314"><br>
+            Figure 10. CPS Fuel Flammibility Card (14)&nbsp; Campbell 1991</p>
+        <p>Topography maps can be shaded on the south and west aspects to highlight 
+            the increased flammability of fuel beds on these aspects. Figure 11 
+            is an example of a hot slope map generated by a GIS system augmented 
+            with compass rose showing the daily wind changes in direction. Placing 
+            the wind direction on the hot slope map shows the alignment of wind 
+            over terrain. Afternoon wind aligned with hot slopes is an indication 
+            of dangerous ground.</p>
+        <p>Forecast winds for the day shift.<br>Morning wind SE 0800 to 1100 
+            hours. Afternoon wind WNW 1200 to 1900 hours.<br></p>
+        <div>
+            <p>a.m.</p>
+        </div>
+        <p>
+            <img alt="image_5" height="40" src="campbell_cps_clip_image005.gif" width="75"><img alt="image_6" height="86" src="campbell_cps_clip_image006.gif" width="68"><img alt="image_7" height="201" src="campbell_cps_clip_image008.jpg" width="200"><img alt="image_8" height="205" src="campbell_cps_clip_image010_0000.jpg" width="400"><br>
+        </p>
+        <p>Figure 11. Hot Slope Map with Wind Arrows. (20)</p>
+        <p><strong>Tactics Planning Procedure:</strong></p>
+        <ul>
+            <li>Match the type of fire to the tactic (Table 1)</li>
+            <li>Draw the wind direction on the map (Figure 2)</li>
+            <li>Show trigger points and fire tracks on the map (Figure 3)</li>
+            <li>Know where you are on the flammability-curve (Figures 10 and 
+                11)</li>
+        </ul>
+        <p>Identifying the trigger point of where or when fire behavior will 
+            change is an important tactical procedure. Time tagging a tactic based 
+            on previous fire signatures helps identify dangerous tactical time periods. 
+            In the preceding photos of the Zaca Fire (Figure 8), we saw evidence 
+            of what solar heating variations over time will do to a fire. Although 
+            the fire spread is out of alignment with slope and wind, it is spreading 
+            on a west aspect and the preheating is going up the curve. The best 
+            time period to attack with good results would be before 1400 or after 
+            sunset when the solar preheating force-multiplier is gone. Crew supervisors 
+            should develop their tactical plan after viewing their assignments and 
+            make adjustments such as time tags.</p>
+        <p><strong>Tactical Evaluation Steps:</strong></p>
+        <ul>
+            <li>Establish Trigger Points of Change</li>
+            <li>Indentify the In-Alignment Tracks</li>
+            <li>Determine Fire Signature Threshold of Control</li>
+            <li>Time Tag the Task</li>
+            <li>Make Signature Predictions</li>
+            <li>Select the Tactical Plan</li>
+            <li>Establish L.C.E.S.</li>
+        </ul>
+        <p>&nbsp;</p>
+        <p>The Campbell Prediction System provides the steps needed in a complete 
+            evaluation of a fire situation. The logic, information, and language 
+            used to evaluate and explain the fire situation are prerequisites to 
+            a good tactical plan.</p>
+        <p align="center">
+            <img alt="STM 2 Kirk" height="314" src="campbell_cps_clip_image002.gif" width="470">
+            <br>Figure 12.<br>Management team discussing tactics using a solid terrain 
+            model on the Kirk Fire LPF 1999 (21)</p>
+        <p>It would improve situational awareness if the Operations Chief and 
+            those below in the ICS were trained to identify and display the fire 
+            potentials. In briefings the Operations Chief could order the fire overhead 
+            assigned to the fireline to consult their maps and mark on them the 
+            trigger points and tracks the fire would take.</p>
+        <p><strong>Technological Advances</strong><br>New tools are being used 
+            to augment the collection of fire behavior observations, and to enhance 
+            the fire behavior prediction opportunity.</p>
+        <p>Bruce Schubert of AeroComputers has developed an airborne system, 
+            which leverages aircraft-mounted gyro-stabilized cameras (infrared and/or 
+            daylight) to gather wildland fire behavior signatures, and to map the 
+            perimeter of these fires by simply tracing the fireline with the camera&#39;s 
+            cross hairs. This system produces GIS shapefiles and both geo-referenced 
+            video and screenshots of fire signatures to aid in the evaluation of 
+            past and current fire behavior. The system continuously geo-references 
+            live video so that the latitude and longitude of the cross hairs displayed 
+            on the operator&#39;s screen are recorded. At the same time, the AeroComputers 
+            system overlays scale bars on the video image to measure flame height 
+            and help provide context to the live video being collected. The data 
+            can be simultaneously transmitted to the ground for immediate consumption. 
+            (22)</p>
+        <p>Schubert is designing a decision support and training tool that integrates 
+            the disciplines of GIS and the new field of data mining with the logic 
+            embodied by CPS to render potential fire behavior and the thresholds 
+            of control in the path of a fire. This system will determine potential 
+            fire behavior across the fireground by analyzing the observations from 
+            an active fire plus an aggregate of observations from past fires. The 
+            system is being designed for use in the classroom and the Situation 
+            Status Unit.</p>
+        <h3><font size="+1"><a name="Conclusions">Conclusions</a></font></h3>
+        <p>Much of the fire behavior training prior to the final advanced fire 
+            behavior class (S-490) was designed to enable students to accomplish 
+            fire-modeling tasks. The Fire Behavior Analyst is part of the fire team 
+            who attempts to utilize the training to add to the information in the 
+            Incident Action Plan. How does it work when developing a tactical approach 
+            on wildland fires? Experienced firefighters used their intuition to 
+            fight fire effectively and safely for years. How the successful ones 
+            accomplished dangerous jobs is not well known. They did not use the 
+            fire modeling system to accomplish the tasks.</p>
+        <p>The Campbell Prediction System was developed to augment the fire 
+            modeling design weakness as described by scientist Richard Rothermel.&nbsp; 
+            Rothermel has long had the distinction of being the Guru of fire behavior 
+            for wildland fire prediction. His evaluation of his invention follows.(23)<br>
+            <br>&quot;The mathematical model has application to management problems in 
+            two situations:<br>1.&nbsp; The &quot;hypothetical fire&quot; situation in which 
+            operations&#39; research techniques are utilized for fire planning, fire 
+            training, and fuel appraisal. </p>
+        <p>2.&nbsp; The &quot;possible fire&quot; situation for which advance planning 
+            is needed, such as fire-danger rating and pre-suppression planning. 
+            Predictions of potential fire severity for possible management practices 
+            (i.e., methods of thinning, slash treatment and prescribed burning) 
+            have the potential for being the most valuable contribution that fire 
+            modeling can perform.</p>
+        <p>A third situation -- forecasting the behavior of existing wildfires 
+            -- will require a greater degree of sophistication than this model and 
+            our knowledge of fuels will permit at the present time. Variations in 
+            fuel and weather cause departures from predicted spread and intensity 
+            that pose risks unacceptable in fire suppression activities. A method 
+            for forecasting the behavior of a specific fire eventually will be developed; 
+            most likely, it will be patterned on a probability basis similar to 
+            that used for forecasting weather. To accomplish this, a technique must 
+            be developed for rapidly updating fuel inventories on the threatened 
+            site.</p>
+        <p>CPS has been on many wildland fires. The logic program and fire signature 
+            concepts have been field-tested while operating as a Type Two Incident 
+            Commander, Type One Operations Section Chief and as a Fire Behavior 
+            Analyst and it was accepted well and worked well.&nbsp; During a ten-year 
+            period while working for the Ventura County Fire Department as the Fire 
+            Behavior Analyst, CPS was tested and improved on over ninety prescribed 
+            burns.<br><br>During the past eighteen years Doug Campbell has taught 
+            CPS to more than thirty five hundred firefighters in the U.S., Spain 
+            and Canada.&nbsp; A two-day investment has produced logic in the firefighter&#39;s 
+            toolbox and a way to explain how they know how the fire will behave 
+            and how they modified the tactic and remained effective and safe during 
+            hazardous situations.&nbsp; The accuracy and viability of the method 
+            student evaluation rated the program over 90% very useful. Those who 
+            have attended this training program have reported they have used this 
+            information and avoided potential burnovers.</p>
+        <p>There are numerous fire personnel who have utilized CPS on wildland 
+            fires and are qualified to teach the subject.&nbsp; Doug Campbell has 
+            retired from teaching.&nbsp; He is however open to teach instructors 
+            and furnishing the course material on a one-on-one basis to those individuals 
+            interested in instructing the CPS course.<br></p>
+        <h3><font size="+1">References</font></h3>
+        <p>1. <strong>National Park Service.</strong> <em>Cerro Grande Prescribed 
+                Fire, Board of Inquiry Final Report. </em>2001.<br>2. <strong>Gonzales, 
+                Laurence.</strong> <em>Deep Survival: Who Lives, Who Dies, and Why.
+            </em><br>3. <strong>Incident Operation Standards Working Team.</strong>
+            <em>Incident Response Pocket Guide. </em>s.l. : National Wildfire Coordinating 
+            Group.<br>4. <strong>Wilson, C. C.</strong> <em>Fatal and Near-Fatal 
+                Forest Fires, the Common Denominators. </em>1988.<br>4a.
+            <a href="http://www.wildlandfire.com/docs/2007/cause-death-fed-ff-90to08.htm">
+                http://www.wildlandfire.com/docs/2007/cause-death-fed-ff-90to08.htm</a></p>
+        <p>5. <strong>Countryman, C. M.</strong> <em>Radiation. </em>PSW Forest 
+            &amp; Range Experiment Station : USDA Forest Service, 1976.<br>6. <em>The 
+                Fire Environment Concept. </em>PMS 433 : USDA Forest Service, 1972. 
+            NFES 2166, 1972.<br>7. <strong><em>This Humidity Business.</em></strong><em> 
+                What it is all about and its use in fire control. </em>s.l. : Pacific 
+            Southwest Forest and Range Experiment Station, 1971.<br>8. <strong>Countryman, 
+                C. M. and Dean, W. A. Dean.</strong> <em>Measuring Moisture Content 
+                in Living Chaparral: A Field User&#39;s Manual. </em>s.l. : USDA Forest 
+            Service, 1979. Gen. Tech. Rep. PSW 36, 27 P..<br>9. <strong>Fischer, 
+                W. C. and Hardy, C. E.</strong> <em>Fire Weather Observer&#39;s Handbook.
+            </em>s.l. : USDA Forest Service , 1976. Agric. Handbook 494.142 p.<br>
+            10. <strong>Greenlee, Jason M., Thomas, David and Gleason, Paul.</strong>
+            <em>From Cosmos to Chaos: Deja Vu or Vu Jade? </em>1996.<br>11.
+            <strong>Campbell, Doug.</strong> <em>The Campbell Prediction System.
+            </em>Ojai, CA : s.n., 1995.<br>12. <strong>NWCG.</strong> <em>1985 Fire 
+                Entrapment Incident Review. </em>s.l. : National Wildfire Coordinating 
+            Group, 1986.<br>13. <strong>South Canyon Fire Investigation Team.</strong>
+            <em>South Canyon Fire Investigation. </em>August 17, 1994.<br>14.
+            <strong>Campbell, Doug.</strong> <em>The Campbell Prediction System 
+                Workbook II. </em>2003.<br>15. <em>The Concept of Fire Environment, 
+                Fire Control Notes. </em><strong>Countryman, C. M.</strong> 4, s.l. 
+            : USDA Forest Service, 1966, Vol. 27.<br>16. <strong>Barrows, J.S.</strong>
+            <em>Fire behavior in the Rocky Mtns. </em><br>17. <strong>USDA Forest 
+                Service.</strong> <em>Fire Weather Handbook 360. </em>1977. NFES 1174.<br>
+            18. <strong>Ventura County Fire Department.</strong> <em>Boundary RX 
+                1995. </em>[DVD] 1995.<br>19. <strong>Tzu, Sun and Cleary, Thomos.</strong>
+            <em>The Art of War. </em>1988.<br>20. <strong>Lunder, Zeke.</strong>
+            <em>Hot Slope Map. </em>NorthTree Fire International, s.l. : s.n.<br>
+            21<strong>. Solid Terrain Modeling Inc.</strong> [Online] http://www.stm-usa.com.<br>
+            22. <strong>AeroComputers, Inc.</strong> UC5100 Mission Management System. 
+            s.l. : AeroComputers, Inc.<br>23. <strong>Rothermel, R. C.</strong>
+            <em>A Mathmatical Model for Predicting Fire Spread In Wildland Fuels.
+            </em>s.l. : USDA Forest Service, 1972. INT-115.</p>
+        <p><strong><u>Additional Information:</u></strong></p>
+        <p>Lessons Learned. [Online]
+            <a href="http://www.wildfirelessons.net/Additional.aspx?Page=84">http://www.wildfirelessons.net/Additional.aspx?Page=84</a>.</p>
+        <p>Wildland Fire website publications. [Online]<br>access:
+            <a href="http://www.wildlandfire.com/arc/arc.htm#docs">http://www.wildlandfire.com/arc/arc.htm 
+                - docs</a></p>
+        <p>A Case for Using Wildland Firefighter Mission &amp; Vision Statements 
+            to Determine a Firefighters ETHICS. [Online]<br>
+            <a href="http://www.wildlandfire.com/docs/2004/mission_vision.htm">http://www.wildlandfire.com/docs/2004/mission_vision.htm</a></p>
+        <p>Another Way to Prevent a Reoccurrence - Cramer [Online]<br>
+            <a href="http://www.dougsfire.com/articles/">http://www.dougsfire.com/articles/</a><br>
+            A power point slideshow about solving the Cramer Fire Incident using 
+            the Campbell Prediction Method. The Fire Signature Prediction method 
+            is a logical method for looking at current and expected fire behavior 
+            that allows ground-pounders to determine safe firefighting tactics. 
+            Includes similarities between Cramer and South Canyon. 3/04. </p>
+    </body>
+</html>

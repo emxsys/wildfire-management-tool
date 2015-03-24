@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <mapID target="com.emxsys.wmt.cps.winds" url="cps-winds.html"/>
     <mapID target="com.emxsys.wmt.cps.terrain" url="cps-terrain.html"/>
     <mapID target="com.emxsys.wmt.cps.language" url="cps-language.html"/>
+    <mapID target="com.emxsys.wmt.cps.art_wildland_firefighting" url="cps-art_wildland_firefighting.html"/>
     <mapID target="com.emxsys.wmt.cps.fuelmodel-40" url="cps-fuelmodel-40.html"/>
     <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR1" url="cps-fuelmodel-40_GR1.html"/>
     <mapID target="com.emxsys.wmt.cps.fuelmodel-40-GR2" url="cps-fuelmodel-40_GR2.html"/>
