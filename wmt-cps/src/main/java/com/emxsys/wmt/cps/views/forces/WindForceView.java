@@ -29,11 +29,17 @@
  */
 package com.emxsys.wmt.cps.views.forces;
 
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wmt.cps.Controller;
 import com.emxsys.wmt.cps.Model;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import org.openide.util.NbBundle;
+import visad.CommonUnit;
 import visad.Real;
 
 /**
@@ -47,7 +53,11 @@ public class WindForceView extends javax.swing.JPanel {
     // Properties that are available from this panel
     public static final String PROP_WINDDIR = "PROP_WINDDIR";
     public static final String PROP_WINDSPEED = "PROP_WINDSPEED";
-    
+
+    // Borders used to indicate manual overrides
+    private LineBorder lineBorder = new LineBorder(Color.black);
+    private EmptyBorder emptyBorder = new EmptyBorder(1, 1, 1, 1);
+
     // Implementation
     private final com.emxsys.weather.panels.WindForcePanel windPanel = new com.emxsys.weather.panels.WindForcePanel();
 
@@ -56,29 +66,41 @@ public class WindForceView extends javax.swing.JPanel {
      */
     public WindForceView() {
         initComponents();
+        windPanel.setBorder(emptyBorder);
         add(windPanel);
-        
+
         // Update the Conroller et al from inputs in this View
         windPanel.addPropertyChangeListener((e) -> {
             switch (e.getPropertyName()) {
                 case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_DIR:
                     Controller.getInstance().setWindDir((Real) e.getNewValue());
                     firePropertyChange(PROP_WINDDIR, e.getOldValue(), e.getNewValue());
+                    windPanel.setBorder(lineBorder);    // indicates overridden value
                     break;
                 case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_SPD:
                     Controller.getInstance().setWindSpeed((Real) e.getNewValue());
                     firePropertyChange(PROP_WINDSPEED, e.getOldValue(), e.getNewValue());
+                    windPanel.setBorder(lineBorder);    // indicates overridden value
                     break;
             }
         });
 
-        // Syncronized this View to the Model
+        // Syncronize this View to the Model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather weather = (Weather) evt.getNewValue();
-            windPanel.setWindDirection(weather.getWindDirection());
-            windPanel.setWindSpeed(weather.getWindSpeed());
+            Real newWindDir = weather.getWindDirection();
+            Real newWindSpd = weather.getWindSpeed();
+            Real oldWindDir = windPanel.getWindDirection();
+            Real oldWindSpd = windPanel.getWindSpeed();
+            // Update if either new value is not equal to the old value
+            if (!Reals.nearlyEquals(newWindDir, oldWindDir, CommonUnit.degree, 1.0d)
+                    || !Reals.nearlyEquals(newWindSpd, oldWindSpd, GeneralUnit.mph, 1.0d)) {
+                windPanel.setWindSpeed(newWindSpd);
+                windPanel.setWindDirection(newWindDir);
+                windPanel.setBorder(emptyBorder);
+            }
         });
-  
+
     }
 
     /**

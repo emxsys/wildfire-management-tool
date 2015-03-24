@@ -33,6 +33,8 @@ import com.emxsys.jfree.ClockCompassPlot;
 import static com.emxsys.jfree.ClockCompassPlot.CLOCK_HAND_NEEDLE;
 import static com.emxsys.jfree.ClockCompassPlot.WIND_NEEDLE;
 import com.emxsys.solar.api.Sunlight;
+import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.WildfirePreferences;
 import com.emxsys.wildfire.api.WildfireType;
@@ -40,13 +42,8 @@ import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.panels.FuelTemperatureGauge;
 import com.emxsys.wmt.cps.Controller;
 import com.emxsys.wmt.cps.Model;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
@@ -55,7 +52,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import org.jfree.chart.ChartPanel;
 import static org.jfree.chart.ChartPanel.*;
 import org.jfree.chart.JFreeChart;
@@ -90,6 +88,9 @@ public final class PreheatForceView extends javax.swing.JPanel {
     private MoistureChart fuelMoistureGauge;
     private FuelTemperatureGauge fuelTempGauge;
 
+    private LineBorder lineBorder = new LineBorder(Color.black);
+    private EmptyBorder emptyBorder = new EmptyBorder(1, 1, 1, 1);
+
     private static final int AZIMUTH_SERIES = 0;
     private static final int HOUR_SERIES = 1;
     private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
@@ -115,7 +116,16 @@ public final class PreheatForceView extends javax.swing.JPanel {
             updateAirTemp(wx.getAirTemperature());
         });
         Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
-            updateFuel((SurfaceFuel) evt.getNewValue());
+            SurfaceFuel fuel = (SurfaceFuel) evt.getNewValue();
+            Real newFuelTemp = fuel.getFuelTemperature();
+            Real oldFuelTemp = fuelTempGauge.getFuelTemperature();
+            // Update the fuel chart if the new value is not equal to the existing value
+            if (!Reals.nearlyEquals(newFuelTemp, oldFuelTemp, GeneralUnit.degF, 1.0d)) {
+                fuelTempGauge.setFuelTemperature(fuel.getFuelTemperature());
+                fuelTempGauge.setBorder(emptyBorder);
+            }
+            fuelMoistureGauge.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
+            fuelMoistureGauge.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
         });
 
         // Update the Controller from inputs in this View
@@ -123,6 +133,7 @@ public final class PreheatForceView extends javax.swing.JPanel {
             Real fuelTemp = (Real) evt.getNewValue();
             Controller.getInstance().setFuelTemperature(fuelTemp);
             firePropertyChange(PROP_FUELTEMP, (Real) evt.getOldValue(), fuelTemp);
+            fuelTempGauge.setBorder(lineBorder);    // indicates manual override
         });
 
     }
@@ -179,15 +190,6 @@ public final class PreheatForceView extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the fuel moisture and fuel temperature plots
-     */
-    public void updateFuel(SurfaceFuel fuel) {
-        fuelTempGauge.setFuelTemperature(fuel.getFuelTemperature());
-        fuelMoistureGauge.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
-        fuelMoistureGauge.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
-    }
-
-    /**
      * Updates the solar azimuth plot.
      */
     public void refresh() {
@@ -241,8 +243,8 @@ public final class PreheatForceView extends javax.swing.JPanel {
         // Create the fuel properties panel
         JPanel fuelPropertiesPanel = new JPanel(); // Layout Manager with percentages
         fuelPropertiesPanel.setLayout(new BoxLayout(fuelPropertiesPanel, BoxLayout.X_AXIS));
-        
-        temperaturePanel.add(fuelTempGauge);        
+
+        temperaturePanel.add(fuelTempGauge);
         moisturePanel.add(new ChartPanel(fuelMoistureGauge,
                 DEFAULT_WIDTH,
                 DEFAULT_HEIGHT,
@@ -274,7 +276,6 @@ public final class PreheatForceView extends javax.swing.JPanel {
 //        rightPanel.add(sliderPanel, BorderLayout.EAST);
 //        add(leftPanel);
 //        add(rightPanel);
-
     }
 
 //    private Scene createScene() {

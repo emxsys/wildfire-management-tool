@@ -252,6 +252,7 @@ public final class Controller {
 
     public void setWindSpeed(Real windSpd) {
         this.windSpd = windSpd;
+        this.fuelTemp = null;   // reset 
         updateWeather();
         updateFireBehavior();
         updateView();

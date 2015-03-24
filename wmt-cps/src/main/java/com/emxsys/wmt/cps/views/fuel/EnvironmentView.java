@@ -63,6 +63,7 @@ public class EnvironmentView extends javax.swing.JPanel {
     private RelativeHumidityGauge relHumidityPanel;
     private SkyCoverGauge skyCoverPanel;
 
+    // Borders used to indicate manual overrides
     private LineBorder lineBorder = new LineBorder(Color.black);
     private EmptyBorder emptyBorder = new EmptyBorder(1, 1, 1, 1);
 
