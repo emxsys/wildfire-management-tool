@@ -87,13 +87,13 @@ import org.openide.windows.WindowManager;
 //        tooltipFooter = "#CTL_FuelAction_TooltipFooter",
 //        tooltipFooterIcon = "com/terramenta/images/help.png")
 @Messages({
-    "CTL_FuelTopComponent=Fuel",
-    "CTL_FuelTopComponent_Hint=The Fuel Model window.",
-    "CTL_FuelAction=Fuel Model",
-    "CTL_FuelAction_Hint=Show the Fuel Model.",
-    "CTL_FuelAction_TooltipTitle=Show the Fuel Model",
-    "CTL_FuelAction_TooltipBody=Activates the Fuel Model window used for visualizing "
-    + "the fuel conditions influencing fire behavior.",
+    "CTL_FuelTopComponent=Environment",
+    "CTL_FuelTopComponent_Hint=The Environment window.",
+    "CTL_FuelAction=Environement",
+    "CTL_FuelAction_Hint=Shows the fire environment.",
+    "CTL_FuelAction_TooltipTitle=Fire Environment",
+    "CTL_FuelAction_TooltipBody=Activates the Environment window used for visualizing "
+    + "the conditions influencing fire behavior.",
     "CTL_FuelAction_TooltipFooter=Press F1 for more help."
 })
 public final class FuelTopComponent extends TopComponent {
