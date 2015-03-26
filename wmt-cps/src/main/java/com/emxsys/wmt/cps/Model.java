@@ -370,10 +370,10 @@ public class Model {
     public void modifyFuelbed(Real fuelTemperature) {
         SurfaceFuel fuel = getFuelbed();
         // Recondition the fuel using the provided the fuel temperature
-        SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(fuel.getFuelModel(),
+        SurfaceFuel newFuel = fuelProvider.getSurfaceFuel(
+                fuel.getFuelModel(),
                 fuelTemperature,
-                getWeather().getAirTemperature(),
-                getWeather().getRelativeHumidity(),
+                getWeather(),
                 getFuelMoisture());
         fuelbedRef.set(newFuel);
         synchronized (dirtyFlags) {
