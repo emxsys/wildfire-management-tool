@@ -158,7 +158,7 @@ public final class Controller {
         timeUpdater.updateTime(
                 new TimeEvent(this, null, ZonedDateTime.now(ZoneId.of("UTC"))));
 
-        // LookupListener waits for arrival of  ReticuleCoordinateProvider ...
+        // LookupListener waits for arrival of a ReticuleCoordinateProvider ...
         reticuleLookupListener = (LookupEvent le) -> {
             if (reticuleResult != null && reticuleResult.allInstances().iterator().hasNext()) {
                 // ... on arrival, reticule listens for ReticuleCoordinateEvents and notifies TerrainUpdater
@@ -228,6 +228,7 @@ public final class Controller {
         updateView();
     }
 
+    
     public void setAirTemperature(Real airTemp) {
         this.airTemp = airTemp;
         this.fuelTemp = null;   // reset 
@@ -270,6 +271,53 @@ public final class Controller {
         this.fuelTemp = fuelTemp;
         updateFireBehavior();
         updateView();
+    }
+
+    void updateSpatialDomain(Coord3D coord) {
+        spatialDomain = SpatialDomain.from(coord);
+        SpatioTemporalDomain domain = new SpatioTemporalDomain(temporalDomain, spatialDomain);
+        model.setCoord(coord);
+        model.setDomain(domain);
+    }
+
+    void updateTemporalDomain(ZonedDateTime time) {
+        temporalDomain = new TemporalDomain(time.minusHours(24), 25);
+        SpatioTemporalDomain domain = new SpatioTemporalDomain(temporalDomain, spatialDomain);
+        model.setDateTime(time);
+        model.setDomain(domain);
+
+    }
+
+    /**
+     * Updates the solar angles and sun position using the current coordinate and time.
+     */
+    void updateSunlight() {
+        Sunlight sunlight = sun.getSunlight(model.getDateTime(), model.getCoord());
+        if (sunlight.isMissing()) {
+            return;
+        }
+        model.setSunlight(sunlight);
+    }
+
+    void updateTerrain() {
+        Terrain terrain = earth.getTerrain(model.getCoord());
+        model.setTerrain(terrain);
+    }
+
+    /**
+     * Updates the terrain shading at the current coordinate.
+     */
+    void updateTerrainShading() {
+        Sunlight sunlight = model.getSunlight();
+        Real azimuth = sunlight.getAzimuthAngle();
+        Real zenith = sunlight.getZenithAngle();
+        GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
+        boolean isShaded
+                = terrainShadingEnabled //&& !(azimuth.isMissing() || zenith.isMissing())
+                        ? earth.isCoordinateTerrestialShaded(model.getCoord(), subsolarPoint)
+                        //? earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
+                        : false;
+        model.setShaded(isShaded);
     }
 
     /**
@@ -331,33 +379,6 @@ public final class Controller {
     }
 
     /**
-     * Updates the solar angles and sun position using the current coordinate and time.
-     */
-    void updateSunlight() {
-        Sunlight sunlight = sun.getSunlight(model.getDateTime(), model.getCoord());
-        if (sunlight.isMissing()) {
-            return;
-        }
-        model.setSunlight(sunlight);
-    }
-
-    /**
-     * Updates the terrain shading at the current coordinate.
-     */
-    void updateTerrainShading() {
-        Sunlight sunlight = model.getSunlight();
-        Real azimuth = sunlight.getAzimuthAngle();
-        Real zenith = sunlight.getZenithAngle();
-        GeoCoord2D subsolarPoint = GeoCoord2D.fromReals(sunlight.getSubsolarLatitude(), sunlight.getSubsolarLongitude());
-        boolean isShaded
-                = terrainShadingEnabled //&& !(azimuth.isMissing() || zenith.isMissing())
-                        ? earth.isCoordinateTerrestialShaded(model.getCoord(), subsolarPoint)
-                        //? earth.isCoordinateTerrestialShaded(coord, azimuth, zenith)
-                        : false;
-        model.setShaded(isShaded);
-    }
-
-    /**
      * Updates the fuel model data at the current coordinate.
      */
     void updateFuelModel() {
@@ -402,6 +423,9 @@ public final class Controller {
             this.controller = controller;
         }
 
+        /**
+         * Queues a request to update the model based the current coordinate.
+         */
         public void update() {
             // Sliding task: coallese the update events into fixed intervals
             if (this.updatingTask.isFinished()) {
@@ -409,16 +433,26 @@ public final class Controller {
             }
         }
 
+        /**
+         * ReticuleCoordinateListener event handler.
+         *
+         * @param evt Contains the coordinate under the crosshairs.
+         */
         @Override
         public void updateCoordinate(ReticuleCoordinateEvent evt) {
             this.lastEvent.set(evt);
             update();
         }
 
+        /**
+         * Runnable for the RequestProcessor.Task that updates the model based on the current
+         * coordinate.
+         */
         @Override
         @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
         public void run() {
             try {
+                // Examine the last ReticuleCoordinateEvent event for a new coordinate.
                 ReticuleCoordinateEvent event = this.lastEvent.get();
                 if (event == null || controller.earth == null) {
                     return;
@@ -428,24 +462,17 @@ public final class Controller {
                 if (coord.isMissing()) {
                     return;
                 }
-                controller.model.setCoord(coord);
 
-                // Update the terrain and terrestrial shading
-                Terrain terrain = controller.earth.getTerrain(coord);
-                controller.model.setTerrain(terrain);
+                controller.updateSpatialDomain(coord);
+                controller.updateTerrain();
                 controller.updateTerrainShading();
 
-                // Update the temporal-spatial domain
-                controller.spatialDomain = SpatialDomain.from(coord);
-                SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
-                controller.model.setDomain(domain);
-
-                // Update the weather
+                // Must provide the weather provider with the current coord before updating weather model
                 WeatherManager.getInstance().updateSpatialDomain(coord);
                 controller.updateWeather();
 
-                // Update the fuel bed and the fire behavior
-                controller.fuelTemp = null;   // reset fuel temp. override
+                // Must reset the fuel temperature override whenever the coordinate changes
+                controller.fuelTemp = null;   // reset fuel temp.
                 controller.updateFuelModel();
                 controller.updateFireBehavior();
 
@@ -474,6 +501,11 @@ public final class Controller {
             this.controller = controller;
         }
 
+        /**
+         * TimeListener event handler that updates the model when the time changes.
+         *
+         * @param evt Contains the application date/time.
+         */
         @Override
         public void updateTime(TimeEvent evt) {
             this.lastTimeEvent.set(evt);
@@ -482,29 +514,27 @@ public final class Controller {
             }
         }
 
+        /**
+         * Runnable for the RequestProcessor.Task that updates the model from the current time.
+         */
         @Override
         @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
         public void run() {
 
+            // 
             TimeEvent timeEvent = this.lastTimeEvent.get();
             if (timeEvent == null) {
                 return;
             }
-
-            // Update the temporal-spatial domain
             ZonedDateTime time = timeEvent.getNewTime();
-            controller.temporalDomain = new TemporalDomain(time.minusHours(24), 25);
-
-            SpatioTemporalDomain domain = new SpatioTemporalDomain(controller.temporalDomain, controller.spatialDomain);
-            controller.model.setDateTime(time);
-            controller.model.setDomain(domain);
+            controller.updateTemporalDomain(time);
 
             try {
                 // Update solar angles and position
                 controller.updateSunlight();
                 controller.updateTerrainShading();
 
-                // Update the Weather
+                // Must update the weather providers with the time before updating the Weather
                 WeatherManager.getInstance().updateTime(time);
                 controller.resetWeather();  // Cancel the wx overrides
                 controller.updateWeather(); // Update the model
