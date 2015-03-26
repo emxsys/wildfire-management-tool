@@ -1,0 +1,11 @@
+Fixed Bugs:
+ - [134] Tactical Symbols do not work when offline (https://bitbucket.org/emxsys/wildfire-management-tool/issue/134/) 
+ - [133] Enable Manual Override checkboxes in CPS Forces (https://bitbucket.org/emxsys/wildfire-management-tool/issue/133/) 
+ - [128] WMT 4.0 will not launch on Windows 7. (https://bitbucket.org/emxsys/wildfire-management-tool/issue/128/) 
+ - [126] Fireground sectors are not displayed on Globe (https://bitbucket.org/emxsys/wildfire-management-tool/issue/126/) 
+ - [124] GeoMAC Current Fire Perimeters do not display (https://bitbucket.org/emxsys/wildfire-management-tool/issue/124/) 
+Enhancements:
+ - [132] Add Tooltip to Fire Shape Ellipse (https://bitbucket.org/emxsys/wildfire-management-tool/issue/132/) 
+Completed Tasks:
+ - [15] Add Articles to CPS module documentation (https://bitbucket.org/emxsys/wildfire-management-tool/issue/15/) 
+Accepted Proposals:
