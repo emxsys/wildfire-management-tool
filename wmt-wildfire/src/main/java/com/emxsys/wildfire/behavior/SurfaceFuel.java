@@ -29,10 +29,17 @@
  */
 package com.emxsys.wildfire.behavior;
 
+import com.emxsys.gis.api.Terrain;
+import com.emxsys.solar.api.Sunlight;
 import com.emxsys.visad.FireUnit;
+import static com.emxsys.visad.GeneralUnit.degC;
+import static com.emxsys.visad.GeneralUnit.degF;
+import static com.emxsys.visad.GeneralUnit.foot;
+import static com.emxsys.visad.GeneralUnit.mph;
 import com.emxsys.visad.Reals;
 import static com.emxsys.visad.Reals.convertTo;
 import com.emxsys.visad.Tuples;
+import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.WildfireType;
@@ -43,6 +50,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
+import static visad.CommonUnit.radian;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -74,6 +82,16 @@ public class SurfaceFuel extends RealTuple {
         return from(model, moisture, new Real(WildfireType.FUEL_TEMP_F));
     }
 
+    /**
+     * Creates a SurfaceFuel object. If the FuelModal is dynamic, then the herbaceous fuels are
+     * cured based on the FuelMoisture and the cured fuels are transfered to the dead 1 hour
+     * category.
+     * 
+     * @param model Either a static or dynamic fuel model.
+     * @param moisture 
+     * @param fuelTemp
+     * @return A new SurfaceFuel object.
+     */
     public static SurfaceFuel from(FuelModel model, FuelMoisture moisture, Real fuelTemp) {
         try {
             // Transfer cured herbaceous fuel into the dead herbaceous fuel load
@@ -113,6 +131,138 @@ public class SurfaceFuel extends RealTuple {
             return new SurfaceFuel();
         }
 
+    }
+
+    /**
+     * Computes the fuel temperature from the given environmental parameters.
+     *
+     * @param fuelModel The fuel model containing the vegetation height.
+     * @param sun The current sunlight prevailing upon the fuel.
+     * @param wx The current weather acting on the fuel (wind, air temperature and sky cover).
+     * @param terrain The slope, aspect and elevation at the fuel.
+     * @param shaded Set true if the fuel is currently shaded (by terrain or night).
+     *
+     * @return The fuel temperature [Fahrenheit]
+     *
+     * @see Rothermel
+     *
+     */
+    public static Real computeFuelTemperature(FuelModel fuelModel,
+                                              Sunlight sun, Weather wx,
+                                              Terrain terrain, boolean shaded) {
+        try {
+            // Vegetation height [feet]
+            double h_v = fuelModel.getFuelBedDepth().getValue(foot);
+
+            // Weather Values
+            double W = wx.getWindSpeed().getValue(mph); // 20' wind speed
+            double S_c = shaded ? 100. : wx.getCloudCover().getValue(); // [percent]
+            double T_a = wx.getAirTemperature().getValue(degF);
+
+            // Atmospheric transparency
+            // p    Qualitative description
+            // 0.8  exceptionally clear atmosphere
+            // 0.75 average clear forest atmosphere
+            // 0.7  moderate forest (blue) haze
+            // 0.6  dense haze
+            double p = 0.75;
+
+            // Terrain Values
+            double E = terrain.getElevationMeters();
+            double slope = terrain.getSlope().getValue(radian);
+            double aspect = terrain.getAspect().getValue(radian);
+
+            // Calculate solar irradiance
+            double A = sun.getAltitudeAngle().getValue(radian);
+            double Z = sun.getAzimuthAngle().getValue(radian);
+            double M = Rothermel.calcOpticalAirMass(A, E);
+            double I_a = Rothermel.calcAttenuatedIrradiance(M, S_c, p);
+            double I = Rothermel.calcIrradianceOnASlope(slope, aspect, A, Z, I_a);
+
+            // Calculate fuel temperature and humidity immediatly adjacent to fuel
+            double U_h = Rothermel.calcWindSpeedNearFuel(W, h_v);
+            double T_f = Rothermel.calcFuelTemp(I, T_a, U_h); // fahrenheit
+
+            return new Real(WildfireType.FUEL_TEMP_F, T_f);
+
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Computes the fine fuel moisture from the given environmental parameters. Dead 1-hour fuel
+     * moisture is computed using an "instantaneous" wetting or drying computation, versus the
+     * traditional 1-hour time lag formula. This approach is computationally more performant.
+     *
+     * Per K. Anderson, "This approach produces diurnal variations closer to expected values and
+     * when used in fire-growth modeling, over-predictions are reduced by 30%."
+     * <p>
+     * References:
+     * <ul>
+     * <li><a name="bib_1002"></a>Anderson, K., 2009, A Comparison of Hourly Fire Fuel Moisture Code
+     * Calculations within Canada, Canadian Forest Service
+     * </ul>
+     *
+     * @param fuelTemperature Fuel surface temperature.
+     * @param airTemperature General air temperature.
+     * @param relHumidity General relative humidity.
+     * @param initialDead1HrFuelMoisture Previous hour's fuel moisture - determines a wetting or
+     * drying trend.
+     *
+     * @return The fine fuel moisture (dead 1 hour fuel moisture) [%]
+     *
+     * @see Rothermel
+     */
+    public static Real computeFineFuelMoisture(Real fuelTemperature,
+                                               Real airTemperature,
+                                               Real relHumidity,
+                                               Real initialDead1HrFuelMoisture) {
+        try {
+            // Weather inputs
+            double Ta_f = airTemperature.getValue(degF);
+            double Ha = relHumidity.getValue();    // %
+
+            // Calculate humidity immediatly adjacent to fuel
+            double Tf_f = fuelTemperature.getValue(degF); // fahrenheit
+            double Hf = Rothermel.calcRelativeHumidityNearFuel(Ha, Tf_f, Ta_f); // humidity at fuel
+
+            // Compute fine dead fuel moisture... requires metric values;
+            // temp and humidity have been adjusted for solar preheating.
+            double Tf_c = fuelTemperature.getValue(degC); // celsius
+            double m_0 = initialDead1HrFuelMoisture.getValue();
+            double m = Rothermel.calcFineDeadFuelMoisture(m_0, Tf_c, Hf);   // instantaneous wetting/drying
+
+            // Round the fuel moisture to reduce the number entries in cache
+            return new Real(FUEL_MOISTURE_1H, m);//MathUtil.round(m, m < 2 ? 1 : 2));
+
+        } catch (VisADException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Computes the cured portion of live herbaceous fuels.
+     *
+     * @param fuelMoisture Provides the live fuel moisture.
+     * @return The cured percentage [%].
+     */
+    public static double calcHerbaceousCuring(FuelMoisture fuelMoisture) {
+        double herbMoisture = fuelMoisture.getLiveHerbFuelMoisture().getValue();
+        if (herbMoisture == 0) {
+            return 0;
+        }
+        double curing;
+        if (herbMoisture >= 120.) {
+            curing = 0.0;   // fully green
+        } else if (herbMoisture <= 30) {
+            curing = 1.0;   // fully cured
+        } else {
+            // interpolate between 30 and 120 percents
+            curing = 1.0 - ((herbMoisture - 30.) / 90.);
+        }
+        return curing;
     }
 
     // In all fire behavior simulation systems that use the Rothermel model, total mineral content
@@ -174,9 +324,8 @@ public class SurfaceFuel extends RealTuple {
     }
 
     /**
-     * Constructs an instance with from a RealTuple.
+     * Private constructor creates an instance initialized with the given values.
      *
-     * @param fuelMoistureTuple Fuel moisture values.
      */
     private SurfaceFuel(FuelModel model, FuelMoisture moisture, RealTuple tuple, Real fuelTemp)
             throws VisADException, RemoteException {
@@ -256,28 +405,6 @@ public class SurfaceFuel extends RealTuple {
         if (w0_total == 0 || sv_total == 0) {
             nonBurnable = true;
         }
-    }
-
-    /**
-     * Computes the cured portion of live herbaceous fuels.
-     * @param fuelMoisture Provides the live fuel moisture.
-     * @return The cured percentage [%].
-     */
-    public static double calcHerbaceousCuring(FuelMoisture fuelMoisture) {
-        double herbMoisture = fuelMoisture.getLiveHerbFuelMoisture().getValue();
-        if (herbMoisture == 0) {
-            return 0;
-        }
-        double curing;
-        if (herbMoisture >= 120.) {
-            curing = 0.0;   // fully green
-        } else if (herbMoisture <= 30) {
-            curing = 1.0;   // fully cured
-        } else {
-            // interpolate between 30 and 120 percents
-            curing = 1.0 - ((herbMoisture - 30.) / 90.);
-        }
-        return curing;
     }
 
     /**
