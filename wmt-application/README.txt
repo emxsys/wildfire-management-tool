@@ -3,19 +3,35 @@ Wildfire Management Tool (WMT)
 ==============================
 
 Installers:
-- WMT_windows-x64_4_0_BETA1.exe: 	Windows 64bit installer.
-- WMT_windows-x64_4_0_BETA1_JRE.exe: 	Windows 64bit installer with Java 8.
-- WMT_windows_4_0_BETA1.exe: 		Windows 32bit installer.
-- WMT_windows_4_0_BETA1_JRE.exe: 	Windows 32bit installer with Java 8.
-- wmt-application-4.0-BETA1.zip:	No installer -- see bin folder for launchers
+- WMT_windows-x64_4_0_BETA2A.exe: 	Windows 64bit installer.
+- WMT_windows-x64_4_0_BETA2A_JRE.exe: 	Windows 64bit installer with Java 8.
+- WMT_windows_4_0_BETA2A.exe: 		Windows 32bit installer.
+- WMT_windows_4_0_BETA2A_JRE.exe: 	Windows 32bit installer with Java 8.
+- wmt-application-4.0-BETA2A.zip:	No installer -- see bin folder for launchers
 
-07-OCT-2014 v4.0 BETA1
-----------------------
 Known Issues:
  - Offline mode does not work.  You must have an internet connection.
  - US National Weather Service is the only working weather provider.
  - You must move the globe and the time to activate the weather after it is downloaded.
  - Project fireground analysis do not work. Only point based fire-behavior is enabled.
+
+26-MAR-2015 v4.0 BETA2A
+-----------------------
+Fixed Bugs:
+ - [134] Tactical Symbols do not work when offline (https://bitbucket.org/emxsys/wildfire-management-tool/issue/134/) 
+ - [133] Enable Manual Override checkboxes in CPS Forces (https://bitbucket.org/emxsys/wildfire-management-tool/issue/133/) 
+ - [128] WMT 4.0 will not launch on Windows 7. (https://bitbucket.org/emxsys/wildfire-management-tool/issue/128/) 
+ - [126] Fireground sectors are not displayed on Globe (https://bitbucket.org/emxsys/wildfire-management-tool/issue/126/) 
+ - [124] GeoMAC Current Fire Perimeters do not display (https://bitbucket.org/emxsys/wildfire-management-tool/issue/124/) 
+
+Enhancements:
+ - [132] Add Tooltip to Fire Shape Ellipse (https://bitbucket.org/emxsys/wildfire-management-tool/issue/132/) 
+
+Completed Tasks:
+ - [15] Add Articles to CPS module documentation (https://bitbucket.org/emxsys/wildfire-management-tool/issue/15/) 
+
+07-OCT-2014 v4.0 BETA1
+----------------------
 
 Fixed Bugs:
  - [112] Pushpin Markers are INOP (https://bitbucket.org/emxsys/wildfire-management-tool/issue/112/) 
