@@ -49,6 +49,7 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.SimpleWeatherProvider;
+import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
@@ -109,8 +110,7 @@ public final class Controller {
 
     private final SimpleWeatherProvider simpleWeather = new SimpleWeatherProvider();
 
-    // Overrides (these values are read and writted on the EDT)
-    private boolean overrideFuelTemp = false;
+    // Overrides (unsyncronized: these values are read and written on the EDT)
     private Real airTemp = null;
     private Real relHumidity = null;
     private Real windDir = null;
@@ -131,7 +131,7 @@ public final class Controller {
     // The current project
     private Project currentProject;
     private Lookup.Result<Project> projects;
-    private LookupListener projectListener;
+    private final LookupListener projectListener;
 
     private final PreferenceChangeListener prefsChangeListener;
     private boolean terrainShadingEnabled;
@@ -225,30 +225,29 @@ public final class Controller {
         logger.log(Level.CONFIG, "FuelMoisture set to: {0}", fuelMoisture.toString());
         model.setFuelMoisture(fuelMoisture);
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
-    
     public void setAirTemperature(Real airTemp) {
         this.airTemp = airTemp;
         this.fuelTemp = null;   // reset 
         updateWeather();
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
     public void setRelativeHumidity(Real relHumidity) {
         this.relHumidity = relHumidity;
         updateWeather();
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
     public void setWindDir(Real windDir) {
         this.windDir = windDir;
         updateWeather();
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
     public void setWindSpeed(Real windSpd) {
@@ -256,7 +255,7 @@ public final class Controller {
         this.fuelTemp = null;   // reset 
         updateWeather();
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
     public void setSkyCover(Real skyCover) {
@@ -264,13 +263,13 @@ public final class Controller {
         this.fuelTemp = null;   // reset 
         updateWeather();
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
     public void setFuelTemperature(Real fuelTemp) {
         this.fuelTemp = fuelTemp;
         updateFireBehavior();
-        updateView();
+        updateViews();
     }
 
     void updateSpatialDomain(Coord3D coord) {
@@ -324,27 +323,8 @@ public final class Controller {
      * Updates the weather using the current coordinate and time.
      */
     void updateWeather() {
-        // Get the current weather and store it in our mutable SimpleWeatherProvider
-        simpleWeather.setWeather(WeatherManager.getInstance().getWeatherAt(model.getCoord(), model.getDateTime()));
-
-        // Apply wx overrides
-        if (airTemp != null && !airTemp.isMissing()) {
-            simpleWeather.setAirTemperature(airTemp);
-        }
-        if (relHumidity != null && !relHumidity.isMissing()) {
-            simpleWeather.setRelativeHumdity(relHumidity);
-        }
-        if (windDir != null) {
-            simpleWeather.setWindDirection(windDir);
-        }
-        if (windSpd != null) {
-            simpleWeather.setWindSpeed(windSpd);
-        }
-        if (skyCover != null) {
-            simpleWeather.setCloudCover(skyCover);
-        }
-        // Update the model
-        model.setWeather(simpleWeather.getWeather());
+        Weather wx = WeatherManager.getInstance().getWeatherAt(model.getCoord(), model.getDateTime());
+        model.setWeather(applyWeatherOverrides(wx));
 
         //                if (controller.forecastProvider != null) {
         //                    if (controller.forecastProvider instanceof DiurnalWeatherProvider) {
@@ -366,16 +346,39 @@ public final class Controller {
         //                }
     }
 
+    Weather applyWeatherOverrides(Weather weather) {
+
+        // Copy the weather into a mutable weather provider 
+        simpleWeather.setWeather(weather);
+
+        // Apply wx overrides
+        if (airTemp != null && !airTemp.isMissing()) {
+            simpleWeather.setAirTemperature(airTemp);
+        }
+        if (relHumidity != null && !relHumidity.isMissing()) {
+            simpleWeather.setRelativeHumdity(relHumidity);
+        }
+        if (windDir != null) {
+            simpleWeather.setWindDirection(windDir);
+        }
+        if (windSpd != null) {
+            simpleWeather.setWindSpeed(windSpd);
+        }
+        if (skyCover != null) {
+            simpleWeather.setCloudCover(skyCover);
+        }
+        return simpleWeather.getWeather();
+    }
+
     /**
      * Reset the weather overrides.
      */
-    void resetWeather() {
+    void clearWeatherOverrides() {
         airTemp = null;
         relHumidity = null;
         windDir = null;
         windSpd = null;
         skyCover = null;
-        //fuelTemp = null;
     }
 
     /**
@@ -403,7 +406,7 @@ public final class Controller {
     /**
      * Updates the View in the Model-View-Controller relationship.
      */
-    void updateView() {
+    void updateViews() {
         model.publishUpdates();
     }
 
@@ -477,7 +480,7 @@ public final class Controller {
                 controller.updateFireBehavior();
 
                 // Update the GUI 
-                controller.updateView();
+                controller.updateViews();
 
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "CooridinateUpdater failed.", e);
@@ -536,14 +539,14 @@ public final class Controller {
 
                 // Must update the weather providers with the time before updating the Weather
                 WeatherManager.getInstance().updateTime(time);
-                controller.resetWeather();  // Cancel the wx overrides
+                controller.clearWeatherOverrides();  // Cancel the wx overrides
                 controller.updateWeather(); // Update the model
 
                 // Update the fuelbed and fire behavior
                 controller.updateFireBehavior();
 
                 // Update the GUI 
-                controller.updateView();
+                controller.updateViews();
 
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, "TimeUpdater failed.", ex);
