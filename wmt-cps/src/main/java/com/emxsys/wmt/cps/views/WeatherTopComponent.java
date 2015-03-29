@@ -93,9 +93,9 @@ import visad.FlatField;
 //        tooltipFooterIcon = "com/terramenta/images/help.png")
 @Messages({
     "CTL_WeatherTopComponent=Weather",
-    "CTL_WeatherTopComponent_Hint=The Weather window.",
+    "CTL_WeatherTopComponent_Hint=The Weather Charts window.",
     "CTL_WeatherAction=Weather",
-    "CTL_WeatherAction_Hint=Show the Weather.",
+    "CTL_WeatherAction_Hint=Show the Weather Charts.",
     "CTL_WeatherAction_TooltipTitle=Show the Weather",
     "CTL_WeatherAction_TooltipBody=Activates the Weather window used for visualizing "
     + "the weather conditions influencing fire behavior.",
@@ -137,7 +137,7 @@ public final class WeatherTopComponent extends TopComponent {
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
-        // Update the charts from the CPS data model
+        // Sync the Weather Charts to the CPS data model
         Model.getInstance().addPropertyChangeListener(Model.PROP_COORD3D, (PropertyChangeEvent evt) -> {
             Coord3D coord = (Coord3D) evt.getNewValue();
             WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();

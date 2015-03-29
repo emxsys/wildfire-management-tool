@@ -88,7 +88,7 @@ import org.openide.windows.WindowManager;
 //        tooltipFooterIcon = "com/terramenta/images/help.png")
 @Messages({
     "CTL_FuelTopComponent=Environment",
-    "CTL_FuelTopComponent_Hint=The Environment window.",
+    "CTL_FuelTopComponent_Hint=The Fire Environment window.",
     "CTL_FuelAction=Environement",
     "CTL_FuelAction_Hint=Shows the fire environment.",
     "CTL_FuelAction_TooltipTitle=Fire Environment",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Bruce Schubert
+ * Copyright (c) 2014-2015, Bruce Schubert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -152,19 +152,18 @@ public final class Controller {
         earth = ShadedTerrainProviderFactory.getInstance();
         earthClock = TimeProviderFactory.getInstance();
 
-        // Clock listens for TimeEvents and notifies SolarUpdater
-        earthClock.addTimeListener(WeakListeners.create(
-                TimeListener.class, timeUpdater, earthClock));
-        timeUpdater.updateTime(
-                new TimeEvent(this, null, ZonedDateTime.now(ZoneId.of("UTC"))));
+        // Clock listens for TimeEvents and notifies TimeUpdater
+        earthClock.addTimeListener(WeakListeners.create(TimeListener.class, timeUpdater, earthClock));
+        timeUpdater.updateTime(new TimeEvent(this, null, earthClock.getTime()));
 
         // LookupListener waits for arrival of a ReticuleCoordinateProvider ...
         reticuleLookupListener = (LookupEvent le) -> {
             if (reticuleResult != null && reticuleResult.allInstances().iterator().hasNext()) {
-                // ... on arrival, reticule listens for ReticuleCoordinateEvents and notifies TerrainUpdater
+                // ... on arrival, reticule listens for ReticuleCoordinateEvents and notifies CoordianteUpdater
                 reticule = reticuleResult.allInstances().iterator().next();
                 reticule.addReticuleCoordinateListener(
                         WeakListeners.create(ReticuleCoordinateListener.class, coordinateUpdater, reticule));
+                reticule.getReticuleCoordinate();
             }
         };
         // Initiate the ReticuleCoordinateProvider lookup
@@ -207,9 +206,7 @@ public final class Controller {
         }
         logger.log(Level.CONFIG, "FuelModelProvider set to: {0}", fuels.toString());
         this.fuels = fuels;
-
-        // Fire a coordinate-based update to change the current FuelModel
-        coordinateUpdater.update();
+        updateFuelModel();
     }
 
     /**

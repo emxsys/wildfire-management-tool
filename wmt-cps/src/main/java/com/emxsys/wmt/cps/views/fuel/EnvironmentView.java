@@ -74,7 +74,7 @@ public class EnvironmentView extends javax.swing.JPanel {
         // See com.emxsys.wmt.cps.docs.cps-map.xml for help ids.
         this.airTempPanel = new AirTemperatureGauge("Air Temp.", WeatherPreferences.getAirTempUnit(),
                 new Real(WeatherType.AIR_TEMP_F, 59), 
-                "com.emxsys.wmt.cps.airtemperature");
+                "com.emxsys.wmt.cps.airtemperature"); // help text ID
         this.relHumidityPanel = new RelativeHumidityGauge("Humidty", 
                 new Real(WeatherType.REL_HUMIDITY, 20),
                 "com.emxsys.wmt.cps.relativehumidity");

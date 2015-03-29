@@ -117,15 +117,17 @@ public final class PreheatForceView extends javax.swing.JPanel {
         });
         Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
             SurfaceFuel fuel = (SurfaceFuel) evt.getNewValue();
-            Real newFuelTemp = fuel.getFuelTemperature();
-            Real oldFuelTemp = fuelTempGauge.getFuelTemperature();
-            // Update the fuel chart if the new value is not equal to the existing value
-            if (!Reals.nearlyEquals(newFuelTemp, oldFuelTemp, GeneralUnit.degF, 1.0d)) {
-                fuelTempGauge.setFuelTemperature(fuel.getFuelTemperature());
-                fuelTempGauge.setBorder(emptyBorder);
+            if (fuel != null) {
+                Real newFuelTemp = fuel.getFuelTemperature();
+                Real oldFuelTemp = fuelTempGauge.getFuelTemperature();
+                // Update the fuel chart if the new value is not equal to the existing value
+                if (!Reals.nearlyEquals(newFuelTemp, oldFuelTemp, GeneralUnit.degF, 1.0d)) {
+                    fuelTempGauge.setFuelTemperature(fuel.getFuelTemperature());
+                    fuelTempGauge.setBorder(emptyBorder);
+                }
+                fuelMoistureGauge.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
+                fuelMoistureGauge.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
             }
-            fuelMoistureGauge.setMoisture(fuel.isBurnable() ? fuel.getDead1HrFuelMoisture() : null);
-            fuelMoistureGauge.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
         });
 
         // Update the Controller from inputs in this View
