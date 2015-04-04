@@ -32,6 +32,7 @@ package com.emxsys.util;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  *
@@ -50,9 +51,21 @@ public class TimeUtil {
      * </pre>
      *
      * Source: Java Cookbook by Ian Darwin
+     * 
+     * @param msTime Time in milliseconds
+     * @return Time in seconds: "123 s"
      */
-    public static String msToSecs(long t) {
-        return Double.toString(t / 1000D) + " s";
+    public static String msToSecs(long msTime) {
+        return Double.toString(msTime / 1000D) + " s";
+    }
+    
+    /**
+     * Returns a the time truncated to the start of the day (midnight).
+     * @param time The date/time to truncate.
+     * @return A new date/time set to midnight.
+     */
+    public static ZonedDateTime toStartOfDay(ZonedDateTime time) {
+        return time.truncatedTo(ChronoUnit.DAYS);
     }
     
     public static ZonedDateTime toUTC(ZonedDateTime time) {
