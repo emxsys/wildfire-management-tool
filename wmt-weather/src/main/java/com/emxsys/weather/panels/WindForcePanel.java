@@ -34,8 +34,6 @@ import com.emxsys.weather.api.WeatherType;
 import com.emxsys.weather.panels.WindDirectionDial.WindDirChart;
 import com.emxsys.weather.panels.WindSpeedDial.WindSpdChart;
 import java.awt.Dimension;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -44,8 +42,8 @@ import visad.Real;
 import visad.VisADException;
 
 /**
- * The WindForcePanel is a combined WindDirectionDial and WindSpeedDial used for editing
- wind speed and direction.
+ * The WindForcePanel is a combined WindDirectionDial and WindSpeedDial used for editing wind speed
+ * and direction.
  *
  * @author Bruce Schubert
  */
@@ -59,8 +57,6 @@ public class WindForcePanel extends javax.swing.JPanel {
     private final JSlider dirSlider = new DirectionSlider((WindDirChart) dirPanel.getChart());
     private final JSlider spdSlider = new SpeedSlider((WindSpdChart) spdPanel.getChart());
     private Real lastWindDir = new Real(WeatherType.WIND_DIR);
-
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /** Creates new form WindPanel */
     public WindForcePanel() {
@@ -108,18 +104,6 @@ public class WindForcePanel extends javax.swing.JPanel {
         }
     }
 
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        super.addPropertyChangeListener(listener);
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        super.removePropertyChangeListener(listener);
-        pcs.removePropertyChangeListener(listener);
-    }
-
     /**
      * The DirectionSlider updates the WindDirChart and fires a property change event.
      */
@@ -138,7 +122,7 @@ public class WindForcePanel extends javax.swing.JPanel {
                 Real newDir = new Real(WeatherType.WIND_DIR, getValue());
                 dirPanel.setWindDirection(newDir);
                 if (this.isEnabled()) {
-                    pcs.firePropertyChange(PROP_WIND_DIR, oldDir, newDir);
+                    WindForcePanel.this.firePropertyChange(PROP_WIND_DIR, oldDir, newDir);
                 }
             });
         }
@@ -163,7 +147,7 @@ public class WindForcePanel extends javax.swing.JPanel {
                 // Panel will draw in the speed in the configured UOM.
                 spdPanel.setWindSpeed(newSpd);
                 if (this.isEnabled()) {
-                    pcs.firePropertyChange(PROP_WIND_SPD, oldSpd, newSpd);
+                    WindForcePanel.this.firePropertyChange(PROP_WIND_SPD, oldSpd, newSpd);
                 }
                 if (value == 0) {
                     dirPanel.setWindDirection(null);
