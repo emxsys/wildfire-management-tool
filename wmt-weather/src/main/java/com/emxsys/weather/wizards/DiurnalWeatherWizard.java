@@ -60,6 +60,8 @@ public final class DiurnalWeatherWizard {
     public static final String PROP_REL_HUMIDITY_1400 = "relHumidity1400";
     public static final String PROP_REL_HUMIDITY_SUNSET = "relHumiditySunset";
     public static final String PROP_WIND_SPD_UOM = "windSpdUOM";
+    public static final String PROP_WIND_SPEEDS = "windSpeeds";
+    public static final String PROP_WIND_DIRECTIONS = "windDirections";
     private final DiurnalWeatherProvider provider;
     private WizardDescriptor wizard;
 
@@ -118,7 +120,7 @@ public final class DiurnalWeatherWizard {
     }
 
     /**
-     * Display the wizard.
+     * Display the wizard. The provider will be updated upon finish.
      */
     public void show() {
         if (DialogDisplayer.getDefault().notify(wizard) == WizardDescriptor.FINISH_OPTION) {
@@ -126,17 +128,27 @@ public final class DiurnalWeatherWizard {
         }
     }
 
+    /**
+     * Update the provider from the wizard properties.
+     */
     private void updateProvider() {
         provider.initializeAirTemperatures(
                 (Real) wizard.getProperty(PROP_AIR_TEMP_SUNRISE),
                 (Real) wizard.getProperty(PROP_AIR_TEMP_NOON),
                 (Real) wizard.getProperty(PROP_AIR_TEMP_1400),
                 (Real) wizard.getProperty(PROP_AIR_TEMP_SUNSET));
+        
         provider.initializeRelativeHumidities(
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_SUNRISE),
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_NOON),
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_1400),
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_SUNSET));
+        
+        //provider.initializeWindDirections(...);
+        
+        //provider.initializeWindSpeeds(...);
+        
+        //provider.initializeCloudCovers(...);
 
     }
 

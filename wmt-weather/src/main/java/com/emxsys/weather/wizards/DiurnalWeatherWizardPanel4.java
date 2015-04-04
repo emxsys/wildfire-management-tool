@@ -33,6 +33,8 @@ import com.emxsys.weather.api.DiurnalWeatherProvider;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
+import visad.Real;
+import visad.Unit;
 
 public class DiurnalWeatherWizardPanel4 implements WizardDescriptor.Panel<WizardDescriptor> {
 
@@ -83,12 +85,18 @@ public class DiurnalWeatherWizardPanel4 implements WizardDescriptor.Panel<Wizard
 
     @Override
     public void readSettings(WizardDescriptor wiz) {
-        // use wiz.getProperty to retrieve previous panel state
+        // Set the UOM first so following wind speed setting are in correct UOM
+        Unit uom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_WIND_SPD_UOM);
+        if (uom != null) {
+            getComponent().setSpeedUom(uom);
+        }
+        getComponent().repaint();
     }
-
     @Override
     public void storeSettings(WizardDescriptor wiz) {
         // use wiz.putProperty to remember current panel state
+        wiz.putProperty(DiurnalWeatherWizard.PROP_WIND_SPEEDS, getComponent().getWindSpeeds());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_WIND_DIRECTIONS, getComponent().getWindDirections());
     }
 
 }

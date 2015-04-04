@@ -49,7 +49,7 @@ public class HumidityPanelTest {
     /**
      * Comment out @Ignore to display the interactive unit test.
      */
-    //@Ignore("interative test")
+    @Ignore("interative test")
     @Test
     public void testBehavior() {
         System.out.println("testBehavior - interative");

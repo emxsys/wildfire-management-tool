@@ -44,7 +44,7 @@ import visad.Real;
  *
  * @author Bruce Schubert
  */
-//@Ignore("interactive tests")
+@Ignore("interactive tests")
 public class TemperaturePanelTest {
 
     public TemperaturePanelTest() {
