@@ -35,7 +35,9 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- *
+ * Class utility for new Java DateTime objects.
+ * 
+ * @see DateUtil
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class TimeUtil {
