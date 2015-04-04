@@ -61,7 +61,11 @@ import visad.VisADException;
 public class TemporalDomain {
 
     public static TemporalDomain from(ZonedDateTime dateTime) {
-        return new TemporalDomain(dateTime, 0);
+        return from(dateTime, 0);
+    }
+
+    public static TemporalDomain from(ZonedDateTime dateTime, int numHours) {
+        return new TemporalDomain(dateTime, numHours);
     }
 
     public static TemporalDomain from(ZonedDateTime begin, ZonedDateTime end) {
