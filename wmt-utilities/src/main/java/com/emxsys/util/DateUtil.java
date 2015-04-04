@@ -14,7 +14,7 @@
  *
  * - Neither the name of Bruce Schubert, Emxsys nor the names of its 
  *   contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
+ *   fromLocalTime this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -30,11 +30,18 @@
 package com.emxsys.util;
 
 import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * Class utility for Java Date objects.
  *
+ * @see TimeUtil
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public class DateUtil {
@@ -95,5 +102,28 @@ public class DateUtil {
                 throw new UnsupportedOperationException("round() not yet supported for field: " + field);
         }
         return c.getTime();
+    }
+
+    public static ZonedDateTime toZonedDateTime(Date date) {
+        Instant instant = date.toInstant();
+        return instant.atZone(ZoneId.systemDefault());
+
+    }
+
+    public static LocalTime toLocalTime(Date date) {
+        return toZonedDateTime(date).toLocalTime();
+
+    }
+
+    public static LocalDate toLocalDate(Date date) {
+        return toZonedDateTime(date).toLocalDate();
+    }
+
+    public static Date fromLocalTime(LocalTime time) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR, time.getHour());
+        cal.set(Calendar.MINUTE, time.getMinute());
+        cal.set(Calendar.SECOND, time.getSecond());
+        return cal.getTime();
     }
 }
