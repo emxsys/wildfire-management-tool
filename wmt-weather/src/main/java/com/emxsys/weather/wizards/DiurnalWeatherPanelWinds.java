@@ -14,7 +14,7 @@
  *
  *     - Neither the name of Bruce Schubert, Emxsys nor the names of its 
  *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
+ *       fromLocalTime this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -30,6 +30,7 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.util.AngleUtil;
+import com.emxsys.util.DateUtil;
 import com.emxsys.util.MathUtil;
 import com.emxsys.util.TimeUtil;
 import com.emxsys.visad.TemporalDomain;
@@ -76,7 +77,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
 
     /**
      * Creates new form DiurnalWeatherPanelWinds.
-     * @param provider
+     * @param provider Provides initial values.
      */
     public DiurnalWeatherPanelWinds(DiurnalWeatherProvider provider) {
         initComponents();
@@ -88,8 +89,8 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         formatter.setOverwriteMode(true);
         timeSpinField.setEditor(editor);
 
-        // Add the wind direction and speed dials.  
-        // These dials have sliders that will generate property change events when manipulated
+        // Add the wind direction and speed dials....
+        // Add property change listeners that will sync the controls to the dial sliders
         windDials = new WindForcePanel();
         windDials.addPropertyChangeListener(WindForcePanel.PROP_WIND_SPD, (evt) -> {
             try {
@@ -117,8 +118,21 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             LocalTime time = times.next();
             tableModel.add(time, dirs.get(time), spds.get(time));
         }
+        // Add a listener to sync the controls when the table selection changes
+        windsTable.getSelectionModel().addListSelectionListener((event) -> {
+            int row = windsTable.getSelectedRow();
+            if (row < 0) {
+                return;
+            }
+            LocalTime time = tableModel.getTimeAt(row);
+            WindsTableModel.Item item = tableModel.getItemAt(row);
+            speedSpinField.setValue(item.windSpd.getValue());
+            dirSpinField.setValue(item.windDir.getValue());
+            timeSpinField.setValue(DateUtil.fromLocalTime(time));
 
-        // Update the weather chart from the table model
+        });
+
+        // Update the weather chart fromLocalTime the table model
         updateChartFromTable();
     }
 
@@ -168,10 +182,10 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
                 Real spd = (entry == null) ? new Real(WIND_SPEED_KTS, 0) : entry.getValue().windSpd;
                 Real dir = (entry == null) ? new Real(WIND_DIR, 0) : entry.getValue().windDir;
 
-                wxSamples[AIR_TEMP_INDEX][i] = Double.NaN;      // ignored
-                wxSamples[REL_HUMIDITY_INDEX][i] = Double.NaN;  // ignored
                 wxSamples[WIND_SPEED_INDEX][i] = spd.getValue(speedUom);
                 wxSamples[WIND_DIR_INDEX][i] = dir.getValue();
+                wxSamples[AIR_TEMP_INDEX][i] = Double.NaN;      // ignored
+                wxSamples[REL_HUMIDITY_INDEX][i] = Double.NaN;  // ignored
                 wxSamples[CLOUD_COVER_INDEX][i] = Double.NaN;   // ignored
             }
             // ...and put the weather values above into it
@@ -247,17 +261,23 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             return Arrays.binarySearch(map.navigableKeySet().toArray(), time);
         }
 
+        public LocalTime getTimeAt(int row) {
+            return (LocalTime) map.navigableKeySet().toArray()[row];
+        }
+
+        public Item getItemAt(int row) {
+            return map.get(getTimeAt(row));
+        }
+
         @Override
         public Object getValueAt(int row, int column) {
-            LocalTime key = (LocalTime) map.navigableKeySet().toArray()[row];
-            Item item = map.get(key);
             try {
                 if (column == 0) {
-                    return key;
+                    return getTimeAt(row);
                 } else if (column == 1) {
-                    return item.windSpd;
+                    return getItemAt(row).windSpd;
                 } else {
-                    return AngleUtil.degreesToCardinalPoint16(item.windDir.getValue());
+                    return AngleUtil.degreesToCardinalPoint16(getItemAt(row).windDir.getValue());
                 }
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
@@ -279,7 +299,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         }
     }
 
-    /** This method is called from within the constructor to initialize the form. WARNING: Do NOT
+    /** This method is called fromLocalTime within the constructor to initialize the form. WARNING: Do NOT
      * modify this code. The content of this method is always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -379,20 +399,19 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(timeSpinField, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
-                    .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addButton)))
+                .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(timeSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addButton)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dirSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(removeButton))
+                    .addComponent(removeButton)
+                    .addComponent(dirSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(controlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(speedSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(speedSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(removeAllButton))
                 .addGap(17, 17, 17))
         );
@@ -452,16 +471,16 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
 
-        // Use a LocalTime to get second-of-day for the map ky
+        // Use a LocalTime to get second-of-day for the map key
         Calendar cal = Calendar.getInstance();
         cal.setTime((Date) timeSpinField.getValue());
+
         LocalTime time = LocalTime.of(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
         Real direction = windDials.getWindDirection();
         Real windspeed = windDials.getWindSpeed();
 
         tableModel.add(time, windspeed, direction);
         updateChartFromTable();
-
 
     }//GEN-LAST:event_addButtonActionPerformed
 
