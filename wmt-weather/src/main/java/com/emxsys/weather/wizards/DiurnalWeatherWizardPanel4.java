@@ -86,6 +86,7 @@ public class DiurnalWeatherWizardPanel4 implements WizardDescriptor.Panel<Wizard
     @Override
     public void readSettings(WizardDescriptor wiz) {
         // Set the UOM first so following wind speed setting are in correct UOM
+        // Restore the customized state of dialog
         Unit uom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_WIND_SPD_UOM);
         if (uom != null) {
             getComponent().setSpeedUom(uom);
