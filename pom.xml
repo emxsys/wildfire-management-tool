@@ -176,7 +176,8 @@
         <module>wmt-gis-shapefile</module>
         <module>wmt-gis-sqlserver</module>
         -->
-    </modules>
+    <module>wmt-web</module>
+  </modules>
     <reporting>
         <plugins>
             <plugin>
