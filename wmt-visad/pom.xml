@@ -44,11 +44,6 @@
         </dependency>        
         <!--WMT Dependencies-->
         <dependency>
-            <artifactId>wmt-core</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <artifactId>wmt-libraries</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
