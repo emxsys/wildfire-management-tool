@@ -55,6 +55,7 @@
             <groupId>com.terramenta</groupId>
             <artifactId>terramenta-time</artifactId>
             <version>${terramenta.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
