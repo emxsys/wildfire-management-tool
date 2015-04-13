@@ -29,7 +29,6 @@
  */
 package com.emxsys.wmt.web;
 
-import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.StdFuelModel;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -37,22 +36,24 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.DELETE;
 
+
 /**
  * REST Web Service
  *
  * @author Bruce Schubert
  */
 public class FuelModelResource {
-    private FuelModel fuelModel;
+    private StdFuelModel fm;
 
     /** Creates a new instance of FuelModelResource */
     private FuelModelResource(String modelNo) {
-        this.fuelModel = StdFuelModel.from(Integer.parseInt(modelNo));
+        this.fm = StdFuelModel.from(Integer.parseInt(modelNo));
     }
 
     /** Get instance of the FuelModelResource
+     *
      * @param modelNo
-     * @return  
+     * @return
      */
     public static FuelModelResource getInstance(String modelNo) {
         // The user may use some kind of persistence mechanism
@@ -62,22 +63,24 @@ public class FuelModelResource {
 
     /**
      * Retrieves representation of an instance of com.emxsys.wmt.web.FuelModelResource
+     *
      * @return an instance of com.emxsys.wildfire.api.FuelModel
      */
     @GET
     @Produces("application/xml")
-    public FuelModelBean getFuelModel() {
+    public StdFuelModel getFuelModel() {
         //TODO return proper representation object
-        return new FuelModelBean(this.fuelModel);
+        return this.fm;
     }
 
     /**
      * PUT method for updating or creating an instance of FuelModelResource
+     *
      * @param content representation for the resource
      */
     @PUT
     @Consumes("application/xml")
-    public void putFuelModel(FuelModelBean content) {
+    public void putFuelModel(StdFuelModel content) {
     }
 
     /**

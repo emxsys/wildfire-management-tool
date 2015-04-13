@@ -62,19 +62,19 @@ public class FuelModelsResource {
     /**
      * Retrieves representation of an instance of com.emxsys.wmt.web.FuelModelsResource
      *
-     * @return an instance of List<FuelModelBean>
+     * @return an instance of List<StdFuelModel>
      */
     @GET
     @Produces("application/xml")
-    public List<FuelModelBean> getAllFuelModels() {
-        ArrayList<FuelModelBean> list = new ArrayList<>();
+    public List<StdFuelModel> getAllFuelModels() {
+        ArrayList<StdFuelModel> list = new ArrayList<>();
         // Add the Standard 13 FuelModels
         for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
-            list.add(new FuelModelBean(StdFuelModel.from(fbfm.getModelNo())));
+            list.add(new StdFuelModel.Builder(fbfm).build());
         }
         // Add the Standard 13 FuelModels
         for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
-            list.add(new FuelModelBean(StdFuelModel.from(fbfm.getModelNo())));
+            list.add(new StdFuelModel.Builder(fbfm).build());
         }
         return list;
     }
@@ -88,7 +88,7 @@ public class FuelModelsResource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public Response postFuelModel(FuelModelBean content) {
+    public Response postFuelModel(StdFuelModel content) {
         //TODO
         return Response.created(context.getAbsolutePath()).build();
     }
@@ -103,4 +103,5 @@ public class FuelModelsResource {
     public FuelModelResource getFuelModelResource(@PathParam("modelNo") String modelNo) {
         return FuelModelResource.getInstance(modelNo);
     }
+
 }

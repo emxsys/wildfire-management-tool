@@ -55,6 +55,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(
                                         Set<Class<?>> resources) {
+        resources.add(com.emxsys.wmt.web.FuelModelResource.class);
         resources.add(com.emxsys.wmt.web.FuelModelsResource.class);
         resources.add(com.emxsys.wmt.web.TestResource.class);
     }
