@@ -37,7 +37,7 @@ import visad.Real;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Sunlight extends Data {
+public interface Sunlight {
 
     /**
      * Gets the declination: the earth's tilt angle relative to the sun at a given date and time. It
@@ -125,7 +125,6 @@ public interface Sunlight extends Data {
      *
      * @return true if a data element is missing.
      */
-    @Override
     boolean isMissing();
 
 }

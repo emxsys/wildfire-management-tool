@@ -139,14 +139,14 @@ public class SPASunlightProviderTest {
         SolarPositionAlgorithms.spa_calculate(spa);
         
         SPASunlightProvider instance = new SPASunlightProvider();
-        RealTuple tuple = instance.getSunlight(date, observer);
+        RealTuple tuple = instance.getSunlight(date, observer).getTuple();
         System.out.println(observer + " @ " + date);
         System.out.println(tuple.longString());
         
         
         date = ZonedDateTime.now();
         observer = GeoCoord3D.fromDegrees(34.25, -119.2);
-        tuple = instance.getSunlight(date, observer);
+        tuple = instance.getSunlight(date, observer).getTuple();
         System.out.println(observer + " @ " + date);
         System.out.println(tuple.longString());
         

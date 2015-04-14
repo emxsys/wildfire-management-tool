@@ -48,8 +48,8 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
- * SunlightTuple is a concrete implementation of the Sunlight interface using a SUNLIGHT
- * RealTupleType.
+ * BasicSunlight is a concrete implementation of the Sunlight interface using a SUNLIGHT
+ RealTupleType.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -61,11 +61,10 @@ import visad.VisADException;
            "sunriseTime", "sunsetTime", "sunTransitTime",
            "missing"
         })
-
-public class SunlightTuple extends RealTuple implements Sunlight {
+public class BasicSunlight implements Sunlight {
 
     /** A tuple with "missing" components */
-    public static final SunlightTuple INVALID_TUPLE = new SunlightTuple();
+    public static final BasicSunlight INVALID_TUPLE = new BasicSunlight();
     public static final int SUBSOLAR_LATITUDE_INDEX = Tuples.getIndex(SUBSOLAR_LATITUDE, SUNLIGHT);
     public static final int SUBSOLAR_LONGITIDUE_INDEX = Tuples.getIndex(SUBSOLAR_LONGITUDE, SUNLIGHT);
     public static final int AZIMUTH_ANGLE_INDEX = Tuples.getIndex(AZIMUTH_ANGLE, SUNLIGHT);
@@ -79,7 +78,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     public static final int SUNSET_HOUR_INDEX = Tuples.getIndex(SUNSET_HOUR, SUNLIGHT);
     public static final int ZONE_OFFSET_HOUR_INDEX = Tuples.getIndex(ZONE_OFFSET_HOUR, SUNLIGHT);
 
-    public static SunlightTuple fromRealTuple(RealTuple sunightTuple) {
+    public static BasicSunlight fromRealTuple(RealTuple sunightTuple) {
         if (!sunightTuple.getType().equals(SolarType.SUNLIGHT)) {
             throw new IllegalArgumentException("Incompatible MathType: " + sunightTuple.getType());
         } else if (sunightTuple.isMissing()) {
@@ -87,7 +86,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
         }
         try {
 
-            return new SunlightTuple(sunightTuple);
+            return new BasicSunlight(sunightTuple);
 
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
@@ -95,26 +94,38 @@ public class SunlightTuple extends RealTuple implements Sunlight {
         }
     }
 
+    private RealTuple tuple;
+
     /**
      * Constructs and instance with missing values.
      * @param sunlight
      */
-    SunlightTuple(RealTuple sunlightTuple) throws VisADException, RemoteException {
-        super(SolarType.SUNLIGHT, sunlightTuple.getRealComponents(), null);
+    BasicSunlight(RealTuple sunlightTuple) throws VisADException, RemoteException {
+        this.tuple = sunlightTuple;
+        //super(SolarType.SUNLIGHT, sunlightTuple.getRealComponents(), null);
     }
 
     /**
      * Constructs and instance with missing values.
      */
-    public SunlightTuple() {
-        super(SolarType.SUNLIGHT);
+    public BasicSunlight() {
+        this.tuple = new RealTuple(SolarType.SUNLIGHT);
+        //super(SolarType.SUNLIGHT);
+    }
+
+    /**
+     * Gets the SolarType.SUNLIGHT implementation tuple.
+     * @return A RealTuple of type SolarType.SUNLIGHT.
+     */
+    public RealTuple getTuple() {
+        return this.tuple;
     }
 
     @Override
     public Real getDeclination() {
         try {
             // Subsolar point latitude is same as declination angle
-            return (Real) getComponent(SUBSOLAR_LATITUDE_INDEX);
+            return (Real) tuple.getComponent(SUBSOLAR_LATITUDE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -125,7 +136,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSubsolarLatitude() {
         try {
-            return (Real) getComponent(SUBSOLAR_LATITUDE_INDEX);
+            return (Real) tuple.getComponent(SUBSOLAR_LATITUDE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -136,7 +147,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSubsolarLongitude() {
         try {
-            return (Real) getComponent(SUBSOLAR_LONGITIDUE_INDEX);
+            return (Real) tuple.getComponent(SUBSOLAR_LONGITIDUE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -147,7 +158,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getAzimuthAngle() {
         try {
-            return (Real) getComponent(AZIMUTH_ANGLE_INDEX);
+            return (Real) tuple.getComponent(AZIMUTH_ANGLE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -158,7 +169,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getZenithAngle() {
         try {
-            return (Real) getComponent(ZENITH_ANGLE_INDEX);
+            return (Real) tuple.getComponent(ZENITH_ANGLE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -169,7 +180,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getAltitudeAngle() {
         try {
-            return (Real) getComponent(ALTITUDE_ANGLE_INDEX);
+            return (Real) tuple.getComponent(ALTITUDE_ANGLE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -180,7 +191,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLocalHourAngle() {
         try {
-            return (Real) getComponent(HOUR_ANGLE_INDEX);
+            return (Real) tuple.getComponent(HOUR_ANGLE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -191,7 +202,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSunriseHourAngle() {
         try {
-            return (Real) getComponent(SUNRISE_HOUR_ANGLE_INDEX);
+            return (Real) tuple.getComponent(SUNRISE_HOUR_ANGLE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -202,7 +213,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSunsetHourAngle() {
         try {
-            return (Real) getComponent(SUNSET_HOUR_ANGLE_INDEX);
+            return (Real) tuple.getComponent(SUNSET_HOUR_ANGLE_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -211,7 +222,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @Override
     public Real getSunriseHour() {
         try {
-            return (Real) getComponent(SUNRISE_HOUR_INDEX);
+            return (Real) tuple.getComponent(SUNRISE_HOUR_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -220,7 +231,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @Override
     public Real getSunsetHour() {
         try {
-            return (Real) getComponent(SUNSET_HOUR_INDEX);
+            return (Real) tuple.getComponent(SUNSET_HOUR_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -229,7 +240,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @Override
     public Real getSunTransitHour() {
         try {
-            return (Real) getComponent(SUNTRANSIT_HOUR_INDEX);
+            return (Real) tuple.getComponent(SUNTRANSIT_HOUR_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -238,7 +249,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @Override
     public Real getZoneOffsetHour() {
         try {
-            return (Real) getComponent(ZONE_OFFSET_HOUR_INDEX);
+            return (Real) tuple.getComponent(ZONE_OFFSET_HOUR_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -248,7 +259,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     @XmlElement
     public boolean isMissing() {
         try {
-            Data[] components = getComponents(false);
+            Data[] components = tuple.getComponents(false);
             if (components == null) {
                 return true;
             } else {
@@ -284,4 +295,15 @@ public class SunlightTuple extends RealTuple implements Sunlight {
         ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds((int) (offset.getValue() * 3600));
         return OffsetTime.of(localTime, zoneOffset);
     }
+
+    @Override
+    public String toString() {
+        try {
+            return this.tuple.longString();
+        } catch (VisADException | RemoteException ex) {
+            return this.tuple.toString();
+        }
+    }
+    
+    
 }

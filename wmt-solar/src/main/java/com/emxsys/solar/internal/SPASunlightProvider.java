@@ -31,7 +31,7 @@ package com.emxsys.solar.internal;
 
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.solar.api.SunlightTuple;
+import com.emxsys.solar.api.BasicSunlight;
 import com.emxsys.solar.api.SolarType;
 import com.emxsys.solar.api.SunlightProvider;
 import static com.emxsys.solar.internal.SolarPositionAlgorithms.*;
@@ -66,11 +66,11 @@ public class SPASunlightProvider implements SunlightProvider {
      * 
      * @param time The date and time for the sunlight angles.
      * @param observer The location for the sunlight hours and hour angles.
-     * @return A new SunlightTuple instance.
+     * @return A new BasicSunlight instance.
      */
     @Override
     @SuppressWarnings("UseSpecificCatch")
-    public SunlightTuple getSunlight(ZonedDateTime time, Coord3D observer) {
+    public BasicSunlight getSunlight(ZonedDateTime time, Coord3D observer) {
         try {
             SolarData spa = new SolarData(time, observer);
             SolarPositionAlgorithms.spa_calculate(spa);
@@ -90,11 +90,11 @@ public class SPASunlightProvider implements SunlightProvider {
                         new Real(SolarType.SUNTRANSIT_HOUR, spa.getSunTransit()),   // solar noon local time
                         new Real(SolarType.ZONE_OFFSET_HOUR, spa.getTimezone()),    // local time zone offset
                     }, null);
-            return SunlightTuple.fromRealTuple(tuple);
+            return BasicSunlight.fromRealTuple(tuple);
 
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
-            return SunlightTuple.INVALID_TUPLE;
+            return BasicSunlight.INVALID_TUPLE;
         }
     }
 
@@ -134,7 +134,7 @@ public class SPASunlightProvider implements SunlightProvider {
                     GeoCoord3D coord = GeoCoord3D.fromDegrees(lat, lon);
 
                     // Compute solar data at time and place
-                    RealTuple sunlight = getSunlight(time, coord);
+                    RealTuple sunlight = getSunlight(time, coord).getTuple();
                     double[] values = sunlight.getValues();
                     for (int dim = 0; dim < SolarType.SUNLIGHT.getDimension(); dim++) {
                         solarSamples[dim][xy] = values[dim];

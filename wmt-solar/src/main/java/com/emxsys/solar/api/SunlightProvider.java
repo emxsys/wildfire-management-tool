@@ -47,6 +47,6 @@ public interface SunlightProvider {
      * @param observer The coordinates of the observer.
      * @return A SolarType.SUNLIGHT tuple
      */
-    SunlightTuple getSunlight(ZonedDateTime time, Coord3D observer);
+    BasicSunlight getSunlight(ZonedDateTime time, Coord3D observer);
 
 }
