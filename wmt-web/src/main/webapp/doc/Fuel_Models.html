@@ -1,0 +1,606 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>REST API</title>
+<link type="text/css" rel="stylesheet" href="restapi.css">
+<script>
+function copyToClipboard(id) {
+	text = document.getElementById(id).innerText;
+	window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+}
+</script>
+</head>
+<body>
+	<header class="company">Wildfire Managment Tool</header>
+	<div class="container">
+		<div class="toc">
+			<div class="toc-top"></div>
+<div class="item"><a href="Fuel_Model.html">Fuel Model</a></div>
+<div class="current item">Fuel Models</div>
+<div class="item"><a href="Sunlight.html">Sunlight</a></div>
+		</div>
+		<div class="main">
+			<div class="background"></div>
+			<div class="content">
+				<header>Fuel Models</header>
+				<div class="basic-info">
+										<div><span>
+<p>
+  Get a collection of Fuel Models, including the original 13 and the standard 
+  40 fuel models.
+</p>
+</span>
+</div>
+										<div class="title">Resource URL</div>
+					<div>/rs/fuelmodels</div>
+					
+										</div>
+				</div>
+				
+				<div class="sidebar">
+					<div class="code-block">
+						<header>Curl Example</header>
+						<a class="copy" href="javascript:copyToClipboard('curl-example')"></a>
+						<code id='curl-example'>
+						$ curl -X GET
+												-H 'Content-Type: plain/text' "/rs/fuelmodels"
+						</code>
+					</div>
+				</div>
+				
+				<div class="content">
+										&nbsp;
+									</div>
+				
+				<div class="sidebar">
+										<div class="code-block">
+						<header>Request Header</header>
+						<a class="copy" href="javascript:copyToClipboard('request-header')"></a>
+						<code id='request-header' class="header">Content-Type: plain/text</code>
+					</div>
+										
+									</div>
+				
+				<div class="content">
+										<div class="description"><span>
+<p>
+  Gets all the standard fuel models.
+</p>
+</span>
+</div>
+					<div class="image"><img src="img/Fuel_Models_response.png"></div>
+												<a name="StdFuelModel"></a>
+						<div class="classname">StdFuelModel</div>
+						<div class="attributes">
+							<table>
+								<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+																<tr>
+								<td>FUEL_MODEL_GROUP_ORIGINAL_13</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  The original 13 fuel models.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>FUEL_MODEL_GROUP_STANDARD_40</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  The standard 40 fuel models.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>FUEL_MODEL_GROUP_UNBURNABLE</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  Unburnable fuel models common to the original 13 and standard 40, such as 
+  urban, water, etc.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>FUEL_MODEL_GROUP_CUSTOM</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  Custom fuel models.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>fuelModels</td><td>
+																Map
+																</td><td><span>
+<p style="margin-top:0;">
+  Collection reuse of previously created FuelModel instances
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>fuelModelGroups</td><td>
+																Set
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>modelNo</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>modelCode</td><td>
+																String
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>modelName</td><td>
+																String
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>modelGroup</td><td>
+																String
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dynamic</td><td>
+																boolean
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dead1HrFuelLoad</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dead10HrFuelLoad</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dead100HrFuelLoad</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>liveHerbFuelLoad</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>liveWoodyFuelLoad</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dead1HrSAVRatio</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dead10HrSAVRatio</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>dead100HrSAVRatio</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>liveHerbSAVRatio</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>liveWoodySAVRatio</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>fuelBedDepth</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>moistureOfExtinction</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>lowHeatContent</td><td>
+																visad.Real
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>INVALID</td><td>
+																Design Model.com.emxsys.wildfire.api.StdFuelModel
+																</td><td><span>
+<p style="margin-top:0;">
+  A non-burnable fuel model representing an INVALID model; Fuel model number: 
+  -1
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>INVALID</td><td>
+																<a href="#StdFuelModel">StdFuelModel</a>
+																</td><td><span>
+<p style="margin-top:0;">
+  A non-burnable fuel model representing an INVALID model; Fuel model number: 
+  -1
+</p>
+</span>
+</td>
+								</tr>
+															</table>
+						</div>
+												<a name="FuelModel"></a>
+						<div class="classname">FuelModel</div>
+						<div class="attributes">
+							<table>
+								<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+																<tr>
+								<td>modelNo</td><td>
+																int
+																</td><td><span>
+<p style="margin-top:0;">
+  The standard fuel model number compatible with LANDFIRE data sets.
+</p>
+<p style="margin-top:0;">
+  @return The unique number identifying the fuel model.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>modelCode</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  The standard fuel model code.
+</p>
+<p style="margin-top:0;">
+  @return The unique code representing the fuel model.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>modelName</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  The fuel type complex name.
+</p>
+<p style="margin-top:0;">
+  @return The model name.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>modelGroup</td><td>
+																String
+																</td><td><span>
+<p style="margin-top:0;">
+  The fuel type group that this model belongs to, e.g., Original 13, Standard 
+  40, etc.
+</p>
+<p style="margin-top:0;">
+  @return The model group name.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dead1HrFuelLoad</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The 1 hour dead fuel loading.
+</p>
+<p style="margin-top:0;">
+  @return [kg/m2]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dead10HrFuelLoad</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The 10 hour dead fuel loading.
+</p>
+<p style="margin-top:0;">
+  @return [kg/m2]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dead100HrFuelLoad</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The 100 hour dead fuel loading.
+</p>
+<p style="margin-top:0;">
+  @return [kg/m2]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>liveHerbFuelLoad</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The live herbaceous fuel loading.
+</p>
+<p style="margin-top:0;">
+  @return [kg/m2]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>liveWoodyFuelLoad</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The live woody fuel loading.
+</p>
+<p style="margin-top:0;">
+  @return &#160;[kg/m2]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dynamic</td><td>
+																boolean
+																</td><td><span>
+<p style="margin-top:0;">
+  The fuel type: static or dynamic.
+</p>
+<p style="margin-top:0;">
+  @return True if the fuel model is dynamic.
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>burnable</td><td>
+																boolean
+																</td><td><span>
+<p style="margin-top:0;">
+  Burnable or non burnable.
+</p>
+<p style="margin-top:0;">
+  @return True if the fuel model is burnable
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dead1HrSAVRatio</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The dead 1 hour fuel surface-area-to-volume ratio.
+</p>
+<p style="margin-top:0;">
+  @return [1/m]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dead10HrSAVRatio</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The dead 10 hour fuel surface-area-to-volume ratio
+</p>
+<p style="margin-top:0;">
+  @return [1/m]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>dead100HrSAVRatio</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The dead 100 hour fuel surface-area-to-volume ratio
+</p>
+<p style="margin-top:0;">
+  @return [1/m]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>liveHerbSAVRatio</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The live herbaceous fuel surface-area-to-volume ratio.
+</p>
+<p style="margin-top:0;">
+  @return [m^2/m^3]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>liveWoodySAVRatio</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The live woody fuel surface-area-to-volume ratio.
+</p>
+<p style="margin-top:0;">
+  @return [[m^2/m^3]]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>fuelBedDepth</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The fuel bed depth.
+</p>
+<p style="margin-top:0;">
+  @return [m]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>moistureOfExtinction</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The moisture of extinction.
+</p>
+<p style="margin-top:0;">
+  @return [percent]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>lowHeatContent</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  The low heat content.
+</p>
+<p style="margin-top:0;">
+  @return [kJ/kg]
+</p>
+</span>
+</td>
+								</tr>
+															</table>
+						</div>
+															</div>
+
+				<div class="sidebar">
+										<div class="code-block">
+						<header>Response Header</header>
+						<a class="copy" href="javascript:copyToClipboard('response-header')"></a>
+						<code id='response-header' class="header">content-type: application/xml;
+status: 200 OK</code>
+					</div>
+										
+										<div class="code-block">
+						<header>Response Body</header>
+						<a class="copy" href="javascript:copyToClipboard('response-body')"></a>
+						<code id='response-body' class="json"><?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<stdFuelModels>
+    <fuelmodel>
+        <modelNo>1</modelNo>
+        <modelCode>#1</modelCode>
+        <modelName>Short Grass (1 foot)</modelName>
+        <modelGroup>Original 13</modelGroup>
+        <dynamic>false</dynamic>
+        <dead1HrFuelLoad>
+            <type>fuel_load:kg/m2</type>
+            <value>0.16588530757355857</value>
+            <unit>kg.m-2</unit>
+        </dead1HrFuelLoad>
+        <dead10HrFuelLoad>
+            <type>fuel_load:kg/m2</type>
+            <value>0.0</value>
+            <unit>kg.m-2</unit>
+        </dead10HrFuelLoad>
+        <dead100HrFuelLoad>
+            <type>fuel_load:kg/m2</type>
+            <value>0.0</value>
+            <unit>kg.m-2</unit>
+        </dead100HrFuelLoad>
+        <liveHerbFuelLoad>
+            <type>fuel_load:kg/m2</type>
+            <value>0.0</value>
+            <unit>kg.m-2</unit>
+        </liveHerbFuelLoad>
+        <liveWoodyFuelLoad>
+            <type>fuel_load:kg/m2</type>
+            <value>0.0</value>
+            <unit>kg.m-2</unit>
+        </liveWoodyFuelLoad>
+        <dead1HrSAVRatio>
+            <type>surface_to_volume:m2/m3</type>
+            <value>11482.939632545933</value>
+            <unit>m-1</unit>
+        </dead1HrSAVRatio>
+        <dead10HrSAVRatio>
+            <type>surface_to_volume:m2/m3</type>
+            <value>0.0</value>
+            <unit>m-1</unit>
+        </dead10HrSAVRatio>
+        <dead100HrSAVRatio>
+            <type>surface_to_volume:m2/m3</type>
+            <value>0.0</value>
+            <unit>m-1</unit>
+        </dead100HrSAVRatio>
+        <liveHerbSAVRatio>
+            <type>surface_to_volume:m2/m3</type>
+            <value>0.0</value>
+            <unit>m-1</unit>
+        </liveHerbSAVRatio>
+        <liveWoodySAVRatio>
+            <type>surface_to_volume:m2/m3</type>
+            <value>0.0</value>
+            <unit>m-1</unit>
+        </liveWoodySAVRatio>
+        <fuelBedDepth>
+            <type>fuel_depth:m</type>
+            <value>0.30479999999999996</value>
+            <unit>m</unit>
+        </fuelBedDepth>
+        <moistureOfExtinction>
+            <type>moisture_of_extinction:%</type>
+            <value>12.0</value>
+            <unit>%</unit>
+        </moistureOfExtinction>
+        <lowHeatContent>
+            <type>heat_content:kJ/kg</type>
+            <value>18608.0</value>
+            <unit>1000.0 s-2.m2</unit>
+        </lowHeatContent>
+        <burnable>true</burnable>
+    </fuelmodel>
+    ...
+</stdFuelModels></code>
+					</div>
+									</div>
+				
+				<div class="content" style="clear:both">
+					<footer class="download">For client development, you can download <a href="xml/Fuel_Models.xml" target="_blank">Fuel_Models.xml</a></footer>
+					<footer class="powered-by"><a href="http://www.visual-paradigm.com" target="_blank">Powered by Visual Paradigm</a></footer>			
+				</div>
+				
+				<div style="clear:both"></div>
+		</div>
+	</div>
+</body>
+</html>

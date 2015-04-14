@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>REST API</title>
+<link type="text/css" rel="stylesheet" href="restapi.css">
+<script>
+function copyToClipboard(id) {
+	text = document.getElementById(id).innerText;
+	window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+}
+</script>
+</head>
+<body>
+	<header class="company">Wildfire Managment Tool</header>
+	<div class="container">
+		<div class="toc">
+			<div class="toc-top"></div>
+<div class="item"><a href="Fuel_Model.html">Fuel Model</a></div>
+<div class="item"><a href="Fuel_Models.html">Fuel Models</a></div>
+<div class="current item">Sunlight</div>
+		</div>
+		<div class="main">
+			<div class="background"></div>
+			<div class="content">
+				<header>Sunlight</header>
+				<div class="basic-info">
+										<div><span>
+<p>
+  Gets the sunlight for a given time and location.
+</p>
+</span>
+</div>
+										<div class="title">Resource URL</div>
+					<div>/rs/sunlight</div>
+					
+										<div class="title">Parameters</div>
+					<table class="parameters">
+												<tr>
+						<td><div class="name">time</div><div>
+												required
+												</div>
+						</td><td><div class="description"><span>
+<p>
+  An ISO Date Time string.
+</p>
+</span>
+</div>
+												<div><span class="example-title">Type: </span><span class="example-value">String</span></div>
+																		<div><span class="example-title">Example Values: </span><span class="example-value">2015-04-13T12:50-07:00</span></div>
+												</td>
+						</tr>
+												<tr>
+						<td><div class="name">latitude</div><div>
+												required
+												</div>
+						</td><td><div class="description"><span>
+<p>
+  The WGS84 latitude of the observer in decimal degrees.
+</p>
+</span>
+</div>
+												<div><span class="example-title">Type: </span><span class="example-value">double</span></div>
+																		<div><span class="example-title">Example Values: </span><span class="example-value">-34.2</span></div>
+												</td>
+						</tr>
+												<tr>
+						<td><div class="name">longitude</div><div>
+												required
+												</div>
+						</td><td><div class="description"><span>
+<p>
+  The WGS84 longitude of the observer in decimal degrees.
+</p>
+</span>
+</div>
+												<div><span class="example-title">Type: </span><span class="example-value">double</span></div>
+																		<div><span class="example-title">Example Values: </span><span class="example-value">-119.2</span></div>
+												</td>
+						</tr>
+											</table>
+										</div>
+				</div>
+				
+				<div class="sidebar">
+					<div class="code-block">
+						<header>Curl Example</header>
+						<a class="copy" href="javascript:copyToClipboard('curl-example')"></a>
+						<code id='curl-example'>
+						$ curl -X GET
+												-H 'Content-Type: plain/text' "/rs/sunlight?time=2015-04-13T12:50-07:00&latitude=-34.2&longitude=-119.2"
+						</code>
+					</div>
+				</div>
+				
+				<div class="content">
+										&nbsp;
+									</div>
+				
+				<div class="sidebar">
+										<div class="code-block">
+						<header>Request Header</header>
+						<a class="copy" href="javascript:copyToClipboard('request-header')"></a>
+						<code id='request-header' class="header">Content-Type: plain/text</code>
+					</div>
+										
+									</div>
+				
+				<div class="content">
+										<div class="description"><span>
+<p>
+  Returns the solar angles, positions and times for the given time and 
+  location.
+</p>
+</span>
+</div>
+					<div class="image"><img src="img/Sunlight_response.png"></div>
+												<a name="SunlightTuple"></a>
+						<div class="classname">SunlightTuple</div>
+						<div class="attributes">
+							<table>
+								<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+																<tr>
+								<td>SUBSOLAR_LATITUDE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>SUBSOLAR_LONGITIDUE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>AZIMUTH_ANGLE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>ZENITH_ANGLE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>ALTITUDE_ANGLE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>HOUR_ANGLE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>SUNRISE_HOUR_ANGLE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>SUNSET_HOUR_ANGLE_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>SUNTRANSIT_HOUR_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>SUNRISE_HOUR_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>SUNSET_HOUR_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>ZONE_OFFSET_HOUR_INDEX</td><td>
+																int
+																</td><td></td>
+								</tr>
+																<tr>
+								<td>INVALID_TUPLE</td><td>
+																Design Model.com.emxsys.solar.api.SunlightTuple
+																</td><td><span>
+<p style="margin-top:0;">
+  A tuple with &quot;missing&quot; components
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>INVALID_TUPLE</td><td>
+																<a href="#SunlightTuple">SunlightTuple</a>
+																</td><td><span>
+<p style="margin-top:0;">
+  A tuple with &quot;missing&quot; components
+</p>
+</span>
+</td>
+								</tr>
+															</table>
+						</div>
+												<a name="Sunlight"></a>
+						<div class="classname">Sunlight</div>
+						<div class="attributes">
+							<table>
+								<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+																<tr>
+								<td>declination</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the declination: the earth's tilt angle relative to the sun at a given 
+  date and time. It
+</p>
+<p style="margin-top:0;">
+  is also the latitude where the sun is directly overhead (subsolar point).
+</p>
+<p style="margin-top:0;">
+  @return The declination angle [degrees].
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>subsolarLatitude</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the subsolar latitude: the earth latitude for where the sun is overhead 
+  at a given date
+</p>
+<p style="margin-top:0;">
+  and time. This is identical to the declination.
+</p>
+<p style="margin-top:0;">
+  @return [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>subsolarLongitude</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the subsolar longitude: the earth longitude for where the sun is 
+  overhead at a given
+</p>
+<p style="margin-top:0;">
+  date and time.
+</p>
+<p style="margin-top:0;">
+  @return [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>azimuthAngle</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the solar azimuth angle: where the sun is relative to North.
+</p>
+<p style="margin-top:0;">
+  @return The solar azimuth angle. [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>zenithAngle</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the solar zenith angle: where is sun relative to the observer's zenith.
+</p>
+<p style="margin-top:0;">
+  @return The solar zenith angle. [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>altitudeAngle</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the solar altitude angle: how high the sun is from the horizon.
+</p>
+<p style="margin-top:0;">
+  @return The solar altitude angle (possibly corrected for atmospheric 
+  refraction). [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>localHourAngle</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the local hour angle relative to the observer.
+</p>
+<p style="margin-top:0;">
+  @return Hour angle between the sun and the observer. [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>sunriseHourAngle</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the solar hour angle for sunrise.
+</p>
+<p style="margin-top:0;">
+  @return Sunrise hour angle from solar noon. [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>sunsetHourAngle</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the solar hour angle for sunset.
+</p>
+<p style="margin-top:0;">
+  @return Sunset hour angle from solar noon. [degrees]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>sunriseHour</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the local time of sunrise.
+</p>
+<p style="margin-top:0;">
+  @return Sunrise time in the local time zone. [hours]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>sunsetHour</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the local time of sunset.
+</p>
+<p style="margin-top:0;">
+  @return Sunset time in the local time zone. [hours]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>sunTransitHour</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the local sun transit time (or solar noon).
+</p>
+<p style="margin-top:0;">
+  @return The time of solar noon in local time zone. [hours]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>zoneOffsetHour</td><td>
+																visad.Real
+																</td><td><span>
+<p style="margin-top:0;">
+  Gets the time zone offset.
+</p>
+<p style="margin-top:0;">
+  @return The offset from UTC to local time. [hours]
+</p>
+</span>
+</td>
+								</tr>
+																<tr>
+								<td>missing</td><td>
+																boolean
+																</td><td><span>
+<p style="margin-top:0;">
+  Tests whether any data elements are missing.
+</p>
+<p style="margin-top:0;">
+  
+</p>
+<p style="margin-top:0;">
+  @return true if a data element is missing.
+</p>
+</span>
+</td>
+								</tr>
+															</table>
+						</div>
+															</div>
+
+				<div class="sidebar">
+										<div class="code-block">
+						<header>Response Header</header>
+						<a class="copy" href="javascript:copyToClipboard('response-header')"></a>
+						<code id='response-header' class="header">content-type: application/xml
+status: 200 OK</code>
+					</div>
+										
+										<div class="code-block">
+						<header>Response Body</header>
+						<a class="copy" href="javascript:copyToClipboard('response-body')"></a>
+						<code id='response-body' class="json"><?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sunlight>
+    <subsolarLatitude>
+        <type>subsolar_lat:deg</type>
+        <value>9.14704808836862</value>
+        <unit>deg</unit>
+    </subsolarLatitude>
+    <subsolarLongitude>
+        <type>subsolar_lon:deg</type>
+        <value>-117.37256298844292</value>
+        <unit>deg</unit>
+    </subsolarLongitude>
+    <azimuthAngle>
+        <type>azimuth:deg</type>
+        <value>175.75296508447678</value>
+        <unit>deg</unit>
+    </azimuthAngle>
+    <altitudeAngle>
+        <type>altitude:deg</type>
+        <value>64.84887095057533</value>
+        <unit>deg</unit>
+    </altitudeAngle>
+    <zenithAngle>
+        <type>zenith:deg</type>
+        <value>25.151129049424668</value>
+        <unit>deg</unit>
+    </zenithAngle>
+    <localHourAngle>
+        <type>hour:deg</type>
+        <value>358.17256298844296</value>
+        <unit>deg</unit>
+    </localHourAngle>
+    <sunriseHourAngle>
+        <type>sunrise_hour:deg</type>
+        <value>-97.07613326922825</value>
+        <unit>deg</unit>
+    </sunriseHourAngle>
+    <sunsetHourAngle>
+        <type>sunset_hour:deg</type>
+        <value>97.11693590717262</value>
+        <unit>deg</unit>
+    </sunsetHourAngle>
+    <sunriseTime>06:28:21-07:00</sunriseTime>
+    <sunsetTime>19:26:02-07:00</sunsetTime>
+    <sunTransitTime>12:57:18-07:00</sunTransitTime>
+    <missing>false</missing>
+</sunlight></code>
+					</div>
+									</div>
+				
+				<div class="content" style="clear:both">
+					<footer class="download">For client development, you can download <a href="xml/Sunlight.xml" target="_blank">Sunlight.xml</a></footer>
+					<footer class="powered-by"><a href="http://www.visual-paradigm.com" target="_blank">Powered by Visual Paradigm</a></footer>			
+				</div>
+				
+				<div style="clear:both"></div>
+		</div>
+	</div>
+</body>
+</html>
