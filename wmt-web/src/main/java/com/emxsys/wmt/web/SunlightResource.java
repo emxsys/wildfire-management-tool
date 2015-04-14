@@ -69,7 +69,7 @@ public class SunlightResource {
      * @return an instance of SunlightTuple
      */
     @GET
-    @Produces("application/xml")
+    @Produces({"application/xml",})
     public SunlightTuple getSunlight(@QueryParam("time") String time,
                                      @QueryParam("latitude") double latitude,
                                      @QueryParam("longitude") double longitude) {
