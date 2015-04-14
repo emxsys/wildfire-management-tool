@@ -10,7 +10,7 @@
 
     <artifactId>wmt-application</artifactId>
     <packaging>nbm-application</packaging>
-    <name>WMT Application</name>
+    <name>WMT Application - Desktop</name>
     <description>The Wildfire Management Tool (WMT) application.</description>
 
     <properties>

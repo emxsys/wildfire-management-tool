@@ -8,7 +8,7 @@
   </parent>
 
     <groupId>com.emxsys</groupId>
-    <artifactId>wmt-web</artifactId>
+    <artifactId>wmt-application-rest</artifactId>
     <version>4.0-SNAPSHOT</version>
     <packaging>war</packaging>
 

@@ -172,11 +172,11 @@
         <module>wmt-weather-nws</module>
         <module>wmt-wildfire</module>
         <module>wmt-maps-geomac</module>
-        <module>wmt-web</module>
         <!--        
         <module>wmt-gis-shapefile</module>
         <module>wmt-gis-sqlserver</module>
         -->
+        <module>wmt-application-rest</module>
     </modules>
     <reporting>
         <plugins>
