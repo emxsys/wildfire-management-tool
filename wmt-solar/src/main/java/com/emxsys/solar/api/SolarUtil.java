@@ -51,6 +51,7 @@ import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
 
+@Deprecated
 public class SolarUtil {
 
     private static final Logger logger = Logger.getLogger(SolarUtil.class.getName());

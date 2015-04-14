@@ -30,8 +30,17 @@
 package com.emxsys.solar.api;
 
 import static com.emxsys.solar.api.SolarType.*;
+import com.emxsys.visad.RealXmlAdaptor;
 import com.emxsys.visad.Tuples;
 import java.rmi.RemoteException;
+import java.time.LocalTime;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.openide.util.Exceptions;
 import visad.Data;
 import visad.Real;
@@ -44,6 +53,15 @@ import visad.VisADException;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
+@XmlRootElement(name = "sunlight")
+@XmlType(propOrder
+        = {"subsolarLatitude", "subsolarLongitude",
+           "azimuthAngle", "altitudeAngle", "zenithAngle",
+           "localHourAngle", "sunriseHourAngle", "sunsetHourAngle",
+           "sunriseTime", "sunsetTime", "sunTransitTime",
+           "missing"
+        })
+
 public class SunlightTuple extends RealTuple implements Sunlight {
 
     /** A tuple with "missing" components */
@@ -103,6 +121,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSubsolarLatitude() {
         try {
             return (Real) getComponent(SUBSOLAR_LATITUDE_INDEX);
@@ -112,6 +132,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSubsolarLongitude() {
         try {
             return (Real) getComponent(SUBSOLAR_LONGITIDUE_INDEX);
@@ -121,6 +143,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getAzimuthAngle() {
         try {
             return (Real) getComponent(AZIMUTH_ANGLE_INDEX);
@@ -130,6 +154,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getZenithAngle() {
         try {
             return (Real) getComponent(ZENITH_ANGLE_INDEX);
@@ -139,6 +165,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getAltitudeAngle() {
         try {
             return (Real) getComponent(ALTITUDE_ANGLE_INDEX);
@@ -148,6 +176,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLocalHourAngle() {
         try {
             return (Real) getComponent(HOUR_ANGLE_INDEX);
@@ -157,6 +187,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSunriseHourAngle() {
         try {
             return (Real) getComponent(SUNRISE_HOUR_ANGLE_INDEX);
@@ -166,6 +198,8 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSunsetHourAngle() {
         try {
             return (Real) getComponent(SUNSET_HOUR_ANGLE_INDEX);
@@ -211,6 +245,7 @@ public class SunlightTuple extends RealTuple implements Sunlight {
     }
 
     @Override
+    @XmlElement
     public boolean isMissing() {
         try {
             Data[] components = getComponents(false);
@@ -229,4 +264,24 @@ public class SunlightTuple extends RealTuple implements Sunlight {
         }
     }
 
+    @XmlElement
+    public String getSunriseTime() {
+        return toOffsetTime(getSunriseHour(), getZoneOffsetHour()).format(DateTimeFormatter.ISO_OFFSET_TIME);
+    }
+
+    @XmlElement
+    public String getSunsetTime() {
+        return toOffsetTime(getSunsetHour(), getZoneOffsetHour()).format(DateTimeFormatter.ISO_OFFSET_TIME);
+    }
+
+    @XmlElement
+    public String getSunTransitTime() {
+        return toOffsetTime(getSunTransitHour(), getZoneOffsetHour()).format(DateTimeFormatter.ISO_OFFSET_TIME);
+    }
+
+    private static OffsetTime toOffsetTime(Real hour, Real offset) {
+        LocalTime localTime = LocalTime.ofSecondOfDay((long) (hour.getValue() * 3600));
+        ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds((int) (offset.getValue() * 3600));
+        return OffsetTime.of(localTime, zoneOffset);
+    }
 }
