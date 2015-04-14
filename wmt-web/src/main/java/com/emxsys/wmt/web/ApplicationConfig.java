@@ -57,7 +57,7 @@ public class ApplicationConfig extends Application {
                                         Set<Class<?>> resources) {
         resources.add(com.emxsys.wmt.web.FuelModelResource.class);
         resources.add(com.emxsys.wmt.web.FuelModelsResource.class);
-        resources.add(com.emxsys.wmt.web.TestResource.class);
+        resources.add(com.emxsys.wmt.web.SunlightResource.class);
     }
 
 }
