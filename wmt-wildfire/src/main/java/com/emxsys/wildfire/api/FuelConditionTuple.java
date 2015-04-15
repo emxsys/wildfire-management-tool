@@ -127,8 +127,8 @@ public class FuelConditionTuple extends RealTuple implements FuelCondition {
         super(WildfireType.FUEL_CONDITION);
     }
 
-    public FuelMoistureTuple getFuelMoisture() {
-        return FuelMoistureTuple.fromReals(
+    public BasicFuelMoisture getFuelMoisture() {
+        return BasicFuelMoisture.fromReals(
                 getDead1HrFuelMoisture(),
                 getDead10HrFuelMoisture(),
                 getDead100HrFuelMoisture(),

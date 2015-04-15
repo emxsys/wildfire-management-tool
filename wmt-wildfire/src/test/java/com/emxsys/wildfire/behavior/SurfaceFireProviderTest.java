@@ -34,7 +34,7 @@ import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
@@ -84,7 +84,7 @@ public class SurfaceFireProviderTest {
         }
         // Common moisture scenario used in test
         for (WeatherConditions conditions : WeatherConditions.values()) {
-            moistures.add(FuelMoistureTuple.fromWeatherConditions(conditions));
+            moistures.add(BasicFuelMoisture.fromWeatherConditions(conditions));
         }
 
         WeatherTuple weather = WeatherTuple.fromReals(

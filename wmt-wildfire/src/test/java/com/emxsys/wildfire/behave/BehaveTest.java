@@ -32,7 +32,7 @@ package com.emxsys.wildfire.behave;
 import com.emxsys.util.MathUtil;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
@@ -149,7 +149,7 @@ public class BehaveTest {
 
         // Common moisture scenario used in test
         //FuelMoisture moisture = new FuelMoisture(FuelMoistureScenario.D1L1);
-        FuelMoisture moisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
+        FuelMoisture moisture = BasicFuelMoisture.fromWeatherConditions(HOT_AND_DRY);
         // Common moisture scenario used in test
         WindSlope windSlope = new WindSlope();
         // Load the original 13 fuel models

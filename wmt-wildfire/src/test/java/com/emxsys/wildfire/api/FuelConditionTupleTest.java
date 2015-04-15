@@ -51,7 +51,7 @@ import visad.VisADException;
 public class FuelConditionTupleTest {
 
     static FuelConditionTuple instance;
-    static FuelMoistureTuple FM;
+    static BasicFuelMoisture FM;
     static Real FM1 = new Real(FUEL_MOISTURE_1H, 1);
     static Real FM10 = new Real(FUEL_MOISTURE_10H, 2);
     static Real FM100 = new Real(FUEL_MOISTURE_100H, 3);
@@ -64,7 +64,7 @@ public class FuelConditionTupleTest {
 
     @BeforeClass
     public static void setUpClass() {
-        FM = FuelMoistureTuple.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
+        FM = BasicFuelMoisture.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
         instance = FuelConditionTuple.fromReals(FM, FUELTEMP);
     }
 
@@ -101,7 +101,7 @@ public class FuelConditionTupleTest {
     @Test
     public void testGetFuelMoisture() {
         System.out.println("getFuelMoisture");
-        FuelMoistureTuple result = instance.getFuelMoisture();
+        BasicFuelMoisture result = instance.getFuelMoisture();
         assertEquals(FM, result);
     }
 

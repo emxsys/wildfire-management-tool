@@ -50,7 +50,7 @@ import visad.VisADException;
  */
 public class FuelMoistureTupleTest {
 
-    static FuelMoistureTuple instance;
+    static BasicFuelMoisture instance;
     static Real FM1 = new Real(FUEL_MOISTURE_1H, 1);
     static Real FM10 = new Real(FUEL_MOISTURE_10H, 2);
     static Real FM100 = new Real(FUEL_MOISTURE_100H, 3);
@@ -62,7 +62,7 @@ public class FuelMoistureTupleTest {
 
     @BeforeClass
     public static void setUpClass() {
-        instance = FuelMoistureTuple.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
+        instance = BasicFuelMoisture.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
     }
 
     @Before
@@ -70,28 +70,28 @@ public class FuelMoistureTupleTest {
     }
 
     /**
-     * Test of fromReals method, of class FuelMoistureTuple.
+     * Test of fromReals method, of class BasicFuelMoisture.
      */
     @Test
     public void testFromReals() {
         System.out.println("fromReals");
-        FuelMoistureTuple result = FuelMoistureTuple.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
+        BasicFuelMoisture result = BasicFuelMoisture.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
         assertEquals(instance, result);
     }
 
     /**
-     * Test of fromRealTuple method, of class FuelMoistureTuple.
+     * Test of fromRealTuple method, of class BasicFuelMoisture.
      */
     @Test
     public void testFromRealTuple() throws VisADException, RemoteException {
         System.out.println("fromRealTuple");
         RealTuple realTuple = new RealTuple(new Real[]{FM1, FM10, FM100, FMHERB, FMWOODY});
-        FuelMoistureTuple result = FuelMoistureTuple.fromRealTuple(realTuple);
+        BasicFuelMoisture result = BasicFuelMoisture.fromRealTuple(realTuple);
         assertEquals(instance, result);
     }
 
     /**
-     * Test of fromDoubles method, of class FuelMoistureTuple.
+     * Test of fromDoubles method, of class BasicFuelMoisture.
      */
     @Test
     public void testFromDoubles() {
@@ -101,24 +101,24 @@ public class FuelMoistureTupleTest {
         double dead100HrFuelMoisture = 3.0;
         double liveHerbFuelMoisture = 4.0;
         double liveWoodyFuelMoisture = 5.0;
-        FuelMoistureTuple result = FuelMoistureTuple.fromDoubles(dead1HrFuelMoisture, dead10HrFuelMoisture, dead100HrFuelMoisture, liveHerbFuelMoisture, liveWoodyFuelMoisture);
+        BasicFuelMoisture result = BasicFuelMoisture.fromDoubles(dead1HrFuelMoisture, dead10HrFuelMoisture, dead100HrFuelMoisture, liveHerbFuelMoisture, liveWoodyFuelMoisture);
         assertEquals(instance, result);
     }
 
     /**
-     * Test of fromWeatherConditions method, of class FuelMoistureTuple.
+     * Test of fromWeatherConditions method, of class BasicFuelMoisture.
      */
     @Test
     public void testFromWeatherConditions() {
         System.out.println("fromWeatherConditions");
         WeatherConditions previousWeeksWx = HOT_AND_DRY;
-        FuelMoistureTuple expResult = FuelMoistureTuple.fromDoubles(6, 7, 8, 70, 70);
-        FuelMoistureTuple result = FuelMoistureTuple.fromWeatherConditions(previousWeeksWx);
+        BasicFuelMoisture expResult = BasicFuelMoisture.fromDoubles(6, 7, 8, 70, 70);
+        BasicFuelMoisture result = BasicFuelMoisture.fromWeatherConditions(previousWeeksWx);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of getDead1HrFuelMoisture method, of class FuelMoistureTuple.
+     * Test of getDead1HrFuelMoisture method, of class BasicFuelMoisture.
      */
     @Test
     public void testGetDead1HrFuelMoisture() {
@@ -128,7 +128,7 @@ public class FuelMoistureTupleTest {
     }
 
     /**
-     * Test of getDead10HrFuelMoisture method, of class FuelMoistureTuple.
+     * Test of getDead10HrFuelMoisture method, of class BasicFuelMoisture.
      */
     @Test
     public void testGetDead10HrFuelMoisture() {
@@ -138,7 +138,7 @@ public class FuelMoistureTupleTest {
     }
 
     /**
-     * Test of getDead100HrFuelMoisture method, of class FuelMoistureTuple.
+     * Test of getDead100HrFuelMoisture method, of class BasicFuelMoisture.
      */
     @Test
     public void testGetDead100HrFuelMoisture() {
@@ -148,7 +148,7 @@ public class FuelMoistureTupleTest {
     }
 
     /**
-     * Test of getLiveHerbFuelMoisture method, of class FuelMoistureTuple.
+     * Test of getLiveHerbFuelMoisture method, of class BasicFuelMoisture.
      */
     @Test
     public void testGetLiveHerbFuelMoisture() {
@@ -158,7 +158,7 @@ public class FuelMoistureTupleTest {
     }
 
     /**
-     * Test of getLiveWoodyFuelMoisture method, of class FuelMoistureTuple.
+     * Test of getLiveWoodyFuelMoisture method, of class BasicFuelMoisture.
      */
     @Test
     public void testGetLiveWoodyFuelMoisture() {

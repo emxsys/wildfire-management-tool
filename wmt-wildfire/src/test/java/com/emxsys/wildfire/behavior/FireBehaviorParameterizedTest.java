@@ -38,7 +38,7 @@ import static com.emxsys.weather.api.WeatherType.WIND_DIR;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
@@ -92,7 +92,7 @@ public class FireBehaviorParameterizedTest {
         // Constructor parameters
         List<Object[]> params = new ArrayList<>();
         // Common moisture scenario used in test
-        FuelMoisture moisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
+        FuelMoisture moisture = BasicFuelMoisture.fromWeatherConditions(HOT_AND_DRY);
         // Load the original 13 fuel models
         for (StdFuelModelParams13 fbfm13 : StdFuelModelParams13.values()) {
             FuelModel model = new StdFuelModel.Builder(fbfm13).build();

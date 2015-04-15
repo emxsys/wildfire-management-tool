@@ -33,7 +33,7 @@ import com.csvreader.CsvReader;
 import com.emxsys.util.MathUtil;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
@@ -94,7 +94,7 @@ public class SurfaceFuelTest {
 
         // Common moisture scenario used in test
         //FuelMoisture moisture = new FuelMoisture(FuelMoistureScenario.D1L1);
-        FuelMoisture moisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
+        FuelMoisture moisture = BasicFuelMoisture.fromWeatherConditions(HOT_AND_DRY);
 
         // Load the original 13 fuel models
         for (StdFuelModelParams13 fbfm13 : StdFuelModelParams13.values()) {
@@ -167,7 +167,7 @@ public class SurfaceFuelTest {
     @Test
     public void testCalcHerbaceousCuring() {
         System.out.println("calcHerbaceousCuring" + " : " + fuelModelCode);
-        FuelMoisture fuelMoisture = FuelMoistureTuple.fromWeatherConditions(HOT_AND_DRY);
+        FuelMoisture fuelMoisture = BasicFuelMoisture.fromWeatherConditions(HOT_AND_DRY);
         double expResult = 0.56;
         double result = SurfaceFuel.calcHerbaceousCuring(fuelMoisture);
         assertEquals(expResult, result, 1);

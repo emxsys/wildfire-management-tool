@@ -34,7 +34,7 @@ import com.emxsys.solar.api.Sunlight;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import static com.emxsys.wildfire.api.WildfireType.FUEL_TEMP_F;
 import java.util.HashMap;
 import java.util.Objects;
@@ -134,7 +134,7 @@ public class SurfaceFuelProvider {
                 weather.getRelativeHumidity(),
                 initialFuelMoisture.getDead1HrFuelMoisture());
 
-        FuelMoistureTuple adjustedFuelMoisture = FuelMoistureTuple.fromReals(
+        BasicFuelMoisture adjustedFuelMoisture = BasicFuelMoisture.fromReals(
                 dead1HrFuelMoisture,
                 initialFuelMoisture.getDead10HrFuelMoisture(),
                 initialFuelMoisture.getDead100HrFuelMoisture(),

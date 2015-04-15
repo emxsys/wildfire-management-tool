@@ -69,12 +69,12 @@ public enum StdFuelMoistureScenario {
     }
 
     private final String scenarioName;
-    private final FuelMoistureTuple fuelMoisture;
+    private final BasicFuelMoisture fuelMoisture;
 
     StdFuelMoistureScenario(String scenarioName,
                             double dead1Hr, double dead10Hr, double dead100Hr,
                             double liveHerb, double liveWoody) {
         this.scenarioName = scenarioName;
-        this.fuelMoisture = FuelMoistureTuple.fromDoubles(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
+        this.fuelMoisture = BasicFuelMoisture.fromDoubles(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
     }
 }
