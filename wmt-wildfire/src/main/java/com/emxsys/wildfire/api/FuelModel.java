@@ -32,122 +32,122 @@ package com.emxsys.wildfire.api;
 import visad.Real;
 
 /**
- * Fuel Model interface
+ * Fuel Model interface.
+ * 
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: FuelModel.java 209 2012-09-05 23:09:19Z bdschubert $
  */
 public interface FuelModel {
 
     /**
-     * the standard fuel model number compatible with LANDFIRE data sets
-     * @return the fuel model number
+     * The standard fuel model number compatible with LANDFIRE data sets.
+     * @return The unique number identifying the fuel model.
      */
     public int getModelNo() ;
 
     /**
-     * the standard fuel model code
-     * @return the fuel model code
+     * The standard fuel model code.
+     * @return The unique code representing the fuel model.
      */
     public String getModelCode();
 
     /**
-     * the fuel type complex name
-     * @return the model name
+     * The fuel type complex name.
+     * @return The model name.
      */
     public String getModelName();
 
     /**
-     * the fuel type group that this model belongs to
-     * @return the model group
+     * The fuel type group that this model belongs to, e.g., Original 13, Standard 40, etc.
+     * @return The model group name.
      */
     public String getModelGroup();
 
     /**
-     * the 1 hour dead fuel loading
+     * The 1 hour dead fuel loading.
      * @return [kg/m2]
      */
     public Real getDead1HrFuelLoad();
 
     /**
-     * the 10 hour dead fuel loading
+     * The 10 hour dead fuel loading.
      * @return [kg/m2]
      */
     public Real getDead10HrFuelLoad();
 
     /**
-     * the 100 hour dead fuel loading
+     * The 100 hour dead fuel loading.
      * @return [kg/m2]
      */
     public Real getDead100HrFuelLoad();
 
     /**
-     * the live herbaceous fuel loading
+     * The live herbaceous fuel loading.
      * @return [kg/m2]
      */
     public Real getLiveHerbFuelLoad();
 
     /**
-     * the live woody fuel loading
+     * The live woody fuel loading.
      * @return  [kg/m2]
      */
     public Real getLiveWoodyFuelLoad();
 
     /**
-     * the fuel type: static or dynamic
-     * @return true if the fuel model is dynamic
+     * The fuel type: static or dynamic.
+     * @return True if the fuel model is dynamic.
      */
     public boolean isDynamic();
 
     /**
-     * burnable or non burnable
-     * @return true if the fuel model is burnable
+     * Burnable or non burnable.
+     * @return True if the fuel model is burnable
      */
     public boolean isBurnable();
 
     /**
-     * the dead 1Hr fuel surface-area-to-volumne ratio
+     * The dead 1 hour fuel surface-area-to-volume ratio.
      * @return [1/m]
      */
     public Real getDead1HrSAVRatio();
 
     /**
-     * the dead 10Hr fuel surface-area-to-volumne ratio
+     * The dead 10 hour fuel surface-area-to-volume ratio
      * @return [1/m]
      */
     public Real getDead10HrSAVRatio();
 
     /**
-     * the dead 100Hr fuel surface-area-to-volumne ratio
+     * The dead 100 hour fuel surface-area-to-volume ratio
      * @return [1/m]
      */
     public Real getDead100HrSAVRatio();
 
     /**
-     * the live herbaceous fuel surface-area-to-volumne ratio
-     * @return [1/m]
+     * The live herbaceous fuel surface-area-to-volume ratio.
+     * @return [m^2/m^3]
      */
     public Real getLiveHerbSAVRatio();
 
     /**
-     * the live woody fuel surface-area-to-volumne ratio
-     * @return [1/m]
+     * The live woody fuel surface-area-to-volume ratio.
+     * @return [[m^2/m^3]]
      */
     public Real getLiveWoodySAVRatio();
 
     /**
-     * the fuel bed depth
+     * The fuel bed depth.
      * @return [m]
      */
     public Real getFuelBedDepth();
 
     /**
-     * the moisture of extinction
+     * The moisture of extinction.
      * @return [percent]
      */
     public Real getMoistureOfExtinction();
 
     /**
-     * the low heat content
+     * The low heat content.
      * @return [kJ/kg]
      */
     public Real getLowHeatContent();

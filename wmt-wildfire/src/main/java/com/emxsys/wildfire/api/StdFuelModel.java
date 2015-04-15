@@ -33,8 +33,6 @@ import com.emxsys.visad.RealXmlAdaptor;
 import com.emxsys.visad.Reals;
 import com.emxsys.wildfire.behave.Behave;
 import java.util.*;
-import javax.xml.bind.annotation.XmlAccessOrder;
-import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -457,7 +455,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * fuel model number
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -466,7 +464,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * fuel model code
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -475,7 +473,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * fuel type complex
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -484,7 +482,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * fuel type group
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -493,7 +491,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * 1 hour dead fuel loading [kg/m2]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -503,7 +501,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * 10 hour dead fuel loading [kg/m2]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -513,7 +511,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * 100 hour dead fuel loading [kg/m2]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -523,7 +521,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Live herbatious fuel loading [kg/m2]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -533,7 +531,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Live woody fuel loading [kg/m2]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -543,7 +541,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Fuel model type
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -552,7 +550,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * The burnable state
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -565,7 +563,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * 1 hour dead fuel surface-area-to-volumne ratio [1/m]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -575,7 +573,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * 10 hour dead fuel surface-area-to-volumne ratio [1/m]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -585,7 +583,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * 100 hour dead fuel surface-area-to-volumne ratio [1/m]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -595,7 +593,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Live herbatious fuel surface-area-to-volumne ratio [1/m]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -605,7 +603,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Live woody fuel loading surface-area-to-volumne ratio [1/m]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -615,7 +613,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Fuel bed depth [meters]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -625,8 +623,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Moisture of extinction for dead fuels [percent]. This is the value of fuel moisture content
-     * for which a fire would not spread.
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
@@ -636,7 +633,7 @@ public class StdFuelModel implements FuelModel {
     }
 
     /**
-     * Heat content [kJ/kg]
+     * {@inheritDoc}
      */
     @Override
     @XmlElement
