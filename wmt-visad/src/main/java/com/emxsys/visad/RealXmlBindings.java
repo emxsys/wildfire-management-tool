@@ -46,6 +46,10 @@ public class RealXmlBindings {
 
     private Real real;
 
+    public RealXmlBindings() {
+        real = new Real(Double.NaN);
+    }
+
     public RealXmlBindings(Real real) {
         this.real = real;
     }
