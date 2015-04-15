@@ -29,20 +29,14 @@
  */
 package com.emxsys.wmt.web;
 
-import com.emxsys.wildfire.api.StdFuelModel;
-import com.emxsys.wildfire.api.StdFuelModelParams13;
-import com.emxsys.wildfire.api.StdFuelModelParams40;
-import java.util.ArrayList;
-import java.util.List;
+import com.emxsys.solar.api.BasicSunlight;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 
 /**
@@ -50,58 +44,20 @@ import javax.ws.rs.core.Response;
  *
  * @author Bruce Schubert
  */
-@Path("/fuelmodels")
-public class FuelModelsResource {
+@Path("/sunlight.xml")
+public class SunlightXmlResource {
     @Context
     private UriInfo context;
 
-    /** Creates a new instance of FuelModelsResource */
-    public FuelModelsResource() {
+    public SunlightXmlResource() {
     }
 
-    /**
-     * Retrieves representation of an instance of com.emxsys.wmt.web.FuelModelsResource
-     *
-     * @return an instance of List<StdFuelModel>
-     */
     @GET
-    @Produces({"application/json", "application/xml",})
-    public List<StdFuelModel> getAllFuelModels() {
-        ArrayList<StdFuelModel> list = new ArrayList<>();
-        // Add the Standard 13 FuelModels
-        for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
-            list.add(new StdFuelModel.Builder(fbfm).build());
-        }
-        // Add the Standard 13 FuelModels
-        for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
-            list.add(new StdFuelModel.Builder(fbfm).build());
-        }
-        return list;
-    }
-
-    /**
-     * POST method for creating an instance of FuelModelResource
-     *
-     * @param content representation for the new resource
-     * @return an HTTP response with content of the created resource
-     */
-    @POST
-    @Consumes("application/xml")
-    @Produces("application/xml")
-    public Response postFuelModel(StdFuelModel content) {
-        //TODO
-        return Response.created(context.getAbsolutePath()).build();
-    }
-
-    /**
-     * Sub-resource locator method for {modelNo}
-     *
-     * @param modelNo
-     * @return
-     */
-    @Path("{modelNo}")
-    public FuelModelResource getFuelModelResource(@PathParam("modelNo") String modelNo) {
-        return FuelModelResource.getInstance(modelNo);
+    @Produces(MediaType.APPLICATION_XML)
+    public BasicSunlight getJson(@QueryParam("time") String time,
+                                 @QueryParam("latitude") double latitude,
+                                 @QueryParam("longitude") double longitude) {
+        return SunlightResource.getSunlight(time, latitude, longitude);
     }
 
 }

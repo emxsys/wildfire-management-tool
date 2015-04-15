@@ -19,22 +19,22 @@ function copyToClipboard(id) {
 			<div class="toc-top"></div>
 <div class="item"><a href="Fuel_Model.html">Fuel Model</a></div>
 <div class="item"><a href="Fuel_Models.html">Fuel Models</a></div>
-<div class="current item">Sunlight</div>
-<div class="item"><a href="Sunlight_JSON.html">Sunlight JSON</a></div>
+<div class="item"><a href="Sunlight.html">Sunlight</a></div>
+<div class="current item">Sunlight JSON</div>
 		</div>
 		<div class="main">
 			<div class="background"></div>
 			<div class="content">
-				<header>Sunlight</header>
+				<header>Sunlight JSON</header>
 				<div class="basic-info">
 										<div><span>
 <p>
-  Gets the sunlight for a given time and location.
+  Gets the sunlight for a given time and location with a JSON representation.
 </p>
 </span>
 </div>
 										<div class="title">Resource URL</div>
-					<div>/rs/sunlight</div>
+					<div>/rs/sunlight.json</div>
 					
 										<div class="title">Parameters</div>
 					<table class="parameters">
@@ -90,7 +90,7 @@ function copyToClipboard(id) {
 						<a class="copy" href="javascript:copyToClipboard('curl-example')"></a>
 						<code id='curl-example'>
 						$ curl -X GET
-												-H 'Content-Type: plain/text' -H 'Accepts: plain/text, application/xml, application/json' "/rs/sunlight?time=2015-04-13T12:50-07:00&latitude=-34.2&longitude=-119.2"
+												-H 'Content-Type: plain/text' -H 'Accepts: application/json' "/rs/sunlight.json?time=2015-04-13T12:50-07:00&latitude=-34.2&longitude=-119.2"
 						</code>
 					</div>
 				</div>
@@ -104,7 +104,7 @@ function copyToClipboard(id) {
 						<header>Request Header</header>
 						<a class="copy" href="javascript:copyToClipboard('request-header')"></a>
 						<code id='request-header' class="header">Content-Type: plain/text
-Accepts: plain/text, application/xml, application/json</code>
+Accepts: application/json</code>
 					</div>
 										
 									</div>
@@ -117,7 +117,7 @@ Accepts: plain/text, application/xml, application/json</code>
 </p>
 </span>
 </div>
-					<div class="image"><img src="img/Sunlight_response.png"></div>
+					<div class="image"><img src="img/Sunlight_JSON_response.png"></div>
 												<a name="BasicSunlight"></a>
 						<div class="classname">BasicSunlight</div>
 						<div class="attributes">
@@ -356,65 +356,64 @@ Accepts: plain/text, application/xml, application/json</code>
 										<div class="code-block">
 						<header>Response Header</header>
 						<a class="copy" href="javascript:copyToClipboard('response-header')"></a>
-						<code id='response-header' class="header">content-type: application/xml
+						<code id='response-header' class="header">content-type: application/json
 status: 200 OK</code>
 					</div>
 										
 										<div class="code-block">
 						<header>Response Body</header>
 						<a class="copy" href="javascript:copyToClipboard('response-body')"></a>
-						<code id='response-body' class="json"><?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sunlight>
-    <subsolarLatitude>
-        <type>subsolar_lat:deg</type>
-        <value>9.14704808836862</value>
-        <unit>deg</unit>
-    </subsolarLatitude>
-    <subsolarLongitude>
-        <type>subsolar_lon:deg</type>
-        <value>-117.37256298844292</value>
-        <unit>deg</unit>
-    </subsolarLongitude>
-    <azimuthAngle>
-        <type>azimuth:deg</type>
-        <value>175.75296508447678</value>
-        <unit>deg</unit>
-    </azimuthAngle>
-    <altitudeAngle>
-        <type>altitude:deg</type>
-        <value>64.84887095057533</value>
-        <unit>deg</unit>
-    </altitudeAngle>
-    <zenithAngle>
-        <type>zenith:deg</type>
-        <value>25.151129049424668</value>
-        <unit>deg</unit>
-    </zenithAngle>
-    <localHourAngle>
-        <type>hour:deg</type>
-        <value>358.17256298844296</value>
-        <unit>deg</unit>
-    </localHourAngle>
-    <sunriseHourAngle>
-        <type>sunrise_hour:deg</type>
-        <value>-97.07613326922825</value>
-        <unit>deg</unit>
-    </sunriseHourAngle>
-    <sunsetHourAngle>
-        <type>sunset_hour:deg</type>
-        <value>97.11693590717262</value>
-        <unit>deg</unit>
-    </sunsetHourAngle>
-    <sunriseTime>06:28:21-07:00</sunriseTime>
-    <sunsetTime>19:26:02-07:00</sunsetTime>
-    <sunTransitTime>12:57:18-07:00</sunTransitTime>
-    <missing>false</missing>
-</sunlight></code>
+						<code id='response-body' class="json">{
+  <span class="key">"subsolarLatitude"</span>: {
+    <span class="key">"type"</span>: <span class="value">"subsolar_lat:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"9.532856248306256"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"subsolarLongitude"</span>: {
+    <span class="key">"type"</span>: <span class="value">"subsolar_lon:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"-142.62736304521917"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"azimuthAngle"</span>: {
+    <span class="key">"type"</span>: <span class="value">"azimuth:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"226.53343090267936"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"altitudeAngle"</span>: {
+    <span class="key">"type"</span>: <span class="value">"altitude:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"57.31046626496612"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"zenithAngle"</span>: {
+    <span class="key">"type"</span>: <span class="value">"zenith:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"32.68953373503388"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"localHourAngle"</span>: {
+    <span class="key">"type"</span>: <span class="value">"hour:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"23.427363045219163"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"sunriseHourAngle"</span>: {
+    <span class="key">"type"</span>: <span class="value">"sunrise_hour:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"-97.32072605612808"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"sunsetHourAngle"</span>: {
+    <span class="key">"type"</span>: <span class="value">"sunset_hour:deg"</span>,
+    <span class="key">"value"</span>: <span class="value">"97.36056346144589"</span>,
+    <span class="key">"unit"</span>: <span class="value">"deg"</span>
+  },
+  <span class="key">"sunriseTime"</span>: <span class="value">"06:27:08-07:00"</span>,
+  <span class="key">"sunsetTime"</span>: <span class="value">"19:26:45-07:00"</span>,
+  <span class="key">"sunTransitTime"</span>: <span class="value">"12:57:03-07:00"</span>,
+  <span class="key">"missing"</span>: <span class="value">"false"</span>
+}</code>
 					</div>
 									</div>
 				
 				<div class="content" style="clear:both">
-					<footer class="download">For client development, you can download <a href="xml/Sunlight.xml" target="_blank">Sunlight.xml</a></footer>
+					<footer class="download">For client development, you can download <a href="xml/Sunlight_JSON.xml" target="_blank">Sunlight_JSON.xml</a></footer>
 					<footer class="powered-by"><a href="http://www.visual-paradigm.com" target="_blank">Powered by Visual Paradigm</a></footer>			
 				</div>
 				

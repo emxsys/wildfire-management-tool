@@ -30,23 +30,23 @@
 package com.emxsys.wmt.web;
 
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.solar.api.SunlightTuple;
+import com.emxsys.solar.api.BasicSunlight;
 import com.emxsys.solar.spi.SunlightProviderFactory;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 
 /**
- * REST Web Service
+ * REST Web Service. Retrieves representation of an instance of com.emxsys.solar.BasicSunliht.
+ * Example:
+ * <pre>GET http://localhost:8080/sunlight?time=2015-04-13T13:34:25-07:00[America/Los_Angeles]&latitude=34.25&longitude=-119.2</pre>
  *
  * @author Bruce Schubert
  */
@@ -60,31 +60,38 @@ public class SunlightResource {
     }
 
     /**
-     * Retrieves representation of an instance of com.emxsys.wmt.web.SunlightResource Example:
+     * Example:
      * <pre>GET http://localhost:8080/sunlight?time=2015-04-13T13:34:25-07:00[America/Los_Angeles]&latitude=34.25&longitude=-119.2</pre>
-     *
-     * @param time An ISO Date/Time string.
-     * @param latitude Latitude in degrees.
-     * @param longitude Longitude in degrees.
-     * @return an instance of SunlightTuple
      */
     @GET
-    @Produces({"application/xml",})
-    public SunlightTuple getSunlight(@QueryParam("time") String time,
-                                     @QueryParam("latitude") double latitude,
-                                     @QueryParam("longitude") double longitude) {
-        ZonedDateTime datetime = ZonedDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME);
-        GeoCoord3D coord = GeoCoord3D.fromDegrees(latitude, longitude);
-        return SunlightProviderFactory.getInstance().getSunlight(datetime, coord);
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public BasicSunlight getXmlOrJson(@QueryParam("time") String time,
+                                      @QueryParam("latitude") double latitude,
+                                      @QueryParam("longitude") double longitude) {
+        return getSunlight(time, latitude, longitude);
     }
 
     /**
-     * PUT method for updating or creating an instance of SunlightResource
-     *
-     * @param content representation for the resource
+     * Example:
+     * <pre>GET http://localhost:8080/sunlight?time=2015-04-13T13:34:25-07:00[America/Los_Angeles]&latitude=34.25&longitude=-119.2</pre>
      */
-    @PUT
-    @Consumes("application/xml")
-    public void putSunlight(SunlightTuple content) {
+    @GET
+    @Produces({MediaType.TEXT_PLAIN})
+    public String getPlainText(@QueryParam("time") String time,
+                               @QueryParam("latitude") double latitude,
+                               @QueryParam("longitude") double longitude) {
+        return getSunlight(time, latitude, longitude).toString();
+    }
+
+    /**
+     * @param time An ISO Date/Time string.
+     * @param latitude Latitude in degrees.
+     * @param longitude Longitude in degrees.
+     * @return an instance of BasicSunlight
+     */
+    public static BasicSunlight getSunlight(String time, double latitude, double longitude) {
+        ZonedDateTime datetime = ZonedDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME);
+        GeoCoord3D coord = GeoCoord3D.fromDegrees(latitude, longitude);
+        return SunlightProviderFactory.getInstance().getSunlight(datetime, coord);
     }
 }

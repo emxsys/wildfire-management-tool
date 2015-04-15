@@ -29,79 +29,61 @@
  */
 package com.emxsys.wmt.web;
 
-import com.emxsys.wildfire.api.StdFuelModel;
-import com.emxsys.wildfire.api.StdFuelModelParams13;
-import com.emxsys.wildfire.api.StdFuelModelParams40;
-import java.util.ArrayList;
-import java.util.List;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 
 /**
- * REST Web Service
+ * Fuel Moisture REST Web Service.
  *
  * @author Bruce Schubert
  */
-@Path("/fuelmodels")
-public class FuelModelsResource {
+@Path("fuelmoisture")
+public class FuelMoistureResource {
     @Context
     private UriInfo context;
 
-    /** Creates a new instance of FuelModelsResource */
-    public FuelModelsResource() {
+    /** Creates a new instance of FuelMoistureResource */
+    public FuelMoistureResource() {
     }
 
     /**
-     * Retrieves representation of an instance of com.emxsys.wmt.web.FuelModelsResource
+     * Retrieves representation of an instance com.emxsys.wildfire.api.BasicFuelMoisture.
      *
-     * @return an instance of List<StdFuelModel>
+     * @return an instance of BasicFuelMoisture
      */
     @GET
-    @Produces({"application/json", "application/xml",})
-    public List<StdFuelModel> getAllFuelModels() {
-        ArrayList<StdFuelModel> list = new ArrayList<>();
-        // Add the Standard 13 FuelModels
-        for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
-            list.add(new StdFuelModel.Builder(fbfm).build());
-        }
-        // Add the Standard 13 FuelModels
-        for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
-            list.add(new StdFuelModel.Builder(fbfm).build());
-        }
-        return list;
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public BasicFuelMoisture getXmlOrJson(@QueryParam("dead1Hr") double dead1Hr,
+                                          @QueryParam("dead10Hr") double dead10Hr,
+                                          @QueryParam("dead100Hr") double dead100Hr,
+                                          @QueryParam("herb") double herb,
+                                          @QueryParam("woody") double woody) {
+        return BasicFuelMoisture.fromDoubles(dead1Hr, dead10Hr, dead100Hr, herb, woody);
     }
 
     /**
-     * POST method for creating an instance of FuelModelResource
+     * Retrieves representation of an instance com.emxsys.wildfire.api.BasicFuelMoisture.
      *
-     * @param content representation for the new resource
-     * @return an HTTP response with content of the created resource
+     * @return an instance of BasicFuelMoisture
      */
-    @POST
-    @Consumes("application/xml")
-    @Produces("application/xml")
-    public Response postFuelModel(StdFuelModel content) {
-        //TODO
-        return Response.created(context.getAbsolutePath()).build();
-    }
-
-    /**
-     * Sub-resource locator method for {modelNo}
-     *
-     * @param modelNo
-     * @return
-     */
-    @Path("{modelNo}")
-    public FuelModelResource getFuelModelResource(@PathParam("modelNo") String modelNo) {
-        return FuelModelResource.getInstance(modelNo);
+    @GET
+    @Produces({MediaType.TEXT_PLAIN})
+    public String getTxt(@QueryParam("dead1Hr") double dead1Hr,
+                         @QueryParam("dead10Hr") double dead10Hr,
+                         @QueryParam("dead100Hr") double dead100Hr,
+                         @QueryParam("herb") double herb,
+                         @QueryParam("woody") double woody) {
+        return BasicFuelMoisture.fromDoubles(dead1Hr, dead10Hr, dead100Hr, herb, woody).toString();
     }
 
 }

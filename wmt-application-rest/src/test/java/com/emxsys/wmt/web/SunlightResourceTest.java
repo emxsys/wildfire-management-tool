@@ -30,11 +30,12 @@
 package com.emxsys.wmt.web;
 
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.solar.api.SunlightTuple;
+import com.emxsys.solar.api.BasicSunlight;
 import com.sun.jersey.test.framework.JerseyTest;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -54,7 +55,7 @@ public class SunlightResourceTest extends JerseyTest {
     public void testSunlightResource() {
         String time = ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
         GeoCoord3D coord = GeoCoord3D.fromDegrees(34.25, -119.2);
-        
+
         // The following fails (404) because the '?' is converted to "%3F".  Must use queryParams() instead.
         // com.sun.jersey.api.client.UniformInterfaceException: 
         // GET http://localhost:9998/sunlight%3Ftime=2015-04-13T13:34:25.426-07:00%5BAmerica/Los_Angeles%5D&latitude=34.25&longitude=-119.2 returned a response status of 404
@@ -62,13 +63,29 @@ public class SunlightResourceTest extends JerseyTest {
         //            + "?time=" + time
         //            + "&latitude=" + coord.getLatitudeDegrees()
         //            + "&longitude=" + coord.getLongitudeDegrees()).get(String.class);
-
-        String responseMsg = super.webResource.path("sunlight")
+        String xml = super.webResource.path("sunlight")
             .queryParam("time", time)
             .queryParam("latitude", Double.toString(coord.getLatitudeDegrees()))
             .queryParam("longitude", Double.toString(coord.getLongitudeDegrees()))
+            .accept(MediaType.APPLICATION_XML)
             .get(String.class);
-        System.out.println(responseMsg);
+        System.out.println(xml);
+
+        String json = super.webResource.path("sunlight")
+            .queryParam("time", time)
+            .queryParam("latitude", Double.toString(coord.getLatitudeDegrees()))
+            .queryParam("longitude", Double.toString(coord.getLongitudeDegrees()))
+            .accept(MediaType.APPLICATION_JSON)
+            .get(String.class);
+        System.out.println(json);
+        
+        String text = super.webResource.path("sunlight")
+            .queryParam("time", time)
+            .queryParam("latitude", Double.toString(coord.getLatitudeDegrees()))
+            .queryParam("longitude", Double.toString(coord.getLongitudeDegrees()))
+            .accept(MediaType.TEXT_PLAIN)
+            .get(String.class);
+        System.out.println(text);
     }
 
     @Test
@@ -78,20 +95,11 @@ public class SunlightResourceTest extends JerseyTest {
         double latitude = 34.25;
         double longitude = -119.25;
         SunlightResource instance = new SunlightResource();
-        SunlightTuple result = instance.getSunlight(isoDateTime, latitude, longitude);
+        BasicSunlight result = instance.getSunlight(isoDateTime, latitude, longitude);
         assertNotNull(result);
         assertFalse(result.isMissing());
     }
 
-    @Test
-    @Ignore
-    public void testPutSunlight() {
-        System.out.println("putSunlight");
-        SunlightTuple content = null;
-        SunlightResource instance = new SunlightResource();
-        instance.putSunlight(content);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+
 
 }
