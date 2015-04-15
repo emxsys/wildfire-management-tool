@@ -43,7 +43,7 @@ import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wildfire.api.FuelConditionTuple;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
@@ -126,7 +126,7 @@ public class Model {
     private final AtomicReference<Coord3D> coordRef = new AtomicReference<>(GeoCoord3D.INVALID_COORD);
     private final AtomicReference<Terrain> terrainRef = new AtomicReference<>(TerrainTuple.INVALID_TERRAIN);
     private final AtomicReference<FuelModel> fuelModelRef = new AtomicReference<>(StdFuelModel.INVALID);
-    private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(FuelMoistureTuple.INVALID);
+    private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(BasicFuelMoisture.INVALID);
     private final AtomicReference<Sunlight> sunlightRef = new AtomicReference<>(BasicSunlight.INVALID_SUNLIGHT);
     private final AtomicReference<Weather> weatherRef = new AtomicReference<>(WeatherTuple.INVALID_TUPLE);
     private final AtomicReference<FuelCondition> fuelConditionRef = new AtomicReference<>(FuelConditionTuple.INVALID_TUPLE);

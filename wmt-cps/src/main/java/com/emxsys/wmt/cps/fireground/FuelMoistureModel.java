@@ -34,7 +34,7 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.visad.Times;
 import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.weather.api.WeatherType;
-import com.emxsys.wildfire.api.FuelMoistureTuple;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.FuelMoisture;
 import static com.emxsys.wildfire.api.WildfireType.*;
 import static com.emxsys.wmt.cps.fireground.FuelMoistureUtil.*;
@@ -154,8 +154,8 @@ public class FuelMoistureModel {
         return evaluateFuelMoisture(getLiveWoodyFuelMoistureData(), hour, latLon);
     }
 
-    public FuelMoistureTuple getFuelMoisture(Real hour, Coord2D latLon) {
-        FuelMoistureTuple fuelMoisture = FuelMoistureTuple.fromReals(
+    public BasicFuelMoisture getFuelMoisture(Real hour, Coord2D latLon) {
+        BasicFuelMoisture fuelMoisture = BasicFuelMoisture.fromReals(
                 getDead1HrFuelMoisture(hour, latLon),
                 getDead10HrFuelMoisture(hour, latLon),
                 getDead100HrFuelMoisture(hour, latLon),
@@ -164,7 +164,7 @@ public class FuelMoistureModel {
         return fuelMoisture;
     }
 
-    public FuelMoistureTuple getFuelMoistureAt(int timeIndex, int spatialIndex) {
+    public BasicFuelMoisture getFuelMoistureAt(int timeIndex, int spatialIndex) {
         try {
             Real dead1Hr = (Real) ((FieldImpl) getDead1HrFuelMoistureData().getSample(timeIndex)).getSample(spatialIndex);
             Real dead10Hr = (Real) ((FieldImpl) getDead10HrFuelMoistureData().getSample(timeIndex)).getSample(0);
@@ -172,7 +172,7 @@ public class FuelMoistureModel {
             Real liveHerb = (Real) ((FieldImpl) getLiveHerbFuelMoistureData().getSample(timeIndex)).getSample(0);
             Real liveWoody = (Real) ((FieldImpl) getLiveWoodyFuelMoistureData().getSample(timeIndex)).getSample(0);
 
-            FuelMoistureTuple fuelMoisture = FuelMoistureTuple.fromReals(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
+            BasicFuelMoisture fuelMoisture = BasicFuelMoisture.fromReals(dead1Hr, dead10Hr, dead100Hr, liveHerb, liveWoody);
             return fuelMoisture;
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
