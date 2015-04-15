@@ -34,7 +34,7 @@ import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.solar.api.Sunlight;
-import com.emxsys.solar.api.SunlightTuple;
+import com.emxsys.solar.api.BasicSunlight;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.weather.api.WeatherProvider;
@@ -127,7 +127,7 @@ public class Model {
     private final AtomicReference<Terrain> terrainRef = new AtomicReference<>(TerrainTuple.INVALID_TERRAIN);
     private final AtomicReference<FuelModel> fuelModelRef = new AtomicReference<>(StdFuelModel.INVALID);
     private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(FuelMoistureTuple.INVALID);
-    private final AtomicReference<Sunlight> sunlightRef = new AtomicReference<>(SunlightTuple.INVALID_TUPLE);
+    private final AtomicReference<Sunlight> sunlightRef = new AtomicReference<>(BasicSunlight.INVALID_SUNLIGHT);
     private final AtomicReference<Weather> weatherRef = new AtomicReference<>(WeatherTuple.INVALID_TUPLE);
     private final AtomicReference<FuelCondition> fuelConditionRef = new AtomicReference<>(FuelConditionTuple.INVALID_TUPLE);
     private final AtomicReference<SurfaceFuel> fuelbedRef = new AtomicReference<>();
