@@ -61,7 +61,7 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-public class SurfaceFuel extends RealTuple {
+public class SurfaceFuel {
 
     public static final int LOAD_DEAD_1H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_1H, FUEL_BED);
     public static final int LOAD_DEAD_10H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_10H, FUEL_BED);
@@ -86,9 +86,9 @@ public class SurfaceFuel extends RealTuple {
      * Creates a SurfaceFuel object. If the FuelModal is dynamic, then the herbaceous fuels are
      * cured based on the FuelMoisture and the cured fuels are transfered to the dead 1 hour
      * category.
-     * 
+     *
      * @param model Either a static or dynamic fuel model.
-     * @param moisture 
+     * @param moisture
      * @param fuelTemp
      * @return A new SurfaceFuel object.
      */
@@ -275,6 +275,11 @@ public class SurfaceFuel extends RealTuple {
     /** Oven-dry fuel-particle density: 32 [lbs/ft3] - Albini's constant */
     static final double rho_p = 32.0;
 
+    /**
+     * The data implementation tuple of type WildfireType.FUEL_BED.
+     */
+    private RealTuple tuple;
+
     // Input values
     double[] sv;        // [ft2/ft3]      
     double[] sv_dead;   // [ft2/ft3]      
@@ -320,7 +325,7 @@ public class SurfaceFuel extends RealTuple {
      * Construct a new FuelCharacter object with "missing" values.
      */
     public SurfaceFuel() {
-        super(WildfireType.FUEL_BED);
+        this.tuple = new RealTuple(WildfireType.FUEL_BED);
     }
 
     /**
@@ -329,12 +334,12 @@ public class SurfaceFuel extends RealTuple {
      */
     private SurfaceFuel(FuelModel model, FuelMoisture moisture, RealTuple tuple, Real fuelTemp)
             throws VisADException, RemoteException {
-        super(WildfireType.FUEL_BED, tuple.getRealComponents(), null);
+        this.tuple = new RealTuple(WildfireType.FUEL_BED, tuple.getRealComponents(), null);
         this.fuelModel = model;
         this.fuelMoisture = moisture;
         this.fuelTemperature = Reals.convertTo(FUEL_TEMP_F, fuelTemp);
 
-        double[] values = getValues();
+        double[] values = tuple.getValues();
 
         // Compute adjusted fine fuels (mix dead herbaceous with dead 1hr)
         double w0_d = values[LOAD_DEAD_1H_INDEX];
@@ -405,6 +410,14 @@ public class SurfaceFuel extends RealTuple {
         if (w0_total == 0 || sv_total == 0) {
             nonBurnable = true;
         }
+    }
+
+    /**
+     * Gets the WildfireType.FUEL_BED implementation tuple.
+     * @return A WildfireType.FUEL_BED type RealTuple.
+     */
+    public RealTuple getTuple() {
+        return this.tuple;
     }
 
     /**
@@ -792,7 +805,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDeadHerbFuelLoad() {
         try {
-            return (Real) getComponent(LOAD_DEAD_HERB_INDEX);
+            return (Real) tuple.getComponent(LOAD_DEAD_HERB_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -804,7 +817,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDead1HrFuelLoad() {
         try {
-            return (Real) getComponent(LOAD_DEAD_1H_INDEX);
+            return (Real) tuple.getComponent(LOAD_DEAD_1H_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -816,7 +829,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDead10HrFuelLoad() {
         try {
-            return (Real) getComponent(LOAD_DEAD_10H_INDEX);
+            return (Real) tuple.getComponent(LOAD_DEAD_10H_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -828,7 +841,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDead100HrFuelLoad() {
         try {
-            return (Real) getComponent(LOAD_DEAD_100H_INDEX);
+            return (Real) tuple.getComponent(LOAD_DEAD_100H_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -840,7 +853,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getLiveHerbFuelLoad() {
         try {
-            return (Real) getComponent(LOAD_LIVE_HERB_INDEX);
+            return (Real) tuple.getComponent(LOAD_LIVE_HERB_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -852,7 +865,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getLiveWoodyFuelLoad() {
         try {
-            return (Real) getComponent(LOAD_LIVE_WOODY_INDEX);
+            return (Real) tuple.getComponent(LOAD_LIVE_WOODY_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -864,7 +877,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDeadHerbSAVRatio() {
         try {
-            return (Real) getComponent(SAV_DEAD_HERB_INDEX);
+            return (Real) tuple.getComponent(SAV_DEAD_HERB_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -876,7 +889,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDead1HrSAVRatio() {
         try {
-            return (Real) getComponent(SAV_DEAD_1H_INDEX);
+            return (Real) tuple.getComponent(SAV_DEAD_1H_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -888,7 +901,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDead10HrSAVRatio() {
         try {
-            return (Real) getComponent(SAV_DEAD_10H_INDEX);
+            return (Real) tuple.getComponent(SAV_DEAD_10H_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -900,7 +913,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getDead100HrSAVRatio() {
         try {
-            return (Real) getComponent(SAV_DEAD_100H_INDEX);
+            return (Real) tuple.getComponent(SAV_DEAD_100H_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -912,7 +925,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getLiveHerbSAVRatio() {
         try {
-            return (Real) getComponent(SAV_LIVE_HERB_INDEX);
+            return (Real) tuple.getComponent(SAV_LIVE_HERB_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -924,7 +937,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getLiveWoodySAVRatio() {
         try {
-            return (Real) getComponent(SAV_LIVE_WOODY_INDEX);
+            return (Real) tuple.getComponent(SAV_LIVE_WOODY_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
@@ -936,7 +949,7 @@ public class SurfaceFuel extends RealTuple {
      */
     public Real getFuelBedDepth() {
         try {
-            return (Real) getComponent(FUEL_BED_DEPTH_INDEX);
+            return (Real) tuple.getComponent(FUEL_BED_DEPTH_INDEX);
         } catch (VisADException | RemoteException ex) {
             throw new IllegalStateException(ex);
         }
