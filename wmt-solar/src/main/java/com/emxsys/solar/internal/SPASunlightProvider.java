@@ -94,7 +94,7 @@ public class SPASunlightProvider implements SunlightProvider {
 
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
-            return BasicSunlight.INVALID_TUPLE;
+            return BasicSunlight.INVALID_SUNLIGHT;
         }
     }
 

@@ -31,6 +31,7 @@ package com.emxsys.solar.api;
 
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Reals;
+import com.emxsys.visad.Tuples;
 import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;
@@ -77,6 +78,19 @@ public class SolarType {
     public static final RealTupleType SUN_POSITION;
     public final static RealTupleType SUNLIGHT;
 
+    public static final int SUBSOLAR_LATITUDE_INDEX;
+    public static final int SUBSOLAR_LONGITIDUE_INDEX;
+    public static final int AZIMUTH_ANGLE_INDEX;
+    public static final int ZENITH_ANGLE_INDEX;
+    public static final int ALTITUDE_ANGLE_INDEX;
+    public static final int HOUR_ANGLE_INDEX;
+    public static final int SUNRISE_HOUR_ANGLE_INDEX;
+    public static final int SUNSET_HOUR_ANGLE_INDEX;
+    public static final int SUNTRANSIT_HOUR_INDEX;
+    public static final int SUNRISE_HOUR_INDEX;
+    public static final int SUNSET_HOUR_INDEX;
+    public static final int ZONE_OFFSET_HOUR_INDEX;
+
     static {
         TIME = RealType.getRealType("local_time:sec", CommonUnit.secondsSinceTheEpoch, null);
         SUNRISE_TIME = RealType.getRealType("sunrise:utc", CommonUnit.secondsSinceTheEpoch, null);
@@ -114,20 +128,32 @@ public class SolarType {
                     SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE,});
         SUNLIGHT = Reals.newRealTupleType(
                 new RealType[]{
-                    SUBSOLAR_LATITUDE, 
-                    SUBSOLAR_LONGITUDE, 
-                    AZIMUTH_ANGLE, 
-                    ZENITH_ANGLE, 
-                    ALTITUDE_ANGLE, 
-                    HOUR_ANGLE, 
-                    SUNRISE_HOUR_ANGLE, 
-                    SUNSET_HOUR_ANGLE, 
-                    SUNRISE_HOUR, 
-                    SUNSET_HOUR, 
+                    SUBSOLAR_LATITUDE,
+                    SUBSOLAR_LONGITUDE,
+                    AZIMUTH_ANGLE,
+                    ZENITH_ANGLE,
+                    ALTITUDE_ANGLE,
+                    HOUR_ANGLE,
+                    SUNRISE_HOUR_ANGLE,
+                    SUNSET_HOUR_ANGLE,
+                    SUNRISE_HOUR,
+                    SUNSET_HOUR,
                     SUNTRANSIT_HOUR,
                     ZONE_OFFSET_HOUR
                 });
 
+        SUBSOLAR_LATITUDE_INDEX = Tuples.getIndex(SUBSOLAR_LATITUDE, SUNLIGHT);
+        SUBSOLAR_LONGITIDUE_INDEX = Tuples.getIndex(SUBSOLAR_LONGITUDE, SUNLIGHT);
+        AZIMUTH_ANGLE_INDEX = Tuples.getIndex(AZIMUTH_ANGLE, SUNLIGHT);
+        ZENITH_ANGLE_INDEX = Tuples.getIndex(ZENITH_ANGLE, SUNLIGHT);
+        ALTITUDE_ANGLE_INDEX = Tuples.getIndex(ALTITUDE_ANGLE, SUNLIGHT);
+        HOUR_ANGLE_INDEX = Tuples.getIndex(HOUR_ANGLE, SUNLIGHT);
+        SUNRISE_HOUR_ANGLE_INDEX = Tuples.getIndex(SUNRISE_HOUR_ANGLE, SUNLIGHT);
+        SUNSET_HOUR_ANGLE_INDEX = Tuples.getIndex(SUNSET_HOUR_ANGLE, SUNLIGHT);
+        SUNTRANSIT_HOUR_INDEX = Tuples.getIndex(SUNTRANSIT_HOUR, SUNLIGHT);
+        SUNRISE_HOUR_INDEX = Tuples.getIndex(SUNRISE_HOUR, SUNLIGHT);
+        SUNSET_HOUR_INDEX = Tuples.getIndex(SUNSET_HOUR, SUNLIGHT);
+        ZONE_OFFSET_HOUR_INDEX = Tuples.getIndex(ZONE_OFFSET_HOUR, SUNLIGHT);
     }
 
 }
