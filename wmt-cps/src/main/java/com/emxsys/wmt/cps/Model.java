@@ -127,7 +127,7 @@ public class Model {
     private final AtomicReference<Terrain> terrainRef = new AtomicReference<>(TerrainTuple.INVALID_TERRAIN);
     private final AtomicReference<FuelModel> fuelModelRef = new AtomicReference<>(StdFuelModel.INVALID);
     private final AtomicReference<FuelMoisture> fuelMoistureRef = new AtomicReference<>(BasicFuelMoisture.INVALID);
-    private final AtomicReference<Sunlight> sunlightRef = new AtomicReference<>(BasicSunlight.INVALID_SUNLIGHT);
+    private final AtomicReference<Sunlight> sunlightRef = new AtomicReference<>(BasicSunlight.INVALID);
     private final AtomicReference<Weather> weatherRef = new AtomicReference<>(WeatherTuple.INVALID_TUPLE);
     private final AtomicReference<FuelCondition> fuelConditionRef = new AtomicReference<>(FuelConditionTuple.INVALID_TUPLE);
     private final AtomicReference<SurfaceFuel> fuelbedRef = new AtomicReference<>();

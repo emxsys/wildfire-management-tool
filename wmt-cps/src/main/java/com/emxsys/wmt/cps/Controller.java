@@ -38,6 +38,7 @@ import com.emxsys.gis.api.event.ReticuleCoordinateEvent;
 import com.emxsys.gis.api.event.ReticuleCoordinateListener;
 import com.emxsys.gis.api.event.ReticuleCoordinateProvider;
 import com.emxsys.gis.spi.ShadedTerrainProviderFactory;
+import com.emxsys.solar.api.BasicSunlight;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.api.SunlightProvider;
 import com.emxsys.solar.spi.SunlightProviderFactory;
@@ -56,7 +57,6 @@ import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.StdFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.globe.Globe;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
@@ -288,8 +288,9 @@ public final class Controller {
      * Updates the solar angles and sun position using the current coordinate and time.
      */
     void updateSunlight() {
-        Sunlight sunlight = sun.getSunlight(model.getDateTime(), model.getCoord());
-        if (sunlight.isMissing()) {
+        BasicSunlight sunlight = sun.getSunlight(model.getDateTime(), model.getCoord());
+        if (sunlight.equals(BasicSunlight.INVALID)) {
+            
             return;
         }
         model.setSunlight(sunlight);
