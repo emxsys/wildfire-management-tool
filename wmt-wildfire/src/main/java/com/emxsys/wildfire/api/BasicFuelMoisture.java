@@ -30,7 +30,6 @@
 package com.emxsys.wildfire.api;
 
 import com.emxsys.visad.RealXmlAdaptor;
-import com.emxsys.visad.Tuples;
 import static com.emxsys.wildfire.api.WildfireType.*;
 import visad.RealTuple;
 import visad.Real;
@@ -42,29 +41,27 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import visad.Data;
+import org.openide.util.Exceptions;
 import visad.VisADException;
 
 /**
  * The BasicFuelMoisture manages the fuel moisture values for a surface fuel.
+ *
  * @author Bruce Schubert
  */
 @XmlRootElement(name = "fuelmoisture")
-@XmlType(propOrder = {"dead1HrFuelMoisture", "dead10HrFuelMoisture", "dead100HrFuelMoisture", "liveHerbFuelMoisture", "liveWoodyFuelMoisture",})
+@XmlType(propOrder = {"dead1HrFuelMoisture", "dead10HrFuelMoisture", "dead100HrFuelMoisture",
+                      "liveHerbFuelMoisture", "liveWoodyFuelMoisture",})
 public class BasicFuelMoisture implements FuelMoisture {
 
     public static BasicFuelMoisture INVALID = new BasicFuelMoisture();
-    public static final int FUEL_MOISTURE_1H_INDEX = Tuples.getIndex(FUEL_MOISTURE_1H, FUEL_CONDITION);
-    public static final int FUEL_MOISTURE_10H_INDEX = Tuples.getIndex(FUEL_MOISTURE_10H, FUEL_CONDITION);
-    public static final int FUEL_MOISTURE_100H_INDEX = Tuples.getIndex(FUEL_MOISTURE_100H, FUEL_CONDITION);
-    public static final int FUEL_MOISTURE_HERB_INDEX = Tuples.getIndex(FUEL_MOISTURE_HERB, FUEL_CONDITION);
-    public static final int FUEL_MOISTURE_WOODY_INDEX = Tuples.getIndex(FUEL_MOISTURE_WOODY, FUEL_CONDITION);
     private static final Logger logger = Logger.getLogger(BasicFuelMoisture.class.getName());
 
-    /**
-     * The data implementation: WildfireType.FUEL_MOISTURE.
-     */
-    private RealTuple tuple;
+    private Real dead1HrFuelMoisture;
+    private Real dead10HrFuelMoisture;
+    private Real dead100HrFuelMoisture;
+    private Real liveHerbFuelMoisture;
+    private Real liveWoodyFuelMoisture;
 
     /**
      * Creates a BasicFuelMoisture for WildfireType.FUEL_MOISTURE
@@ -79,35 +76,27 @@ public class BasicFuelMoisture implements FuelMoisture {
     public static BasicFuelMoisture fromReals(
             Real dead1HrFuelMoisture, Real dead10HrFuelMoisture, Real dead100HrFuelMoisture,
             Real liveHerbFuelMoisture, Real liveWoodyFuelMoisture) {
-        try {
-            Real[] reals = new Real[]{
-                dead1HrFuelMoisture,
-                dead10HrFuelMoisture,
-                dead100HrFuelMoisture,
-                liveHerbFuelMoisture,
-                liveWoodyFuelMoisture};
-            return new BasicFuelMoisture(new RealTuple(reals));
-
-        } catch (VisADException | RemoteException ex) {
-            logger.log(Level.SEVERE, Bundle.ERR_FuelConditionCannotCreate(), ex);
-            throw new IllegalStateException(ex);
-        }
+        return new BasicFuelMoisture(dead1HrFuelMoisture, dead10HrFuelMoisture, dead100HrFuelMoisture,
+                liveHerbFuelMoisture, liveWoodyFuelMoisture);
     }
 
     /**
      * Creates a BasicFuelMoisture from a RealTuple of type FUEL_MOISTURE.
-     * @param fuelMoisture A WeatherType.FIRE_WEATHER RealTuple.
+     * @param tuple A WeatherType.FIRE_WEATHER RealTuple.
      * @return A new WeatherTuple.
      */
-    public static BasicFuelMoisture fromRealTuple(RealTuple fuelMoisture) {
-        if (!fuelMoisture.getType().equals(FUEL_MOISTURE)) {
-            throw new IllegalArgumentException("Incompatible MathType: " + fuelMoisture.getType());
-        } else if (fuelMoisture.isMissing()) {
-            return INVALID;
+    public static BasicFuelMoisture fromRealTuple(RealTuple tuple) {
+
+        if (!tuple.getType().equals(FUEL_MOISTURE)) {
+            throw new IllegalArgumentException("Incompatible MathType: " + tuple.getType());
         }
         try {
-            return new BasicFuelMoisture(fuelMoisture);
-
+            return new BasicFuelMoisture(
+                    (Real) tuple.getComponent(FUEL_MOISTURE_1H_INDEX),
+                    (Real) tuple.getComponent(FUEL_MOISTURE_10H_INDEX),
+                    (Real) tuple.getComponent(FUEL_MOISTURE_100H_INDEX),
+                    (Real) tuple.getComponent(FUEL_MOISTURE_HERB_INDEX),
+                    (Real) tuple.getComponent(FUEL_MOISTURE_WOODY_INDEX));
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, "Cannot create FuelMoistureTuple.", ex);
             throw new IllegalStateException(ex);
@@ -172,103 +161,110 @@ public class BasicFuelMoisture implements FuelMoisture {
     }
 
     /**
-     * Constructs an instance with from a RealTuple.
-     * @param fuelMoistureTuple Fuel moisture values.
-     */
-    private BasicFuelMoisture(RealTuple fuelMoistureTuple) throws VisADException, RemoteException {
-        this.tuple = new RealTuple(WildfireType.FUEL_MOISTURE, fuelMoistureTuple.getRealComponents(), null);
-    }
-
-    /**
      * Construct a new FuelMoistureTuple object with "missing" values.
      */
     public BasicFuelMoisture() {
-        this.tuple = new RealTuple(WildfireType.FUEL_MOISTURE);
+        this.dead1HrFuelMoisture = new Real(FUEL_MOISTURE_1H);
+        this.dead10HrFuelMoisture = new Real(FUEL_MOISTURE_10H);
+        this.dead100HrFuelMoisture = new Real(FUEL_MOISTURE_100H);
+        this.liveHerbFuelMoisture = new Real(FUEL_MOISTURE_HERB);
+        this.liveWoodyFuelMoisture = new Real(FUEL_MOISTURE_WOODY);
     }
 
     /**
-     * Gets the WildfireType.FUEL_MOISTURE implementation.
-     * @return A WildfireType.FUEL_MOISTURE RealTuple.
+     * Constructs a new BasicFuelMoisture instance with the given values.
+     *
+     * @param dead1HrFuelMoisture [percent]
+     * @param dead10HrFuelMoisture [percent]
+     * @param dead100HrFuelMoisture [percent]
+     * @param liveHerbFuelMoisture [percent]
+     * @param liveWoodyFuelMoisture [percent]
+     */
+    public BasicFuelMoisture(Real dead1HrFuelMoisture, Real dead10HrFuelMoisture, Real dead100HrFuelMoisture,
+                             Real liveHerbFuelMoisture, Real liveWoodyFuelMoisture) {
+        this.dead1HrFuelMoisture = dead1HrFuelMoisture;
+        this.dead10HrFuelMoisture = dead10HrFuelMoisture;
+        this.dead100HrFuelMoisture = dead100HrFuelMoisture;
+        this.liveHerbFuelMoisture = liveHerbFuelMoisture;
+        this.liveWoodyFuelMoisture = liveWoodyFuelMoisture;
+    }
+
+    /**
+     * Gets a WildfireType.FUEL_MOISTURE tuple.
+     * @return A new WildfireType.FUEL_MOISTURE RealTuple.
      */
     public RealTuple getTuple() {
-        return this.tuple;
+        Real[] reals = new Real[]{
+            dead1HrFuelMoisture,
+            dead10HrFuelMoisture,
+            dead100HrFuelMoisture,
+            liveHerbFuelMoisture,
+            liveWoodyFuelMoisture};
+        try {
+            return new RealTuple(FUEL_MOISTURE, reals, null);
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            return new RealTuple(FUEL_MOISTURE);
+        }
     }
 
     @Override
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead1HrFuelMoisture() {
-        try {
-            return (Real) getTuple().getComponent(FUEL_MOISTURE_1H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.dead1HrFuelMoisture;
+    }
+
+    public void setDead1HrFuelMoisture(Real dead1HrFuelMoisture) {
+        this.dead1HrFuelMoisture = dead1HrFuelMoisture;
     }
 
     @Override
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead10HrFuelMoisture() {
-        try {
-            return (Real) getTuple().getComponent(FUEL_MOISTURE_10H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.dead10HrFuelMoisture;
+    }
+
+    public void setDead10HrFuelMoisture(Real dead10HrFuelMoisture) {
+        this.dead10HrFuelMoisture = dead10HrFuelMoisture;
     }
 
     @Override
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead100HrFuelMoisture() {
-        try {
-            return (Real) getTuple().getComponent(FUEL_MOISTURE_100H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.dead100HrFuelMoisture;
+    }
+
+    public void setDead100HrFuelMoisture(Real dead100HrFuelMoisture) {
+        this.dead100HrFuelMoisture = dead100HrFuelMoisture;
     }
 
     @Override
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveHerbFuelMoisture() {
-        try {
-            return (Real) getTuple().getComponent(FUEL_MOISTURE_HERB_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.liveHerbFuelMoisture;
+    }
+
+    public void setLiveHerbFuelMoisture(Real liveHerbFuelMoisture) {
+        this.liveHerbFuelMoisture = liveHerbFuelMoisture;
     }
 
     @Override
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveWoodyFuelMoisture() {
-        try {
-            return (Real) getTuple().getComponent(FUEL_MOISTURE_WOODY_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.liveWoodyFuelMoisture;
     }
 
-    public boolean isMissing() {
-        try {
-            Data[] components = getTuple().getComponents(false);
-            if (components == null) {
-                return true;
-            } else {
-                for (Data data : components) {
-                    if (data == null || data.isMissing()) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } catch (VisADException | RemoteException ex) {
-            throw new RuntimeException(ex);
-        }
+    public void setLiveWoodyFuelMoisture(Real liveWoodyFuelMoisture) {
+        this.liveWoodyFuelMoisture = liveWoodyFuelMoisture;
     }
 
     /**
-     * to string
+     * Gets a plain text representation
      *
      * @return string of me
      */
@@ -284,7 +280,6 @@ public class BasicFuelMoisture implements FuelMoisture {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.tuple);
         return hash;
     }
 
@@ -297,7 +292,19 @@ public class BasicFuelMoisture implements FuelMoisture {
             return false;
         }
         final BasicFuelMoisture other = (BasicFuelMoisture) obj;
-        if (!Objects.equals(this.tuple, other.tuple)) {
+        if (!Objects.equals(this.dead1HrFuelMoisture, other.dead1HrFuelMoisture)) {
+            return false;
+        }
+        if (!Objects.equals(this.dead10HrFuelMoisture, other.dead10HrFuelMoisture)) {
+            return false;
+        }
+        if (!Objects.equals(this.dead100HrFuelMoisture, other.dead100HrFuelMoisture)) {
+            return false;
+        }
+        if (!Objects.equals(this.liveHerbFuelMoisture, other.liveHerbFuelMoisture)) {
+            return false;
+        }
+        if (!Objects.equals(this.liveWoodyFuelMoisture, other.liveWoodyFuelMoisture)) {
             return false;
         }
         return true;
