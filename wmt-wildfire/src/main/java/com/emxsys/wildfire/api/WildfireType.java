@@ -32,6 +32,7 @@ package com.emxsys.wildfire.api;
 import com.emxsys.visad.FireUnit;
 import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.visad.Reals.*;
+import com.emxsys.visad.Tuples;
 import visad.CommonUnit;
 import visad.RealTupleType;
 import visad.RealType;
@@ -191,6 +192,13 @@ public class WildfireType {
     public static final RealType FUEL_TEMP_C;
     public static final RealType FUEL_TEMP_F;
 
+    // Tuple component indices
+    public static final int FUEL_MOISTURE_1H_INDEX;
+    public static final int FUEL_MOISTURE_10H_INDEX;
+    public static final int FUEL_MOISTURE_100H_INDEX;
+    public static final int FUEL_MOISTURE_HERB_INDEX;
+    public static final int FUEL_MOISTURE_WOODY_INDEX;
+
     // Initializer
     static {
         FUEL_TEMP_C = RealType.getRealType("fuel_temp:C", GeneralUnit.degC, null);
@@ -335,6 +343,12 @@ public class WildfireType {
                     FLAME_LENGTH_SI,
                     RATE_OF_SPREAD_SI,
                     DIR_OF_SPREAD,});
+
+        FUEL_MOISTURE_1H_INDEX = Tuples.getIndex(FUEL_MOISTURE_1H, FUEL_CONDITION);
+        FUEL_MOISTURE_10H_INDEX = Tuples.getIndex(FUEL_MOISTURE_10H, FUEL_CONDITION);
+        FUEL_MOISTURE_100H_INDEX = Tuples.getIndex(FUEL_MOISTURE_100H, FUEL_CONDITION);
+        FUEL_MOISTURE_HERB_INDEX = Tuples.getIndex(FUEL_MOISTURE_HERB, FUEL_CONDITION);
+        FUEL_MOISTURE_WOODY_INDEX = Tuples.getIndex(FUEL_MOISTURE_WOODY, FUEL_CONDITION);
 
     }
 }
