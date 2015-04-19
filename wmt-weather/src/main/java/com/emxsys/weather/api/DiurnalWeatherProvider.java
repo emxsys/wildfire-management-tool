@@ -256,7 +256,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @see SpotWeatherObserver
      */
     public WeatherTuple getWeather(ZonedDateTime time) {
-        if (sunlight == null || sunlight.isMissing()) {
+        if (sunlight == null) {
             throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
         return WeatherTuple.fromReals(
