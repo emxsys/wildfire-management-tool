@@ -31,15 +31,28 @@ package com.emxsys.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -52,12 +65,20 @@ public class XmlUtil {
 
     private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
 
-    public static Document getDoc(String xmlString) {
+    /**
+     * Creates a new Document from an String containing XML.
+     * @param xmlString String containing XML content.
+     * @return A new Document.
+     */
+    public static Document newDocumentFromString(String xmlString) {
+        DocumentBuilderFactory factory = null;
+        DocumentBuilder builder = null;
+        Document doc = null;
         try {
-            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-            docBuilderFactory.setNamespaceAware(false);
-            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            return docBuilder.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
+            factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(false);
+            builder = factory.newDocumentBuilder();
+            doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes("UTF-8")));
         }
         catch (ParserConfigurationException | UnsupportedEncodingException ex) {
             throw new RuntimeException(ex);
@@ -65,51 +86,160 @@ public class XmlUtil {
         catch (SAXException | IOException ex) {
             throw new RuntimeException(ex);
         }
+        return doc;
+    }
 
+    /**
+     * Creates a new Document from an InputStream.
+     * @param in Stream containing XML content.
+     * @return A new Document.
+     */
+    public static Document newDocumentFromInputStream(InputStream in) {
+        DocumentBuilderFactory factory = null;
+        DocumentBuilder builder = null;
+        Document doc = null;
+
+        try {
+            factory = DocumentBuilderFactory.newInstance();
+            builder = factory.newDocumentBuilder();
+        }
+        catch (ParserConfigurationException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        try {
+            doc = builder.parse(new InputSource(in));
+        }
+        catch (SAXException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return doc;
+    }
+
+    public static String convertDocumentToString(Document doc) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+            // below code to remove XML declaration
+            // transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            String output = writer.getBuffer().toString();
+            return format(output);
+        }
+        catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Pretty-prints XML, supplied as a string.
+     * @param xml Unformatted XML.
+     * @return Formatted XML
+     */
+    public static String format(String xml) {
+        try {
+            final InputSource src = new InputSource(new StringReader(xml));
+            final Node document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src).getDocumentElement();
+            final boolean keepDeclaration = xml.startsWith("<?xml");
+
+            //May need this: System.setProperty(DOMImplementationRegistry.PROPERTY,"com.sun.org.apache.xerces.internal.dom.DOMImplementationSourceImpl");
+            final DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+            final LSSerializer writer = impl.createLSSerializer();
+
+            writer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE); // Set this to true if the output needs to be beautified.
+            writer.getDomConfig().setParameter("xml-declaration", keepDeclaration); // Set this to true if the declaration is needed to be outputted.
+
+            return writer.writeToString(document);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Gets the first child element with the matching tag.
      *
-     * @param element containing children
-     * @param namespaceURI namespace URI (e.g., "http://emxsys.com/worldwind-shape-attributes")
+     * @param parent Element containing children
+     * @param namespaceURI Namespace URI (e.g., "http://emxsys.com/worldwind-shape-attributes")
      * @param tag to search for
-     * @return the first Element in the NodeList, or null if not found.
+     * @return the first Element in the parent element's NodeList, or null if not found.
      */
-    public static Element getChildElement(Element element, String namespaceURI, String tag) {
-        NodeList nodes = element.getElementsByTagNameNS(namespaceURI, tag);
+    public static Element getChildElement(Element parent, String namespaceURI, String tag) {
+        NodeList nodes;
+        if (namespaceURI == null || namespaceURI.isEmpty()) {
+            nodes = parent.getElementsByTagName(tag);
+        }
+        else {
+            nodes = parent.getElementsByTagNameNS(namespaceURI, tag);
+        }
         if (nodes != null && nodes.getLength() > 0) {
             return (Element) nodes.item(0);
         }
         return null;
     }
 
-    public static Boolean getChildElementBoolean(Element element, String namespaceURI, String tag) {
-        Element childElement = getChildElement(element, namespaceURI, tag);
+    /**
+     * Gets the first child element with the matching tag as a Boolean.
+     *
+     * @param parent Node containing the children.
+     * @param namespaceURI Namespace URI (e.g., "http://emxsys.com/worldwind-shape-attributes").
+     * @param tag The to search for.
+     * @return The first Element in the NodeList as Boolean, or null if not found.
+     */
+    public static Boolean getChildElementBoolean(Element parent, String namespaceURI, String tag) {
+        Element childElement = getChildElement(parent, namespaceURI, tag);
         if (childElement == null) {
             return null;
         }
         return Boolean.valueOf(childElement.getTextContent());
     }
 
-    public static Double getChildElementDouble(Element element, String namespaceURI, String tag) {
-        Element childElement = getChildElement(element, namespaceURI, tag);
+    /**
+     * Gets the first child element with the matching tag as a Double.
+     *
+     * @param parent Node containing the children.
+     * @param namespaceURI Namespace URI (e.g., "http://emxsys.com/worldwind-shape-attributes").
+     * @param tag The to search for.
+     * @return The first Element in the NodeList as Double, or null if not found.
+     */
+    public static Double getChildElementDouble(Element parent, String namespaceURI, String tag) {
+        Element childElement = getChildElement(parent, namespaceURI, tag);
         if (childElement == null) {
             return null;
         }
         return Double.valueOf(childElement.getTextContent());
     }
 
-    public static Integer getChildElementInteger(Element element, String namespaceURI, String tag) {
-        Element childElement = getChildElement(element, namespaceURI, tag);
+    /**
+     * Gets the first child element with the matching tag as an Integer.
+     *
+     * @param parent Node containing the children.
+     * @param namespaceURI Namespace URI (e.g., "http://emxsys.com/worldwind-shape-attributes").
+     * @param tag The to search for.
+     * @return The first Element in the NodeList as Integer, or null if not found.
+     */
+    public static Integer getChildElementInteger(Element parent, String namespaceURI, String tag) {
+        Element childElement = getChildElement(parent, namespaceURI, tag);
         if (childElement == null) {
             return null;
         }
         return Integer.valueOf(childElement.getTextContent());
     }
 
-    public static String getChildElementText(Element element, String namespaceURI, String tag) {
-        Element childElement = getChildElement(element, namespaceURI, tag);
+    /**
+     * Gets the first child element with the matching tag.
+     *
+     * @param parent Node containing the children.
+     * @param namespaceURI Namespace URI (e.g., "http://emxsys.com/worldwind-shape-attributes").
+     * @param tag The to search for.
+     * @return The first Element in the NodeList as a String, or null if not found.
+     */
+    public static String getChildElementText(Element parent, String namespaceURI, String tag) {
+        Element childElement = getChildElement(parent, namespaceURI, tag);
         if (childElement == null) {
             return null;
         }
