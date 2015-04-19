@@ -32,40 +32,60 @@ package com.emxsys.visad;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import visad.Real;
+import visad.RealType;
 
 /**
- * The RealXmlBindings class maps the Real type, value and unit properties to JAXB XmlElements for
- * use by the RealXmlAdaptor, which marshals a VisAD Real object to XML via the XmlElements.
+ * The RealXmlBinding class maps a Real to JAXB XmlElements for use by the RealXmlAdaptor, which
+ * marshals/unmarshals a VisAD Real object to/from XML.
  *
  * @see RealXmlAdaptor
  * @author Bruce Schubert
  * @version $Id$
  */
 @XmlType(propOrder = {"type", "value", "unit"})
-public class RealXmlBindings {
+public class RealXmlBinding {
 
-    private Real real;
+    private String type;
+    private double value;
+    private String unit;
 
-    public RealXmlBindings() {
-        real = new Real(Double.NaN);
+    public RealXmlBinding() {
+        this(new Real(RealType.Generic));
     }
 
-    public RealXmlBindings(Real real) {
-        this.real = real;
+    public RealXmlBinding(Real real) {
+        if (real == null) {
+            real = new Real(RealType.Generic);
+        }
+        type = real.getType().toString();
+        value = real.getValue();
+        unit = real.getUnit().getIdentifier();
     }
 
     @XmlElement
     public String getType() {
-        return real.getType().toString();
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @XmlElement
     public double getValue() {
-        return real.getValue();
+        return this.value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 
     @XmlElement
     public String getUnit() {
-        return real.getUnit().toString();
+        return this.unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }
