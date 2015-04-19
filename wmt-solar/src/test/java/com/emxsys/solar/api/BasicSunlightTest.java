@@ -30,8 +30,6 @@
 package com.emxsys.solar.api;
 
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.gis.api.TerrainTuple;
-import com.emxsys.solar.internal.SolarData;
 import com.emxsys.solar.spi.SunlightProviderFactory;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -67,7 +65,6 @@ public class BasicSunlightTest {
 
     @Before
     public void setUp() {
-
         date = ZonedDateTime.of(2014, 05, 29, 15, 00, 00, 00, ZoneId.of("-8"));
         observer = GeoCoord3D.fromDegreesAndMeters(34.25, -119.2, 60);
         instance = SunlightProviderFactory.getInstance().getSunlight(date, observer);
@@ -130,8 +127,10 @@ public class BasicSunlightTest {
     @Test
     public void testFromRealTuple() {
         System.out.println("fromRealTuple");
-        RealTuple sunightTuple = new RealTuple(SolarType.SUNLIGHT);
-        BasicSunlight result = BasicSunlight.fromRealTuple(sunightTuple);
+        RealTuple expected = instance.getTuple();
+        RealTuple result = BasicSunlight.fromRealTuple(instance.getDateTime(), instance.getLocation(), expected).getTuple();
+        assertTrue(expected.equals(result));
+
     }
 
     /**
@@ -142,7 +141,7 @@ public class BasicSunlightTest {
         //5/29/2014,15:00:00,42.474091,265.372919,4.782459,11.903856,19.019525,46.437739,21.715162,46.439295,47.513124,-106.760688,106.737361,77.446386
         System.out.println("getDeclination");
         Real result = instance.getDeclination();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("declination", 21.715162, result.getValue(), .001);
     }
 
@@ -153,7 +152,7 @@ public class BasicSunlightTest {
     public void testGetSubsolarLatitude() {
         System.out.println("getSubsolarLatitude");
         Real result = instance.getSubsolarLatitude();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("subsolar latitude", 21.715162, result.getValue(), .001);
     }
 
@@ -164,7 +163,7 @@ public class BasicSunlightTest {
     public void testGetSubsolarLongitude() {
         System.out.println("getSubsolarLongitude");
         Real result = instance.getSubsolarLongitude();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
     }
 
     /**
@@ -174,7 +173,7 @@ public class BasicSunlightTest {
     public void testGetAzimuthAngle() {
         System.out.println("getAzimuthAngle");
         Real result = instance.getAzimuthAngle();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("azimuth", 265.372919, result.getValue(), .001);
     }
 
@@ -185,7 +184,7 @@ public class BasicSunlightTest {
     public void testGetZenithAngle() {
         System.out.println("getZenithAngle");
         Real result = instance.getZenithAngle();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("zenith", 42.471631, result.getValue(), .001);
     }
 
@@ -196,7 +195,7 @@ public class BasicSunlightTest {
     public void testGetAltitudeAngle() {
         System.out.println("getAltitudeAngle");
         Real result = instance.getAltitudeAngle();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("altitude angle (corrected)", 47.525909, result.getValue(), .003);
     }
 
@@ -207,7 +206,7 @@ public class BasicSunlightTest {
     public void testGetLocalHourAngle() {
         System.out.println("getLocalHourAngle");
         Real result = instance.getLocalHourAngle();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("local hour angle", 46.439295, result.getValue(), .001);
     }
 
@@ -218,7 +217,7 @@ public class BasicSunlightTest {
     public void testGetSunriseHourAngle() {
         System.out.println("getSunriseHourAngle");
         Real result = instance.getSunriseHourAngle();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("sunrise hour angle", -106.760688, result.getValue(), .001);
     }
 
@@ -229,7 +228,7 @@ public class BasicSunlightTest {
     public void testGetSunsetHourAngle() {
         System.out.println("getSunsetHourAngle");
         Real result = instance.getSunsetHourAngle();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("sunset hour angle", 106.737361, result.getValue(), .001);
     }
 
@@ -240,7 +239,7 @@ public class BasicSunlightTest {
     public void testGetSunriseHour() {
         System.out.println("getSunriseHour");
         Real result = instance.getSunriseHour();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("sunrise hour std time", 4.782459, result.getValue(), .001);
     }
 
@@ -251,7 +250,7 @@ public class BasicSunlightTest {
     public void testGetSunsetHour() {
         System.out.println("getSunsetHour");
         Real result = instance.getSunsetHour();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("sunset hour std time", 19.019525, result.getValue(), .001);
     }
 
@@ -262,8 +261,14 @@ public class BasicSunlightTest {
     public void testGetSunTransitHour() {
         System.out.println("getSunTransitHour");
         Real result = instance.getSunTransitHour();
-        System.out.println(observer + " @ " + date + ": " +result);
+        System.out.println(observer + " @ " + date + ": " + result);
         assertEquals("sun transit hour std time", 11.903856, result.getValue(), .001);
+    }
+
+    @Test
+    public void testToString() {
+        System.out.println("toString");
+        System.out.println(instance.toString());
     }
 
 }

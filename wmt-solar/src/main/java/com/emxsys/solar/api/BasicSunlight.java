@@ -29,18 +29,27 @@
  */
 package com.emxsys.solar.api;
 
+import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
+import static com.emxsys.solar.api.SolarType.*;
 import com.emxsys.visad.RealXmlAdaptor;
+import com.emxsys.visad.Reals;
 import java.rmi.RemoteException;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.openide.util.Exceptions;
-import visad.Data;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
@@ -53,33 +62,35 @@ import visad.VisADException;
  */
 @XmlRootElement(name = "sunlight")
 @XmlType(propOrder
-        = {"subsolarLatitude", "subsolarLongitude",
+        = {"observerTime", "observerLatitude", "observerLongitude", "observerAltitude",
+           "subsolarLatitude", "subsolarLongitude",
            "azimuthAngle", "altitudeAngle", "zenithAngle",
            "localHourAngle", "sunriseHourAngle", "sunsetHourAngle",
            "sunriseTime", "sunsetTime", "sunTransitTime",
-           "missing"
         })
 public class BasicSunlight implements Sunlight {
 
     /**
-     * A tuple with "missing" components 
+     * A tuple with "missing" components
      */
-    public static final BasicSunlight INVALID_SUNLIGHT = new BasicSunlight();
+    public static final BasicSunlight INVALID = new BasicSunlight();
 
     /**
      * A factory method to create a BasicSunlight instance from a tuple.
+     * @param time The date/time for the sunlight observation.
+     * @param location The coordinates of the observer.
      * @param sunightTuple A SolarType.SUNLIGHT tuple.
      * @return A new BasicSunlight instance.
      */
-    public static BasicSunlight fromRealTuple(RealTuple sunightTuple) {
+    public static BasicSunlight fromRealTuple(ZonedDateTime time, Coord3D location, RealTuple sunightTuple) {
         if (!sunightTuple.getType().equals(SolarType.SUNLIGHT)) {
             throw new IllegalArgumentException("Incompatible MathType: " + sunightTuple.getType());
         } else if (sunightTuple.isMissing()) {
-            return INVALID_SUNLIGHT;
+            return INVALID;
         }
         try {
 
-            return new BasicSunlight(sunightTuple);
+            return new BasicSunlight(time, location, sunightTuple);
 
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
@@ -87,37 +98,139 @@ public class BasicSunlight implements Sunlight {
         }
     }
 
-    /** The data implementation */
-    private RealTuple tuple;
+    private ZonedDateTime dateTime;
+    private Coord3D location;
+    private Real subsolarLatitude;
+    private Real subsolarLongitude;
+    private Real azimuthAngle;
+    private Real altitudeAngle;
+    private Real zenithAngle;
+    private Real localHourAngle;
+    private Real sunriseHourAngle;
+    private Real sunsetHourAngle;
+    private Real sunriseHour;
+    private Real sunsetHour;
+    private Real sunTransitHour;
+    private Real zoneOffsetHour;
 
     /**
      * Constructs and instance with missing values.
      * @param sunlight
      */
-    BasicSunlight(RealTuple sunlightTuple) throws VisADException, RemoteException {
-        this.tuple = sunlightTuple;
-        //super(SolarType.SUNLIGHT, sunlightTuple.getRealComponents(), null);
+    BasicSunlight(ZonedDateTime time, Coord3D coord, RealTuple tuple) throws VisADException, RemoteException {
+        this.dateTime = time;
+        this.location = coord;
+        try {
+            this.subsolarLatitude = (Real) tuple.getComponent(SolarType.SUBSOLAR_LATITUDE_INDEX);
+            this.subsolarLongitude = (Real) tuple.getComponent(SolarType.SUBSOLAR_LONGITIDUE_INDEX);
+            this.azimuthAngle = (Real) tuple.getComponent(SolarType.AZIMUTH_ANGLE_INDEX);
+            this.zenithAngle = (Real) tuple.getComponent(SolarType.ZENITH_ANGLE_INDEX);
+            this.altitudeAngle = (Real) tuple.getComponent(SolarType.ALTITUDE_ANGLE_INDEX);
+            this.localHourAngle = (Real) tuple.getComponent(SolarType.HOUR_ANGLE_INDEX);
+            this.sunriseHourAngle = (Real) tuple.getComponent(SolarType.SUNRISE_HOUR_ANGLE_INDEX);
+            this.sunsetHourAngle = (Real) tuple.getComponent(SolarType.SUNSET_HOUR_ANGLE_INDEX);
+            this.sunriseHour = (Real) tuple.getComponent(SolarType.SUNRISE_HOUR_INDEX);
+            this.sunsetHour = (Real) tuple.getComponent(SolarType.SUNSET_HOUR_INDEX);
+            this.sunTransitHour = (Real) tuple.getComponent(SolarType.SUNTRANSIT_HOUR_INDEX);
+            this.zoneOffsetHour = (Real) tuple.getComponent(SolarType.ZONE_OFFSET_HOUR_INDEX);
+        } catch (VisADException | RemoteException ex) {
+            throw new IllegalStateException(ex);
+        }
+
     }
 
     /**
      * Constructs and instance with missing values.
      */
     public BasicSunlight() {
-        this.tuple = new RealTuple(SolarType.SUNLIGHT);
-        //super(SolarType.SUNLIGHT);
+        this.dateTime = ZonedDateTime.ofInstant(Instant.EPOCH,ZoneId.of("Z"));
+        this.location = GeoCoord3D.INVALID_COORD;
+        this.subsolarLatitude = new Real(SUBSOLAR_LATITUDE);
+        this.subsolarLongitude = new Real(SUBSOLAR_LONGITUDE);
+        this.azimuthAngle = new Real(AZIMUTH_ANGLE);
+        this.zenithAngle = new Real(ZENITH_ANGLE);
+        this.altitudeAngle = new Real(ALTITUDE_ANGLE);
+        this.localHourAngle = new Real(HOUR_ANGLE);
+        this.sunriseHourAngle = new Real(SUNRISE_HOUR_ANGLE);
+        this.sunsetHourAngle = new Real(SUNSET_HOUR_ANGLE);
+        this.sunriseHour = new Real(SUNRISE_HOUR);
+        this.sunsetHour = new Real(SUNSET_HOUR);
+        this.sunTransitHour = new Real(SUNTRANSIT_HOUR);
+        this.zoneOffsetHour = new Real(ZONE_OFFSET_HOUR);
+
     }
 
     /**
-     * Gets the SolarType.SUNLIGHT implementation tuple, including: SUBSOLAR_LATITUDE,
-     * SUBSOLAR_LONGITUDE, AZIMUTH_ANGLE, ZENITH_ANGLE, ALTITUDE_ANGLE, HOUR_ANGLE,
-     * SUNRISE_HOUR_ANGLE, SUNSET_HOUR_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNTRANSIT_HOUR,
-     * ZONE_OFFSET_HOUR.
+     * Gets a SolarType.SUNLIGHT tuple, including: SUBSOLAR_LATITUDE, SUBSOLAR_LONGITUDE,
+     * AZIMUTH_ANGLE, ZENITH_ANGLE, ALTITUDE_ANGLE, HOUR_ANGLE, SUNRISE_HOUR_ANGLE,
+     * SUNSET_HOUR_ANGLE, SUNRISE_HOUR, SUNSET_HOUR, SUNTRANSIT_HOUR, ZONE_OFFSET_HOUR.
      *
-     * @return A RealTuple of type SolarType.SUNLIGHT.
+     * @return A new RealTuple with RealTupleType SolarType.SUNLIGHT.
      * @see SolarType
      */
     public RealTuple getTuple() {
-        return this.tuple;
+        Real[] reals = new Real[]{
+            this.subsolarLatitude,
+            this.subsolarLongitude,
+            this.azimuthAngle,
+            this.zenithAngle,
+            this.altitudeAngle,
+            this.localHourAngle,
+            this.sunriseHourAngle,
+            this.sunsetHourAngle,
+            this.sunriseHour,
+            this.sunsetHour,
+            this.sunTransitHour,
+            this.zoneOffsetHour};
+        try {
+            return new RealTuple(SUNLIGHT, reals, null);
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            return new RealTuple(SUNLIGHT);
+        }
+    }
+
+    /**
+     * Gets the date/time for when the sunlight is calculated.
+     * @return The sunlight observation time.
+     */
+    public ZonedDateTime getDateTime() {
+        return dateTime;
+    }
+
+    /**
+     * Gets the date/time for when the sunlight is calculated.
+     * @return Date/time as ISO DATE TIME string.
+     */
+    @XmlElement
+    public String getObserverTime() {
+        return dateTime.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    /**
+     * Gets the location from where the sunlight is calculated.
+     * @return The sunlight observer's location.
+     */
+    public Coord3D getLocation() {
+        return location;
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    public Real getObserverLatitude() {
+        return location.getLatitude();
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    public Real getObserverLongitude() {
+        return location.getLongitude();
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    public Real getObserverAltitude() {
+        return location.getAltitude();
     }
 
     /**
@@ -127,12 +240,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     public Real getDeclination() {
-        try {
-            // Subsolar point latitude is same as declination angle
-            return (Real) tuple.getComponent(SolarType.SUBSOLAR_LATITUDE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return Reals.convertTo(DECLINATION, this.subsolarLatitude);
     }
 
     /**
@@ -144,11 +252,7 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSubsolarLatitude() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUBSOLAR_LATITUDE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.subsolarLatitude;
     }
 
     /**
@@ -160,22 +264,14 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSubsolarLongitude() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUBSOLAR_LONGITIDUE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.subsolarLongitude;
     }
 
     @Override
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getAzimuthAngle() {
-        try {
-            return (Real) tuple.getComponent(SolarType.AZIMUTH_ANGLE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.azimuthAngle;
     }
 
     /**
@@ -186,11 +282,7 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getZenithAngle() {
-        try {
-            return (Real) tuple.getComponent(SolarType.ZENITH_ANGLE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.zenithAngle;
     }
 
     /**
@@ -201,11 +293,7 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getAltitudeAngle() {
-        try {
-            return (Real) tuple.getComponent(SolarType.ALTITUDE_ANGLE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.altitudeAngle;
     }
 
     /**
@@ -216,11 +304,7 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLocalHourAngle() {
-        try {
-            return (Real) tuple.getComponent(SolarType.HOUR_ANGLE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.localHourAngle;
     }
 
     /**
@@ -231,11 +315,7 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSunriseHourAngle() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUNRISE_HOUR_ANGLE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.sunriseHourAngle;
     }
 
     /**
@@ -246,11 +326,7 @@ public class BasicSunlight implements Sunlight {
     @XmlElement
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getSunsetHourAngle() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUNSET_HOUR_ANGLE_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.sunsetHourAngle;
     }
 
     /**
@@ -259,11 +335,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     public Real getSunriseHour() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUNRISE_HOUR_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.sunriseHour;
     }
 
     /**
@@ -272,11 +344,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     public Real getSunsetHour() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUNSET_HOUR_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.sunsetHour;
     }
 
     /**
@@ -285,11 +353,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     public Real getSunTransitHour() {
-        try {
-            return (Real) tuple.getComponent(SolarType.SUNTRANSIT_HOUR_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return this.sunTransitHour;
     }
 
     /**
@@ -298,36 +362,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     public Real getZoneOffsetHour() {
-        try {
-            return (Real) tuple.getComponent(SolarType.ZONE_OFFSET_HOUR_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Tests whether any data elements are missing.
-     *
-     * @return true if a data element is missing.
-     */
-    @Override
-    @XmlElement
-    public boolean isMissing() {
-        try {
-            Data[] components = tuple.getComponents(false);
-            if (components == null) {
-                return true;
-            } else {
-                for (Data data : components) {
-                    if (data == null || data.isMissing()) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } catch (VisADException | RemoteException ex) {
-            throw new RuntimeException(ex);
-        }
+        return this.zoneOffsetHour;
     }
 
     /**
@@ -365,11 +400,48 @@ public class BasicSunlight implements Sunlight {
 
     @Override
     public String toString() {
-        try {
-            return this.tuple.longString();
-        } catch (VisADException | RemoteException ex) {
-            return this.tuple.toString();
+        return "Sunlight:"
+                + "\n Observation Time: " + getDateTime()
+                + "\n Observer's Location: " + getLocation()
+                + "\n Declination: " + getDeclination().toValueString()
+                + "\n Subsolar Latitude: " + subsolarLatitude.toValueString()
+                + "\n Subsolar Longitude: " + subsolarLongitude.toValueString()
+                + "\n Azimuth Angle: " + azimuthAngle.toValueString()
+                + "\n Altitude Angle: " + altitudeAngle.toValueString()
+                + "\n Zenith Angle: " + zenithAngle.toValueString()
+                + "\n Local Hour Angle: " + localHourAngle.toValueString()
+                + "\n Sunrise Hour Angle: " + sunriseHourAngle.toValueString()
+                + "\n Sunset Hour Angle: " + sunsetHourAngle.toValueString()
+                + "\n Sunrise Hour: " + sunriseHour.toValueString()
+                + "\n Sunset Hour: " + sunsetHour.toValueString()
+                + "\n Sun Transit Hour: " + sunTransitHour.toValueString()
+                + "\n Zone Offset Hour: " + zoneOffsetHour.toValueString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.dateTime);
+        hash = 19 * hash + Objects.hashCode(this.location);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BasicSunlight other = (BasicSunlight) obj;
+        if (!Objects.equals(this.dateTime, other.dateTime)) {
+            return false;
+        }
+        if (!Objects.equals(this.location, other.location)) {
+            return false;
+        }
+        return true;
     }
 
 }

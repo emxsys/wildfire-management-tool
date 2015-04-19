@@ -118,13 +118,16 @@ public class SolarModel {
     private static BasicSunlight getSunlight(FieldImpl solarField, ZonedDateTime temporal, Coord2D spatial) {
         try {
             DateTime time = Times.fromZonedDateTime(temporal);
-            RealTuple location = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]{
-                spatial.getLatitudeDegrees(), spatial.getLongitudeDegrees()
-            });
+            RealTuple location = new RealTuple(
+                    RealTupleType.LatitudeLongitudeTuple,
+                    new double[]{spatial.getLatitudeDegrees(), spatial.getLongitudeDegrees()});
+
             // Function: (time -> ((lat, lon) -> (sunlight)))
             FieldImpl field = (FieldImpl) solarField.evaluate(time, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             RealTuple tuple = (RealTuple) field.evaluate(location, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-            return BasicSunlight.fromRealTuple(tuple);
+
+            return BasicSunlight.fromRealTuple(temporal, GeoCoord3D.fromCoord(spatial), tuple);
+
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
@@ -135,14 +138,18 @@ public class SolarModel {
         if (this.solarField == null) {
             this.solarField = createSolarField();
         }
-        return BasicSunlight.fromRealTuple(getSunlightAt(this.solarField, temporalIndex, spatialIndex).getTuple());
+        ZonedDateTime time = temporalDomain.getZonedDateTimeAt(temporalIndex);
+        LatLonPoint latLon = spatialDomain.getLatLonPointAt(spatialIndex);
+        RealTuple tuple = getSunlightAt(this.solarField, temporalIndex, spatialIndex);
+
+        return BasicSunlight.fromRealTuple(time, GeoCoord3D.fromLatLonPoint(latLon), tuple);
     }
 
-    private static BasicSunlight getSunlightAt(FieldImpl solarField, int temporalIndex, int spatialIndex) {
+    private static RealTuple getSunlightAt(FieldImpl solarField, int temporalIndex, int spatialIndex) {
         try {
             FieldImpl field = (FieldImpl) solarField.getSample(temporalIndex);
             RealTuple tuple = (RealTuple) field.getSample(spatialIndex);
-            return BasicSunlight.fromRealTuple(tuple);
+            return tuple;
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);

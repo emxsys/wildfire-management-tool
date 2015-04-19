@@ -29,7 +29,6 @@
  */
 package com.emxsys.solar.api;
 
-import visad.Data;
 import visad.Real;
 
 /**
@@ -119,12 +118,5 @@ public interface Sunlight {
      * @return The offset from UTC to local time. [hours]
      */
     Real getZoneOffsetHour();
-
-    /**
-     * Tests whether any data elements are missing.
-     *
-     * @return true if a data element is missing.
-     */
-    boolean isMissing();
 
 }
