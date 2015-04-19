@@ -42,6 +42,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
@@ -60,14 +61,15 @@ public class FuelModelsResource {
     }
 
     /**
-     * Retrieves representation of an instance of com.emxsys.wmt.web.FuelModelsResource
+     * Retrieves representation of a collection of com.emxsys.wildfire.api.StdFuelModel instances.
      *
      * @return an instance of List<StdFuelModel>
      */
     @GET
-    @Produces({"application/json", "application/xml",})
-    public List<StdFuelModel> getAllFuelModels() {
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<StdFuelModel> getXmlOrJson() {
         ArrayList<StdFuelModel> list = new ArrayList<>();
+        
         // Add the Standard 13 FuelModels
         for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
             list.add(new StdFuelModel.Builder(fbfm).build());

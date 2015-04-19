@@ -43,7 +43,7 @@ public class ApplicationConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
-        addRestResourceClasses(resources);
+        addRestResourceClasses(resources);        
         return resources;
     }
 
@@ -55,11 +55,13 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(
                                         Set<Class<?>> resources) {
+        resources.add(com.emxsys.wmt.web.FuelModelResource.class);
         resources.add(com.emxsys.wmt.web.FuelModelsResource.class);
         resources.add(com.emxsys.wmt.web.FuelMoistureResource.class);
         resources.add(com.emxsys.wmt.web.SunlightJsonResource.class);
         resources.add(com.emxsys.wmt.web.SunlightResource.class);
         resources.add(com.emxsys.wmt.web.SunlightXmlResource.class);
+        resources.add(com.emxsys.wmt.web.SurfaceFuelResource.class);
     }
 
 }

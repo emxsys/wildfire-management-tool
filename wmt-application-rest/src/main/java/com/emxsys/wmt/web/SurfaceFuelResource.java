@@ -29,64 +29,53 @@
  */
 package com.emxsys.wmt.web;
 
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelMoisture;
+import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 
 /**
- * REST Web Service
+ * Surface Fuel REST Web Service.
  *
  * @author Bruce Schubert
  */
-public class FuelModelResource {
-    private StdFuelModel fuelModel;
+@Path("surfacefuel")
+public class SurfaceFuelResource {
 
-    /** Creates a new instance of FuelModelResource */
-    private FuelModelResource(String modelNo) {
-        this.fuelModel = StdFuelModel.from(Integer.parseInt(modelNo));
-    }
+    private static SurfaceFuelProvider provider = new SurfaceFuelProvider();
 
-    /** Get instance of the FuelModelResource
-     *
-     * @param modelNo FuelModel number used to create a new instance.
-     * @return A new instance.
-     */
-    public static FuelModelResource getInstance(String modelNo) {
-        // The user may use some kind of persistence mechanism
-        // to store and restore instances of FuelModelResource class.
-        return new FuelModelResource(modelNo);
+    @Context
+    private UriInfo context;
+
+    /** Creates a new instance of SurfaceFuelResource */
+    public SurfaceFuelResource() {
     }
 
     /**
-     * Retrieves representation of an instance of com.emxsys.wmt.wildfire.StdFuelModel
+     * Retrieves representation of an instance of com.emxsys.wildfire.behavior.SurfaceFuel
      *
-     * @return an instance of com.emxsys.wildfire.api.FuelModel
+     * @param fuelModelNo A FuelModel number.
+     * @param fuelMoisture An XML or JSON FuelMoisture representation.
+     * @return An instance of SurfaceFuel.
      */
-    @GET
+    @POST
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public StdFuelModel getFuelModel() {
-        return this.fuelModel;
+    @Consumes(MediaType.APPLICATION_XML)
+    public SurfaceFuel createSurfaceFuel(BasicFuelMoisture fuelMoisture) {
+
+        // TODO: Unmarshall fuelmodel XML.
+        // TODO: Unmarshall fuelmoisture XML.
+        //SurfaceFuel fuel = provider.getSurfaceFuel(fuelModel, fuelMoisture);
+        //StdFuelModel fuelModel = StdFuelModel.from(fuelModelNo);
+        return new SurfaceFuel();
+        //return SurfaceFuel.from(fuelModel, fuelMoisture); 
     }
 
-    /**
-     * PUT method for updating or creating an instance of FuelModelResource
-     *
-     * @param content representation for the resource
-     */
-    @PUT
-    @Consumes("application/xml")
-    public void putFuelModel(StdFuelModel content) {
-    }
-
-    /**
-     * DELETE method for resource FuelModelResource
-     */
-    @DELETE
-    public void delete() {
-    }
 }

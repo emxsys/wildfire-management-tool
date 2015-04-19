@@ -29,7 +29,11 @@
  */
 package com.emxsys.wmt.web;
 
+import com.emxsys.util.XmlUtil;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.test.framework.JerseyTest;
+import javax.ws.rs.core.MediaType;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
@@ -38,16 +42,51 @@ import org.junit.Test;
  * @author Bruce Schubert
  */
 public class FuelModelsResourceTest extends JerseyTest {
-    
+
     public FuelModelsResourceTest() throws Exception {
         super("com.emxsys.wmt.web");
     }
 
     @Test
-    public void testGetAllFuelModels() {
-        String responseMsg = this.webResource.path("fuelmodels").get(String.class);
-        System.out.println(responseMsg);
+    public void testGetXmlOrJson() {
+        ////////////////////////////////////////////////////////////////////
+        System.out.println("TESTING: getXmlOrJson >>> Get All Fuel Models");
+        ////////////////////////////////////////////////////////////////////
+
+        FuelModelsResource instance = new FuelModelsResource();
+        ClientResponse response;
+
+        // Test XML
+        response = super.webResource.path("fuelmodels").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+        assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
+        assertTrue("Expecting: " + MediaType.APPLICATION_XML + " but found: " + response.getType(),
+            response.getType().equals(MediaType.APPLICATION_XML_TYPE));
+        System.out.println(">>>> XML Output: \n" + XmlUtil.format(response.getEntity(String.class)));
+
+        // Test JSON
+        response = super.webResource.path("fuelmodels").accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
+        assertTrue("Expecting: " + MediaType.APPLICATION_JSON + " but found: " + response.getType(),
+            response.getType().equals(MediaType.APPLICATION_JSON_TYPE));
+        System.out.println(">>>> JSON Output:\n" + response.getEntity(String.class));
+
+        ////////////////////////////////////////////////////////////////////
+        System.out.println("TESTING: getXmlOrJson >>> Get Single Fuel Model");
+        ////////////////////////////////////////////////////////////////////
+
+        // Test XML
+        response = super.webResource.path("fuelmodels/6").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+        assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
+        assertTrue("Expecting: " + MediaType.APPLICATION_XML + " but found: " + response.getType(),
+            response.getType().equals(MediaType.APPLICATION_XML_TYPE));
+        System.out.println(">>>> XML Output: \n" + XmlUtil.format(response.getEntity(String.class)));
+
+        // Test JSON
+        response = super.webResource.path("fuelmodels/6").accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
+        assertTrue("Expecting: " + MediaType.APPLICATION_JSON + " but found: " + response.getType(),
+            response.getType().equals(MediaType.APPLICATION_JSON_TYPE));
+        System.out.println(">>>> JSON Output:\n" + response.getEntity(String.class));
     }
 
-    
 }

@@ -31,6 +31,8 @@ package com.emxsys.wmt.web;
 
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.solar.api.BasicSunlight;
+import com.emxsys.util.JsonUtil;
+import com.emxsys.util.XmlUtil;
 import com.sun.jersey.test.framework.JerseyTest;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -69,7 +71,7 @@ public class SunlightResourceTest extends JerseyTest {
             .queryParam("longitude", Double.toString(coord.getLongitudeDegrees()))
             .accept(MediaType.APPLICATION_XML)
             .get(String.class);
-        System.out.println(xml);
+        System.out.println(XmlUtil.format(xml));
 
         String json = super.webResource.path("sunlight")
             .queryParam("time", time)
@@ -77,8 +79,8 @@ public class SunlightResourceTest extends JerseyTest {
             .queryParam("longitude", Double.toString(coord.getLongitudeDegrees()))
             .accept(MediaType.APPLICATION_JSON)
             .get(String.class);
-        System.out.println(json);
-        
+        System.out.println(JsonUtil.format(json));
+
         String text = super.webResource.path("sunlight")
             .queryParam("time", time)
             .queryParam("latitude", Double.toString(coord.getLatitudeDegrees()))
@@ -95,11 +97,8 @@ public class SunlightResourceTest extends JerseyTest {
         double latitude = 34.25;
         double longitude = -119.25;
         SunlightResource instance = new SunlightResource();
-        BasicSunlight result = instance.getSunlight(isoDateTime, latitude, longitude);
+        BasicSunlight result = SunlightResource.getSunlight(isoDateTime, latitude, longitude);
         assertNotNull(result);
-        assertFalse(result.isMissing());
     }
-
-
 
 }
