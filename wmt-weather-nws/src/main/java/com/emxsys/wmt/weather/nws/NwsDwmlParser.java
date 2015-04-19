@@ -220,7 +220,7 @@ public class NwsDwmlParser {
      * @param xmlString
      */
     private NwsDwmlParser(String xmlString) {
-        doc = XmlUtil.getDoc(xmlString);
+        doc = XmlUtil.newDocumentFromString(xmlString);
         xpath = XPathFactory.newInstance().newXPath();
     }
 
