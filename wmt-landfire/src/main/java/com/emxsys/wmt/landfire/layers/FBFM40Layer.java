@@ -35,7 +35,7 @@ import com.emxsys.gis.api.layer.BasicLayerLegend;
 import com.emxsys.gis.api.layer.BasicLayerGroup;
 import com.emxsys.gis.api.layer.BasicLayerType;
 import com.emxsys.util.ModuleUtil;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
 import gov.nasa.worldwind.avlist.AVList;
@@ -117,7 +117,7 @@ public class FBFM40Layer extends LandfireTiledImageLayer {
                 float g = Float.parseFloat(csv.get(green));
                 float b = Float.parseFloat(csv.get(blue));
                 int val = Integer.parseInt(csv.get(value));
-                FuelModel fm = StdFuelModel.from(val);
+                FuelModel fm = BasicFuelModel.from(val);
                 if (fm != null) {
                     Color color = new Color(r, g, b);
                     addColorEntry(color, fm);

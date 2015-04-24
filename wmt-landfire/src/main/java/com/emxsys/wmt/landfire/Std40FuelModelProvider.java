@@ -37,7 +37,7 @@ import com.emxsys.gis.api.viewer.GisViewer;
 import com.emxsys.wildfire.api.AbstractFuelModelProvider;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wmt.landfire.layers.FBFM40Layer;
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,8 +48,8 @@ import org.openide.util.LookupEvent;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * The Std40FuelModelProvider provides StdFuelModel instances from the
- * FBFM40Layer.
+ * The Std40FuelModelProvider provides BasicFuelModel instances from the
+ FBFM40Layer.
  *
  * @author Bruce Schubert
  */
@@ -107,13 +107,13 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
      * Gets the FuelModel at the given location.
      *
      * @param location The location where the fuel model is sampled.
-     * @return The fuel model at the location, or StdFuelModel.INVALID if not
-     * found.
+     * @return The fuel model at the location, or BasicFuelModel.INVALID if not
+ found.
      */
     @Override
     public FuelModel getFuelModel(Coord2D location) {
         if (this.fuelModelLayer == null) {
-            return StdFuelModel.INVALID;
+            return BasicFuelModel.INVALID;
         }
         // Get the query capability object
         QueryableByPoint query = this.fuelModelLayer.getLookup().lookup(QueryableByPoint.class);
@@ -125,13 +125,13 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
             Iterator<?> results = query.getObjectsAtLatLon(location).getResults().iterator();
             if (results.hasNext()) {
                 Object objectAtLatLon = results.next();
-                if (objectAtLatLon != null && objectAtLatLon instanceof StdFuelModel) {
-                    return (StdFuelModel) objectAtLatLon;
+                if (objectAtLatLon != null && objectAtLatLon instanceof BasicFuelModel) {
+                    return (BasicFuelModel) objectAtLatLon;
                 }
             }
         }
         logger.log(Level.FINE, "No FuelModel found for {0}", location);
-        return StdFuelModel.INVALID;
+        return BasicFuelModel.INVALID;
     }
 
     @Override
