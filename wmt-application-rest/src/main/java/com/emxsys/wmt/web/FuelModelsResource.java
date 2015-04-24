@@ -29,22 +29,24 @@
  */
 package com.emxsys.wmt.web;
 
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import static javax.ws.rs.core.MediaType.*;
 import javax.ws.rs.core.Response;
-
 
 /**
  * REST Web Service
@@ -53,57 +55,96 @@ import javax.ws.rs.core.Response;
  */
 @Path("/fuelmodels")
 public class FuelModelsResource {
-    @Context
-    private UriInfo context;
 
-    /** Creates a new instance of FuelModelsResource */
+    @Context
+    HttpHeaders headers;
+
+    /**
+     * Creates a new instance of FuelModelsResource
+     */
     public FuelModelsResource() {
     }
 
     /**
-     * Retrieves representation of a collection of com.emxsys.wildfire.api.StdFuelModel instances.
+     * Get a representation of a com.emxsys.wildfire.BasicFuelModel.
      *
-     * @return an instance of List<StdFuelModel>
+     * @param category Optional. Either all, standard or original.
+     * @param mimeType Optional. Either application/json, application/xml or
+     * text/plain.
+     * @return A list of BasicFuelModel representations.
      */
     @GET
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<StdFuelModel> getXmlOrJson() {
-        ArrayList<StdFuelModel> list = new ArrayList<>();
-        
-        // Add the Standard 13 FuelModels
-        for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
-            list.add(new StdFuelModel.Builder(fbfm).build());
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getFuelModels(
+            @DefaultValue("all") @QueryParam("category") String category,
+            @DefaultValue("") @QueryParam("mime-type") String mimeType) {
+
+        // Populate an ArrayList with the desired fuel model categories
+        ArrayList<BasicFuelModel> models = new ArrayList<>();
+        if (category.equals("all") || category.contains("original")) {
+            // Add the Original 13 FuelModels
+            for (StdFuelModelParams13 fbfm : StdFuelModelParams13.values()) {
+                models.add(new BasicFuelModel.Builder(fbfm).build());
+            }
         }
-        // Add the Standard 13 FuelModels
-        for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
-            list.add(new StdFuelModel.Builder(fbfm).build());
+        if (category.equals("all") || category.contains("standard")) {
+            // Add the Standard 40 FuelModels
+            for (StdFuelModelParams40 fbfm : StdFuelModelParams40.values()) {
+                models.add(new BasicFuelModel.Builder(fbfm).build());
+            }
         }
-        return list;
+
+        // Set the MediaType based on mime-type or Accept header...
+        MediaType mediaType = getMediaType(mimeType);
+
+        if (mediaType.equals(MediaType.TEXT_PLAIN_TYPE)) {
+            // Handle TEXT/PLAIN type here with a CSV representation
+            StringBuilder sb = new StringBuilder();
+            sb.append("ModelNo,ModelName,ModelGroup\n");
+            for (BasicFuelModel model : models) {
+                sb.append(model.getModelNo())
+                        .append(',').append('\"').append(model.getModelName()).append('\"')
+                        .append(',').append('\"').append(model.getModelGroup()).append('\"')
+                        .append('\n');
+            }
+            return Response.ok(sb.toString(), mediaType).build();
+
+        } else {
+            // Otherwise, let JAXB/Jersey handle vai the message body writer for the
+            // given MediaType. We have to to wrap the collection in a GenericEntity
+            // object in order to preserve information on the parameterised type.
+            GenericEntity<List<BasicFuelModel>> entity = new GenericEntity<List<BasicFuelModel>>(models) {
+            };
+            return Response.ok(entity, mediaType).build();
+        }
     }
 
     /**
-     * POST method for creating an instance of FuelModelResource
-     *
-     * @param content representation for the new resource
-     * @return an HTTP response with content of the created resource
-     */
-    @POST
-    @Consumes("application/xml")
-    @Produces("application/xml")
-    public Response postFuelModel(StdFuelModel content) {
-        //TODO
-        return Response.created(context.getAbsolutePath()).build();
-    }
-
-    /**
-     * Sub-resource locator method for {modelNo}
+     * Sub-resource locator method for {modelNo}. Retrieves representation of an
+     * instance of com.emxsys.wmt.wildfire.BasicFuelModel
      *
      * @param modelNo
-     * @return
+     * @param mimeType
+     * @return A representation of BasicFuelModel.
      */
-    @Path("{modelNo}")
-    public FuelModelResource getFuelModelResource(@PathParam("modelNo") String modelNo) {
-        return FuelModelResource.getInstance(modelNo);
+    @GET
+    @Path("/{modelNo : \\d+}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response getFuelModel(
+            @PathParam("modelNo") String modelNo,
+            @DefaultValue("") @QueryParam("mime-type") String mimeType) {
+
+        BasicFuelModel fuelModel = BasicFuelModel.from(Integer.parseInt(modelNo));
+        MediaType mediaType = getMediaType(mimeType);
+        return Response.ok(
+                mediaType.equals(MediaType.TEXT_PLAIN_TYPE) ? fuelModel.toString() : fuelModel,
+                mediaType).build();
+    }
+
+    private MediaType getMediaType(String mimeType) {
+        final List<MediaType> permittedTypes
+                = Arrays.asList(APPLICATION_JSON_TYPE, APPLICATION_XML_TYPE, TEXT_PLAIN_TYPE);
+        return WebUtil.getPermittedMediaType(mimeType, permittedTypes, headers, TEXT_PLAIN_TYPE);
     }
 
 }

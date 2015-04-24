@@ -37,7 +37,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 /**
  *
  * @author Bruce Schubert
@@ -53,33 +52,36 @@ public class SurfaceFuelResourceTest extends JerseyTest {
         System.out.println("TESTING: createSurfaceFuel");
         SurfaceFuelResource instance = new SurfaceFuelResource();
 
-        String fuelModel = super.webResource.path("fuelmodels/6").accept(MediaType.APPLICATION_XML).get(String.class);
-        System.out.println("Fuel Model: \n" + XmlUtil.format(fuelModel));
+        ClientResponse fuelModel = super.webResource.path("fuelmodels/6")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ClientResponse.class);
+        assertTrue("Status: expected 200 but got " + fuelModel.getStatus(), fuelModel.getStatus() == 200);
 
-        String fuelMoisture = super.webResource.path("fuelmoisture")
-            .queryParam("dead1Hr", Double.toString(1.0))
-            .queryParam("dead10Hr", Double.toString(2.0))
-            .queryParam("dead100Hr", Double.toString(3.0))
-            .queryParam("herb", Double.toString(4.0))
-            .queryParam("woody", Double.toString(5.0))
-            .accept(MediaType.APPLICATION_XML)
-            .get(String.class);
-        System.out.println("Fuel Moisture: \n" + XmlUtil.format(fuelMoisture));
+        ClientResponse fuelMoisture = super.webResource.path("fuelmoisture")
+                .queryParam("dead1Hr", Double.toString(1.0))
+                .queryParam("dead10Hr", Double.toString(2.0))
+                .queryParam("dead100Hr", Double.toString(3.0))
+                .queryParam("herb", Double.toString(4.0))
+                .queryParam("woody", Double.toString(5.0))
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ClientResponse.class);
+        assertTrue("Status: expected 200 but got " + fuelMoisture.getStatus(), fuelMoisture.getStatus() == 200);
 
-//        SurfaceFuel result = instance.createSurfaceFuel(fuelModel, fuelMoisture);
         
         FormDataMultiPart formData = new FormDataMultiPart();
-        //formData.field("fuelModelNo", Integer.toString(6));
-        formData.field("fuelMoisture", fuelMoisture, MediaType.APPLICATION_XML_TYPE);
-
+        // On the server-side, use @FormParam to process formData.field(s)
+        // and use @FormDataParam to process formData.bodyPart.
+        formData.field("fuelModel",  fuelModel.getEntity(String.class), MediaType.APPLICATION_JSON_TYPE);
+        formData.field("fuelMoisture", fuelMoisture.getEntity(String.class), MediaType.APPLICATION_JSON_TYPE);
+        
         ClientResponse response = super.webResource.path("surfacefuel")
-            .type(MediaType.APPLICATION_XML)
-            .accept(MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, fuelMoisture);
+                .type(MediaType.MULTIPART_FORM_DATA_TYPE)
+                .accept(MediaType.APPLICATION_XML)
+                .post(ClientResponse.class, formData);
 
         assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
         assertTrue("Expecting: " + MediaType.APPLICATION_XML + " but found: " + response.getType(),
-            response.getType().equals(MediaType.APPLICATION_XML_TYPE));
+                response.getType().equals(MediaType.APPLICATION_XML_TYPE));
         System.out.println("SurfaceFire XML >>>>\n" + XmlUtil.format(response.getEntity(String.class)));
     }
 

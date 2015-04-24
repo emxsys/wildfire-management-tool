@@ -30,17 +30,23 @@
 package com.emxsys.wmt.web;
 
 import com.emxsys.wildfire.api.BasicFuelMoisture;
+import com.emxsys.wildfire.api.WeatherConditions;
+import java.util.Arrays;
+import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
+import static javax.ws.rs.core.MediaType.*;
+import javax.ws.rs.core.Response;
 
 /**
  * Fuel Moisture REST Web Service.
@@ -49,41 +55,67 @@ import javax.ws.rs.core.MediaType;
  */
 @Path("fuelmoisture")
 public class FuelMoistureResource {
+
     @Context
-    private UriInfo context;
+    private HttpHeaders headers;
 
     /** Creates a new instance of FuelMoistureResource */
     public FuelMoistureResource() {
     }
 
     /**
-     * Retrieves representation of an instance com.emxsys.wildfire.api.BasicFuelMoisture.
+     * Retrieves representation of an instance
+     * com.emxsys.wildfire.api.BasicFuelMoisture.
      *
+     * @param mimeType Optional. Either application/json, application/xml or
+     * text/plain.
+     * @param conditions Optional. Either hot_and_dry, cool_and_wet, or
+     * between_hot_and_cool.
+     * @param dead1Hr Optional, default value NaN.
+     * @param dead10Hr Optional, default value NaN.
+     * @param dead100Hr Optional, default value NaN.
+     * @param herb Optional, default value NaN.
+     * @param woody Optional, default value NaN.
      * @return an instance of BasicFuelMoisture
      */
     @GET
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public BasicFuelMoisture getXmlOrJson(@QueryParam("dead1Hr") double dead1Hr,
-                                          @QueryParam("dead10Hr") double dead10Hr,
-                                          @QueryParam("dead100Hr") double dead100Hr,
-                                          @QueryParam("herb") double herb,
-                                          @QueryParam("woody") double woody) {
-        return BasicFuelMoisture.fromDoubles(dead1Hr, dead10Hr, dead100Hr, herb, woody);
-    }
+    @Produces({APPLICATION_XML, APPLICATION_JSON, TEXT_PLAIN})
+    public Response getFuelMoisture(
+            @DefaultValue("") @QueryParam("mime-type") String mimeType,
+            @DefaultValue("") @QueryParam("conditions") String conditions,
+            @QueryParam("dead1Hr") Double dead1Hr,
+            @QueryParam("dead10Hr") Double dead10Hr,
+            @QueryParam("dead100Hr") Double dead100Hr,
+            @QueryParam("herb") Double herb,
+            @QueryParam("woody") Double woody) {
 
-    /**
-     * Retrieves representation of an instance com.emxsys.wildfire.api.BasicFuelMoisture.
-     *
-     * @return an instance of BasicFuelMoisture
-     */
-    @GET
-    @Produces({MediaType.TEXT_PLAIN})
-    public String getTxt(@QueryParam("dead1Hr") double dead1Hr,
-                         @QueryParam("dead10Hr") double dead10Hr,
-                         @QueryParam("dead100Hr") double dead100Hr,
-                         @QueryParam("herb") double herb,
-                         @QueryParam("woody") double woody) {
-        return BasicFuelMoisture.fromDoubles(dead1Hr, dead10Hr, dead100Hr, herb, woody).toString();
-    }
+        // Dermine representation
+        List<MediaType> permittedTypes = Arrays.asList(APPLICATION_JSON_TYPE, APPLICATION_XML_TYPE, TEXT_PLAIN_TYPE);
+        MediaType mediaType = WebUtil.getPermittedMediaType(mimeType, permittedTypes, headers, MediaType.TEXT_PLAIN_TYPE);
 
+        BasicFuelMoisture fuelMoisture = null;
+        switch (conditions) {
+            case "hot_and_dry":
+                fuelMoisture = BasicFuelMoisture.fromWeatherConditions(WeatherConditions.HOT_AND_DRY);
+                break;
+            case "between_hot_and_cool":
+                fuelMoisture = BasicFuelMoisture.fromWeatherConditions(WeatherConditions.BETWEEN_HOTDRY_AND_COOLWET);
+                break;
+            case "cool_and_wet":
+                fuelMoisture = BasicFuelMoisture.fromWeatherConditions(WeatherConditions.COOL_AND_WET);
+                break;
+            default:
+                fuelMoisture = BasicFuelMoisture.fromDoubles(
+                        dead1Hr == null ? Double.NaN : dead1Hr,
+                        dead10Hr == null ? Double.NaN : dead10Hr,
+                        dead100Hr == null ? Double.NaN : dead100Hr,
+                        herb == null ? Double.NaN : herb,
+                        woody == null ? Double.NaN : woody);
+
+        }
+        return Response.ok(
+                mediaType.equals(TEXT_PLAIN_TYPE) ? fuelMoisture.toString() : fuelMoisture,
+                mediaType).build();
+
+    }
 }

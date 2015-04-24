@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.web;
 
+import com.emxsys.util.JsonUtil;
 import com.emxsys.util.XmlUtil;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.test.framework.JerseyTest;
@@ -61,14 +62,14 @@ public class FuelModelsResourceTest extends JerseyTest {
         assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
         assertTrue("Expecting: " + MediaType.APPLICATION_XML + " but found: " + response.getType(),
             response.getType().equals(MediaType.APPLICATION_XML_TYPE));
-        System.out.println(">>>> XML Output: \n" + XmlUtil.format(response.getEntity(String.class)));
+        //System.out.println(">>>> XML Output: \n" + XmlUtil.format(response.getEntity(String.class)));
 
         // Test JSON
         response = super.webResource.path("fuelmodels").accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
         assertTrue("Expecting: " + MediaType.APPLICATION_JSON + " but found: " + response.getType(),
             response.getType().equals(MediaType.APPLICATION_JSON_TYPE));
-        System.out.println(">>>> JSON Output:\n" + response.getEntity(String.class));
+        //System.out.println(">>>> JSON Output:\n" + JsonUtil.format(response.getEntity(String.class)));
 
         ////////////////////////////////////////////////////////////////////
         System.out.println("TESTING: getXmlOrJson >>> Get Single Fuel Model");
@@ -86,7 +87,7 @@ public class FuelModelsResourceTest extends JerseyTest {
         assertTrue("Status: expected 200 but got " + response.getStatus(), response.getStatus() == 200);
         assertTrue("Expecting: " + MediaType.APPLICATION_JSON + " but found: " + response.getType(),
             response.getType().equals(MediaType.APPLICATION_JSON_TYPE));
-        System.out.println(">>>> JSON Output:\n" + response.getEntity(String.class));
+        System.out.println(">>>> JSON Output:\n" + JsonUtil.format(response.getEntity(String.class)));
     }
 
 }
