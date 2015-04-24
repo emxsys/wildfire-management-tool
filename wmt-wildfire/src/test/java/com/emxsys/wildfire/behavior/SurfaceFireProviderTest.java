@@ -35,7 +35,7 @@ import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.BasicFuelMoisture;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.StdFuelModelParams13;
 import com.emxsys.wildfire.api.StdFuelModelParams40;
 import com.emxsys.wildfire.api.WeatherConditions;
@@ -76,11 +76,11 @@ public class SurfaceFireProviderTest {
 
         // Load the original 13 fuel models
         for (StdFuelModelParams13 fbfm13 : StdFuelModelParams13.values()) {
-            models.add(new StdFuelModel.Builder(fbfm13).build());
+            models.add(new BasicFuelModel.Builder(fbfm13).build());
         }
         // Load the standard 40 fuel models
         for (StdFuelModelParams40 fbfm40 : StdFuelModelParams40.values()) {
-            models.add(new StdFuelModel.Builder(fbfm40).build());
+            models.add(new BasicFuelModel.Builder(fbfm40).build());
         }
         // Common moisture scenario used in test
         for (WeatherConditions conditions : WeatherConditions.values()) {

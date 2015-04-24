@@ -33,7 +33,7 @@ import com.emxsys.util.AngleUtil;
 import static com.emxsys.util.AngleUtil.normalize360;
 import static com.emxsys.weather.api.WeatherType.WIND_DIR;
 import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import static com.emxsys.wildfire.api.StdFuelModelParams13.FBFM04;
 import static com.emxsys.wildfire.api.StdFuelMoistureScenario.VeryLowDead_FullyCuredHerb;
 import static com.emxsys.wildfire.api.WildfireType.ASPECT;
@@ -55,7 +55,7 @@ public class FireBehaviorIndividualTest {
     @Test
     public void testCalcWindAndSlopeEffects() throws VisADException {
         System.out.println("calcWindAndSlopeEffects");
-        SurfaceFuel fuelbed = SurfaceFuel.from(StdFuelModel.from(FBFM04), VeryLowDead_FullyCuredHerb.getFuelMoisture());
+        SurfaceFuel fuelbed = SurfaceFuel.from(BasicFuelModel.from(FBFM04), VeryLowDead_FullyCuredHerb.getFuelMoisture());
         // Test Wind Direction 
         int n = 1;
         for (int i = 0; i < 360; i += 30) {

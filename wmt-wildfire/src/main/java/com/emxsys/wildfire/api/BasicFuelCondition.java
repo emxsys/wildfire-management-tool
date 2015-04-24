@@ -47,7 +47,7 @@ import visad.RealTuple;
 import visad.VisADException;
 
 /**
- * FuelConditionTuple is a concrete implementation of the FuelCondition interface.
+ * BasicFuelCondition is a concrete implementation of the FuelCondition interface.
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
@@ -56,31 +56,31 @@ import visad.VisADException;
     "# {0} - MathType",
     "ERR_FuelConditionWrongMathType=Incompatible MathType: {0}."
 })
-public class FuelConditionTuple extends RealTuple implements FuelCondition {
+public class BasicFuelCondition extends RealTuple implements FuelCondition {
 
     /** A tuple with "missing" components */
-    public static final FuelConditionTuple INVALID_TUPLE = new FuelConditionTuple();
+    public static final BasicFuelCondition INVALID_TUPLE = new BasicFuelCondition();
     public static final int FUEL_MOISTURE_1H_INDEX = Tuples.getIndex(FUEL_MOISTURE_1H, FUEL_CONDITION);
     public static final int FUEL_MOISTURE_10H_INDEX = Tuples.getIndex(FUEL_MOISTURE_10H, FUEL_CONDITION);
     public static final int FUEL_MOISTURE_100H_INDEX = Tuples.getIndex(FUEL_MOISTURE_100H, FUEL_CONDITION);
     public static final int FUEL_MOISTURE_HERB_INDEX = Tuples.getIndex(FUEL_MOISTURE_HERB, FUEL_CONDITION);
     public static final int FUEL_MOISTURE_WOODY_INDEX = Tuples.getIndex(FUEL_MOISTURE_WOODY, FUEL_CONDITION);
     public static final int FUEL_TEMP_INDEX = Tuples.getIndex(FUEL_TEMP_C, FUEL_CONDITION);
-    private static final Logger logger = Logger.getLogger(FuelConditionTuple.class.getName());
+    private static final Logger logger = Logger.getLogger(BasicFuelCondition.class.getName());
 
     /**
-     * Creates a FuelConditionTuple from a RealTuple of type FUEL_CONDITION.
+     * Creates a BasicFuelCondition from a RealTuple of type FUEL_CONDITION.
      * @param fuelCondition A WildfireType.FUEL_CONDITION RealTuple.
-     * @return A new FuelConditionTuple.
+     * @return A new BasicFuelCondition.
      */
-    public static FuelConditionTuple fromRealTuple(RealTuple fuelCondition) {
+    public static BasicFuelCondition fromRealTuple(RealTuple fuelCondition) {
         if (!fuelCondition.getType().equals(WildfireType.FUEL_CONDITION)) {
             throw new IllegalArgumentException(Bundle.ERR_FuelConditionWrongMathType(fuelCondition.getType()));
         } else if (fuelCondition.isMissing()) {
             return INVALID_TUPLE;
         }
         try {
-            return new FuelConditionTuple(fuelCondition);
+            return new BasicFuelCondition(fuelCondition);
 
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, Bundle.ERR_FuelConditionCannotCreate(), ex);
@@ -89,12 +89,12 @@ public class FuelConditionTuple extends RealTuple implements FuelCondition {
     }
 
     /**
-     * Creates a FuelConditionTuple.
+     * Creates a BasicFuelCondition.
      * @param fuelMoisture
      * @param fuelTemperature
-     * @return A new FuelConditionTuple.
+     * @return A new BasicFuelCondition.
      */
-    public static FuelConditionTuple fromReals(FuelMoisture fuelMoisture, Real fuelTemperature) {
+    public static BasicFuelCondition fromReals(FuelMoisture fuelMoisture, Real fuelTemperature) {
         try {
             Real[] reals = new Real[]{
                 fuelMoisture.getDead1HrFuelMoisture(),
@@ -103,7 +103,7 @@ public class FuelConditionTuple extends RealTuple implements FuelCondition {
                 fuelMoisture.getLiveHerbFuelMoisture(),
                 fuelMoisture.getLiveWoodyFuelMoisture(),
                 convertTo(FUEL_TEMP_C, fuelTemperature),};
-            return new FuelConditionTuple(new RealTuple(reals));
+            return new BasicFuelCondition(new RealTuple(reals));
 
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, Bundle.ERR_FuelConditionCannotCreate(), ex);
@@ -116,14 +116,14 @@ public class FuelConditionTuple extends RealTuple implements FuelCondition {
      * Constructs an instance with from a RealTuple.
      * @param FuelCondition
      */
-    FuelConditionTuple(RealTuple fuelConditionTuple) throws VisADException, RemoteException {
+    BasicFuelCondition(RealTuple fuelConditionTuple) throws VisADException, RemoteException {
         super(WildfireType.FUEL_CONDITION, fuelConditionTuple.getRealComponents(), null);
     }
 
     /**
      * Constructs an instance with missing values.
      */
-    public FuelConditionTuple() {
+    public BasicFuelCondition() {
         super(WildfireType.FUEL_CONDITION);
     }
 

@@ -33,7 +33,7 @@ import com.emxsys.gis.api.Terrain;
 import static com.emxsys.visad.FireUnit.*;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FireBehaviorProvider;
-import com.emxsys.wildfire.api.FireBehaviorTuple;
+import com.emxsys.wildfire.api.BasicFireBehavior;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wildfire.api.FuelModel;
@@ -121,13 +121,13 @@ public class SurfaceFireProvider implements FireBehaviorProvider {
             FireEnvironment fireEnv = new FireEnvironment();
             fireEnv.model = fuelModel;
             fireEnv.condition = condition;
-            fireEnv.fireBehavior = new FireBehaviorTuple(
+            fireEnv.fireBehavior = new BasicFireBehavior(
                     maxSpreadResults.get("fli"),
                     maxSpreadResults.get("fln"),
                     maxSpreadResults.get("ros"),
                     maxSpreadResults.get("sdr"));
 
-            fireEnv.fireBehaviorNoWnd = new FireBehaviorTuple(
+            fireEnv.fireBehaviorNoWnd = new BasicFireBehavior(
                     noWndNoSlpResults.get("fli"),
                     noWndNoSlpResults.get("fln"),
                     noWndNoSlpResults.get("ros"),

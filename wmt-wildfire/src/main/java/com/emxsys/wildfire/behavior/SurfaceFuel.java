@@ -44,7 +44,7 @@ import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.WildfireType;
 import static com.emxsys.wildfire.api.WildfireType.*;
 import java.rmi.RemoteException;
@@ -333,7 +333,7 @@ public class SurfaceFuel {
      */
     public SurfaceFuel() {
         this.tuple = new RealTuple(WildfireType.FUEL_BED);
-        this.fuelModel = StdFuelModel.INVALID;
+        this.fuelModel = BasicFuelModel.INVALID;
         this.fuelMoisture = BasicFuelMoisture.INVALID;
         this.nonBurnable = true;
     }

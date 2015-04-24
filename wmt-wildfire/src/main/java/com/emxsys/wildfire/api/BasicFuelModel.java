@@ -58,12 +58,12 @@ import visad.Real;
            "dead1HrSAVRatio", "dead10HrSAVRatio", "dead100HrSAVRatio", "liveHerbSAVRatio", "liveWoodySAVRatio",
            "fuelBedDepth", "moistureOfExtinction", "lowHeatContent", "burnable"
         })
-public class StdFuelModel implements FuelModel {
+public class BasicFuelModel implements FuelModel {
 
     /**
      * A non-burnable fuel model representing an INVALID model; Fuel model number: -1
      */
-    public static final StdFuelModel INVALID;
+    public static final BasicFuelModel INVALID;
     /**
      * The original 13 fuel models.
      */
@@ -83,7 +83,7 @@ public class StdFuelModel implements FuelModel {
     /**
      * Collection reuse of previously created FuelModel instances
      */
-    private static Map<Integer, StdFuelModel> fuelModels;
+    private static Map<Integer, BasicFuelModel> fuelModels;
     private static Set<String> fuelModelGroups;
     private int modelNo;
     private String modelCode;
@@ -107,7 +107,7 @@ public class StdFuelModel implements FuelModel {
     static {
         fuelModels = new HashMap<>();
         fuelModelGroups = new HashSet<>();
-        INVALID = new StdFuelModel.Builder(-1, "INVALID", "Invalid Fuel Model",
+        INVALID = new BasicFuelModel.Builder(-1, "INVALID", "Invalid Fuel Model",
                 Builder.FUEL_LOAD_ZERO,
                 Builder.SAV_RATIO_ZERO,
                 Builder.FUEL_DEPTH_ZERO,
@@ -121,9 +121,9 @@ public class StdFuelModel implements FuelModel {
      * of the original '13' or standard '40' fuel model codes.
      * @return null if the FuelModel doesn't exist or cannot be created.
      */
-    public static StdFuelModel from(int fuelModelNo) {
+    public static BasicFuelModel from(int fuelModelNo) {
         // First, look for an existing fuel model instance...
-        StdFuelModel fm = fuelModels.get(fuelModelNo);
+        BasicFuelModel fm = fuelModels.get(fuelModelNo);
         if (fm == null) {
             // ... attempt to create a fuel model from one of the fuel model enums
             final String fmt = "FBFM%02d";
@@ -143,18 +143,27 @@ public class StdFuelModel implements FuelModel {
         return fm;
     }
 
-    public static StdFuelModel from(StdFuelModelParams13 params) {
+    /**
+     * A factory method used by Jersey/JAXB @FormParam.
+     * @param fuelModelNoOrCode A model no (int) or model code (String).
+     * @return A BasicFuelModel corresponding to the model no or model code; may return null.
+     */
+    public static BasicFuelModel fromString(String fuelModelNoOrCode) {
+        return from(Integer.parseInt(fuelModelNoOrCode));
+    }
+
+    public static BasicFuelModel from(StdFuelModelParams13 params) {
         // First, look for an existing fuel model instance...
-        StdFuelModel fm = fuelModels.get(params.getModelNo());
+        BasicFuelModel fm = fuelModels.get(params.getModelNo());
         if (fm == null) {
             fm = new Builder(params).build();
         }
         return fm;
     }
 
-    public static StdFuelModel from(StdFuelModelParams40 params) {
+    public static BasicFuelModel from(StdFuelModelParams40 params) {
         // First, look for an existing fuel model instance...
-        StdFuelModel fm = fuelModels.get(params.getModelNo());
+        BasicFuelModel fm = fuelModels.get(params.getModelNo());
         if (fm == null) {
             fm = new Builder(params).build();
         }
@@ -406,15 +415,15 @@ public class StdFuelModel implements FuelModel {
          * @return a fuel model ready for use
          * @throws IllegalStateException
          */
-        public StdFuelModel build() {
-            return new StdFuelModel(this);
+        public BasicFuelModel build() {
+            return new BasicFuelModel(this);
         }
     }
 
     /**
      * Default constructor required for JavaBean support; creates an INVALID FuelModel.
      */
-    public StdFuelModel() {
+    public BasicFuelModel() {
         new Builder(-1, "INVALID", "Invalid Fuel Model",
                 Builder.FUEL_LOAD_ZERO,
                 Builder.SAV_RATIO_ZERO,
@@ -428,7 +437,7 @@ public class StdFuelModel implements FuelModel {
      * @param builder
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    private StdFuelModel(Builder builder) {
+    private BasicFuelModel(Builder builder) {
         // Init members
         this.dead100HrFuelLoad = builder.dead100HrFuelLoad;
         this.dead10HrFuelLoad = builder.dead10HrFuelLoad;
@@ -463,6 +472,10 @@ public class StdFuelModel implements FuelModel {
         return this.modelNo;
     }
 
+    public void setModelNo(int modelNo) {
+        this.modelNo = modelNo;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -470,6 +483,10 @@ public class StdFuelModel implements FuelModel {
     @XmlElement
     public String getModelCode() {
         return this.modelCode;
+    }
+
+    public void setModelCode(String modelCode) {
+        this.modelCode = modelCode;
     }
 
     /**
@@ -481,6 +498,10 @@ public class StdFuelModel implements FuelModel {
         return this.modelName;
     }
 
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -488,6 +509,10 @@ public class StdFuelModel implements FuelModel {
     @XmlElement
     public String getModelGroup() {
         return this.modelGroup;
+    }
+
+    public void setModelGroup(String modelGroup) {
+        this.modelGroup = modelGroup;
     }
 
     /**
@@ -500,6 +525,10 @@ public class StdFuelModel implements FuelModel {
         return this.dead1HrFuelLoad;
     }
 
+    public void setDead1HrFuelLoad(Real dead1HrFuelLoad) {
+        this.dead1HrFuelLoad = dead1HrFuelLoad;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -508,6 +537,10 @@ public class StdFuelModel implements FuelModel {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead10HrFuelLoad() {
         return this.dead10HrFuelLoad;
+    }
+
+    public void setDead10HrFuelLoad(Real dead10HrFuelLoad) {
+        this.dead10HrFuelLoad = dead10HrFuelLoad;
     }
 
     /**
@@ -520,6 +553,10 @@ public class StdFuelModel implements FuelModel {
         return this.dead100HrFuelLoad;
     }
 
+    public void setDead100HrFuelLoad(Real dead100HrFuelLoad) {
+        this.dead100HrFuelLoad = dead100HrFuelLoad;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -528,6 +565,10 @@ public class StdFuelModel implements FuelModel {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveHerbFuelLoad() {
         return this.liveHerbFuelLoad;
+    }
+
+    public void setLiveHerbFuelLoad(Real liveHerbFuelLoad) {
+        this.liveHerbFuelLoad = liveHerbFuelLoad;
     }
 
     /**
@@ -540,6 +581,10 @@ public class StdFuelModel implements FuelModel {
         return this.liveWoodyFuelLoad;
     }
 
+    public void setLiveWoodyFuelLoad(Real liveWoodyFuelLoad) {
+        this.liveWoodyFuelLoad = liveWoodyFuelLoad;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -547,6 +592,10 @@ public class StdFuelModel implements FuelModel {
     @XmlElement
     public boolean isDynamic() {
         return this.dynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     /**
@@ -572,6 +621,10 @@ public class StdFuelModel implements FuelModel {
         return this.dead1HrSAVRatio;
     }
 
+    public void setDead1HrSAVRatio(Real dead1HrSAVRatio) {
+        this.dead1HrSAVRatio = dead1HrSAVRatio;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -580,6 +633,10 @@ public class StdFuelModel implements FuelModel {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead10HrSAVRatio() {
         return this.dead10HrSAVRatio;
+    }
+
+    public void setDead10HrSAVRatio(Real dead10HrSAVRatio) {
+        this.dead10HrSAVRatio = dead10HrSAVRatio;
     }
 
     /**
@@ -592,6 +649,10 @@ public class StdFuelModel implements FuelModel {
         return this.dead100HrSAVRatio;
     }
 
+    public void setDead100HrSAVRatio(Real dead100HrSAVRatio) {
+        this.dead100HrSAVRatio = dead100HrSAVRatio;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -600,6 +661,10 @@ public class StdFuelModel implements FuelModel {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveHerbSAVRatio() {
         return this.liveHerbSAVRatio;
+    }
+
+    public void setLiveHerbSAVRatio(Real liveHerbSAVRatio) {
+        this.liveHerbSAVRatio = liveHerbSAVRatio;
     }
 
     /**
@@ -612,6 +677,10 @@ public class StdFuelModel implements FuelModel {
         return this.liveWoodySAVRatio;
     }
 
+    public void setLiveWoodySAVRatio(Real liveWoodySAVRatio) {
+        this.liveWoodySAVRatio = liveWoodySAVRatio;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -620,6 +689,10 @@ public class StdFuelModel implements FuelModel {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getFuelBedDepth() {
         return this.fuelBedDepth;
+    }
+
+    public void setFuelBedDepth(Real fuelBedDepth) {
+        this.fuelBedDepth = fuelBedDepth;
     }
 
     /**
@@ -632,6 +705,10 @@ public class StdFuelModel implements FuelModel {
         return this.moistureOfExtinction;
     }
 
+    public void setMoistureOfExtinction(Real moistureOfExtinction) {
+        this.moistureOfExtinction = moistureOfExtinction;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -640,6 +717,10 @@ public class StdFuelModel implements FuelModel {
     @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLowHeatContent() {
         return this.lowHeatContent;
+    }
+
+    public void setLowHeatContent(Real lowHeatContent) {
+        this.lowHeatContent = lowHeatContent;
     }
 
     @Override
@@ -680,7 +761,7 @@ public class StdFuelModel implements FuelModel {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final StdFuelModel other = (StdFuelModel) obj;
+        final BasicFuelModel other = (BasicFuelModel) obj;
         return this.modelNo == other.modelNo;
     }
 

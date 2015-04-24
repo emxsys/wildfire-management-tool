@@ -50,7 +50,7 @@ import visad.VisADException;
  */
 public class FuelConditionTupleTest {
 
-    static FuelConditionTuple instance;
+    static BasicFuelCondition instance;
     static BasicFuelMoisture FM;
     static Real FM1 = new Real(FUEL_MOISTURE_1H, 1);
     static Real FM10 = new Real(FUEL_MOISTURE_10H, 2);
@@ -65,7 +65,7 @@ public class FuelConditionTupleTest {
     @BeforeClass
     public static void setUpClass() {
         FM = BasicFuelMoisture.fromReals(FM1, FM10, FM100, FMHERB, FMWOODY);
-        instance = FuelConditionTuple.fromReals(FM, FUELTEMP);
+        instance = BasicFuelCondition.fromReals(FM, FUELTEMP);
     }
 
     @Before
@@ -73,7 +73,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of fromRealTuple method, of class FuelConditionTuple.
+     * Test of fromRealTuple method, of class BasicFuelCondition.
      */
     @Test
     public void testFromRealTuple() throws VisADException, RemoteException {
@@ -81,22 +81,22 @@ public class FuelConditionTupleTest {
         RealTuple fuelCondition = new RealTuple(new Real[]{
             FM1, FM10, FM100, FMHERB, FMWOODY, FUELTEMP,
         });
-        FuelConditionTuple result = FuelConditionTuple.fromRealTuple(fuelCondition);
+        BasicFuelCondition result = BasicFuelCondition.fromRealTuple(fuelCondition);
         assertEquals(instance, result);
     }
 
     /**
-     * Test of fromReals method, of class FuelConditionTuple.
+     * Test of fromReals method, of class BasicFuelCondition.
      */
     @Test
     public void testFromReals() {
         System.out.println("fromReals");
-        FuelConditionTuple result = FuelConditionTuple.fromReals(FM, FUELTEMP);
+        BasicFuelCondition result = BasicFuelCondition.fromReals(FM, FUELTEMP);
         assertEquals(instance, result);
     }
 
     /**
-     * Test of getFuelMoisture method, of class FuelConditionTuple.
+     * Test of getFuelMoisture method, of class BasicFuelCondition.
      */
     @Test
     public void testGetFuelMoisture() {
@@ -106,7 +106,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of getDead1HrFuelMoisture method, of class FuelConditionTuple.
+     * Test of getDead1HrFuelMoisture method, of class BasicFuelCondition.
      */
     @Test
     public void testGetDead1HrFuelMoisture() {
@@ -116,7 +116,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of getDead10HrFuelMoisture method, of class FuelConditionTuple.
+     * Test of getDead10HrFuelMoisture method, of class BasicFuelCondition.
      */
     @Test
     public void testGetDead10HrFuelMoisture() {
@@ -126,7 +126,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of getDead100HrFuelMoisture method, of class FuelConditionTuple.
+     * Test of getDead100HrFuelMoisture method, of class BasicFuelCondition.
      */
     @Test
     public void testGetDead100HrFuelMoisture() {
@@ -136,7 +136,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of getLiveHerbFuelMoisture method, of class FuelConditionTuple.
+     * Test of getLiveHerbFuelMoisture method, of class BasicFuelCondition.
      */
     @Test
     public void testGetLiveHerbFuelMoisture() {
@@ -146,7 +146,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of getLiveWoodyFuelMoisture method, of class FuelConditionTuple.
+     * Test of getLiveWoodyFuelMoisture method, of class BasicFuelCondition.
      */
     @Test
     public void testGetLiveWoodyFuelMoisture() {
@@ -156,7 +156,7 @@ public class FuelConditionTupleTest {
     }
 
     /**
-     * Test of getFuelTemperature method, of class FuelConditionTuple.
+     * Test of getFuelTemperature method, of class BasicFuelCondition.
      */
     @Test
     public void testGetFuelTemperature() {

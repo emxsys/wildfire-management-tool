@@ -49,11 +49,11 @@ import visad.VisADException;
  * Where the domain is (lat,lon) and the range is (fli, fl, ros, dir).
  *
  * @author Bruce Schubert <bruce@emxsys.com>
- * @version $Id: FireBehaviorTuple.java 709 2013-05-31 03:17:13Z bdschubert $
+ * @version $Id: BasicFireBehavior.java 709 2013-05-31 03:17:13Z bdschubert $
  */
-public class FireBehaviorTuple extends RealTuple implements FireBehavior
+public class BasicFireBehavior extends RealTuple implements FireBehavior
 {
-    public static final FireBehaviorTuple INVALID_TUPLE = new FireBehaviorTuple();
+    public static final BasicFireBehavior INVALID_TUPLE = new BasicFireBehavior();
     
     private Real fireLineIntensity;
     private Real flameLength;
@@ -68,7 +68,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
     /**
      * Constructs an instance with missing values.
      */
-    public FireBehaviorTuple()
+    public BasicFireBehavior()
     {
         this(new Real(FIRE_LINE_INTENSITY_SI),
             new Real(FLAME_LENGTH_SI),
@@ -86,7 +86,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @param dir direction of max spread [degrees]
      * @throws VisADException
      */
-    public FireBehaviorTuple(double fli, double fl, double ros, double dir)
+    public BasicFireBehavior(double fli, double fl, double ros, double dir)
         throws VisADException
     {
         this(new Real(FIRE_LINE_INTENSITY_SI, fli),
@@ -105,7 +105,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      * @param rateOfSpread rate of spread [m/s]
      * @param dirOfMaxSpread direction of max spread [degrees]
      */
-    public FireBehaviorTuple(Real fireLineIntensity, Real flameLength,
+    public BasicFireBehavior(Real fireLineIntensity, Real flameLength,
         Real rateOfSpread, Real dirOfMaxSpread)
     {
         super(FIRE_BEHAVIOR);
@@ -120,7 +120,7 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
      *
      * @param reals {fireLineIntensity, flameLength, rateOfSpread, dirOfMaxSpread, heatRelase}
      */
-    public FireBehaviorTuple(Real[] reals)
+    public BasicFireBehavior(Real[] reals)
     {
         super(FIRE_BEHAVIOR);
         this.fireLineIntensity = convertTo(FIRE_LINE_INTENSITY_SI, reals[0]);
@@ -257,11 +257,11 @@ public class FireBehaviorTuple extends RealTuple implements FireBehavior
         {
             return true;
         }
-        if (!(obj instanceof FireBehaviorTuple))
+        if (!(obj instanceof BasicFireBehavior))
         {
             return false;
         }
-        FireBehaviorTuple that = (FireBehaviorTuple) obj;
+        BasicFireBehavior that = (BasicFireBehavior) obj;
 
         return this.fireLineIntensity.equals(that.fireLineIntensity)
             && this.flameLength.equals(that.flameLength)
