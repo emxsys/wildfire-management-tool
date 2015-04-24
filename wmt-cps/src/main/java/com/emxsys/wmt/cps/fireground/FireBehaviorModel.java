@@ -33,10 +33,10 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.TerrainTuple;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FireBehaviorProvider;
-import com.emxsys.wildfire.api.FireBehaviorTuple;
+import com.emxsys.wildfire.api.BasicFireBehavior;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.FuelCondition;
-import com.emxsys.wildfire.api.FuelConditionTuple;
+import com.emxsys.wildfire.api.BasicFuelCondition;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
 import static com.emxsys.wildfire.api.WildfireType.*;
@@ -170,21 +170,21 @@ public class FireBehaviorModel {
         return terrain;
     }
 
-    public FireBehaviorTuple getMaxFireBehavior(DateTime temporal, Coord2D spatial) {
+    public BasicFireBehavior getMaxFireBehavior(DateTime temporal, Coord2D spatial) {
         if (this.hourlyMaxBehavior == null) {
             this.hourlyMaxBehavior = createFireBehavior();
         }
         return getFireBehavior(this.hourlyMaxBehavior, temporal, spatial);
     }
 
-    public FireBehaviorTuple getMinFireBehavior(DateTime temporal, Coord2D spatial) {
+    public BasicFireBehavior getMinFireBehavior(DateTime temporal, Coord2D spatial) {
         if (this.hourlyMinBehavior == null) {
             this.hourlyMinBehavior = createFireBehavior();
         }
         return getFireBehavior(this.hourlyMinBehavior, temporal, spatial);
     }
 
-    private static FireBehaviorTuple getFireBehavior(FieldImpl hourlyBehavior, DateTime temporal,
+    private static BasicFireBehavior getFireBehavior(FieldImpl hourlyBehavior, DateTime temporal,
                                                      Coord2D spatial) {
         try {
             RealTuple location = new RealTuple(RealTupleType.LatitudeLongitudeTuple, new double[]{
@@ -192,33 +192,33 @@ public class FireBehaviorModel {
             });
             FieldImpl field = (FieldImpl) hourlyBehavior.evaluate(temporal, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             RealTuple tuple = (RealTuple) field.evaluate(location, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-            return tuple.isMissing() ? FireBehaviorTuple.INVALID_TUPLE : new FireBehaviorTuple(tuple.getRealComponents());
+            return tuple.isMissing() ? BasicFireBehavior.INVALID_TUPLE : new BasicFireBehavior(tuple.getRealComponents());
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
         }
     }
 
-    public FireBehaviorTuple getMaxFireBehaviorAt(int temporalIndex, int spatialIndex) {
+    public BasicFireBehavior getMaxFireBehaviorAt(int temporalIndex, int spatialIndex) {
         if (this.hourlyMaxBehavior == null) {
             this.hourlyMaxBehavior = createFireBehavior();
         }
         return getFireBehaviorAt(this.hourlyMaxBehavior, temporalIndex, spatialIndex);
     }
 
-    public FireBehaviorTuple getMinFireBehaviorAt(int temporalIndex, int spatialIndex) {
+    public BasicFireBehavior getMinFireBehaviorAt(int temporalIndex, int spatialIndex) {
         if (this.hourlyMinBehavior == null) {
             this.hourlyMinBehavior = createFireBehavior();
         }
         return getFireBehaviorAt(this.hourlyMinBehavior, temporalIndex, spatialIndex);
     }
 
-    private static FireBehaviorTuple getFireBehaviorAt(FieldImpl hourlyBehavior, int temporalIndex,
+    private static BasicFireBehavior getFireBehaviorAt(FieldImpl hourlyBehavior, int temporalIndex,
                                                        int spatialIndex) {
         try {
             FieldImpl field = (FieldImpl) hourlyBehavior.getSample(temporalIndex);
             RealTuple sample = (RealTuple) field.getSample(spatialIndex);
-            return new FireBehaviorTuple(sample.getRealComponents());
+            return new BasicFireBehavior(sample.getRealComponents());
         } catch (VisADException | RemoteException ex) {
             LOG.severe(ex.toString());
             throw new RuntimeException(ex);
@@ -287,7 +287,7 @@ public class FireBehaviorModel {
                     TerrainTuple terrainTuple = this.terrain.getTerrainSample(xy);
 
                     // Create the fire behavior input parameters
-                    FuelCondition fuelCondition = FuelConditionTuple.fromReals(
+                    FuelCondition fuelCondition = BasicFuelCondition.fromReals(
                             fuelMoisture, fuelTemp.getRealComponents()[0]);
 
                     FireEnvironment fire = fireBehaviorService.computeFireBehavior(

@@ -39,7 +39,7 @@ import com.emxsys.weather.api.WeatherTuple;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.Fireground;
 import com.emxsys.wildfire.api.FuelCondition;
-import com.emxsys.wildfire.api.FuelConditionTuple;
+import com.emxsys.wildfire.api.BasicFuelCondition;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
 import com.emxsys.wildfire.api.StdFuelMoistureScenario;
@@ -173,8 +173,8 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
             fe.model = fuel.getFuelModel(position);
             fe.fireBehavior = behave.getMaxFireBehavior(dateTime, position);
             fe.fireBehaviorNoWnd = behave.getMinFireBehavior(dateTime, position);
-            // FIXME: replace FuelConditionTuple.INVALID_TUPLE with actual values.
-            fe.condition = FuelConditionTuple.INVALID_TUPLE;
+            // FIXME: replace BasicFuelCondition.INVALID_TUPLE with actual values.
+            fe.condition = BasicFuelCondition.INVALID_TUPLE;
 //            fe.condition.airTemp = weather.getWeather(dateTime).getAirTemperature();
 //            fe.condition.fuelTemp = (Real) temps.getFuelTemperature(dateTime, position).getComponent(0);
 //            fe.condition.fuelMoisture = moistures.getFuelMoisture(dateTime, position);

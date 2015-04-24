@@ -33,7 +33,7 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.layer.GisLayer;
 import com.emxsys.wildfire.api.FuelModel;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
@@ -138,7 +138,7 @@ public class FuelTypeModel
         {
             Real sample = (Real) this.fuels.getSample(index);
             int fuelModelNo = (int) Math.round(sample.getValue());
-            return StdFuelModel.from(fuelModelNo);
+            return BasicFuelModel.from(fuelModelNo);
         }
         catch (VisADException | RemoteException ex)
         {
@@ -161,7 +161,7 @@ public class FuelTypeModel
             Real fuel = (Real) this.fuels.evaluate(latLonTuple, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             int fuelModelNo = (int) Math.round(fuel.getValue());
 
-            return StdFuelModel.from(fuelModelNo);
+            return BasicFuelModel.from(fuelModelNo);
         }
         catch (VisADException | RemoteException ex)
         {
@@ -206,7 +206,7 @@ public class FuelTypeModel
                     FuelModel fuelModel = this.fuelModelProvider.getFuelModel(latLon);
                     if (fuelModel==null)
                     {
-                        fuelModel = StdFuelModel.INVALID;
+                        fuelModel = BasicFuelModel.INVALID;
                         logger.log(Level.WARNING, "createFuels : No FuelModel for {0}, using INVALID.", latLon.toString());                        
                     }
                     // Assign a fuel model number

@@ -54,7 +54,7 @@ import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wmt.cps.options.CpsOptions;
 import com.emxsys.wmt.globe.Globe;
 import java.time.ZonedDateTime;
@@ -385,7 +385,7 @@ public final class Controller {
     void updateFuelModel() {
         FuelModel fuelModel = fuels != null
                 ? fuels.getFuelModel(model.getCoord())
-                : StdFuelModel.INVALID;
+                : BasicFuelModel.INVALID;
         model.setFuelModel(fuelModel);
 
     }

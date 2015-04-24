@@ -34,7 +34,7 @@ import com.emxsys.wmt.cps.views.fuel.EnvironmentView;
 import com.emxsys.wmt.cps.views.fuel.FuelModelView;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelModelProvider;
-import com.emxsys.wildfire.api.StdFuelModel;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.spi.FuelModelProviderFactory;
 import com.emxsys.wmt.cps.Controller;
 import com.terramenta.ribbon.RibbonActionReference;
@@ -271,11 +271,11 @@ public final class FuelTopComponent extends TopComponent {
         if (fuelModel != null) {
             String id;
             switch (fuelModel.getModelGroup()) {
-                case StdFuelModel.FUEL_MODEL_GROUP_ORIGINAL_13:
+                case BasicFuelModel.FUEL_MODEL_GROUP_ORIGINAL_13:
                     id = "com.emxsys.wmt.cps.fuelmodel-13";
                     id += fuelModel.getModelCode();
                     break;
-                case StdFuelModel.FUEL_MODEL_GROUP_STANDARD_40:
+                case BasicFuelModel.FUEL_MODEL_GROUP_STANDARD_40:
                     id = "com.emxsys.wmt.cps.fuelmodel-40-";
                     id += fuelModel.getModelCode();
                     break;
