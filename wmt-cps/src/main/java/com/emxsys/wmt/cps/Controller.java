@@ -385,7 +385,7 @@ public final class Controller {
     void updateFuelModel() {
         FuelModel fuelModel = fuels != null
                 ? fuels.getFuelModel(model.getCoord())
-                : BasicFuelModel.INVALID;
+                : BasicFuelModel.INVALID_FUEL_MODEL;
         model.setFuelModel(fuelModel);
 
     }

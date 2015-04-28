@@ -29,7 +29,7 @@
  */
 package com.emxsys.wmt.cps.fireground;
 
-import com.emxsys.wildfire.behave.BehaveUtil;
+import com.emxsys.wildfire.obsolete.behave.BehaveUtil;
 import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.wildfire.api.WildfireType.*;
 

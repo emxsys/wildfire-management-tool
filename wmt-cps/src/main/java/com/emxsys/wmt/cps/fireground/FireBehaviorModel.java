@@ -30,7 +30,7 @@
 package com.emxsys.wmt.cps.fireground;
 
 import com.emxsys.gis.api.Coord2D;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FireBehaviorProvider;
 import com.emxsys.wildfire.api.BasicFireBehavior;
@@ -284,7 +284,7 @@ public class FireBehaviorModel {
                     FuelModel fuelModel = this.fuelTypes.getFuelModelAt(xy);
                     RealTuple fuelTemp = this.fuelTemps.getFuelTemperatureAt(t, xy);
                     FuelMoisture fuelMoisture = this.moistures.getFuelMoistureAt(t, xy);
-                    TerrainTuple terrainTuple = this.terrain.getTerrainSample(xy);
+                    BasicTerrain terrainTuple = this.terrain.getTerrainSample(xy);
 
                     // Create the fire behavior input parameters
                     FuelCondition fuelCondition = BasicFuelCondition.fromReals(

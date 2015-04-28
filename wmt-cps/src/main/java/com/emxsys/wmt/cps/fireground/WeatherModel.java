@@ -30,7 +30,7 @@
 package com.emxsys.wmt.cps.fireground;
 
 import com.emxsys.visad.Times;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.BasicWeather;
 import static com.emxsys.weather.api.WeatherType.AIR_TEMP_F;
 import static com.emxsys.weather.api.WeatherType.CLOUD_COVER;
 import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
@@ -173,13 +173,13 @@ public class WeatherModel
      *
      * @return hourly weather
      */
-    public final WeatherTuple getWeatherAt(int index)
+    public final BasicWeather getWeatherAt(int index)
     {
         try
         {
             lazyCreateHourlyWeather();
             RealTuple sample = (RealTuple) this.hourlyWx.getSample(index);
-            return WeatherTuple.fromRealTuple(sample);
+            return BasicWeather.fromRealTuple(sample);
         }
         catch (VisADException | RemoteException ex)
         {
@@ -189,7 +189,7 @@ public class WeatherModel
     }
 
 
-    public WeatherTuple getWeather(DateTime dateTime)
+    public BasicWeather getWeather(DateTime dateTime)
     {
         if (dateTime == null)
         {
@@ -199,7 +199,7 @@ public class WeatherModel
         try
         {
             RealTuple tuple = (RealTuple) this.hourlyWx.evaluate(dateTime, FlatField.NEAREST_NEIGHBOR, FlatField.NO_ERRORS);
-            return tuple.isMissing() ? WeatherTuple.INVALID_TUPLE : WeatherTuple.fromRealTuple(tuple);
+            return tuple.isMissing() ? BasicWeather.INVALID_WEATHER : BasicWeather.fromRealTuple(tuple);
         }
         catch (VisADException | RemoteException ex)
         {

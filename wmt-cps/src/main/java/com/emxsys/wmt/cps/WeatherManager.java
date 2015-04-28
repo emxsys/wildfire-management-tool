@@ -35,7 +35,7 @@ import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.WeatherModel;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
 import java.rmi.RemoteException;
@@ -183,7 +183,7 @@ public class WeatherManager {
         refreshTask.schedule(msDelay);
     }
 
-    public WeatherTuple getCurrentWeatherAt(Coord2D coord) {
+    public BasicWeather getCurrentWeatherAt(Coord2D coord) {
         // Prerequistes
 //        WeatherModel model;
 //        Map<Long, FlatField> cache;
@@ -195,12 +195,12 @@ public class WeatherManager {
 //            model = weatherForecast;
 //            cache = forecastCache;
 //        } else {
-//            return WeatherTuple.INVALID_TUPLE;
+//            return BasicWeather.INVALID_WEATHER;
 //        }
 //        System.out.println(model);
 //
 //        if (!spatialDomain.contains(coord)) {
-//            return WeatherTuple.INVALID_TUPLE;
+//            return BasicWeather.INVALID_WEATHER;
 //        }
 //        // Get the hourly floor and cache key for the hour-by-hour weather
 //        ZonedDateTime timeHour = time.truncatedTo(ChronoUnit.HOURS);
@@ -222,19 +222,19 @@ public class WeatherManager {
 //                        Data.WEIGHTED_AVERAGE,
 //                        Data.NO_ERRORS);
 //                if (tuple != null) {
-//                    // Transform RealTuple to WeatherTuple (assures proper units after resample)
-//                    return WeatherTuple.fromRealTuple(tuple);
+//                    // Transform RealTuple to BasicWeather (assures proper units after resample)
+//                    return BasicWeather.fromRealTuple(tuple);
 //                }
 //            } catch (VisADException | RemoteException ex) {
 //                Exceptions.printStackTrace(ex);
 //            }
 //        }
         // Return a safe value if no weather available
-        return WeatherTuple.INVALID_TUPLE;
+        return BasicWeather.INVALID_WEATHER;
 
     }
 
-    public WeatherTuple getWeatherAt(Coord2D coord, ZonedDateTime time) {
+    public BasicWeather getWeatherAt(Coord2D coord, ZonedDateTime time) {
         WeatherModel model = null;
         Map<Long, FlatField> cache = null;
 
@@ -254,14 +254,14 @@ public class WeatherManager {
             }
         }
         if (model == null || cache == null) {
-            return WeatherTuple.INVALID_TUPLE;
+            return BasicWeather.INVALID_WEATHER;
         }
         //System.out.println(model);
 
         // Spatial prerequisite: ensure the spatial domain is valid
         SpatialDomain area = spatialDomain.get();
         if (area == null || !area.contains(coord)) {
-            return WeatherTuple.INVALID_TUPLE;
+            return BasicWeather.INVALID_WEATHER;
         }
         // Get the hourly floor and cache key for the hour-by-hour weather
         ZonedDateTime timeHour = time.truncatedTo(ChronoUnit.HOURS);
@@ -283,15 +283,15 @@ public class WeatherManager {
                         Data.WEIGHTED_AVERAGE,
                         Data.NO_ERRORS);
                 if (tuple != null) {
-                    // Transform RealTuple to WeatherTuple (assures proper units after resample)
-                    return WeatherTuple.fromRealTuple(tuple);
+                    // Transform RealTuple to BasicWeather (assures proper units after resample)
+                    return BasicWeather.fromRealTuple(tuple);
                 }
             } catch (VisADException | RemoteException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
         // Return a safe value if no weather available
-        return WeatherTuple.INVALID_TUPLE;
+        return BasicWeather.INVALID_WEATHER;
     }
 
     public void setForecaster(WeatherForecaster forecaster) {

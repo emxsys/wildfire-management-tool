@@ -35,7 +35,7 @@ import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.capabilities.Disposable;
 import com.emxsys.gis.api.viewer.Viewers;
 import com.emxsys.visad.Times;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.Fireground;
 import com.emxsys.wildfire.api.FuelCondition;
@@ -457,12 +457,12 @@ public class WildlandFireground implements Fireground, PropertyChangeListener, D
         return list;
     }
 
-    public WeatherTuple getFireWeather(DateTime dateTime) {
+    public BasicWeather getFireWeather(DateTime dateTime) {
         WeatherModel model = this.wxModels.entrySet().iterator().next().getValue();
         if (model != null) {
             return model.getWeather(dateTime);
         }
-        return new WeatherTuple();
+        return new BasicWeather();
     }
 
     /**

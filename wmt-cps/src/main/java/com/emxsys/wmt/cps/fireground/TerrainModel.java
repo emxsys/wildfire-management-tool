@@ -32,7 +32,7 @@ package com.emxsys.wmt.cps.fireground;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.GeoCoord2D;
 import com.emxsys.gis.api.ShadedTerrainProvider;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import com.emxsys.gis.api.layer.GisLayer;
 import com.emxsys.gis.api.viewer.GisViewer;
 import com.emxsys.gis.spi.ShadedTerrainProviderFactory;
@@ -185,14 +185,14 @@ public class TerrainModel
     }
 
 
-    public final TerrainTuple getTerrainSample(int i)
+    public final BasicTerrain getTerrainSample(int i)
     {
-        TerrainTuple value = null;
+        BasicTerrain value = null;
         try
         {
             RealTuple tuple = (RealTuple) getTerrainData().getSample(i);
             Real[] reals = tuple.getRealComponents();
-            value = new TerrainTuple(reals[0], reals[1], reals[2]);
+            value = new BasicTerrain(reals[0], reals[1], reals[2]);
         }
         catch (VisADException | RemoteException ex)
         {
@@ -203,9 +203,9 @@ public class TerrainModel
     }
 
 
-    public TerrainTuple getTerrain(Coord2D latLon)
+    public BasicTerrain getTerrain(Coord2D latLon)
     {
-        TerrainTuple value = null;
+        BasicTerrain value = null;
         GeoCoord2D latLonTuple = latLon instanceof GeoCoord2D ? (GeoCoord2D) latLon
             : GeoCoord2D.fromDegrees(latLon.getLatitudeDegrees(), latLon.getLongitudeDegrees());
 
@@ -214,7 +214,7 @@ public class TerrainModel
             // XXX
             RealTuple tuple = (RealTuple) getTerrainData().evaluate(latLonTuple, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
 
-            value = new TerrainTuple(tuple.getRealComponents()[0],
+            value = new BasicTerrain(tuple.getRealComponents()[0],
                 tuple.getRealComponents()[1],
                 tuple.getRealComponents()[2]);
         }
@@ -273,8 +273,8 @@ public class TerrainModel
 
 
                 // ... and then get the terrain at that lat/lon
-                TerrainTuple tuple = (TerrainTuple) this.terrainProvider.getTerrain(latLon);
-
+                BasicTerrain terrain = (BasicTerrain) this.terrainProvider.getTerrain(latLon);
+                RealTuple tuple = terrain.getTuple();
                 // TEST
 // The LANDFIRE Dem layer is useless: the resolution is extremely low!                
 //                Real testElv;

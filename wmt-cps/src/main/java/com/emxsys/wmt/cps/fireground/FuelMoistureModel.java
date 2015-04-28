@@ -32,7 +32,7 @@ package com.emxsys.wmt.cps.fireground;
 import com.emxsys.gis.api.Box;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.visad.Times;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.FuelMoisture;
@@ -261,7 +261,7 @@ public class FuelMoistureModel {
 
                 // Set the fuel moisture sample(s) in the terrain's lat/lon domain
                 for (int xy = 0; xy < numLatLons; xy++) {
-                    WeatherTuple genWx = weather.getWeatherAt(t);
+                    BasicWeather genWx = weather.getWeatherAt(t);
                     RealTuple fuelCond = fuelTemps.getFuelTemperatureAt(t, xy);
 
                     Real T_f = fuelCond.getRealComponents()[0]; // Temp adjacent fuel

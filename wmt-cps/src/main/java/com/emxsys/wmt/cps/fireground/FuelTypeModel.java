@@ -206,7 +206,7 @@ public class FuelTypeModel
                     FuelModel fuelModel = this.fuelModelProvider.getFuelModel(latLon);
                     if (fuelModel==null)
                     {
-                        fuelModel = BasicFuelModel.INVALID;
+                        fuelModel = BasicFuelModel.INVALID_FUEL_MODEL;
                         logger.log(Level.WARNING, "createFuels : No FuelModel for {0}, using INVALID.", latLon.toString());                        
                     }
                     // Assign a fuel model number
