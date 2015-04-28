@@ -34,7 +34,7 @@ import com.emxsys.gis.api.Coord3D;
 import static com.emxsys.gis.api.GisType.DISTANCE;
 import com.emxsys.gis.api.ShadedTerrainProvider;
 import com.emxsys.gis.api.Terrain;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.util.Positions;
@@ -110,7 +110,7 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
     }
 
     /**
-     * Creates a VisAD based {@link TerrainTuple} from the WorldWind terrain model.
+     * Creates a VisAD based {@link BasicTerrain} from the WorldWind terrain model.
      * @param coord the coordinate where terrain should be determined
      * @return the terrain's aspect, slope and elevation at supplied location
      */
@@ -131,10 +131,10 @@ public class GlobeTerrainProvider implements ShadedTerrainProvider {
             // Get the elevation 
             Real elevation = getElevation(coord);
 
-            return new TerrainTuple(aspect.degrees, slope.degrees, elevation.getValue());
+            return new BasicTerrain(aspect.degrees, slope.degrees, elevation.getValue());
         } else {
             // Globe is null; return a tuple with missing values.
-            return new TerrainTuple();
+            return new BasicTerrain();
         }
     }
 

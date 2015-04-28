@@ -163,9 +163,9 @@ public class ReticuleStatusLine implements ReticuleCoordinateListener, Runnable 
                 Terrain terrain = terrainProvider.getTerrain(evt.getCoordinate());
                 ELEVATION_CELL.setText("Elev " + Long.toString((long) terrain.getElevationFeet()) + " feet");
                 ELEVATION_CELL.setToolTipText(terrain.getElevation().longString());
-                ASPECT_CELL.setText(terrain.isMissing() ? "" : "Aspect " + terrain.getAspectCardinalPoint8());
+                ASPECT_CELL.setText(terrain.getAspect().isMissing() ? "" : "Aspect " + terrain.getAspectCardinalPoint8());
                 ASPECT_CELL.setToolTipText(terrain.getAspect().longString());
-                SLOPE_CELL.setText(terrain.isMissing() ? "" : "Slope " + Long.toString((long) terrain.getSlopePercent()) + "%");
+                SLOPE_CELL.setText(terrain.getSlope().isMissing() ? "" : "Slope " + Long.toString((long) terrain.getSlopePercent()) + "%");
                 SLOPE_CELL.setToolTipText(terrain.getSlope().longString());
             }
 

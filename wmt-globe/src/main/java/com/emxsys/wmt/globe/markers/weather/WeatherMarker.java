@@ -40,7 +40,7 @@ import com.emxsys.visad.SpatialDomain;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.WeatherProvider;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.wmt.globe.markers.AbstractMarkerBuilder;
 import com.emxsys.wmt.globe.markers.AbstractMarkerWriter;
 import static com.emxsys.wmt.globe.markers.AbstractMarkerWriter.MKR_PREFIX;
@@ -149,7 +149,7 @@ public class WeatherMarker extends BasicMarker {
             if (marker.forecast == null) {
                 return;
             }
-            WeatherTuple wx = marker.forecast.getWeather(event.getNewTime(), marker.getPosition());
+            BasicWeather wx = marker.forecast.getWeather(event.getNewTime(), marker.getPosition());
             marker.placemark.setLabelText(wx.isMissing() ? "missing" : String.format("T: %1$.0f, RH: %2$.0f", 
                     wx.getAirTemperature().getValue(), wx.getRelativeHumidity().getValue()));
         }
