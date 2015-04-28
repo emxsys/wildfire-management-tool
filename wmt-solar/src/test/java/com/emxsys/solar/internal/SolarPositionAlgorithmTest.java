@@ -30,7 +30,7 @@
 package com.emxsys.solar.internal;
 
 import com.emxsys.gis.api.GeoCoord3D;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -95,7 +95,7 @@ public class SolarPositionAlgorithmTest {
         ZonedDateTime date = ZonedDateTime.of(2003, 10, 17, 12, 30, 30, 1, ZoneId.of("-7"));
         GeoCoord3D observer = GeoCoord3D.fromDegreesAndMeters(39.742476, -105.1786, 0/*1830.14*/);
 
-        SolarData spa = new SolarData(date, observer, new TerrainTuple(-10, 30, 0), new Real(11), new Real(820));
+        SolarData spa = new SolarData(date, observer, new BasicTerrain(-10, 30, 0), new Real(11), new Real(820));
         SolarPositionAlgorithms.spa_calculate(spa);
 
         /////////////////////////////////////////////

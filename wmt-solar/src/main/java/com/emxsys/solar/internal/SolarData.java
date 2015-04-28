@@ -31,7 +31,7 @@ package com.emxsys.solar.internal;
 
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.Terrain;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import com.emxsys.visad.GeneralUnit;
 import java.time.ZonedDateTime;
 import org.openide.util.Exceptions;
@@ -176,7 +176,7 @@ public class SolarData implements Cloneable {
     double sunset;
 
     public SolarData(ZonedDateTime time, Coord3D observer) {
-        this(time, observer, new TerrainTuple(0, 0, 0));
+        this(time, observer, new BasicTerrain(0, 0, 0));
     }
 
     public SolarData(ZonedDateTime time, Coord3D observer, Terrain terrain) {

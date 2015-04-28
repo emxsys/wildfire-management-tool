@@ -32,7 +32,7 @@ package com.emxsys.solar.api;
 import com.emxsys.gis.api.Coord3D;
 import com.emxsys.gis.api.GeoCoord3D;
 import static com.emxsys.solar.api.SolarType.*;
-import com.emxsys.visad.RealXmlAdaptor;
+import com.emxsys.visad.RealXmlAdapter;
 import com.emxsys.visad.Reals;
 import java.rmi.RemoteException;
 import java.time.Instant;
@@ -216,19 +216,19 @@ public class BasicSunlight implements Sunlight {
     }
 
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getObserverLatitude() {
         return location.getLatitude();
     }
 
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getObserverLongitude() {
         return location.getLongitude();
     }
 
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getObserverAltitude() {
         return location.getAltitude();
     }
@@ -250,7 +250,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getSubsolarLatitude() {
         return this.subsolarLatitude;
     }
@@ -262,14 +262,14 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getSubsolarLongitude() {
         return this.subsolarLongitude;
     }
 
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getAzimuthAngle() {
         return this.azimuthAngle;
     }
@@ -280,7 +280,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getZenithAngle() {
         return this.zenithAngle;
     }
@@ -291,7 +291,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getAltitudeAngle() {
         return this.altitudeAngle;
     }
@@ -302,7 +302,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLocalHourAngle() {
         return this.localHourAngle;
     }
@@ -313,7 +313,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getSunriseHourAngle() {
         return this.sunriseHourAngle;
     }
@@ -324,7 +324,7 @@ public class BasicSunlight implements Sunlight {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getSunsetHourAngle() {
         return this.sunsetHourAngle;
     }
