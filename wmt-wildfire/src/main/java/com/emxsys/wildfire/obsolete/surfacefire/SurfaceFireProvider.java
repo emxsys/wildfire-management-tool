@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfire.surfacefire;
+package com.emxsys.wildfire.obsolete.surfacefire;
 
 import com.emxsys.gis.api.Terrain;
 import static com.emxsys.visad.FireUnit.*;
@@ -37,7 +37,7 @@ import com.emxsys.wildfire.api.BasicFireBehavior;
 import com.emxsys.wildfire.api.FireEnvironment;
 import com.emxsys.wildfire.api.FuelCondition;
 import com.emxsys.wildfire.api.FuelModel;
-import com.emxsys.wildfire.behave.Behave;
+import com.emxsys.wildfire.obsolete.behave.Behave;
 import java.util.Map;
 import org.openide.util.Exceptions;
 import visad.CommonUnit;

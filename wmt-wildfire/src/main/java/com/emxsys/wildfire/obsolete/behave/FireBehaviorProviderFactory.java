@@ -27,17 +27,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfire.spi;
+package com.emxsys.wildfire.obsolete.behave;
 
 import com.emxsys.wildfire.api.FireBehaviorProvider;
-import com.emxsys.wildfire.surfacefire.SurfaceFireProvider;
+import com.emxsys.wildfire.obsolete.surfacefire.SurfaceFireProvider;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Lookup;
 
 /**
- * The FireBehaviorProviderFactory provides the registered FireBehaviorProvider service provider found
- on the global lookup, or, if not found, a SurfaceFireProvider instance.
+ * The FireBehaviorProviderFactory provides the registered FireBehaviorProvider service provider
+ * found on the global lookup, or, if not found, a SurfaceFireProvider instance.
  *
  * @author Bruce Schubert
  */
@@ -53,8 +53,8 @@ public class FireBehaviorProviderFactory {
 
     /**
      * Gets a SurfaceFireProvider instance. You can override this behavior by registering
- FireBehaviorProvider service provider on the global lookup, in which case, the first service
- provider instance will be returned.
+     * FireBehaviorProvider service provider on the global lookup, in which case, the first service
+     * provider instance will be returned.
      *
      * @return The FireBehaviorProvider found on the global lookup, otherwise a SurfaceFireProvider.
      * @see SurfaceFireProvider

@@ -27,32 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.emxsys.wildfire.behave;
+package com.emxsys.wildfire.obsolete.behave;
 
 import com.emxsys.util.MathUtil;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcAirTempLateAfternoon;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcAirTempMorning;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcAirTempNighttime;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcAttenuatedIrradiance;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcCanadianHourlyFineFuelMoisture;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcCanadianStandardDailyFineFuelMoisture;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcEarthSunDistanceSqrd;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcFuelTemp;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcHumidityLateAfternoon;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcHumidityMorning;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcHumidityNighttime;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcIrradianceOnASlope;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcJulianDate;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcLocalHourAngle;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcOpticalAirMass;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcRelativeHumidityNearFuel;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcSolarAltitudeAngle;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcSolarAzimuthAngle;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcSolarDeclinationAngle;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcSolarIrradianceOnHorzSurface;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcSunrise;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcSunset;
-import static com.emxsys.wildfire.behave.BehaveUtil.calcWindSpeedAtFuelLevel;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcAirTempLateAfternoon;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcAirTempMorning;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcAirTempNighttime;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcAttenuatedIrradiance;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcCanadianHourlyFineFuelMoisture;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcCanadianStandardDailyFineFuelMoisture;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcEarthSunDistanceSqrd;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcFuelTemp;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcHumidityLateAfternoon;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcHumidityMorning;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcHumidityNighttime;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcIrradianceOnASlope;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcJulianDate;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcLocalHourAngle;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcOpticalAirMass;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcRelativeHumidityNearFuel;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcSolarAltitudeAngle;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcSolarAzimuthAngle;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcSolarDeclinationAngle;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcSolarIrradianceOnHorzSurface;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcSunrise;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcSunset;
+import static com.emxsys.wildfire.obsolete.behave.BehaveUtil.calcWindSpeedAtFuelLevel;
 import java.awt.Color;
 import static java.lang.Math.cos;
 import static java.lang.Math.max;

@@ -155,6 +155,7 @@
                         <publicPackage>com.emxsys.wildfire.api</publicPackage>
                         <publicPackage>com.emxsys.wildfire.behave</publicPackage>
                         <publicPackage>com.emxsys.wildfire.behavior</publicPackage>
+                        <publicPackage>com.emxsys.wildfire.obsolete.behave</publicPackage>
                         <publicPackage>com.emxsys.wildfire.options</publicPackage>
                         <publicPackage>com.emxsys.wildfire.panels</publicPackage>
                         <publicPackage>com.emxsys.wildfire.spi</publicPackage>

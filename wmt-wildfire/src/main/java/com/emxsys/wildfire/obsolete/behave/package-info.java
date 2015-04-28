@@ -28,4 +28,4 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @Deprecated
-package com.emxsys.wildfire.behave;
+package com.emxsys.wildfire.obsolete.behave;
