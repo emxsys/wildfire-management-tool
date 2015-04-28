@@ -29,7 +29,6 @@
  */
 package com.emxsys.gis.api;
 
-import visad.Data;
 import visad.Real;
 
 /**
@@ -37,7 +36,7 @@ import visad.Real;
  *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public interface Terrain extends Data {
+public interface Terrain {
 
     /**
      * Aspect is direction that non-flat terrain faces. It is the down-slope direction relative to
@@ -46,7 +45,7 @@ public interface Terrain extends Data {
      */
     Real getAspect();
 
-    /** 
+    /**
      * Get the aspect in degrees.
      * @return [degrees]
      */
@@ -54,10 +53,10 @@ public interface Terrain extends Data {
 
     /**
      * Get the aspect as a cardinal point.
-     * @return 
+     * @return
      */
     CardinalPoint8 getAspectCardinalPoint8();
-    
+
     /**
      * Slope is the steepness of the terrain. Zero slope is horizontal, 90 degrees is vertical.
      * @return [degrees]
@@ -76,7 +75,6 @@ public interface Terrain extends Data {
      */
     double getSlopePercent();
 
-
     /**
      * Elevation is the height of the terrain.
      * @return [meters]
@@ -94,4 +92,5 @@ public interface Terrain extends Data {
      * @return [feet]
      */
     double getElevationFeet();
+
 }

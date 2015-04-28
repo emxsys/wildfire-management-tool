@@ -29,35 +29,37 @@
  */
 package com.emxsys.gis.api;
 
-import static com.emxsys.gis.api.GisType.ASPECT;
-import static com.emxsys.gis.api.GisType.ELEVATION;
-import static com.emxsys.gis.api.GisType.SLOPE;
-import static com.emxsys.gis.api.GisType.TERRAIN;
+import static com.emxsys.gis.api.GisType.*;
 import com.emxsys.visad.GeneralUnit;
+import com.emxsys.visad.RealXmlAdapter;
 import com.emxsys.visad.Reals;
 import java.rmi.RemoteException;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.openide.util.Exceptions;
 import visad.CommonUnit;
-import visad.Data;
 import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
 
 /**
- * The TerrainTuple is a concrete implementation of the Terrain interface.
- * 
+ * The BasicTerrain is a concrete implementation of the Terrain interface.
+ *
  * @author Bruce Schubert <bruce@emxsys.com>
  */
-public class TerrainTuple extends RealTuple implements Terrain {
+@XmlRootElement(name = "terrain")
+@XmlType(propOrder = {"aspect", "slope", "elevation"})
+public class BasicTerrain implements Terrain {
 
-    public static final TerrainTuple INVALID_TERRAIN = new TerrainTuple();
+    public static final BasicTerrain INVALID_TERRAIN = new BasicTerrain();
     public static final int ASPECT_INDEX = 0;
     public static final int SLOPE_INDEX = 1;
     public static final int ELEVATION_INDEX = 2;
     private Real aspect;
     private Real slope;
     private Real elevation;
-    private Data[] components;
 
     /**
      * Construct a TerrainTuple object from doubles.
@@ -65,21 +67,20 @@ public class TerrainTuple extends RealTuple implements Terrain {
      * @param slope [degrees]
      * @param elevation [meters]
      */
-    public TerrainTuple(double aspect, double slope, double elevation) {
+    public BasicTerrain(double aspect, double slope, double elevation) {
         this(new Real(ASPECT, aspect),
                 new Real(SLOPE, slope),
                 new Real(ELEVATION, elevation));
     }
 
     /**
-     * Construct a TerrainTuple object from Reals.
-     * Guarrantees that input parameter values are converted to the member's defined RealTypes.
+     * Construct a TerrainTuple object from Reals. Guarrantees that input parameter values are
+     * converted to the member's defined RealTypes.
      * @param aspect must be compatible with GisType.ASPECT
      * @param slope must be compatible with GisType.SLOPE
      * @param elevation must be compatible with GisType.ELEVATION
      */
-    public TerrainTuple(Real aspect, Real slope, Real elevation) {
-        super(TERRAIN);
+    public BasicTerrain(Real aspect, Real slope, Real elevation) {
         this.aspect = Reals.convertTo(ASPECT, aspect);
         this.slope = Reals.convertTo(SLOPE, slope);
         this.elevation = Reals.convertTo(ELEVATION, elevation);
@@ -91,8 +92,7 @@ public class TerrainTuple extends RealTuple implements Terrain {
      * @throws visad.VisADException
      * @throws java.rmi.RemoteException
      */
-    public TerrainTuple(RealTuple tuple) throws VisADException, RemoteException {
-        super(TERRAIN);
+    public BasicTerrain(RealTuple tuple) throws VisADException, RemoteException {
         if (tuple.getType() != TERRAIN) {
             throw new IllegalArgumentException("TerrainTuple constructor cannot accept " + tuple.getType() + " types.");
         }
@@ -104,11 +104,24 @@ public class TerrainTuple extends RealTuple implements Terrain {
     /**
      * Construct a TerrainTuple object with "missing" values. Used for "Invalid" objects.
      */
-    public TerrainTuple() {
-        super(TERRAIN);
+    public BasicTerrain() {
         this.aspect = new Real(ASPECT);
         this.slope = new Real(SLOPE);
         this.elevation = new Real(ELEVATION);
+    }
+
+    /**
+     *
+     * @return A TERRAIN RealTuple.
+     */
+    public RealTuple getTuple() {
+        try {
+            return new RealTuple(TERRAIN, new Real[]{aspect, slope, elevation}, null);
+        }
+        catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            return new RealTuple(TERRAIN);
+        }
     }
 
     /**
@@ -116,100 +129,76 @@ public class TerrainTuple extends RealTuple implements Terrain {
      * true north.
      * @return [degrees]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getAspect() {
         return this.aspect;
+    }
+
+    public void setAspect(Real aspect) {
+        this.aspect = aspect;
     }
 
     /**
      * Slope is the steepness of the terrain. Zero slope is horizontal, 90 degrees is vertical.
      * @return [degrees]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getSlope() {
         return this.slope;
+    }
+
+    public void setSlope(Real slope) {
+        this.slope = slope;
     }
 
     /**
      * Elevation is the height of the terrain.
      * @return [meters]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getElevation() {
         return this.elevation;
+    }
+
+    public void setElevation(Real elevation) {
+        this.elevation = elevation;
     }
 
     /**
      * Is missing any data elements?
      * @return is missing
      */
-    @Override
     public boolean isMissing() {
         return aspect.isMissing() || slope.isMissing() || elevation.isMissing();
     }
 
     /**
-     * Get the i'th component.
-     * @param i Which one
-     * @return The component
-     *
-     * @throws RemoteException On badness
-     * @throws VisADException On badness
-     */
-    @Override
-    public Data getComponent(int i) throws VisADException, RemoteException {
-        switch (i) {
-            case ASPECT_INDEX:
-                return aspect;
-            case SLOPE_INDEX:
-                return slope;
-            case ELEVATION_INDEX:
-                return elevation;
-            default:
-                throw new IllegalArgumentException("Wrong component number:" + i);
-        }
-    }
-
-    /**
-     * Create, if needed, and return the component array.
-     * @param copy ignored
-     * @return components
-     */
-    @Override
-    public Data[] getComponents(boolean copy) {
-        //Create the array and populate it if needed
-        if (components == null) {
-            Data[] tmp = new Data[getDimension()];
-            tmp[ASPECT_INDEX] = aspect;
-            tmp[SLOPE_INDEX] = slope;
-            tmp[ELEVATION_INDEX] = elevation;
-            components = tmp;
-        }
-        return components;
-    }
-
-    /**
      * Indicates if this Tuple is identical to an object.
      * @param obj The object.
-     * @return  true if and only if the object is a Tuple and both Tuple-s have
-     * identical component sequences.
+     * @return true if and only if the object is a Tuple and both Tuple-s have identical component
+     * sequences.
      */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof TerrainTuple)) {
+        if (!(obj instanceof BasicTerrain)) {
             return false;
         }
-        TerrainTuple that = (TerrainTuple) obj;
+        BasicTerrain that = (BasicTerrain) obj;
         return this.aspect.equals(that.aspect)
                 && this.slope.equals(that.slope)
                 && this.elevation.equals(that.elevation);
     }
 
     /**
-     * Returns the hash code of this object.
      * @return The hash code of this object.
      */
     @Override
@@ -270,5 +259,5 @@ public class TerrainTuple extends RealTuple implements Terrain {
             return Double.NaN;
         }
     }
-    
+
 }

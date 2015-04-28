@@ -32,7 +32,7 @@ package com.emxsys.gis.spi;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.gis.api.TerrainProvider;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import org.openide.util.Lookup;
 import visad.Real;
 import visad.RealType;
@@ -72,7 +72,7 @@ public class TerrainProviderFactory implements TerrainProvider {
 
     @Override
     public Terrain getTerrain(Coord2D coord) {
-        return TerrainTuple.INVALID_TERRAIN;
+        return BasicTerrain.INVALID_TERRAIN;
     }
 
     @Override
