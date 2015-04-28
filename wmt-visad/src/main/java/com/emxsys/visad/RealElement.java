@@ -35,25 +35,25 @@ import visad.Real;
 import visad.RealType;
 
 /**
- * The RealXmlBinding class maps a Real to JAXB XmlElements for use by the RealXmlAdaptor, which
- * marshals/unmarshals a VisAD Real object to/from XML.
+ * The RealElement class maps a Real to JAXB XmlElements for use by the RealXmlAdaptor, which
+ marshals/unmarshals a VisAD Real object to/from XML.
  *
  * @see RealXmlAdaptor
  * @author Bruce Schubert
  * @version $Id$
  */
 @XmlType(propOrder = {"type", "value", "unit"})
-public class RealXmlBinding {
+public class RealElement {
 
     private String type;
     private double value;
     private String unit;
 
-    public RealXmlBinding() {
+    public RealElement() {
         this(new Real(RealType.Generic));
     }
 
-    public RealXmlBinding(Real real) {
+    public RealElement(Real real) {
         if (real == null) {
             real = new Real(RealType.Generic);
         }

@@ -29,41 +29,39 @@
  */
 package com.emxsys.visad;
 
-import com.emxsys.visad.RealXmlBinding;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import visad.Real;
 import visad.RealType;
 
 /**
- * The RealXmlAdaptor marshals a VisAD Real to XML via the JAXB XmlAdapter and the XmlElements
- * defined in RealXmlBinding. The RealXmlBinding class maps the Real type, value and unit properties
+ * The RealXmlAdapter marshals a VisAD Real to XML via the JAXB XmlAdapter and the XmlElements
+ defined in RealElement. The RealElement class maps the Real type, value and unit properties
  * to XmlElements.
  *
  * To use, JavaBean properties that return a Real should be annotated with
- * <code>@XmlJavaTypeAdapter(RealXmlAdaptor.class)</code> Example:
- * <pre>
- * @code{
+ * <code>@XmlJavaTypeAdapter(RealXmlAdapter.class)</code> Example:
+ * <pre> @code{
  * @XmlElement
- * @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+ * @XmlJavaTypeAdapter(RealAdaptor.class)
  * public Real getDead1HrFuelLoad() {
  *       return this.dead1HrFuelLoad;
  * }
  * </pre>
  *
- * @see RealXmlBinding
+ * @see RealElement
  *
  * @author Bruce Schubert
  */
-public class RealXmlAdaptor extends XmlAdapter<RealXmlBinding, Real> {
+public class RealXmlAdapter extends XmlAdapter<RealElement, Real> {
 
     @Override
-    public Real unmarshal(RealXmlBinding real) throws Exception {
+    public Real unmarshal(RealElement real) throws Exception {
         return new Real(RealType.getRealType(real.getType()), real.getValue());
     }
 
     @Override
-    public RealXmlBinding marshal(Real real) throws Exception {
-        return new RealXmlBinding(real);
+    public RealElement marshal(Real real) throws Exception {
+        return new RealElement(real);
     }
 
 }
