@@ -58,6 +58,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import visad.FlatField;
 import visad.Real;
+import visad.RealTuple;
 
 /**
  * The DiurnalWeatherProvider creates hourly weather for 24 hour cycle.
@@ -85,44 +86,45 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
 
     private WeatherObserver observer = new WeatherObserver() {
 
-            /**
-             * Gets a WeatherModel from the weather values stored in this provider.
-             * @param areaOfInterest Each coordinate in the spatial domain will get the same values.
-             * @param age Ignored. The current time will be used for the temporal domain.
-             * @return a new WeatherModel.
-             */
-            @Override
-            public WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age) {
-                TemporalDomain timeDomain = TemporalDomain.from(ZonedDateTime.now());
-                return getObservations(areaOfInterest, timeDomain);
-            }
+        /**
+         * Gets a WeatherModel from the weather values stored in this provider.
+         * @param areaOfInterest Each coordinate in the spatial domain will get the same values.
+         * @param age Ignored. The current time will be used for the temporal domain.
+         * @return a new WeatherModel.
+         */
+        @Override
+        public WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age) {
+            TemporalDomain timeDomain = TemporalDomain.from(ZonedDateTime.now());
+            return getObservations(areaOfInterest, timeDomain);
+        }
 
-            /**
-             * Gets a WeatherModel from the weather values stored in this provider.
-             * @param areaOfInterest Each coordinate in the domain will get the same diurnal values.
-             * @param timeframe Each time in the domain will get an hourly diurnal value.
-             * @return a new WeatherModel.
-             */
-            @Override
-            public WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
+        /**
+         * Gets a WeatherModel from the weather values stored in this provider.
+         * @param areaOfInterest Each coordinate in the domain will get the same diurnal values.
+         * @param timeframe Each time in the domain will get an hourly diurnal value.
+         * @return a new WeatherModel.
+         */
+        @Override
+        public WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
 
-                final int numTimes = timeframe.getDomainSetLength();
-                final int numLatLons = areaOfInterest.getDomainSetLength();
+            final int numTimes = timeframe.getDomainSetLength();
+            final int numLatLons = areaOfInterest.getDomainSetLength();
 
-                SpatialField[] fields = new SpatialField[numTimes];
-                for (int t = 0; t < numTimes; t++) {
-                    WeatherTuple tuple = getWeather(timeframe.getZonedDateTimeAt(t));
-                    double[] values = tuple.getValues();
-                    double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
-                    for (int xy = 0; xy < numLatLons; xy++) {
-                        for(int dim = 0; dim < tuple.getDimension(); dim++) {
-                            rangeSamples[dim][xy] = values[dim];
-                        }
+            SpatialField[] fields = new SpatialField[numTimes];
+            for (int t = 0; t < numTimes; t++) {
+                BasicWeather weather = getWeather(timeframe.getZonedDateTimeAt(t));
+                RealTuple tuple = weather.getTuple();
+                double[] values = tuple.getValues();
+                double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
+                for (int xy = 0; xy < numLatLons; xy++) {
+                    for (int dim = 0; dim < tuple.getDimension(); dim++) {
+                        rangeSamples[dim][xy] = values[dim];
                     }
-                    fields[t] = SpatialField.from(areaOfInterest, FIRE_WEATHER, rangeSamples);
                 }
-                return WeatherModel.from(timeframe, fields);
+                fields[t] = SpatialField.from(areaOfInterest, FIRE_WEATHER, rangeSamples);
             }
+            return WeatherModel.from(timeframe, fields);
+        }
     };
 
     /**
@@ -252,14 +254,14 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * Implements the SpotWeatherObserver functional interface.
      *
      * @param time The time for the weather.
-     * @return A {@code WeatherTuple} containing the weather at the specified time.
+     * @return A {@code BasicWeather} containing the weather at the specified time.
      * @see SpotWeatherObserver
      */
-    public WeatherTuple getWeather(ZonedDateTime time) {
+    public BasicWeather getWeather(ZonedDateTime time) {
         if (sunlight == null) {
             throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
-        return WeatherTuple.fromReals(
+        return BasicWeather.fromReals(
                 getAirTemperature(time.toLocalTime()),
                 getRelativeHumidity(time.toLocalTime()),
                 getWindSpeed(time.toLocalTime()),
@@ -387,7 +389,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      * @return
      */
     static private double calcValueEarlyAfternoon(double time, double valueAtNoon, double valueAt1400) {
-        double range =  valueAt1400 - valueAtNoon;
+        double range = valueAt1400 - valueAtNoon;
         double x = (time - 12.) / 2.;
         return valueAtNoon + range * x;
     }

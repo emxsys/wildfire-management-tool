@@ -139,10 +139,10 @@ public class SimpleWeatherProvider extends AbstractWeatherProvider {
 
     /**
      * Gets the current weather values.
-     * @return A {@code WeatherTuple} containing the weather values.
+     * @return A {@code BasicWeather} containing the weather values.
      */
-    public WeatherTuple getWeather() {
-        return WeatherTuple.fromReals(
+    public BasicWeather getWeather() {
+        return BasicWeather.fromReals(
                 this.airTemp,
                 this.relHumd,
                 this.windSpd,

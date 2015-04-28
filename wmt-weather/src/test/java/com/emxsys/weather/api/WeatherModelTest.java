@@ -179,7 +179,7 @@ public class WeatherModelTest {
         System.out.println("from(time,coord,tuple)");
         ZonedDateTime time = ZonedDateTime.now();
         Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        WeatherTuple wxTuple = WeatherTuple.fromRealTuple(new RealTuple(FIRE_WEATHER, new double[]{29, 10, 5, 235, 10}));
+        BasicWeather wxTuple = BasicWeather.fromRealTuple(new RealTuple(FIRE_WEATHER, new double[]{29, 10, 5, 235, 10}));
 
         WeatherModel result = WeatherModel.from(time, coord, wxTuple);
         assertNotNull(result);
@@ -191,7 +191,7 @@ public class WeatherModelTest {
         System.out.println("getField");
         ZonedDateTime time = ZonedDateTime.now();
         Coord2D coord = GeoCoord2D.fromDegrees(34.25, -119.2);
-        WeatherTuple wxTuple = WeatherTuple.fromRealTuple(new RealTuple(FIRE_WEATHER, new double[]{29, 10, 5, 235, 10}));
+        BasicWeather wxTuple = BasicWeather.fromRealTuple(new RealTuple(FIRE_WEATHER, new double[]{29, 10, 5, 235, 10}));
         WeatherModel instance = WeatherModel.from(time, coord, wxTuple);
         FieldImpl result = instance.getField();
         assertNotNull(result);
@@ -248,7 +248,7 @@ public class WeatherModelTest {
         ZonedDateTime time = ZonedDateTime.now();
 
         // Outside temporal domain
-        WeatherTuple result = temporalInstance.getWeather(time.minusHours(1), GeoCoord2D.fromDegrees(34.0, -120.0));
+        BasicWeather result = temporalInstance.getWeather(time.minusHours(1), GeoCoord2D.fromDegrees(34.0, -120.0));
         assertNotNull("result not null", result);
         assertTrue("result isMissing", result.isMissing());
 

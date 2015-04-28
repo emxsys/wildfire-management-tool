@@ -74,12 +74,12 @@ public class WeatherModel extends SpatioTemporalModel {
      * Creates a WeatherModel at a single location at a single point in time.
      * @param time Point in time.
      * @param coord Location.
-     * @param tuple Weather values.
+     * @param weather Weather values.
      * @return A new WeatherModel instance.
      */
-    public static WeatherModel from(ZonedDateTime time, Coord2D coord, WeatherTuple tuple) {
+    public static WeatherModel from(ZonedDateTime time, Coord2D coord, BasicWeather weather) {
         TemporalDomain timeDomain = new TemporalDomain(time, 1);
-        SpatialField spatialField = SpatialField.from(coord, tuple);
+        SpatialField spatialField = SpatialField.from(coord, weather.getTuple());
         return WeatherModel.from(timeDomain, new SpatialField[]{spatialField});
     }
 
@@ -131,9 +131,9 @@ public class WeatherModel extends SpatioTemporalModel {
      * @param coord Place at which to sample the weather.
      * @return A {@code FIRE_WEATHER} tuple.
      */
-    public WeatherTuple getWeather(ZonedDateTime time, Coord2D coord) {
+    public BasicWeather getWeather(ZonedDateTime time, Coord2D coord) {
         RealTuple tuple = super.getTuple(time, coord);
-        return tuple == null ? WeatherTuple.INVALID_TUPLE : WeatherTuple.fromRealTuple(tuple);
+        return tuple == null ? BasicWeather.INVALID_WEATHER : BasicWeather.fromRealTuple(tuple);
     }
 
     public Gridded1DDoubleSet getTemporalDomainSet() {

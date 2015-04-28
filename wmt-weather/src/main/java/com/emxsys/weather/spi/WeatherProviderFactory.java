@@ -46,7 +46,7 @@ import static com.emxsys.weather.api.WeatherPreferences.PREF_RH_SUNSET;
 import static com.emxsys.weather.api.WeatherPreferences.getAirTempValue;
 import static com.emxsys.weather.api.WeatherPreferences.getRelHumidityValue;
 import com.emxsys.weather.api.WeatherProvider;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
 import java.util.ArrayList;
@@ -166,7 +166,7 @@ public class WeatherProviderFactory {
 //
         public Weather getWeather(Date utcTime, Coord2D coord) {
             // TODO: lookup the weather, if not found use general weather
-            return new WeatherTuple();
+            return new BasicWeather();
         }
 
         @Override

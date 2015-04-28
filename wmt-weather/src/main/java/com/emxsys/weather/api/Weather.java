@@ -29,7 +29,6 @@
  */
 package com.emxsys.weather.api;
 
-import visad.Data;
 import visad.Real;
 
 /**
@@ -37,7 +36,7 @@ import visad.Real;
  *
  * @author Bruce Schubert
  */
-public interface Weather extends Data {
+public interface Weather {
 
     /**
      * The wind velocity.
