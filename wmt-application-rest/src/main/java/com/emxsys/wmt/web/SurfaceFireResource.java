@@ -29,10 +29,11 @@
  */
 package com.emxsys.wmt.web;
 
-import com.emxsys.wildfire.api.BasicFuelModel;
-import com.emxsys.wildfire.api.BasicFuelMoisture;
+import com.emxsys.gis.api.BasicTerrain;
+import com.emxsys.weather.api.BasicWeather;
+import com.emxsys.wildfire.behavior.SurfaceFire;
+import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
-import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.Context;
@@ -47,60 +48,62 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import static javax.ws.rs.core.MediaType.*;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
- * Surface Fuel REST Web Service.
+ * Surface Fire REST Web Service.
  *
  * @author Bruce Schubert
  */
-@Path("/surfacefuel")
-public class SurfaceFuelResource {
+@Path("surfacefire")
+public class SurfaceFireResource {
+
+    private static final SurfaceFireProvider provider = new SurfaceFireProvider();
+    private static final List<MediaType> permittedTypes = Arrays.asList(APPLICATION_JSON_TYPE, APPLICATION_XML_TYPE, TEXT_PLAIN_TYPE);
 
     @Context
     private HttpHeaders headers;
-    // 
-    private static final List<MediaType> permittedTypes = Arrays.asList(APPLICATION_JSON_TYPE, APPLICATION_XML_TYPE, TEXT_PLAIN_TYPE);
-    static final SurfaceFuelProvider fuelProvider = new SurfaceFuelProvider();
 
     /** Creates a new instance of SurfaceFuelResource */
-    public SurfaceFuelResource() {
+    public SurfaceFireResource() {
     }
 
     /**
      * Retrieves representation of an instance of
-     * com.emxsys.wildfire.behavior.SurfaceFuel
+     * com.emxsys.wildfire.behavior.SurfaceFire
      *
-     * @param mimeType Optional. A specified mime-type overrides the Accepts
+     * @param mimeType Optional. The specified mime-type overrides the Accepts
      * header.
-     * @param fuelModel An XML or JSON FuelModel representation.
-     * @param fuelMoisture An XML or JSON FuelMoisture representation.
-     * @return A Response containing a SurfaceFuel entity.
+     * @param fuel An XML or JSON FuelModel representation.
+     * @param weather An XML or JSON Weather representation.
+     * @param terrain An XML or JSON Terrain representation.
+     * @return A Response containing a SurfaceFire entity.
      */
     @POST
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response createSurfaceFuel(
             @DefaultValue("") @FormParam("mime-type") String mimeType,
-            @FormParam("fuelModel") BasicFuelModel fuelModel,
-            @FormParam("fuelMoisture") BasicFuelMoisture fuelMoisture) {
+            @FormParam("fuel") SurfaceFuel fuel,
+            @FormParam("weather") BasicWeather weather,
+            @FormParam("terrain") BasicTerrain terrain) {
 
-        // Preconditions
-        if (fuelModel == null || fuelMoisture == null) {
+        // Validate preconditions
+        if (fuel == null || weather == null || terrain == null) {
             throw new WebApplicationException(Response.Status.PRECONDITION_FAILED);
         }
-        // Dermine representation
-        MediaType mediaType = WebUtil.getPermittedMediaType(mimeType, 
-                permittedTypes, headers, MediaType.TEXT_PLAIN_TYPE);
+        // Dermine the proper representation
+        MediaType mediaType = WebUtil.getPermittedMediaType(mimeType, permittedTypes, headers, MediaType.TEXT_PLAIN_TYPE);
 
         // Create the resource
-        SurfaceFuel fuel = fuelProvider.getSurfaceFuel(fuelModel, fuelMoisture);
-        if (fuel == null) {
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        SurfaceFire fire = provider.getFireBehavior(fuel, weather, terrain);
+        if (fire == null) {
+            throw new WebApplicationException(
+                    new RuntimeException("SurfaceFireProvider.getFireBehavior() returned null"),
+                    Status.INTERNAL_SERVER_ERROR);
         }
-        
-        // Return the representation
         return Response.ok(
-                mediaType.equals(TEXT_PLAIN_TYPE) ? fuel.toString() : fuel,
+                mediaType.equals(TEXT_PLAIN_TYPE) ? fire.toString() : fire,
                 mediaType).build();
     }
 

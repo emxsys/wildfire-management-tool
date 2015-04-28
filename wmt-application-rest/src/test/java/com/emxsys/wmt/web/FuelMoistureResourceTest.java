@@ -52,7 +52,7 @@ public class FuelMoistureResourceTest extends JerseyTest {
     @Test
     public void testGetDefaults() {
         System.out.println("TESTING: getDefaults");
-        BasicFuelMoisture expResult = BasicFuelMoisture.INVALID;
+        BasicFuelMoisture expResult = BasicFuelMoisture.INVALID_FUEL_MOISTURE;
         ClientResponse response = super.webResource.path("fuelmoisture")
                 .accept(MediaType.APPLICATION_XML)
                 .get(ClientResponse.class);
@@ -127,9 +127,9 @@ public class FuelMoistureResourceTest extends JerseyTest {
         double woody = 5.0;
         BasicFuelMoisture expResult = BasicFuelMoisture.fromDoubles(dead1Hr, dead10Hr, dead100Hr, herb, woody);
         ClientResponse response = super.webResource.path("fuelmoisture")
-                .queryParam("dead1h", Double.toString(dead1Hr))
-                .queryParam("dead10h", Double.toString(dead10Hr))
-                .queryParam("dead100h", Double.toString(dead100Hr))
+                .queryParam("dead1Hr", Double.toString(dead1Hr))
+                .queryParam("dead10Hr", Double.toString(dead10Hr))
+                .queryParam("dead100Hr", Double.toString(dead100Hr))
                 .queryParam("herb", Double.toString(herb))
                 .queryParam("woody", Double.toString(woody))
                 .accept(MediaType.TEXT_PLAIN)
@@ -137,8 +137,8 @@ public class FuelMoistureResourceTest extends JerseyTest {
         assertTrue(response.getStatus() == 200);
         assertTrue("Expecting: " + MediaType.TEXT_PLAIN + " but found: " + response.getType(),
                 response.getType().equals(MediaType.TEXT_PLAIN_TYPE));
-        System.out.println(">>>> " + response.getEntity(String.class));
-        //assertTrue(response.getEntity(BasicFuelMoisture.class).equals(expResult));
+        //System.out.println(">>>> " + response.getEntity(String.class));
+        assertTrue(response.getEntity(String.class).equals(expResult.toString()));
     }
 
     @Test
