@@ -107,13 +107,13 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
      * Gets the FuelModel at the given location.
      *
      * @param location The location where the fuel model is sampled.
-     * @return The fuel model at the location, or BasicFuelModel.INVALID if not
+     * @return The fuel model at the location, or BasicFuelModel.INVALID_FUEL_MODEL if not
  found.
      */
     @Override
     public FuelModel getFuelModel(Coord2D location) {
         if (this.fuelModelLayer == null) {
-            return BasicFuelModel.INVALID;
+            return BasicFuelModel.INVALID_FUEL_MODEL;
         }
         // Get the query capability object
         QueryableByPoint query = this.fuelModelLayer.getLookup().lookup(QueryableByPoint.class);
@@ -131,7 +131,7 @@ public class Std40FuelModelProvider extends AbstractFuelModelProvider {
             }
         }
         logger.log(Level.FINE, "No FuelModel found for {0}", location);
-        return BasicFuelModel.INVALID;
+        return BasicFuelModel.INVALID_FUEL_MODEL;
     }
 
     @Override
