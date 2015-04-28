@@ -31,7 +31,7 @@ package com.emxsys.wildfire.behavior;
 
 import com.csvreader.CsvReader;
 import com.emxsys.gis.api.Terrain;
-import com.emxsys.gis.api.TerrainTuple;
+import com.emxsys.gis.api.BasicTerrain;
 import com.emxsys.util.MathUtil;
 import com.emxsys.visad.FireUnit;
 import static com.emxsys.weather.api.WeatherType.WIND_DIR;
@@ -122,7 +122,7 @@ public class FireBehaviorParameterizedTest {
     public FireBehaviorParameterizedTest(FuelModel model, FuelMoisture moisture) {
         fuelbed = SurfaceFuel.from(model, moisture);
         fuelModelCode = model.getModelCode();
-        Terrain terrain = new TerrainTuple(180, 16.7, 0);
+        Terrain terrain = new BasicTerrain(180, 16.7, 0);
         instance = new SurfaceFire(fuelbed,
                 new Real(WIND_SPEED_MPH, 5),
                 new Real(WIND_DIR, 215),

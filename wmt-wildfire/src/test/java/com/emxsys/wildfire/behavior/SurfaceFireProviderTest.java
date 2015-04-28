@@ -29,8 +29,8 @@
  */
 package com.emxsys.wildfire.behavior;
 
-import com.emxsys.gis.api.TerrainTuple;
-import com.emxsys.weather.api.WeatherTuple;
+import com.emxsys.gis.api.BasicTerrain;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.weather.api.WeatherType;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
@@ -87,13 +87,13 @@ public class SurfaceFireProviderTest {
             moistures.add(BasicFuelMoisture.fromWeatherConditions(conditions));
         }
 
-        WeatherTuple weather = WeatherTuple.fromReals(
+        BasicWeather weather = BasicWeather.fromReals(
                 new Real(WeatherType.AIR_TEMP_F, 70),
                 new Real(WeatherType.REL_HUMIDITY, 20),
                 new Real(WeatherType.WIND_SPEED_MPH, 5),
                 new Real(WeatherType.WIND_DIR, 215),
                 new Real(WeatherType.CLOUD_COVER, 0));
-        TerrainTuple terrain = new TerrainTuple(180, 16.7, 0);
+        BasicTerrain terrain = new BasicTerrain(180, 16.7, 0);
 
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();

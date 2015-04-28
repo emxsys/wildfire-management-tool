@@ -32,28 +32,24 @@ package com.emxsys.wildfire.behavior;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.util.AngleUtil;
 import com.emxsys.visad.FireUnit;
-import static com.emxsys.visad.GeneralUnit.foot;
-import static com.emxsys.visad.GeneralUnit.mph;
+import static com.emxsys.visad.GeneralUnit.*;
+import com.emxsys.visad.RealXmlAdapter;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_MPH;
+import static com.emxsys.weather.api.WeatherType.*;
 import com.emxsys.wildfire.api.FireBehavior;
-import static com.emxsys.wildfire.api.WildfireType.DIR_OF_SPREAD;
-import static com.emxsys.wildfire.api.WildfireType.FIRE_LINE_INTENSITY_US;
-import static com.emxsys.wildfire.api.WildfireType.FLAME_LENGTH_US;
-import static com.emxsys.wildfire.api.WildfireType.ROS;
-import static java.lang.Math.PI;
-import static java.lang.Math.asin;
-import static java.lang.Math.cos;
-import static java.lang.Math.min;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
+import static com.emxsys.wildfire.api.WildfireType.*;
+import static java.lang.Math.*;
+import java.rmi.RemoteException;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.openide.util.Exceptions;
 import visad.Real;
+import visad.RealTuple;
 import visad.VisADException;
 
 /**
@@ -63,20 +59,29 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
+@XmlRootElement(name = "surfaceFire")
+//@XmlType(propOrder = {
+//    "rateOfSpread",
+//    "rateOfSpreadMax",
+//    "directionMaxSpread",
+//    "effectiveWindSpeed",
+//    "firelineIntensity",
+//    "flameLength",
+//    "burnable",})
 public class SurfaceFire implements FireBehavior {
 
     private static final Logger logger = Logger.getLogger(SurfaceFire.class.getName());
 
     // Inputs
-    private final SurfaceFuel fuelBed;
-    private final Real aspect;
-    private final Real slope;
-    private final Real windSpd;
-    private final Real windDir;
+    private SurfaceFuel fuelBed;
+    private Real aspect;
+    private Real slope;
+    private Real windSpdMidFlame;
+    private Real windDir;
 
     // Outputs
-    private Real rateOfSpread;
     private Real rateOfSpreadMax;
+    private Real rateOfSpreadNoWindSlope;
     private Real directionMaxSpread;
     private Real effectiveWindSpeed;
     private Real firelineIntensity;
@@ -85,6 +90,9 @@ public class SurfaceFire implements FireBehavior {
     // Intermediate wind and slope effects
     private double phiEw;           // Combined wind and slope factors
     private double eccentricity;    // Fire ellipse from effective wind
+
+    private boolean initialized = false;
+    private final Object initializing = new Object(); // Lock
 
     static {
         logger.setLevel(Level.FINE);
@@ -116,42 +124,170 @@ public class SurfaceFire implements FireBehavior {
     }
 
     /**
-     * Constructor.
+     * Package constructor.
      * @param fuelBed The fuel complex.
-     * @param windSpd Mid-flame wind speed.
+     * @param windSpdMidFlame Mid-flame wind speed.
      * @param windDir Customary wind direction (direction wind is blowing FROM).
      * @param aspect Terrain aspect (South-facing slope is 180 degrees).
      * @param slope Terrain slope angle (steepness) in degrees.
      */
-    public SurfaceFire(SurfaceFuel fuelBed, Real windSpd, Real windDir, Real aspect, Real slope) {
+    SurfaceFire(SurfaceFuel fuelBed, Real windSpdMidFlame, Real windDir, Real aspect, Real slope) {
         this.fuelBed = fuelBed;
-        this.windSpd = windSpd;
+        this.windSpdMidFlame = windSpdMidFlame;
         this.windDir = windDir;
         this.aspect = aspect;
         this.slope = slope;
+        initialize();
+    }
+
+    /**
+     * Constructor.
+     */
+    public SurfaceFire() {
+        this.fuelBed = new SurfaceFuel();
+        this.windSpdMidFlame = new Real(WIND_SPEED_MPH);
+        this.windDir = new Real(WIND_DIR);
+        this.aspect = new Real(ASPECT);
+        this.slope = new Real(SLOPE);
+        initialize();
+    }
+
+    private void initialize() {
+
+        if (!this.fuelBed.isInitialized()
+                || this.aspect.isMissing() || this.slope.isMissing()
+                || this.windSpdMidFlame.isMissing() || this.windDir.isMissing()) {
+            initialized = false;
+            rateOfSpreadMax = new Real(ROS);
+            rateOfSpreadNoWindSlope = new Real(ROS);
+            directionMaxSpread = new Real(DIR_OF_SPREAD);
+            effectiveWindSpeed = new Real(WIND_SPEED_MPH);
+            firelineIntensity = new Real(FIRE_LINE_INTENSITY_US);
+            flameLength = new Real(FLAME_LENGTH_US);
+        } else {
+            initialized = true;
+            calcFireBehavior();
+        }
+    }
+
+    private boolean isInitialized() {
+        return this.initialized;
+    }
+
+    /**
+     * Gets an immutable WildfireType.FIRE_BEHAVIOR tuple from this instance.
+     * @return A new WildfireType.FIRE_BEHAVIOR tuple.
+     */
+    public RealTuple getTuple() {
+        try {
+            return new RealTuple(FIRE_BEHAVIOR,
+                    new Real[]{
+                        Reals.convertTo(FIRE_LINE_INTENSITY_SI, firelineIntensity),
+                        Reals.convertTo(FLAME_LENGTH_SI, flameLength),
+                        Reals.convertTo(RATE_OF_SPREAD_SI, rateOfSpreadMax),
+                        Reals.convertTo(DIR_OF_SPREAD, directionMaxSpread)
+                    }, null);
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            return new RealTuple(FIRE_BEHAVIOR);
+        }
     }
 
     /**
      * Gets the fuel complex that generates this fire behavior.
-     * @return A WildfireType.FUEL_BED tuple representing the surface fuel.
+     * @return A SurfaceFuel instance representing the fuel bed.
      */
+    @XmlElement
     public SurfaceFuel getFuelBed() {
         return this.fuelBed;
+    }
+
+    public void setFuelBed(SurfaceFuel fuelBed) {
+        if (fuelBed == null) {
+            throw new IllegalArgumentException("fuelBed cannot be null.");
+        }
+        synchronized (initializing) {
+            this.fuelBed = fuelBed;
+            initialize();
+        }
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
+    public Real getAspect() {
+        return aspect;
+    }
+
+    public void setAspect(Real aspect) {
+        if (aspect == null) {
+            throw new IllegalArgumentException("aspect cannot be null.");
+        }
+        synchronized (initializing) {
+            this.aspect = aspect;
+            initialize();
+        }
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
+    public Real getSlope() {
+        return slope;
+    }
+
+    public void setSlope(Real slope) {
+        if (slope == null) {
+            throw new IllegalArgumentException("slope cannot be null.");
+        }
+        synchronized (initializing) {
+            this.slope = slope;
+            initialize();
+        }
+    }
+
+    /**
+     * Gets the 20ft mid-flame wind speed.
+     * @return
+     */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
+    public Real getMidFlameWindSpeed() {
+        return windSpdMidFlame;
+    }
+
+    public void setMidFlameWindSpeed(Real midFlameWindSpeed) {
+        if (midFlameWindSpeed == null) {
+            throw new IllegalArgumentException("midFlameWindSpeed cannot be null.");
+        }
+        synchronized (initializing) {
+            this.windSpdMidFlame = Reals.convertTo(WIND_SPEED_MPH, midFlameWindSpeed);
+            initialize();
+        }
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
+    public Real getWindDirection() {
+        return windDir;
+    }
+
+    public void setWindDirection(Real windDir) {
+        if (windDir == null) {
+            throw new IllegalArgumentException("windDir cannot be null.");
+        }
+        synchronized (initializing) {
+            this.windDir = windDir;
+            initialize();
+        }
     }
 
     /**
      * Gets the maximum rate of spread of the heading fire: ros.
      * @return Heading fire rate of spread, ros [ft/min]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getRateOfSpreadMax() {
-        if (this.rateOfSpreadMax == null) {
-            if (this.fuelBed.isBurnable()) {
-                calcFireBehavior();
-            } else {
-                this.rateOfSpreadMax = new Real(ROS, 0);
-            }
-        }
         return this.rateOfSpreadMax;
     }
 
@@ -159,6 +295,8 @@ public class SurfaceFire implements FireBehavior {
      * Gets the rate of spread of the backing fire: ros.
      * @return Backing fire rate of spread, ros [ft/min]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getRateOfSpreadBacking() {
         double ros = 0;
         if (this.fuelBed.isBurnable()) {
@@ -172,13 +310,21 @@ public class SurfaceFire implements FireBehavior {
      * Gets the rate of spread of the flanking fire (90 degrees from direction of max spread): ros.
      * @return Flanking fire rate of spread, ros [ft/min]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getRateOfSpreadFlanking() {
-        double ros = 0;
-        if (this.fuelBed.isBurnable()) {
-            double azimuth = AngleUtil.normalize360(getDirectionMaxSpread().getValue() + 90);
-            return getRateOfSpreadAtAzimuth(new Real(azimuth));
+        synchronized (initializing) {
+            if (isInitialized()) {
+                double ros = 0;
+                if (this.fuelBed.isBurnable()) {
+                    double azimuth = AngleUtil.normalize360(getDirectionMaxSpread().getValue() + 90);
+                    return getRateOfSpreadAtAzimuth(new Real(azimuth));
+                }
+                return new Real(ROS, ros);
+            } else {
+                return new Real(ROS);
+            }
         }
-        return new Real(ROS, ros);
     }
 
     /**
@@ -187,65 +333,72 @@ public class SurfaceFire implements FireBehavior {
      * @return The rate of spread, ros, along the azimuth [ft/min].
      */
     public Real getRateOfSpreadAtAzimuth(Real azimuth) {
-        double ros = 0;
-        if (this.fuelBed.isBurnable()) {
-            // Angle between maximum spread azimuth and requested azimuth.
-            double dir = AngleUtil.angularDistanceBetween(
-                    getDirectionMaxSpread().getValue(), azimuth.getValue());
+        synchronized (initializing) {
+            if (isInitialized()) {
+                double ros = 0;
+                if (this.fuelBed.isBurnable()) {
+                    // Angle between maximum spread azimuth and requested azimuth.
+                    double dir = AngleUtil.angularDistanceBetween(
+                            getDirectionMaxSpread().getValue(), azimuth.getValue());
 
-            // Calculate the fire spread rate in this azimuth. 
-            // From FireLib 1.04, firelib.c by Collin D. Bevins
-            double denom = 1. - eccentricity * cos(toRadians(dir));
-            if (denom > 0) {
-                ros = getRateOfSpreadMax().getValue() * (1. - eccentricity) / denom;
+                    // Calculate the fire spread rate in this azimuth. 
+                    // From FireLib 1.04, firelib.c by Collin D. Bevins
+                    double denom = 1. - eccentricity * cos(toRadians(dir));
+                    if (denom > 0) {
+                        ros = getRateOfSpreadMax().getValue() * (1. - eccentricity) / denom;
+                    } else {
+                        ros = getRateOfSpreadNoWindNoSlope().getValue();
+                    }
+                }
+                return new Real(ROS, ros);
             } else {
-                ros = getRateOfSpreadNoWindNoSlope().getValue();
+                return new Real(ROS);
             }
         }
-        return new Real(ROS, ros);
     }
 
     /**
      * Gets the rate of spread without wind or slope.
      * @return ros [ft/min]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getRateOfSpreadNoWindNoSlope() {
-        if (this.rateOfSpread == null) {
-            if (this.fuelBed.isBurnable()) {
-                double ros = Rothermel.rateOfSpreadNoWindNoSlope(
-                        fuelBed.getReactionIntensity().getValue(),
-                        fuelBed.getPropagatingFluxRatio().getValue(),
-                        fuelBed.getHeatSink().getValue());
-                this.rateOfSpread = new Real(ROS, ros);
-                try {
-                    if (logger.isLoggable(Level.FINER)) {
-                        logger.log(Level.FINER, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
-                                new Object[]{fuelBed.getFuelModel().getModelCode(),
-                                             rateOfSpread.getValue(FireUnit.chain_hour)});
+        synchronized (initializing) {
+            if (this.rateOfSpreadNoWindSlope == null || this.rateOfSpreadNoWindSlope.isMissing()) {
+                if (this.fuelBed.isBurnable()) {
+                    double ros = Rothermel.rateOfSpreadNoWindNoSlope(
+                            fuelBed.getReactionIntensity().getValue(),
+                            fuelBed.getPropagatingFluxRatio().getValue(),
+                            fuelBed.getHeatSink().getValue());
+                    this.rateOfSpreadNoWindSlope = new Real(ROS, ros);
+                    try {
+                        if (logger.isLoggable(Level.FINER)) {
+                            logger.log(Level.FINER, "ROS [{0}] (Wind=0,Slope=0): {1} [chn/hr]",
+                                    new Object[]{fuelBed.getFuelModel().getModelCode(),
+                                                 rateOfSpreadNoWindSlope.getValue(FireUnit.chain_hour)});
+                        }
+                    } catch (VisADException ex) {
                     }
-                } catch (VisADException ex) {
+                } else {
+                    this.rateOfSpreadNoWindSlope = new Real(ROS, 0);
                 }
-            } else {
-                this.rateOfSpread = new Real(ROS, 0);
             }
+            return this.rateOfSpreadNoWindSlope;
         }
-        return this.rateOfSpread;
     }
 
     /**
      * Gets the direction of maximum spread.
      * @return [degrees]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getDirectionMaxSpread() {
-        if (this.directionMaxSpread == null) {
-            if (this.fuelBed.isBurnable()) {
-                calcFireBehavior();
-            } else {
-                this.directionMaxSpread = new Real(DIR_OF_SPREAD, 0);
-            }
+        synchronized (initializing) {
+            return this.directionMaxSpread;
         }
-        return this.directionMaxSpread;
     }
 
     /**
@@ -253,47 +406,38 @@ public class SurfaceFire implements FireBehavior {
      * maximum wind speed formula.
      * @return [mph]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getEffectiveWindSpeed() {
-        if (this.effectiveWindSpeed == null) {
-            if (this.fuelBed.isBurnable()) {
-                calcFireBehavior();
-            } else {
-                this.effectiveWindSpeed = new Real(WIND_SPEED_MPH, 0);
-            }
+        synchronized (initializing) {
+            return this.effectiveWindSpeed;
         }
-        return this.effectiveWindSpeed;
     }
 
     /**
      * Gets Byram's fireline intensity: I.
      * @return [Btu/ft/s]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getFirelineIntensity() {
-        if (this.firelineIntensity == null) {
-            if (this.fuelBed.isBurnable()) {
-                calcFireBehavior();
-            } else {
-                this.firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, 0);
-            }
+        synchronized (initializing) {
+            return this.firelineIntensity;
         }
-        return this.firelineIntensity;
     }
 
     /**
      * Gets the flame length.
      * @return [ft]
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     @Override
     public Real getFlameLength() {
-        if (this.flameLength == null) {
-            if (this.fuelBed.isBurnable()) {
-                calcFireBehavior();
-            } else {
-                this.flameLength = new Real(FLAME_LENGTH_US, 0);
-            }
+        synchronized (initializing) {
+            return this.flameLength;
         }
-        return this.flameLength;
     }
 
     /**
@@ -301,41 +445,51 @@ public class SurfaceFire implements FireBehavior {
      *
      * @return The eccentricity of the fire ellipse.
      */
+    //@XmlElement
+    //@XmlJavaTypeAdapter(RealXmlAdapter.class)
     public double getEccentricity() {
-        calcFireBehavior();
-        return eccentricity;
+        return isInitialized() ? eccentricity : 0;
     }
 
     /**
      * Computes the fire behavior elements.
      */
     protected void calcFireBehavior() {
+        if (!isInitialized()) {
+            throw new IllegalStateException("SurfaceFire is not initilized.");
+        }
         if (this.fuelBed.isBurnable()) {
-            if (this.rateOfSpread == null) {
 
-                // Compute phiEw, effective wind and spread direction, and eccentricity
-                calcWindAndSlopeEffects(windSpd, windDir, aspect, slope);
+            // Compute phiEw, effective wind and spread direction, and eccentricity
+            calcWindAndSlopeEffects(windSpdMidFlame, windDir, aspect, slope);
 
-                double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
-                double rosMax = 0;
-                if (phiEw <= 0) {
-                    rosMax = ros0;  // No wind, no slope
-                } else {
-                    rosMax = ros0 * (1 + phiEw);
-                }
-                this.rateOfSpread = new Real(ROS, ros0);
-                this.rateOfSpreadMax = new Real(ROS, rosMax);
-
-                double flameZoneDepth = Rothermel.flameZoneDepth(
-                        rosMax, fuelBed.getFlameResidenceTime().getValue());
-                double fli = Rothermel.firelineIntensity(
-                        flameZoneDepth, fuelBed.getReactionIntensity().getValue());
-                double fl = Rothermel.flameLength(fli);
-
-                // Outputs
-                this.firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, fli);
-                this.flameLength = new Real(FLAME_LENGTH_US, fl);
+            double ros0 = getRateOfSpreadNoWindNoSlope().getValue();
+            double rosMax = 0;
+            if (phiEw <= 0) {
+                rosMax = ros0;  // No wind, no slope
+            } else {
+                rosMax = ros0 * (1 + phiEw);
             }
+            this.rateOfSpreadNoWindSlope = new Real(ROS, ros0);
+            this.rateOfSpreadMax = new Real(ROS, rosMax);
+
+            double flameZoneDepth = Rothermel.flameZoneDepth(
+                    rosMax, fuelBed.getFlameResidenceTime().getValue());
+            double fli = Rothermel.firelineIntensity(
+                    flameZoneDepth, fuelBed.getReactionIntensity().getValue());
+            double fl = Rothermel.flameLength(fli);
+
+            // Outputs
+            this.firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, fli);
+            this.flameLength = new Real(FLAME_LENGTH_US, fl);
+        } else {
+            rateOfSpreadNoWindSlope = new Real(ROS, 0);
+            rateOfSpreadMax = new Real(ROS, 0);
+            directionMaxSpread = new Real(DIR_OF_SPREAD, 0);
+            effectiveWindSpeed = new Real(WIND_SPEED_MPH, 0);
+            firelineIntensity = new Real(FIRE_LINE_INTENSITY_US, 0);
+            flameLength = new Real(FLAME_LENGTH_US, 0);
+
         }
     }
 
@@ -414,7 +568,7 @@ public class SurfaceFire implements FireBehavior {
 
             }
             // Intermediate fire ellipse eccentricity
-            eccentricity = Rothermel.eccentricity(effectiveWnd);
+            this.eccentricity = Rothermel.eccentricity(effectiveWnd);
 
             // Outputs
             this.directionMaxSpread = new Real(DIR_OF_SPREAD, spreadDirMax);
@@ -428,10 +582,48 @@ public class SurfaceFire implements FireBehavior {
 
     @Override
     public String toString() {
-        if (this.rateOfSpread == null) {
+        if (this.rateOfSpreadNoWindSlope == null) {
             calcFireBehavior();
         }
         return "FireReaction{" + "ROS=" + rateOfSpreadMax + ", DIR=" + directionMaxSpread + ", I=" + firelineIntensity + ", L=" + flameLength + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.fuelBed);
+        hash = 47 * hash + Objects.hashCode(this.aspect);
+        hash = 47 * hash + Objects.hashCode(this.slope);
+        hash = 47 * hash + Objects.hashCode(this.windSpdMidFlame);
+        hash = 47 * hash + Objects.hashCode(this.windDir);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SurfaceFire other = (SurfaceFire) obj;
+        if (!Objects.equals(this.fuelBed, other.fuelBed)) {
+            return false;
+        }
+        if (!Objects.equals(this.aspect, other.aspect)) {
+            return false;
+        }
+        if (!Objects.equals(this.slope, other.slope)) {
+            return false;
+        }
+        if (!Objects.equals(this.windSpdMidFlame, other.windSpdMidFlame)) {
+            return false;
+        }
+        if (!Objects.equals(this.windDir, other.windDir)) {
+            return false;
+        }
+        return true;
     }
 
 }

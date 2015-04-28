@@ -49,7 +49,6 @@ public class SurfaceFireProvider {
     public SurfaceFireProvider() {
     }
 
-
     public SurfaceFire getFireBehavior(SurfaceFuel fuel, Weather weather, Terrain terrain) {
 
         FireEnvironment key = new FireEnvironment(fuel, weather, terrain);
