@@ -102,6 +102,8 @@ public class SurfaceFireResource {
                     new RuntimeException("SurfaceFireProvider.getFireBehavior() returned null"),
                     Status.INTERNAL_SERVER_ERROR);
         }
+        // If TEXT is requested, simply return a String, otherwise, let JAXB
+        // perform the marshalling.
         return Response.ok(
                 mediaType.equals(TEXT_PLAIN_TYPE) ? fire.toString() : fire,
                 mediaType).build();

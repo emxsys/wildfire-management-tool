@@ -58,7 +58,10 @@ public class ApplicationConfig extends Application {
         resources.add(com.emxsys.wmt.web.FuelModelsResource.class);
         resources.add(com.emxsys.wmt.web.FuelMoistureResource.class);
         resources.add(com.emxsys.wmt.web.SunlightResource.class);
+        resources.add(com.emxsys.wmt.web.SurfaceFireResource.class);
         resources.add(com.emxsys.wmt.web.SurfaceFuelResource.class);
+        resources.add(com.emxsys.wmt.web.TerrainResource.class);
+        resources.add(com.emxsys.wmt.web.WeatherResource.class);
     }
 
 }
