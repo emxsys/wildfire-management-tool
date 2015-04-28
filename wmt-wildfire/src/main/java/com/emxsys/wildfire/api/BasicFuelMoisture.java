@@ -29,7 +29,7 @@
  */
 package com.emxsys.wildfire.api;
 
-import com.emxsys.visad.RealXmlAdaptor;
+import com.emxsys.visad.RealXmlAdapter;
 import static com.emxsys.wildfire.api.WildfireType.*;
 import visad.RealTuple;
 import visad.Real;
@@ -49,12 +49,12 @@ import visad.VisADException;
  *
  * @author Bruce Schubert
  */
-@XmlRootElement(name = "fuelmoisture")
+@XmlRootElement(name = "fuelMoisture")
 @XmlType(propOrder = {"dead1HrFuelMoisture", "dead10HrFuelMoisture", "dead100HrFuelMoisture",
                       "liveHerbFuelMoisture", "liveWoodyFuelMoisture",})
 public class BasicFuelMoisture implements FuelMoisture {
 
-    public static BasicFuelMoisture INVALID = new BasicFuelMoisture();
+    public static BasicFuelMoisture INVALID_FUEL_MOISTURE = new BasicFuelMoisture();
     private static final Logger logger = Logger.getLogger(BasicFuelMoisture.class.getName());
 
     private Real dead1HrFuelMoisture;
@@ -156,7 +156,7 @@ public class BasicFuelMoisture implements FuelMoisture {
                         new Real(FUEL_MOISTURE_HERB, 100),
                         new Real(FUEL_MOISTURE_WOODY, 100));
             default:
-                return INVALID;
+                return INVALID_FUEL_MOISTURE;
         }
     }
 
@@ -171,6 +171,18 @@ public class BasicFuelMoisture implements FuelMoisture {
         this.liveWoodyFuelMoisture = new Real(FUEL_MOISTURE_WOODY);
     }
 
+    /**
+     * Copy constructor performs a shallow copy of the immutable members.
+     * @param copy
+     */
+    public BasicFuelMoisture(FuelMoisture copy) {
+        this.dead1HrFuelMoisture = copy.getDead1HrFuelMoisture();
+        this.dead10HrFuelMoisture = copy.getDead10HrFuelMoisture();
+        this.dead100HrFuelMoisture = copy.getDead100HrFuelMoisture();
+        this.liveHerbFuelMoisture = copy.getLiveHerbFuelMoisture();
+        this.liveWoodyFuelMoisture = copy.getLiveWoodyFuelMoisture();
+    }
+    
     /**
      * Constructs a new BasicFuelMoisture instance with the given values.
      *
@@ -210,7 +222,7 @@ public class BasicFuelMoisture implements FuelMoisture {
 
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead1HrFuelMoisture() {
         return this.dead1HrFuelMoisture;
     }
@@ -221,7 +233,7 @@ public class BasicFuelMoisture implements FuelMoisture {
 
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead10HrFuelMoisture() {
         return this.dead10HrFuelMoisture;
     }
@@ -232,7 +244,7 @@ public class BasicFuelMoisture implements FuelMoisture {
 
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead100HrFuelMoisture() {
         return this.dead100HrFuelMoisture;
     }
@@ -243,7 +255,7 @@ public class BasicFuelMoisture implements FuelMoisture {
 
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveHerbFuelMoisture() {
         return this.liveHerbFuelMoisture;
     }
@@ -254,7 +266,7 @@ public class BasicFuelMoisture implements FuelMoisture {
 
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveWoodyFuelMoisture() {
         return this.liveWoodyFuelMoisture;
     }

@@ -29,9 +29,8 @@
  */
 package com.emxsys.wildfire.api;
 
-import com.emxsys.visad.RealXmlAdaptor;
+import com.emxsys.visad.RealXmlAdapter;
 import com.emxsys.visad.Reals;
-import com.emxsys.wildfire.behave.Behave;
 import java.util.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -47,11 +46,10 @@ import visad.Real;
  *
  * @see StdFuelModelParams13
  * @see StdFuelModelParams40
- * @see Behave
  *
  * @author Bruce D. Schubert
  */
-@XmlRootElement(name = "fuelmodel")
+@XmlRootElement(name = "fuelModel")
 @XmlType(propOrder
         = {"modelNo", "modelCode", "modelName", "modelGroup", "dynamic",
            "dead1HrFuelLoad", "dead10HrFuelLoad", "dead100HrFuelLoad", "liveHerbFuelLoad", "liveWoodyFuelLoad",
@@ -61,9 +59,9 @@ import visad.Real;
 public class BasicFuelModel implements FuelModel {
 
     /**
-     * A non-burnable fuel model representing an INVALID model; Fuel model number: -1
+     * A non-burnable fuel model representing an INVALID_FUEL_MODEL model; Fuel model number: -1
      */
-    public static final BasicFuelModel INVALID;
+    public static final BasicFuelModel INVALID_FUEL_MODEL;
     /**
      * The original 13 fuel models.
      */
@@ -85,29 +83,11 @@ public class BasicFuelModel implements FuelModel {
      */
     private static Map<Integer, BasicFuelModel> fuelModels;
     private static Set<String> fuelModelGroups;
-    private int modelNo;
-    private String modelCode;
-    private String modelName;
-    private String modelGroup;
-    private boolean dynamic;
-    private Real dead1HrFuelLoad;
-    private Real dead10HrFuelLoad;
-    private Real dead100HrFuelLoad;
-    private Real liveHerbFuelLoad;
-    private Real liveWoodyFuelLoad;
-    private Real dead1HrSAVRatio;
-    private Real dead10HrSAVRatio;
-    private Real dead100HrSAVRatio;
-    private Real liveHerbSAVRatio;
-    private Real liveWoodySAVRatio;
-    private Real fuelBedDepth;
-    private Real moistureOfExtinction;
-    private Real lowHeatContent;
 
     static {
         fuelModels = new HashMap<>();
         fuelModelGroups = new HashSet<>();
-        INVALID = new BasicFuelModel.Builder(-1, "INVALID", "Invalid Fuel Model",
+        INVALID_FUEL_MODEL = new BasicFuelModel.Builder(-1, "INVALID", "Invalid Fuel Model",
                 Builder.FUEL_LOAD_ZERO,
                 Builder.SAV_RATIO_ZERO,
                 Builder.FUEL_DEPTH_ZERO,
@@ -420,8 +400,31 @@ public class BasicFuelModel implements FuelModel {
         }
     }
 
+    ////////////////////
+    // FuelModel members
+    ////////////////////
+    
+    private int modelNo;
+    private String modelCode;
+    private String modelName;
+    private String modelGroup;
+    private boolean dynamic;
+    private Real dead1HrFuelLoad;
+    private Real dead10HrFuelLoad;
+    private Real dead100HrFuelLoad;
+    private Real liveHerbFuelLoad;
+    private Real liveWoodyFuelLoad;
+    private Real dead1HrSAVRatio;
+    private Real dead10HrSAVRatio;
+    private Real dead100HrSAVRatio;
+    private Real liveHerbSAVRatio;
+    private Real liveWoodySAVRatio;
+    private Real fuelBedDepth;
+    private Real moistureOfExtinction;
+    private Real lowHeatContent;
+
     /**
-     * Default constructor required for JavaBean support; creates an INVALID FuelModel.
+     * Default constructor required for JavaBean support; creates an INVALID_FUEL_MODEL FuelModel.
      */
     public BasicFuelModel() {
         new Builder(-1, "INVALID", "Invalid Fuel Model",
@@ -429,6 +432,30 @@ public class BasicFuelModel implements FuelModel {
                 Builder.SAV_RATIO_ZERO,
                 Builder.FUEL_DEPTH_ZERO,
                 Builder.EXT_MOISTURE_ZERO).build();
+    }
+
+    /**
+     * Copy constructor performs a shallow copy of the immutable members.
+     */
+    public BasicFuelModel(FuelModel copy) {
+        this.dead100HrFuelLoad = copy.getDead100HrFuelLoad();
+        this.dead10HrFuelLoad = copy.getDead10HrFuelLoad();
+        this.dead1HrFuelLoad = copy.getDead1HrFuelLoad();
+        this.liveHerbFuelLoad = copy.getLiveHerbFuelLoad();
+        this.liveWoodyFuelLoad = copy.getLiveWoodyFuelLoad();
+        this.dynamic = copy.isDynamic();
+        this.dead1HrSAVRatio = copy.getDead1HrSAVRatio();
+        this.dead10HrSAVRatio = copy.getDead10HrSAVRatio();
+        this.dead100HrSAVRatio = copy.getDead100HrSAVRatio();
+        this.liveHerbSAVRatio = copy.getLiveHerbSAVRatio();
+        this.liveWoodySAVRatio = copy.getLiveWoodySAVRatio();
+        this.fuelBedDepth = copy.getFuelBedDepth();
+        this.moistureOfExtinction = copy.getMoistureOfExtinction();
+        this.lowHeatContent = copy.getLowHeatContent();
+        this.modelNo = copy.getModelNo();
+        this.modelCode = copy.getModelCode();
+        this.modelName = copy.getModelName();
+        this.modelGroup = copy.getModelGroup();
     }
 
     /**
@@ -520,7 +547,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead1HrFuelLoad() {
         return this.dead1HrFuelLoad;
     }
@@ -534,7 +561,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead10HrFuelLoad() {
         return this.dead10HrFuelLoad;
     }
@@ -548,7 +575,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead100HrFuelLoad() {
         return this.dead100HrFuelLoad;
     }
@@ -562,7 +589,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveHerbFuelLoad() {
         return this.liveHerbFuelLoad;
     }
@@ -576,7 +603,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveWoodyFuelLoad() {
         return this.liveWoodyFuelLoad;
     }
@@ -616,7 +643,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead1HrSAVRatio() {
         return this.dead1HrSAVRatio;
     }
@@ -630,7 +657,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead10HrSAVRatio() {
         return this.dead10HrSAVRatio;
     }
@@ -644,7 +671,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getDead100HrSAVRatio() {
         return this.dead100HrSAVRatio;
     }
@@ -658,7 +685,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveHerbSAVRatio() {
         return this.liveHerbSAVRatio;
     }
@@ -672,7 +699,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveWoodySAVRatio() {
         return this.liveWoodySAVRatio;
     }
@@ -686,7 +713,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getFuelBedDepth() {
         return this.fuelBedDepth;
     }
@@ -700,7 +727,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getMoistureOfExtinction() {
         return this.moistureOfExtinction;
     }
@@ -714,7 +741,7 @@ public class BasicFuelModel implements FuelModel {
      */
     @Override
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLowHeatContent() {
         return this.lowHeatContent;
     }

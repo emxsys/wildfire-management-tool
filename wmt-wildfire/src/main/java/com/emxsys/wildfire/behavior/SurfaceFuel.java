@@ -29,22 +29,20 @@
  */
 package com.emxsys.wildfire.behavior;
 
+import com.emxsys.wildfire.api.FuelMoistureXmlAdapter;
+import com.emxsys.wildfire.api.FuelModelXmlAdapter;
 import com.emxsys.gis.api.Terrain;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.visad.FireUnit;
-import static com.emxsys.visad.GeneralUnit.degC;
-import static com.emxsys.visad.GeneralUnit.degF;
-import static com.emxsys.visad.GeneralUnit.foot;
-import static com.emxsys.visad.GeneralUnit.mph;
-import com.emxsys.visad.RealXmlAdaptor;
+import static com.emxsys.visad.GeneralUnit.*;
+import com.emxsys.visad.RealXmlAdapter;
 import com.emxsys.visad.Reals;
 import static com.emxsys.visad.Reals.convertTo;
-import com.emxsys.visad.Tuples;
 import com.emxsys.weather.api.Weather;
+import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.api.FuelModel;
 import com.emxsys.wildfire.api.FuelMoisture;
-import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.WildfireType;
 import static com.emxsys.wildfire.api.WildfireType.*;
 import java.rmi.RemoteException;
@@ -54,6 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.openide.util.Exceptions;
 import static visad.CommonUnit.radian;
@@ -68,22 +67,29 @@ import visad.VisADException;
  * @author Bruce Schubert
  */
 @XmlRootElement(name = "surfacefuel")
+@XmlType(propOrder
+        = {
+            "fuelModel",
+            "fuelMoisture",
+            "fuelTemperature",
+            "meanBulkDensity",
+            "fuelParticleDensity",
+            "meanPackingRatio",
+            "optimalPackingRatio",
+            "relativePackingRatio",
+            "characteristicSAV",
+            "liveMoistureOfExt",
+            "mineralDamping",
+            "moistureDamping",
+            "lowHeatContent",
+            "reactionVelocity",
+            "reactionIntensity",
+            "flameResidenceTime",
+            "heatRelease",
+            "propagatingFluxRatio",
+            "heatSink",
+            "burnable",})
 public class SurfaceFuel {
-
-    public static final int LOAD_DEAD_1H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_1H, FUEL_BED);
-    public static final int LOAD_DEAD_10H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_10H, FUEL_BED);
-    public static final int LOAD_DEAD_100H_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_100H, FUEL_BED);
-    public static final int LOAD_DEAD_HERB_INDEX = Tuples.getIndex(FUELBED_LOAD_DEAD_HERB, FUEL_BED);
-    public static final int LOAD_LIVE_HERB_INDEX = Tuples.getIndex(FUELBED_LOAD_LIVE_HERB, FUEL_BED);
-    public static final int LOAD_LIVE_WOODY_INDEX = Tuples.getIndex(FUELBED_LOAD_LIVE_WOODY, FUEL_BED);
-    public static final int SAV_DEAD_1H_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_1H, FUEL_BED);
-    public static final int SAV_DEAD_10H_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_10H, FUEL_BED);
-    public static final int SAV_DEAD_100H_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_100H, FUEL_BED);
-    public static final int SAV_DEAD_HERB_INDEX = Tuples.getIndex(FUELBED_SAV_DEAD_HERB, FUEL_BED);
-    public static final int SAV_LIVE_HERB_INDEX = Tuples.getIndex(FUELBED_SAV_LIVE_HERB, FUEL_BED);
-    public static final int SAV_LIVE_WOODY_INDEX = Tuples.getIndex(FUELBED_SAV_LIVE_WOODY, FUEL_BED);
-    public static final int FUEL_BED_DEPTH_INDEX = Tuples.getIndex(FUEL_BED_DEPTH, FUEL_BED);
-    public static final int MX_DEAD_INDEX = Tuples.getIndex(MX_DEAD, FUEL_BED);
 
     public static SurfaceFuel from(FuelModel model, FuelMoisture moisture) {
         return from(model, moisture, new Real(WildfireType.FUEL_TEMP_F));
@@ -101,36 +107,8 @@ public class SurfaceFuel {
      */
     public static SurfaceFuel from(FuelModel model, FuelMoisture moisture, Real fuelTemp) {
         try {
-            // Transfer cured herbaceous fuel into the dead herbaceous fuel load
-            double curing = model.isDynamic() ? calcHerbaceousCuring(moisture) : 0;
-            double liveHerbLoad = model.getLiveHerbFuelLoad().getValue(FireUnit.lb_ft2);
-            double deadHerbLoad = 0;
-            if (liveHerbLoad > 0) {
-                deadHerbLoad = liveHerbLoad * curing;
-                liveHerbLoad -= deadHerbLoad;
-            }
-            // Build a tuple with the proper UOMs
-            RealTuple tuple = new RealTuple(new Real[]{
-                convertTo(FUELBED_LOAD_DEAD_HERB, new Real(FUEL_LOAD, deadHerbLoad)),
-                convertTo(FUELBED_LOAD_DEAD_1H, model.getDead1HrFuelLoad()),
-                convertTo(FUELBED_LOAD_DEAD_10H, model.getDead10HrFuelLoad()),
-                convertTo(FUELBED_LOAD_DEAD_100H, model.getDead100HrFuelLoad()),
-                convertTo(FUELBED_LOAD_LIVE_HERB, new Real(FUEL_LOAD, liveHerbLoad)),
-                convertTo(FUELBED_LOAD_LIVE_WOODY, model.getLiveWoodyFuelLoad()),
-                convertTo(FUELBED_SAV_DEAD_HERB, model.getLiveHerbSAVRatio()), // dead SAV same as live SAV
-                convertTo(FUELBED_SAV_DEAD_1H, model.getDead1HrSAVRatio()),
-                convertTo(FUELBED_SAV_DEAD_10H, model.getDead10HrSAVRatio()),
-                convertTo(FUELBED_SAV_DEAD_100H, model.getDead100HrSAVRatio()),
-                convertTo(FUELBED_SAV_LIVE_HERB, model.getLiveHerbSAVRatio()),
-                convertTo(FUELBED_SAV_LIVE_WOODY, model.getLiveWoodySAVRatio()),
-                convertTo(FUEL_BED_DEPTH, model.getFuelBedDepth()),
-                convertTo(MX_DEAD, model.getMoistureOfExtinction())});
 
-            // Conditional logging
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine(tuple.longString());
-            }
-            return new SurfaceFuel(model, moisture, tuple, fuelTemp);
+            return new SurfaceFuel(model, moisture, fuelTemp);
 
         } catch (VisADException | RemoteException ex) {
             logger.log(Level.SEVERE, "Error in fuel bed", ex);
@@ -152,7 +130,6 @@ public class SurfaceFuel {
      * @return The fuel temperature [Fahrenheit]
      *
      * @see Rothermel
-     *
      */
     public static Real computeFuelTemperature(FuelModel fuelModel,
                                               Sunlight sun, Weather wx,
@@ -285,7 +262,11 @@ public class SurfaceFuel {
     /**
      * The data implementation tuple of type WildfireType.FUEL_BED.
      */
-    private RealTuple tuple;
+    //private RealTuple tuple;
+    // Inputs parameters
+    FuelModel fuelModel;
+    FuelMoisture fuelMoisture;
+    Real fuelTemperature;
 
     // Input values
     double[] sv;        // [ft2/ft3]      
@@ -305,7 +286,8 @@ public class SurfaceFuel {
     double sv_total;            // total SAV [ft2/ft3]
     double sv_total_dead;       // total dead SAV [ft2/ft3]
     double sv_total_live;       // total live SAV [ft2/ft3]
-    boolean nonBurnable = true;
+    boolean burnable = false;
+    boolean initialized = false;    // synchronizer
 
     // Intermediate values
     double W_prime;                 // computed in Mx_live
@@ -314,9 +296,9 @@ public class SurfaceFuel {
     double eta_M_dead, eta_M_live;  // computed in eta_M for I_r
     double I_r_dead, I_r_live;      // computed in I_r
 
-    FuelModel fuelModel;
-    FuelMoisture fuelMoisture;
-    Real fuelTemperature;
+    // Outputs
+    Real curedDeadHerbFuelLoad;
+    Real curedLiveHerbFuelLoad;
     Real characteristicSAV;
     Real meanBulkDensity;
     Real liveMx;
@@ -329,95 +311,129 @@ public class SurfaceFuel {
     private static final Logger logger = Logger.getLogger(SurfaceFuel.class.getName());
 
     /**
-     * Construct a new FuelCharacter object with "missing" values.
+     * Construct a new SurfaceFuel object with "missing" values.
      */
     public SurfaceFuel() {
-        this.tuple = new RealTuple(WildfireType.FUEL_BED);
-        this.fuelModel = BasicFuelModel.INVALID;
-        this.fuelMoisture = BasicFuelMoisture.INVALID;
-        this.nonBurnable = true;
+        //this.tuple = new RealTuple(WildfireType.FUEL_BED);
+        this.fuelModel = BasicFuelModel.INVALID_FUEL_MODEL;
+        this.fuelMoisture = BasicFuelMoisture.INVALID_FUEL_MOISTURE;
+        this.burnable = false;
+        this.initialized = false;
     }
 
     /**
      * Private constructor creates an instance initialized with the given values.
-     *
      */
-    private SurfaceFuel(FuelModel model, FuelMoisture moisture, RealTuple tuple, Real fuelTemp)
+    private SurfaceFuel(FuelModel model, FuelMoisture moisture, Real fuelTemp)
             throws VisADException, RemoteException {
-        this.tuple = new RealTuple(WildfireType.FUEL_BED, tuple.getRealComponents(), null);
         this.fuelModel = model;
         this.fuelMoisture = moisture;
         this.fuelTemperature = Reals.convertTo(FUEL_TEMP_F, fuelTemp);
+        //this.tuple = new RealTuple(WildfireType.FUEL_BED, tuple.getRealComponents(), null);
+        initialize();
+    }
 
-        double[] values = tuple.getValues();
+    /**
+     * Initializer from input parameters.
+     */
+    private void initialize() {
 
-        // Compute adjusted fine fuels (mix dead herbaceous with dead 1hr)
-        double w0_d = values[LOAD_DEAD_1H_INDEX];
-        double w0_h = values[LOAD_DEAD_HERB_INDEX];
-        double sv_d = values[SAV_DEAD_1H_INDEX];
-        double sv_h = values[SAV_DEAD_HERB_INDEX];
-        double deadFineFuelLoad = w0_d + w0_h;
-        double deadFineSAV = ((sv_d * sv_d * w0_d) + (sv_h * sv_h * w0_h))
-                / (sv_d * w0_d + sv_h * w0_h);
+        try {
+            // Prerequisites
+            if (this.fuelModel.equals(BasicFuelModel.INVALID_FUEL_MODEL)
+                    || this.fuelMoisture.equals(BasicFuelMoisture.INVALID_FUEL_MOISTURE)) {
+                this.initialized = false;
+                return;
+            }
+            // Transfer cured herbaceous fuel into the dead herbaceous fuel load
+            double curing = fuelModel.isDynamic() ? calcHerbaceousCuring(fuelMoisture) : 0;
+            double liveHerbLoad = fuelModel.getLiveHerbFuelLoad().getValue(FireUnit.lb_ft2);
+            double deadHerbLoad = 0;
+            if (liveHerbLoad > 0) {
+                deadHerbLoad = liveHerbLoad * curing;
+                liveHerbLoad -= deadHerbLoad;
+            }
+            curedDeadHerbFuelLoad = new Real(FUEL_LOAD, deadHerbLoad);
+            curedLiveHerbFuelLoad = new Real(FUEL_LOAD, liveHerbLoad);
 
-        // Populate arrays used in formulas that sum fuel particle components
-        this.sv = new double[]{
-            deadFineSAV,
-            values[SAV_DEAD_10H_INDEX],
-            values[SAV_DEAD_100H_INDEX],
-            values[SAV_LIVE_HERB_INDEX],
-            values[SAV_LIVE_WOODY_INDEX]};
-        this.sv_dead = new double[]{
-            deadFineSAV,
-            values[SAV_DEAD_10H_INDEX],
-            values[SAV_DEAD_100H_INDEX]};
-        this.sv_live = new double[]{
-            values[SAV_LIVE_HERB_INDEX],
-            values[SAV_LIVE_WOODY_INDEX]};
+            // Compute adjusted fine fuels (mix dead herbaceous with dead 1hr)
+            double w0_d = getDead1HrFuelLoad().getValue();  //values[LOAD_DEAD_1H_INDEX];
+            double w0_h = getDeadHerbFuelLoad().getValue(); //values[LOAD_DEAD_HERB_INDEX];
+            double sv_d = getDead1HrSAVRatio().getValue();  //values[SAV_DEAD_1H_INDEX];
+            double sv_h = getDeadHerbSAVRatio().getValue(); //values[SAV_DEAD_HERB_INDEX];
+            double deadFineFuelLoad = w0_d + w0_h;
+            double deadFineSAV = ((sv_d * sv_d * w0_d) + (sv_h * sv_h * w0_h))
+                    / (sv_d * w0_d + sv_h * w0_h);
 
-        this.w0 = new double[]{
-            deadFineFuelLoad,
-            values[LOAD_DEAD_10H_INDEX],
-            values[LOAD_DEAD_100H_INDEX],
-            values[LOAD_LIVE_HERB_INDEX],
-            values[LOAD_LIVE_WOODY_INDEX]};
-        this.w0_dead = new double[]{
-            deadFineFuelLoad,
-            values[LOAD_DEAD_10H_INDEX],
-            values[LOAD_DEAD_100H_INDEX]};
-        this.w0_live = new double[]{
-            values[LOAD_LIVE_HERB_INDEX],
-            values[LOAD_LIVE_WOODY_INDEX]};
+            // Populate arrays used in formulas that sum fuel particle components
+            this.sv = new double[]{
+                deadFineSAV,
+                getDead10HrSAVRatio().getValue(), //values[SAV_DEAD_10H_INDEX],
+                getDead100HrSAVRatio().getValue(), //values[SAV_DEAD_100H_INDEX],
+                getLiveHerbSAVRatio().getValue(), //values[SAV_LIVE_HERB_INDEX],
+                getLiveWoodySAVRatio().getValue(), //values[SAV_LIVE_WOODY_INDEX]
+            };
+            this.sv_dead = new double[]{
+                deadFineSAV,
+                getDead10HrSAVRatio().getValue(), //values[SAV_DEAD_10H_INDEX],
+                getDead100HrSAVRatio().getValue(), //values[SAV_DEAD_100H_INDEX]
+            };
+            this.sv_live = new double[]{
+                getLiveHerbSAVRatio().getValue(), //values[SAV_LIVE_HERB_INDEX],
+                getLiveWoodySAVRatio().getValue(), //values[SAV_LIVE_WOODY_INDEX]
+            };
 
-        this.Mf = new double[]{
-            fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
-            fuelMoisture.getDead10HrFuelMoisture().getValue(),
-            fuelMoisture.getDead100HrFuelMoisture().getValue(),
-            fuelMoisture.getLiveHerbFuelMoisture().getValue(),
-            fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
-        this.M_dead = new double[]{
-            fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
-            fuelMoisture.getDead10HrFuelMoisture().getValue(),
-            fuelMoisture.getDead100HrFuelMoisture().getValue()};
-        this.M_live = new double[]{
-            fuelMoisture.getLiveHerbFuelMoisture().getValue(),
-            fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
+            this.w0 = new double[]{
+                deadFineFuelLoad,
+                getDead10HrFuelLoad().getValue(), //values[LOAD_DEAD_10H_INDEX],
+                getDead100HrFuelLoad().getValue(), //values[LOAD_DEAD_100H_INDEX],
+                getLiveHerbFuelLoad().getValue(), //values[LOAD_LIVE_HERB_INDEX],
+                getLiveWoodyFuelLoad().getValue(), //values[LOAD_LIVE_WOODY_INDEX]
+            };
+            this.w0_dead = new double[]{
+                deadFineFuelLoad,
+                getDead10HrFuelLoad().getValue(), //values[LOAD_DEAD_10H_INDEX],
+                getDead100HrFuelLoad().getValue(), //values[LOAD_DEAD_100H_INDEX],
+            };
+            this.w0_live = new double[]{
+                getLiveHerbFuelLoad().getValue(), //values[LOAD_LIVE_HERB_INDEX],
+                getLiveWoodyFuelLoad().getValue(), //values[LOAD_LIVE_WOODY_INDEX]
+            };
 
-        // Precompute total weight [lb/ft2] and total SAV [ft2/ft3]
-        for (int i = 0; i < w0_dead.length; i++) {
-            w0_total += w0_dead[i];
-            sv_total += sv_dead[i];
-            w0_total_dead += w0_dead[i];
-            sv_total_dead += sv_dead[i];
+            this.Mf = new double[]{
+                fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
+                fuelMoisture.getDead10HrFuelMoisture().getValue(),
+                fuelMoisture.getDead100HrFuelMoisture().getValue(),
+                fuelMoisture.getLiveHerbFuelMoisture().getValue(),
+                fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
+            this.M_dead = new double[]{
+                fuelMoisture.getDead1HrFuelMoisture().getValue(), // dead herbaceous
+                fuelMoisture.getDead10HrFuelMoisture().getValue(),
+                fuelMoisture.getDead100HrFuelMoisture().getValue()};
+            this.M_live = new double[]{
+                fuelMoisture.getLiveHerbFuelMoisture().getValue(),
+                fuelMoisture.getLiveWoodyFuelMoisture().getValue()};
+
+            // Precompute total weight [lb/ft2] and total SAV [ft2/ft3]
+            for (int i = 0; i < w0_dead.length; i++) {
+                w0_total += w0_dead[i];
+                sv_total += sv_dead[i];
+                w0_total_dead += w0_dead[i];
+                sv_total_dead += sv_dead[i];
+            }
+            for (int i = 0; i < w0_live.length; i++) {
+                w0_total += w0_live[i];
+                sv_total += sv_live[i];
+                w0_total_live += w0_live[i];
+                sv_total_live += sv_live[i];
+            }
+
+            burnable = (w0_total > 0 && sv_total > 0) && fuelModel.isBurnable();
+            initialized = true;
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            initialized = false;
         }
-        for (int i = 0; i < w0_live.length; i++) {
-            w0_total += w0_live[i];
-            sv_total += sv_live[i];
-            w0_total_live += w0_live[i];
-            sv_total_live += sv_live[i];
-        }
-
-        nonBurnable = (w0_total == 0 || sv_total == 0) || !fuelModel.isBurnable();
     }
 
     /**
@@ -425,7 +441,56 @@ public class SurfaceFuel {
      * @return A WildfireType.FUEL_BED type RealTuple.
      */
     public RealTuple getTuple() {
-        return this.tuple;
+        try {
+            // Build a tuple with the proper UOMs
+            RealTuple tuple = new RealTuple(FUEL_BED, new Real[]{
+                getDeadHerbFuelLoad(),
+                getDead1HrFuelLoad(),
+                getDead10HrFuelLoad(),
+                getDead100HrFuelLoad(),
+                getLiveHerbFuelLoad(),
+                getLiveWoodyFuelLoad(),
+                getDeadHerbSAVRatio(), // dead SAV same as live SAV
+                getDead1HrSAVRatio(),
+                getDead10HrSAVRatio(),
+                getDead100HrSAVRatio(),
+                getLiveHerbSAVRatio(),
+                getLiveWoodySAVRatio(),
+                getFuelBedDepth(),
+                getMoistureOfExtinction()
+            }, null);
+            return tuple;
+        } catch (VisADException | RemoteException ex) {
+            Exceptions.printStackTrace(ex);
+            return new RealTuple(FUEL_BED);
+        }
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(FuelModelXmlAdapter.class)
+    public FuelModel getFuelModel() {
+        return fuelModel;
+    }
+
+    public void setFuelModel(FuelModel model) {
+        synchronized (this) {
+            this.fuelModel = model;
+            initialize();
+        }
+
+    }
+
+    @XmlElement
+    @XmlJavaTypeAdapter(FuelMoistureXmlAdapter.class)
+    public FuelMoisture getFuelMoisture() {
+        return fuelMoisture;
+    }
+
+    public void setFuelMoisture(FuelMoisture fuelMoisture) {
+        synchronized (this) {
+            this.fuelMoisture = fuelMoisture;
+            initialize();
+        }
     }
 
     /**
@@ -434,9 +499,9 @@ public class SurfaceFuel {
      * @return rho_b [lbs/ft3]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getMeanBulkDensity() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(RHO_B, 0);
         }
         if (this.meanBulkDensity == null) {
@@ -453,7 +518,7 @@ public class SurfaceFuel {
      * @return rho_p [lbs/ft3]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getFuelParticleDensity() {
         return new Real(RHO_P, 32); // Albini's constant.
     }
@@ -467,9 +532,9 @@ public class SurfaceFuel {
      * @return beta [dimensionless]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getMeanPackingRatio() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(BETA, 0);
         } else if (this.meanPackingRatio == null) {
             double beta = Rothermel.meanPackingRatio(
@@ -486,9 +551,9 @@ public class SurfaceFuel {
      * @return beta_opt [dimensionless]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getOptimalPackingRatio() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(BETA_OPT, 0);
         }
         double beta_opt = Rothermel.optimalPackingRatio(
@@ -502,9 +567,9 @@ public class SurfaceFuel {
      * @return beta_ratio [dimensionless]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getRelativePackingRatio() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(BETA_RATIO, 0);
         }
         double beta = getMeanPackingRatio().getValue();
@@ -519,9 +584,9 @@ public class SurfaceFuel {
      * @return sigma [ft2/ft3]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getCharacteristicSAV() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(SIGMA, 0);
         }
         if (this.characteristicSAV == null) {
@@ -536,9 +601,9 @@ public class SurfaceFuel {
      * @return Mx_live
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLiveMoistureOfExt() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(MX_LIVE, 0);
         }
         if (this.liveMx == null) {
@@ -582,7 +647,7 @@ public class SurfaceFuel {
      * @return eta_s
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getMineralDamping() {
         // Rothermel 1972: eq. (62)
         // s_e = silica-free ash content of fuel - Albini's constant
@@ -602,10 +667,10 @@ public class SurfaceFuel {
      * @return eta_M
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getMoistureDamping() {
-        if (nonBurnable) {
-            return new Real(0);
+        if (!isValid()) {
+            return new Real(ETA_M, 0);
         }
         if (this.moistureDamping == null) {
             // Intermediates
@@ -694,7 +759,7 @@ public class SurfaceFuel {
      * @return 8,000 BTU/lb
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getLowHeatContent() {
         return convertTo(HEAT_CONTENT_US, this.fuelModel.getLowHeatContent());
     }
@@ -705,9 +770,9 @@ public class SurfaceFuel {
      * @return gamma [1/min]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getReactionVelocity() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(GAMMA, 0);
         }
         if (this.reactionVelocity == null) {
@@ -727,9 +792,9 @@ public class SurfaceFuel {
      * @return I_r.
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getReactionIntensity() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(I_R, 0);
         }
         if (reactionIntensity == null) {
@@ -754,9 +819,9 @@ public class SurfaceFuel {
      * @return tau [min]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getFlameResidenceTime() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(0);
         }
         double tau = Rothermel.flameResidenceTime(getCharacteristicSAV().getValue());
@@ -769,9 +834,9 @@ public class SurfaceFuel {
      * @return hpa [Btu/ft2]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getHeatRelease() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(0);
         }
         double hpa = Rothermel.heatRelease(
@@ -789,9 +854,9 @@ public class SurfaceFuel {
      * @return xi
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getPropagatingFluxRatio() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(0);
         }
         double xi = Rothermel.propagatingFluxRatio(
@@ -814,9 +879,9 @@ public class SurfaceFuel {
      * @return [Btu/ft3]
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getHeatSink() {
-        if (nonBurnable) {
+        if (!isValid()) {
             return new Real(0);
         }
         // Effective heating number for each particle: epsilon 
@@ -846,226 +911,115 @@ public class SurfaceFuel {
     }
 
     /**
-     * Gets the dead herbaceous fuel loading.
-     * @return [lb/ft2]
-     */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
-    public Real getDeadHerbFuelLoad() {
-        try {
-            return (Real) tuple.getComponent(LOAD_DEAD_HERB_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
      * Gets the 1 hour dead fuel loading.
-     * @return [lb/ft2]
+     * @return [ton/acre]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead1HrFuelLoad() {
-        try {
-            return (Real) tuple.getComponent(LOAD_DEAD_1H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_LOAD_DEAD_1H, fuelModel.getDead1HrFuelLoad());
     }
 
     /**
      * Gets the 10 hour dead fuel loading.
-     * @return [lb/ft2]
+     * @return [ton/acre]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead10HrFuelLoad() {
-        try {
-            return (Real) tuple.getComponent(LOAD_DEAD_10H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_LOAD_DEAD_10H, fuelModel.getDead10HrFuelLoad());
     }
 
     /**
      * Gets the 100 hour dead fuel loading.
-     * @return [lb/ft2]
+     * @return [ton/acre]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead100HrFuelLoad() {
-        try {
-            return (Real) tuple.getComponent(LOAD_DEAD_100H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_LOAD_DEAD_100H, fuelModel.getDead100HrFuelLoad());
     }
 
     /**
-     * Gets the adjusted live herbaceous fuel loading.
-     * @return [lb/ft2]
+     * Gets the cured dead herbaceous fuel loading.
+     * @return [ton/acre]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    public Real getDeadHerbFuelLoad() {
+        return convertTo(FUELBED_LOAD_DEAD_HERB, this.curedDeadHerbFuelLoad);
+    }
+
+    /**
+     * Gets the cured live herbaceous fuel loading.
+     * @return [ton/acre]
+     */
     public Real getLiveHerbFuelLoad() {
-        try {
-            return (Real) tuple.getComponent(LOAD_LIVE_HERB_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_LOAD_LIVE_HERB, this.curedLiveHerbFuelLoad);
     }
 
     /**
      * Gets the live woody fuel loading.
-     * @return [lb/ft2]
+     * @return [ton/acre]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveWoodyFuelLoad() {
-        try {
-            return (Real) tuple.getComponent(LOAD_LIVE_WOODY_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    /**
-     * Gets the dead herbaceous fuel surface-area-to-volume ratio.
-     * @return [ft2/ft3]
-     */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
-    public Real getDeadHerbSAVRatio() {
-        try {
-            return (Real) tuple.getComponent(SAV_DEAD_HERB_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_LOAD_LIVE_WOODY, fuelModel.getLiveWoodyFuelLoad());
     }
 
     /**
      * Gets the 1 hour dead fuel surface-area-to-volume ratio.
      * @return [ft2/ft3]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead1HrSAVRatio() {
-        try {
-            return (Real) tuple.getComponent(SAV_DEAD_1H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_SAV_DEAD_1H, fuelModel.getDead1HrSAVRatio());
     }
 
     /**
      * Gets the 10 hour dead fuel surface-area-to-volume ratio.
      * @return [ft2/ft3]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead10HrSAVRatio() {
-        try {
-            return (Real) tuple.getComponent(SAV_DEAD_10H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_SAV_DEAD_10H, fuelModel.getDead10HrSAVRatio());
     }
 
     /**
      * Gets the 100 hour dead fuel surface-area-to-volume ratio.
      * @return [ft2/ft3]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getDead100HrSAVRatio() {
-        try {
-            return (Real) tuple.getComponent(SAV_DEAD_100H_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_SAV_DEAD_100H, fuelModel.getDead100HrSAVRatio());
+    }
+
+    /**
+     * Gets the dead herbaceous fuel surface-area-to-volume ratio.
+     * @return [ft2/ft3]
+     */
+    public Real getDeadHerbSAVRatio() {
+        return convertTo(FUELBED_SAV_DEAD_HERB, fuelModel.getLiveHerbSAVRatio()); // dead SAV ratio is same as live SAV ratio
     }
 
     /**
      * Gets the live herbaceous fuel surface-area-to-volume ratio.
      * @return [ft2/ft3]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveHerbSAVRatio() {
-        try {
-            return (Real) tuple.getComponent(SAV_LIVE_HERB_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_SAV_LIVE_HERB, fuelModel.getLiveHerbSAVRatio());
     }
 
     /**
      * Gets the live woody fuel loading surface-area-to-volume ratio.
      * @return [ft2/ft3]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getLiveWoodySAVRatio() {
-        try {
-            return (Real) tuple.getComponent(SAV_LIVE_WOODY_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUELBED_SAV_LIVE_WOODY, fuelModel.getLiveWoodySAVRatio());
     }
 
     /**
      * Gets the fuel bed depth.
      * @return [foot]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
     public Real getFuelBedDepth() {
-        try {
-            return (Real) tuple.getComponent(FUEL_BED_DEPTH_INDEX);
-        } catch (VisADException | RemoteException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return convertTo(FUEL_BED_DEPTH, fuelModel.getFuelBedDepth());
     }
 
     /**
-     * Gets the fuel model used to construct the fuel bed.
-     * @return FuelModel
-     */
-    public FuelModel getFuelModel() {
-        return this.fuelModel;
-    }
-
-    /**
-     *
-     * @return True if the fuel model is a burnable type (e.g., not water, urban, etc.)
-     */
-    @XmlElement
-    public boolean isBurnable() {
-        return !this.nonBurnable;
-    }
-
-    /**
-     * Gets the dead moisture of extinction percent. Fuel moisture content is expressed as the mass
-     * of water as a percentage of oven-dry mass.
-     *
-     * This value is used as a way to predict the effect of moisture content on fire behavior
-     * (through the moisture damping coefficient). The greater the difference between actual
-     * moisture content and the moisture of extinction, the smaller the moisture damping coefficient
-     * and therefore the greater the spread rate.
+     * Gets the moisture of extinction.
      * @return [percent]
      */
-    @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
-    public Real getDeadMoistureOfExt() {
-        return Reals.convertTo(MX_DEAD, fuelModel.getMoistureOfExtinction());
-    }
-
-    public FuelMoisture getFuelMoisture() {
-        return fuelMoisture;
-    }
-
-    public Real getDeadHerbFuelMoisture() {
-        return fuelMoisture.getDead1HrFuelMoisture();   // dead herbaceous same as dead 1 hour.
+    public Real getMoistureOfExtinction() {
+        return convertTo(MX_DEAD, fuelModel.getMoistureOfExtinction());
     }
 
     public Real getDead1HrFuelMoisture() {
@@ -1080,6 +1034,11 @@ public class SurfaceFuel {
         return fuelMoisture.getDead100HrFuelMoisture();
     }
 
+    public Real getDeadHerbFuelMoisture() {
+        // dead herbaceous fuel moisture is same as dead 1 hour.
+        return fuelMoisture.getDead1HrFuelMoisture();
+    }
+
     public Real getLiveHerbFuelMoisture() {
         return fuelMoisture.getLiveHerbFuelMoisture();
     }
@@ -1089,13 +1048,58 @@ public class SurfaceFuel {
     }
 
     /**
+     * Gets the dead moisture of extinction percent. Fuel moisture content is expressed as the mass
+     * of water as a percentage of oven-dry mass.
+     *
+     * This value is used as a way to predict the effect of moisture content on fire behavior
+     * (through the moisture damping coefficient). The greater the difference between actual
+     * moisture content and the moisture of extinction, the smaller the moisture damping coefficient
+     * and therefore the greater the spread rate.
+     * @return [percent]
+     */
+    public Real getDeadMoistureOfExt() {
+        return convertTo(MX_DEAD, fuelModel.getMoistureOfExtinction());
+    }
+
+    /**
+     * Gets the burnable state of this fuel.
+     * @return True if the fuel model is a burnable type (e.g., not water, urban, etc.)
+     */
+    @XmlElement
+    public boolean isBurnable() {
+        return this.burnable;
+    }
+
+    /**
+     * Gets the initialized state, set by <code>initialized()</code>.
+     * @return True if this instance has been initialized.
+     */
+    public boolean isInitialized() {
+        return this.initialized;
+    }
+
+    private boolean isValid() {
+        return isInitialized() && isBurnable();
+    }
+
+    /**
      * Gets the fuel temperature supplied in the constructor.
      * @return The fuel temperature in Fahrenheit; may contain a missing value.
      */
     @XmlElement
-    @XmlJavaTypeAdapter(RealXmlAdaptor.class)
+    @XmlJavaTypeAdapter(RealXmlAdapter.class)
     public Real getFuelTemperature() {
         return fuelTemperature;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return report();
+        } catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            return getTuple().toString();
+        }
     }
 
     public String report() throws VisADException {
@@ -1222,7 +1226,6 @@ public class SurfaceFuel {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 53 * hash + Objects.hashCode(this.tuple);
         hash = 53 * hash + Objects.hashCode(this.fuelModel);
         hash = 53 * hash + Objects.hashCode(this.fuelMoisture);
         return hash;
@@ -1240,10 +1243,7 @@ public class SurfaceFuel {
         if (!Objects.equals(this.fuelModel, other.fuelModel)) {
             return false;
         }
-        if (!Objects.equals(this.fuelMoisture, other.fuelMoisture)) {
-            return false;
-        }
-        return Objects.equals(this.tuple, other.tuple);
+        return Objects.equals(this.fuelMoisture, other.fuelMoisture);
     }
 
 }
