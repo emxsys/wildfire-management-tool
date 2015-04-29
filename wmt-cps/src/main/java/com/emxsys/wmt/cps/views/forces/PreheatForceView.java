@@ -48,10 +48,8 @@ import java.beans.PropertyChangeEvent;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -141,24 +139,6 @@ public final class PreheatForceView extends javax.swing.JPanel {
             fuelTempGauge.setBorder(lineBorder);    // indicates manual override
         });
 
-    }
-
-    /**
-     * Updates the clock.
-     */
-    public void updateTime(ZonedDateTime time) {
-        // Update the Hour plot
-        ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
-        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[SOLAR_HOUR_SERIES];
-        final double DEG_PER_HOUR12 = 360 / 12.0;
-        double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
-        double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
-        hourData.setValue(hourDegrees);
-        //canvas.draw();
-
-        // Set the title
-        String title = time.format(titleFormatter);
-        solarChart.setTitle(title);
     }
 
     /**
@@ -356,6 +336,10 @@ public final class PreheatForceView extends javax.swing.JPanel {
             setSeriesOutlinePaint(SOLAR_HOUR_SERIES, Color.black); //        
         }
 
+        /**
+         * Update the solar vectors
+         * @param aziumthAngle 
+         */
         public void setAzimuthAngle(Real aziumthAngle) {
             try {
                 // Update the Azimuth Plot (solar vectors)
@@ -367,13 +351,19 @@ public final class PreheatForceView extends javax.swing.JPanel {
             }
         }
 
+        /**
+         * Update the clock hands
+         * @param localTime 
+         */
         public void setClockTime(LocalTime localTime) {
             // Update the Time Plot (clock hands)
-            DefaultValueDataset timeData = (DefaultValueDataset) getDatasets()[SOLAR_HOUR_SERIES];
-            final double MINUTES_12_HOURS = 12 * 60;
-            final double MINUTES_TO_DEGREES = 360.0 / MINUTES_12_HOURS;  // in 12 hours
-            double H = (localTime.get(MINUTE_OF_DAY) % MINUTES_12_HOURS) * MINUTES_TO_DEGREES;  // Local AM/PM time in degrees
-            timeData.setValue(H);
+            DefaultValueDataset hourData = (DefaultValueDataset) getDatasets()[SOLAR_HOUR_SERIES];
+
+            final double DEG_PER_HOUR_12 = 360 / 12.0;
+            double hour = localTime.get(ChronoField.MINUTE_OF_DAY) / 60.0;
+            double hourDegrees = (hour % 12.0) * DEG_PER_HOUR_12;
+            hourData.setValue(hourDegrees);
+
         }
     }
 
