@@ -29,6 +29,8 @@
  */
 package com.emxsys.solar.api;
 
+import com.emxsys.gis.api.Coord3D;
+import java.time.ZonedDateTime;
 import visad.Real;
 
 /**
@@ -37,6 +39,19 @@ import visad.Real;
  * @author Bruce Schubert <bruce@emxsys.com>
  */
 public interface Sunlight {
+
+    /**
+     * Gets the date/time of the sunlight observation, i.e., the time at which the sunlight values
+     * are valid.
+     * @return The sunlight observation time.
+     */
+    ZonedDateTime getDateTime();
+
+    /**
+     * Gets the observer's location, i.e., where the sunlight values are applicable.
+     * @return The geographic coordinates of the sunlight observer.
+     */
+    Coord3D getLocation();
 
     /**
      * Gets the declination: the earth's tilt angle relative to the sun at a given date and time. It

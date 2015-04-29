@@ -194,6 +194,7 @@ public class BasicSunlight implements Sunlight {
      * Gets the date/time for when the sunlight is calculated.
      * @return The sunlight observation time.
      */
+    @Override
     public ZonedDateTime getDateTime() {
         return dateTime;
     }
@@ -211,6 +212,7 @@ public class BasicSunlight implements Sunlight {
      * Gets the location from where the sunlight is calculated.
      * @return The sunlight observer's location.
      */
+    @Override
     public Coord3D getLocation() {
         return location;
     }
