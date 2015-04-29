@@ -47,9 +47,11 @@ import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import static java.time.temporal.ChronoField.MINUTE_OF_DAY;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -91,8 +93,9 @@ public final class PreheatForceView extends javax.swing.JPanel {
     private LineBorder lineBorder = new LineBorder(Color.black);
     private EmptyBorder emptyBorder = new EmptyBorder(1, 1, 1, 1);
 
-    private static final int AZIMUTH_SERIES = 0;
-    private static final int HOUR_SERIES = 1;
+    // SolarChart/SolarPlot members
+    private static final int SOLAR_AZIMUTH_SERIES = 0;
+    private static final int SOLAR_HOUR_SERIES = 1;
     private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("dd-MMM, HH:mm z");
 
     //private DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern(TimeOptions.getTimeFormat());
@@ -146,7 +149,7 @@ public final class PreheatForceView extends javax.swing.JPanel {
     public void updateTime(ZonedDateTime time) {
         // Update the Hour plot
         ClockCompassPlot compassPlot = (ClockCompassPlot) solarChart.getPlot();
-        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[HOUR_SERIES];
+        DefaultValueDataset hourData = (DefaultValueDataset) compassPlot.getDatasets()[SOLAR_HOUR_SERIES];
         final double DEG_PER_HOUR12 = 360 / 12.0;
         double hour = time.get(ChronoField.MINUTE_OF_DAY) / 60.;
         double hourDegrees = (hour % 12.0) * DEG_PER_HOUR12;
@@ -164,15 +167,17 @@ public final class PreheatForceView extends javax.swing.JPanel {
     public void updateSunlight(Sunlight sun) {
 
         try {
-            // Update the Azimuth Plot
             SolarPlot solarPlot = (SolarPlot) solarChart.getPlot();
-            double A = sun.getAzimuthAngle().getValue(CommonUnit.degree);
-            DefaultValueDataset compassData = (DefaultValueDataset) solarPlot.getDatasets()[AZIMUTH_SERIES];
-            compassData.setValue(A);
+
+            // Update the Azimuth Plot (solar vectors)
+            solarPlot.setAzimuthAngle(sun.getAzimuthAngle());
 
             // Color the background based on the Zenith angle (above or below the horizon)
             double Z = Math.abs(sun.getZenithAngle().getValue(CommonUnit.degree));
             solarPlot.night = (Z > 90);
+
+            // Update the Time Plot (clock hands)
+            solarPlot.setClockTime(sun.getDateTime().toLocalTime());
 
             // Set the title
             //  Using date/time instead            
@@ -200,8 +205,8 @@ public final class PreheatForceView extends javax.swing.JPanel {
 
         Color seriesColor = solarPlot.night || solarPlot.shaded ? Color.lightGray : Color.red;
         Color centerColor = solarPlot.night ? Color.darkGray : Color.white;
-        solarPlot.setSeriesPaint(AZIMUTH_SERIES, seriesColor);
-        solarPlot.setSeriesOutlinePaint(AZIMUTH_SERIES, seriesColor);
+        solarPlot.setSeriesPaint(SOLAR_AZIMUTH_SERIES, seriesColor);
+        solarPlot.setSeriesOutlinePaint(SOLAR_AZIMUTH_SERIES, seriesColor);
         solarPlot.setRoseCenterPaint(centerColor);
         //canvas.draw();
     }
@@ -339,16 +344,36 @@ public final class PreheatForceView extends javax.swing.JPanel {
             setDrawBorder(false);
 
             // The first (default) dataset is the direction of Solar Radiation
-            setSeriesNeedle(AZIMUTH_SERIES, WIND_NEEDLE);
-            setSeriesPaint(AZIMUTH_SERIES, Color.red);        // arrow heads
-            setSeriesOutlinePaint(AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
+            setSeriesNeedle(SOLAR_AZIMUTH_SERIES, WIND_NEEDLE);
+            setSeriesPaint(SOLAR_AZIMUTH_SERIES, Color.red);        // arrow heads
+            setSeriesOutlinePaint(SOLAR_AZIMUTH_SERIES, Color.red); // arrow shafts and arrow head outline
 
             // The second  dataset is the Time / Clock
             ValueDataset dataset = new DefaultValueDataset(new Double(0.0));
             addDataset(dataset, null);
-            setSeriesNeedle(HOUR_SERIES, CLOCK_HAND_NEEDLE);
-            setSeriesPaint(HOUR_SERIES, Color.black);        // arrow heads
-            setSeriesOutlinePaint(HOUR_SERIES, Color.black); // arrow shafts and arrow head outline        
+            setSeriesNeedle(SOLAR_HOUR_SERIES, CLOCK_HAND_NEEDLE);
+            setSeriesPaint(SOLAR_HOUR_SERIES, Color.black);        // clock hands
+            setSeriesOutlinePaint(SOLAR_HOUR_SERIES, Color.black); //        
+        }
+
+        public void setAzimuthAngle(Real aziumthAngle) {
+            try {
+                // Update the Azimuth Plot (solar vectors)
+                DefaultValueDataset compassData = (DefaultValueDataset) getDatasets()[SOLAR_AZIMUTH_SERIES];
+                double A = aziumthAngle.getValue(CommonUnit.degree);
+                compassData.setValue(A);
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+
+        public void setClockTime(LocalTime localTime) {
+            // Update the Time Plot (clock hands)
+            DefaultValueDataset timeData = (DefaultValueDataset) getDatasets()[SOLAR_HOUR_SERIES];
+            final double MINUTES_12_HOURS = 12 * 60;
+            final double MINUTES_TO_DEGREES = 360.0 / MINUTES_12_HOURS;  // in 12 hours
+            double H = (localTime.get(MINUTE_OF_DAY) % MINUTES_12_HOURS) * MINUTES_TO_DEGREES;  // Local AM/PM time in degrees
+            timeData.setValue(H);
         }
     }
 
