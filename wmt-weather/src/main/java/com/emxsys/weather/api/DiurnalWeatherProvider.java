@@ -30,6 +30,7 @@
 package com.emxsys.weather.api;
 
 import com.emxsys.gis.api.Coord3D;
+import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.solar.api.Sunlight;
 import com.emxsys.solar.spi.SunlightProviderFactory;
 import com.emxsys.util.ImageUtil;
@@ -37,7 +38,9 @@ import com.emxsys.visad.Reals;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatialField;
 import com.emxsys.visad.TemporalDomain;
+import static com.emxsys.weather.api.WeatherPreferences.*;
 import static com.emxsys.weather.api.WeatherType.*;
+import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
 import com.emxsys.weather.wizards.DiurnalWeatherWizard;
 import java.awt.event.ActionEvent;
@@ -51,11 +54,14 @@ import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.WeakListeners;
 import visad.FlatField;
 import visad.Real;
 import visad.RealTuple;
@@ -84,48 +90,50 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     private TreeMap<LocalTime, Real> windDirs = new TreeMap<>();
     private TreeMap<LocalTime, Real> clouds = new TreeMap<>();
 
+    // Initialize the WeatherObserver service.  It will be place in the lookup.
     private WeatherObserver observer = new WeatherObserver() {
 
-        /**
-         * Gets a WeatherModel from the weather values stored in this provider.
-         * @param areaOfInterest Each coordinate in the spatial domain will get the same values.
-         * @param age Ignored. The current time will be used for the temporal domain.
-         * @return a new WeatherModel.
-         */
         @Override
         public WeatherModel getLatestObservations(SpatialDomain areaOfInterest, Duration age) {
-            TemporalDomain timeDomain = TemporalDomain.from(ZonedDateTime.now());
-            return getObservations(areaOfInterest, timeDomain);
+            ZonedDateTime start = ZonedDateTime.now();
+            ZonedDateTime end = start.plus(age);
+            TemporalDomain timeDomain = TemporalDomain.from(start, end);
+            return getWeatherModel(areaOfInterest, timeDomain);
         }
 
-        /**
-         * Gets a WeatherModel from the weather values stored in this provider.
-         * @param areaOfInterest Each coordinate in the domain will get the same diurnal values.
-         * @param timeframe Each time in the domain will get an hourly diurnal value.
-         * @return a new WeatherModel.
-         */
         @Override
         public WeatherModel getObservations(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
-
-            final int numTimes = timeframe.getDomainSetLength();
-            final int numLatLons = areaOfInterest.getDomainSetLength();
-
-            SpatialField[] fields = new SpatialField[numTimes];
-            for (int t = 0; t < numTimes; t++) {
-                BasicWeather weather = getWeather(timeframe.getZonedDateTimeAt(t));
-                RealTuple tuple = weather.getTuple();
-                double[] values = tuple.getValues();
-                double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
-                for (int xy = 0; xy < numLatLons; xy++) {
-                    for (int dim = 0; dim < tuple.getDimension(); dim++) {
-                        rangeSamples[dim][xy] = values[dim];
-                    }
-                }
-                fields[t] = SpatialField.from(areaOfInterest, FIRE_WEATHER, rangeSamples);
-            }
-            return WeatherModel.from(timeframe, fields);
+            return getWeatherModel(areaOfInterest, timeframe);
         }
     };
+
+    // Initialize the WeatherForecaster service.  It will be place in the lookup.
+    private WeatherForecaster forecaster = new WeatherForecaster() {
+
+        @Override
+        public WeatherModel getForecast(SpatialDomain spatialDomain, TemporalDomain temporalDomain) {
+            return getWeatherModel(spatialDomain, temporalDomain);
+        }
+    };
+
+    /**
+     * Creates a new DiurnalWeatherProvider from the WeatherPreferences with a
+     * PreferenceChangeListener on the WeatherPreferences.
+     * @return A new DiurnalWeatherProvider synchronized with the WeatherPreferences.
+     */
+    public static DiurnalWeatherProvider fromWeatherPreferences() {
+        DiurnalWeatherProvider provider = new DiurnalWeatherProvider();
+        provider.initializeFromWeatherPreferences();
+
+        // Add a PreferenceChangeListener to the prefernces that reinitializes the 
+        // the provider whenever the preferences change.
+        WeakListeners.create(PreferenceChangeListener.class,
+                (PreferenceChangeListener) (PreferenceChangeEvent evt) -> {
+                    provider.initializeFromWeatherPreferences();
+                }, provider);
+
+        return provider;
+    }
 
     /**
      * Constructor.
@@ -133,6 +141,7 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
     public DiurnalWeatherProvider() {
         // Add a WeatherObserver service
         getContent().add(this.observer);
+        getContent().add(this.forecaster);
     }
 
     /**
@@ -150,42 +159,105 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         return "Diurnal Weather";
     }
 
-    public void initializeAirTemperatures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
-        this.tempAtSunrise = Reals.convertTo(AIR_TEMP_F, tempAtSunrise);
-        this.tempAtNoon = Reals.convertTo(AIR_TEMP_F, tempAtNoon);
-        this.tempAt1400 = Reals.convertTo(AIR_TEMP_F, tempAt1400);
-        this.tempAtSunset = Reals.convertTo(AIR_TEMP_F, tempAtSunset);
-    }
-
-    public void initializeRelativeHumidities(Real rhAtSunrise, Real rhAtNoon, Real rhAt1400, Real rhAtSunset) {
-        this.rhAtSunrise = rhAtSunrise;
-        this.rhAtNoon = rhAtNoon;
-        this.rhAt1400 = rhAt1400;
-        this.rhAtSunset = rhAtSunset;
-    }
-
-    public void initializeWindSpeeds(TreeMap<LocalTime, Real> windSpeeds) {
-        Collection<Real> values = windSpeeds.values();
-        for (Real real : values) {
-            if (real.getValue() < 0) {
-                throw new IllegalArgumentException(Bundle.ERR_DiurnalNegativeValues());
-            }
+    /**
+     * Gets the diurnal weather at the specific time, using the values provided by setSunlight() for
+     * sunrise and sunset.
+     *
+     * @param time The time for the weather.
+     * @return A {@code BasicWeather} containing the weather at the specified time.
+     */
+    public BasicWeather getWeather(ZonedDateTime time) {
+        if (sunlight == null) {
+            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
-        this.windSpds = windSpeeds;
+        return BasicWeather.fromReals(
+                getAirTemperature(time.toLocalTime()),
+                getRelativeHumidity(time.toLocalTime()),
+                getWindSpeed(time.toLocalTime()),
+                getWindDirection(time.toLocalTime()),
+                getCloudCover(time.toLocalTime()));
     }
 
-    public void initializeWindDirections(TreeMap<LocalTime, Real> windDirections) {
-        this.windDirs = windDirections;
+    /**
+     * Gets the diurnal weather at the specific time, using the coordinate to determine sunrise and
+     * sunset.
+     *
+     * @param time The time for the weather.
+     * @param coord The coordinate used to determine sunrise and sunset.
+     * @return A {@code BasicWeather} containing the weather at the specified time and location.
+     */
+    public BasicWeather getWeather(ZonedDateTime time, Coord3D coord) {
+        initializeSunlight(time, coord);
+        return getWeather(time);
     }
 
-    public void initializeCloudCovers(TreeMap<LocalTime, Real> cloudCovers) {
-        Collection<Real> values = cloudCovers.values();
-        for (Real real : values) {
-            if (real.getValue() < 0) {
-                throw new IllegalArgumentException(Bundle.ERR_DiurnalNegativeValues());
-            }
+    /**
+     * Gets the diurnal weather cycles for the given temporal domain.
+     *
+     * @param domain The time domain.
+     * @return A FlatField (time -> FIRE_WEATHER).
+     */
+    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
+    public FlatField getHourlyWeather(TemporalDomain domain) {
+        if (sunlight == null) {
+            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
         }
-        this.clouds = cloudCovers;
+        try {
+            // Create a FieldImpl and the samples for the hourly weather range
+            FlatField wxField = domain.createSimpleTemporalField(FIRE_WEATHER); // FunctionType: time -> fire weather)
+            double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][wxField.getLength()];
+
+            // Create the wx range samples...
+            for (int i = 0; i < wxField.getLength(); i++) {
+                ZonedDateTime time = domain.getZonedDateTimeAt(i);
+                wxSamples[AIR_TEMP_INDEX][i] = getAirTemperature(time.toLocalTime()).getValue();
+                wxSamples[REL_HUMIDITY_INDEX][i] = getRelativeHumidity(time.toLocalTime()).getValue();
+                wxSamples[WIND_SPEED_INDEX][i] = getWindSpeed(time.toLocalTime()).getValue();
+                wxSamples[WIND_DIR_INDEX][i] = getWindDirection(time.toLocalTime()).getValue();
+                wxSamples[CLOUD_COVER_INDEX][i] = getCloudCover(time.toLocalTime()).getValue();
+            }
+            // ...and put the weather values above into it
+            wxField.setSamples(wxSamples);
+            return wxField;
+
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+
+    /**
+     * Gets a WeatherModel from the weather values stored in this provider.
+     *
+     * @param areaOfInterest Each coordinate in the domain will use the same diurnal values, with
+     * variations based on sunrise/sunset times for the locations.
+     * @param timeframe Each time in the domain will get an hourly diurnal value.
+     * @return a new WeatherModel.
+     */
+    public WeatherModel getWeatherModel(SpatialDomain areaOfInterest, TemporalDomain timeframe) {
+
+        final int numTimes = timeframe.getDomainSetLength();
+        final int numLatLons = areaOfInterest.getDomainSetLength();
+
+        // Create and populate array of fields indexed by time to create a WeatherModel
+        SpatialField[] fields = new SpatialField[numTimes];
+        for (int t = 0; t < numTimes; t++) {
+            // Create spatial range samples for the selected time [t].
+            double[][] rangeSamples = new double[FIRE_WEATHER.getDimension()][numLatLons];
+            for (int xy = 0; xy < numLatLons; xy++) {
+                // Get the weather for time and place
+                GeoCoord3D coord = GeoCoord3D.fromLatLonPoint(areaOfInterest.getLatLonPointAt(xy));
+                BasicWeather weather = getWeather(timeframe.getZonedDateTimeAt(t), coord);
+                // Populate the range samples
+                RealTuple tuple = weather.getTuple();
+                double[] values = tuple.getValues();
+                for (int dim = 0; dim < tuple.getDimension(); dim++) {
+                    rangeSamples[dim][xy] = values[dim];
+                }
+            }
+            fields[t] = SpatialField.from(areaOfInterest, FIRE_WEATHER, rangeSamples);
+        }
+        return WeatherModel.from(timeframe, fields);
     }
 
     public Real getTempAtSunrise() {
@@ -232,6 +304,62 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
         return clouds;
     }
 
+    public void initializeFromWeatherPreferences() {
+        initializeAirTemperatures(
+                WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_SUNRISE),
+                WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_1200),
+                WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_1400),
+                WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_SUNSET)
+        );
+        initializeRelativeHumidities(
+                WeatherPreferences.getRelHumidityValue(PREF_RH_SUNRISE),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_1200),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_1400),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_SUNSET)
+        );
+        initializeWindDirections(WeatherPreferences.getDiurnalWindDirs());
+        initializeWindSpeeds(WeatherPreferences.getDiurnalWindSpeeds());
+        initializeCloudCovers(WeatherPreferences.getDiurnalClouds());
+    }
+
+    public void initializeAirTemperatures(Real tempAtSunrise, Real tempAtNoon, Real tempAt1400, Real tempAtSunset) {
+        this.tempAtSunrise = Reals.convertTo(AIR_TEMP_F, tempAtSunrise);
+        this.tempAtNoon = Reals.convertTo(AIR_TEMP_F, tempAtNoon);
+        this.tempAt1400 = Reals.convertTo(AIR_TEMP_F, tempAt1400);
+        this.tempAtSunset = Reals.convertTo(AIR_TEMP_F, tempAtSunset);
+    }
+
+    public void initializeRelativeHumidities(Real rhAtSunrise, Real rhAtNoon, Real rhAt1400, Real rhAtSunset) {
+        this.rhAtSunrise = rhAtSunrise;
+        this.rhAtNoon = rhAtNoon;
+        this.rhAt1400 = rhAt1400;
+        this.rhAtSunset = rhAtSunset;
+    }
+
+    public void initializeWindSpeeds(TreeMap<LocalTime, Real> windSpeeds) {
+        Collection<Real> values = windSpeeds.values();
+        for (Real real : values) {
+            if (real.getValue() < 0) {
+                throw new IllegalArgumentException(Bundle.ERR_DiurnalNegativeValues());
+            }
+        }
+        this.windSpds = windSpeeds;
+    }
+
+    public void initializeWindDirections(TreeMap<LocalTime, Real> windDirections) {
+        this.windDirs = windDirections;
+    }
+
+    public void initializeCloudCovers(TreeMap<LocalTime, Real> cloudCovers) {
+        Collection<Real> values = cloudCovers.values();
+        for (Real real : values) {
+            if (real.getValue() < 0) {
+                throw new IllegalArgumentException(Bundle.ERR_DiurnalNegativeValues());
+            }
+        }
+        this.clouds = cloudCovers;
+    }
+
     /**
      * Creates the sunlight used for the sunrise and sunset times.
      * @param date Date used to determine sunrise and sunset.
@@ -247,61 +375,6 @@ public class DiurnalWeatherProvider extends AbstractWeatherProvider {
      */
     public void setSunlight(Sunlight sunlight) {
         this.sunlight = sunlight;
-    }
-
-    /**
-     * Gets the diurnal weather at the specific time; the coordinate parameter is ignored.
-     * Implements the SpotWeatherObserver functional interface.
-     *
-     * @param time The time for the weather.
-     * @return A {@code BasicWeather} containing the weather at the specified time.
-     * @see SpotWeatherObserver
-     */
-    public BasicWeather getWeather(ZonedDateTime time) {
-        if (sunlight == null) {
-            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
-        }
-        return BasicWeather.fromReals(
-                getAirTemperature(time.toLocalTime()),
-                getRelativeHumidity(time.toLocalTime()),
-                getWindSpeed(time.toLocalTime()),
-                getWindDirection(time.toLocalTime()),
-                getCloudCover(time.toLocalTime()));
-    }
-
-    /**
-     * Gets the diurnal weather cycles for the given temporal domain.
-     *
-     * @param domain The time domain.
-     * @return A FlatField (time -> FIRE_WEATHER).
-     */
-    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
-    public FlatField getHourlyWeather(TemporalDomain domain) {
-        if (sunlight == null) {
-            throw new IllegalStateException(Bundle.ERR_DiurnalSunlightNotInitialized());
-        }
-        try {
-            // Create a FieldImpl and the samples for the hourly weather range
-            FlatField wxField = domain.createSimpleTemporalField(FIRE_WEATHER); // FunctionType: time -> fire weather)
-            double[][] wxSamples = new double[FIRE_WEATHER.getDimension()][wxField.getLength()];
-
-            // Create the wx range samples...
-            for (int i = 0; i < wxField.getLength(); i++) {
-                ZonedDateTime time = domain.getZonedDateTimeAt(i);
-                wxSamples[AIR_TEMP_INDEX][i] = getAirTemperature(time.toLocalTime()).getValue();
-                wxSamples[REL_HUMIDITY_INDEX][i] = getRelativeHumidity(time.toLocalTime()).getValue();
-                wxSamples[WIND_SPEED_INDEX][i] = getWindSpeed(time.toLocalTime()).getValue();
-                wxSamples[WIND_DIR_INDEX][i] = getWindDirection(time.toLocalTime()).getValue();
-                wxSamples[CLOUD_COVER_INDEX][i] = getCloudCover(time.toLocalTime()).getValue();
-            }
-            // ...and put the weather values above into it
-            wxField.setSamples(wxSamples);
-            return wxField;
-
-        } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
     }
 
     protected Real getAirTemperature(LocalTime localTime) {

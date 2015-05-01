@@ -49,6 +49,7 @@ import visad.Gridded1DDoubleSet;
 import visad.MathType;
 import visad.RealTuple;
 import visad.RealTupleType;
+import visad.RealType;
 import visad.SampledSet;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
@@ -197,7 +198,7 @@ public class WeatherModel extends SpatioTemporalModel {
                 double[][] wxSamples = new double[wxTupleType.getDimension()][numLatLons];
                 for (int i = 0; i < numLatLons; i++) {
                     FlatField temporalField = (FlatField) field.getSample(i);
-                    RealTuple wxTuple = (RealTuple) temporalField.evaluate(dateTime, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+                    RealTuple wxTuple = (RealTuple) temporalField.evaluate(dateTime, Data.WEIGHTED_AVERAGE, Data.DEPENDENT);
 
                     double[] wxValues = wxTuple.getValues();
                     for (int j = 0; j < wxSamples.length; j++) {
@@ -214,7 +215,7 @@ public class WeatherModel extends SpatioTemporalModel {
             } else {
                 // Handle model function type: Time -> ((Lat,Lon) -> (Weather))
                 // Simply get the temporal sample
-                return (FlatField) field.evaluate(dateTime, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+                return (FlatField) field.evaluate(dateTime, Data.WEIGHTED_AVERAGE, Data.DEPENDENT);
             }
         } catch (VisADException | RemoteException e) {
             throw new RuntimeException(e);
@@ -239,7 +240,7 @@ public class WeatherModel extends SpatioTemporalModel {
                 // Handle model function type: (Lat,Lon) -> (Time -> (Weather)) ...
                 
                 // ... Simply get the (Time -> (Weather)) FlatField
-                return (FlatField) field.evaluate(latLon, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+                return (FlatField) field.evaluate(latLon, Data.WEIGHTED_AVERAGE, Data.DEPENDENT);
             } else {
                 
                 // Handle model function type: Time -> ((Lat,Lon) -> (Weather))...
@@ -250,7 +251,7 @@ public class WeatherModel extends SpatioTemporalModel {
                 double[][] wxSamples = new double[wxTupleType.getDimension()][numTimes];
                 for (int i = 0; i < numTimes; i++) {
                     FlatField spatialField = (FlatField) field.getSample(i);
-                    RealTuple wxTuple = (RealTuple) spatialField.evaluate(latLon, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+                    RealTuple wxTuple = (RealTuple) spatialField.evaluate(latLon, Data.WEIGHTED_AVERAGE, Data.DEPENDENT);
 
                     double[] wxValues = wxTuple.getValues();
                     for (int j = 0; j < wxSamples.length; j++) {
@@ -259,7 +260,7 @@ public class WeatherModel extends SpatioTemporalModel {
                 }
                 // ... Then return a new (Time) -> (Weather) FlatField
                 FlatField temporalWeatherField = new FlatField(
-                        new FunctionType(RealTupleType.LatitudeLongitudeTuple, wxTupleType),
+                        new FunctionType(RealType.Time, wxTupleType),
                         field.getDomainSet());
                 temporalWeatherField.setSamples(wxSamples);
                 return temporalWeatherField;

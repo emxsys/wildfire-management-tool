@@ -51,6 +51,7 @@ import visad.VisADException;
 public class WindDirectionDial extends ChartPanel {
 
     private WindDirChart chart;
+    private Real lastValidDir;
 
     /**
      * Constructor creates new form WindDirPanel

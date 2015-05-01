@@ -56,7 +56,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     private final WindSpeedDial spdPanel = new WindSpeedDial();
     private final JSlider dirSlider = new DirectionSlider((WindDirChart) dirPanel.getChart());
     private final JSlider spdSlider = new SpeedSlider((WindSpdChart) spdPanel.getChart());
-    private Real lastWindDir = new Real(WeatherType.WIND_DIR);
+    private Real lastWindDir = new Real(WeatherType.WIND_DIR, 180); // also the default initial value
 
     /** Creates new form WindPanel */
     public WindForcePanel() {
@@ -90,16 +90,22 @@ public class WindForcePanel extends javax.swing.JPanel {
     }
 
     public Real getWindDirection() {
-        return dirPanel.getWindDirection();
+        Real windDir = dirPanel.getWindDirection();
+        // the missing value is used to nullify the directional arrows when the speed is zero.
+        if (windDir.isMissing()) {  
+            return lastWindDir;
+        } else {
+            return windDir;
+        }
     }
 
     public void setWindDirection(Real direction) {
-        // Cache the wind dir so we can restore it when speed is > 0.
-        lastWindDir = direction;
         // Slider will generate event that updates the chart.
         if (direction.isMissing()) {
             dirPanel.setWindDirection(null);
         } else {
+            // Cache the wind dir so we can restore it when speed is > 0.
+            lastWindDir = direction;
             dirSlider.setValue((int) direction.getValue());
         }
     }
@@ -149,6 +155,7 @@ public class WindForcePanel extends javax.swing.JPanel {
                 if (this.isEnabled()) {
                     WindForcePanel.this.firePropertyChange(PROP_WIND_SPD, oldSpd, newSpd);
                 }
+                // Hide the wind direction arrows when speed is zero
                 if (value == 0) {
                     dirPanel.setWindDirection(null);
                 } else if (oldSpd.getValue() == 0) {

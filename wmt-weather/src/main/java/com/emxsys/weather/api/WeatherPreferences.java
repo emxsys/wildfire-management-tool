@@ -32,10 +32,11 @@ package com.emxsys.weather.api;
 import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.visad.GeneralUnit.degF;
 import com.emxsys.visad.Reals;
-import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.WeatherType;
 import static java.lang.Math.round;
+import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
@@ -79,10 +80,10 @@ public class WeatherPreferences {
     public static final String PREF_RH_1400 = "weather.rhAt1400";
     public static final String PREF_RH_SUNSET = "weather.rhAtSunset";
     // Defaults for rh controls (%)
-    static final int DEFAULT_RH_SUNRISE = 20;
-    static final int DEFAULT_RH_1200 = 7;
-    static final int DEFAULT_RH_1400 = 6;
-    static final int DEFAULT_RH_SUNSET = 8;
+    static final int DEFAULT_RH_SUNRISE = 60;
+    static final int DEFAULT_RH_1200 = 25;
+    static final int DEFAULT_RH_1400 = 20;
+    static final int DEFAULT_RH_SUNSET = 40;
 
     private static final HashMap<String, Unit> tempUnits = new HashMap<>();
     private static final HashMap<String, Unit> windUnits = new HashMap<>();
@@ -96,7 +97,6 @@ public class WeatherPreferences {
         windUnits.put(UOM_KTS, GeneralUnit.knot);
         windUnits.put(UOM_MPS, CommonUnit.meterPerSecond);
     }
-
 
     /**
      * Adds a PreferenceChangeListener to the underlying WildfireOptions preferences file.
@@ -231,6 +231,21 @@ public class WeatherPreferences {
             throw new IllegalArgumentException("Invalid wind speed uom: " + uom);
         }
         return unit;
+    }
+
+    public static TreeMap<LocalTime, Real> getDiurnalWindSpeeds() {
+        // TODO: Populate diurnal wind speeds
+        return new TreeMap<>();
+    }
+
+    public static TreeMap<LocalTime, Real> getDiurnalWindDirs() {
+        // TODO: Populate diurnal wind dirs
+        return new TreeMap<>();
+    }
+
+    public static TreeMap<LocalTime, Real> getDiurnalClouds() {
+        // TODO: Populate diurnal clouds
+        return new TreeMap<>();
     }
 
 }

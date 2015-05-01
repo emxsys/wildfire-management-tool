@@ -121,7 +121,9 @@ class ChartHelper {
 
     static List<Marker> createNightMarkers(Sunlight sunlight, VectorSeriesCollection vecDataset) {
         ArrayList<Marker> markers = new ArrayList<>();
-
+        if (vecDataset.getItemCount(0) < 2) {
+            return markers;
+        }
         try {
             double lower = vecDataset.getXValue(0, 0);
             double upper = vecDataset.getXValue(0, vecDataset.getItemCount(0) - 1);
