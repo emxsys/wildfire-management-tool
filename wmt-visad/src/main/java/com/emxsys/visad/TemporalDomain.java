@@ -30,10 +30,13 @@
 package com.emxsys.visad;
 
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
@@ -74,6 +77,27 @@ public class TemporalDomain {
             Gridded1DSet set = DateTime.makeTimeSet(new DateTime[]{
                 Times.fromZonedDateTime(begin),
                 Times.fromZonedDateTime(end)});
+            return new TemporalDomain(set, utcOffset);
+        }
+        catch (VisADException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static TemporalDomain from(ZonedDateTime begin, ZonedDateTime end, Duration interval) {
+        try {
+            long lengthSecs = begin.until(end, SECONDS);
+            long intervalSecs = interval.get(SECONDS); // Duration only supports SECONDS.
+            long numTimes = lengthSecs / intervalSecs;
+            
+            DateTime[] times = new DateTime[(int) numTimes];
+            for (int i = 0; i < times.length; i++) {
+                times[i] = Times.fromZonedDateTime(begin.plusSeconds(intervalSecs * i));
+            }
+            Gridded1DSet set = DateTime.makeTimeSet(times);
+            
+            int utcOffset = begin.getOffset().getTotalSeconds();
             return new TemporalDomain(set, utcOffset);
         }
         catch (VisADException ex) {
