@@ -109,13 +109,17 @@ public final class PreheatForceView extends javax.swing.JPanel {
         Model.getInstance().addPropertyChangeListener(Model.PROP_SUNLIGHT, (PropertyChangeEvent evt) -> {
             updateSunlight((Sunlight) evt.getNewValue());
         });
+        updateSunlight(Model.getInstance().getSunlight());
+
         Model.getInstance().addPropertyChangeListener(Model.PROP_SHADED, (PropertyChangeEvent evt) -> {
             updateShading((boolean) evt.getNewValue());
         });
+        
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather wx = Model.getInstance().getWeather();
             updateAirTemp(wx.getAirTemperature());
         });
+        
         Model.getInstance().addPropertyChangeListener(Model.PROP_FUELBED, (PropertyChangeEvent evt) -> {
             SurfaceFuel fuel = (SurfaceFuel) evt.getNewValue();
             if (fuel != null) {
@@ -130,6 +134,7 @@ public final class PreheatForceView extends javax.swing.JPanel {
                 fuelMoistureGauge.setMoistureOfExtinction(fuel.isBurnable() ? fuel.getFuelModel().getMoistureOfExtinction() : null);
             }
         });
+
 
         // Update the Controller from inputs in this View
         this.fuelTempGauge.addPropertyChangeListener(FuelTemperatureGauge.PROP_FUEL_TEMP, (PropertyChangeEvent evt) -> {

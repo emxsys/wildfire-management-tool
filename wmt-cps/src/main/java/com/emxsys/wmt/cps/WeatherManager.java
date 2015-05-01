@@ -32,12 +32,17 @@ package com.emxsys.wmt.cps;
 import com.emxsys.gis.api.Coord2D;
 import com.emxsys.gis.api.Coords;
 import com.emxsys.gis.api.GeoCoord2D;
+import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.TemporalDomain;
 import com.emxsys.weather.api.WeatherModel;
 import com.emxsys.weather.api.BasicWeather;
+import com.emxsys.weather.api.DiurnalWeatherProvider;
+import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
 import com.emxsys.weather.api.services.WeatherForecaster;
 import com.emxsys.weather.api.services.WeatherObserver;
+import java.awt.EventQueue;
+import java.beans.PropertyChangeSupport;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -45,13 +50,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
+import javax.swing.event.ChangeListener;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.util.ChangeSupport;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.util.RequestProcessor.Task;
 import visad.Data;
+import visad.Field;
 import visad.FlatField;
+import visad.Real;
 import visad.RealTuple;
 import visad.VisADException;
 
@@ -70,28 +80,54 @@ public class WeatherManager {
     public static WeatherManager getInstance() {
         return WeatherManagerHolder.INSTANCE;
     }
+
+    // The weather providers
     private WeatherForecaster forecaster;
     private WeatherObserver observer;
+    private DiurnalWeatherProvider defaultProvider;
+
+    // The local data cache
     private final Map<Long, FlatField> observationCache = new HashMap<>();
     private final Map<Long, FlatField> forecastCache = new HashMap<>();
 
+    // The spatial and temporal domains
     private ZonedDateTime hour;
     private Duration historyPeriod = Duration.ofHours(24);
     private Duration forecastPeriod = Duration.ofHours(72);
+    private Duration interval = Duration.ofHours(1);
+
     private final AtomicReference<TemporalDomain> forecastTimeframe = new AtomicReference<>();
     private final AtomicReference<TemporalDomain> observationTimeframe = new AtomicReference<>();
     private final AtomicReference<SpatialDomain> spatialDomain = new AtomicReference<>();
+
+    // The weather models for the domain
     private WeatherModel weatherForecast;
     private WeatherModel weatherObservations;
 
+    // Process/thread resources
     private final RequestProcessor executor = new RequestProcessor(WeatherManager.class);
     private Task refreshTask;
+
+    // WeatherModel change notification support
+    private ChangeSupport changeSupport = new ChangeSupport(this);
+
+    // Logging support
+    private static final Logger logger = Logger.getLogger(WeatherManager.class.getName());
 
     /**
      * Private constructor. Use WeatherManager.getInstance() to get the singleton.
      */
     private WeatherManager() {
+        defaultProvider = DiurnalWeatherProvider.fromWeatherPreferences();
         updateTime(null);
+    }
+
+    public void addChangeListener(ChangeListener listener) {
+        changeSupport.addChangeListener(listener);
+    }
+
+    public void removeChangeListener(ChangeListener listener) {
+        changeSupport.removeChangeListener(listener);
     }
 
     /**
@@ -107,8 +143,8 @@ public class WeatherManager {
             ZonedDateTime start = hour.minus(historyPeriod);
             ZonedDateTime end = hour.plus(forecastPeriod);
 
-            observationTimeframe.set(TemporalDomain.from(start, hour));
-            forecastTimeframe.set(TemporalDomain.from(hour, end));
+            observationTimeframe.set(TemporalDomain.from(start, hour, interval));
+            forecastTimeframe.set(TemporalDomain.from(hour, end, interval));
 
             refreshModels();
         }
@@ -145,10 +181,10 @@ public class WeatherManager {
 
         // Perform task in a worker thread.
         if (refreshTask == null) {
-            
+
             // Create the runnable task
             refreshTask = executor.create(() -> {
-                
+
                 // Create a 'cancellable' progress bar
                 ProgressHandle progressBar = ProgressHandleFactory.createHandle("Downloading weather", refreshTask);
                 try {
@@ -171,6 +207,11 @@ public class WeatherManager {
                         // No need to flush cache...observations do not change over time.
                         //observationCache.clear();
                     }
+                    // Notify the Controller of a change in weather
+                    EventQueue.invokeLater(() -> {
+                        changeSupport.fireChange();
+                    });
+
                 } finally {
                     progressBar.finish();
                 }
@@ -234,35 +275,47 @@ public class WeatherManager {
 
     }
 
+    /**
+     * Gets the weather at a specific location and time. If the location and time are outside of
+     * the spatial or temporal domains, then the weather is determined by the WeatherPreferences.
+     *
+     * @param coord The location.
+     * @param time The date/time.
+     * @return A valid BasicWeather instance.
+     */
     public BasicWeather getWeatherAt(Coord2D coord, ZonedDateTime time) {
+
+        // Determine which model to use
         WeatherModel model = null;
         Map<Long, FlatField> cache = null;
 
         // Temporal prerequistes: ensure a model exists for the temporal domain
-        TemporalDomain obsTime = observationTimeframe.get();
-        TemporalDomain fcstTime = forecastTimeframe.get();
-        if (obsTime != null && obsTime.contains(time)) {
+        TemporalDomain obsTimeFrame = observationTimeframe.get();
+        TemporalDomain fcstTimeFrame = forecastTimeframe.get();
+        if (obsTimeFrame != null && obsTimeFrame.contains(time)) {
             if (weatherObservations != null) {
                 model = weatherObservations;
                 cache = observationCache;
             }
-        } else if (fcstTime != null && fcstTime.contains(time)) {
+        } else if (fcstTimeFrame != null && fcstTimeFrame.contains(time)) {
             // Ensure the model contains the time
             if (weatherForecast != null) {
                 model = weatherForecast;
                 cache = forecastCache;
             }
         }
+        // TODO: Create a hybrid model to bridge the gap from the last observation to the first forecast.            
         if (model == null || cache == null) {
-            return BasicWeather.INVALID_WEATHER;
+            // Use a diurnal model from the preferences for the times outside the temporal domains.
+            return defaultProvider.getWeather(time, GeoCoord3D.fromCoord(coord));
         }
-        //System.out.println(model);
-
         // Spatial prerequisite: ensure the spatial domain is valid
         SpatialDomain area = spatialDomain.get();
         if (area == null || !area.contains(coord)) {
-            return BasicWeather.INVALID_WEATHER;
+            // Use a diurnal model from the preferences for the locations outside the spatial domain.
+            return defaultProvider.getWeather(time, GeoCoord3D.fromCoord(coord));
         }
+
         // Get the hourly floor and cache key for the hour-by-hour weather
         ZonedDateTime timeHour = time.truncatedTo(ChronoUnit.HOURS);
         Long key = timeHour.toEpochSecond();
@@ -278,13 +331,43 @@ public class WeatherManager {
         // Now get and return the weather tuple at the coordinate
         if (wxField != null) {
             try {
+                // TODO: Extract each wx component out as a single field
+                // FIRE_WEATHER: AIR_TEMP_F, REL_HUMIDITY, WIND_SPEED_KTS, WIND_DIR, CLOUD_COVER                
+                Field airTemp = wxField.extract(0);
+                Field relHum = wxField.extract(1);
+                Field windSpd = wxField.extract(2);
+                Field windDir = wxField.extract(3);
+                Field cloudCvr = wxField.extract(4);
+
+                Real temperature = (Real) airTemp.evaluate(
+                        Coords.toLatLonTuple(coord),
+                        Data.WEIGHTED_AVERAGE,
+                        Data.DEPENDENT //Data.NO_ERRORS 
+                );
+                Real humidity = (Real) relHum.evaluate(
+                        Coords.toLatLonTuple(coord),
+                        Data.WEIGHTED_AVERAGE,
+                        Data.DEPENDENT //Data.NO_ERRORS 
+                );
+                Real direction = (Real) windDir.evaluate(
+                        Coords.toLatLonTuple(coord),
+                        Data.NEAREST_NEIGHBOR,
+                        Data.DEPENDENT //Data.NO_ERRORS 
+                );
+
                 RealTuple tuple = (RealTuple) wxField.evaluate(
                         Coords.toLatLonTuple(coord),
                         Data.WEIGHTED_AVERAGE,
-                        Data.NO_ERRORS);
+                        Data.DEPENDENT //Data.NO_ERRORS 
+                );
                 if (tuple != null) {
                     // Transform RealTuple to BasicWeather (assures proper units after resample)
                     return BasicWeather.fromRealTuple(tuple);
+
+//                    Real[] reals = tuple.getRealComponents();
+//                    return BasicWeather.fromReals(
+//                            reals[0].isMissing() ? 
+//                            tuple.getRealComponents()null, null, null, null, null)
                 }
             } catch (VisADException | RemoteException ex) {
                 Exceptions.printStackTrace(ex);
@@ -294,12 +377,24 @@ public class WeatherManager {
         return BasicWeather.INVALID_WEATHER;
     }
 
+    /**
+     * Sets the weather forecasting service, e.g., NWS.
+     *
+     * @param forecaster A weather provider that provides forecasts.
+     */
     public void setForecaster(WeatherForecaster forecaster) {
         this.forecaster = forecaster;
+        refreshModels();
     }
 
+    /**
+     * Sets the weather observer service.
+     *
+     * @param observer A weather provider the provides historical observations.
+     */
     public void setObserver(WeatherObserver observer) {
         this.observer = observer;
+        refreshModels();
     }
 
     public WeatherModel getWeatherForecast() {

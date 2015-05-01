@@ -127,17 +127,29 @@ public final class WeatherTopComponent extends TopComponent {
         logger.fine(PREFERRED_ID + " initializing....");
 
         // Initialize our "manual" weather provider
-        diurnalWx = WeatherProviderFactory.newDiurnalWeatherProvider(Model.getInstance().getSunlight());
+        //diurnalWx = WeatherProviderFactory.newDiurnalWeatherProvider(Model.getInstance().getSunlight());
+        diurnalWx = DiurnalWeatherProvider.fromWeatherPreferences();
 
         initComponents();
         initPanels();
         initWeatherProviders();
-        
+
         setName(Bundle.CTL_WeatherTopComponent());
         setToolTipText(Bundle.CTL_WeatherTopComponent_Hint());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
 
         // Sync the Weather Charts to the CPS data model
+        Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
+            Coord3D coord = Model.getInstance().getCoord();
+            WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();
+            if (wxModel != null) {
+                FlatField wx = wxModel.getTemporalWeatherAt(coord);
+                temperatureChart.setTemperatures(wx);
+                humidityChart.setHumidities(wx);
+                humidityChart.setCloudCover(wx);
+                windChart.setWinds(wx);
+            }
+        });
         Model.getInstance().addPropertyChangeListener(Model.PROP_COORD3D, (PropertyChangeEvent evt) -> {
             Coord3D coord = (Coord3D) evt.getNewValue();
             WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();
@@ -200,6 +212,8 @@ public final class WeatherTopComponent extends TopComponent {
                 forecasters.addElement(instance);
             }
         });
+        observers.addElement(diurnalWx);
+        forecasters.addElement(DiurnalWeatherProvider.fromWeatherPreferences());
 
         // Preselect the last used services, if set, otherwise, just use the first service
         String lastWxObsService = prefs.get(PREF_LAST_WX_OBSERVER_SERVICE,
@@ -214,7 +228,6 @@ public final class WeatherTopComponent extends TopComponent {
                 }
             }
         }
-        observers.addElement(diurnalWx);
 
         String lastWxFcstService = prefs.get(PREF_LAST_WX_FORECAST_SERVICE,
                 instances.size() > 0 ? instances.get(0).getClass().getName() : "");
@@ -228,7 +241,6 @@ public final class WeatherTopComponent extends TopComponent {
                 }
             }
         }
-        forecasters.addElement(new DiurnalWeatherProvider());
 
         this.observersComboBox.setModel(observers);
         this.forecastersComboBox.setModel(forecasters);
@@ -366,11 +378,20 @@ public final class WeatherTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
+        // Update the weather models
+        WeatherManager.getInstance().refreshModels();
+
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void configForecasterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configForecasterButtonActionPerformed
-        // TODO add your handling code here:
+        // Configure the weather source
+        WeatherProvider provider = (WeatherProvider) forecastersComboBox.getSelectedItem();
+        Action action = provider.getConfigAction();
+        if (action != null) {
+            action.actionPerformed(evt);
+            WeatherManager.getInstance().refreshModels();
+        }
+
     }//GEN-LAST:event_configForecasterButtonActionPerformed
 
     private void forecastersComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forecastersComboBoxActionPerformed

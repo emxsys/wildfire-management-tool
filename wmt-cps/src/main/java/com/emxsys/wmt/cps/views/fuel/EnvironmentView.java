@@ -70,39 +70,46 @@ public class EnvironmentView extends javax.swing.JPanel {
     /** Creates new form FuelMoisturePanel */
     public EnvironmentView() {
         initComponents();
-        
+
         // See com.emxsys.wmt.cps.docs.cps-map.xml for help ids.
-        this.airTempPanel = new AirTemperatureGauge("Air Temp.", WeatherPreferences.getAirTempUnit(),
-                new Real(WeatherType.AIR_TEMP_F, 59), 
+        this.airTempPanel = new AirTemperatureGauge("Air Temp.",
+                WeatherPreferences.getAirTempUnit(),
+                new Real(WeatherType.AIR_TEMP_F, 59), // Default initial value
                 "com.emxsys.wmt.cps.airtemperature"); // help text ID
-        this.relHumidityPanel = new RelativeHumidityGauge("Humidty", 
-                new Real(WeatherType.REL_HUMIDITY, 20),
+        this.relHumidityPanel = new RelativeHumidityGauge("Humidty",
+                new Real(WeatherType.REL_HUMIDITY, 20), // Default initial value
                 "com.emxsys.wmt.cps.relativehumidity");
-        this.skyCoverPanel = new SkyCoverGauge("Sky Cover", 
-                new Real(WeatherType.CLOUD_COVER, 10),
+        this.skyCoverPanel = new SkyCoverGauge("Sky Cover",
+                new Real(WeatherType.CLOUD_COVER, 10), // Default initial value
                 "com.emxsys.wmt.cps.skycover");
         add(airTempPanel);
         add(relHumidityPanel);
         add(skyCoverPanel);
 
-        // Update this View from the Model
+        // Add a listener to update this View from the Model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather wx = Model.getInstance().getWeather();
 
             Real newAirTemp = wx.getAirTemperature();
-            if (!Reals.nearlyEquals(newAirTemp, airTempPanel.getTemperature(), GeneralUnit.degF, 0.5d)) {
-                airTempPanel.setTemperature(newAirTemp);
-                airTempPanel.setBorder(emptyBorder);
+            if (!newAirTemp.isMissing()) {
+                if (!Reals.nearlyEquals(newAirTemp, airTempPanel.getTemperature(), GeneralUnit.degF, 0.5d)) {
+                    airTempPanel.setTemperature(newAirTemp);
+                    airTempPanel.setBorder(emptyBorder);
+                }
             }
             Real newHumidity = wx.getRelativeHumidity();
-            if (!newHumidity.equals(relHumidityPanel.getHumidity())) {
-                relHumidityPanel.setHumidity(newHumidity);
-                relHumidityPanel.setBorder(emptyBorder);
+            if (!newHumidity.isMissing()) {
+                if (!newHumidity.equals(relHumidityPanel.getHumidity())) {
+                    relHumidityPanel.setHumidity(newHumidity);
+                    relHumidityPanel.setBorder(emptyBorder);
+                }
             }
             Real newSkyCover = wx.getCloudCover();
-            if (!newSkyCover.equals(skyCoverPanel.getCloudCover())) {
-                skyCoverPanel.setSkyCover(newSkyCover);
-                skyCoverPanel.setBorder(emptyBorder);
+            if (!newSkyCover.isMissing()) {
+                if (!newSkyCover.equals(skyCoverPanel.getCloudCover())) {
+                    skyCoverPanel.setSkyCover(newSkyCover);
+                    skyCoverPanel.setBorder(emptyBorder);
+                }
             }
         });
 
@@ -123,6 +130,11 @@ public class EnvironmentView extends javax.swing.JPanel {
             skyCoverPanel.setBorder(lineBorder);    // indicates manual override
         });
 
+        // Set the initial control values from the Model
+        //Weather wx = Model.getInstance().getWeather();
+        //airTempPanel.setTemperature(wx.getAirTemperature());
+        //relHumidityPanel.setHumidity(wx.getRelativeHumidity());
+        //skyCoverPanel.setSkyCover(wx.getCloudCover());
     }
 
     public void updateAirTemperature(Real airTemp) {

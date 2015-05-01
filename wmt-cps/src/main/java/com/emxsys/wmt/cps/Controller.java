@@ -49,6 +49,7 @@ import com.emxsys.time.spi.TimeProviderFactory;
 import com.emxsys.visad.SpatialDomain;
 import com.emxsys.visad.SpatioTemporalDomain;
 import com.emxsys.visad.TemporalDomain;
+import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.weather.api.SimpleWeatherProvider;
 import com.emxsys.weather.api.Weather;
 import com.emxsys.wildfire.api.FuelModel;
@@ -65,6 +66,8 @@ import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.Project;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -119,8 +122,9 @@ public final class Controller {
     private Real fuelTemp = null;
 
     // Event handlers
-    private final CooridinateUpdater coordinateUpdater;
     private final TimeUpdater timeUpdater;
+    private final CooridinateUpdater coordinateUpdater;
+    private final WeatherUpdater weatherUpdater;
     private final LookupListener reticuleLookupListener;
     private Lookup.Result<ReticuleCoordinateProvider> reticuleResult;
 
@@ -146,6 +150,7 @@ public final class Controller {
         // Event handlers used to handle temporal and spatial events.
         timeUpdater = new TimeUpdater(this);
         coordinateUpdater = new CooridinateUpdater(this);
+        weatherUpdater = new WeatherUpdater(this);
 
         // Data providers
         sun = SunlightProviderFactory.getInstance();
@@ -281,16 +286,15 @@ public final class Controller {
         SpatioTemporalDomain domain = new SpatioTemporalDomain(temporalDomain, spatialDomain);
         model.setDateTime(time);
         model.setDomain(domain);
-
     }
 
     /**
      * Updates the solar angles and sun position using the current coordinate and time.
      */
     void updateSunlight() {
+
         BasicSunlight sunlight = sun.getSunlight(model.getDateTime(), model.getCoord());
         if (sunlight.equals(BasicSunlight.INVALID)) {
-            
             return;
         }
         model.setSunlight(sunlight);
@@ -321,27 +325,8 @@ public final class Controller {
      * Updates the weather using the current coordinate and time.
      */
     void updateWeather() {
-        Weather wx = WeatherManager.getInstance().getWeatherAt(model.getCoord(), model.getDateTime());
+        BasicWeather wx = WeatherManager.getInstance().getWeatherAt(model.getCoord(), model.getDateTime());
         model.setWeather(applyWeatherOverrides(wx));
-
-        //                if (controller.forecastProvider != null) {
-        //                    if (controller.forecastProvider instanceof DiurnalWeatherProvider) {
-        //                        // Update sunrise/sunset times
-        //                        DiurnalWeatherProvider diurnalWx = (DiurnalWeatherProvider) controller.weatherForecaster;
-        //                        diurnalWx.setSunlight(sunlight); 
-        //                    }
-        //                    
-        //                    if (controller.forecastProvider.hasCapability(WeatherForecaster.class)) {
-        //                        WeatherForecaster wxObs = controller.forecastProvider.getCapability(WeatherForecaster.class);
-        //                        controller.model.setWeather(wxObs.getSpotWeather(time, coord));                        
-        //                    }
-        ////                    else if (controller.weatherSource.hasCapability(PointForecaster.class)) {
-        //                        PointForecaster forecaster = controller.weatherSource.getCapability(PointForecaster.class);
-        //                        Field forecast = forecaster.getForecast(coord);
-        //                        RealTuple wx = (RealTuple) forecast.evaluate(new DateTime(time.toEpochSecond()));
-        //
-        //                    }
-        //                }
     }
 
     Weather applyWeatherOverrides(Weather weather) {
@@ -409,6 +394,25 @@ public final class Controller {
     }
 
     /**
+     * WeatherUpdater updates the weather when the WeatherManager says there's a change.
+     */
+    private static class WeatherUpdater implements ChangeListener {
+
+        private final Controller controller;
+
+        WeatherUpdater(Controller controller) {
+            this.controller = controller;
+            WeatherManager.getInstance().addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            this.controller.updateWeather();
+            this.controller.updateViews();
+        }
+    }
+
+    /**
      * CooridinateUpdater monitors the globe's reticule (cross-hairs) layer and updates the domain
      * and the model with the terrain under the cross-hairs.
      */
@@ -465,6 +469,7 @@ public final class Controller {
                 }
 
                 controller.updateSpatialDomain(coord);
+                controller.updateSunlight();
                 controller.updateTerrain();
                 controller.updateTerrainShading();
 

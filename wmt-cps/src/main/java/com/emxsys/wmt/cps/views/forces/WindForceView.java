@@ -32,6 +32,8 @@ package com.emxsys.wmt.cps.views.forces;
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.Weather;
+import com.emxsys.weather.api.WeatherType;
+import com.emxsys.weather.panels.WindForcePanel;
 import com.emxsys.wmt.cps.Controller;
 import com.emxsys.wmt.cps.Model;
 import java.awt.Color;
@@ -59,7 +61,7 @@ public class WindForceView extends javax.swing.JPanel {
     private EmptyBorder emptyBorder = new EmptyBorder(1, 1, 1, 1);
 
     // Implementation
-    private final com.emxsys.weather.panels.WindForcePanel windPanel = new com.emxsys.weather.panels.WindForcePanel();
+    private final WindForcePanel windPanel = new WindForcePanel();
 
     /**
      * Constructor creates new form WindForcePanel.
@@ -73,7 +75,7 @@ public class WindForceView extends javax.swing.JPanel {
         windPanel.addPropertyChangeListener((e) -> {
             switch (e.getPropertyName()) {
                 case com.emxsys.weather.panels.WindForcePanel.PROP_WIND_DIR:
-                    Controller.getInstance().setWindDir((Real) e.getNewValue());
+                    Controller.getInstance().setWindDir((Real) e.getNewValue()); 
                     firePropertyChange(PROP_WINDDIR, e.getOldValue(), e.getNewValue());
                     windPanel.setBorder(lineBorder);    // indicates overridden value
                     break;
@@ -85,7 +87,7 @@ public class WindForceView extends javax.swing.JPanel {
             }
         });
 
-        // Syncronize this View to the Model
+        // Add a listener to syncronize this View to the Model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Weather weather = (Weather) evt.getNewValue();
             Real newWindDir = weather.getWindDirection();
@@ -93,14 +95,17 @@ public class WindForceView extends javax.swing.JPanel {
             Real oldWindDir = windPanel.getWindDirection();
             Real oldWindSpd = windPanel.getWindSpeed();
             // Update if either new value is not equal to the old value
-            if (!Reals.nearlyEquals(newWindDir, oldWindDir, CommonUnit.degree, 1.0d)
-                    || !Reals.nearlyEquals(newWindSpd, oldWindSpd, GeneralUnit.mph, 1.0d)) {
-                windPanel.setWindSpeed(newWindSpd);
-                windPanel.setWindDirection(newWindDir);
-                windPanel.setBorder(emptyBorder);
+            if (!newWindSpd.isMissing() && !newWindDir.isMissing()) {
+                if (!Reals.nearlyEquals(newWindDir, oldWindDir, CommonUnit.degree, 1.0d)
+                        || !Reals.nearlyEquals(newWindSpd, oldWindSpd, GeneralUnit.mph, 1.0d)) {
+                    windPanel.setWindSpeed(newWindSpd);
+                    windPanel.setWindDirection(newWindDir);
+                    windPanel.setBorder(emptyBorder);
+                }
             }
         });
-
+        //windPanel.setWindDirection(Model.getInstance().getWeather().getWindDirection());
+        //windPanel.setWindSpeed(Model.getInstance().getWeather().getWindSpeed());
     }
 
     /**
