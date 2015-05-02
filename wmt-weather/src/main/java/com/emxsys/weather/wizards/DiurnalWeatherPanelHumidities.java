@@ -29,7 +29,8 @@
  */
 package com.emxsys.weather.wizards;
 
-import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.api.WeatherPreferences;
+import static com.emxsys.weather.api.WeatherPreferences.*;
 import com.emxsys.weather.panels.RelativeHumidityGauge;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle;
@@ -48,16 +49,24 @@ public final class DiurnalWeatherPanelHumidities extends JPanel {
     private final RelativeHumidityGauge panel1400;
     private final RelativeHumidityGauge panelSunset;
 
-    /** 
+    /**
      * Creates new form DiurnalWeatherPanelHumidities
-     * @param provider 
      */
-    public DiurnalWeatherPanelHumidities(DiurnalWeatherProvider provider) {
-        panelSunrise = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumiditySunrise(), provider.getRelativeHumidityAtSunrise());
-        panelNoon = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumidityNoon(), provider.getRelativeHumidityAtNoon());
-        panel1400 = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumidity1400(), provider.getRelativeHumidityAt1400());
-        panelSunset = new RelativeHumidityGauge(Bundle.CTL_DiurnalHumiditySunset(), provider.getRelativeHumidityAtSunset());
+    public DiurnalWeatherPanelHumidities() {
         initComponents();
+        
+        panelSunrise = new RelativeHumidityGauge(
+                Bundle.CTL_DiurnalHumiditySunrise(),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_SUNRISE));
+        panelNoon = new RelativeHumidityGauge(
+                Bundle.CTL_DiurnalHumidityNoon(),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_1200));
+        panel1400 = new RelativeHumidityGauge(
+                Bundle.CTL_DiurnalHumidity1400(),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_1400));
+        panelSunset = new RelativeHumidityGauge(
+                Bundle.CTL_DiurnalHumiditySunset(),
+                WeatherPreferences.getRelHumidityValue(PREF_RH_SUNSET));
         jPanel1.add(panelSunrise);
         jPanel2.add(panelNoon);
         jPanel3.add(panel1400);
@@ -68,7 +77,8 @@ public final class DiurnalWeatherPanelHumidities extends JPanel {
     public String getName() {
         return Bundle.CTL_DiurnalHumidities();
     }
-        public Real getSunriseHumidity() {
+
+    public Real getSunriseHumidity() {
         return panelSunrise.getHumidity();
     }
 
@@ -111,6 +121,8 @@ public final class DiurnalWeatherPanelHumidities extends JPanel {
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
 
+        setMinimumSize(new java.awt.Dimension(400, 300));
+        setPreferredSize(new java.awt.Dimension(600, 300));
         setLayout(new java.awt.GridLayout(1, 4, 3, 0));
 
         jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));

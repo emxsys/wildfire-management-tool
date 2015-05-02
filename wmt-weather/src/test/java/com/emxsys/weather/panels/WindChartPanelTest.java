@@ -84,7 +84,7 @@ public class WindChartPanelTest {
 
         WindSpeedDirectionChart instance = new WindSpeedDirectionChart();
         instance.setTitle("Diurnal Weather");
-        instance.setWinds(wx);
+        instance.setWindForecasts(wx);
 
         WeatherPreferences.setWindSpeedUom(WeatherPreferences.UOM_MPH);
         assertTrue("Form was invalidated by the user",

@@ -45,25 +45,37 @@ import org.junit.Ignore;
  * @author Bruce Schubert
  */
 public class DiurnalWeatherPanelWindsTest {
-    
+
     public DiurnalWeatherPanelWindsTest() {
     }
 
-    //@Ignore("interactive test")
+    @Ignore("interactive test")
     @Test
     public void testLayout() {
         System.out.println("getLayout - interactive");
         Sunlight sunlight = SunlightProviderFactory.getInstance().getSunlight(ZonedDateTime.now(), GeoCoord3D.fromDegrees(34.2, -119.2));
-        DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
-        DiurnalWeatherPanelWinds instance = new DiurnalWeatherPanelWinds(provider);
+        //DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
+        DiurnalWeatherProvider provider = DiurnalWeatherProvider.fromWeatherPreferences();
+
+        DiurnalWeatherPanelWinds instance = new DiurnalWeatherPanelWinds();
+        instance.setWinds(provider.getWindDirs(), provider.getWindSpeeds());
+        assertTrue("Form was cancelled by the user",
+                JOptionPane.showConfirmDialog(
+                        null, // frame
+                        instance,
+                        "Input winds. Form will be redisplayed.",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE
+                ) == JOptionPane.OK_OPTION);
+
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(
                         null, // frame
                         instance,
-                        "Is Form Valid?",
+                        "Check winds. Is Form Valid?",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
+                        JOptionPane.QUESTION_MESSAGE,
                         null) == JOptionPane.YES_OPTION);
     }
-    
+
 }

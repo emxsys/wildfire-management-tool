@@ -29,16 +29,18 @@
  */
 package com.emxsys.weather.options;
 
+import com.emxsys.weather.api.WeatherPreferences;
+import com.emxsys.weather.wizards.DiurnalWeatherPanelUnits;
+import static com.emxsys.weather.wizards.DiurnalWeatherPanelUnits.PROP_WEATHER_PANEL_UNITS;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import org.netbeans.spi.options.OptionsPanelController;
-import org.openide.DialogDisplayer;
-import org.openide.LifecycleManager;
-import org.openide.NotifyDescriptor;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.WeakListeners;
 
 @OptionsPanelController.SubRegistration(
         location = "Weather",
@@ -52,32 +54,35 @@ import org.openide.util.Lookup;
     "AdvancedOption_Keywords_WeatherUnits=units uom measure"})
 public final class WeatherUnitsOptionsPanelController extends OptionsPanelController {
 
-    private WeatherUnitsOptionsPanel panel;
+    private DiurnalWeatherPanelUnits panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
     @Override
     public void update() {
-        getPanel().load();
+        getPanel().setAirTempUom(WeatherPreferences.getAirTempUnit());
+        getPanel().setWindSpeedUom(WeatherPreferences.getWindSpeedUnit());
         changed = false;
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
-            getPanel().store();
+            WeatherPreferences.setAirTempUnit(getPanel().getAirTempUom());
+            WeatherPreferences.setWindSpeedUnit(getPanel().getWindSpdUom());
             changed = false;
-            if (getPanel().getShouldRestart()) {
-                NotifyDescriptor dlg = new NotifyDescriptor.Confirmation(
-                        "You may want to restart the application to ensure your changes are applied everwhere.\n"
-                        + "Do you want to restart the application now?", "Restart Application?",
-                        NotifyDescriptor.YES_NO_OPTION);
-                Object result = DialogDisplayer.getDefault().notify(dlg);
-                if (result != null && result == NotifyDescriptor.YES_OPTION) {
-                    LifecycleManager.getDefault().markForRestart();
-                    LifecycleManager.getDefault().exit();
-                }
-            }
+
+//            if (getPanel().getShouldRestart()) {
+//                NotifyDescriptor dlg = new NotifyDescriptor.Confirmation(
+//                        "You may want to restart the application to ensure your changes are applied everwhere.\n"
+//                        + "Do you want to restart the application now?", "Restart Application?",
+//                        NotifyDescriptor.YES_NO_OPTION);
+//                Object result = DialogDisplayer.getDefault().notify(dlg);
+//                if (result != null && result == NotifyDescriptor.YES_OPTION) {
+//                    LifecycleManager.getDefault().markForRestart();
+//                    LifecycleManager.getDefault().exit();
+//                }
+//            }
         });
 
     }
@@ -89,7 +94,7 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
 
     @Override
     public boolean isValid() {
-        return getPanel().valid();
+        return true;
     }
 
     @Override
@@ -107,6 +112,19 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
         return getPanel();
     }
 
+    private DiurnalWeatherPanelUnits getPanel() {
+        if (panel == null) {
+            panel = new DiurnalWeatherPanelUnits();
+            panel.addPropertyChangeListener(WeakListeners.propertyChange((PropertyChangeEvent evt) -> {
+                if (evt.getPropertyName().equals(PROP_WEATHER_PANEL_UNITS)) {
+                    changed = true;
+                    pcs.firePropertyChange(evt); // Forward the event
+                }
+            }, panel));
+        }
+        return panel;
+    }
+
     @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
@@ -115,21 +133,6 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
     @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pcs.removePropertyChangeListener(l);
-    }
-
-    private WeatherUnitsOptionsPanel getPanel() {
-        if (panel == null) {
-            panel = new WeatherUnitsOptionsPanel(this);
-        }
-        return panel;
-    }
-
-    void changed() {
-        if (!changed) {
-            changed = true;
-            pcs.firePropertyChange(OptionsPanelController.PROP_CHANGED, false, true);
-        }
-        pcs.firePropertyChange(OptionsPanelController.PROP_VALID, null, null);
     }
 
 }

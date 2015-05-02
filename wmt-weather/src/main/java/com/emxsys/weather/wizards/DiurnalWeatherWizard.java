@@ -30,11 +30,14 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
+import com.emxsys.weather.api.WeatherPreferences;
 import java.awt.Component;
 import java.awt.Image;
 import java.text.MessageFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import javax.swing.JComponent;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
@@ -93,15 +96,34 @@ public final class DiurnalWeatherWizard {
                 .getScaledInstance(195, 195, Image.SCALE_SMOOTH);
         wizard.putProperty(WizardDescriptor.PROP_IMAGE, image);
         wizard.putProperty(WizardDescriptor.PROP_IMAGE_ALIGNMENT, "South"); // North or South (default);
+        
+        // Set initial units
+        wizard.putProperty(PROP_AIR_TEMP_UOM, WeatherPreferences.getAirTempUnit());
+        wizard.putProperty(PROP_WIND_SPD_UOM, WeatherPreferences.getWindSpeedUnit());
+        // Set initial air temperatures
+        wizard.putProperty(PROP_AIR_TEMP_SUNRISE, provider.getTempAtSunrise());
+        wizard.putProperty(PROP_AIR_TEMP_NOON, provider.getTempAtNoon());
+        wizard.putProperty(PROP_AIR_TEMP_1400, provider.getTempAt1400());
+        wizard.putProperty(PROP_AIR_TEMP_SUNSET, provider.getTempAtSunset());
+        // Set initial humidities
+        wizard.putProperty(PROP_REL_HUMIDITY_SUNRISE, provider.getRelativeHumidityAtSunrise());
+        wizard.putProperty(PROP_REL_HUMIDITY_NOON, provider.getRelativeHumidityAtNoon());
+        wizard.putProperty(PROP_REL_HUMIDITY_1400, provider.getRelativeHumidityAt1400());
+        wizard.putProperty(PROP_REL_HUMIDITY_SUNSET, provider.getRelativeHumidityAtSunset());
+        // Set initial winds
+        wizard.putProperty(PROP_WIND_SPEEDS, provider.getWindSpeeds());
+        wizard.putProperty(PROP_WIND_DIRECTIONS, provider.getWindDirs());
+        // Update initial clouds
+        
     }
 
     private List<WizardDescriptor.Panel<WizardDescriptor>> getPanels() {
         List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<>();
-        panels.add(new DiurnalWeatherWizardPanel1(provider));
-        panels.add(new DiurnalWeatherWizardPanel2(provider));
-        panels.add(new DiurnalWeatherWizardPanel3(provider));
-        panels.add(new DiurnalWeatherWizardPanel4(provider));
-        panels.add(new DiurnalWeatherWizardPanel5(provider));
+        panels.add(new DiurnalWeatherWizardUnits());
+        panels.add(new DiurnalWeatherWizardTemps());
+        panels.add(new DiurnalWeatherWizardHumidities());
+        panels.add(new DiurnalWeatherWizardWinds());
+        panels.add(new DiurnalWeatherWizardClouds(provider));
         String[] steps = new String[panels.size()];
         for (int i = 0; i < panels.size(); i++) {
             Component c = panels.get(i).getComponent();
@@ -131,6 +153,7 @@ public final class DiurnalWeatherWizard {
     /**
      * Update the provider from the wizard properties.
      */
+    @SuppressWarnings("unchecked")
     private void updateProvider() {
         provider.initializeAirTemperatures(
                 (Real) wizard.getProperty(PROP_AIR_TEMP_SUNRISE),
@@ -144,9 +167,8 @@ public final class DiurnalWeatherWizard {
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_1400),
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_SUNSET));
         
-        //provider.initializeWindDirections(...);
-        
-        //provider.initializeWindSpeeds(...);
+        provider.initializeWindDirections((TreeMap<LocalTime, Real>) wizard.getProperty(PROP_WIND_DIRECTIONS));
+        provider.initializeWindSpeeds((TreeMap<LocalTime, Real>) wizard.getProperty(PROP_WIND_SPEEDS));
         
         //provider.initializeCloudCovers(...);
 

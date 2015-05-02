@@ -55,7 +55,7 @@ final class WeatherUnitsOptionsPanel extends javax.swing.JPanel {
     WeatherUnitsOptionsPanel(WeatherUnitsOptionsPanelController controller) {
         this.controller = controller;
         this.listener = (ActionEvent e) -> {
-            this.controller.changed();
+            //this.controller.changed();
         };
         initComponents();
         // listen to changes in form fields and call controller.changed()

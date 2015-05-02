@@ -29,20 +29,21 @@
  */
 package com.emxsys.weather.wizards;
 
-import com.emxsys.weather.api.DiurnalWeatherProvider;
+import static com.emxsys.weather.wizards.DiurnalWeatherWizard.PROP_WIND_DIRECTIONS;
+import static com.emxsys.weather.wizards.DiurnalWeatherWizard.PROP_WIND_SPEEDS;
+import java.time.LocalTime;
+import java.util.TreeMap;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import visad.Real;
 import visad.Unit;
 
-public class DiurnalWeatherWizardPanel2 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class DiurnalWeatherWizardWinds implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    private DiurnalWeatherPanelTemps component;
-    private final DiurnalWeatherProvider provider;
+    private DiurnalWeatherPanelWinds component;
 
-    public DiurnalWeatherWizardPanel2(DiurnalWeatherProvider provider) {
-        this.provider = provider;
+    public DiurnalWeatherWizardWinds() {
     }
 
     // Get the visual component for the panel. In this template, the component
@@ -50,9 +51,9 @@ public class DiurnalWeatherWizardPanel2 implements WizardDescriptor.Panel<Wizard
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
     @Override
-    public DiurnalWeatherPanelTemps getComponent() {
+    public DiurnalWeatherPanelWinds getComponent() {
         if (component == null) {
-            component = new DiurnalWeatherPanelTemps(provider);
+            component = new DiurnalWeatherPanelWinds();
         }
         return component;
     }
@@ -85,37 +86,27 @@ public class DiurnalWeatherWizardPanel2 implements WizardDescriptor.Panel<Wizard
 
     @Override
     public void readSettings(WizardDescriptor wiz) {
-        // Set the UOM first so following temperature setting are in correct UOM
-        Unit uom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_UOM);
+        // Set the UOM first so following wind speed setting are in correct UOM
+        // Restore the customized state of dialog
+        Unit uom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_WIND_SPD_UOM);
         if (uom != null) {
-            getComponent().setUom(uom);
+            getComponent().setSpeedUom(uom);
         }
-
-        Real value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNRISE);
-        if (value != null) {
-            getComponent().setSunriseTemp(value);
-        }
-        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_NOON);
-        if (value != null) {
-            getComponent().setNoonTemp(value);
-        }
-        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_1400);
-        if (value != null) {
-            getComponent().set1400Temp(value);
-        }
-        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNSET);
-        if (value != null) {
-            getComponent().setSunsetTemp(value);
+        @SuppressWarnings("unchecked")
+        TreeMap<LocalTime, Real> speeds = (TreeMap<LocalTime, Real>) wiz.getProperty(PROP_WIND_SPEEDS);
+        @SuppressWarnings("unchecked")
+        TreeMap<LocalTime, Real> dirs = (TreeMap<LocalTime, Real>) wiz.getProperty(PROP_WIND_DIRECTIONS);
+        if (speeds != null && dirs != null) {
+            getComponent().setWinds(dirs, speeds);
         }
         getComponent().repaint();
     }
 
     @Override
     public void storeSettings(WizardDescriptor wiz) {
-        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNRISE, getComponent().getSunriseTemp());
-        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_NOON, getComponent().getNoonTemp());
-        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_1400, getComponent().get1400Temp());
-        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNSET, getComponent().getSunsetTemp());
+        // use wiz.putProperty to remember current panel state
+        wiz.putProperty(PROP_WIND_SPEEDS, getComponent().getWindSpeeds());
+        wiz.putProperty(PROP_WIND_DIRECTIONS, getComponent().getWindDirections());
     }
 
 }

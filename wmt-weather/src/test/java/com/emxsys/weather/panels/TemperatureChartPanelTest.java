@@ -72,7 +72,7 @@ public class TemperatureChartPanelTest {
         WeatherPreferences.setAirTempUom(WeatherPreferences.UOM_FAHRENHEIT);
         AirTemperatureChart instance = new AirTemperatureChart();
         instance.setTitle("Diurnal Weather");
-        instance.setTemperatures(wx);
+        instance.setTemperatureForecasts(wx);
 
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(

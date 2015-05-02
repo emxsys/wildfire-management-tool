@@ -46,7 +46,7 @@ import org.junit.Test;
  *
  * @author Bruce Schubert
  */
-@Ignore("interative test")
+//@Ignore("interative test")
 public class DiurnalWeatherWizardTest {
 
     public DiurnalWeatherWizardTest() {
@@ -58,7 +58,7 @@ public class DiurnalWeatherWizardTest {
         Sunlight sunlight = SunlightProviderFactory.getInstance().getSunlight(
                 ZonedDateTime.now(), 
                 GeoCoord3D.fromDegrees(34.2, -119.2));
-        DiurnalWeatherProvider provider = WeatherProviderFactory.newDiurnalWeatherProvider(sunlight);
+        DiurnalWeatherProvider provider = DiurnalWeatherProvider.fromWeatherPreferences();
         DiurnalWeatherWizard instance = new DiurnalWeatherWizard(provider);
         boolean result = instance.testShow();
         assertTrue("Wizard was cancelled.", result);

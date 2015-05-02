@@ -76,7 +76,7 @@ import visad.VisADException;
  * @author Bruce Schubert
  */
 public class WindSpeedDial extends ChartPanel {
-
+    
     private WindSpdChart chart;
 
     /**
@@ -86,12 +86,12 @@ public class WindSpeedDial extends ChartPanel {
         this(new WindSpdChart());
         initComponents();
     }
-
+    
     WindSpeedDial(WindSpdChart chart) {
         super(chart,
                 100, //DEFAULT_WIDTH,
                 150, //DEFAULT_HEIGHT,
-                50,  // DEFAULT_MINIMUM_DRAW_WIDTH, // 300
+                50, // DEFAULT_MINIMUM_DRAW_WIDTH, // 300
                 50, //DEFAULT_MINIMUM_DRAW_HEIGHT, // 200
                 DEFAULT_MAXIMUM_DRAW_WIDTH,
                 DEFAULT_MAXIMUM_DRAW_HEIGHT,
@@ -104,21 +104,25 @@ public class WindSpeedDial extends ChartPanel {
 
         this.chart = chart;
     }
-
+    
     public void setTitle(String title) {
         this.chart.setTitle(title);
     }
-
+    
     public void setSubTitle(String subtitle) {
         this.chart.addSubtitle(new TextTitle(subtitle));
     }
-
+    
     public void setWindSpeed(Real speed) {
         this.chart.setWindSpeed(speed);
     }
-
+    
     public Real getWindSpeed() {
         return this.chart.getWindSpeed();
+    }
+    
+    public void setWindSpeedUnit(Unit unit) {
+        this.chart.setUnit(unit);
     }
 
     /**
@@ -139,20 +143,20 @@ public class WindSpeedDial extends ChartPanel {
      * WindSpdChart is a JFreeChart integrated with a WindSpdPlot.
      */
     public static class WindSpdChart extends JFreeChart {
-
+        
         final DefaultValueDataset dataset;
         private TextTitle subtitle = new TextTitle();
         private Unit uom;
-
+        
         public WindSpdChart() {
             this(new DefaultValueDataset(0.0));
         }
-
+        
         WindSpdChart(DefaultValueDataset dataset) {
             super(new WindSpdPlot(dataset));
             addSubtitle(subtitle);
             setPadding(RectangleInsets.ZERO_INSETS);
-
+            
             this.uom = WeatherPreferences.getWindSpeedUnit();
             this.dataset = dataset;
             this.dataset.addChangeListener((DatasetChangeEvent event) -> {
@@ -173,18 +177,18 @@ public class WindSpeedDial extends ChartPanel {
                     Exceptions.printStackTrace(ex);
                 }
             });
-
+            
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
                 if (evt.getKey().equals(WeatherPreferences.PREF_WIND_SPD_UOM)) {
                     setUnit(WeatherPreferences.getWindSpeedUnit());
                 }
             });
         }
-
+        
         public void refresh() {
             dataset.setNotify(true);
         }
-
+        
         public final void setUnit(Unit uom) {
             Real speed = getWindSpeed();
             this.uom = uom;
@@ -192,7 +196,7 @@ public class WindSpeedDial extends ChartPanel {
             plot.setScale(uom);
             setWindSpeed(speed);
         }
-
+        
         public void setWindSpeed(Real speed) {
             try {
                 dataset.setValue(speed.isMissing() ? null : speed.getValue(uom));
@@ -200,7 +204,7 @@ public class WindSpeedDial extends ChartPanel {
                 Exceptions.printStackTrace(ex);
             }
         }
-
+        
         public final Real getWindSpeed() {
             Number value = this.dataset.getValue();
             if (value != null) {
@@ -222,7 +226,7 @@ public class WindSpeedDial extends ChartPanel {
      * WindSpdPlot is a DialPlot stylized for wind speed.
      */
     private static class WindSpdPlot extends DialPlot {
-
+        
         WindSpdPlot(ValueDataset dataset) {
             super(dataset);
             setView(0.8, 0.37, 0.22, 0.26);
@@ -259,7 +263,7 @@ public class WindSpeedDial extends ChartPanel {
             needle.setRadius(0.84);
             addLayer(needle);
         }
-
+        
         void setScale(Unit uom) {
             try {
                 Real MAX_MPH = new Real(WIND_SPEED_MPH, 40);
@@ -275,12 +279,12 @@ public class WindSpeedDial extends ChartPanel {
                 Exceptions.printStackTrace(ex);
             }
         }
-
+        
         @Override
         public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor, PlotState parentState, PlotRenderingInfo info) {
             super.draw(g2, area, anchor, parentState, info); //To change body of generated methods, choose Tools | Templates.
         }
-
+        
     }
 
     /** This method is called from within the constructor to initialize the form. WARNING: Do NOT

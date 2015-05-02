@@ -92,8 +92,12 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
         initComponents();
     }
 
-    public void setWinds(FlatField weather) {
-        this.chart.plotWinds(weather);
+    public void setWindForecasts(FlatField weather) {
+        this.chart.plotWinds(weather, WindChart.FORECAST_SERIES);
+    }
+
+    public void setWindObservations(FlatField weather) {
+        this.chart.plotWinds(weather, WindChart.OBSERVATION_SERIES);
     }
 
     public void setSunlight(Sunlight sunlight) {
@@ -105,17 +109,23 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
         this.chart.setDateTime(datetime);
     }
 
+    public void setWindSpeedUnit(Unit unit) {
+        this.chart.setWindSpeedUnit(unit);
+    }
+
     /**
      * The WindChart is a JFreeChart with a specialized XYPlot for displaying temperature, humidity,
      * winds and day/night.
      */
     public static class WindChart extends AbstractWeatherChart {
 
-        private Unit unit;
+        private Unit speedUnit;
         /** Dataset for wind vectors */
         private VectorSeriesCollection dataset;
         /** Wind direction and velocity */
-        private VectorSeries series;
+        private VectorSeries[] series = new VectorSeries[2];
+        private static final int FORECAST_SERIES = 0;
+        private static final int OBSERVATION_SERIES = 1;
 
         /**
          * Constructor for a WeatherChart.
@@ -131,10 +141,12 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
          */
         WindChart(VectorSeriesCollection dataset, Unit unit) {
             super(new WindPlot(dataset, unit));
-            this.unit = unit;
-            this.series = new VectorSeries(getSeriesNameAndUom(unit));
+            this.speedUnit = unit;
+            this.series[FORECAST_SERIES] = new VectorSeries(getSeriesNameAndUom(unit));
+            this.series[OBSERVATION_SERIES] = new VectorSeries("Observations");
             this.dataset = dataset;
-            this.dataset.addSeries(series);
+            this.dataset.addSeries(series[FORECAST_SERIES]);
+            this.dataset.addSeries(series[OBSERVATION_SERIES]);
 
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
                 if (evt.getKey().equals(WeatherPreferences.PREF_WIND_SPD_UOM)) {
@@ -158,36 +170,42 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
         }
 
         public final void setWindSpeedUnit(Unit newUnit) {
-            if (this.unit.equals(newUnit)) {
+            if (this.speedUnit.equals(newUnit)) {
                 return;
             }
-            // Refresh the series with the new unit of measure
-            VectorSeries newSeries = new VectorSeries(getSeriesNameAndUom(newUnit));
-
-            for (int i = 0; i < series.getItemCount(); i++) {
+            for (VectorSeries xySeries : series) {
                 try {
-                    double time = series.getXValue(i);
-                    double speed = series.getYValue(i);
-                    double vectorX = series.getVectorXValue(i);
-                    double vectorY = series.getVectorYValue(i);
-                    // convert speed  to new unit of measure
-                    speed = unit.toThat(speed, newUnit);
-                    newSeries.add(time, speed, vectorX, vectorY);
-                } catch (UnitException ex) {
+                    // Refresh the series with the new unit of measure
+                    VectorSeries oldSeries = (VectorSeries) xySeries.clone();
+                    xySeries.clear();
+                    for (int i = 0; i < oldSeries.getItemCount(); i++) {
+                        try {
+                            double time = oldSeries.getXValue(i);
+                            double speed = oldSeries.getYValue(i);
+                            double vectorX = oldSeries.getVectorXValue(i);
+                            double vectorY = oldSeries.getVectorYValue(i);
+                            // convert speed  to new unit of measure
+                            double newSpeed = speedUnit.toThat(speed, newUnit);
+                            xySeries.add(time, newSpeed, vectorX, vectorY);
+                        } catch (UnitException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                    }
+                    if (xySeries.equals(series[FORECAST_SERIES])) {
+                        xySeries.setKey(getSeriesNameAndUom(newUnit)); // updates the legend text
+                    }
+                    xySeries.fireSeriesChanged();
+                } catch (CloneNotSupportedException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
-            // Replace the old series
-            dataset.removeSeries(series);
-            dataset.addSeries(newSeries);
-            series = newSeries;
-            series.fireSeriesChanged();
-
-            unit = newUnit;
+            speedUnit = newUnit;
+            // Update the range units and scale
+            ((WindPlot) getPlot()).setRangeUnit(newUnit);
         }
 
-        public void plotWinds(FlatField weather) {
-            series.clear();
+        public void plotWinds(FlatField weather, int seriesNo) {
+            series[seriesNo].clear();
             try {
                 int dirIndex = getWindDirIndex(weather);
                 if (dirIndex == -1) {
@@ -197,19 +215,19 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
                 if (spdIndex == -1) {
                     throw new IllegalArgumentException("FlatField must contain WIND_SPEED_...");
                 }
-                Unit unit = weather.getDefaultRangeUnits()[spdIndex];
+                Unit rngUnit = weather.getDefaultRangeUnits()[spdIndex];
 
                 final float[][] times = weather.getDomainSet().getSamples(false);
                 final float[][] values = weather.getFloats(false);
                 for (int i = 0; i < times[0].length; i++) {
                     double dir = values[dirIndex][i];
-                    double speed = unit.equals(unit)
+                    double speed = rngUnit.equals(this.speedUnit)
                             ? values[spdIndex][i]
-                            : unit.toThis(values[spdIndex][i], unit);
+                            : rngUnit.toThat(values[spdIndex][i], this.speedUnit);
                     // draw direction wind is blowing (vs from)
                     double deltax = -Math.sin(Math.toRadians(dir));
                     double deltay = -Math.cos(Math.toRadians(dir));
-                    series.add(times[0][i], speed, deltax, deltay);
+                    series[seriesNo].add(times[0][i], speed, deltax, deltay);
                 }
             } catch (VisADException ex) {
                 Exceptions.printStackTrace(ex);
@@ -251,6 +269,9 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
             if (spdIndex == -1) {
                 spdIndex = findRangeComponentIndex(functionType, WeatherType.WIND_SPEED_KPH);
             }
+            if (spdIndex == -1) {
+                spdIndex = findRangeComponentIndex(functionType, WeatherType.WIND_SPEED_SI);
+            }
             return spdIndex;
         }
 
@@ -272,7 +293,9 @@ public class WindSpeedDirectionChart extends AbstractWeatherChartPanel {
 
             // Customize the renderer for winds
             WindVectorRenderer vecRenderer = (WindVectorRenderer) getRenderer();
-            vecRenderer.setSeriesPaint(0, new Color(128, 0, 128));    // purple
+            vecRenderer.setSeriesPaint(WindChart.FORECAST_SERIES, new Color(128, 0, 128));    // purple
+            vecRenderer.setSeriesPaint(WindChart.OBSERVATION_SERIES, new Color(128, 0, 128));    // purple
+            vecRenderer.setSeriesVisibleInLegend(WindChart.OBSERVATION_SERIES, false);
             vecRenderer.setBaseToolTipGenerator(new WindVectorToolTipGenerator());
 
             setDomainCrosshairVisible(true);

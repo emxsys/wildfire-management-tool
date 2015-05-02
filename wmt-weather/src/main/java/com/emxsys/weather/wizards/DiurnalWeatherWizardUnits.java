@@ -29,18 +29,16 @@
  */
 package com.emxsys.weather.wizards;
 
-import com.emxsys.weather.api.DiurnalWeatherProvider;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
+import visad.Unit;
 
-public class DiurnalWeatherWizardPanel5 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class DiurnalWeatherWizardUnits implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    private DiurnalWeatherPanelClouds component;
-    private DiurnalWeatherProvider provider;
+    private DiurnalWeatherPanelUnits component;
 
-    public DiurnalWeatherWizardPanel5(DiurnalWeatherProvider provider) {
-        this.provider = provider;
+    public DiurnalWeatherWizardUnits() {
     }
 
     // Get the visual component for the panel. In this template, the component
@@ -48,9 +46,9 @@ public class DiurnalWeatherWizardPanel5 implements WizardDescriptor.Panel<Wizard
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
     @Override
-    public DiurnalWeatherPanelClouds getComponent() {
+    public DiurnalWeatherPanelUnits getComponent() {
         if (component == null) {
-            component = new DiurnalWeatherPanelClouds();
+            component = new DiurnalWeatherPanelUnits();
         }
         return component;
     }
@@ -83,12 +81,21 @@ public class DiurnalWeatherWizardPanel5 implements WizardDescriptor.Panel<Wizard
 
     @Override
     public void readSettings(WizardDescriptor wiz) {
-        // use wiz.getProperty to retrieve previous panel state
+        Unit airTempUom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_UOM);
+        if (airTempUom != null) {
+            getComponent().setAirTempUom(airTempUom);
+        }
+        Unit windSpdUom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_WIND_SPD_UOM);
+        if (windSpdUom != null) {
+            getComponent().setWindSpeedUom(windSpdUom);
+        }
     }
 
     @Override
     public void storeSettings(WizardDescriptor wiz) {
         // use wiz.putProperty to remember current panel state
+        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_UOM, getComponent().getAirTempUom());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_WIND_SPD_UOM, getComponent().getWindSpdUom());
     }
 
 }

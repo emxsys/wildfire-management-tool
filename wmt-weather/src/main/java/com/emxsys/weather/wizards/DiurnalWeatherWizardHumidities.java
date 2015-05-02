@@ -29,30 +29,26 @@
  */
 package com.emxsys.weather.wizards;
 
-import com.emxsys.weather.api.DiurnalWeatherProvider;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
+import visad.Real;
 
-public class DiurnalWeatherWizardPanel1 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class DiurnalWeatherWizardHumidities implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    
-    private DiurnalWeatherPanelUnits component;
-    private DiurnalWeatherProvider provider;
-    private WizardDescriptor wd;
+    private DiurnalWeatherPanelHumidities component;
 
-    public DiurnalWeatherWizardPanel1(DiurnalWeatherProvider provider) {
-        this.provider = provider;
+    public DiurnalWeatherWizardHumidities() {
     }
 
-    // Get the visual component for the panel. In this template, the component
+    // Get the visual component for the panel. In this humiditylate, the component
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
     @Override
-    public DiurnalWeatherPanelUnits getComponent() {
+    public DiurnalWeatherPanelHumidities getComponent() {
         if (component == null) {
-            component = new DiurnalWeatherPanelUnits();
+            component = new DiurnalWeatherPanelHumidities();
         }
         return component;
     }
@@ -85,16 +81,32 @@ public class DiurnalWeatherWizardPanel1 implements WizardDescriptor.Panel<Wizard
 
     @Override
     public void readSettings(WizardDescriptor wiz) {
-        this.wd = wiz;
-        wiz.getProperty("airTempUOM");
-    }
 
+        Real value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNRISE);
+        if (value != null) {
+            getComponent().setSunriseHumidity(value);
+        }
+        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_NOON);
+        if (value != null) {
+            getComponent().setNoonHumidity(value);
+        }
+        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_1400);
+        if (value != null) {
+            getComponent().set1400Humidity(value);
+        }
+        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNSET);
+        if (value != null) {
+            getComponent().setSunsetHumidity(value);
+        }
+        getComponent().repaint();
+    }
 
     @Override
     public void storeSettings(WizardDescriptor wiz) {
-        // use wiz.putProperty to remember current panel state
-        wiz.putProperty("airTempUOM", getComponent().getAirTempUom());
-        wiz.putProperty("windSpeedUOM", getComponent().getAirTempUom());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNRISE, getComponent().getSunriseHumidity());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_NOON, getComponent().getNoonHumidity());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_1400, getComponent().get1400Humidity());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNSET, getComponent().getSunsetHumidity());
     }
 
 }

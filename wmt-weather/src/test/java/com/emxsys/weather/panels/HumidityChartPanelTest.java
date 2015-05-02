@@ -82,8 +82,8 @@ public class HumidityChartPanelTest {
         RelativeHumiditySkyCoverChart instance = new RelativeHumiditySkyCoverChart();
         instance.setTitle("Diurnal Weather");
         instance.setSunlight(sunlight);
-        instance.setHumidities(wx);
-        instance.setCloudCover(wx);
+        instance.setHumidityForecasts(wx);
+        instance.setCloudCoverForecasts(wx);
 
         assertTrue("Form was invalidated by the user",
                 JOptionPane.showConfirmDialog(

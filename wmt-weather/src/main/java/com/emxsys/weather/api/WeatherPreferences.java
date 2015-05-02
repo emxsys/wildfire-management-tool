@@ -127,6 +127,21 @@ public class WeatherPreferences {
     }
 
     /**
+     * Sets the air temperature UOM preference from a VisAD Unit.
+     *
+     * @param unit Air Temperature Unit
+     */
+    public static void setAirTempUnit(Unit unit) {
+        if (unit.equals(GeneralUnit.degF)) {
+            setAirTempUom(UOM_FAHRENHEIT);
+        } else if (unit.equals(GeneralUnit.degC)) {
+            setAirTempUom(WeatherPreferences.UOM_CELSIUS);
+        } else {
+            throw new IllegalArgumentException("Invalid air temp UOM: " + unit.toString());
+        }
+    }
+
+    /**
      * Sets the air temperature unit of measure preference.
      * @param uom One of: UOM_FAHRENHEIT, UOM_CELSIUS.
      */
@@ -162,6 +177,24 @@ public class WeatherPreferences {
      */
     public static Unit getWindSpeedUnit() {
         return windSpeedUomToUnit(getWindSpeedUom());
+    }
+
+    /**
+     * Sets the wind speed UOM from a VisAD Unit.
+     * @param unit Wind Speed Unit
+     */
+    public static void setWindSpeedUnit(Unit unit) {
+        if (unit.equals(GeneralUnit.mph)) {
+            setWindSpeedUom(UOM_MPH);
+        } else if (unit.equals(GeneralUnit.kph)) {
+            setWindSpeedUom(UOM_KPH);
+        } else if (unit.equals(GeneralUnit.knot)) {
+            setWindSpeedUom(UOM_KTS);
+        } else if (unit.equals(CommonUnit.meterPerSecond)) {
+            setWindSpeedUom(UOM_MPS);
+        } else {
+            throw new IllegalArgumentException("Invalid wind speed UOM: " + unit.toString());
+        }
     }
 
     public static Real getAirTempValue(String key) {

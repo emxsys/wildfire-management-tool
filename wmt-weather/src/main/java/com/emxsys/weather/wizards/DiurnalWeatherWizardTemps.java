@@ -29,29 +29,27 @@
  */
 package com.emxsys.weather.wizards;
 
-import com.emxsys.weather.api.DiurnalWeatherProvider;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 import visad.Real;
+import visad.Unit;
 
-public class DiurnalWeatherWizardPanel3 implements WizardDescriptor.Panel<WizardDescriptor> {
+public class DiurnalWeatherWizardTemps implements WizardDescriptor.Panel<WizardDescriptor> {
 
-    private DiurnalWeatherPanelHumidities component;
-    private final DiurnalWeatherProvider provider;
+    private DiurnalWeatherPanelTemps component;
 
-    public DiurnalWeatherWizardPanel3(DiurnalWeatherProvider provider) {
-        this.provider = provider;
+    public DiurnalWeatherWizardTemps() {
     }
 
-    // Get the visual component for the panel. In this humiditylate, the component
+    // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
     // but never displayed, or not all panels are displayed, it is better to
     // create only those which really need to be visible.
     @Override
-    public DiurnalWeatherPanelHumidities getComponent() {
+    public DiurnalWeatherPanelTemps getComponent() {
         if (component == null) {
-            component = new DiurnalWeatherPanelHumidities(provider);
+            component = new DiurnalWeatherPanelTemps();
         }
         return component;
     }
@@ -84,32 +82,36 @@ public class DiurnalWeatherWizardPanel3 implements WizardDescriptor.Panel<Wizard
 
     @Override
     public void readSettings(WizardDescriptor wiz) {
-
-        Real value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNRISE);
-        if (value != null) {
-            getComponent().setSunriseHumidity(value);
+        // Set the UOM first so following temperature setting are in correct UOM
+        Unit uom = (Unit) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_UOM);
+        if (uom != null) {
+            getComponent().setUom(uom);
         }
-        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_NOON);
+        Real value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNRISE);
         if (value != null) {
-            getComponent().setNoonHumidity(value);
+            getComponent().setSunriseTemp(value);
         }
-        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_1400);
+        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_NOON);
         if (value != null) {
-            getComponent().set1400Humidity(value);
+            getComponent().setNoonTemp(value);
         }
-        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNSET);
+        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_1400);
         if (value != null) {
-            getComponent().setSunsetHumidity(value);
+            getComponent().set1400Temp(value);
+        }
+        value = (Real) wiz.getProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNSET);
+        if (value != null) {
+            getComponent().setSunsetTemp(value);
         }
         getComponent().repaint();
     }
 
     @Override
     public void storeSettings(WizardDescriptor wiz) {
-        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNRISE, getComponent().getSunriseHumidity());
-        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_NOON, getComponent().getNoonHumidity());
-        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_1400, getComponent().get1400Humidity());
-        wiz.putProperty(DiurnalWeatherWizard.PROP_REL_HUMIDITY_SUNSET, getComponent().getSunsetHumidity());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNRISE, getComponent().getSunriseTemp());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_NOON, getComponent().getNoonTemp());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_1400, getComponent().get1400Temp());
+        wiz.putProperty(DiurnalWeatherWizard.PROP_AIR_TEMP_SUNSET, getComponent().getSunsetTemp());
     }
 
 }

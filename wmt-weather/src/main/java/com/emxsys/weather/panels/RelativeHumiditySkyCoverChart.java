@@ -76,12 +76,20 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
         initComponents();
     }
 
-    public void setCloudCover(FlatField ff) {
-        this.chart.plotClouds(ff);
+    public void setCloudCoverForecasts(FlatField ff) {
+        this.chart.plotClouds(ff, HumidityChart.FORECAST_SERIES);
     }
 
-    public void setHumidities(FlatField ff) {
-        this.chart.plotHumidities(ff);
+    public void setCloudCoverObservations(FlatField ff) {
+        this.chart.plotClouds(ff, HumidityChart.OBSERVATION_SERIES);
+    }
+
+    public void setHumidityForecasts(FlatField ff) {
+        this.chart.plotHumidities(ff, HumidityChart.FORECAST_SERIES);
+    }
+
+    public void setHumidityObservations(FlatField ff) {
+        this.chart.plotHumidities(ff, HumidityChart.OBSERVATION_SERIES);
     }
 
     public void setSunlight(Sunlight sunlight) {
@@ -102,9 +110,11 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
         /** Dataset for clouds and humidity */
         private XYSeriesCollection xyDataset;
         /** Relative humidity */
-        private XYSeries seriesH;
+        private XYSeries[] seriesH = new XYSeries[2];
         /** Clouds */
-        private XYSeries seriesC;
+        private XYSeries[] seriesC = new XYSeries[2];
+        private static final int FORECAST_SERIES = 0;
+        private static final int OBSERVATION_SERIES = 1;
 
         /**
          * Constructor for a HumidityChart.
@@ -119,19 +129,24 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
          */
         private HumidityChart(XYSeriesCollection xyDataset) {
             super(new HumidityPlot(xyDataset));
-            this.seriesH = new XYSeries(Bundle.CTL_HumidityChartHumidity());
-            this.seriesC = new XYSeries(Bundle.CTL_HumidityChartClouds());
+            this.seriesH[FORECAST_SERIES] = new XYSeries(Bundle.CTL_HumidityChartHumidity());
+            this.seriesH[OBSERVATION_SERIES] = new XYSeries("HumidityObservtions");
+            this.seriesC[FORECAST_SERIES] = new XYSeries(Bundle.CTL_HumidityChartClouds());
+            this.seriesC[OBSERVATION_SERIES] = new XYSeries("CloudCoverObservations");
             this.xyDataset = xyDataset;
-            this.xyDataset.addSeries(seriesH);
-            this.xyDataset.addSeries(seriesC);
+            this.xyDataset.addSeries(seriesH[FORECAST_SERIES]);
+            this.xyDataset.addSeries(seriesH[OBSERVATION_SERIES]);
+            this.xyDataset.addSeries(seriesC[FORECAST_SERIES]);
+            this.xyDataset.addSeries(seriesC[OBSERVATION_SERIES]);
         }
 
         /**
          * Plot the relative humidity. This is the primary dataset.
          * @param weather (hour -> (..., REL_HUMIDITY, ...))
+         * @param seriesNo
          */
-        public void plotHumidities(FlatField weather) {
-            seriesH.clear();
+        public void plotHumidities(FlatField weather, int seriesNo) {
+            seriesH[seriesNo].clear();
             try {
                 FunctionType functionType = (FunctionType) weather.getType();
                 int index = findRangeComponentIndex(functionType, WeatherType.REL_HUMIDITY);
@@ -143,7 +158,7 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
                 final float[][] values = weather.getFloats(false);
 
                 for (int i = 0; i < times[0].length; i++) {
-                    seriesH.add(times[0][i], values[index][i]);
+                    seriesH[seriesNo].add(times[0][i], values[index][i]);
                 }
                 plotDayNight();
 
@@ -155,9 +170,10 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
         /**
          * Plot the cloud cover in the chart. Clouds are the secondary dataset.
          * @param weather (hour -> (..., CLOUD_COVER, ...))
+         * @param seriesNo
          */
-        public void plotClouds(FlatField weather) {
-            seriesC.clear();
+        public void plotClouds(FlatField weather, int seriesNo) {
+            seriesC[seriesNo].clear();
             try {
                 // TODO test math types for compatablity and tuple index
                 FunctionType functionType = (FunctionType) weather.getType();
@@ -171,7 +187,7 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
 
                 for (int i = 0; i < times[0].length; i++) {
                     float value = values[index][i];
-                    seriesC.add(times[0][i], value);
+                    seriesC[seriesNo].add(times[0][i], value);
                 }
 
             } catch (VisADException ex) {
@@ -198,7 +214,14 @@ public class RelativeHumiditySkyCoverChart extends AbstractWeatherChartPanel {
             XYItemRenderer xyRenderer = getRenderer();
             xyRenderer.setBaseToolTipGenerator(new DateTimeToolTipGenerator());
             xyRenderer.setSeriesPaint(0, new Color(0, 128, 0)); // dark green for humidty
-            xyRenderer.setSeriesPaint(1, new Color(0, 0, 128)); // dark blue for cloud cover
+            xyRenderer.setSeriesPaint(1, new Color(0, 128, 0)); // dark green for humidty
+            xyRenderer.setSeriesShape(1, xyRenderer.getSeriesShape(0));
+            xyRenderer.setSeriesVisibleInLegend(1, false);
+
+            xyRenderer.setSeriesPaint(2, new Color(0, 0, 128)); // dark blue for cloud cover
+            xyRenderer.setSeriesPaint(3, new Color(0, 0, 128)); // dark blue for cloud cover
+            xyRenderer.setSeriesShape(3, xyRenderer.getSeriesShape(2));
+            xyRenderer.setSeriesVisibleInLegend(3, false);
 
             setDomainCrosshairVisible(true);
             setRangeCrosshairVisible(true);

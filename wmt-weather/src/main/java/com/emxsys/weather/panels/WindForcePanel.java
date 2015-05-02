@@ -39,6 +39,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import org.openide.util.Exceptions;
 import visad.Real;
+import visad.Unit;
 import visad.VisADException;
 
 /**
@@ -75,6 +76,10 @@ public class WindForcePanel extends javax.swing.JPanel {
         return spdPanel.getWindSpeed();
     }
 
+    public void setWindSpeedUnit(Unit unit) {
+        spdPanel.setWindSpeedUnit(unit);
+    }
+
     public void setWindSpeed(Real speed) {
         try {
             if (speed == null || speed.isMissing() || speed.getValue() == 0) {
@@ -92,7 +97,7 @@ public class WindForcePanel extends javax.swing.JPanel {
     public Real getWindDirection() {
         Real windDir = dirPanel.getWindDirection();
         // the missing value is used to nullify the directional arrows when the speed is zero.
-        if (windDir.isMissing()) {  
+        if (windDir.isMissing()) {
             return lastWindDir;
         } else {
             return windDir;

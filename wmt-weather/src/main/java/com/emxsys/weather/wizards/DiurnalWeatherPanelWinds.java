@@ -33,18 +33,11 @@ import com.emxsys.util.AngleUtil;
 import com.emxsys.util.DateUtil;
 import com.emxsys.util.MathUtil;
 import com.emxsys.util.TimeUtil;
+import com.emxsys.visad.Reals;
 import com.emxsys.visad.TemporalDomain;
-import com.emxsys.weather.api.DiurnalWeatherProvider;
 import com.emxsys.weather.api.WeatherPreferences;
 import com.emxsys.weather.api.WeatherType;
-import static com.emxsys.weather.api.WeatherType.AIR_TEMP_INDEX;
-import static com.emxsys.weather.api.WeatherType.CLOUD_COVER_INDEX;
-import static com.emxsys.weather.api.WeatherType.FIRE_WEATHER;
-import static com.emxsys.weather.api.WeatherType.REL_HUMIDITY_INDEX;
-import static com.emxsys.weather.api.WeatherType.WIND_DIR;
-import static com.emxsys.weather.api.WeatherType.WIND_DIR_INDEX;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_INDEX;
-import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KTS;
+import static com.emxsys.weather.api.WeatherType.*;
 import com.emxsys.weather.panels.WindForcePanel;
 import com.emxsys.weather.panels.WindSpeedDirectionChart;
 import java.rmi.RemoteException;
@@ -77,9 +70,8 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
 
     /**
      * Creates new form DiurnalWeatherPanelWinds.
-     * @param provider Provides initial values.
      */
-    public DiurnalWeatherPanelWinds(DiurnalWeatherProvider provider) {
+    public DiurnalWeatherPanelWinds() {
         initComponents();
 
         // Customize Date spinner to only show/edit time
@@ -105,30 +97,25 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             dirSpinField.setValue(newValue.getValue());
         });
         dialsPanel.add(windDials);
-
         // Create the weather chart used to plot the winds
         chart = new WindSpeedDirectionChart();
         chartPanel.add(chart);
 
-        // Populate the table model (assumes dirs and speeds have cooincident times)
-        TreeMap<LocalTime, Real> dirs = provider.getWindDirs();
-        TreeMap<LocalTime, Real> spds = provider.getWindSpeeds();
-        Iterator<LocalTime> times = spds.keySet().iterator();
-        while (times.hasNext()) {
-            LocalTime time = times.next();
-            tableModel.add(time, dirs.get(time), spds.get(time));
-        }
         // Add a listener to sync the controls when the table selection changes
         windsTable.getSelectionModel().addListSelectionListener((event) -> {
-            int row = windsTable.getSelectedRow();
-            if (row < 0) {
-                return;
+            try {
+                int row = windsTable.getSelectedRow();
+                if (row < 0) {
+                    return;
+                }
+                LocalTime time = tableModel.getTimeAt(row);
+                WindsTableModel.Item item = tableModel.getItemAt(row);
+                speedSpinField.setValue(item.windSpd.getValue(speedUom));
+                dirSpinField.setValue(item.windDir.getValue());
+                timeSpinField.setValue(DateUtil.fromLocalTime(time));
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
             }
-            LocalTime time = tableModel.getTimeAt(row);
-            WindsTableModel.Item item = tableModel.getItemAt(row);
-            speedSpinField.setValue(item.windSpd.getValue());
-            dirSpinField.setValue(item.windDir.getValue());
-            timeSpinField.setValue(DateUtil.fromLocalTime(time));
 
         });
 
@@ -139,6 +126,19 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
     @Override
     public String getName() {
         return Bundle.CTL_DiurnalWinds();
+    }
+
+    /**
+     * Populate the Winds table (assumes directions and speeds have coincident times).
+     * @param dirs
+     * @param spds
+     */
+    public void setWinds(TreeMap<LocalTime, Real> dirs, TreeMap<LocalTime, Real> spds) {
+        Iterator<LocalTime> times = spds.keySet().iterator();
+        while (times.hasNext()) {
+            LocalTime time = times.next();
+            tableModel.add(time, spds.get(time), dirs.get(time));
+        }
     }
 
     public TreeMap<LocalTime, Real> getWindSpeeds() {
@@ -159,8 +159,10 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         return dirs;
     }
 
-    void setSpeedUom(Unit uom) {
+    public void setSpeedUom(Unit uom) {
         speedUom = uom;
+        this.windDials.setWindSpeedUnit(uom);
+        this.chart.setWindSpeedUnit(uom);
     }
 
     void updateChartFromTable() {
@@ -179,10 +181,10 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
 
                 LocalTime time = domain.getZonedDateTimeAt(i).toLocalTime();
                 Map.Entry<LocalTime, WindsTableModel.Item> entry = items.floorEntry(time);
-                Real spd = (entry == null) ? new Real(WIND_SPEED_KTS, 0) : entry.getValue().windSpd;
+                Real spd = (entry == null) ? new Real(WIND_SPEED_KTS, 0) : Reals.convertTo(WIND_SPEED_KTS, entry.getValue().windSpd);
                 Real dir = (entry == null) ? new Real(WIND_DIR, 0) : entry.getValue().windDir;
 
-                wxSamples[WIND_SPEED_INDEX][i] = spd.getValue(speedUom);
+                wxSamples[WIND_SPEED_INDEX][i] = spd.getValue();
                 wxSamples[WIND_DIR_INDEX][i] = dir.getValue();
                 wxSamples[AIR_TEMP_INDEX][i] = Double.NaN;      // ignored
                 wxSamples[REL_HUMIDITY_INDEX][i] = Double.NaN;  // ignored
@@ -190,7 +192,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             }
             // ...and put the weather values above into it
             wxField.setSamples(wxSamples);
-            chart.setWinds(wxField);
+            chart.setWindForecasts(wxField);
 
         } catch (VisADException | RemoteException ex) {
             Exceptions.printStackTrace(ex);
@@ -275,7 +277,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
                 if (column == 0) {
                     return getTimeAt(row);
                 } else if (column == 1) {
-                    return getItemAt(row).windSpd;
+                    return getItemAt(row).windSpd.getValue(speedUom);
                 } else {
                     return AngleUtil.degreesToCardinalPoint16(getItemAt(row).windDir.getValue());
                 }
@@ -299,8 +301,8 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
         }
     }
 
-    /** This method is called fromLocalTime within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+    /** This method is called fromLocalTime within the constructor to initialize the form. WARNING:
+     * Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

@@ -37,11 +37,8 @@ import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeAxis;
 import com.emxsys.weather.panels.AbstractWeatherChart.DateTimeToolTipGenerator;
 import java.awt.Color;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.Marker;
-import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -49,7 +46,6 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.Layer;
 import org.jfree.ui.RectangleInsets;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
@@ -89,8 +85,12 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
         initComponents();
     }
 
-    public void setTemperatures(FlatField ff) {
-        this.chart.plotTemperatures(ff);
+    public void setTemperatureForecasts(FlatField ff) {
+        this.chart.plotTemperatures(ff, TemperatureChart.FORECAST_SERIES);
+    }
+
+    public void setTemperatureObservations(FlatField ff) {
+        this.chart.plotTemperatures(ff, TemperatureChart.OBSERVATION_SERIES);
     }
 
     public void setSunlight(Sunlight sunlight) {
@@ -112,8 +112,10 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
         private Unit unit;
         /** Datasets for temperature and dew point */
         private XYSeriesCollection dataset;
-        /** Air temperature */
-        private XYSeries series;
+        /** Air Temperatures */
+        private XYSeries[] series = new XYSeries[2];
+        private static final int FORECAST_SERIES = 0;
+        private static final int OBSERVATION_SERIES = 1;
 
         /**
          * Constructor for a TemperatureChart.
@@ -131,9 +133,11 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
             super(new TemperaturePlot(dataset, WeatherPreferences.getAirTempUnit()));
 
             this.unit = WeatherPreferences.getAirTempUnit();
-            this.series = new XYSeries(getSeriesNameAndUom(this.unit));
+            this.series[FORECAST_SERIES] = new XYSeries(getSeriesNameAndUom(this.unit));
+            this.series[OBSERVATION_SERIES] = new XYSeries("Observations");
             this.dataset = dataset;
-            this.dataset.addSeries(series);
+            this.dataset.addSeries(series[FORECAST_SERIES]);
+            this.dataset.addSeries(series[OBSERVATION_SERIES]);
 
             // Customize the units when preferences change
             WeatherPreferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
@@ -169,27 +173,30 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
                 return;
             }
             try {
-                // Refresh the temperature series with the new Unit of measure
-                XYSeries oldSeries = (XYSeries) series.clone();
-                series.clear();
-                for (int i = 0; i < oldSeries.getItemCount(); i++) {
-                    try {
-                        XYDataItem item = oldSeries.getDataItem(i);
-                        // convert item to new unit of measure
-                        item.setY(unit.toThat(item.getYValue(), newUnit));
-                        series.add(item);
-                    } catch (UnitException ex) {
-                        Exceptions.printStackTrace(ex);
+                for (XYSeries xySeries : series) {
+
+                    // Refresh the temperature series with the new Unit of measure
+                    XYSeries oldSeries = (XYSeries) xySeries.clone();
+                    xySeries.clear();
+                    for (int i = 0; i < oldSeries.getItemCount(); i++) {
+                        try {
+                            XYDataItem item = oldSeries.getDataItem(i);
+                            // convert item to new unit of measure
+                            item.setY(unit.toThat(item.getYValue(), newUnit));
+                            xySeries.add(item);
+                        } catch (UnitException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
                     }
+                    if (xySeries.equals(series[FORECAST_SERIES])) {
+                        xySeries.setKey(getSeriesNameAndUom(newUnit)); // updates the legend text
+                    }
+                    xySeries.fireSeriesChanged();
                 }
                 // Update the range units and scale
                 ((TemperaturePlot) getPlot()).setRangeUnit(newUnit);
-
                 // Now set the new air temp unit property
                 this.unit = newUnit;
-
-                this.series.setKey(getSeriesNameAndUom(newUnit)); // updates the legend text
-                this.series.fireSeriesChanged();
             } catch (CloneNotSupportedException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -198,9 +205,10 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
         /**
          * Plot the supplied temperatures in the chart.
          * @param weather (hour -> (temperature))
+         * @param seriesNo
          */
-        public void plotTemperatures(FlatField weather) {
-            series.clear();
+        public void plotTemperatures(FlatField weather, int seriesNo) {
+            series[seriesNo].clear();
             try {
                 FunctionType functionType = (FunctionType) weather.getType();
                 int index = findRangeComponentIndex(functionType, WeatherType.AIR_TEMP_F);
@@ -217,7 +225,7 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
                 for (int i = 0; i < times[0].length; i++) {
                     // Add values to the series in the preferred UOM
                     float value = values[index][i];
-                    series.add(times[0][i], this.unit.equals(wxUnit)
+                    series[seriesNo].add(times[0][i], this.unit.equals(wxUnit)
                             ? value
                             : this.unit.toThis(value, wxUnit));
                 }
@@ -245,7 +253,9 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
             // Customize the renderer 
             XYItemRenderer xyRenderer = getRenderer();
             xyRenderer.setBaseToolTipGenerator(new DateTimeToolTipGenerator());
-            xyRenderer.setSeriesPaint(0, new Color(128, 0, 0));   // dark red
+            xyRenderer.setSeriesPaint(TemperatureChart.FORECAST_SERIES, new Color(128, 0, 0));   // dark red
+            xyRenderer.setSeriesPaint(TemperatureChart.OBSERVATION_SERIES, new Color(128, 0, 0));   // dark red
+            xyRenderer.setSeriesVisibleInLegend(TemperatureChart.OBSERVATION_SERIES, false);
 
             // Customize the plot
             setRangeUnit(unit); // Update the range axis label
@@ -275,7 +285,6 @@ public class AirTemperatureChart extends AbstractWeatherChartPanel {
             } else {
                 throw new IllegalArgumentException("unhandled unit: " + unit.toString());
             }
-
         }
 
     }

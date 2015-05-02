@@ -31,6 +31,8 @@ package com.emxsys.weather.wizards;
 
 import com.emxsys.visad.GeneralUnit;
 import com.emxsys.weather.api.WeatherPreferences;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
 import visad.CommonUnit;
@@ -39,27 +41,29 @@ import visad.Unit;
 @Messages({"CTL_DiurnalUnitsName=Unit of Measure"})
 public final class DiurnalWeatherPanelUnits extends JPanel {
 
+    public static final String PROP_WEATHER_PANEL_UNITS = DiurnalWeatherPanelUnits.class.getSimpleName();
+    private final ActionListener listener;
+    
+
     /** Creates new form DiurnalWeatherVisualPanel1 */
     public DiurnalWeatherPanelUnits() {
         initComponents();
-        
-        Unit tempUom = WeatherPreferences.getAirTempUnit();
-        if (tempUom.equals(GeneralUnit.degF)) {
-            fahrenheitButton.setSelected(true);
-        } else {
-            celsiusButton.setSelected(true);
-        }
-        
-        Unit speedUom = WeatherPreferences.getWindSpeedUnit();
-        if (speedUom.equals(GeneralUnit.mph)) {
-            mphButton.setSelected(true);
-        } else if (speedUom.equals(GeneralUnit.knot)) {
-            ktsButton.setSelected(true);
-        } else if (speedUom.equals(GeneralUnit.kph)) {
-            kphButton.setSelected(true);
-        } else {
-            mpsButton.setSelected(true);
-        }
+
+        setAirTempUom(WeatherPreferences.getAirTempUnit());
+        setWindSpeedUom(WeatherPreferences.getWindSpeedUnit());
+
+        listener = (ActionEvent e) -> {
+            firePropertyChange(PROP_WEATHER_PANEL_UNITS, null, e.getSource());
+        };
+        // listen to changes in form fields and fire property change 
+        this.fahrenheitButton.addActionListener(listener);
+        this.celsiusButton.addActionListener(listener);
+        this.ktsButton.addActionListener(listener);
+        this.ktsButton.addActionListener(listener);
+        this.mphButton.addActionListener(listener);
+        this.kphButton.addActionListener(listener);
+        this.mpsButton.addActionListener(listener);
+
     }
 
     public Unit getAirTempUom() {
@@ -67,6 +71,14 @@ public final class DiurnalWeatherPanelUnits extends JPanel {
             return GeneralUnit.degF;
         } else {
             return GeneralUnit.degC;
+        }
+    }
+
+    public void setAirTempUom(Unit tempUom) {
+        if (tempUom.equals(GeneralUnit.degF)) {
+            fahrenheitButton.setSelected(true);
+        } else {
+            celsiusButton.setSelected(true);
         }
     }
 
@@ -79,6 +91,18 @@ public final class DiurnalWeatherPanelUnits extends JPanel {
             return GeneralUnit.kph;
         } else {
             return CommonUnit.meterPerSecond;
+        }
+    }
+
+    public void setWindSpeedUom(Unit speedUom) {
+        if (speedUom.equals(GeneralUnit.mph)) {
+            mphButton.setSelected(true);
+        } else if (speedUom.equals(GeneralUnit.knot)) {
+            ktsButton.setSelected(true);
+        } else if (speedUom.equals(GeneralUnit.kph)) {
+            kphButton.setSelected(true);
+        } else {
+            mpsButton.setSelected(true);
         }
     }
 
