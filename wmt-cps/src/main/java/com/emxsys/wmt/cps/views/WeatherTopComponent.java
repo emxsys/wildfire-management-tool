@@ -141,24 +141,24 @@ public final class WeatherTopComponent extends TopComponent {
         // Sync the Weather Charts to the CPS data model
         Model.getInstance().addPropertyChangeListener(Model.PROP_WEATHER, (PropertyChangeEvent evt) -> {
             Coord3D coord = Model.getInstance().getCoord();
-            WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();
-            if (wxModel != null) {
-                FlatField wx = wxModel.getTemporalWeatherAt(coord);
-                temperatureChart.setTemperatures(wx);
-                humidityChart.setHumidities(wx);
-                humidityChart.setCloudCover(wx);
-                windChart.setWinds(wx);
+            WeatherModel wxForecast = WeatherManager.getInstance().getWeatherForecast();
+            if (wxForecast != null) {
+                updateForecasts(wxForecast.getTemporalWeatherAt(coord));
+            }
+            WeatherModel wxHistory = WeatherManager.getInstance().getWeatherHistory();
+            if (wxHistory != null) {
+                updateHistory(wxHistory.getTemporalWeatherAt(coord));
             }
         });
         Model.getInstance().addPropertyChangeListener(Model.PROP_COORD3D, (PropertyChangeEvent evt) -> {
             Coord3D coord = (Coord3D) evt.getNewValue();
-            WeatherModel wxModel = WeatherManager.getInstance().getWeatherForecast();
-            if (wxModel != null) {
-                FlatField wx = wxModel.getTemporalWeatherAt(coord);
-                temperatureChart.setTemperatures(wx);
-                humidityChart.setHumidities(wx);
-                humidityChart.setCloudCover(wx);
-                windChart.setWinds(wx);
+            WeatherModel wxForecast = WeatherManager.getInstance().getWeatherForecast();
+            if (wxForecast != null) {
+                updateForecasts(wxForecast.getTemporalWeatherAt(coord));
+            }
+            WeatherModel wxHistory = WeatherManager.getInstance().getWeatherHistory();
+            if (wxHistory != null) {
+                updateHistory(wxHistory.getTemporalWeatherAt(coord));
             }
         });
         Model.getInstance().addPropertyChangeListener(Model.PROP_DATETIME, (PropertyChangeEvent evt) -> {
@@ -176,6 +176,20 @@ public final class WeatherTopComponent extends TopComponent {
         });
 
         logger.config(PREFERRED_ID + " initialized.");
+    }
+
+    private void updateForecasts(FlatField wx) {
+        temperatureChart.setTemperatureForecasts(wx);
+        humidityChart.setHumidityForecasts(wx);
+        humidityChart.setCloudCoverForecasts(wx);
+        windChart.setWindForecasts(wx);
+    }
+
+    private void updateHistory(FlatField wx) {
+        temperatureChart.setTemperatureObservations(wx);
+        humidityChart.setHumidityObservations(wx);
+        humidityChart.setCloudCoverObservations(wx);
+        windChart.setWindObservations(wx);
     }
 
     /**
