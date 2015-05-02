@@ -30,7 +30,8 @@
 package com.emxsys.weather.options;
 
 import com.emxsys.weather.api.WeatherPreferences;
-import com.emxsys.weather.wizards.DiurnalWeatherPanelUnits;
+import static com.emxsys.weather.api.WeatherPreferences.*;
+import com.emxsys.weather.wizards.DiurnalWeatherPanelHumidities;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -43,38 +44,42 @@ import org.openide.util.WeakListeners;
 
 @OptionsPanelController.SubRegistration(
         location = "Weather",
-        position = 100,
-        displayName = "#AdvancedOption_DisplayName_WeatherUnits",
-        keywords = "#AdvancedOption_Keywords_WeatherUnits",
-        keywordsCategory = "Weather/WeatherUnits"
+        position = 300,
+        displayName = "#AdvancedOption_DisplayName_DiurnalHumidity",
+        keywords = "#AdvancedOption_Keywords_DiurnalHumidity",
+        keywordsCategory = "Weather/DiurnalHumidity"
 )
 @org.openide.util.NbBundle.Messages({
-    "AdvancedOption_DisplayName_WeatherUnits=Units",
-    "AdvancedOption_Keywords_WeatherUnits=units uom measure"})
-public final class WeatherUnitsOptionsPanelController extends OptionsPanelController {
+    "AdvancedOption_DisplayName_DiurnalHumidity=Daily Humidities",
+    "AdvancedOption_Keywords_DiurnalHumidity=diurnal daily hourly humidity"})
+public final class DiurnalHumidityOptionsPanelController extends OptionsPanelController {
 
-    private DiurnalWeatherPanelUnits panel;
+    private DiurnalWeatherPanelHumidities panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private final PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
-        changed();
-    };
     private boolean changed;
 
     @Override
     public void update() {
-        getPanel().setAirTempUom(WeatherPreferences.getAirTempUnit());
-        getPanel().setWindSpeedUom(WeatherPreferences.getWindSpeedUnit());
+        getPanel().setSunriseHumidity(WeatherPreferences.getRelHumidityValue(PREF_RH_SUNRISE));
+        getPanel().setNoonHumidity(WeatherPreferences.getRelHumidityValue(PREF_RH_1200));
+        getPanel().set1400Humidity(WeatherPreferences.getRelHumidityValue(PREF_RH_1400));
+        getPanel().setSunsetHumidity(WeatherPreferences.getRelHumidityValue(PREF_RH_SUNSET));
         changed = false;
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
-            WeatherPreferences.setAirTempUnit(getPanel().getAirTempUom());
-            WeatherPreferences.setWindSpeedUnit(getPanel().getWindSpdUom());
+            WeatherPreferences.setRelHumidityValue(PREF_RH_SUNRISE,
+                    (int) Math.round(getPanel().getSunriseHumidity().getValue()));
+            WeatherPreferences.setRelHumidityValue(PREF_RH_1200,
+                    (int) Math.round(getPanel().getNoonHumidity().getValue()));
+            WeatherPreferences.setRelHumidityValue(PREF_RH_1400,
+                    (int) Math.round(getPanel().get1400Humidity().getValue()));
+            WeatherPreferences.setRelHumidityValue(PREF_RH_SUNSET,
+                    (int) Math.round(getPanel().getSunsetHumidity().getValue()));
             changed = false;
         });
-
     }
 
     @Override
@@ -102,14 +107,6 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
         return getPanel();
     }
 
-    private DiurnalWeatherPanelUnits getPanel() {
-        if (panel == null) {
-            panel = new DiurnalWeatherPanelUnits();
-            panel.addPropertyChangeListener(WeakListeners.propertyChange(listener, panel));
-        }
-        return panel;
-    }
-
     @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
@@ -118,6 +115,17 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
     @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pcs.removePropertyChangeListener(l);
+    }
+
+    private DiurnalWeatherPanelHumidities getPanel() {
+        if (panel == null) {
+            panel = new DiurnalWeatherPanelHumidities();
+
+            panel.addPropertyChangeListener(WeakListeners.propertyChange((PropertyChangeEvent evt) -> {
+                changed();
+            }, panel));
+        }
+        return panel;
     }
 
     void changed() {

@@ -29,6 +29,9 @@
  */
 package com.emxsys.weather.options;
 
+import com.emxsys.weather.api.WeatherPreferences;
+import com.emxsys.weather.wizards.DiurnalWeatherPanelWinds;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
@@ -36,31 +39,38 @@ import javax.swing.SwingUtilities;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.WeakListeners;
 
 @OptionsPanelController.SubRegistration(
         location = "Weather",
-        position = 200,
-        displayName = "#AdvancedOption_DisplayName_DiurnalWeather",
-        keywords = "#AdvancedOption_Keywords_DiurnalWeather",
-        keywordsCategory = "Weather/DiurnalWeather"
+        position = 400,
+        displayName = "#AdvancedOption_DisplayName_DiurnalWind",
+        keywords = "#AdvancedOption_Keywords_DiurnalWind",
+        keywordsCategory = "Weather/DiurnalWind"
 )
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_DiurnalWeather=Daily Weather", "AdvancedOption_Keywords_DiurnalWeather=diurnal daily hourly"})
-public final class DiurnalWeatherOptionsPanelController extends OptionsPanelController {
+@org.openide.util.NbBundle.Messages({
+    "AdvancedOption_DisplayName_DiurnalWind=Daily Winds",
+    "AdvancedOption_Keywords_DiurnalWind=diurnal daily hourly wind"})
+public final class DiurnalWindsOptionsPanelController extends OptionsPanelController {
 
-    private DiurnalWeatherOptionsPanel panel;
+    private DiurnalWeatherPanelWinds panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
     @Override
     public void update() {
-        getPanel().load();
+
+        getPanel().setWinds(
+                WeatherPreferences.getDiurnalWindDirs(),
+                WeatherPreferences.getDiurnalWindSpeeds());
         changed = false;
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
-            getPanel().store();
+            WeatherPreferences.setDiurnalWindSpeeds(getPanel().getWindSpeeds());
+            WeatherPreferences.setDiurnalWindDirections(getPanel().getWindDirections());
             changed = false;
         });
     }
@@ -72,7 +82,7 @@ public final class DiurnalWeatherOptionsPanelController extends OptionsPanelCont
 
     @Override
     public boolean isValid() {
-        return getPanel().valid();
+        return true;
     }
 
     @Override
@@ -100,9 +110,13 @@ public final class DiurnalWeatherOptionsPanelController extends OptionsPanelCont
         pcs.removePropertyChangeListener(l);
     }
 
-    private DiurnalWeatherOptionsPanel getPanel() {
+    private DiurnalWeatherPanelWinds getPanel() {
         if (panel == null) {
-            panel = new DiurnalWeatherOptionsPanel(this);
+            panel = new DiurnalWeatherPanelWinds();
+
+            panel.addPropertyChangeListener(WeakListeners.propertyChange((PropertyChangeEvent evt) -> {
+                changed();
+            }, panel));
         }
         return panel;
     }

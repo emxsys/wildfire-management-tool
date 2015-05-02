@@ -139,6 +139,7 @@ public final class DiurnalWeatherPanelWinds extends JPanel {
             LocalTime time = times.next();
             tableModel.add(time, spds.get(time), dirs.get(time));
         }
+        updateChartFromTable();
     }
 
     public TreeMap<LocalTime, Real> getWindSpeeds() {

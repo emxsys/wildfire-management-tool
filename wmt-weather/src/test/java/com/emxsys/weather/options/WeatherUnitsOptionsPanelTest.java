@@ -52,77 +52,80 @@ public class WeatherUnitsOptionsPanelTest {
     @Ignore("interactive")
     @Test
     public void testBehavior() {
-        System.out.println("Layout and Behavior");
-        System.out.println("Fahrenheit and MPH");
-        WeatherUnitsOptionsPanel instance = new WeatherUnitsOptionsPanel(new WeatherUnitsOptionsPanelController());
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate F and MPH. Select Celsius",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
-        System.out.println("Celsius");
-        instance.store();
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate Celsius. Select Fahrenheit",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
-        System.out.println("Fahrenheit");
-        instance.store();
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate Fahrenheit. Select KPH",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
-        System.out.println("KPH");
-        instance.store();
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate KPH. Select KTS",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
-        System.out.println("KTS");
-        instance.store();
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate KTS. Select MPS",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
-        System.out.println("MPS");
-        instance.store();
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate MPS. Select MPH",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
-        System.out.println("MPH");
-        instance.store();
-        instance.load();
-        assertTrue(JOptionPane.showConfirmDialog(
-                null,
-                instance,
-                "Validate MPH.",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null) == JOptionPane.YES_OPTION);
+// Obsolete, replaced by DiurnalWeatherPanelUnits
+        
+        
+//        System.out.println("Layout and Behavior");
+//        System.out.println("Fahrenheit and MPH");
+//        WeatherUnitsOptionsPanel instance = new WeatherUnitsOptionsPanel(new WeatherUnitsOptionsPanelController());
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate F and MPH. Select Celsius",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
+//        System.out.println("Celsius");
+//        instance.store();
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate Celsius. Select Fahrenheit",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
+//        System.out.println("Fahrenheit");
+//        instance.store();
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate Fahrenheit. Select KPH",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
+//        System.out.println("KPH");
+//        instance.store();
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate KPH. Select KTS",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
+//        System.out.println("KTS");
+//        instance.store();
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate KTS. Select MPS",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
+//        System.out.println("MPS");
+//        instance.store();
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate MPS. Select MPH",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
+//        System.out.println("MPH");
+//        instance.store();
+//        instance.load();
+//        assertTrue(JOptionPane.showConfirmDialog(
+//                null,
+//                instance,
+//                "Validate MPH.",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.PLAIN_MESSAGE,
+//                null) == JOptionPane.YES_OPTION);
     }
 
 }

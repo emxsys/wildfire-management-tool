@@ -32,6 +32,8 @@ package com.emxsys.weather.wizards;
 import com.emxsys.weather.api.WeatherPreferences;
 import static com.emxsys.weather.api.WeatherPreferences.*;
 import com.emxsys.weather.panels.AirTemperatureGauge;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle.Messages;
 import visad.Real;
@@ -48,6 +50,7 @@ public final class DiurnalWeatherPanelTemps extends JPanel {
     private final AirTemperatureGauge panelNoon;
     private final AirTemperatureGauge panel1400;
     private final AirTemperatureGauge panelSunset;
+    private final PropertyChangeListener listener;
 
     public DiurnalWeatherPanelTemps() {
         initComponents();
@@ -70,6 +73,16 @@ public final class DiurnalWeatherPanelTemps extends JPanel {
         jPanel2.add(panelNoon);
         jPanel3.add(panel1400);
         jPanel4.add(panelSunset);
+
+        // Pass on gauge notification to parent
+        listener = (PropertyChangeEvent evt) -> {
+            firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+        };
+        panelSunrise.addPropertyChangeListener(listener);
+        panelNoon.addPropertyChangeListener(listener);
+        panel1400.addPropertyChangeListener(listener);
+        panelSunset.addPropertyChangeListener(listener);
+
     }
 
     void setUom(Unit uom) {

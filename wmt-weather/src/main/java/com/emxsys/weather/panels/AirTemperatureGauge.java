@@ -46,6 +46,7 @@ import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_HEIGHT;
 import static org.jfree.chart.ChartPanel.DEFAULT_MAXIMUM_DRAW_WIDTH;
 import static org.jfree.chart.ChartPanel.DEFAULT_MINIMUM_DRAW_HEIGHT;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.general.ValueDataset;
@@ -132,9 +133,11 @@ public class AirTemperatureGauge extends javax.swing.JPanel {
 
     public final void updateUom(Unit uom) {
         try {
+            Real value = getTemperature();
             this.uom = uom;
             this.range = maxAirTemp.getValue(uom) - minAirTemp.getValue(uom);
             this.chart.setUnits(uom);
+            setTemperature(value);
         } catch (VisADException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -273,6 +276,7 @@ public class AirTemperatureGauge extends javax.swing.JPanel {
             plot.setUnits(uom.equals(GeneralUnit.degF) ? ThermometerPlot.UNITS_FAHRENHEIT : ThermometerPlot.UNITS_CELCIUS);
             try {
                 plot.setRange(minAirTemp.getValue(uom), maxAirTemp.getValue(uom));
+                plot.notifyListeners(new PlotChangeEvent(plot));
             } catch (VisADException ex) {
             }
         }

@@ -39,6 +39,7 @@ public class DiurnalWeatherWizardUnits implements WizardDescriptor.Panel<WizardD
     private DiurnalWeatherPanelUnits component;
 
     public DiurnalWeatherWizardUnits() {
+        
     }
 
     // Get the visual component for the panel. In this template, the component

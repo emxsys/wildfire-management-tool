@@ -30,7 +30,8 @@
 package com.emxsys.weather.options;
 
 import com.emxsys.weather.api.WeatherPreferences;
-import com.emxsys.weather.wizards.DiurnalWeatherPanelUnits;
+import static com.emxsys.weather.api.WeatherPreferences.*;
+import com.emxsys.weather.wizards.DiurnalWeatherPanelTemps;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -43,17 +44,17 @@ import org.openide.util.WeakListeners;
 
 @OptionsPanelController.SubRegistration(
         location = "Weather",
-        position = 100,
-        displayName = "#AdvancedOption_DisplayName_WeatherUnits",
-        keywords = "#AdvancedOption_Keywords_WeatherUnits",
-        keywordsCategory = "Weather/WeatherUnits"
+        position = 200,
+        displayName = "#AdvancedOption_DisplayName_DiurnalTemperature",
+        keywords = "#AdvancedOption_Keywords_DiurnalTemperature",
+        keywordsCategory = "Weather/DiurnalTemperature"
 )
 @org.openide.util.NbBundle.Messages({
-    "AdvancedOption_DisplayName_WeatherUnits=Units",
-    "AdvancedOption_Keywords_WeatherUnits=units uom measure"})
-public final class WeatherUnitsOptionsPanelController extends OptionsPanelController {
+    "AdvancedOption_DisplayName_DiurnalTemperature=Daily Temperatures",
+    "AdvancedOption_Keywords_DiurnalTemperature=diurnal daily hourly temperature"})
+public final class DiurnalTemperatureOptionsPanelController extends OptionsPanelController {
 
-    private DiurnalWeatherPanelUnits panel;
+    private DiurnalWeatherPanelTemps panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
         changed();
@@ -62,19 +63,22 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
 
     @Override
     public void update() {
-        getPanel().setAirTempUom(WeatherPreferences.getAirTempUnit());
-        getPanel().setWindSpeedUom(WeatherPreferences.getWindSpeedUnit());
+        getPanel().setSunriseTemp(WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_SUNRISE));
+        getPanel().setNoonTemp(WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_1200));
+        getPanel().set1400Temp(WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_1400));
+        getPanel().setSunsetTemp(WeatherPreferences.getAirTempValue(PREF_AIR_TEMP_SUNSET));
         changed = false;
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
-            WeatherPreferences.setAirTempUnit(getPanel().getAirTempUom());
-            WeatherPreferences.setWindSpeedUnit(getPanel().getWindSpdUom());
+            WeatherPreferences.setAirTempValue(PREF_AIR_TEMP_SUNRISE,getPanel().getSunriseTemp());
+            WeatherPreferences.setAirTempValue(PREF_AIR_TEMP_1200,getPanel().getNoonTemp());
+            WeatherPreferences.setAirTempValue(PREF_AIR_TEMP_1400,getPanel().get1400Temp());
+            WeatherPreferences.setAirTempValue(PREF_AIR_TEMP_SUNSET,getPanel().getSunsetTemp());
             changed = false;
         });
-
     }
 
     @Override
@@ -102,14 +106,6 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
         return getPanel();
     }
 
-    private DiurnalWeatherPanelUnits getPanel() {
-        if (panel == null) {
-            panel = new DiurnalWeatherPanelUnits();
-            panel.addPropertyChangeListener(WeakListeners.propertyChange(listener, panel));
-        }
-        return panel;
-    }
-
     @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
@@ -118,6 +114,14 @@ public final class WeatherUnitsOptionsPanelController extends OptionsPanelContro
     @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pcs.removePropertyChangeListener(l);
+    }
+
+    private DiurnalWeatherPanelTemps getPanel() {
+        if (panel == null) {
+            panel = new DiurnalWeatherPanelTemps();
+            panel.addPropertyChangeListener(WeakListeners.propertyChange(listener, panel));
+        }
+        return panel;
     }
 
     void changed() {

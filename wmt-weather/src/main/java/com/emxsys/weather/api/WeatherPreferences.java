@@ -33,16 +33,23 @@ import com.emxsys.visad.GeneralUnit;
 import static com.emxsys.visad.GeneralUnit.degF;
 import com.emxsys.visad.Reals;
 import com.emxsys.weather.api.WeatherType;
+import static com.emxsys.weather.api.WeatherType.WIND_SPEED_KTS;
 import static java.lang.Math.round;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import visad.CommonUnit;
 import visad.Real;
+import visad.RealType;
 import visad.Unit;
+import visad.VisADException;
 
 /**
  * Weather Options
@@ -84,6 +91,9 @@ public class WeatherPreferences {
     static final int DEFAULT_RH_1200 = 25;
     static final int DEFAULT_RH_1400 = 20;
     static final int DEFAULT_RH_SUNSET = 40;
+    // Winds Preferences property keys
+    public static final String PREF_WIND_SPEEDS = "weather.wind.speeds";
+    public static final String PREF_WIND_DIRECTIONS = "weather.wind.directions";
 
     private static final HashMap<String, Unit> tempUnits = new HashMap<>();
     private static final HashMap<String, Unit> windUnits = new HashMap<>();
@@ -267,13 +277,29 @@ public class WeatherPreferences {
     }
 
     public static TreeMap<LocalTime, Real> getDiurnalWindSpeeds() {
-        // TODO: Populate diurnal wind speeds
-        return new TreeMap<>();
+        String winds = prefs.get(PREF_WIND_SPEEDS, "");
+        if (!winds.isEmpty()) {
+            return stringToTreeMap(winds, WeatherType.WIND_SPEED_KTS);
+        } else {
+            return new TreeMap<>();
+        }
+    }
+
+    public static void setDiurnalWindSpeeds(TreeMap<LocalTime, Real> speeds) {
+        prefs.put(PREF_WIND_SPEEDS, treeMapToString(speeds, GeneralUnit.knot));
     }
 
     public static TreeMap<LocalTime, Real> getDiurnalWindDirs() {
-        // TODO: Populate diurnal wind dirs
-        return new TreeMap<>();
+        String winds = prefs.get(PREF_WIND_DIRECTIONS, "");
+        if (!winds.isEmpty()) {
+            return stringToTreeMap(winds, WeatherType.WIND_DIR);
+        } else {
+            return new TreeMap<>();
+        }
+    }
+
+    public static void setDiurnalWindDirections(TreeMap<LocalTime, Real> dirs) {
+        prefs.put(PREF_WIND_DIRECTIONS, treeMapToString(dirs,CommonUnit.degree));
     }
 
     public static TreeMap<LocalTime, Real> getDiurnalClouds() {
@@ -281,4 +307,36 @@ public class WeatherPreferences {
         return new TreeMap<>();
     }
 
+    private static String treeMapToString(TreeMap<LocalTime, Real> map, Unit uom) {
+        // TODO: Populate diurnal wind speeds
+        StringBuilder sb = new StringBuilder();
+        Iterator<Entry<LocalTime, Real>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            try {
+                Entry<LocalTime, Real> entry = iterator.next();
+                sb.append(entry.getKey().toString());
+                sb.append("=");
+                sb.append(entry.getValue().getValue(uom));
+                sb.append(",");
+            } catch (VisADException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static TreeMap<LocalTime, Real> stringToTreeMap(String string, RealType type) {
+        TreeMap<LocalTime, Real> map = new TreeMap<>();
+        if (!string.isEmpty()) {
+            String[] pairs = string.split(",");
+            for (String pair : pairs) {
+                String[] values = pair.split("=");
+                LocalTime time = LocalTime.parse(values[0]);
+                Double val = Double.valueOf(values[1]);
+                Real real = new Real(type, val);
+                map.put(time, real);
+            }
+        }
+        return map;
+    }
 }
