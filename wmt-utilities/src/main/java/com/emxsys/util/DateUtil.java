@@ -121,7 +121,7 @@ public class DateUtil {
 
     public static Date fromLocalTime(LocalTime time) {
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR, time.getHour());
+        cal.set(Calendar.HOUR_OF_DAY, time.getHour());
         cal.set(Calendar.MINUTE, time.getMinute());
         cal.set(Calendar.SECOND, time.getSecond());
         return cal.getTime();
