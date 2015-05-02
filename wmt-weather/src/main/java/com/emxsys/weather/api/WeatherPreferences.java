@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import org.openide.explorer.propertysheet.PropertyPanel;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 import visad.CommonUnit;
@@ -94,6 +95,7 @@ public class WeatherPreferences {
     // Winds Preferences property keys
     public static final String PREF_WIND_SPEEDS = "weather.wind.speeds";
     public static final String PREF_WIND_DIRECTIONS = "weather.wind.directions";
+    public static final String PREF_CLOUD_COVERS = "weather.cloudCover";
 
     private static final HashMap<String, Unit> tempUnits = new HashMap<>();
     private static final HashMap<String, Unit> windUnits = new HashMap<>();
@@ -299,12 +301,20 @@ public class WeatherPreferences {
     }
 
     public static void setDiurnalWindDirections(TreeMap<LocalTime, Real> dirs) {
-        prefs.put(PREF_WIND_DIRECTIONS, treeMapToString(dirs,CommonUnit.degree));
+        prefs.put(PREF_WIND_DIRECTIONS, treeMapToString(dirs, CommonUnit.degree));
     }
 
     public static TreeMap<LocalTime, Real> getDiurnalClouds() {
-        // TODO: Populate diurnal clouds
-        return new TreeMap<>();
+        String winds = prefs.get(PREF_CLOUD_COVERS, "");
+        if (!winds.isEmpty()) {
+            return stringToTreeMap(winds, WeatherType.CLOUD_COVER);
+        } else {
+            return new TreeMap<>();
+        }
+    }
+
+    public static void setDiurnalClouds(TreeMap<LocalTime, Real> speeds) {
+        prefs.put(PREF_CLOUD_COVERS, treeMapToString(speeds, GeneralUnit.percent));
     }
 
     private static String treeMapToString(TreeMap<LocalTime, Real> map, Unit uom) {

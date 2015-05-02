@@ -30,9 +30,13 @@
 package com.emxsys.weather.wizards;
 
 import com.emxsys.weather.api.DiurnalWeatherProvider;
+import static com.emxsys.weather.wizards.DiurnalWeatherWizard.PROP_CLOUD_COVERS;
+import java.time.LocalTime;
+import java.util.TreeMap;
 import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
+import visad.Real;
 
 public class DiurnalWeatherWizardClouds implements WizardDescriptor.Panel<WizardDescriptor> {
 
@@ -83,12 +87,16 @@ public class DiurnalWeatherWizardClouds implements WizardDescriptor.Panel<Wizard
 
     @Override
     public void readSettings(WizardDescriptor wiz) {
-        // use wiz.getProperty to retrieve previous panel state
+        @SuppressWarnings("unchecked")
+        TreeMap<LocalTime, Real> clouds = (TreeMap<LocalTime, Real>) wiz.getProperty(PROP_CLOUD_COVERS);
+        if (clouds != null ) {
+            getComponent().setClouds(clouds);
+        }
     }
 
     @Override
     public void storeSettings(WizardDescriptor wiz) {
-        // use wiz.putProperty to remember current panel state
+        wiz.putProperty(PROP_CLOUD_COVERS, getComponent().getClouds());
     }
 
 }

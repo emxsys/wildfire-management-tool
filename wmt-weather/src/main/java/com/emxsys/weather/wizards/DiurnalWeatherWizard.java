@@ -65,6 +65,7 @@ public final class DiurnalWeatherWizard {
     public static final String PROP_WIND_SPD_UOM = "windSpdUOM";
     public static final String PROP_WIND_SPEEDS = "windSpeeds";
     public static final String PROP_WIND_DIRECTIONS = "windDirections";
+    public static final String PROP_CLOUD_COVERS = "cloudCovers";
     private final DiurnalWeatherProvider provider;
     private WizardDescriptor wizard;
 
@@ -114,6 +115,7 @@ public final class DiurnalWeatherWizard {
         wizard.putProperty(PROP_WIND_SPEEDS, provider.getWindSpeeds());
         wizard.putProperty(PROP_WIND_DIRECTIONS, provider.getWindDirs());
         // Update initial clouds
+        wizard.putProperty(PROP_CLOUD_COVERS, provider.getClouds());
         
     }
 
@@ -168,9 +170,10 @@ public final class DiurnalWeatherWizard {
                 (Real) wizard.getProperty(PROP_REL_HUMIDITY_SUNSET));
         
         provider.initializeWindDirections((TreeMap<LocalTime, Real>) wizard.getProperty(PROP_WIND_DIRECTIONS));
+        
         provider.initializeWindSpeeds((TreeMap<LocalTime, Real>) wizard.getProperty(PROP_WIND_SPEEDS));
         
-        //provider.initializeCloudCovers(...);
+        provider.initializeCloudCovers((TreeMap<LocalTime, Real>) wizard.getProperty(PROP_CLOUD_COVERS));
 
     }
 

@@ -46,7 +46,7 @@ import org.junit.Test;
  *
  * @author Bruce Schubert
  */
-//@Ignore("interative test")
+@Ignore("interative test")
 public class DiurnalWeatherWizardTest {
 
     public DiurnalWeatherWizardTest() {
