@@ -3,21 +3,43 @@ Wildfire Management Tool (WMT)
 ==============================
 
 Installers:
-- WMT_windows-x64_4_0_BETA2A.exe: 	Windows 64bit installer.
-- WMT_windows-x64_4_0_BETA2A_JRE.exe: 	Windows 64bit installer with Java 8.
-- WMT_windows_4_0_BETA2A.exe: 		Windows 32bit installer.
-- WMT_windows_4_0_BETA2A_JRE.exe: 	Windows 32bit installer with Java 8.
-- wmt-application-4.0-BETA2A.zip:	No installer -- see bin folder for launchers
+- WMT_windows_4_0_BETA3_JRE.exe:        Windows 32bit installer with Java 8.
+- WMT_windows-x64_4_0_BETA3_JRE.exe:    Windows 64bit installer with Java 8.
+- wmt-application-4.0-BETA3.zip:        No installer -- see bin folder for launchers
 
 Known Issues:
  - Offline mode does not work.  You must have an internet connection.
  - US National Weather Service is the only working weather provider.
- - You must move the globe and the time to activate the weather after it is downloaded.
  - Project fireground analysis do not work. Only point based fire-behavior is enabled.
+
+02-MAY-2015 v4.0 BETA3
+-----------------------
+Fixed Bugs:
+ - [118] Weather charts should auto-update after weather download completes (https://bitbucket.org/emxsys/wildfire-management-tool/issue/118/) 
+ - [119] CPS views should auto-update after initialization (https://bitbucket.org/emxsys/wildfire-management-tool/issue/119/) 
+ - [152] Clock hands do not move in the Solar Preheat Chart (https://bitbucket.org/emxsys/wildfire-management-tool/issue/152/) 
+ - [117] Haul Chart tooltip text says "no slope" instead of "flanking" (https://bitbucket.org/emxsys/wildfire-management-tool/issue/117/) 
+Enhancements:
+ - [139] Improve the Fire Environment window (https://bitbucket.org/emxsys/wildfire-management-tool/issue/139/) 
+Completed Tasks:
+ - [121] Diurnal Weather Editor is incomplete (https://bitbucket.org/emxsys/wildfire-management-tool/issue/121/) 
+ - [120] Weather Temporal Domain is not initialized properly (https://bitbucket.org/emxsys/wildfire-management-tool/issue/120/) 
+ - [148] Add Surface Fuel REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/148/) 
+ - [149] Add Surface Fire REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/149/) 
+ - [63] Add Environment TopComponent (https://bitbucket.org/emxsys/wildfire-management-tool/issue/63/) 
+ - [150] Add Weather REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/150/) 
+ - [151] Add Terrain REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/151/) 
+ - [147] Add Fuel Moisture REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/147/) 
+ - [146] Add Solar REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/146/) 
+ - [145] Add Fuel Model REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/145/) 
+ - [144] Create Web Application to host RESTful web services (https://bitbucket.org/emxsys/wildfire-management-tool/issue/144/) 
+ - [143] Create Windows Azure Web App with Tomcat 7 and Java 8 (https://bitbucket.org/emxsys/wildfire-management-tool/issue/143/) 
+Accepted Proposals:
 
 26-MAR-2015 v4.0 BETA2A
 -----------------------
 Fixed Bugs:
+ - [135] Fuel Moisture sceanrio doesn't seen to work (https://bitbucket.org/emxsys/wildfire-management-tool/issue/135/) 
  - [134] Tactical Symbols do not work when offline (https://bitbucket.org/emxsys/wildfire-management-tool/issue/134/) 
  - [133] Enable Manual Override checkboxes in CPS Forces (https://bitbucket.org/emxsys/wildfire-management-tool/issue/133/) 
  - [128] WMT 4.0 will not launch on Windows 7. (https://bitbucket.org/emxsys/wildfire-management-tool/issue/128/) 
@@ -32,7 +54,6 @@ Completed Tasks:
 
 07-OCT-2014 v4.0 BETA1
 ----------------------
-
 Fixed Bugs:
  - [112] Pushpin Markers are INOP (https://bitbucket.org/emxsys/wildfire-management-tool/issue/112/) 
  - [108] Marker icons not being displayed on Globe (https://bitbucket.org/emxsys/wildfire-management-tool/issue/108/) 

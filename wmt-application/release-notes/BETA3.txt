@@ -1,0 +1,21 @@
+Fixed Bugs:
+ - [118] Weather charts should auto-update after weather download completes (https://bitbucket.org/emxsys/wildfire-management-tool/issue/118/) 
+ - [119] CPS views should auto-update after initialization (https://bitbucket.org/emxsys/wildfire-management-tool/issue/119/) 
+ - [152] Clock hands do not move in the Solar Preheat Chart (https://bitbucket.org/emxsys/wildfire-management-tool/issue/152/) 
+ - [117] Haul Chart tooltip text says "no slope" instead of "flanking" (https://bitbucket.org/emxsys/wildfire-management-tool/issue/117/) 
+Enhancements:
+ - [139] Improve the Fire Environment window (https://bitbucket.org/emxsys/wildfire-management-tool/issue/139/) 
+Completed Tasks:
+ - [121] Diurnal Weather Editor is incomplete (https://bitbucket.org/emxsys/wildfire-management-tool/issue/121/) 
+ - [120] Weather Temporal Domain is not initialized properly (https://bitbucket.org/emxsys/wildfire-management-tool/issue/120/) 
+ - [148] Add Surface Fuel REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/148/) 
+ - [149] Add Surface Fire REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/149/) 
+ - [63] Add Environment TopComponent (https://bitbucket.org/emxsys/wildfire-management-tool/issue/63/) 
+ - [150] Add Weather REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/150/) 
+ - [151] Add Terrain REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/151/) 
+ - [147] Add Fuel Moisture REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/147/) 
+ - [146] Add Solar REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/146/) 
+ - [145] Add Fuel Model REST Service (https://bitbucket.org/emxsys/wildfire-management-tool/issue/145/) 
+ - [144] Create Web Application to host RESTful web services (https://bitbucket.org/emxsys/wildfire-management-tool/issue/144/) 
+ - [143] Create Windows Azure Web App with Tomcat 7 and Java 8 (https://bitbucket.org/emxsys/wildfire-management-tool/issue/143/) 
+Accepted Proposals:

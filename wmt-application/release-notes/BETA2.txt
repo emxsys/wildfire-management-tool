@@ -1,4 +1,5 @@
 Fixed Bugs:
+ - [135] Fuel Moisture sceanrio doesn't seen to work (https://bitbucket.org/emxsys/wildfire-management-tool/issue/135/) 
  - [134] Tactical Symbols do not work when offline (https://bitbucket.org/emxsys/wildfire-management-tool/issue/134/) 
  - [133] Enable Manual Override checkboxes in CPS Forces (https://bitbucket.org/emxsys/wildfire-management-tool/issue/133/) 
  - [128] WMT 4.0 will not launch on Windows 7. (https://bitbucket.org/emxsys/wildfire-management-tool/issue/128/) 
