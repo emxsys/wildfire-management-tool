@@ -32,6 +32,8 @@ package com.emxsys.wmt.web;
 import com.emxsys.gis.api.GeoCoord3D;
 import com.emxsys.solar.api.BasicSunlight;
 import com.emxsys.solar.spi.SunlightProviderFactory;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.openide.util.Exceptions;
 
 /**
  * REST Web Service. Retrieves representation of an instance of
@@ -83,38 +86,55 @@ public class SunlightResource {
             @QueryParam("longitude") double longitude,
             @QueryParam("mime-type") String mimeType) {
 
-        // Get the resource entity
-        BasicSunlight sunlight = getSunlight(time, latitude, longitude);
-
-        MediaType mediaType = MediaType.APPLICATION_XML_TYPE;  // default.
-
-        // When the optional mime-type param is supplied, we override the Accept header
-        if (mimeType != null && !mimeType.isEmpty()) {
-            // Use mime-type param for representation
-            switch (mimeType) {
-                case MediaType.APPLICATION_JSON:
-                    mediaType = MediaType.APPLICATION_JSON_TYPE;
-                    break;
-                case MediaType.APPLICATION_XML:
-                    mediaType = MediaType.APPLICATION_XML_TYPE;
-                    break;
-                case MediaType.TEXT_PLAIN:
-                    mediaType = MediaType.TEXT_PLAIN_TYPE;
-                    break;
-                default:
-                    return Response.status(Status.UNSUPPORTED_MEDIA_TYPE).build();
+        try {
+            // Validate params and decode JavaScript encoded params
+            if (time == null || time.isEmpty()) {
+                // mandatory parameter
+                // TODO: throw
+            } else {
+                time = URLDecoder.decode(time.replace("+", "%2B"), "UTF-8");
             }
-        } else {
-            // Set the MediaType based on the first acceptable HTTP Accept header
-            // from the sorted list of acceptable types (one of the @Produces entries)
-            Iterator<MediaType> iterator = headers.getAcceptableMediaTypes().iterator();
-            if (iterator.hasNext()) {
-                mediaType = iterator.next();
+            if (mimeType != null && !mimeType.isEmpty()) {
+                // Optional param
+                mimeType = URLDecoder.decode(mimeType.replace("+", "%2B"), "UTF-8");
             }
+
+            // Get the resource entity
+            BasicSunlight sunlight = getSunlight(time, latitude, longitude);
+
+            MediaType mediaType = MediaType.APPLICATION_XML_TYPE;  // default.
+
+            // When the optional mime-type param is supplied, we override the Accept header
+            if (mimeType != null && !mimeType.isEmpty()) {
+                // Use mime-type param for representation
+                switch (mimeType) {
+                    case MediaType.APPLICATION_JSON:
+                        mediaType = MediaType.APPLICATION_JSON_TYPE;
+                        break;
+                    case MediaType.APPLICATION_XML:
+                        mediaType = MediaType.APPLICATION_XML_TYPE;
+                        break;
+                    case MediaType.TEXT_PLAIN:
+                        mediaType = MediaType.TEXT_PLAIN_TYPE;
+                        break;
+                    default:
+                        return Response.status(Status.UNSUPPORTED_MEDIA_TYPE).build();
+                }
+            } else {
+                // Set the MediaType based on the first acceptable HTTP Accept header
+                // from the sorted list of acceptable types (one of the @Produces entries)
+                Iterator<MediaType> iterator = headers.getAcceptableMediaTypes().iterator();
+                if (iterator.hasNext()) {
+                    mediaType = iterator.next();
+                }
+            }
+            return Response.ok(mediaType.getType().equals("text") ? sunlight.toString() : sunlight, mediaType)
+                    .build();
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+            return Response.serverError().entity(ex.toString()).build();
         }
-        return Response.ok(
-                mediaType.equals(MediaType.TEXT_PLAIN_TYPE) ? sunlight.toString() : sunlight,
-                mediaType).build();
+
     }
 
     /**
