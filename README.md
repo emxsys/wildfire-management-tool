@@ -1,5 +1,5 @@
 # README #
-## Wildfire Management Tool##
+## Wildfire Management Tool - Desktop##
 ### What is this repository for? ###
 #### Quick summary ####
 This is a NetBeans 8.0 mavenized module suite used to build the Wildfire Management Tool (WMT).
