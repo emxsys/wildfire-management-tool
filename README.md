@@ -1,5 +1,7 @@
 # README #
 ## Wildfire Management Tool - Desktop##
+
+**Are you looking for the [Wildfire Management Tool - Web](https://bitbucket.org/emxsys/wildfire-management-tool-web/overview) edition? Look here: (https://bitbucket.org/emxsys/wildfire-management-tool-wev/overview)**
 ### What is this repository for? ###
 #### Quick summary ####
 This is a NetBeans 8.0 mavenized module suite used to build the Wildfire Management Tool (WMT).
