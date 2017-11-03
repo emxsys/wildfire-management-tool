@@ -25,14 +25,14 @@
         Versions are based on IDE releases, e.g.: RELEASE691
         To create your own repository, use: nbm:populate-repository
         -->
-        <repository>
+<!--        <repository>
             <id>netbeans</id>
             <name>NetBeans</name>
             <url>http://bits.netbeans.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
+        </repository>-->
     </repositories>
 
     <dependencies>
@@ -124,11 +124,6 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.17</version>
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-core-startup</artifactId>
             <version>${netbeans.version}</version>
@@ -137,6 +132,15 @@
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-bootstrap</artifactId>
             <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util-ui</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
@@ -191,11 +195,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <!-- to have the jar plugin pickup the nbm generated manifest -->
-                    <useDefaultManifestFile>true</useDefaultManifestFile>
-                </configuration>
             </plugin>
         </plugins>
     </build>
