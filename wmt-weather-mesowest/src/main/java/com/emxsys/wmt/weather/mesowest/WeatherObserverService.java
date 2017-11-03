@@ -170,13 +170,15 @@ import visad.georef.LatLonPoint;
 public class WeatherObserverService implements WeatherObserver {
 
     /** URI for MesoWest Stations. */
-    protected static final String STATIONS_URI = "http://api.mesowest.net/stations?";
+    protected static final String STATIONS_URI = "https://api.mesowest.net/v2/stations?";
+    protected static final String STATIONS_LATEST_URI = "https://api.mesowest.net/v2/stations/latest?";
+    protected static final String STATIONS_NEARESTTIME_URI = "https://api.mesowest.net/v2/stations/nearesttime?";
 
     /** URI for MesoWest Networks. */
-    protected static final String NETWORKS_URI = "http://api.mesowest.net/networks?";
+    protected static final String NETWORKS_URI = "https://api.mesowest.net/v2/networks?";
 
     /** URI for MesoWest Network Types. */
-    protected static final String NETWORKTYPES_URI = "http://api.mesowest.net/networktypes?";
+    protected static final String NETWORKTYPES_URI = "https://api.mesowest.net/v2/networktypes?";
 
     /** App token for registered 'WMT' project */
     protected static final String APP_TOKEN = NbBundle.getBundle("com.emxsys.wmt.branding.Bundle").getString("MESOWEST_APP_TOKEN");
@@ -187,77 +189,36 @@ public class WeatherObserverService implements WeatherObserver {
     protected static final String WIND_SPEED = "wind_speed";
     protected static final String WIND_DIRECTION = "wind_direction";
 
-    /** Latest weather query at lat/lon - params: lat, lon, radius (miles) [and app token] */
-    protected static final String LATEST_WX_RADIUS_QUERY = "&status=active"
-            + "&jsonformat=2"
-            + "&latestobs=1"
-            + "&vars="
-            + AIR_TEMP + ","
-            + RELATIVE_HUMIDITY + ","
-            + WIND_SPEED + ","
-            + WIND_DIRECTION + ","
+    /** Latest weather query with a bounding box - params: minLon, minLat, maxLon, maxLat [and app
+     * token */
+    protected static final String LATEST_WX_BOUNDING_BOX_QUERY_V2 = "&status=active"
+//            + "&vars="
+//            + AIR_TEMP + ","
+//            + RELATIVE_HUMIDITY + ","
+//            + WIND_SPEED + ","
+//            + WIND_DIRECTION + ","
             + "&obtimezone=utc"
-            + "&jsonformat=2"
-            + "&radius=%1$f,%2$f,%3$f"
-            + "&token=%4$s";
-
-    /** Latest weather query at lat/lon - params: lat, lon, radius (miles), age (minutes) [and app
-     * token] */
-    protected static final String LATEST_WX_RADIUS_AGE_QUERY = "&status=active"
-            + "&latestobs=1"
-            + "&within=%4$d"
-            + "&vars="
-            + AIR_TEMP + ","
-            + RELATIVE_HUMIDITY + ","
-            + WIND_SPEED + ","
-            + WIND_DIRECTION + ","
-            + "&obtimezone=utc"
-            + "&jsonformat=2"
-            + "&radius=%1$f,%2$f,%3$f"
-            + "&token=%5$s";
-
-    /** Latest weather query for station - params: station_id, age (minutes) [and app token] */
-    protected static final String LATEST_WX_STATION_QUERY = "&status=active"
-            + "&latestobs=1"
-            + "&stid=%1$s"
-            + "&vars="
-            + AIR_TEMP + ","
-            + RELATIVE_HUMIDITY + ","
-            + WIND_SPEED + ","
-            + WIND_DIRECTION + ","
-            + "&obtimezone=utc"
-            + "&jsonformat=2"
-            + "&token=%2$s";
-
+            + "&units=temp|F,speed|kts"
+            + "&output=json"
+            + "&bbox=%1$f,%2$f,%3$f,%4$f" // minLon,minLat,maxLon,maxLat
+            + "&within=%5$d" // age in minutes
+            + "&token=%6$s";                // app token
+    
     /** Recorded weather query with a bounding box - params: minLon, minLat, maxLon, maxLat, start,
      * end [and app token */
-    protected static final String RECORDED_WX_BOUNDING_BOX_QUERY = "&status=active"
-            + "&vars="
-            + AIR_TEMP + ","
-            + RELATIVE_HUMIDITY + ","
-            + WIND_SPEED + ","
-            + WIND_DIRECTION + ","
+    protected static final String RECORDED_WX_BOUNDING_BOX_QUERY_V2 = "&status=active"
+//            + "&vars="
+//            + AIR_TEMP + ","
+//            + RELATIVE_HUMIDITY + ","
+//            + WIND_SPEED + ","
+//            + WIND_DIRECTION + ","
             + "&obtimezone=utc"
-            + "&jsonformat=2"
+            + "&units=temp|F,speed|kts"
+            + "&output=json"
             + "&bbox=%1$f,%2$f,%3$f,%4$f" // minLon,minLat,maxLon,maxLat
             + "&start=%5$s" // start time
             + "&end=%6$s" // end time
             + "&token=%7$s";                // app token
-
-    /** Latest weather query with a bounding box - params: minLon, minLat, maxLon, maxLat [and app
-     * token */
-    protected static final String LATEST_WX_BOUNDING_BOX_QUERY = "&status=active"
-            + "&vars="
-            + AIR_TEMP + ","
-            + RELATIVE_HUMIDITY + ","
-            + WIND_SPEED + ","
-            + WIND_DIRECTION + ","
-            + "&latestobs=1"
-            + "&obtimezone=utc"
-            + "&jsonformat=2"
-            + "&bbox=%1$f,%2$f,%3$f,%4$f" // minLon,minLat,maxLon,maxLat
-            + "&within=%5$d" // age in minutes
-            + "&token=%6$s";                // app token
 
     private static final Logger logger = Logger.getLogger(WeatherObserverService.class.getName());
 
@@ -274,7 +235,7 @@ public class WeatherObserverService implements WeatherObserver {
             LatLonPoint maxLatLon = areaOfInterest.getMaxLatLon();
 
             // Build the query string and URL
-            String query = String.format(LATEST_WX_BOUNDING_BOX_QUERY,
+            String query = String.format(LATEST_WX_BOUNDING_BOX_QUERY_V2,
                     minLatLon.getLongitude().getValue(),
                     minLatLon.getLatitude().getValue(),
                     maxLatLon.getLongitude().getValue(),
@@ -282,7 +243,7 @@ public class WeatherObserverService implements WeatherObserver {
                     age != null ? age.toMinutes() : 3600,
                     APP_TOKEN);
             StringBuilder sb = new StringBuilder();
-            sb.append(STATIONS_URI).append(query);
+            sb.append(STATIONS_LATEST_URI).append(query);
 
             String urlString = sb.toString();
             logger.fine(urlString);
@@ -290,7 +251,7 @@ public class WeatherObserverService implements WeatherObserver {
 
             // Invoke the REST service and get the JSON results
             String jsonResult = HttpUtil.callWebService(new URL(urlString));
-            //System.out.println(jsonResult);
+            System.out.println(jsonResult);
 
             WeatherModel wxModel = JsonParser.parseSingleObservation(jsonResult);
             if (wxModel == null) {
@@ -327,7 +288,7 @@ public class WeatherObserverService implements WeatherObserver {
             }
 
             // Build the query string and URL
-            String query = String.format(RECORDED_WX_BOUNDING_BOX_QUERY,
+            String query = String.format(RECORDED_WX_BOUNDING_BOX_QUERY_V2,
                     minLatLon.getLongitude().getValue(),
                     minLatLon.getLatitude().getValue(),
                     maxLatLon.getLongitude().getValue(),
@@ -336,7 +297,7 @@ public class WeatherObserverService implements WeatherObserver {
                     end.format(DateTimeFormatter.ISO_INSTANT).replaceAll("\\D+", "").substring(0, 12),
                     APP_TOKEN);
             StringBuilder sb = new StringBuilder();
-            sb.append(STATIONS_URI).append(query);
+            sb.append(STATIONS_NEARESTTIME_URI).append(query);
 
             String urlString = sb.toString();
             logger.fine(urlString);
@@ -344,7 +305,7 @@ public class WeatherObserverService implements WeatherObserver {
 
             // Invoke the REST service and get the JSON results
             String jsonResult = HttpUtil.callWebService(new URL(urlString));
-            //System.out.println(jsonResult);
+            System.out.println(jsonResult);
 
             return JsonParser.parseTimeSeries(jsonResult);
 

@@ -42,6 +42,7 @@ import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -173,6 +174,7 @@ public class MesoWestWeatherProviderTest {
     /**
      * Test of getRecordedConditions method, of class MesoWestWeatherProvider.
      */
+    @Ignore
     @Test
     public void testGetRecordedConditions() throws VisADException, RemoteException {
         System.out.println("getRecordedConditions");
@@ -192,6 +194,7 @@ public class MesoWestWeatherProviderTest {
     /**
      * Test of getLatestObservations method, of class MesoWestWeatherProvider.
      */
+    @Ignore
     @Test
     public void testGetCurrentConditions() throws VisADException, RemoteException {
         System.out.println("getCurrentConditions");
