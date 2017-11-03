@@ -21,14 +21,14 @@
         Versions are based on IDE releases, e.g.: RELEASE691
         To create your own repository, use: nbm:populate-repository
         -->
-        <repository>
+        <!--        <repository>
             <id>netbeans</id>
             <name>NetBeans</name>
             <url>http://bits.netbeans.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
+        </repository>-->
     </repositories>
     <build>
         <plugins>
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.terramenta</groupId>
             <artifactId>terramenta-globe</artifactId>
-            <version>2.0.0-EMXSYS-SNAPSHOT</version>
+            <version>${terramenta.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -118,6 +118,26 @@
             <artifactId>org-openide-awt</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-windows</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util-ui</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-progress-nb</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>        
     </dependencies>
     <name>WMT Swarm</name>
     <description>Intelligent Swarm technologies, including ant-colony-optimization.</description>
