@@ -197,7 +197,7 @@ import visad.georef.LatLonTuple;
 })
 public class NwsDwmlParser {
 
-    public static final String DWML_SCHEMA_URI = "http://www.nws.noaa.gov/forecasts/xml/DWMLgen/schema/DWML.xsd";
+    public static final String DWML_SCHEMA_URI = "https://www.nws.noaa.gov/forecasts/xml/DWMLgen/schema/DWML.xsd";
     public static final String TAG_HEAD = "/dwml/head";
     public static final String TAG_DATA = "/dwml/data";
 

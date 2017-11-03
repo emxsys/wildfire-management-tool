@@ -40,7 +40,7 @@ import java.net.URL;
  */
 public class NwsPointForecastPresenter implements WebForecastPresenter {
 
-    private static final String HOURLY_GRAPH_PAGE = "http://forecast.weather.gov/MapClick.php"
+    private static final String HOURLY_GRAPH_PAGE = "https://forecast.weather.gov/MapClick.php"
             + "?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
             + "&Submit=Submit"
             + "&FcstType=graphical"
@@ -48,7 +48,7 @@ public class NwsPointForecastPresenter implements WebForecastPresenter {
             + "&textField2=%2$f" // Lon
             + "&site=all"
             + "&menu=1";
-    private static final String TABULAR_PAGE = "http://forecast.weather.gov/MapClick.php"
+    private static final String TABULAR_PAGE = "https://forecast.weather.gov/MapClick.php"
             + "?w0=t&w1=td&w2=wc&w3=sfcwind&w3u=1&w4=sky&w5=pop&w6=rh&w8=rain&AheadHour=0"
             + "&Submit=Submit"
             + "&FcstType=digital"
@@ -58,28 +58,28 @@ public class NwsPointForecastPresenter implements WebForecastPresenter {
             + "&unit=0"
             + "&menu=1"
             + "&dd=&bw=";
-    private static final String SVN_DAY_PRINTABLE_PAGE = "http://forecast.weather.gov/MapClick.php"
+    private static final String SVN_DAY_PRINTABLE_PAGE = "https://forecast.weather.gov/MapClick.php"
             + "?lat=%1$f"
             + "&lon=%2$f"
             + "&unit=0"
             + "&lg=english"
             + "&FcstType=text"
             + "&TextType=2";
-    private static final String SVN_DAY_TEXT_ONLY_PAGE = "http://forecast.weather.gov/MapClick.php"
+    private static final String SVN_DAY_TEXT_ONLY_PAGE = "https://forecast.weather.gov/MapClick.php"
             + "?lat=%1$f"
             + "&lon=%2$f"
             + "&unit=0"
             + "&lg=english"
             + "&FcstType=text"
             + "&TextType=1";
-    private static final String SVN_DAY_FORECAST_PAGE = "http://forecast.weather.gov/MapClick.php"
+    private static final String SVN_DAY_FORECAST_PAGE = "https://forecast.weather.gov/MapClick.php"
             + "?lat=%1$f"
             + "&lon=%2$f"
             + "&smap=1"
             + "&unit=0"
             + "&lg=en"
             + "&FcstType=text";
-    private static final String QUICK_FORECAST_PAGE = "http://forecast.weather.gov/afm/PointClick.php"
+    private static final String QUICK_FORECAST_PAGE = "https://forecast.weather.gov/afm/PointClick.php"
             + "?lat=%1$f"
             + "&lon=%2$f";
 

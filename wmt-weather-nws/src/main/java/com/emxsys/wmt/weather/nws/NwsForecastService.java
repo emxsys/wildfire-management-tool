@@ -115,7 +115,7 @@ import visad.VisADException;
 public class NwsForecastService implements WeatherForecaster {
 
     /** NDFD URI for Official REST service. */
-    protected static final String NDFD_REST_URI = "http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?";
+    protected static final String NDFD_REST_URI = "https://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?";
     private static final String NDFD_MULTIPOINT_FORECAST
             = "listLatLon=%1$s"
             + "&product=time-series"
