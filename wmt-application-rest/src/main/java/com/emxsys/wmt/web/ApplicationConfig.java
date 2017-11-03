@@ -27,11 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.emxsys.wmt.web;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
+
 /**
  *
  * @author Bruce Schubert
@@ -43,18 +43,17 @@ public class ApplicationConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
-        addRestResourceClasses(resources);        
+        addRestResourceClasses(resources);
         return resources;
     }
 
     /**
-     * Do not modify addRestResourceClasses() method.
-     * It is automatically populated with
-     * all resources defined in the project.
-     * If required, comment out calling this method in getClasses().
+     * Do not modify addRestResourceClasses() method. It is automatically
+     * populated with all resources defined in the project. If required, comment
+     * out calling this method in getClasses().
      */
     private void addRestResourceClasses(
-                                        Set<Class<?>> resources) {
+            Set<Class<?>> resources) {
         resources.add(com.emxsys.wmt.web.FuelModelsResource.class);
         resources.add(com.emxsys.wmt.web.FuelMoistureResource.class);
         resources.add(com.emxsys.wmt.web.SunlightResource.class);

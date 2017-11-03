@@ -33,6 +33,7 @@ import com.emxsys.wildfire.api.BasicFuelModel;
 import com.emxsys.wildfire.api.BasicFuelMoisture;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
 import com.emxsys.wildfire.behavior.SurfaceFuelProvider;
+import com.sun.jersey.multipart.FormDataParam;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.Context;
@@ -80,9 +81,9 @@ public class SurfaceFuelResource {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response createSurfaceFuel(
-            @DefaultValue("") @FormParam("mime-type") String mimeType,
-            @FormParam("fuelModel") BasicFuelModel fuelModel,
-            @FormParam("fuelMoisture") BasicFuelMoisture fuelMoisture) {
+            @DefaultValue("") @FormDataParam("mime-type") String mimeType,
+            @FormDataParam("fuelModel") BasicFuelModel fuelModel,
+            @FormDataParam("fuelMoisture") BasicFuelMoisture fuelMoisture) {
 
         // Preconditions
         if (fuelModel == null || fuelMoisture == null) {

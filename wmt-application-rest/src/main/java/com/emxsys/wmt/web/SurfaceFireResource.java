@@ -34,6 +34,7 @@ import com.emxsys.weather.api.BasicWeather;
 import com.emxsys.wildfire.behavior.SurfaceFire;
 import com.emxsys.wildfire.behavior.SurfaceFireProvider;
 import com.emxsys.wildfire.behavior.SurfaceFuel;
+import com.sun.jersey.multipart.FormDataParam;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.Context;
@@ -83,10 +84,10 @@ public class SurfaceFireResource {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response createSurfaceFuel(
-            @DefaultValue("") @FormParam("mime-type") String mimeType,
-            @FormParam("fuel") SurfaceFuel fuel,
-            @FormParam("weather") BasicWeather weather,
-            @FormParam("terrain") BasicTerrain terrain) {
+            @DefaultValue("") @FormDataParam("mime-type") String mimeType,
+            @FormDataParam("fuel") SurfaceFuel fuel,
+            @FormDataParam("weather") BasicWeather weather,
+            @FormDataParam("terrain") BasicTerrain terrain) {
 
         // Validate preconditions
         if (fuel == null || weather == null || terrain == null) {
