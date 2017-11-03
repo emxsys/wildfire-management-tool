@@ -53,6 +53,7 @@ import com.emxsys.wmt.globe.Globe;
 import com.emxsys.wmt.globe.layers.RenderableGisLayer;
 import com.emxsys.wmt.globe.render.GlobeEllipse;
 import com.terramenta.globe.utilities.QuickTipController;
+import gov.nasa.worldwind.avlist.AVKey;
 import java.awt.Color;
 import java.time.Duration;
 import org.openide.util.Exceptions;
@@ -94,7 +95,7 @@ public class FirePerimeterEllipse {
         @Override
         public synchronized String getStringValue(String key) {
             // Defer setting the tooltip text until it is needed
-            if (!toolTipValid && key.equals(QuickTipController.getHoverKey())) {
+            if (!toolTipValid && key.equals(AVKey.DESCRIPTION)) { // hoverKey
                 if (fire != null && wx != null) {
                     setHoverText( Bundle.LBL_Weather() + CpsUtil.getPrettyString(wx) +
                             Bundle.LBL_Fuel() + CpsUtil.getPrettyString(fire.getFuelBed()) + 
