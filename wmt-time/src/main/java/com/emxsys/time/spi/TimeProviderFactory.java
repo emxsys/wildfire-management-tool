@@ -32,12 +32,11 @@ package com.emxsys.time.spi;
 import com.emxsys.time.api.TimeEvent;
 import com.emxsys.time.api.TimeListener;
 import com.emxsys.time.api.TimeProvider;
-import com.terramenta.time.DateProvider;
+import com.terramenta.time.DatetimeChangeListener;
+import com.terramenta.time.DatetimeProvider;
 import com.terramenta.time.options.TimeOptions;
+import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -81,28 +80,28 @@ public class TimeProviderFactory {
     /**
      * The default implementation of a TimeProvider.
      */
-    static class DefaultTimeProvider implements TimeProvider, Observer {
+    static class DefaultTimeProvider implements TimeProvider, DatetimeChangeListener {
 
         private final EventListenerList listenerList = new EventListenerList();
-        private DateProvider dateProvider;
+        private DatetimeProvider datetimeProvider;
         private ZonedDateTime curTime;
 
         private DefaultTimeProvider() {
             logger.config("Constructed TimeProvider");
-            getDateProvider();
+            getDatetimeProvider();
         }
 
-        private DateProvider getDateProvider() {
-            if (dateProvider == null) {
-                dateProvider = Lookup.getDefault().lookup(DateProvider.class);
+        private DatetimeProvider getDatetimeProvider() {
+            if (datetimeProvider == null) {
+                datetimeProvider = Lookup.getDefault().lookup(DatetimeProvider.class);
 
-                if (dateProvider == null) {
-                    throw new IllegalStateException("getDateProvider() unable to locate a DateProvider.");
+                if (datetimeProvider == null) {
+                    throw new IllegalStateException("getDatetimeProvider() unable to locate a DatetimeProvider.");
                 }
-                dateProvider.addObserver(this);
-                curTime = dateToZonedDateTime(dateProvider.getDate());
+                datetimeProvider.addChangeListener(this);
+                curTime = instantToZonedDateTime(datetimeProvider.getDatetime());
             }
-            return dateProvider;
+            return datetimeProvider;
         }
 
         @Override
@@ -116,7 +115,7 @@ public class TimeProviderFactory {
                 throw new IllegalArgumentException("setTime() utcTime arg cannot be null.");
             }
             // Update Terramenta
-            getDateProvider().setDate(Date.from(utcTime.toInstant()));
+            getDatetimeProvider().setDatetime(utcTime.toInstant());
         }
 
         @Override
@@ -135,19 +134,20 @@ public class TimeProviderFactory {
          * @param date New date.
          */
         @Override
-        public void update(Observable dateProvider, Object date) {
+        public void onDatetimeChange(Instant oldDatetime, Instant newDatetime) {
             ZonedDateTime oldTime = curTime;
-            curTime = dateToZonedDateTime((Date) date);
+            curTime = instantToZonedDateTime(newDatetime);
             logger.log(Level.FINEST, "update: {0}", curTime.toString());
             TimeEvent timeEvent = new TimeEvent(this, oldTime, curTime);
             for (TimeListener listener : listenerList.getListeners(TimeListener.class)) {
                 listener.updateTime(timeEvent);
             }
         }
-
-        static ZonedDateTime dateToZonedDateTime(Date date) {
-            TimeZone timeZone = TimeOptions.getTimeZone();
-            return ZonedDateTime.ofInstant(date.toInstant(), timeZone.toZoneId());            
+        
+        static ZonedDateTime instantToZonedDateTime(Instant datetime) {
+            TimeZone timeZone = TimeZone.getTimeZone(TimeOptions.DEFAULT_TIMEZONE);
+            return ZonedDateTime.ofInstant(datetime, timeZone.toZoneId());
         }
+
     }
 }
