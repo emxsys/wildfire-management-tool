@@ -5,8 +5,8 @@
     <DataCacheName>igskmncngs137.cr.usgs.gov_80\_wmsconnector_com.esri.wms.Esrimap_USGS_EDC_LandFire\LANDFIRE.US_100FBFM40</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.1.1">
         <LayerNames>LANDFIRE.US_100FBFM40</LayerNames>
-        <GetMapURL>http://igskmncngs137.cr.usgs.gov:80/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetMapURL>
-        <GetCapabilitiesURL>http://igskmncngs137.cr.usgs.gov:80/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetCapabilitiesURL>
+        <GetMapURL>https://igskmncngs137.cr.usgs.gov:80/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetMapURL>
+        <GetCapabilitiesURL>https://igskmncngs137.cr.usgs.gov:80/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_LandFire?</GetCapabilitiesURL>
     </Service>
     <FormatSuffix>.dds</FormatSuffix>
     <NumLevels count="19" numEmpty="0"/>
