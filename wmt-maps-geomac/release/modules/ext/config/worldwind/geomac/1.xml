@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>Land Ownership : 1</DisplayName>
-    <DatasetName>1</DatasetName>
+    <DisplayName>Land Ownership</DisplayName>
+    <DatasetName>Land Ownership</DatasetName>
     <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\1\default</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
-        <LayerNames>1</LayerNames>
+        <LayerNames>Land Ownership</LayerNames>
         <StyleNames>default</StyleNames>
-        <GetMapURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
-        <GetCapabilitiesURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
+        <GetMapURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
+        <GetCapabilitiesURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
     </Service>
     <FormatSuffix>.dds</FormatSuffix>
     <NumLevels count="19" numEmpty="0"/>

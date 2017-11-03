@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>Wildland-Urban Interface : 0</DisplayName>
-    <DatasetName>0</DatasetName>
+    <DisplayName>Wildland-Urban Interface</DisplayName>
+    <DatasetName>Wildland-Urban Interface</DatasetName>
     <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\0\default</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
-        <LayerNames>0</LayerNames>
+        <LayerNames>Wildland-Urban Interface</LayerNames>
         <StyleNames>default</StyleNames>
-        <GetMapURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
-        <GetCapabilitiesURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
+        <GetMapURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
+        <GetCapabilitiesURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
     </Service>
     <FormatSuffix>.dds</FormatSuffix>
     <NumLevels count="19" numEmpty="0"/>

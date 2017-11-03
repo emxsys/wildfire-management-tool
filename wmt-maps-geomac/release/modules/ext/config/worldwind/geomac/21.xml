@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>All Current Year Fires : 21</DisplayName>
-    <DatasetName>21</DatasetName>
+    <DisplayName>All Current Year Fires</DisplayName>
+    <DatasetName>All Current Year Fires</DatasetName>
     <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\AllCurrYearFires\default</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
-        <LayerNames>21</LayerNames>
+        <LayerNames>All Current Year Fires</LayerNames>
         <StyleNames>default</StyleNames>
-        <GetMapURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
-        <GetCapabilitiesURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
+        <GetMapURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
+        <GetCapabilitiesURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
     </Service>
     <FormatSuffix>.dds</FormatSuffix>
     <NumLevels count="19" numEmpty="0"/>

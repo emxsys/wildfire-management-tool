@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Layer layerType="TiledImageLayer" version="1">
-    <DisplayName>Previous Perimeters : 20</DisplayName>
-    <DatasetName>20</DatasetName>
+    <DisplayName>Previous Perimeters</DisplayName>
+    <DatasetName>Previous Perimeters</DatasetName>
     <DataCacheName>wildfire.cr.usgs.gov\_arcgis_services_geomac_dyn_MapServer_WMSServer\PrevFirePerims\default</DataCacheName>
     <Service serviceName="OGC:WMS" version="1.3.0">
-        <LayerNames>20</LayerNames>
+        <LayerNames>Previous Perimeters</LayerNames>
         <StyleNames>default</StyleNames>
-        <GetMapURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
-        <GetCapabilitiesURL>http://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
+        <GetMapURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetMapURL>
+        <GetCapabilitiesURL>https://wildfire.cr.usgs.gov/arcgis/services/geomac_dyn/MapServer/WMSServer</GetCapabilitiesURL>
     </Service>
     <FormatSuffix>.dds</FormatSuffix>
     <NumLevels count="19" numEmpty="0"/>
