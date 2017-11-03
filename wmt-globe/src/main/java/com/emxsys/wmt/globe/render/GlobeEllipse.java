@@ -84,20 +84,20 @@ public class GlobeEllipse extends SurfaceEllipse {
     }
 
     public void setRollOverText(String tooltip) {
-        // The rollOverKey (AVKey.DISPLAY_NAME) is defined in the Terrament QuickTipController
+        // The key (AVKey.DISPLAY_NAME) is defined in the Terramenta QuickTipController constructor
         if (tooltip == null || tooltip.isEmpty()) {
-            removeKey(QuickTipController.getRolloverKey());
+            removeKey(AVKey.DISPLAY_NAME);
         } else {
-            setValue(QuickTipController.getRolloverKey(), tooltip);
+            setValue(AVKey.DISPLAY_NAME, tooltip);
         }
     }
 
     public void setHoverText(String tooltip) {
-        // The hoverKey (AVKey.DESCRIPTION) is defined in the Terrament QuickTipController
+        // The key (AVKey.DESCRIPTION) is defined in the Terrament QuickTipController constructor
         if (tooltip == null || tooltip.isEmpty()) {
-            removeKey(QuickTipController.getHoverKey());
+            removeKey(AVKey.DESCRIPTION);
         } else {
-            setValue(QuickTipController.getHoverKey(), tooltip);
+            setValue(AVKey.DESCRIPTION, tooltip);
         }
     }
 
