@@ -38,9 +38,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.openide.util.Exceptions;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import visad.Real;
 import visad.VisADException;
 
@@ -61,84 +59,20 @@ public class YahooPlace extends GeoCoord2D implements Place {
         super(lat, lon);
         this.woeid = woeid;
         this.name = name;
-        this.boundingBox = new GeoSector();
+        this.boundingBox = new GeoSector(lat.getValue(), lon.getValue(), lat.getValue(), lon.getValue());
     }
 
     public YahooPlace(String woeid, String name, double lat, double lon) throws VisADException,
             RemoteException {
+        this(woeid, name, lat, lon, lat, lon, lat, lon);
+    }
+
+    public YahooPlace(String woeid, String name, double lat, double lon, double swLat, double swLon, double neLat, double neLon) throws VisADException,
+            RemoteException {
         super(lat, lon);
         this.woeid = woeid;
         this.name = name;
-        this.boundingBox = new GeoSector();
-    }
-
-    /**
-     * Parse the XML results returned from "select * from geo.placefinder ...". Example:
-     * <pre>
-     * {@code
-     *<?xml version="1.0" encoding="UTF-8"?>
-     * <query xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" yahoo:count="1"
-     * yahoo:created="2013-05-04T23:55:38Z" yahoo:lang="en-US">
-     *  <results>
-     *      <Result>
-     *          <quality>62</quality>
-     *          <latitude>37.614769</latitude>
-     *          <longitude>-122.391792</longitude>
-     *          <offsetlat>37.614769</offsetlat>
-     *          <offsetlon>-122.391792</offsetlon>
-     *          <radius>1300</radius>
-     *          <name>San Francisco International Airport</name>
-     *          <line1>San Francisco International Airport</line1>
-     *          <line2>San Francisco, CA 94128</line2>
-     *          <line3/>
-     *          <line4>United States</line4>
-     *          <house/>
-     *          <street/>
-     *          <xstreet/>
-     *          <unittype/>
-     *          <unit/>
-     *          <postal>94128</postal>
-     *          <neighborhood/>
-     *          <city>San Francisco</city>
-     *          <county>San Francisco County</county>
-     *          <state>California</state>
-     *          <country>United States</country>
-     *          <countrycode>US</countrycode>
-     *          <statecode>CA</statecode>
-     *          <countycode/>
-     *          <uzip>94128</uzip>
-     *          <hash/>
-     *          <woeid>12521721</woeid>
-     *          <woetype>14</woetype>
-     *      </Result>
-     *  </results>
-     *</query>
-     *
-     *
-     * </pre>
-     */
-    static public YahooPlace fromPlacefinderNode(Node placefinderNode) throws XPathExpressionException, VisADException, RemoteException {
-        XPathFactory xpFactory = XPathFactory.newInstance();
-        XPath xpath = xpFactory.newXPath();
-
-        String woeid = xpath.evaluate("woeid", placefinderNode);
-        String lat = xpath.evaluate("latitude", placefinderNode);
-        String lon = xpath.evaluate("longitude", placefinderNode);
-        // Build the display name
-        StringBuilder displayName = new StringBuilder();
-        String[] lines = new String[]{
-            "line1", "line2", "line3", "line4"
-        };
-        for (String line : lines) {
-            String str = xpath.evaluate(line, placefinderNode);
-            if (str.length() > 0) {
-                if (displayName.length() > 0) {
-                    displayName.append(", ");
-                }
-                displayName.append(str);
-            }
-        }
-        return new YahooPlace(woeid, displayName.toString(), Double.parseDouble(lat), Double.parseDouble(lon));
+        this.boundingBox = new GeoSector(swLat, swLon, neLat, neLon);
     }
 
     /**
@@ -181,20 +115,74 @@ public class YahooPlace extends GeoCoord2D implements Place {
      * }
      * </pre>
      */
-    static public YahooPlace fromPlaceNode(Node placeNode)  {
+    static public YahooPlace fromPlaceNode(Node placeNode) {
         try {
             XPathFactory xpFactory = XPathFactory.newInstance();
             XPath xpath = xpFactory.newXPath();
-            
+
             String woeid = xpath.evaluate("woeid", placeNode);
             String name = xpath.evaluate("name", placeNode);
+            String placeType = xpath.evaluate("placeTypeName", placeNode);
+            String locality = xpath.evaluate("locality1", placeNode);
+            String admin = xpath.evaluate("admin1", placeNode);
+
+            String placeName = name + " [" + placeType + "]";
+            if (!locality.isEmpty()) {
+                placeName += ", " + locality;
+            }
+            if (!admin.isEmpty()) {
+                placeName += ", " + admin;
+            }
+
             Node centroidNode = (Node) xpath.evaluate("centroid", placeNode, XPathConstants.NODE);
             String lat = xpath.evaluate("latitude", centroidNode);
             String lon = xpath.evaluate("longitude", centroidNode);
-            return new YahooPlace(woeid, name, Double.parseDouble(lat), Double.parseDouble(lon));
+
+            Node swNode = (Node) xpath.evaluate("boundingBox/southWest", placeNode, XPathConstants.NODE);
+            String swLat = xpath.evaluate("latitude", swNode);
+            String swLon = xpath.evaluate("longitude", swNode);
+
+            Node neNode = (Node) xpath.evaluate("boundingBox/northEast", placeNode, XPathConstants.NODE);
+            String neLat = xpath.evaluate("latitude", neNode);
+            String neLon = xpath.evaluate("longitude", neNode);
+
+            YahooPlace place = new YahooPlace(woeid, placeName, 
+                    Double.parseDouble(lat), Double.parseDouble(lon),
+                    Double.parseDouble(swLat), Double.parseDouble(swLon),
+                    Double.parseDouble(neLat), Double.parseDouble(neLon));
+
+            return place;
         } catch (VisADException | RemoteException | XPathExpressionException ex) {
             throw new RuntimeException(ex.getMessage());
         }
+    }
+
+    /**
+     * Parse the XML results returned from "select * from geo.placefinder ...".
+     */
+    @Deprecated
+    static public YahooPlace fromPlacefinderNode(Node placefinderNode) throws XPathExpressionException, VisADException, RemoteException {
+        XPathFactory xpFactory = XPathFactory.newInstance();
+        XPath xpath = xpFactory.newXPath();
+
+        String woeid = xpath.evaluate("woeid", placefinderNode);
+        String lat = xpath.evaluate("latitude", placefinderNode);
+        String lon = xpath.evaluate("longitude", placefinderNode);
+        // Build the display name
+        StringBuilder displayName = new StringBuilder();
+        String[] lines = new String[]{
+            "line1", "line2", "line3", "line4"
+        };
+        for (String line : lines) {
+            String str = xpath.evaluate(line, placefinderNode);
+            if (str.length() > 0) {
+                if (displayName.length() > 0) {
+                    displayName.append(", ");
+                }
+                displayName.append(str);
+            }
+        }
+        return new YahooPlace(woeid, displayName.toString(), Double.parseDouble(lat), Double.parseDouble(lon));
     }
 
     /**
@@ -243,7 +231,7 @@ public class YahooPlace extends GeoCoord2D implements Place {
 
     @Override
     public String toString() {
-        return "YahooPlace{" + "name=" + name + ", woeid=" + woeid + '}';
+        return "YahooPlace{" + "name=" + name + ", woeid=" + woeid + ", coords=" + super.toString() + ", sector=" + boundingBox.toString() + '}';
     }
 
 }

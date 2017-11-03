@@ -45,7 +45,7 @@ public interface PlaceProvider
      * @param lookupCriteria criteria to search for
      * @return Places that match the lookup criteria.
      */
-    List<? extends Place> findPlaces(String lookupCriteria);
+    List<? extends Place> findMatchingPlaces(String lookupCriteria);
 
     /**
      * Returns a collection of Places that are near the supplied coordinate.
