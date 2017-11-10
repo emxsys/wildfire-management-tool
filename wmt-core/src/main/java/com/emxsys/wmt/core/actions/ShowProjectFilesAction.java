@@ -53,7 +53,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_ShowProjectFilesAction",
         surviveFocusChange = false,
         lazy = true)
-@RibbonActionReference(path = "Menu/Window/Show", position = 2200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Window/Show", position = 2200,
         tooltipTitle = "#CTL_ShowProjectFilesAction_TooltipTitle",
         tooltipBody = "#CTL_ShowProjectFilesAction_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/core/images/folder_full32.png",

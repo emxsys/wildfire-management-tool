@@ -54,7 +54,7 @@ import org.openide.windows.WindowManager;
         iconBase = "com/emxsys/wmt/core/images/snapshot-window.png",
         displayName = "#CTL_ScreenshotWindowAction")
 @ActionReference(path = "Toolbars/Create", position = 1200)
-@RibbonActionReference(path = "Menu/Tools/Create/Screenshot",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Tools/Create/Screenshot",
         position = 200,
         priority = "top",
         menuText = "#CTL_ScreenshotWindowAction_Text",

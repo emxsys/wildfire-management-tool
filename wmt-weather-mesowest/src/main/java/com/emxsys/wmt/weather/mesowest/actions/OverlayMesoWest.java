@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_MesoWest",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
 @ActionReference(path = "Toolbars/Overlays", position = 312)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Weather",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Weather",
         buttonStyle = "toggle",
         position = 200,
         description = "#CTL_MesoWest_Hint",

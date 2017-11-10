@@ -58,7 +58,7 @@ import org.openide.util.Utilities;
         lazy = false)
 //@ActionReference(path = "Toolbars/Edit", position = 310)
 //// Create a button on the ribbon bar to represent this action
-//@RibbonActionReference(path = "Menu/Home/Edit",
+//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
 //        buttonStyle = "toggle",
 //        priority = "medium",
 //        description = "#CTL_ToggleLockAction_Hint",

@@ -45,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/swarm/actions/ant.png",
         displayName = "#CTL_TestSwarmAction"
 )
-@RibbonActionReference(path = "Menu/Help", position = 1600)
+@RibbonActionReference(path = "Ribbon/TaskPanes/Help", position = 1600)
 @Messages("CTL_TestSwarmAction=Test Swarm")
 public final class TestSwarmAction implements ActionListener {
 

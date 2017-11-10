@@ -56,7 +56,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/save-globe.png",
         displayName = "#CTL_SaveSceneAction", surviveFocusChange = true)
 @ActionReference(path = "Toolbars/Create", position = 1500)
-@RibbonActionReference(path = "Menu/Home/Manage", position = 500,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage", position = 500,
         priority = "top",
         description = "#CTL_SaveSceneAction_Hint",
         tooltipTitle = "#CTL_SaveSceneAction_TooltipTitle",

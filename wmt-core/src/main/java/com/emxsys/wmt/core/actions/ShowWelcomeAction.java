@@ -48,7 +48,7 @@ import org.openide.windows.TopComponent;
 @ActionRegistration(displayName = "#CTL_ShowWelcomeAction",
         iconBase = "com/emxsys/wmt/core/images/light_bulb_info.png",
         iconInMenu = false)
-@RibbonActionReference(path = "Menu/Window/Show", position = 3000,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Window/Show", position = 3000,
         tooltipTitle = "#CTL_ShowWelcomeAction_TooltipTitle",
         tooltipBody = "#CTL_ShowWelcomeAction_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/core/images/light_bulb_info32.png",

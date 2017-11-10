@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/edit.png",
         displayName = "#CTL_EditAction")
 //@ActionReference(path = "Menu/Edit", position = 500)
-//@RibbonActionReference(path = "Menu/Home/Edit",
+//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
 //        position = 100,
 //        priority = "top",
 //        description = "#CTL_EditAction_Hint",

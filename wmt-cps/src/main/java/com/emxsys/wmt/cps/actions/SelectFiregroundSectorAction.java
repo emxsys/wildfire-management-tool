@@ -49,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_SelectFiregroundSector",
         iconBase = "com/emxsys/wmt/cps/images/select.png")
 @ActionReference(path = "Toolbars/Fire", position = 1100)
-@RibbonActionReference(path = "Menu/Process/Fireground", position = 100)
+@RibbonActionReference(path = "Ribbon/TaskPanes/Process/Fireground", position = 100)
 
 @Messages({
     "CTL_SelectFiregroundSector=Select a Sector"

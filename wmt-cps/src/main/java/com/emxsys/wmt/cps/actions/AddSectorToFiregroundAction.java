@@ -56,7 +56,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/cps/images/layer-add.png",
         iconInMenu = true)
 @ActionReference(path = "Toolbars/Fire", position = 1200)
-@RibbonActionReference(path = "Menu/Process/Fireground", position = 200)
+@RibbonActionReference(path = "Ribbon/TaskPanes/Process/Fireground", position = 200)
 @Messages({ //    "CTL_AddSectorToFireground=Add Sector to Fireground",
 //    "ERR_NoProject=A project must be designated to perform this action.\n"
 //    + "You must open or create a project.",

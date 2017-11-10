@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_OverlayWorldMap",
         lazy = true)
 @ActionReference(path = "Toolbars/Overlays", position = 5200)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Controls", position = 200,
         buttonStyle = "toggle",
         description = "#CTL_OverlayWorldMap_Hint",
         priority = "top",

@@ -42,7 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/tilt_down.png",
         displayName = "#CTL_TiltBackAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3300)
-@RibbonActionReference(path = "Menu/Home/Rotate",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Rotate",
         position = 300,
         description = "#CTL_TiltBackAction_Hint",
         tooltipTitle = "#CTL_TiltBackAction_TooltipTitle",

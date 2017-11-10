@@ -50,7 +50,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/design.png",
         displayName = "#CTL_DesignAction")
 //@ActionReference(path = "Menu/Edit", position = 505)
-//@RibbonActionReference(path = "Menu/Home/Edit",
+//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
 //        position = 200,
 //        priority = "top",
 //        description = "#CTL_DesignAction_Hint",

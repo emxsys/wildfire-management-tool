@@ -77,7 +77,7 @@ import org.openide.windows.WindowManager;
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
 @ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.FuelTopComponent")
-@RibbonActionReference(path = "Menu/Window/Show",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Window/Show",
         position = 210,
         priority = "top",
         description = "#CTL_FuelAction_Hint",

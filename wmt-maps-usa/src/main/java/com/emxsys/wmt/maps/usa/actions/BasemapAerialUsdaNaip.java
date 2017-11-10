@@ -51,7 +51,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/maps/usa/images/basemap-usda-naip.png",
         displayName = "#CTL_BasemapUsdaNaip")
 @ActionReference(path = "Toolbars/Basemap", position = 240)
-@RibbonActionReference(path = "Menu/Home/Manage/Basemap/Aerial",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Basemap/Aerial",
         position = 400,
         description = "#CTL_BasemapUsdaNaip_Hint",
         priority = "top",

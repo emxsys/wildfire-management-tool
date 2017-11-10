@@ -42,7 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/rotate_ccw.png",
         displayName = "#CTL_RotateCcwAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 3100)
-@RibbonActionReference(path = "Menu/Home/Rotate",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Rotate",
         position = 100,
         description = "#CTL_RotateCcwAction_Hint",
         tooltipTitle = "#CTL_RotateCcwAction_TooltipTitle",

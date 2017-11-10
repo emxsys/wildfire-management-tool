@@ -55,7 +55,7 @@ import org.openide.util.NbBundle.Messages;
 //            //@ActionReference(path = "Menu/Edit", position = 300),
 //            @ActionReference(path = "Toolbars/Edit", position = 300)
 //        })
-//@RibbonActionReference(path = "Menu/Home/Edit",
+//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Edit",
 //        position = 300,
 //        priority = "top",
 //        description = "#CTL_DeleteAction_Hint",

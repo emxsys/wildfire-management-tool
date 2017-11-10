@@ -52,7 +52,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         iconBase = "com/emxsys/wmt/core/images/mail_edit.png",
         displayName = "#CTL_RegisterSoftwareAction")
-@RibbonActionReference(path = "Menu/Tools/Launch", position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Tools/Launch", position = 200,
         tooltipTitle = "#CTL_RegisterSoftwareAction_TooltipTitle",
         tooltipBody = "#CTL_RegisterSoftwareAction_TooltipBody",
         tooltipIcon = "com/emxsys/wmt/core/images/mail_edit32.png",

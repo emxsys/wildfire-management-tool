@@ -55,7 +55,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Markers", id = "com.emxsys.wmt.globe.actions.AddWeatherMarkerAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/weather/sun_clouds.png", displayName = "#CTL_AddWeatherMarkerAction")
 @ActionReference(path = "Toolbars/Create", position = 2400)
-@RibbonActionReference(path = "Menu/Insert/Markers", position = 400,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Insert/Markers", position = 400,
         priority = "top",
         description = "#CTL_AddWeatherMarkerAction_Hint",
         tooltipTitle = "#CTL_AddWeatherMarkerAction_TooltipTitle",

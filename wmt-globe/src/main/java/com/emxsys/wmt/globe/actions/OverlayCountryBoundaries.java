@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_CountryBoundaries",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
 @ActionReference(path = "Toolbars/Overlays", position = 6100)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Boundaries", position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Boundaries", position = 100,
         buttonStyle = "toggle",
         description = "#CTL_CountryBoundaries_Hint",
         priority = "top",

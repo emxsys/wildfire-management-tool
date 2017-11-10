@@ -61,7 +61,7 @@ import org.openide.util.WeakListeners;
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/markers/pushpins/castshadow-green.png",
         displayName = "#CTL_AddPushpinAction")
 @ActionReference(path = "Toolbars/Create", position = 2200)
-@RibbonActionReference(path = "Menu/Insert/Markers", position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Insert/Markers", position = 200,
         description = "#CTL_AddPushpinAction_Hint",
         priority = "top",
         tooltipTitle = "#CTL_AddPushpinAction_TooltipTitle",

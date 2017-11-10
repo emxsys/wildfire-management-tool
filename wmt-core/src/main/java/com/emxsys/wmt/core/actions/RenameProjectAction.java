@@ -58,7 +58,7 @@ import org.openide.util.Utilities;
         lazy = false)
 //@ActionReference(path = "Menu/File", position = 300)
 //// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Menu/Home/Project/Projects", position = 300,
+//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 300,
 //                       tooltipTitle = "#CTL_RenameProjectAction_TooltipTitle",
 //                       tooltipBody = "#CTL_RenameProjectAction_TooltipBody",
 //                       tooltipIcon = "com/emxsys/wmt/core/images/folder_edit32.png",

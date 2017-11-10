@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_GeomacHistFirePerimOverlay",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
 
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Hazards",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Hazards",
         buttonStyle = "toggle",
         position = 100,
         description = "#CTL_GeomacHistFirePerimOverlay_Hint",

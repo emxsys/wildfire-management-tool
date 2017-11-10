@@ -45,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_OverlayScalebar",
         lazy = false)
 @ActionReference(path = "Toolbars/Overlays", position = 5300)
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 300,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Controls", position = 300,
         buttonStyle = "toggle",
         description = "#CTL_OverlayScalebar_Hint",
         priority = "top",

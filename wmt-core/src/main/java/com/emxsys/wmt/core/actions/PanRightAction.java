@@ -42,7 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_right.png",
         displayName = "#CTL_PanRightAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 2300)
-@RibbonActionReference(path = "Menu/Home/Move",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move",
         position = 300,
         description = "#CTL_PanRightAction_Hint",
         tooltipTitle = "#CTL_PanRightAction_TooltipTitle",

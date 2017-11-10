@@ -48,7 +48,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_GeomacCurrFiresOverlay",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@RibbonActionReference(path = "Menu/Home/Manage/Overlays/Labels",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Labels",
         buttonStyle = "toggle",
         position = 100,
         description = "#CTL_GeomacCurrFiresOverlay_Hint",

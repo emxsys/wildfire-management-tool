@@ -50,7 +50,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/cps/images/layer-delete.png",
         displayName = "Delete Fireground Sector")
 @ActionReference(path = "Toolbars/Fire", position = 1300)
-@RibbonActionReference(path = "Menu/Process/Fireground", position = 300)
+@RibbonActionReference(path = "Ribbon/TaskPanes/Process/Fireground", position = 300)
 @Messages({
     //"CTL_DeleteSectorFromFireground=Delete Fireground Sector ",
     //"ERR_CannotRemoveSector=Cannot Remove Sector from Fireground"
