@@ -52,7 +52,7 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.terramenta</groupId>
+            <groupId>com.emxsys</groupId>
             <artifactId>terramenta-time</artifactId>
             <version>${terramenta.version}</version>
             <optional>true</optional>

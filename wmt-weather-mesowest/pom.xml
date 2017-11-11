@@ -111,7 +111,7 @@
         </dependency>
         <dependency>
             <artifactId>terramenta-globe</artifactId>
-            <groupId>com.terramenta</groupId>
+            <groupId>com.emxsys</groupId>
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>

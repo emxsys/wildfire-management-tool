@@ -104,7 +104,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.terramenta</groupId>
+            <groupId>com.emxsys</groupId>
             <artifactId>terramenta-globe</artifactId>
             <version>${terramenta.version}</version>
         </dependency>

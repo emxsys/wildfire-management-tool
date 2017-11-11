@@ -163,8 +163,8 @@
 
         <!-- Terramenta -->
         <dependency>
+            <groupId>com.emxsys</groupId>
             <artifactId>terramenta-application</artifactId>
-            <groupId>com.terramenta</groupId>
             <version>${terramenta.version}</version>
             <type>zip</type>
         </dependency>
@@ -254,7 +254,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.terramenta</groupId>
+                                    <groupId>com.emxsys</groupId>
                                     <artifactId>terramenta-application</artifactId>
                                     <version>${terramenta.version}</version>
                                     <type>zip</type>

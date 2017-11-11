@@ -38,23 +38,23 @@
         <!--WMT Dependencies-->
         <dependency>
             <artifactId>wmt-libraries</artifactId>
-            <groupId>com.emxsys</groupId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <artifactId>wmt-utilities</artifactId>
-            <groupId>com.emxsys</groupId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <!--Terramenta Dependencies-->
         <dependency>
             <artifactId>terramenta-ribbon</artifactId>
-            <groupId>com.terramenta</groupId>
+            <groupId>${project.groupId}</groupId>
             <version>${terramenta.version}</version>
         </dependency>
         <dependency>
             <artifactId>terramenta-core</artifactId>
-            <groupId>com.terramenta</groupId>
+            <groupId>${project.groupId}</groupId>
             <version>${terramenta.version}</version>
         </dependency>
         <!--NetBeans Dependencies-->
@@ -167,14 +167,14 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.emxsys</groupId>
             <artifactId>wmt-time</artifactId>
-            <version>4.0-SNAPSHOT</version>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>wmt-visad</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

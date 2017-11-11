@@ -54,7 +54,7 @@
         </dependency>
         <!--Terramenta-->
         <dependency>
-            <groupId>com.terramenta</groupId>
+            <groupId>com.emxsys</groupId>
             <artifactId>terramenta-ribbon</artifactId>
             <version>${terramenta.version}</version>
         </dependency>
