@@ -57,13 +57,12 @@ import org.openide.util.Utilities;
         lazy = false)
 // Note, this action registered in a contextual ribbon task pane instead of the general Menu system.
 // See layer.xml in this module.
-@RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/Edit",
+@RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/Edit", position = 400,
         buttonStyle = "toggle",
         priority = "top",
         description = "#CTL_ToggleLockAction_Hint",
         tooltipTitle = "#CTL_ToggleLockAction_TooltipTitle",
         tooltipBody = "#CTL_ToggleLockAction_TooltipBody",
-        position = 400,
         autoRepeatAction = false)
 @Messages({
     "CTL_ToggleLockAction=Lock",

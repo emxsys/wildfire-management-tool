@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_EffectSunlight",
         lazy = false)
 @ActionReference(path = "Toolbars/Effects", position = 1300)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Effects/Controls", position = 300,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Effects/Controls", position = 300,
         buttonStyle = "toggle",
         description = "#CTL_EffectSunlight_Hint",
         priority = "top",

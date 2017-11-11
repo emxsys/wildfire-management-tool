@@ -52,7 +52,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/images/basemap-openstreet.png",
         displayName = "#CTL_BasemapOpenStreetMapBlend")
 @ActionReference(path = "Toolbars/Basemap", position = 4200)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Basemap/Street", position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Basemap/Street", position = 200,
         description = "#CTL_BasemapOpenStreetMapBlend_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapOpenStreetMapBlend_TooltipTitle",

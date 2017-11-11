@@ -48,7 +48,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_OverlayLandfireFuelModel13",
         lazy = false)
 @ActionReference(path = "Toolbars/Overlays", position = 120)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/LANDFIRE", position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/LANDFIRE", position = 200,
         buttonStyle = "toggle",
         description = "#CTL_OverlayLandfireFuelModel13_Hint",
         priority = "top",

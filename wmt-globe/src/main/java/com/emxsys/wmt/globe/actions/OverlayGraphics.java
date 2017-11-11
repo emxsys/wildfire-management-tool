@@ -56,7 +56,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Menu/Map/Overlays/Graphics", position = 300),
     @ActionReference(path = "Toolbars/Overlays", position = 313)
 })
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Map/Overlays/Graphics",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Map/Overlays/Graphics",
                        buttonStyle = "toggle",
                        position = 300,
                        description = "#CTL_Graphics_Hint",

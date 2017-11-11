@@ -82,8 +82,7 @@ import visad.FlatField;
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = true)
 @ActionID(category = "Window", id = "com.emxsys.wmt.cps.views.WeatherTopComponent")
-@RibbonActionReference(path = "Ribbon/TaskPanes/Window/Show",
-        position = 220,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Window/Show", position = 220,
         priority = "top",
         description = "#CTL_WeatherAction_Hint",
         tooltipTitle = "#CTL_WeatherAction_TooltipTitle",

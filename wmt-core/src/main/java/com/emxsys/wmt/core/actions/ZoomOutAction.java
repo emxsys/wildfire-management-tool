@@ -42,7 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/zoom_out.png",
         displayName = "#CTL_ZoomOutAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 4200)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Zoom", position = 200, 
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Zoom", position = 200, 
         description = "#CTL_ZoomOutAction_Hint",
         tooltipTitle = "#CTL_ZoomOutAction_TooltipTitle",
         tooltipBody = "#CTL_ZoomOutAction_TooltipBody",

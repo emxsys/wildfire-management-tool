@@ -47,9 +47,8 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
     displayName = "#CTL_GeomacLandOwnershipOverlay",
     lazy = false)   // non-lazy init is required to update the button state before it displayed                    
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Boundaries",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/Boundaries", position = 100,
                        buttonStyle = "toggle",
-                       position = 100,
                        description = "#CTL_GeomacLandOwnershipOverlay_Hint",
                        priority = "top",
                        tooltipTitle = "#CTL_GeomacLandOwnershipOverlay_TooltipTitle",

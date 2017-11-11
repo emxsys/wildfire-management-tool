@@ -61,7 +61,7 @@ import org.openide.util.Utilities;
         surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Find", position = 300)
 @RibbonActionReferences({
-    @RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage", position = 600,
+    @RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage", position = 600,
             priority = "top",
             description = "#CTL_RestoreSceneAction_Hint",
             tooltipTitle = "#CTL_RestoreSceneAction_TooltipTitle",
@@ -69,8 +69,7 @@ import org.openide.util.Utilities;
             tooltipIcon = "com/emxsys/wmt/core/images/restore-globe32.png"),
 //                       tooltipFooter = "com.emxsys.wmt.globe.Bundle#CTL_Default_TooltipFooter",
 //                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
-    @RibbonActionReference(path = "Ribbon/TaskPanes/SceneTools/View",
-            position = 300,
+    @RibbonActionReference(path = "Ribbon/TaskPanes/SceneTools/View", position = 300,
             priority = "top",
             description = "#CTL_RestoreSceneAction_Hint",
             tooltipTitle = "#CTL_RestoreSceneAction_TooltipTitle",

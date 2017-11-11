@@ -46,8 +46,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.globe.actions.MakePresentAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/status_unknown_present.png",
         displayName = "#CTL_MakePresentAction")
-@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/Status",
-        position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/Status", position = 100,
         description = "#CTL_MakePresentAction_Hint",
         autoRepeatAction = false)
 @Messages(

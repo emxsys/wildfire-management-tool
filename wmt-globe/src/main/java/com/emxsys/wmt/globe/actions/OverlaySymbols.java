@@ -48,9 +48,8 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_Symbols",
         lazy = false)   // non-lazy init is required to update the button state before it displayed   
 @ActionReference(path = "Toolbars/Overlays", position = 2200)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Graphics",
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/Graphics", position = 200,
         buttonStyle = "toggle",
-        position = 200,
         description = "#CTL_Symbols_Hint",
         priority = "top",
         tooltipTitle = "#CTL_Symbols_TooltipTitle",

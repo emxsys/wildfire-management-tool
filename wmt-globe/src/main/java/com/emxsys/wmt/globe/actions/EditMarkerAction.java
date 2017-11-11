@@ -49,8 +49,7 @@ import org.openide.util.NbBundle.Messages;
 
 // Note, this action registered in a contextual ribbon task pane instead of the general Menu system.
 // See layer.xml in this module.
-@RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/Edit",
-        position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/Edit", position = 100,
         priority = "top",
         description = "#CTL_EditAction_Hint",
         tooltipTitle = "#CTL_EditAction_TooltipTitle",

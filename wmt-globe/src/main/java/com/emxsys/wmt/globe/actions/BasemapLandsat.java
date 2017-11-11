@@ -53,7 +53,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/images/basemap-landsat.png",
         displayName = "#CTL_BasemapLandsat")
 @ActionReference(path = "Toolbars/Basemap", position = 1200)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Basemap/Satellite", position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Basemap/Satellite", position = 200,
         description = "#CTL_BasemapLandsat_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapLandsat_TooltipTitle",

@@ -48,8 +48,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/goto-location.png", displayName = "#CTL_GotoSymbolAction")
 // Note, this action registered in a contextual ribbon task pane instead of the general Menu system.
 // See layer.xml in this module.
-@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/View",
-        position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/View", position = 100,
         priority = "top",
         description = "#CTL_GotoSymbolAction_Hint",
         tooltipTitle = "#CTL_GotoSymbolAction_TooltipTitle",

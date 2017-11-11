@@ -52,7 +52,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/images/basemap-bing-aerial.png",
         displayName = "#CTL_BasemapBing")
 @ActionReference(path = "Toolbars/Basemap", position = 2100)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Basemap/Aerial", position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Basemap/Aerial", position = 100,
         description = "#CTL_BasemapBing_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapBing_TooltipTitle",

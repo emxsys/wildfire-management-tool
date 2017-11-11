@@ -42,8 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_down.png",
         displayName = "#CTL_PanDownAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 2100)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move",
-        position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Move", position = 100,
         description = "#CTL_PanDownAction_Hint",
         tooltipTitle = "#CTL_PanDownAction_TooltipTitle",
         tooltipBody = "#CTL_PanDownAction_TooltipBody",

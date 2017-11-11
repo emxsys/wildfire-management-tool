@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_MGRSGraticule",
         lazy = false)   // non-lazy init is required to update the button state before it displayed                    
 @ActionReference(path = "Toolbars/Overlays", position = 1300)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Graticules", position = 300,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/Graticules", position = 300,
         buttonStyle = "toggle",
         description = "#CTL_MGRSGraticule_Hint",
         priority = "top",

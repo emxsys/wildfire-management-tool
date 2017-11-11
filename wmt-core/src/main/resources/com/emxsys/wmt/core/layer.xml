@@ -2,8 +2,36 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Ribbon">
-        <!--Establish or Override positions from Terrament-->
+        <!--Establish or Override positions from Terramenta-->
         <folder name="TaskPanes">
+            <!-- HOME Tab -->
+            <folder name="Home">
+                <attr name="position" intvalue="100"/>
+            </folder>
+            <!-- GLOBE Tab -->
+            <folder name="Globe">
+                <attr name="position" intvalue="200"/> 
+            </folder>
+            <!--TIME Tab-->
+            <folder name="Time">
+                <attr name="position" intvalue="300"/> 
+            </folder>                        
+            <!-- INSERT Tab-->
+            <folder name="Insert">
+                <attr name="position" intvalue="400"/> 
+            </folder>
+            <!-- PROCESS Tab-->
+            <folder name="Process">
+                <attr name="position" intvalue="500"/> 
+            </folder>
+            <!-- WINDOW Tab-->
+            <folder name="Window">
+                <attr name="position" intvalue="999"/>
+            </folder>
+            <!-- TEST Tab-->
+            <folder name="Test">
+                <attr name="position" intvalue="9999"/>
+            </folder>
             <folder name="AnnotationTools">
                 <attr name="position" intvalue="1001"/>                
             </folder>

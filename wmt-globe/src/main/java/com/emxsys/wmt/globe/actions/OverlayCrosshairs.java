@@ -30,6 +30,7 @@
 package com.emxsys.wmt.globe.actions;
 
 import com.emxsys.wmt.globe.layers.WidgetLayers;
+import com.terramenta.ribbon.RibbonActionReference;
 import javax.swing.Action;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -44,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_OverlayCrosshairs",
         lazy = false)
 @ActionReference(path = "Toolbars/Overlays", position = 5100)
-@com.terramenta.ribbon.RibbonActionReference(path = "Menu/Home/Manage/Overlays/Controls", position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/Controls", position = 100,
         buttonStyle = "toggle",
         description = "#CTL_OverlayCrosshairs_Hint",
         priority = "top",

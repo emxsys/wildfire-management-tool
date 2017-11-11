@@ -42,8 +42,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/core/images/arrow_up.png",
         displayName = "#CTL_PanUpAction", surviveFocusChange = false)
 @ActionReference(path = "Toolbars/Map", position = 2400)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Move",
-        position = 400,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Move", position = 400,
         description = "#CTL_PanUpAction_Hint",
         tooltipTitle = "#CTL_PanUpAction_TooltipTitle",
         tooltipBody = "#CTL_PanUpAction_TooltipBody",

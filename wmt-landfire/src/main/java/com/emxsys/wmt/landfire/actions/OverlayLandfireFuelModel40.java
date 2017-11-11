@@ -52,7 +52,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_OverlayLandfireFuelModel40",
         lazy = false)   // non-lazy init is required to update the button state before it displayed
 @ActionReference(path = "Toolbars/Overlays", position = 110)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/LANDFIRE", position = 100,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/LANDFIRE", position = 100,
         buttonStyle = "toggle",
         description = "#CTL_OverlayLandfireFuelModel40_Hint",
         priority = "top",

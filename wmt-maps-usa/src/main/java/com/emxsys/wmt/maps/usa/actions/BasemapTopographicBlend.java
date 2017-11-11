@@ -54,8 +54,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/maps/usa/images/basemap-usgs-topo.png",
         displayName = "#CTL_BasemapTopographicBlend")
 @ActionReference(path = "Toolbars/Basemap", position = 320)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Basemap/Topographic",
-        position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Basemap/Topographic", position = 200,
         description = "#CTL_BasemapTopographicBlend_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapTopographicBlend_TooltipTitle",

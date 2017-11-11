@@ -47,8 +47,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/status_unknown_planned.png",
         displayName = "#CTL_MakePlannedAction")
 
-@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/Status",
-        position = 200,
+@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/Status", position = 200,
         description = "CTL_MakePlannedAction_Hint",
         autoRepeatAction = false)
 @Messages({

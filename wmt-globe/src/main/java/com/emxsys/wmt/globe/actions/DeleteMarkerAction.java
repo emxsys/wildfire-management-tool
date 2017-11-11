@@ -53,8 +53,7 @@ import org.openide.util.NbBundle.Messages;
         key = "delete")
 // Note, this action registered in a contextual ribbon task pane instead of the general Menu system.
 // See layer.xml in this module.
-@RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/Edit",
-        position = 300,
+@RibbonActionReference(path = "Ribbon/TaskPanes/MarkerTools/Edit", position = 300,
         priority = "top",
         description = "#CTL_DeleteAction_Hint",
         autoRepeatAction = false,

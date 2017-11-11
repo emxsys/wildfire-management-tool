@@ -41,8 +41,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionID(category = "Edit", id = "com.emxsys.wmt.globe.actions.MakeUnknownAction")
 @ActionRegistration(iconBase = "com/emxsys/wmt/globe/images/affiliation_unknown_gnd.png",
         displayName = "#CTL_MakeUnknownAction")
-@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/Affiliation",
-        position = 400,
+@RibbonActionReference(path = "Ribbon/TaskPanes/SymbolTools/Affiliation", position = 400,
         description = "#CTL_MakeUnknownAction_Hint",
         autoRepeatAction = false)
 @Messages(

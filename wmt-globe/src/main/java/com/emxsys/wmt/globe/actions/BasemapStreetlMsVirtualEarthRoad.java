@@ -51,7 +51,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/images/basemap-vearth-hybrid.png",
         displayName = "#CTL_BasemapMsVirtualEarthRoad")
 @ActionReference(path = "Toolbars/Basemap", position = 4300)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Basemap/Street", position = 300,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Basemap/Street", position = 300,
         description = "#CTL_BasemapMsVirtualEarthRoad_Hint",
         priority = "top",
         tooltipTitle = "#CTL_BasemapMsVirtualEarthRoad_TooltipTitle",

@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "com/emxsys/wmt/globe/images/view_pan.png",
         lazy = true)
 @ActionReference(path = "Toolbars/Overlays", position = 5400)
-@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Manage/Overlays/Controls", position = 400,
+@RibbonActionReference(path = "Ribbon/TaskPanes/Globe/Manage/Overlays/Controls", position = 400,
         buttonStyle = "toggle",
         description = "#CTL_OverlayViewControls_Hint",
         priority = "top",
