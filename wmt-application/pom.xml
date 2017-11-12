@@ -64,11 +64,12 @@
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+        <!-- Problems on Mac.... TODO: resolve missing dependency-->
+        <!--<dependency>
             <artifactId>wmt-gis-sqlserver</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <artifactId>wmt-globe</artifactId>
             <groupId>${project.groupId}</groupId>
