@@ -11,6 +11,98 @@
             <!-- GLOBE Tab -->
             <folder name="Globe">
                 <attr name="position" intvalue="200"/> 
+                <!-- Manage Group (e.g., Base Maps, Overlays, Layer Manager -->
+                <folder name="Manage">
+                    <attr name="position" intvalue="400"/>                
+                    <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Manage"/>
+                    <!--Basemap Popup-->  
+                    <folder name="Basemap">
+                        <attr name="position" intvalue="100"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_basemaps.png"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap"/>
+                        <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_Hint"/>
+                        <attr name="priority" stringvalue="top"/>
+                        <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipTitle"/>
+                        <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Basemap_TooltipBody"/>
+                        <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_basemaps.png"/>
+                        <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                        <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
+                        <folder name="Satellite">
+                            <attr name="position" intvalue="100"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsSatellite"/>
+                        </folder>
+                        <folder name="Aerial">
+                            <attr name="position" intvalue="200"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsAerial"/>
+                        </folder>
+                        <folder name="Topographic">
+                            <attr name="position" intvalue="300"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsTopographic"/>
+                        </folder>
+                        <folder name="Street">
+                            <attr name="position" intvalue="400"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsStreet"/>
+                        </folder>
+                        <folder name="User">
+                            <attr name="position" intvalue="500"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_MapsUser"/>
+                        </folder>
+                    </folder>
+                    <!--Overlays Popup-->  
+                    <folder name="Overlays">
+                        <attr name="position" intvalue="200"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_overlays.png"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays"/>
+                        <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_Hint"/>
+                        <attr name="priority" stringvalue="top"/>
+                        <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipTitle"/>
+                        <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Overlays_TooltipBody"/>
+                        <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_overlays.png"/>
+                        <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                        <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
+                        <folder name="Graticules">
+                            <attr name="position" intvalue="700"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysGraticules"/>
+                        </folder>
+                        <folder name="Hazards">
+                            <attr name="position" intvalue="800"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysHazards"/>
+                        </folder>
+                        <folder name="Weather">
+                            <attr name="position" intvalue="900"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysWeather"/>
+                        </folder>
+                        <folder name="Graphics">
+                            <attr name="position" intvalue="1000"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysGraphics"/>
+                        </folder>
+                        <folder name="Labels">
+                            <attr name="position" intvalue="2000"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysLabels"/>
+                        </folder>
+                        <folder name="Boundaries">
+                            <attr name="position" intvalue="3000"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysBoundaries"/>
+                        </folder>
+                        <folder name="Controls">
+                            <attr name="position" intvalue="4000"/>
+                            <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_OverlaysControls"/>
+                        </folder>
+                    </folder>
+                    <!--Effects Popup-->  
+                    <folder name="Effects">
+                        <attr name="position" intvalue="300"/>
+                        <attr name="iconBase" stringvalue="com/emxsys/wmt/core/images/map_effects.png"/>
+                        <attr name="menuText" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects"/>
+                        <attr name="description" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_Hint"/>
+                        <attr name="priority" stringvalue="top"/>
+                        <attr name="tooltipTitle" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipTitle"/>
+                        <attr name="tooltipBody" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Effects_TooltipBody"/>
+                        <attr name="tooltipIcon" stringvalue="com/emxsys/wmt/core/images/map_effects.png"/>
+                        <attr name="tooltipFooter" bundlevalue="com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter"/>                        
+                        <attr name="tooltipFooterIcon" stringvalue="com/emxsys/wmt/core/images/help.png"/>                        
+                    </folder>
+                </folder>
             </folder>
             <!--TIME Tab-->
             <folder name="Time">
