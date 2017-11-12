@@ -230,7 +230,13 @@
             <groupId>org.eclipse.swt.gtk.linux</groupId>
             <artifactId>x86</artifactId>
             <version>3.3.0-v3346</version>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-projectapi-nb</artifactId>
+            <version>${netbeans.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

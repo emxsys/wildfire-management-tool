@@ -124,6 +124,11 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-projectapi-nb</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>        
+        <dependency>
             <artifactId>org-openide-dialogs</artifactId>
             <groupId>org.netbeans.api</groupId>
             <version>${netbeans.version}</version>
