@@ -29,6 +29,7 @@
  */
 package com.emxsys.wmt.core.actions;
 
+import com.terramenta.ribbon.RibbonActionReference;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.netbeans.api.project.Project;
@@ -54,13 +55,12 @@ import org.openide.util.NbBundle.Messages;
         surviveFocusChange = false,
         lazy = true)
 //@ActionReference(path = "Menu/File", position = 600)
-//// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 600,
-//                       tooltipTitle = "#CTL_DeleteProjectAction_TooltipTitle",
-//                       tooltipBody = "#CTL_DeleteProjectAction_TooltipBody",
-//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_delete32.png",
-//                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+@RibbonActionReference(path = "Ribbon/AppMenu", position = 400,
+                       tooltipTitle = "#CTL_DeleteProjectAction_TooltipTitle",
+                       tooltipBody = "#CTL_DeleteProjectAction_TooltipBody",
+                       tooltipIcon = "com/emxsys/wmt/core/images/folder_delete32.png",
+                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
             "CTL_DeleteProjectAction=Delete...",

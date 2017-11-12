@@ -60,13 +60,13 @@ import org.openide.util.NbBundle.Messages;
             @ActionReference(path = "Toolbars/File", position = 401),
             @ActionReference(path = "Shortcuts", name = "O-O")
         })
-//// Nest this ribbon bar button within the Projects dropdown list
-//@RibbonActionReference(path = "Ribbon/TaskPanes/Home/Project/Projects", position = 200,
-//                       tooltipTitle = "#CTL_OpenProjectAction_TooltipTitle",
-//                       tooltipBody = "#CTL_OpenProjectAction_TooltipBody",
-//                       tooltipIcon = "com/emxsys/wmt/core/images/folder_accept32.png",
-//                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
-//                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
+// Nest this ribbon bar button within the Projects dropdown list
+@RibbonActionReference(path = "Ribbon/AppMenu", position = 100,
+                       tooltipTitle = "#CTL_OpenProjectAction_TooltipTitle",
+                       tooltipBody = "#CTL_OpenProjectAction_TooltipBody",
+                       tooltipIcon = "com/emxsys/wmt/core/images/folder_accept32.png",
+                       tooltipFooter = "com.emxsys.wmt.core.Bundle#CTL_Default_TooltipFooter",
+                       tooltipFooterIcon = "com/emxsys/wmt/core/images/help.png")
 @Messages(
         {
             "CTL_OpenProjectAction=Open...",
