@@ -132,15 +132,15 @@
             <version>${netbeans.version}</version>
         </dependency>        
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>   
-        <dependency>
             <groupId>com.emxsys</groupId>
             <artifactId>wmt-time</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>   
        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-project-libraries</artifactId>
@@ -158,6 +158,11 @@
             <artifactId>org-netbeans-modules-projectapi-nb</artifactId>
             <version>${netbeans.version}</version>
             <type>nbm</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-project-spi-intern-impl</artifactId>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 
