@@ -70,7 +70,7 @@
                     <attr name="active" boolvalue="false"/>
                     <attr name="name" stringvalue="Previous Perimeters"/>
                     <attr name="actuate" stringvalue="onRequest"/>
-                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.Layer20"/>
+                    <attr name="displayName" bundlevalue="com.emxsys.wmt.maps.geomac.Bundle#Layers.LayerPrevFirePerims"/>
                     <attr name="position" intvalue="1400"/>
                     <!-- Look for our custom file resource under the cluster/modules/ext folder -->
                     <attr name="config" urlvalue="nbinst://com-emxsys-wmt-maps-geomac/modules/ext/config/worldwind/geomac/PrevFirePerims.xml"/>

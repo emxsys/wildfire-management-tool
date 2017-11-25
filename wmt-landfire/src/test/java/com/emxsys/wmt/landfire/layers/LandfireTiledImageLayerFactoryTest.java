@@ -126,8 +126,8 @@ public class LandfireTiledImageLayerFactoryTest {
             String result = HttpUtil.callWebService(new URL(capsUrl));
             assertNotNull(result);
             assertTrue(!result.isEmpty());
-        } catch (RuntimeException e) {
-            fail(e.getMessage());
+        } catch (Exception e) {
+            fail(capsUrl + " failed! : " +e.getMessage());
         }
         //System.out.println(result);
     }
